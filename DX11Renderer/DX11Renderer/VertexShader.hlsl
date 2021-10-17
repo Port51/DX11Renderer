@@ -9,10 +9,19 @@ struct VSOut
 	float4 pos : SV_POSITION;
 };
 
+cbuffer CBuf
+{
+	//row_major matrix transform; // another option - slightly slower on GPU
+	float4x4 transform; // could be called "matrix"
+};
+
 VSOut main(float2 positionOS : Position, float4 color : Color)
 {
 	VSOut vso;
-	vso.pos = float4(positionOS.x, positionOS.y, 0.0f, 1.0f);
+	// Originally right multiply, so vector on left
+	// CPU stored in row-major, GPU column-major
+	// Instead of transposing, move the transform to start of mul here
+	vso.pos = mul(transform, float4(positionOS.x, positionOS.y, 0.0f, 1.0f));
 	vso.color = color;
 	return vso;
 }
