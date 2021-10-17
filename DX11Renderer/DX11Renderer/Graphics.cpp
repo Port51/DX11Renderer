@@ -10,6 +10,7 @@
 // This one checks for failure and throws if it fails
 #define GFX_THROW_NOINFO(hrcall) if( FAILED( hr = (hrcall) ) ) throw Graphics::HrException( __LINE__,__FILE__,hr )
 
+// Exceptions throw with info if in NDEBUG, without info if in release
 #ifndef NDEBUG
 #define GFX_EXCEPT(hr) Graphics::HrException( __LINE__,__FILE__,(hr),infoManager.GetMessages() )
 #define GFX_THROW_INFO(hrcall) infoManager.Set(); if( FAILED( hr = (hrcall) ) ) throw GFX_EXCEPT(hr)
@@ -41,13 +42,18 @@ Graphics::Graphics(HWND hWnd)
 
 	HRESULT hr;
 
+	UINT swapCreateFlags = 0u;
+#ifndef NDEBUG
+	swapCreateFlags |= D3D11_CREATE_DEVICE_DEBUG; // Debug will print more to Output window
+#endif
+
 	// Create device and front/back buffers, and swap chain and rendering context
 	// pass nullptr for defaults
 	GFX_THROW_INFO(D3D11CreateDeviceAndSwapChain(
 		nullptr,
 		D3D_DRIVER_TYPE_HARDWARE,
 		nullptr,
-		0,
+		swapCreateFlags,
 		nullptr,
 		0,
 		D3D11_SDK_VERSION,
