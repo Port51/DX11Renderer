@@ -123,18 +123,18 @@ void Graphics::DrawTestTriangle()
 	{
 		struct
 		{
-			float x;
-			float y;
-		} pos;
+			const float x;
+			const float y;
+		} const pos;
 		struct
 		{
-			unsigned char r;
-			unsigned char g;
-			unsigned char b;
-			unsigned char a;
-		} color;
+			const unsigned char r;
+			const unsigned char g;
+			const unsigned char b;
+			const unsigned char a;
+		} const color;
 	};
-	Vertex vertices[] =
+	const Vertex vertices[] =
 	{
 		{ 0.0f,0.5f,255,0,0,0 },
 		{ 0.5f,-0.5f,0,255,0,0 },
