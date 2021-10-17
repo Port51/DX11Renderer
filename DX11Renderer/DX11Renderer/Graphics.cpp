@@ -2,9 +2,11 @@
 #include "dxerr.h"
 #include <sstream>
 #include <d3dcompiler.h>
+#include <DirectXMath.h>
 
 // Only do this in .cpp files
 namespace wrl = Microsoft::WRL;
+namespace dx = DirectX;
 
 // Sets up linker settings
 #pragma comment(lib,"d3d11.lib")
@@ -114,7 +116,7 @@ void Graphics::ClearBuffer(float red, float green, float blue) noexcept
 	pContext->ClearRenderTargetView(pTarget.Get(), color);
 }
 
-void Graphics::DrawTestTriangle(float angle)
+void Graphics::DrawTestTriangle(float x, float y, float angle)
 {
 	namespace wrl = Microsoft::WRL;
 	HRESULT hr;
@@ -175,20 +177,15 @@ void Graphics::DrawTestTriangle(float angle)
 	//
 	struct ConstantBuffer
 	{
-		struct
-		{
-			const float element[4][4];
-		} const transformation;
+		const dx::XMMATRIX transform;
 	};
+	// Right multiply, so left side happens first
 	const ConstantBuffer cb =
 	{
-		{
-			// Account for NDC and aspect ratio via 3/4
-			(3.0f / 4.0f) * std::cos(angle),	std::sin(angle),	0.0f,	0.0f,
-			(3.0f / 4.0f) * -std::sin(angle),	std::cos(angle),	0.0f,	0.0f,
-			0.0f,								0.0f,				1.0f,	0.0f,
-			0.0f,								0.0f,				0.0f,	1.0f,
-		}
+		//dx::XMMatrixMultiply(dx::XMMatrixRotationZ(angle), dx::XMMatrixScaling(3.f/4.f, 1.f, 1.f))
+		dx::XMMatrixRotationZ(angle)
+		* dx::XMMatrixScaling(3.f / 4.f, 1.f, 1.f)
+		* dx::XMMatrixTranslation(x, y, 0)
 	};
 
 	wrl::ComPtr<ID3D11Buffer> pConstantBuffer;
