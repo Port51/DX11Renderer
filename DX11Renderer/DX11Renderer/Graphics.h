@@ -54,7 +54,7 @@ public:
 	~Graphics() = default;
 	void EndFrame();
 	void ClearBuffer(float red, float green, float blue) noexcept;
-	void DrawTestTriangle(float x, float y, float angle);
+	void DrawTestTriangle(float x, float y, float z, float angle);
 private:
 #ifndef NDEBUG
 	DxgiInfoManager infoManager;
@@ -64,6 +64,8 @@ private:
 	Microsoft::WRL::ComPtr<IDXGISwapChain> pSwap;
 	// Used for configuring pipeline and executing render commands
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> pContext;
+
 	// RT view of backbuffer
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pTarget;
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> pDepthStencilView;
 };
