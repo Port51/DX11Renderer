@@ -19,6 +19,9 @@
     <Filter Include="Header Files\ChiliErrors">
       <UniqueIdentifier>{104759e1-4481-4927-8d97-e9a73893f82e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{5494fe3c-109d-4523-ac7c-5486c2016c97}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -107,5 +110,13 @@
     <None Include="DXGetErrorString.inl">
       <Filter>Source Files\ChiliErrors</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="VertexShader.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="PixelShader.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>
