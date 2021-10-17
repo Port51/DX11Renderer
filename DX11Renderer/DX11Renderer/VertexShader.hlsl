@@ -3,7 +3,16 @@
 // - And to set shader type
 // - Can also change shader model targeted
 
-float4 main(float2 positionOS : Position) : SV_POSITION
+struct VSOut
 {
-	return float4(positionOS.x, positionOS.y, 0.0f, 1.0f);
+	float4 color : Color;
+	float4 pos : SV_POSITION;
+};
+
+VSOut main(float2 positionOS : Position, float4 color : Color)
+{
+	VSOut vso;
+	vso.pos = float4(positionOS.x, positionOS.y, 0.0f, 1.0f);
+	vso.color = color;
+	return vso;
 }

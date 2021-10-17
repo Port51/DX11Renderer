@@ -3,7 +3,7 @@
 // - And to set shader type
 // - Can also change shader model targeted
 
-float4 main() : SV_TARGET
+float4 main(float4 color : Color) : SV_TARGET
 {
-	return float4(0.0f, 1.0f, 1.0f, 1.0f);
+	return color;
 }
