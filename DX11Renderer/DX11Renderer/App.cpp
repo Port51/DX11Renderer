@@ -14,7 +14,7 @@ App::App()
 	std::uniform_real_distribution<float> rdist(6.0f, 20.0f);
 
 	// Create boxes
-	for (auto i = 0; i < 1; i++)
+	for (auto i = 0; i < 80; i++)
 	{
 		boxes.push_back(std::make_unique<Box>(
 			wnd.Gfx(), rng, adist,
@@ -23,7 +23,7 @@ App::App()
 	}
 
 	// Set projection matrix
-	wnd.Gfx().SetProjection(DirectX::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, 0.01f, 40.0f));
+	wnd.Gfx().SetProjection(DirectX::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, 0.5f, 40.0f));
 }
 
 App::~App()

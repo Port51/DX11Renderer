@@ -8,10 +8,11 @@ TransformCbuf::TransformCbuf(Graphics& gfx, const Drawable& parent)
 
 void TransformCbuf::Bind(Graphics& gfx) noexcept
 {
-	vcbuf.Update(gfx,
+	vcbuf.Update(gfx, parent.GetTransformXM() * gfx.GetProjection());
+	/*vcbuf.Update(gfx,
 		DirectX::XMMatrixTranspose(
 			parent.GetTransformXM() * gfx.GetProjection()
 		)
-	);
+	);*/
 	vcbuf.Bind(gfx);
 }
