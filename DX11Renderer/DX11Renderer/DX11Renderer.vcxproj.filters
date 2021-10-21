@@ -37,6 +37,9 @@
     <Filter Include="Header Files\Macros">
       <UniqueIdentifier>{2695a929-5975-45ed-9f7a-6f2561f07acd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\GeometryHelpers">
+      <UniqueIdentifier>{38860b03-77f8-4d11-9dd5-7fa460b74b8e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -187,6 +190,27 @@
     </ClInclude>
     <ClInclude Include="DrawableTemplated.h">
       <Filter>Header Files\Drawable</Filter>
+    </ClInclude>
+    <ClInclude Include="IndexedTriangleList.h">
+      <Filter>Header Files\GeometryHelpers</Filter>
+    </ClInclude>
+    <ClInclude Include="Cube.h">
+      <Filter>Header Files\GeometryHelpers</Filter>
+    </ClInclude>
+    <ClInclude Include="Cone.h">
+      <Filter>Header Files\GeometryHelpers</Filter>
+    </ClInclude>
+    <ClInclude Include="GeoMath.h">
+      <Filter>Header Files\GeometryHelpers</Filter>
+    </ClInclude>
+    <ClInclude Include="Plane.h">
+      <Filter>Header Files\GeometryHelpers</Filter>
+    </ClInclude>
+    <ClInclude Include="Prism.h">
+      <Filter>Header Files\GeometryHelpers</Filter>
+    </ClInclude>
+    <ClInclude Include="Sphere.h">
+      <Filter>Header Files\GeometryHelpers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

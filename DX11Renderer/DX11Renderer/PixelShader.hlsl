@@ -11,5 +11,5 @@ cbuffer CBuf
 // SV_PrimitiveID is per-triangle
 float4 main(uint tid : SV_PrimitiveID) : SV_TARGET
 {
-	return faceColors[tid >> 1u];
+	return faceColors[(tid >> 1u) % 6u];
 }
