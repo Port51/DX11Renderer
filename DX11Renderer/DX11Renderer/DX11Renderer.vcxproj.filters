@@ -185,6 +185,9 @@
     <ClInclude Include="BindableCodex.h">
       <Filter>Header Files\Bindable</Filter>
     </ClInclude>
+    <ClInclude Include="DrawableTemplated.h">
+      <Filter>Header Files\Drawable</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DX11Renderer.rc">

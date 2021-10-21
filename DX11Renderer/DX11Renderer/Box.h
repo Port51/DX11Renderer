@@ -1,7 +1,7 @@
 #pragma once
-#include "Drawable.h"
+#include "DrawableTemplated.h"
 
-class Box : public Drawable
+class Box : public DrawableTemplated<Box>
 {
 public:
 	Box(Graphics& gfx, std::mt19937& rng,
