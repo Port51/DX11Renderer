@@ -1,14 +1,18 @@
 #pragma once
-
 #include "WindowsInclude.h"
 #include "CustomException.h"
 #include <d3d11.h>
-#include <vector>
 #include <wrl.h>
+#include <vector>
 #include "DxgiInfoManager.h"
+#include <d3dcompiler.h>
+#include <DirectXMath.h>
+#include <memory>
+#include <random>
 
 class Graphics
 {
+	friend class Bindable;
 public:
 	class Exception : public CustomException
 	{
@@ -54,11 +58,15 @@ public:
 	~Graphics() = default;
 	void EndFrame();
 	void ClearBuffer(float red, float green, float blue) noexcept;
+	void DrawIndexed(UINT count) noexcept(!IS_DEBUG);
+	void SetProjection(DirectX::FXMMATRIX proj) noexcept;
+	DirectX::XMMATRIX GetProjection() const noexcept;
 	void DrawTestTriangle(float x, float y, float z, float angle);
 private:
 #ifndef NDEBUG
 	DxgiInfoManager infoManager;
 #endif
+	DirectX::XMMATRIX projection;
 	// Allocating stuff
 	Microsoft::WRL::ComPtr<ID3D11Device> pDevice;
 	Microsoft::WRL::ComPtr<IDXGISwapChain> pSwap;

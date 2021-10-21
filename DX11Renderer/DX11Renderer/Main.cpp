@@ -1,4 +1,4 @@
-#include "WindowsInclude.h"
+//#include "WindowsInclude.h"
 #include "App.h"
 
 int CALLBACK WinMain(
