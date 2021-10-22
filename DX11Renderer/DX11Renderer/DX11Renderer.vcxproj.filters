@@ -40,6 +40,12 @@
     <Filter Include="Header Files\GeometryHelpers">
       <UniqueIdentifier>{38860b03-77f8-4d11-9dd5-7fa460b74b8e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Chili">
+      <UniqueIdentifier>{0ed1cb02-d74b-4beb-ae43-a69b6b4bac2a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Chili">
+      <UniqueIdentifier>{995e54a0-ad31-487c-a175-10cff89eaa2a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -109,6 +115,24 @@
       <Filter>Source Files\Drawable</Filter>
     </ClCompile>
     <ClCompile Include="Melon.cpp">
+      <Filter>Source Files\Drawable</Filter>
+    </ClCompile>
+    <ClCompile Include="Surface.cpp">
+      <Filter>Source Files\Chili</Filter>
+    </ClCompile>
+    <ClCompile Include="GDIPlusManager.cpp">
+      <Filter>Source Files\Chili</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Source Files\Bindable</Filter>
+    </ClCompile>
+    <ClCompile Include="Sampler.cpp">
+      <Filter>Source Files\Bindable</Filter>
+    </ClCompile>
+    <ClCompile Include="Sheet.cpp">
+      <Filter>Source Files\Drawable</Filter>
+    </ClCompile>
+    <ClCompile Include="SkinnedBox.cpp">
       <Filter>Source Files\Drawable</Filter>
     </ClCompile>
   </ItemGroup>
@@ -224,6 +248,24 @@
     <ClInclude Include="Melon.h">
       <Filter>Header Files\Drawable</Filter>
     </ClInclude>
+    <ClInclude Include="Surface.h">
+      <Filter>Header Files\Chili</Filter>
+    </ClInclude>
+    <ClInclude Include="GDIPlusManager.h">
+      <Filter>Header Files\Chili</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Header Files\Bindable</Filter>
+    </ClInclude>
+    <ClInclude Include="Sampler.h">
+      <Filter>Header Files\Bindable</Filter>
+    </ClInclude>
+    <ClInclude Include="Sheet.h">
+      <Filter>Header Files\Drawable</Filter>
+    </ClInclude>
+    <ClInclude Include="SkinnedBox.h">
+      <Filter>Header Files\Drawable</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DX11Renderer.rc">
@@ -263,6 +305,12 @@
       <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="ColorIndexVS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="TextureVS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="TexturePS.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>
