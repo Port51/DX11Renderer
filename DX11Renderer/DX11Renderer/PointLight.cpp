@@ -14,9 +14,9 @@ void PointLight::DrawImguiControlWindow() noexcept
 	if (ImGui::Begin("Light"))
 	{
 		ImGui::Text("Position");
-		ImGui::SliderFloat("X", &cbData.pos.x, -60.0f, 60.0f, "%.1f");
-		ImGui::SliderFloat("Y", &cbData.pos.y, -60.0f, 60.0f, "%.1f");
-		ImGui::SliderFloat("Z", &cbData.pos.z, -60.0f, 60.0f, "%.1f");
+		ImGui::SliderFloat("X", &cbData.posVS.x, -60.0f, 60.0f, "%.1f");
+		ImGui::SliderFloat("Y", &cbData.posVS.y, -60.0f, 60.0f, "%.1f");
+		ImGui::SliderFloat("Z", &cbData.posVS.z, -60.0f, 60.0f, "%.1f");
 
 		ImGui::Text("Intensity/Color");
 		// ImGuiSliderFlags_Logarithmic makes it power of 2?
@@ -52,20 +52,18 @@ void PointLight::Reset() noexcept
 
 void PointLight::Draw(Graphics& gfx) const noexcept(!IS_DEBUG)
 {
-	mesh.SetPos(cbData.pos);
+	mesh.SetPos(cbData.posVS);
 	mesh.Draw(gfx);
 }
 
 //void PointLight::Bind(Graphics& gfx, DirectX::FXMMATRIX view) const noexcept
-void PointLight::Bind(Graphics& gfx) const noexcept
+void PointLight::Bind(Graphics& gfx, DirectX::FXMMATRIX viewMatrix) const noexcept
 {
-	cbuf.Update(gfx, cbData);
-	cbuf.Bind(gfx);
-	/*auto dataCopy = cbData;
-	const auto pos = DirectX::XMLoadFloat3(&cbData.pos);
+	auto dataCopy = cbData;
+	const auto pos = DirectX::XMLoadFloat3(&cbData.posVS);
 
-	DirectX::XMStoreFloat3(&dataCopy.pos, DirectX::XMVector3Transform(pos, view));
+	DirectX::XMStoreFloat3(&dataCopy.posVS, DirectX::XMVector3Transform(pos, viewMatrix));
 
 	cbuf.Update(gfx, PointLightCBuf{ dataCopy });
-	cbuf.Bind(gfx);*/
+	cbuf.Bind(gfx);
 }

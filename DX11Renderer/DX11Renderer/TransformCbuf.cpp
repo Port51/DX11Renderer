@@ -16,6 +16,7 @@ void TransformCbuf::Bind(Graphics& gfx) noexcept
 	const Transforms tf =
 	{
 		model,
+		model * gfx.GetViewMatrix(),
 		model * gfx.GetViewMatrix() * gfx.GetProjectionMatrix()
 	};
 	pVcbuf->Update(gfx, tf);
