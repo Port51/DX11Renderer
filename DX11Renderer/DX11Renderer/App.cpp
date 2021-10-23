@@ -9,8 +9,6 @@
 #include "Surface.h"
 #include "GDIPlusManager.h"
 #include "Imgui/imgui.h"
-#include "Imgui/imgui_impl_win32.h"
-#include "Imgui/imgui_impl_dx11.h"
 
 GDIPlusManager gdipm;
 
@@ -100,34 +98,26 @@ int App::Go()
 
 void App::DoFrame()
 {
-	/*const float t = timer.Peek();
-	std::ostringstream oss;
-	oss << "Time: " << t;
-	wnd.SetTitle(oss.str());*/
-	auto dt = timer.Mark();
-	//const float c = sin(timer.Peek()) * 0.5f + 0.5f;
-	//wnd.Gfx().ClearBuffer(1.f, c * 0.5f, 0.f);
-	wnd.Gfx().ClearBuffer(0.f, 0.f, 0.f);
-	//wnd.Gfx().DrawTestTriangle(sin(timer.Peek()), sin(timer.Peek() * 0.5f), 0.f, timer.Peek());
-	//wnd.Gfx().DrawTestTriangle(-sin(timer.Peek()), sin(timer.Peek() * 0.5f), 1.f, timer.Peek());
+	auto dt = timer.Mark() * simulationSpeed;
+
+	wnd.Gfx().BeginFrame(0.f, 0.f, 0.f);
 	for (auto& b : drawables)
 	{
 		b->Update(wnd.kbd.KeyIsPressed(VK_SPACE) ? 0.f : dt);
 		b->Draw(wnd.Gfx());
 	}
 
-	// Imgui
-	ImGui_ImplDX11_NewFrame();
-	ImGui_ImplWin32_NewFrame();
-	ImGui::NewFrame();
-
-	static bool showDemoWindow = true;
-	if (showDemoWindow)
+	// imgui window to control simulation speed
+	if (ImGui::Begin("Simulation Speed")) // checks if window open
 	{
-		ImGui::ShowDemoWindow(&showDemoWindow);
+		ImGui::SliderFloat("Speed Factor", &simulationSpeed, 0.0f, 4.0f);
+		ImGui::Text("%.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+		ImGui::Text("Status: %s", wnd.kbd.KeyIsPressed(VK_SPACE) ? "PAUSED" : "RUNNING (hold spacebar to pause)");
 	}
-	ImGui::Render();
-	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+	ImGui::End();
+	// imgui windows to control camera and light
+	//cam.SpawnControlWindow();
+	//light.SpawnControlWindow();
 
 	wnd.Gfx().EndFrame();
 

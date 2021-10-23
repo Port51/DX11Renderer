@@ -56,16 +56,21 @@ public:
 	Graphics(const Graphics&) = delete; // here because of destructor, but don't want this...
 	Graphics& operator=(const Graphics&) = delete; // here because of destructor, but don't want this...
 	~Graphics() = default;
+	void BeginFrame(float red, float green, float blue) noexcept;
 	void EndFrame();
 	void ClearBuffer(float red, float green, float blue) noexcept;
 	void DrawIndexed(UINT count) noexcept(!IS_DEBUG);
 	void SetProjection(DirectX::FXMMATRIX proj) noexcept;
 	DirectX::XMMATRIX GetProjection() const noexcept;
 	void DrawTestTriangle(float x, float y, float z, float angle);
+	void EnableImgui() noexcept;
+	void DisableImgui() noexcept;
+	bool IsImguiEnabled() const noexcept;
 private:
 #ifndef NDEBUG
 	DxgiInfoManager infoManager;
 #endif
+	bool imguiEnabled = true;
 	DirectX::XMMATRIX projection;
 	// Allocating stuff
 	Microsoft::WRL::ComPtr<ID3D11Device> pDevice;

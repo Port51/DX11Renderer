@@ -16,6 +16,8 @@ private:
 	ImguiManager imgui; // must be initialized before wnd
 	Window wnd;
 	Timer timer;
+	bool showDemoWindow = true;
+	float simulationSpeed = 1.f;
 	std::vector<std::unique_ptr<class Drawable>> drawables;
 	static constexpr size_t nDrawables = 180;
 };
