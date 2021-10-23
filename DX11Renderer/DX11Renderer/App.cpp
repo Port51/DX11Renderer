@@ -8,6 +8,9 @@
 #include "GeoMath.h"
 #include "Surface.h"
 #include "GDIPlusManager.h"
+#include "Imgui/imgui.h"
+#include "Imgui/imgui_impl_win32.h"
+#include "Imgui/imgui_impl_dx11.h"
 
 GDIPlusManager gdipm;
 
@@ -112,6 +115,20 @@ void App::DoFrame()
 		b->Update(wnd.kbd.KeyIsPressed(VK_SPACE) ? 0.f : dt);
 		b->Draw(wnd.Gfx());
 	}
+
+	// Imgui
+	ImGui_ImplDX11_NewFrame();
+	ImGui_ImplWin32_NewFrame();
+	ImGui::NewFrame();
+
+	static bool showDemoWindow = true;
+	if (showDemoWindow)
+	{
+		ImGui::ShowDemoWindow(&showDemoWindow);
+	}
+	ImGui::Render();
+	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+
 	wnd.Gfx().EndFrame();
 
 	/*while (!wnd.mouse.IsEmpty())

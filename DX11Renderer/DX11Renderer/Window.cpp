@@ -1,6 +1,7 @@
 #include "Window.h"
 #include <sstream>
 #include "resource.h"
+#include "Imgui/imgui_impl_win32.h"
 
 // Window Exception Stuff
 std::string Window::Exception::TranslateErrorCode(HRESULT hr) noexcept
@@ -142,12 +143,16 @@ Window::Window(int width, int height, const char* name)
 	// Show window
 	ShowWindow(hWnd, SW_SHOWDEFAULT);
 
+	// Init ImGui
+	ImGui_ImplWin32_Init(hWnd);
+
 	// Create graphics
 	pGfx = std::make_unique<Graphics>(hWnd);
 }
 
 Window::~Window()
 {
+	ImGui_ImplWin32_Shutdown();
 	DestroyWindow(hWnd);
 }
 
@@ -237,6 +242,11 @@ LRESULT WINAPI Window::HandleMsgAdapter(HWND hWnd, UINT msg, WPARAM wParam, LPAR
 // Handle Windows messages
 LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
+	if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam))
+	{
+		return true;
+	}
+
 	switch (msg)
 	{
 		
