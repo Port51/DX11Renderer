@@ -150,6 +150,7 @@
     <ClCompile Include="App.cpp" />
     <ClCompile Include="Bindable.cpp" />
     <ClCompile Include="Box.cpp" />
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="ChiliUtil.cpp" />
     <ClCompile Include="CustomException.cpp" />
     <ClCompile Include="Drawable.cpp" />
@@ -191,6 +192,7 @@
     <ClInclude Include="BindableCodex.h" />
     <ClInclude Include="BindableInclude.h" />
     <ClInclude Include="Box.h" />
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="ChiliUtil.h" />
     <ClInclude Include="Cone.h" />
     <ClInclude Include="ConstantBuffers.h" />

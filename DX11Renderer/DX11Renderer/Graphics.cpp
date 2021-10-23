@@ -204,7 +204,7 @@ DirectX::XMMATRIX Graphics::GetProjection() const noexcept
 	return projection;
 }
 
-void Graphics::SetCamera(DirectX::FXMMATRIX cam) noexcept
+void Graphics::SetViewMatrix(DirectX::FXMMATRIX cam) noexcept
 {
 	camera = cam;
 }

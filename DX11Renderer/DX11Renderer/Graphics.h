@@ -62,7 +62,7 @@ public:
 	void DrawIndexed(UINT count) noexcept(!IS_DEBUG);
 	void SetProjection(DirectX::FXMMATRIX proj) noexcept;
 	DirectX::XMMATRIX GetProjection() const noexcept;
-	void SetCamera(DirectX::FXMMATRIX cam) noexcept;
+	void SetViewMatrix(DirectX::FXMMATRIX cam) noexcept;
 	DirectX::XMMATRIX GetCamera() const noexcept;
 	void DrawTestTriangle(float x, float y, float z, float angle);
 	void EnableImgui() noexcept;

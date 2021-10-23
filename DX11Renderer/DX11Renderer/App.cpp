@@ -78,7 +78,7 @@ App::App()
 
 	const auto s = Surface::FromFile("Images\\kappa50.png");
 
-	wnd.Gfx().SetCamera(dx::XMMatrixTranslation(0.f, 0.f, 20.f));
+	//wnd.Gfx().SetCamera(dx::XMMatrixTranslation(0.f, 0.f, 20.f));
 	wnd.Gfx().SetProjection(dx::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, 0.5f, 40.0f));
 }
 
@@ -104,6 +104,7 @@ void App::DoFrame()
 	auto dt = timer.Mark() * simulationSpeed;
 
 	wnd.Gfx().BeginFrame(0.f, 0.f, 0.f);
+	wnd.Gfx().SetViewMatrix(cam.GetViewMatrix());
 	for (auto& b : drawables)
 	{
 		b->Update(wnd.kbd.KeyIsPressed(VK_SPACE) ? 0.f : dt);
@@ -118,8 +119,9 @@ void App::DoFrame()
 		ImGui::Text("Status: %s", wnd.kbd.KeyIsPressed(VK_SPACE) ? "PAUSED" : "RUNNING (hold spacebar to pause)");
 	}
 	ImGui::End();
+
 	// imgui windows to control camera and light
-	//cam.SpawnControlWindow();
+	cam.SpawnControlWindow();
 	//light.SpawnControlWindow();
 
 	wnd.Gfx().EndFrame();
