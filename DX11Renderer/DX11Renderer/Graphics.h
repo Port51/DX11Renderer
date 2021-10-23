@@ -62,6 +62,8 @@ public:
 	void DrawIndexed(UINT count) noexcept(!IS_DEBUG);
 	void SetProjection(DirectX::FXMMATRIX proj) noexcept;
 	DirectX::XMMATRIX GetProjection() const noexcept;
+	void SetCamera(DirectX::FXMMATRIX cam) noexcept;
+	DirectX::XMMATRIX GetCamera() const noexcept;
 	void DrawTestTriangle(float x, float y, float z, float angle);
 	void EnableImgui() noexcept;
 	void DisableImgui() noexcept;
@@ -72,6 +74,7 @@ private:
 #endif
 	bool imguiEnabled = true;
 	DirectX::XMMATRIX projection;
+	DirectX::XMMATRIX camera;
 	// Allocating stuff
 	Microsoft::WRL::ComPtr<ID3D11Device> pDevice;
 	Microsoft::WRL::ComPtr<IDXGISwapChain> pSwap;
