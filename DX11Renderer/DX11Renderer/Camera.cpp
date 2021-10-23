@@ -18,7 +18,7 @@ DirectX::XMMATRIX Camera::GetViewMatrix() const noexcept
 		* dx::XMMatrixRotationRollPitchYaw(pitch, -yaw, roll);
 }
 
-void Camera::SpawnControlWindow() noexcept
+void Camera::DrawImguiControlWindow() noexcept
 {
 	if (ImGui::Begin("Camera"))
 	{

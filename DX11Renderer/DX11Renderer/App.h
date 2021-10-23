@@ -3,6 +3,7 @@
 #include "Timer.h"
 #include "ImguiManager.h"
 #include "Camera.h"
+#include "PointLight.h"
 
 class App
 {
@@ -19,6 +20,7 @@ private:
 	Timer timer;
 	bool showDemoWindow = true;
 	Camera cam;
+	PointLight light;
 	float simulationSpeed = 1.f;
 	std::vector<std::unique_ptr<class Drawable>> drawables;
 	static constexpr size_t nDrawables = 180;
