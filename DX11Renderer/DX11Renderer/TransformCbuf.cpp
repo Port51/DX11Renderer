@@ -13,7 +13,7 @@ TransformCbuf::TransformCbuf(Graphics& gfx, const Drawable& parent)
 void TransformCbuf::Bind(Graphics& gfx) noexcept
 {
 	// Set MVP matrix
-	pVcbuf->Update(gfx, parent.GetTransformXM() * gfx.GetCamera() * gfx.GetProjection());
+	pVcbuf->Update(gfx, parent.GetTransformXM() * gfx.GetViewMatrix() * gfx.GetProjectionMatrix());
 	/*vcbuf.Update(gfx,
 		DirectX::XMMatrixTranspose(
 			parent.GetTransformXM() * gfx.GetProjection()

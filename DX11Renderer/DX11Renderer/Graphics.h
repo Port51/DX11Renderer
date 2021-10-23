@@ -51,6 +51,7 @@ public:
 	private:
 		std::string reason;
 	};
+
 public:
 	Graphics(HWND hWnd);
 	Graphics(const Graphics&) = delete; // here because of destructor, but don't want this...
@@ -60,28 +61,35 @@ public:
 	void EndFrame();
 	void ClearBuffer(float red, float green, float blue) noexcept;
 	void DrawIndexed(UINT count) noexcept(!IS_DEBUG);
-	void SetProjection(DirectX::FXMMATRIX proj) noexcept;
-	DirectX::XMMATRIX GetProjection() const noexcept;
-	void SetViewMatrix(DirectX::FXMMATRIX cam) noexcept;
-	DirectX::XMMATRIX GetCamera() const noexcept;
 	void DrawTestTriangle(float x, float y, float z, float angle);
+public:
 	void EnableImgui() noexcept;
 	void DisableImgui() noexcept;
 	bool IsImguiEnabled() const noexcept;
+public:
+	void SetProjectionMatrix(DirectX::FXMMATRIX proj) noexcept;
+	DirectX::XMMATRIX GetProjectionMatrix() const noexcept;
+	void SetViewMatrix(DirectX::FXMMATRIX cam) noexcept;
+	DirectX::XMMATRIX GetViewMatrix() const noexcept;
 private:
 #ifndef NDEBUG
 	DxgiInfoManager infoManager;
 #endif
 	bool imguiEnabled = true;
-	DirectX::XMMATRIX projection;
-	DirectX::XMMATRIX camera;
+
+	// Matrices
+	DirectX::XMMATRIX projectionMatrix;
+	DirectX::XMMATRIX viewMatrix;
+
+private:
 	// Allocating stuff
 	Microsoft::WRL::ComPtr<ID3D11Device> pDevice;
-	Microsoft::WRL::ComPtr<IDXGISwapChain> pSwap;
+	Microsoft::WRL::ComPtr<IDXGISwapChain> pSwapChain;
+
 	// Used for configuring pipeline and executing render commands
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> pContext;
 
 	// RT view of backbuffer
-	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pTarget;
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pRenderTargetView;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> pDepthStencilView;
 };

@@ -52,7 +52,7 @@ Graphics::Graphics(HWND hWnd)
 		0,
 		D3D11_SDK_VERSION,
 		&swapChainDesc,
-		&pSwap,
+		&pSwapChain,
 		&pDevice,
 		nullptr, // will be filled with feature levels actually secured
 		&pContext
@@ -61,11 +61,11 @@ Graphics::Graphics(HWND hWnd)
 	// Gain access to texture subresource in swap chain (back buffer)
 	wrl::ComPtr<ID3D11Resource> pBackBuffer;
 	// Reinterpret here = creating pointer to a pointer
-	GFX_THROW_INFO(pSwap->GetBuffer(0, __uuidof(ID3D11Resource), &pBackBuffer));
+	GFX_THROW_INFO(pSwapChain->GetBuffer(0, __uuidof(ID3D11Resource), &pBackBuffer));
 	GFX_THROW_INFO(pDevice->CreateRenderTargetView(
 		pBackBuffer.Get(),
 		nullptr,
-		&pTarget
+		&pRenderTargetView
 	));
 
 	// create depth stensil state
@@ -103,7 +103,7 @@ Graphics::Graphics(HWND hWnd)
 	));
 
 	// bind depth stensil view to OM
-	pContext->OMSetRenderTargets(1u, pTarget.GetAddressOf(), pDepthStencilView.Get());
+	pContext->OMSetRenderTargets(1u, pRenderTargetView.GetAddressOf(), pDepthStencilView.Get());
 
 	//
 	// Setup viewport
@@ -132,7 +132,7 @@ void Graphics::BeginFrame(float red, float green, float blue) noexcept
 	}
 
 	const float color[] = { red,green,blue,1.0f };
-	pContext->ClearRenderTargetView(pTarget.Get(), color);
+	pContext->ClearRenderTargetView(pRenderTargetView.Get(), color);
 	pContext->ClearDepthStencilView(pDepthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
 }
 
@@ -151,7 +151,7 @@ void Graphics::EndFrame()
 
 	// Sync interval has to do with target framerate
 	// If refresh = 60Hz but you are targeting 30FPS, use sync interval of 2u
-	if (FAILED(hr = pSwap->Present(1u, 0u)))
+	if (FAILED(hr = pSwapChain->Present(1u, 0u)))
 	{
 		// Special handling for this as we need more info
 		if (hr == DXGI_ERROR_DEVICE_REMOVED)
@@ -170,7 +170,7 @@ void Graphics::EndFrame()
 void Graphics::ClearBuffer(float red, float green, float blue) noexcept
 {
 	const float color[] = { red, green, blue, 1.0f };
-	pContext->ClearRenderTargetView(pTarget.Get(), color);
+	pContext->ClearRenderTargetView(pRenderTargetView.Get(), color);
 	pContext->ClearDepthStencilView(pDepthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.f, 0u);
 }
 
@@ -194,24 +194,24 @@ void Graphics::DrawIndexed(UINT count) noexcept(!IS_DEBUG)
 	GFX_THROW_INFO_ONLY(pContext->DrawIndexed(count, 0u, 0u));
 }
 
-void Graphics::SetProjection(DirectX::FXMMATRIX proj) noexcept
+void Graphics::SetProjectionMatrix(DirectX::FXMMATRIX proj) noexcept
 {
-	projection = proj;
+	projectionMatrix = proj;
 }
 
-DirectX::XMMATRIX Graphics::GetProjection() const noexcept
+DirectX::XMMATRIX Graphics::GetProjectionMatrix() const noexcept
 {
-	return projection;
+	return projectionMatrix;
 }
 
 void Graphics::SetViewMatrix(DirectX::FXMMATRIX cam) noexcept
 {
-	camera = cam;
+	viewMatrix = cam;
 }
 
-DirectX::XMMATRIX Graphics::GetCamera() const noexcept
+DirectX::XMMATRIX Graphics::GetViewMatrix() const noexcept
 {
-	return camera;
+	return viewMatrix;
 }
 
 void Graphics::DrawTestTriangle(float x, float y, float z, float angle)

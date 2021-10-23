@@ -35,6 +35,7 @@ public:
 		using Exception::Exception;
 		const char* GetType() const noexcept override;
 	};
+
 private:
 	// singleton manages registration/cleanup of window class
 	class WindowClass
@@ -51,6 +52,7 @@ private:
 		static WindowClass wndClass;
 		HINSTANCE hInst;
 	};
+
 public:
 	Window(int width, int height, const char* name);
 	~Window();
