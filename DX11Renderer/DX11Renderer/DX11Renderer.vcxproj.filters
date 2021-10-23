@@ -183,6 +183,9 @@
     <ClCompile Include="SolidSphere.cpp">
       <Filter>Source Files\Drawable</Filter>
     </ClCompile>
+    <ClCompile Include="Cylinder.cpp">
+      <Filter>Source Files\Drawable</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WindowsInclude.h">
@@ -350,6 +353,12 @@
     <ClInclude Include="SolidSphere.h">
       <Filter>Header Files\Drawable</Filter>
     </ClInclude>
+    <ClInclude Include="TestObject.h">
+      <Filter>Header Files\Drawable</Filter>
+    </ClInclude>
+    <ClInclude Include="Cylinder.h">
+      <Filter>Header Files\Drawable</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DX11Renderer.rc">
@@ -395,6 +404,9 @@
       <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="SolidPS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="IndexedPhongPS.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>

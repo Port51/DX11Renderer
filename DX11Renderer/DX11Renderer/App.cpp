@@ -7,6 +7,7 @@
 #include <memory>
 #include "GeoMath.h"
 #include "Surface.h"
+#include "Cylinder.h"
 #include "GDIPlusManager.h"
 #include "Imgui/imgui.h"
 
@@ -36,6 +37,11 @@ App::App()
 				return std::make_unique<Box>(
 					gfx, rng, adist, ddist,
 					odist, rdist, bdist, materialColor
+					);
+			case 1:
+				return std::make_unique<Cylinder>(
+					gfx, rng, adist, ddist, odist,
+					rdist, bdist, tessDist
 					);
 			/*case 0:
 				return std::make_unique<Pyramid>(
@@ -70,6 +76,7 @@ App::App()
 	private:
 		Graphics& gfx;
 		std::mt19937 rng{ std::random_device{}() };
+		std::uniform_int_distribution<int> tessDist{ 3,30 };
 		std::uniform_real_distribution<float> adist{ 0.0f,PI * 2.0f };
 		std::uniform_real_distribution<float> ddist{ 0.0f,PI * 0.5f };
 		std::uniform_real_distribution<float> odist{ 0.0f,PI * 0.08f };
@@ -78,7 +85,7 @@ App::App()
 		std::uniform_int_distribution<int> latdist{ 5,20 };
 		std::uniform_int_distribution<int> longdist{ 10,40 };
 		std::uniform_real_distribution<float> cdist{ 0.0f,1.0f };
-		std::uniform_int_distribution<int> typedist{ 0,0 };
+		std::uniform_int_distribution<int> typedist{ 0,1 };
 	};
 
 	Factory f(wnd.Gfx());

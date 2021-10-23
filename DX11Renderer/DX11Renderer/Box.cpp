@@ -14,16 +14,7 @@ Box::Box(Graphics& gfx,
 	std::uniform_real_distribution<float>& bdist,
 	DirectX::XMFLOAT3 materialColor)
 	:
-	r(rdist(rng)),
-	droll(ddist(rng)),
-	dpitch(ddist(rng)),
-	dyaw(ddist(rng)),
-	dphi(odist(rng)),
-	dtheta(odist(rng)),
-	dchi(odist(rng)),
-	chi(adist(rng)),
-	theta(adist(rng)),
-	phi(adist(rng))
+	TestObject(gfx, rng, adist, ddist, odist, rdist)
 {
 
 	if (!IsStaticInitialized())
