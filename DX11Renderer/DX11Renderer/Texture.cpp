@@ -42,6 +42,48 @@ Texture::Texture(Graphics& gfx, const Surface& s)
 	));
 }
 
+Texture::Texture(Graphics& gfx, const Surface& s, D3D11_TEXTURE2D_DESC textureDesc)
+{
+	SETUP_LOGGING(gfx);
+
+	D3D11_SUBRESOURCE_DATA sd = {};
+	sd.pSysMem = s.GetBufferPtr();
+	sd.SysMemPitch = s.GetWidth() * sizeof(Surface::Color); // distance in bytes between rows - keep in mind padding!
+	wrl::ComPtr<ID3D11Texture2D> pTexture;
+
+	GFX_THROW_INFO(GetDevice(gfx)->CreateTexture2D(
+		&textureDesc, &sd, &pTexture
+	));
+
+	// create the resource view on the texture
+	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+	srvDesc.Format = textureDesc.Format;
+	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.Texture2D.MostDetailedMip = 0;
+	srvDesc.Texture2D.MipLevels = 1;
+	GFX_THROW_INFO(GetDevice(gfx)->CreateShaderResourceView(
+		pTexture.Get(), &srvDesc, &pTextureView
+	));
+}
+
+Texture::Texture(Graphics& gfx, const Surface& s, D3D11_TEXTURE2D_DESC textureDesc, D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc)
+{
+	SETUP_LOGGING(gfx);
+
+	D3D11_SUBRESOURCE_DATA sd = {};
+	sd.pSysMem = s.GetBufferPtr();
+	sd.SysMemPitch = s.GetWidth() * sizeof(Surface::Color); // distance in bytes between rows - keep in mind padding!
+	wrl::ComPtr<ID3D11Texture2D> pTexture;
+
+	GFX_THROW_INFO(GetDevice(gfx)->CreateTexture2D(
+		&textureDesc, &sd, &pTexture
+	));
+
+	GFX_THROW_INFO(GetDevice(gfx)->CreateShaderResourceView(
+		pTexture.Get(), &srvDesc, &pTextureView
+	));
+}
+
 void Texture::Bind(Graphics& gfx)
 {
 	GetContext(gfx)->PSSetShaderResources(0u, 1u, pTextureView.GetAddressOf());

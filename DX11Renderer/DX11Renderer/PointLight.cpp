@@ -56,7 +56,6 @@ void PointLight::Draw(Graphics& gfx) const
 	mesh.Draw(gfx);
 }
 
-//void PointLight::Bind(Graphics& gfx, DirectX::FXMMATRIX view) const
 void PointLight::Bind(Graphics& gfx, DirectX::FXMMATRIX viewMatrix) const
 {
 	auto dataCopy = cbData;

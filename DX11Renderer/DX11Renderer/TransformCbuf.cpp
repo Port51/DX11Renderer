@@ -12,12 +12,14 @@ TransformCbuf::TransformCbuf(Graphics& gfx, const Drawable& parent, UINT slot)
 
 void TransformCbuf::Bind(Graphics& gfx)
 {
-	const auto model = parent.GetTransformXM();
+	const auto modelMatrix = parent.GetTransformXM();
+	const auto modelViewMatrix = modelMatrix * gfx.GetViewMatrix();
+	const auto modelViewProjectMatrix = modelViewMatrix * gfx.GetProjectionMatrix();
 	const Transforms tf =
 	{
-		model,
-		model * gfx.GetViewMatrix(),
-		model * gfx.GetViewMatrix() * gfx.GetProjectionMatrix()
+		modelMatrix,
+		modelViewMatrix,
+		modelViewProjectMatrix
 	};
 	pVcbuf->Update(gfx, tf);
 	pVcbuf->Bind(gfx);
