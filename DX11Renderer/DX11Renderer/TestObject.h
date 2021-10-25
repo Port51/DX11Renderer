@@ -23,7 +23,7 @@ public:
 		theta(adist(rng)),
 		phi(adist(rng))
 	{}
-	void Update(float dt) noexcept
+	void Update(float dt)
 	{
 		roll = wrap_angle(roll + droll * dt);
 		pitch = wrap_angle(pitch + dpitch * dt);
@@ -32,7 +32,7 @@ public:
 		phi = wrap_angle(phi + dphi * dt);
 		chi = wrap_angle(chi + dchi * dt);
 	}
-	DirectX::XMMATRIX GetTransformXM() const noexcept
+	DirectX::XMMATRIX GetTransformXM() const
 	{
 		namespace dx = DirectX;
 		return dx::XMMatrixRotationRollPitchYaw(pitch, yaw, roll) *

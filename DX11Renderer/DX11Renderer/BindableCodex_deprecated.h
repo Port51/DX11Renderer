@@ -7,7 +7,7 @@
 
 namespace Bind
 {
-	class Codex
+	/*class Codex
 	{
 	public:
 		template<class T, typename...Params>
@@ -40,5 +40,5 @@ namespace Bind
 		}
 	private:
 		std::unordered_map<std::string, std::shared_ptr<Bindable>> binds;
-	};
+	};*/
 }

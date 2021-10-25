@@ -121,7 +121,7 @@ Graphics::Graphics(HWND hWnd)
 	ImGui_ImplDX11_Init(pDevice.Get(), pContext.Get());
 }
 
-void Graphics::BeginFrame(float red, float green, float blue) noexcept
+void Graphics::BeginFrame(float red, float green, float blue)
 {
 	// imgui begin frame
 	if (imguiEnabled)
@@ -167,49 +167,49 @@ void Graphics::EndFrame()
 	}
 }
 
-void Graphics::ClearBuffer(float red, float green, float blue) noexcept
+void Graphics::ClearBuffer(float red, float green, float blue)
 {
 	const float color[] = { red, green, blue, 1.0f };
 	pContext->ClearRenderTargetView(pRenderTargetView.Get(), color);
 	pContext->ClearDepthStencilView(pDepthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.f, 0u);
 }
 
-void Graphics::EnableImgui() noexcept
+void Graphics::EnableImgui()
 {
 	imguiEnabled = true;
 }
 
-void Graphics::DisableImgui() noexcept
+void Graphics::DisableImgui()
 {
 	imguiEnabled = false;
 }
 
-bool Graphics::IsImguiEnabled() const noexcept
+bool Graphics::IsImguiEnabled() const
 {
 	return imguiEnabled;
 }
 
-void Graphics::DrawIndexed(UINT count) noexcept(!IS_DEBUG)
+void Graphics::DrawIndexed(UINT count)
 {
 	GFX_THROW_INFO_ONLY(pContext->DrawIndexed(count, 0u, 0u));
 }
 
-void Graphics::SetProjectionMatrix(DirectX::FXMMATRIX proj) noexcept
+void Graphics::SetProjectionMatrix(DirectX::FXMMATRIX proj)
 {
 	projectionMatrix = proj;
 }
 
-DirectX::XMMATRIX Graphics::GetProjectionMatrix() const noexcept
+DirectX::XMMATRIX Graphics::GetProjectionMatrix() const
 {
 	return projectionMatrix;
 }
 
-void Graphics::SetViewMatrix(DirectX::FXMMATRIX cam) noexcept
+void Graphics::SetViewMatrix(DirectX::FXMMATRIX cam)
 {
 	viewMatrix = cam;
 }
 
-DirectX::XMMATRIX Graphics::GetViewMatrix() const noexcept
+DirectX::XMMATRIX Graphics::GetViewMatrix() const
 {
 	return viewMatrix;
 }
@@ -460,7 +460,7 @@ void Graphics::DrawTestTriangle(float x, float y, float z, float angle)
 }
 
 // Graphics exception stuff
-Graphics::HrException::HrException(int line, const char * file, HRESULT hr, std::vector<std::string> infoMsgs) noexcept
+Graphics::HrException::HrException(int line, const char * file, HRESULT hr, std::vector<std::string> infoMsgs)
 	:
 	Exception(line, file),
 	hr(hr)
@@ -478,7 +478,7 @@ Graphics::HrException::HrException(int line, const char * file, HRESULT hr, std:
 	}
 }
 
-const char* Graphics::HrException::what() const noexcept
+const char* Graphics::HrException::what() const
 {
 	std::ostringstream oss;
 	oss << GetType() << std::endl
@@ -495,34 +495,34 @@ const char* Graphics::HrException::what() const noexcept
 	return whatBuffer.c_str();
 }
 
-const char* Graphics::HrException::GetType() const noexcept
+const char* Graphics::HrException::GetType() const
 {
 	return "Chili Graphics Exception";
 }
 
-HRESULT Graphics::HrException::GetErrorCode() const noexcept
+HRESULT Graphics::HrException::GetErrorCode() const
 {
 	return hr;
 }
 
-std::string Graphics::HrException::GetErrorString() const noexcept
+std::string Graphics::HrException::GetErrorString() const
 {
 	return DXGetErrorString(hr);
 }
 
-std::string Graphics::HrException::GetErrorDescription() const noexcept
+std::string Graphics::HrException::GetErrorDescription() const
 {
 	char buf[512];
 	DXGetErrorDescription(hr, buf, sizeof(buf));
 	return buf;
 }
 
-std::string Graphics::HrException::GetErrorInfo() const noexcept
+std::string Graphics::HrException::GetErrorInfo() const
 {
 	return info;
 }
 
-Graphics::InfoException::InfoException(int line, const char * file, std::vector<std::string> infoMsgs) noexcept
+Graphics::InfoException::InfoException(int line, const char * file, std::vector<std::string> infoMsgs)
 	:
 	Exception(line, file)
 {
@@ -539,7 +539,7 @@ Graphics::InfoException::InfoException(int line, const char * file, std::vector<
 	}
 }
 
-const char* Graphics::InfoException::what() const noexcept
+const char* Graphics::InfoException::what() const
 {
 	std::ostringstream oss;
 	oss << GetType() << std::endl
@@ -549,17 +549,17 @@ const char* Graphics::InfoException::what() const noexcept
 	return whatBuffer.c_str();
 }
 
-const char* Graphics::InfoException::GetType() const noexcept
+const char* Graphics::InfoException::GetType() const
 {
 	return "Chili Graphics Info Exception";
 }
 
-std::string Graphics::InfoException::GetErrorInfo() const noexcept
+std::string Graphics::InfoException::GetErrorInfo() const
 {
 	return info;
 }
 
-const char* Graphics::DeviceRemovedException::GetType() const noexcept
+const char* Graphics::DeviceRemovedException::GetType() const
 {
 	return "Chili Graphics Exception [Device Removed] (DXGI_ERROR_DEVICE_REMOVED)";
 }

@@ -75,7 +75,7 @@ Pyramid::Pyramid(Graphics& gfx,
 	AddBind(std::make_unique<TransformCbuf>(gfx, *this));
 }
 
-void Pyramid::Update(float dt) noexcept
+void Pyramid::Update(float dt)
 {
 	roll += droll * dt;
 	pitch += dpitch * dt;
@@ -85,7 +85,7 @@ void Pyramid::Update(float dt) noexcept
 	chi += dchi * dt;
 }
 
-DirectX::XMMATRIX Pyramid::GetTransformXM() const noexcept
+DirectX::XMMATRIX Pyramid::GetTransformXM() const
 {
 	namespace dx = DirectX;
 	return dx::XMMatrixRotationRollPitchYaw(pitch, yaw, roll) *

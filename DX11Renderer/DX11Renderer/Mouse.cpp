@@ -21,37 +21,37 @@
 #include "Mouse.h"
 #include <Windows.h>
 
-std::pair<int, int> Mouse::GetPos() const noexcept
+std::pair<int, int> Mouse::GetPos() const
 {
 	return { x,y };
 }
 
-int Mouse::GetPosX() const noexcept
+int Mouse::GetPosX() const
 {
 	return x;
 }
 
-int Mouse::GetPosY() const noexcept
+int Mouse::GetPosY() const
 {
 	return y;
 }
 
-bool Mouse::IsInWindow() const noexcept
+bool Mouse::IsInWindow() const
 {
 	return isInWindow;
 }
 
-bool Mouse::LeftIsPressed() const noexcept
+bool Mouse::LeftIsPressed() const
 {
 	return leftIsPressed;
 }
 
-bool Mouse::RightIsPressed() const noexcept
+bool Mouse::RightIsPressed() const
 {
 	return rightIsPressed;
 }
 
-Mouse::Event Mouse::Read() noexcept
+Mouse::Event Mouse::Read()
 {
 	if (buffer.size() > 0u)
 	{
@@ -65,12 +65,12 @@ Mouse::Event Mouse::Read() noexcept
 	}
 }
 
-void Mouse::Flush() noexcept
+void Mouse::Flush()
 {
 	buffer = std::queue<Event>();
 }
 
-void Mouse::OnMouseMove(int newx, int newy) noexcept
+void Mouse::OnMouseMove(int newx, int newy)
 {
 	x = newx;
 	y = newy;
@@ -79,21 +79,21 @@ void Mouse::OnMouseMove(int newx, int newy) noexcept
 	TrimBuffer();
 }
 
-void Mouse::OnMouseLeave() noexcept
+void Mouse::OnMouseLeave()
 {
 	isInWindow = false;
 	buffer.push(Mouse::Event(Mouse::Event::Type::Leave, *this));
 	TrimBuffer();
 }
 
-void Mouse::OnMouseEnter() noexcept
+void Mouse::OnMouseEnter()
 {
 	isInWindow = true;
 	buffer.push(Mouse::Event(Mouse::Event::Type::Enter, *this));
 	TrimBuffer();
 }
 
-void Mouse::OnLeftPressed(int x, int y) noexcept
+void Mouse::OnLeftPressed(int x, int y)
 {
 	leftIsPressed = true;
 
@@ -101,7 +101,7 @@ void Mouse::OnLeftPressed(int x, int y) noexcept
 	TrimBuffer();
 }
 
-void Mouse::OnLeftReleased(int x, int y) noexcept
+void Mouse::OnLeftReleased(int x, int y)
 {
 	leftIsPressed = false;
 
@@ -109,7 +109,7 @@ void Mouse::OnLeftReleased(int x, int y) noexcept
 	TrimBuffer();
 }
 
-void Mouse::OnRightPressed(int x, int y) noexcept
+void Mouse::OnRightPressed(int x, int y)
 {
 	rightIsPressed = true;
 
@@ -117,7 +117,7 @@ void Mouse::OnRightPressed(int x, int y) noexcept
 	TrimBuffer();
 }
 
-void Mouse::OnRightReleased(int x, int y) noexcept
+void Mouse::OnRightReleased(int x, int y)
 {
 	rightIsPressed = false;
 
@@ -125,19 +125,19 @@ void Mouse::OnRightReleased(int x, int y) noexcept
 	TrimBuffer();
 }
 
-void Mouse::OnWheelUp(int x, int y) noexcept
+void Mouse::OnWheelUp(int x, int y)
 {
 	buffer.push(Mouse::Event(Mouse::Event::Type::WheelUp, *this));
 	TrimBuffer();
 }
 
-void Mouse::OnWheelDown(int x, int y) noexcept
+void Mouse::OnWheelDown(int x, int y)
 {
 	buffer.push(Mouse::Event(Mouse::Event::Type::WheelDown, *this));
 	TrimBuffer();
 }
 
-void Mouse::TrimBuffer() noexcept
+void Mouse::TrimBuffer()
 {
 	while (buffer.size() > bufferSize)
 	{
@@ -145,7 +145,7 @@ void Mouse::TrimBuffer() noexcept
 	}
 }
 
-void Mouse::OnWheelDelta(int x, int y, int delta) noexcept
+void Mouse::OnWheelDelta(int x, int y, int delta)
 {
 	wheelDeltaCarry += delta;
 	// generate events for every 120 

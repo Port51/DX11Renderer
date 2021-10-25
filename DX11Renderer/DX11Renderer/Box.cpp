@@ -2,6 +2,7 @@
 #include "BindableInclude.h"
 #include "GraphicsThrowMacros.h"
 #include "Sphere.h"
+#include "PixelConstantBuffer.h"
 
 namespace dx = DirectX;
 
@@ -81,7 +82,7 @@ Box::Box(Graphics& gfx,
 	dx::XMStoreFloat3x3(&mt, dx::XMMatrixScaling(1.f, 1.f, bdist(rng)));
 }
 
-void Box::Update(float dt) noexcept
+void Box::Update(float dt)
 {
 	roll += droll * dt;
 	pitch += dpitch * dt;
@@ -91,7 +92,7 @@ void Box::Update(float dt) noexcept
 	chi += dchi * dt;
 }
 
-DirectX::XMMATRIX Box::GetTransformXM() const noexcept
+DirectX::XMMATRIX Box::GetTransformXM() const
 {
 	return DirectX::XMLoadFloat3x3(&mt) *
 		DirectX::XMMatrixRotationRollPitchYaw(pitch, yaw, roll) *

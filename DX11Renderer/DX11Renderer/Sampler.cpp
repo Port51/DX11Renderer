@@ -14,7 +14,7 @@ Sampler::Sampler(Graphics& gfx)
 	GFX_THROW_INFO(GetDevice(gfx)->CreateSamplerState(&samplerDesc, &pSampler));
 }
 
-void Sampler::Bind(Graphics& gfx) noexcept
+void Sampler::Bind(Graphics& gfx)
 {
 	// First argument = slot that shader will use
 	GetContext(gfx)->PSSetSamplers(0u, 1u, pSampler.GetAddressOf());

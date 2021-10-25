@@ -1,5 +1,5 @@
 #pragma once
-#include "ConstantBuffers.h"
+#include "VertexConstantBuffer.h"
 #include "Drawable.h"
 #include <DirectXMath.h>
 
@@ -14,7 +14,7 @@ private:
 	};
 public:
 	TransformCbuf(Graphics& gfx, const Drawable& parent, UINT slot = 0u);
-	void Bind(Graphics& gfx) noexcept override;
+	void Bind(Graphics& gfx) override;
 private:
 	// Static so can be re-used each drawcall
 	static std::unique_ptr<VertexConstantBuffer<Transforms>> pVcbuf;

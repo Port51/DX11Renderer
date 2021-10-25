@@ -1,6 +1,7 @@
 #include "Cylinder.h"
 #include "Prism.h"
 #include "BindableInclude.h"
+#include "PixelConstantBuffer.h"
 
 Cylinder::Cylinder(Graphics& gfx, std::mt19937& rng,
 	std::uniform_real_distribution<float>& adist,

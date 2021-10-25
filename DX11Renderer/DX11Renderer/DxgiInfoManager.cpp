@@ -33,7 +33,7 @@ DxgiInfoManager::DxgiInfoManager()
 	GFX_THROW_NOINFO(DxgiGetDebugInterface(__uuidof(IDXGIInfoQueue), &pDxgiInfoQueue));
 }
 
-void DxgiInfoManager::Set() noexcept
+void DxgiInfoManager::Set()
 {
 	// set the index (next) so that the next all to GetMessages()
 	// will only get errors generated after this call

@@ -38,29 +38,29 @@ public:
 		Type type;
 		unsigned char code;
 	public:
-		Event() noexcept
+		Event()
 			:
 			type(Type::Invalid),
 			code(0u)
 		{}
-		Event(Type type, unsigned char code) noexcept
+		Event(Type type, unsigned char code)
 			:
 			type(type),
 			code(code)
 		{}
-		bool IsPress() const noexcept
+		bool IsPress() const
 		{
 			return type == Type::Press;
 		}
-		bool IsRelease() const noexcept
+		bool IsRelease() const
 		{
 			return type == Type::Release;
 		}
-		bool IsValid() const noexcept
+		bool IsValid() const
 		{
 			return type != Type::Invalid;
 		}
-		unsigned char GetCode() const noexcept
+		unsigned char GetCode() const
 		{
 			return code;
 		}
@@ -70,26 +70,26 @@ public:
 	Keyboard(const Keyboard&) = delete;
 	Keyboard& operator=(const Keyboard&) = delete;
 	// key event stuff
-	bool KeyIsPressed(unsigned char keycode) const noexcept;
-	Event ReadKey() noexcept;
-	bool KeyIsEmpty() const noexcept;
-	void FlushKey() noexcept;
+	bool KeyIsPressed(unsigned char keycode) const;
+	Event ReadKey();
+	bool KeyIsEmpty() const;
+	void FlushKey();
 	// char event stuff
-	char ReadChar() noexcept;
-	bool CharIsEmpty() const noexcept;
-	void FlushChar() noexcept;
-	void Flush() noexcept;
+	char ReadChar();
+	bool CharIsEmpty() const;
+	void FlushChar();
+	void Flush();
 	// autorepeat control
-	void EnableAutorepeat() noexcept;
-	void DisableAutorepeat() noexcept;
-	bool AutorepeatIsEnabled() const noexcept;
+	void EnableAutorepeat();
+	void DisableAutorepeat();
+	bool AutorepeatIsEnabled() const;
 private:
-	void OnKeyPressed(unsigned char keycode) noexcept;
-	void OnKeyReleased(unsigned char keycode) noexcept;
-	void OnChar(char character) noexcept;
-	void ClearState() noexcept;
+	void OnKeyPressed(unsigned char keycode);
+	void OnKeyReleased(unsigned char keycode);
+	void OnChar(char character);
+	void ClearState();
 	template<typename T>
-	static void TrimBuffer(std::queue<T>& buffer) noexcept;
+	static void TrimBuffer(std::queue<T>& buffer);
 private:
 	static constexpr unsigned int nKeys = 256u;
 	static constexpr unsigned int bufferSize = 16u;

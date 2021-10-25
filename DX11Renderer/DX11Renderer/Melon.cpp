@@ -2,6 +2,7 @@
 #include "BindableInclude.h"
 #include "GraphicsThrowMacros.h"
 #include "Sphere.h"
+#include "PixelConstantBuffer.h"
 
 
 Melon::Melon(Graphics& gfx,
@@ -83,7 +84,7 @@ Melon::Melon(Graphics& gfx,
 	AddBind(std::make_unique<TransformCbuf>(gfx, *this));
 }
 
-void Melon::Update(float dt) noexcept
+void Melon::Update(float dt)
 {
 	roll += droll * dt;
 	pitch += dpitch * dt;
@@ -93,7 +94,7 @@ void Melon::Update(float dt) noexcept
 	chi += dchi * dt;
 }
 
-DirectX::XMMATRIX Melon::GetTransformXM() const noexcept
+DirectX::XMMATRIX Melon::GetTransformXM() const
 {
 	namespace dx = DirectX;
 	return dx::XMMatrixRotationRollPitchYaw(pitch, yaw, roll) *

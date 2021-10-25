@@ -2,6 +2,7 @@
 #include "BindableInclude.h"
 #include "GraphicsThrowMacros.h"
 #include "Sphere.h"
+#include "PixelConstantBuffer.h"
 
 
 SolidSphere::SolidSphere(Graphics& gfx, float radius)
@@ -48,14 +49,14 @@ SolidSphere::SolidSphere(Graphics& gfx, float radius)
 	AddBind(std::make_unique<TransformCbuf>(gfx, *this));
 }
 
-void SolidSphere::Update(float dt) noexcept {}
+void SolidSphere::Update(float dt) {}
 
-void SolidSphere::SetPos(DirectX::XMFLOAT3 pos) noexcept
+void SolidSphere::SetPos(DirectX::XMFLOAT3 pos)
 {
 	this->pos = pos;
 }
 
-DirectX::XMMATRIX SolidSphere::GetTransformXM() const noexcept
+DirectX::XMMATRIX SolidSphere::GetTransformXM() const
 {
 	return DirectX::XMMatrixTranslation(pos.x, pos.y, pos.z);
 }

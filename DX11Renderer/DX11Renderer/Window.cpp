@@ -4,7 +4,7 @@
 #include "Imgui/imgui_impl_win32.h"
 
 // Window Exception Stuff
-std::string Window::Exception::TranslateErrorCode(HRESULT hr) noexcept
+std::string Window::Exception::TranslateErrorCode(HRESULT hr)
 {
 	char* pMsgBuf = nullptr;
 	// FORMAT_MESSAGE_ALLOCATE_BUFFER --> Windows will allocate memory for err string and make our pointer point to it
@@ -26,13 +26,13 @@ std::string Window::Exception::TranslateErrorCode(HRESULT hr) noexcept
 	return errorString;
 }
 
-Window::HresultException::HresultException(int line, const char * file, HRESULT hr) noexcept
+Window::HresultException::HresultException(int line, const char * file, HRESULT hr)
 	:
 	Exception(line, file),
 	hr(hr)
 {}
 
-const char* Window::HresultException::what() const noexcept
+const char* Window::HresultException::what() const
 {
 	std::ostringstream oss;
 	oss << GetType() << std::endl
@@ -44,23 +44,23 @@ const char* Window::HresultException::what() const noexcept
 	return whatBuffer.c_str();
 }
 
-const char* Window::HresultException::GetType() const noexcept
+const char* Window::HresultException::GetType() const
 {
 	return "Chili Window Exception";
 }
 
-HRESULT Window::HresultException::GetErrorCode() const noexcept
+HRESULT Window::HresultException::GetErrorCode() const
 {
 	return hr;
 }
 
-std::string Window::HresultException::GetErrorDescription() const noexcept
+std::string Window::HresultException::GetErrorDescription() const
 {
 	return Exception::TranslateErrorCode(hr);
 }
 
 
-const char* Window::NoGfxException::GetType() const noexcept
+const char* Window::NoGfxException::GetType() const
 {
 	return "Chili Window Exception [No Graphics]";
 }

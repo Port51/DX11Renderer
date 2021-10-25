@@ -2,13 +2,13 @@
 #include <sstream>
 
 
-CustomException::CustomException(int line, const char* file) noexcept
+CustomException::CustomException(int line, const char* file)
 	:
 	line(line),
 	file(file)
 {}
 
-const char* CustomException::what() const noexcept
+const char* CustomException::what() const
 {
 	std::ostringstream oss;
 	oss << GetType() << std::endl
@@ -17,22 +17,22 @@ const char* CustomException::what() const noexcept
 	return whatBuffer.c_str();
 }
 
-const char* CustomException::GetType() const noexcept
+const char* CustomException::GetType() const
 {
 	return "Chili Exception";
 }
 
-int CustomException::GetLine() const noexcept
+int CustomException::GetLine() const
 {
 	return line;
 }
 
-const std::string& CustomException::GetFile() const noexcept
+const std::string& CustomException::GetFile() const
 {
 	return file;
 }
 
-std::string CustomException::GetOriginString() const noexcept
+std::string CustomException::GetOriginString() const
 {
 	std::ostringstream oss;
 	oss << "[File] " << file << std::endl

@@ -10,7 +10,7 @@ TransformCbuf::TransformCbuf(Graphics& gfx, const Drawable& parent, UINT slot)
 	}
 }
 
-void TransformCbuf::Bind(Graphics& gfx) noexcept
+void TransformCbuf::Bind(Graphics& gfx)
 {
 	const auto model = parent.GetTransformXM();
 	const Transforms tf =

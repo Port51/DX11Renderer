@@ -3,7 +3,7 @@
 
 namespace dx = DirectX;
 
-DirectX::XMMATRIX Camera::GetViewMatrix() const noexcept
+DirectX::XMMATRIX Camera::GetViewMatrix() const
 {
 	// LookAt fails if position = target
 	const auto safeRad = dx::XMMax(r, 0.01f);
@@ -18,7 +18,7 @@ DirectX::XMMATRIX Camera::GetViewMatrix() const noexcept
 		* dx::XMMatrixRotationRollPitchYaw(pitch, -yaw, roll);
 }
 
-void Camera::DrawImguiControlWindow() noexcept
+void Camera::DrawImguiControlWindow()
 {
 	if (ImGui::Begin("Camera"))
 	{
@@ -38,7 +38,7 @@ void Camera::DrawImguiControlWindow() noexcept
 	ImGui::End();
 }
 
-void Camera::Reset() noexcept
+void Camera::Reset()
 {
 	r = 20.0f;
 	theta = 0.0f;

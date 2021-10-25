@@ -31,14 +31,14 @@ namespace Gdiplus
 
 #pragma comment( lib,"gdiplus.lib" )
 
-Surface::Surface(unsigned int width, unsigned int height) noexcept
+Surface::Surface(unsigned int width, unsigned int height)
 	:
 	pBuffer(std::make_unique<Color[]>(width * height)),
 	width(width),
 	height(height)
 {}
 
-Surface& Surface::operator=(Surface&& donor) noexcept
+Surface& Surface::operator=(Surface&& donor)
 {
 	width = donor.width;
 	height = donor.height;
@@ -47,7 +47,7 @@ Surface& Surface::operator=(Surface&& donor) noexcept
 	return *this;
 }
 
-Surface::Surface(Surface && source) noexcept
+Surface::Surface(Surface && source)
 	:
 	pBuffer(std::move(source.pBuffer)),
 	width(source.width),
@@ -57,12 +57,12 @@ Surface::Surface(Surface && source) noexcept
 Surface::~Surface()
 {}
 
-void Surface::Clear(Color fillValue) noexcept
+void Surface::Clear(Color fillValue)
 {
 	memset(pBuffer.get(), fillValue.dword, width * height * sizeof(Color));
 }
 
-void Surface::PutPixel(unsigned int x, unsigned int y, Color c) noexcept(!IS_DEBUG)
+void Surface::PutPixel(unsigned int x, unsigned int y, Color c)
 {
 	assert(x >= 0);
 	assert(y >= 0);
@@ -71,7 +71,7 @@ void Surface::PutPixel(unsigned int x, unsigned int y, Color c) noexcept(!IS_DEB
 	pBuffer[y * width + x] = c;
 }
 
-Surface::Color Surface::GetPixel(unsigned int x, unsigned int y) const noexcept(!IS_DEBUG)
+Surface::Color Surface::GetPixel(unsigned int x, unsigned int y) const
 {
 	assert(x >= 0);
 	assert(y >= 0);
@@ -80,27 +80,27 @@ Surface::Color Surface::GetPixel(unsigned int x, unsigned int y) const noexcept(
 	return pBuffer[y * width + x];
 }
 
-unsigned int Surface::GetWidth() const noexcept
+unsigned int Surface::GetWidth() const
 {
 	return width;
 }
 
-unsigned int Surface::GetHeight() const noexcept
+unsigned int Surface::GetHeight() const
 {
 	return height;
 }
 
-Surface::Color* Surface::GetBufferPtr() noexcept
+Surface::Color* Surface::GetBufferPtr()
 {
 	return pBuffer.get();
 }
 
-const Surface::Color* Surface::GetBufferPtr() const noexcept
+const Surface::Color* Surface::GetBufferPtr() const
 {
 	return pBuffer.get();
 }
 
-const Surface::Color* Surface::GetBufferPtrConst() const noexcept
+const Surface::Color* Surface::GetBufferPtrConst() const
 {
 	return pBuffer.get();
 }
@@ -203,14 +203,14 @@ void Surface::Save(const std::string& filename) const
 	}
 }
 
-void Surface::Copy(const Surface& src) noexcept(!IS_DEBUG)
+void Surface::Copy(const Surface& src)
 {
 	assert(width == src.width);
 	assert(height == src.height);
 	memcpy(pBuffer.get(), src.pBuffer.get(), width * height * sizeof(Color));
 }
 
-Surface::Surface(unsigned int width, unsigned int height, std::unique_ptr<Color[]> pBufferParam) noexcept
+Surface::Surface(unsigned int width, unsigned int height, std::unique_ptr<Color[]> pBufferParam)
 	:
 	width(width),
 	height(height),
@@ -219,13 +219,13 @@ Surface::Surface(unsigned int width, unsigned int height, std::unique_ptr<Color[
 
 
 // surface exception stuff
-Surface::Exception::Exception(int line, const char* file, std::string note) noexcept
+Surface::Exception::Exception(int line, const char* file, std::string note)
 	:
 	CustomException(line, file),
 	note(std::move(note))
 {}
 
-const char* Surface::Exception::what() const noexcept
+const char* Surface::Exception::what() const
 {
 	std::ostringstream oss;
 	oss << CustomException::what() << std::endl
@@ -234,12 +234,12 @@ const char* Surface::Exception::what() const noexcept
 	return whatBuffer.c_str();
 }
 
-const char* Surface::Exception::GetType() const noexcept
+const char* Surface::Exception::GetType() const
 {
 	return "Chili Graphics Exception";
 }
 
-const std::string& Surface::Exception::GetNote() const noexcept
+const std::string& Surface::Exception::GetNote() const
 {
 	return note;
 }

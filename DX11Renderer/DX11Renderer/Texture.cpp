@@ -42,7 +42,7 @@ Texture::Texture(Graphics& gfx, const Surface& s)
 	));
 }
 
-void Texture::Bind(Graphics& gfx) noexcept
+void Texture::Bind(Graphics& gfx)
 {
 	GetContext(gfx)->PSSetShaderResources(0u, 1u, pTextureView.GetAddressOf());
 }

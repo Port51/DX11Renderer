@@ -48,7 +48,7 @@ public:
 		int x;
 		int y;
 	public:
-		Event() noexcept
+		Event()
 			:
 			type( Type::Invalid ),
 			leftIsPressed( false ),
@@ -56,7 +56,7 @@ public:
 			x( 0 ),
 			y( 0 )
 		{}
-		Event( Type type,const Mouse& parent ) noexcept
+		Event( Type type,const Mouse& parent )
 			:
 			type( type ),
 			leftIsPressed( parent.leftIsPressed ),
@@ -64,31 +64,31 @@ public:
 			x( parent.x ),
 			y( parent.y )
 		{}
-		bool IsValid() const noexcept
+		bool IsValid() const
 		{
 			return type != Type::Invalid;
 		}
-		Type GetType() const noexcept
+		Type GetType() const
 		{
 			return type;
 		}
-		std::pair<int,int> GetPos() const noexcept
+		std::pair<int,int> GetPos() const
 		{
 			return{ x,y };
 		}
-		int GetPosX() const noexcept
+		int GetPosX() const
 		{
 			return x;
 		}
-		int GetPosY() const noexcept
+		int GetPosY() const
 		{
 			return y;
 		}
-		bool LeftIsPressed() const noexcept
+		bool LeftIsPressed() const
 		{
 			return leftIsPressed;
 		}
-		bool RightIsPressed() const noexcept
+		bool RightIsPressed() const
 		{
 			return rightIsPressed;
 		}
@@ -97,30 +97,30 @@ public:
 	Mouse() = default;
 	Mouse( const Mouse& ) = delete;
 	Mouse& operator=( const Mouse& ) = delete;
-	std::pair<int,int> GetPos() const noexcept;
-	int GetPosX() const noexcept;
-	int GetPosY() const noexcept;
-	bool IsInWindow() const noexcept;
-	bool LeftIsPressed() const noexcept;
-	bool RightIsPressed() const noexcept;
-	Mouse::Event Read() noexcept;
-	bool IsEmpty() const noexcept
+	std::pair<int,int> GetPos() const;
+	int GetPosX() const;
+	int GetPosY() const;
+	bool IsInWindow() const;
+	bool LeftIsPressed() const;
+	bool RightIsPressed() const;
+	Mouse::Event Read();
+	bool IsEmpty() const
 	{
 		return buffer.empty();
 	}
-	void Flush() noexcept;
+	void Flush();
 private:
-	void OnMouseMove( int x,int y ) noexcept;
-	void OnMouseLeave() noexcept;
-	void OnMouseEnter() noexcept;
-	void OnLeftPressed( int x,int y ) noexcept;
-	void OnLeftReleased( int x,int y ) noexcept;
-	void OnRightPressed( int x,int y ) noexcept;
-	void OnRightReleased( int x,int y ) noexcept;
-	void OnWheelUp( int x,int y ) noexcept;
-	void OnWheelDown( int x,int y ) noexcept;
-	void TrimBuffer() noexcept;
-	void OnWheelDelta( int x,int y,int delta ) noexcept;
+	void OnMouseMove( int x,int y );
+	void OnMouseLeave();
+	void OnMouseEnter();
+	void OnLeftPressed( int x,int y );
+	void OnLeftReleased( int x,int y );
+	void OnRightPressed( int x,int y );
+	void OnRightReleased( int x,int y );
+	void OnWheelUp( int x,int y );
+	void OnWheelDown( int x,int y );
+	void TrimBuffer();
+	void OnWheelDelta( int x,int y,int delta );
 private:
 	static constexpr unsigned int bufferSize = 16u;
 	int x;

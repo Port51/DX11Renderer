@@ -4,9 +4,9 @@
 class Camera
 {
 public:
-	DirectX::XMMATRIX GetViewMatrix() const noexcept;
-	void DrawImguiControlWindow() noexcept;
-	void Reset() noexcept;
+	DirectX::XMMATRIX GetViewMatrix() const;
+	void DrawImguiControlWindow();
+	void Reset();
 private:
 	float r = 20.0f; // dist from origin
 	float theta = 0.0f; // rotate around origin

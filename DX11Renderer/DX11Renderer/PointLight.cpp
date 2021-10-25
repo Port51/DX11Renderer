@@ -9,7 +9,7 @@ PointLight::PointLight(Graphics& gfx, float radius)
 	Reset();
 }
 
-void PointLight::DrawImguiControlWindow() noexcept
+void PointLight::DrawImguiControlWindow()
 {
 	if (ImGui::Begin("Light"))
 	{
@@ -37,7 +37,7 @@ void PointLight::DrawImguiControlWindow() noexcept
 	ImGui::End();
 }
 
-void PointLight::Reset() noexcept
+void PointLight::Reset()
 {
 	cbData = {
 		{ 0.0f,0.0f,0.0f },
@@ -50,14 +50,14 @@ void PointLight::Reset() noexcept
 	};
 }
 
-void PointLight::Draw(Graphics& gfx) const noexcept(!IS_DEBUG)
+void PointLight::Draw(Graphics& gfx) const
 {
 	mesh.SetPos(cbData.posVS);
 	mesh.Draw(gfx);
 }
 
-//void PointLight::Bind(Graphics& gfx, DirectX::FXMMATRIX view) const noexcept
-void PointLight::Bind(Graphics& gfx, DirectX::FXMMATRIX viewMatrix) const noexcept
+//void PointLight::Bind(Graphics& gfx, DirectX::FXMMATRIX view) const
+void PointLight::Bind(Graphics& gfx, DirectX::FXMMATRIX viewMatrix) const
 {
 	auto dataCopy = cbData;
 	const auto pos = DirectX::XMLoadFloat3(&cbData.posVS);

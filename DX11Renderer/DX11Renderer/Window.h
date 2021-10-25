@@ -16,16 +16,16 @@ public:
 	{
 		using CustomException::CustomException;
 	public:
-		static std::string TranslateErrorCode(HRESULT hr) noexcept;
+		static std::string TranslateErrorCode(HRESULT hr);
 	};
 	class HresultException : public Exception
 	{
 	public:
-		HresultException(int line, const char* file, HRESULT hr) noexcept;
-		const char* what() const noexcept override;
-		const char* GetType() const noexcept override;
-		HRESULT GetErrorCode() const noexcept;
-		std::string GetErrorDescription() const noexcept;
+		HresultException(int line, const char* file, HRESULT hr);
+		const char* what() const override;
+		const char* GetType() const override;
+		HRESULT GetErrorCode() const;
+		std::string GetErrorDescription() const;
 	private:
 		HRESULT hr;
 	};
@@ -33,7 +33,7 @@ public:
 	{
 	public:
 		using Exception::Exception;
-		const char* GetType() const noexcept override;
+		const char* GetType() const override;
 	};
 
 private:

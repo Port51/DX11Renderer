@@ -21,13 +21,13 @@ public:
 	class HrException : public Exception
 	{
 	public:
-		HrException(int line, const char* file, HRESULT hr, std::vector<std::string> infoMsgs = {}) noexcept;
-		const char* what() const noexcept override;
-		const char* GetType() const noexcept override;
-		HRESULT GetErrorCode() const noexcept;
-		std::string GetErrorString() const noexcept;
-		std::string GetErrorDescription() const noexcept;
-		std::string GetErrorInfo() const noexcept;
+		HrException(int line, const char* file, HRESULT hr, std::vector<std::string> infoMsgs = {});
+		const char* what() const override;
+		const char* GetType() const override;
+		HRESULT GetErrorCode() const;
+		std::string GetErrorString() const;
+		std::string GetErrorDescription() const;
+		std::string GetErrorInfo() const;
 	private:
 		HRESULT hr;
 		std::string info;
@@ -36,10 +36,10 @@ public:
 	class InfoException : public Exception
 	{
 	public:
-		InfoException(int line, const char* file, std::vector<std::string> infoMsgs) noexcept;
-		const char* what() const noexcept override;
-		const char* GetType() const noexcept override;
-		std::string GetErrorInfo() const noexcept;
+		InfoException(int line, const char* file, std::vector<std::string> infoMsgs);
+		const char* what() const override;
+		const char* GetType() const override;
+		std::string GetErrorInfo() const;
 	private:
 		std::string info;
 	};
@@ -47,7 +47,7 @@ public:
 	{
 		using HrException::HrException;
 	public:
-		const char* GetType() const noexcept override;
+		const char* GetType() const override;
 	private:
 		std::string reason;
 	};
@@ -57,20 +57,20 @@ public:
 	Graphics(const Graphics&) = delete; // here because of destructor, but don't want this...
 	Graphics& operator=(const Graphics&) = delete; // here because of destructor, but don't want this...
 	~Graphics() = default;
-	void BeginFrame(float red, float green, float blue) noexcept;
+	void BeginFrame(float red, float green, float blue);
 	void EndFrame();
-	void ClearBuffer(float red, float green, float blue) noexcept;
-	void DrawIndexed(UINT count) noexcept(!IS_DEBUG);
+	void ClearBuffer(float red, float green, float blue);
+	void DrawIndexed(UINT count);
 	void DrawTestTriangle(float x, float y, float z, float angle);
 public:
-	void EnableImgui() noexcept;
-	void DisableImgui() noexcept;
-	bool IsImguiEnabled() const noexcept;
+	void EnableImgui();
+	void DisableImgui();
+	bool IsImguiEnabled() const;
 public:
-	void SetProjectionMatrix(DirectX::FXMMATRIX proj) noexcept;
-	DirectX::XMMATRIX GetProjectionMatrix() const noexcept;
-	void SetViewMatrix(DirectX::FXMMATRIX cam) noexcept;
-	DirectX::XMMATRIX GetViewMatrix() const noexcept;
+	void SetProjectionMatrix(DirectX::FXMMATRIX proj);
+	DirectX::XMMATRIX GetProjectionMatrix() const;
+	void SetViewMatrix(DirectX::FXMMATRIX cam);
+	DirectX::XMMATRIX GetViewMatrix() const;
 private:
 #ifndef NDEBUG
 	DxgiInfoManager infoManager;

@@ -7,22 +7,22 @@ template<class T>
 class DrawableTemplated : public Drawable
 {
 protected:
-	static bool IsStaticInitialized() noexcept
+	static bool IsStaticInitialized()
 	{
 		return !staticBinds.empty();
 	}
-	static void AddStaticBind(std::unique_ptr<Bindable> bind) noexcept(!IS_DEBUG)
+	static void AddStaticBind(std::unique_ptr<Bindable> bind)
 	{
 		assert("*Must* use AddStaticIndexBuffer to bind index buffer" && typeid(*bind) != typeid(IndexBuffer));
 		staticBinds.push_back(std::move(bind));
 	}
-	void AddStaticIndexBuffer(std::unique_ptr<IndexBuffer> ibuf) noexcept(!IS_DEBUG)
+	void AddStaticIndexBuffer(std::unique_ptr<IndexBuffer> ibuf)
 	{
 		assert("Attempting to add index buffer a second time" && pIndexBuffer == nullptr);
 		pIndexBuffer = ibuf.get();
 		staticBinds.push_back(std::move(ibuf));
 	}
-	void SetIndexFromStatic() noexcept(!IS_DEBUG)
+	void SetIndexFromStatic()
 	{
 		assert("Attempting to add index buffer a second time" && pIndexBuffer == nullptr);
 		for (const auto& b : staticBinds)
@@ -36,7 +36,7 @@ protected:
 		assert("Failed to find index buffer in static binds" && pIndexBuffer != nullptr);
 	}
 private:
-	const std::vector<std::unique_ptr<Bindable>>& GetStaticBinds() const noexcept override
+	const std::vector<std::unique_ptr<Bindable>>& GetStaticBinds() const override
 	{
 		return staticBinds;
 	}

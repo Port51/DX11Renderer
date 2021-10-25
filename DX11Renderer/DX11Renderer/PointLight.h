@@ -1,16 +1,17 @@
 #pragma once
 #include "Graphics.h"
 #include "SolidSphere.h"
-#include "ConstantBuffers.h"
+#include "ConstantBuffer.h"
+#include "PixelConstantBuffer.h"
 
 class PointLight
 {
 public:
 	PointLight(Graphics& gfx, float radius = 0.5f);
-	void DrawImguiControlWindow() noexcept;
-	void Reset() noexcept;
-	void Draw(Graphics& gfx) const noexcept(!IS_DEBUG);
-	void Bind(Graphics& gfx, DirectX::FXMMATRIX viewMatrix) const noexcept;
+	void DrawImguiControlWindow();
+	void Reset();
+	void Draw(Graphics& gfx) const;
+	void Bind(Graphics& gfx, DirectX::FXMMATRIX viewMatrix) const;
 private:
 	struct PointLightCBuf
 	{

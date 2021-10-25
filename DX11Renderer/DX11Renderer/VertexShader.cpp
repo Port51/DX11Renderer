@@ -1,6 +1,6 @@
 #include "VertexShader.h"
 #include "GraphicsThrowMacros.h"
-#include "BindableCodex.h"
+//#include "BindableCodex.h"
 #include <typeinfo>
 #include "ChiliUtil.h"
 
@@ -18,12 +18,12 @@ VertexShader::VertexShader(Graphics& gfx, const std::wstring& path)
 	));
 }
 
-void VertexShader::Bind(Graphics& gfx) noexcept
+void VertexShader::Bind(Graphics& gfx)
 {
 	GetContext(gfx)->VSSetShader(pVertexShader.Get(), nullptr, 0u);
 }
 
-ID3DBlob* VertexShader::GetBytecode() const noexcept
+ID3DBlob* VertexShader::GetBytecode() const
 {
 	return pBytecodeBlob.Get();
 }

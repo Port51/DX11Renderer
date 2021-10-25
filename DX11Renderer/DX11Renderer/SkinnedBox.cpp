@@ -71,7 +71,7 @@ SkinnedBox::SkinnedBox(Graphics& gfx,
 	AddBind(std::make_unique<TransformCbuf>(gfx, *this));
 }
 
-void SkinnedBox::Update(float dt) noexcept
+void SkinnedBox::Update(float dt)
 {
 	roll += droll * dt;
 	pitch += dpitch * dt;
@@ -81,7 +81,7 @@ void SkinnedBox::Update(float dt) noexcept
 	chi += dchi * dt;
 }
 
-DirectX::XMMATRIX SkinnedBox::GetTransformXM() const noexcept
+DirectX::XMMATRIX SkinnedBox::GetTransformXM() const
 {
 	namespace dx = DirectX;
 	return dx::XMMatrixRotationRollPitchYaw(pitch, yaw, roll) *

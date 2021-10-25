@@ -75,7 +75,7 @@ Sheet::Sheet(Graphics& gfx,
 	AddBind(std::make_unique<TransformCbuf>(gfx, *this));
 }
 
-void Sheet::Update(float dt) noexcept
+void Sheet::Update(float dt)
 {
 	roll += droll * dt;
 	pitch += dpitch * dt;
@@ -85,7 +85,7 @@ void Sheet::Update(float dt) noexcept
 	chi += dchi * dt;
 }
 
-DirectX::XMMATRIX Sheet::GetTransformXM() const noexcept
+DirectX::XMMATRIX Sheet::GetTransformXM() const
 {
 	namespace dx = DirectX;
 	return dx::XMMatrixRotationRollPitchYaw(pitch, yaw, roll) *

@@ -34,70 +34,70 @@ public:
 	public:
 		unsigned int dword;
 	public:
-		constexpr Color() noexcept : dword()
+		constexpr Color() : dword()
 		{}
-		constexpr Color(const Color& col) noexcept
+		constexpr Color(const Color& col)
 			:
 			dword(col.dword)
 		{}
-		constexpr Color(unsigned int dw) noexcept
+		constexpr Color(unsigned int dw)
 			:
 			dword(dw)
 		{}
-		constexpr Color(unsigned char x, unsigned char r, unsigned char g, unsigned char b) noexcept
+		constexpr Color(unsigned char x, unsigned char r, unsigned char g, unsigned char b)
 			:
 			dword((x << 24u) | (r << 16u) | (g << 8u) | b)
 		{}
-		constexpr Color(unsigned char r, unsigned char g, unsigned char b) noexcept
+		constexpr Color(unsigned char r, unsigned char g, unsigned char b)
 			:
 			dword((r << 16u) | (g << 8u) | b)
 		{}
-		constexpr Color(Color col, unsigned char x) noexcept
+		constexpr Color(Color col, unsigned char x)
 			:
 			Color((x << 24u) | col.dword)
 		{}
-		Color& operator =(Color color) noexcept
+		Color& operator =(Color color)
 		{
 			dword = color.dword;
 			return *this;
 		}
-		constexpr unsigned char GetX() const noexcept
+		constexpr unsigned char GetX() const
 		{
 			return dword >> 24u;
 		}
-		constexpr unsigned char GetA() const noexcept
+		constexpr unsigned char GetA() const
 		{
 			return GetX();
 		}
-		constexpr unsigned char GetR() const noexcept
+		constexpr unsigned char GetR() const
 		{
 			return (dword >> 16u) & 0xFFu;
 		}
-		constexpr unsigned char GetG() const noexcept
+		constexpr unsigned char GetG() const
 		{
 			return (dword >> 8u) & 0xFFu;
 		}
-		constexpr unsigned char GetB() const noexcept
+		constexpr unsigned char GetB() const
 		{
 			return dword & 0xFFu;
 		}
-		void SetX(unsigned char x) noexcept
+		void SetX(unsigned char x)
 		{
 			dword = (dword & 0xFFFFFFu) | (x << 24u);
 		}
-		void SetA(unsigned char a) noexcept
+		void SetA(unsigned char a)
 		{
 			SetX(a);
 		}
-		void SetR(unsigned char r) noexcept
+		void SetR(unsigned char r)
 		{
 			dword = (dword & 0xFF00FFFFu) | (r << 16u);
 		}
-		void SetG(unsigned char g) noexcept
+		void SetG(unsigned char g)
 		{
 			dword = (dword & 0xFFFF00FFu) | (g << 8u);
 		}
-		void SetB(unsigned char b) noexcept
+		void SetB(unsigned char b)
 		{
 			dword = (dword & 0xFFFFFF00u) | b;
 		}
@@ -106,33 +106,33 @@ public:
 	class Exception : public CustomException
 	{
 	public:
-		Exception(int line, const char* file, std::string note) noexcept;
-		const char* what() const noexcept override;
-		const char* GetType() const noexcept override;
-		const std::string& GetNote() const noexcept;
+		Exception(int line, const char* file, std::string note);
+		const char* what() const override;
+		const char* GetType() const override;
+		const std::string& GetNote() const;
 	private:
 		std::string note;
 	};
 public:
-	Surface(unsigned int width, unsigned int height) noexcept;
-	Surface(Surface&& source) noexcept;
+	Surface(unsigned int width, unsigned int height);
+	Surface(Surface&& source);
 	Surface(Surface&) = delete;
-	Surface& operator=(Surface&& donor) noexcept;
+	Surface& operator=(Surface&& donor);
 	Surface& operator=(const Surface&) = delete;
 	~Surface();
-	void Clear(Color fillValue) noexcept;
-	void PutPixel(unsigned int x, unsigned int y, Color c) noexcept(!IS_DEBUG);
-	Color GetPixel(unsigned int x, unsigned int y) const noexcept(!IS_DEBUG);
-	unsigned int GetWidth() const noexcept;
-	unsigned int GetHeight() const noexcept;
-	Color* GetBufferPtr() noexcept;
-	const Color* GetBufferPtr() const noexcept;
-	const Color* GetBufferPtrConst() const noexcept;
+	void Clear(Color fillValue);
+	void PutPixel(unsigned int x, unsigned int y, Color c);
+	Color GetPixel(unsigned int x, unsigned int y) const;
+	unsigned int GetWidth() const;
+	unsigned int GetHeight() const;
+	Color* GetBufferPtr();
+	const Color* GetBufferPtr() const;
+	const Color* GetBufferPtrConst() const;
 	static Surface FromFile(const std::string& name);
 	void Save(const std::string& filename) const;
-	void Copy(const Surface& src) noexcept(!IS_DEBUG);
+	void Copy(const Surface& src);
 private:
-	Surface(unsigned int width, unsigned int height, std::unique_ptr<Color[]> pBufferParam) noexcept;
+	Surface(unsigned int width, unsigned int height, std::unique_ptr<Color[]> pBufferParam);
 private:
 	std::unique_ptr<Color[]> pBuffer;
 	unsigned int width;
