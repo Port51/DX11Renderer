@@ -14,7 +14,7 @@ public:
 	template<class V>
 	static HRESULT LoadFBX(const char* filename, IndexedTriangleList<V>* pResult)
 	{
-		V vertex;
+		/*V vertex;
 
 		vertex.pos = { -10.f, 0.f, 0.f };
 		pResult->vertices.push_back(vertex);
@@ -29,7 +29,7 @@ public:
 		pResult->indices.push_back(1u);
 		pResult->indices.push_back(2u);
 
-		return S_OK;
+		return S_OK;*/
 
 		if (g_pFbxSdkManager == nullptr)
 		{

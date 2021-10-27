@@ -1,8 +1,9 @@
 #include "Mesh.h"
 #include "BindableInclude.h"
 #include "GraphicsThrowMacros.h"
-#include "Sphere.h"
 #include "PixelConstantBuffer.h"
+#include "FBXLoader.h"
+//#include "Sphere.h"
 
 namespace dx = DirectX;
 
@@ -25,7 +26,10 @@ Mesh::Mesh(Graphics& gfx,
 			dx::XMFLOAT3 pos;
 			dx::XMFLOAT3 normal;
 		};
-		auto model = Sphere::Make<Vertex>();
+		//auto model = Sphere::Make<Vertex>();
+		IndexedTriangleList<Vertex> model;
+		//FBXLoader::LoadFBX("Models\\CubeFBX.fbx", &model);
+		FBXLoader::LoadFBX("Models\\HeadTriangulated.fbx", &model);
 		model.SetNormalsIndependentFlat();
 
 		//model.Transform(dx::XMMatrixScaling(1.f, 1.f, 1.2f));

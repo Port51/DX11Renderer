@@ -23,5 +23,5 @@ private:
 	PointLight light;
 	float simulationSpeed = 1.f;
 	std::vector<std::unique_ptr<class Drawable>> drawables;
-	static constexpr size_t nDrawables = 180;
+	static constexpr size_t nDrawables = 1;
 };
