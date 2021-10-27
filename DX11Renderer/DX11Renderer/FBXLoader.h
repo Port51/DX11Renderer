@@ -14,23 +14,6 @@ public:
 	template<class V>
 	static HRESULT LoadFBX(const char* filename, IndexedTriangleList<V>* pResult)
 	{
-		/*V vertex;
-
-		vertex.pos = { -10.f, 0.f, 0.f };
-		pResult->vertices.push_back(vertex);
-
-		vertex.pos = { -10.f, 10.f, 0.f };
-		pResult->vertices.push_back(vertex);
-
-		vertex.pos = { 0.f, 0.f, 0.f };
-		pResult->vertices.push_back(vertex);
-
-		pResult->indices.push_back(0u);
-		pResult->indices.push_back(1u);
-		pResult->indices.push_back(2u);
-
-		return S_OK;*/
-
 		if (g_pFbxSdkManager == nullptr)
 		{
 			g_pFbxSdkManager = FbxManager::Create();
@@ -41,8 +24,6 @@ public:
 
 		FbxImporter* pImporter = FbxImporter::Create(g_pFbxSdkManager, "");
 		FbxScene* pFbxScene = FbxScene::Create(g_pFbxSdkManager, "");
-		//std::unique_ptr<FbxImporter> pImporter(FbxImporter::Create(g_pFbxSdkManager, ""));
-		//std::unique_ptr<FbxScene> pFbxScene(FbxScene::Create(g_pFbxSdkManager, ""));
 
 		bool bSuccess = pImporter->Initialize(filename, -1, g_pFbxSdkManager->GetIOSettings());
 		if (!bSuccess) return E_FAIL;
