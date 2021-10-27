@@ -83,7 +83,7 @@ Mesh::Mesh(Graphics& gfx,
 	AddBind(std::make_unique<PixelConstantBuffer<PSMaterialConstant>>(gfx, colorConst, 1u));
 
 	// Instance scaling
-	dx::XMStoreFloat3x3(&mt, dx::XMMatrixScaling(1.f, 1.f, bdist(rng)));
+	dx::XMStoreFloat3x3(&mt, dx::XMMatrixScaling(1.f, 1.f, 1.f));
 }
 
 void Mesh::Update(float dt)

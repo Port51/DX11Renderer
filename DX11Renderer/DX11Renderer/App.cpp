@@ -36,8 +36,8 @@ App::App()
 			{
 			case 0:
 				return std::make_unique<Mesh>(
-					gfx, rng, adist, ddist,
-					odist, rdist, bdist, materialColor
+					gfx, rng, zerodist, zerodist,
+					zerodist, zerodist, zerodist, materialColor
 					);
 			/*case 0:
 				return std::make_unique<Box>(
@@ -91,6 +91,7 @@ App::App()
 		std::uniform_int_distribution<int> latdist{ 5,20 };
 		std::uniform_int_distribution<int> longdist{ 10,40 };
 		std::uniform_real_distribution<float> cdist{ 0.0f,1.0f };
+		std::uniform_real_distribution<float> zerodist{ 0.0f,0.0f };
 		std::uniform_int_distribution<int> typedist{ 0,0 };
 	};
 
