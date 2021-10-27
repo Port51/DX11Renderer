@@ -18,7 +18,7 @@ GDIPlusManager gdipm;
 
 App::App()
 	:
-	wnd(ResolutionX, ResolutionY, "The Donkey Fart Box"),
+	wnd(ResolutionX, ResolutionY, "DX11 Renderer"),
 	light(wnd.Gfx(), dx::XMFLOAT3(2.2f, 3.2f, 4.2f))
 {
 	class Factory
@@ -96,10 +96,8 @@ App::App()
 	drawables.reserve(nDrawables);
 	std::generate_n(std::back_inserter(drawables), nDrawables, f);
 
-	const auto s = Surface::FromFile("Images\\kappa50.png");
-
 	//wnd.Gfx().SetProjectionMatrix(dx::XMMatrixPerspectiveLH(1.0f, (float)ResolutionY / (float)ResolutionX, 0.5f, 40.0f));
-	wnd.Gfx().SetProjectionMatrix(dx::XMMatrixPerspectiveFovLH(dx::XMConvertToRadians(40.0f), (float)ResolutionY / (float)ResolutionX, 0.5f, 100.0f));
+	wnd.Gfx().SetProjectionMatrix(dx::XMMatrixPerspectiveFovLH(dx::XMConvertToRadians(40.0f), (float)ResolutionX / (float)ResolutionY, 0.5f, 100.0f));
 }
 
 App::~App()
