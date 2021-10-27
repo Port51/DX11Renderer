@@ -81,15 +81,12 @@ public:
 					pResult->vertices.push_back(vertex);
 				}
 
-				// Indices
-				for (int j = 0; j < pMesh->GetPolygonCount(); j++)
-				{
-					int iNumVertices = pMesh->GetPolygonSize(j);
+				int* pIndices = pMesh->GetPolygonVertices();
 
-					for (int k = 0; k < iNumVertices; k++) {
-						int index = pMesh->GetPolygonVertex(j, k);
-						pResult->indices.push_back(index);
-					}
+				// Indices
+				for (int j = 0; j < pMesh->GetPolygonVertexCount(); ++j)
+				{
+					pResult->indices.push_back(pIndices[j]);
 				}
 
 			}
