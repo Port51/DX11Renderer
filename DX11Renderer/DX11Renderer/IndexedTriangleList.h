@@ -15,6 +15,7 @@ public:
 		assert(vertices.size() > 2);
 		assert(indices.size() % 3 == 0);
 	}
+
 	void Transform(DirectX::FXMMATRIX matrix)
 	{
 		for (auto& v : vertices)
@@ -26,6 +27,7 @@ public:
 			);
 		}
 	}
+
 	// asserts face-independent vertices w/ normals cleared to zero
 	void SetNormalsIndependentFlat()
 	{

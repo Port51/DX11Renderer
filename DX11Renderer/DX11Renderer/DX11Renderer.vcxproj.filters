@@ -189,6 +189,9 @@
     <ClCompile Include="Cylinder.cpp">
       <Filter>Source Files\Drawable</Filter>
     </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Source Files\Drawable</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WindowsInclude.h">
@@ -367,6 +370,12 @@
     </ClInclude>
     <ClInclude Include="PixelConstantBuffer.h">
       <Filter>Header Files\Bindable\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="FBXLoader.h">
+      <Filter>Header Files\GeometryHelpers</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Header Files\Drawable</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

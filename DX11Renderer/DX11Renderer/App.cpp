@@ -8,6 +8,7 @@
 #include "GeoMath.h"
 #include "Surface.h"
 #include "Cylinder.h"
+#include "Mesh.h"
 #include "GDIPlusManager.h"
 #include "Imgui/imgui.h"
 
@@ -34,6 +35,11 @@ App::App()
 			switch (typedist(rng))
 			{
 			case 0:
+				return std::make_unique<Mesh>(
+					gfx, rng, adist, ddist,
+					odist, rdist
+					);
+			/*case 0:
 				return std::make_unique<Box>(
 					gfx, rng, adist, ddist,
 					odist, rdist, bdist, materialColor
@@ -42,7 +48,7 @@ App::App()
 				return std::make_unique<Cylinder>(
 					gfx, rng, adist, ddist, odist,
 					rdist, bdist, tessDist
-					);
+					);*/
 			/*case 0:
 				return std::make_unique<Pyramid>(
 					gfx, rng, adist, ddist,
@@ -85,7 +91,7 @@ App::App()
 		std::uniform_int_distribution<int> latdist{ 5,20 };
 		std::uniform_int_distribution<int> longdist{ 10,40 };
 		std::uniform_real_distribution<float> cdist{ 0.0f,1.0f };
-		std::uniform_int_distribution<int> typedist{ 0,1 };
+		std::uniform_int_distribution<int> typedist{ 0,0 };
 	};
 
 	Factory f(wnd.Gfx());
