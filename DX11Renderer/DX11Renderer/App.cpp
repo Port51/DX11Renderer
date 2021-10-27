@@ -37,7 +37,7 @@ App::App()
 			case 0:
 				return std::make_unique<Mesh>(
 					gfx, rng, adist, ddist,
-					odist, rdist
+					odist, rdist, bdist, materialColor
 					);
 			/*case 0:
 				return std::make_unique<Box>(
