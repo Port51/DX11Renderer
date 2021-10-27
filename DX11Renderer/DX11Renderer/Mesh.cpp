@@ -7,16 +7,7 @@
 
 namespace dx = DirectX;
 
-Mesh::Mesh(Graphics& gfx,
-	std::mt19937& rng,
-	std::uniform_real_distribution<float>& adist,
-	std::uniform_real_distribution<float>& ddist,
-	std::uniform_real_distribution<float>& odist,
-	std::uniform_real_distribution<float>& rdist,
-	std::uniform_real_distribution<float>& bdist,
-	DirectX::XMFLOAT3 materialColor)
-	:
-	TestObject(gfx, rng, adist, ddist, odist, rdist)
+Mesh::Mesh(Graphics& gfx, DirectX::XMFLOAT3 materialColor, dx::XMFLOAT3 scale)
 {
 
 	if (!IsStaticInitialized())
@@ -83,23 +74,15 @@ Mesh::Mesh(Graphics& gfx,
 	AddBind(std::make_unique<PixelConstantBuffer<PSMaterialConstant>>(gfx, colorConst, 1u));
 
 	// Instance scaling
-	dx::XMStoreFloat3x3(&mt, dx::XMMatrixScaling(1.f, 1.f, 1.f));
+	dx::XMStoreFloat3x3(&mt, dx::XMMatrixScaling(scale.x, scale.y, scale.z));
 }
 
 void Mesh::Update(float dt)
 {
-	roll += droll * dt;
-	pitch += dpitch * dt;
-	yaw += dyaw * dt;
-	theta += dtheta * dt;
-	phi += dphi * dt;
-	chi += dchi * dt;
+	// nothing yet
 }
 
 DirectX::XMMATRIX Mesh::GetTransformXM() const
 {
-	return DirectX::XMLoadFloat3x3(&mt) *
-		DirectX::XMMatrixRotationRollPitchYaw(pitch, yaw, roll) *
-		DirectX::XMMatrixTranslation(r, 0.0f, 0.0f) *
-		DirectX::XMMatrixRotationRollPitchYaw(theta, phi, chi);
+	return DirectX::XMLoadFloat3x3(&mt);
 }

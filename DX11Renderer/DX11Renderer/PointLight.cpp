@@ -1,10 +1,11 @@
 #include "PointLight.h"
 #include "imgui/imgui.h"
 
-PointLight::PointLight(Graphics& gfx, float radius)
+PointLight::PointLight(Graphics& gfx, DirectX::XMFLOAT3 position, float radius)
 	:
 	mesh(gfx, radius),
-	cbuf(gfx)
+	cbuf(gfx),
+	initialPositionWS(position)
 {
 	Reset();
 }
@@ -40,9 +41,9 @@ void PointLight::DrawImguiControlWindow()
 void PointLight::Reset()
 {
 	cbData = {
-		{ 0.0f,0.0f,0.0f },
-		{ 0.05f,0.05f,0.05f },
-		{ 1.0f,1.0f,1.0f },
+		{ initialPositionWS.x, initialPositionWS.y, initialPositionWS.z },
+		{ 0.05f, 0.05f, 0.05f },
+		{ 1.0f, 1.0f, 1.0f },
 		1.0f,
 		1.0f,
 		0.045f,
@@ -61,6 +62,7 @@ void PointLight::Bind(Graphics& gfx, DirectX::FXMMATRIX viewMatrix) const
 	auto dataCopy = cbData;
 	const auto pos = DirectX::XMLoadFloat3(&cbData.posVS);
 
+	// Transform WS to VS
 	DirectX::XMStoreFloat3(&dataCopy.posVS, DirectX::XMVector3Transform(pos, viewMatrix));
 
 	cbuf.Update(gfx, PointLightCBuf{ dataCopy });

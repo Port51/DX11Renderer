@@ -1,16 +1,10 @@
 #pragma once
 #include "TestObject.h"
 
-class Mesh : public TestObject<Mesh>
+class Mesh : public DrawableTemplated<Mesh>
 {
 public:
-	Mesh(Graphics& gfx, std::mt19937& rng,
-		std::uniform_real_distribution<float>& adist,
-		std::uniform_real_distribution<float>& ddist,
-		std::uniform_real_distribution<float>& odist,
-		std::uniform_real_distribution<float>& rdist,
-		std::uniform_real_distribution<float>& bdist,
-		DirectX::XMFLOAT3 materialColor);
+	Mesh(Graphics& gfx, DirectX::XMFLOAT3 materialColor, DirectX::XMFLOAT3 scale);
 	void Update(float dt) override;
 	DirectX::XMMATRIX GetTransformXM() const override;
 private:

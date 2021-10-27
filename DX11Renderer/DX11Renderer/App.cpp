@@ -19,7 +19,7 @@ GDIPlusManager gdipm;
 App::App()
 	:
 	wnd(800, 600, "The Donkey Fart Box"),
-	light(wnd.Gfx())
+	light(wnd.Gfx(), dx::XMFLOAT3(2.2f, 3.2f, 4.2f))
 {
 	class Factory
 	{
@@ -35,10 +35,7 @@ App::App()
 			switch (typedist(rng))
 			{
 			case 0:
-				return std::make_unique<Mesh>(
-					gfx, rng, zerodist, zerodist,
-					zerodist, zerodist, zerodist, materialColor
-					);
+				return std::make_unique<Mesh>(gfx, materialColor, dx::XMFLOAT3(3.f, 3.f, 3.f));
 			/*case 0:
 				return std::make_unique<Box>(
 					gfx, rng, adist, ddist,
