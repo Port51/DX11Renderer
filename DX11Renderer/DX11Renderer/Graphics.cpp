@@ -15,7 +15,7 @@ namespace dx = DirectX;
 #pragma comment(lib,"d3d11.lib")
 #pragma comment(lib,"D3DCompiler.lib") // for loading and compiling shaders
 
-Graphics::Graphics(HWND hWnd)
+Graphics::Graphics(HWND hWnd, int windowWidth, int windowHeight)
 {
 	DXGI_SWAP_CHAIN_DESC swapChainDesc = {};
 	swapChainDesc.BufferDesc.Width = 0; // use window size
@@ -82,8 +82,8 @@ Graphics::Graphics(HWND hWnd)
 	// create depth stencil texture
 	wrl::ComPtr<ID3D11Texture2D> pDepthStencil;
 	D3D11_TEXTURE2D_DESC descDepth = {};
-	descDepth.Width = 800u;
-	descDepth.Height = 600u;
+	descDepth.Width = (UINT)windowWidth;
+	descDepth.Height = (UINT)windowHeight;
 	descDepth.MipLevels = 1u;
 	descDepth.ArraySize = 1u;
 	descDepth.Format = DXGI_FORMAT_D32_FLOAT;
@@ -110,8 +110,8 @@ Graphics::Graphics(HWND hWnd)
 	//
 	// (includes screen size, but could be sub-portion of screen too)
 	D3D11_VIEWPORT vp;
-	vp.Width = 800;
-	vp.Height = 600;
+	vp.Width = windowWidth;
+	vp.Height = windowHeight;
 	vp.MinDepth = 0;
 	vp.MaxDepth = 1;
 	vp.TopLeftX = 0;

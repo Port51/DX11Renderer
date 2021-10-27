@@ -53,7 +53,7 @@ public:
 	};
 
 public:
-	Graphics(HWND hWnd);
+	Graphics(HWND hWnd, int windowWidth, int windowHeight);
 	Graphics(const Graphics&) = delete; // here because of destructor, but don't want this...
 	Graphics& operator=(const Graphics&) = delete; // here because of destructor, but don't want this...
 	~Graphics() = default;

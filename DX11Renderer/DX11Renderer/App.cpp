@@ -18,7 +18,7 @@ GDIPlusManager gdipm;
 
 App::App()
 	:
-	wnd(800, 600, "The Donkey Fart Box"),
+	wnd(ResolutionX, ResolutionY, "The Donkey Fart Box"),
 	light(wnd.Gfx(), dx::XMFLOAT3(2.2f, 3.2f, 4.2f))
 {
 	class Factory
