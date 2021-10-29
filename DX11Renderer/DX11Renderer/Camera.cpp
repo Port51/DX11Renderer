@@ -3,6 +3,12 @@
 
 namespace dx = DirectX;
 
+Camera::Camera(float fov, float aspect)
+	: fov(fov), aspect(aspect)
+{
+	UpdateProjectionMatrix();
+}
+
 DirectX::XMMATRIX Camera::GetViewMatrix() const
 {
 	// LookAt fails if position = target
@@ -16,6 +22,28 @@ DirectX::XMMATRIX Camera::GetViewMatrix() const
 	// +Y = up
 	return dx::XMMatrixLookAtLH(pos, dx::XMVectorZero(), dx::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f))
 		* dx::XMMatrixRotationRollPitchYaw(pitch, -yaw, roll);
+}
+
+DirectX::XMMATRIX Camera::GetProjectionMatrix() const
+{
+	return projectionMatrix;
+}
+
+void Camera::SetFOV(float _fov)
+{
+	fov = _fov;
+	UpdateProjectionMatrix();
+}
+
+void Camera::SetAspect(float _aspect)
+{
+	aspect = _aspect;
+	UpdateProjectionMatrix();
+}
+
+void Camera::UpdateProjectionMatrix()
+{
+	projectionMatrix = dx::XMMatrixPerspectiveFovLH(dx::XMConvertToRadians(fov), aspect, 0.5f, 100.0f);
 }
 
 void Camera::DrawImguiControlWindow()

@@ -204,9 +204,9 @@ DirectX::XMMATRIX Graphics::GetProjectionMatrix() const
 	return projectionMatrix;
 }
 
-void Graphics::SetViewMatrix(DirectX::FXMMATRIX cam)
+void Graphics::SetViewMatrix(DirectX::FXMMATRIX _viewMatrix)
 {
-	viewMatrix = cam;
+	viewMatrix = _viewMatrix;
 }
 
 DirectX::XMMATRIX Graphics::GetViewMatrix() const

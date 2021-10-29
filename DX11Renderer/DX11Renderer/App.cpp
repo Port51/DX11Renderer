@@ -19,7 +19,8 @@ GDIPlusManager gdipm;
 App::App()
 	:
 	wnd(ResolutionX, ResolutionY, "DX11 Renderer"),
-	light(wnd.Gfx(), dx::XMFLOAT3(2.2f, 3.2f, 4.2f))
+	light(wnd.Gfx(), dx::XMFLOAT3(2.2f, 3.2f, 4.2f)),
+	cam(40.0f, (float)ResolutionX / (float)ResolutionY)
 {
 	class Factory
 	{
@@ -97,7 +98,7 @@ App::App()
 	std::generate_n(std::back_inserter(drawables), nDrawables, f);
 
 	//wnd.Gfx().SetProjectionMatrix(dx::XMMatrixPerspectiveLH(1.0f, (float)ResolutionY / (float)ResolutionX, 0.5f, 40.0f));
-	wnd.Gfx().SetProjectionMatrix(dx::XMMatrixPerspectiveFovLH(dx::XMConvertToRadians(40.0f), (float)ResolutionX / (float)ResolutionY, 0.5f, 100.0f));
+	//wnd.Gfx().SetProjectionMatrix(dx::XMMatrixPerspectiveFovLH(dx::XMConvertToRadians(40.0f), (float)ResolutionX / (float)ResolutionY, 0.5f, 100.0f));
 }
 
 App::~App()
@@ -123,6 +124,7 @@ void App::DoFrame()
 
 	wnd.Gfx().BeginFrame(0.f, 0.f, 0.f);
 	wnd.Gfx().SetViewMatrix(cam.GetViewMatrix());
+	wnd.Gfx().SetProjectionMatrix(cam.GetProjectionMatrix());
 
 	light.Bind(wnd.Gfx(), cam.GetViewMatrix());
 	for (auto& b : drawables)
