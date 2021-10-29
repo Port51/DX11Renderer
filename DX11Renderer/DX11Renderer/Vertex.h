@@ -12,7 +12,6 @@ namespace hw3dexp
 		unsigned char g;
 		unsigned char b;
 	};
-}
 
 	class VertexLayout
 	{
@@ -197,7 +196,9 @@ namespace hw3dexp
 		std::vector<Element> elements;
 	};
 
-	// Exists as view into vertex that exists in VertexBuffer
+	///
+	/// Read-only view of vertex that exists in VertexBuffer
+	///
 	class Vertex
 	{
 		friend class VertexBuffer;
@@ -246,7 +247,7 @@ namespace hw3dexp
 				assert("Bad element type" && false);
 			}
 		}
-	protected:
+	public:
 		Vertex(char* pData, const VertexLayout& layout) noexcept(!IS_DEBUG)
 			:
 			pData(pData),
@@ -286,6 +287,9 @@ namespace hw3dexp
 		const VertexLayout& layout;
 	};
 
+	///
+	/// Read-only view of vertex data that exists in VertexBuffer
+	///
 	class ConstVertex
 	{
 	public:
@@ -372,4 +376,4 @@ namespace hw3dexp
 		std::vector<char> buffer; // vector of bytes
 		VertexLayout layout; // structure of these bytes
 	};
-//}
+}

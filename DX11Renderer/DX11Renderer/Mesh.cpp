@@ -3,6 +3,7 @@
 #include "GraphicsThrowMacros.h"
 #include "PixelConstantBuffer.h"
 #include "FBXLoader.h"
+#include "Vertex.h"
 //#include "Sphere.h"
 
 namespace dx = DirectX;
@@ -12,19 +13,34 @@ Mesh::Mesh(Graphics& gfx, DirectX::XMFLOAT3 materialColor, dx::XMFLOAT3 instance
 
 	if (!IsStaticInitialized())
 	{
+		using hw3dexp::VertexLayout;
 		struct Vertex
 		{
 			dx::XMFLOAT3 pos;
 			dx::XMFLOAT3 normal;
 		};
+		hw3dexp::VertexBuffer vbuf(std::move(
+			VertexLayout{}
+				.Append(VertexLayout::Position3D)
+				.Append(VertexLayout::Normal)
+		));
+
 		//auto model = Sphere::Make<Vertex>();
 		IndexedTriangleList<Vertex> model;
 		//FBXLoader::LoadFBX("Models\\CubeFBX.fbx", &model);
 		FBXLoader::LoadFBX("Models\\HeadTriangulated.fbx", &model, 1.5f);
 		model.SetNormalsIndependentFlat();
 
+		for (unsigned int i = 0; i < model.vertices.size(); ++i)
+		{
+			vbuf.EmplaceBack(
+				model.vertices[i].pos,
+				model.vertices[i].normal
+			);
+		}
+
 		//model.Transform(dx::XMMatrixScaling(1.f, 1.f, 1.2f));
-		AddStaticBind(std::make_unique<VertexBuffer>(gfx, model.vertices));
+		AddStaticBind(std::make_unique<VertexBuffer>(gfx, vbuf));
 
 		auto pvs = std::make_unique<VertexShader>(gfx, L"PhongVS.cso");
 		auto pvsbc = pvs->GetBytecode();
