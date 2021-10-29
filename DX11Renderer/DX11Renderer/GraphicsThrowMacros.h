@@ -1,5 +1,7 @@
 #pragma once
 
+#define THROW_GFX_EXCEPT(message) assert(message && false)
+
 // Graphics exception checking/throwing macros (some with dxgi infos)
 #define GFX_EXCEPT_NOINFO(hr) Graphics::HrException( __LINE__,__FILE__,(hr) )
 // This one checks for failure and throws if it fails

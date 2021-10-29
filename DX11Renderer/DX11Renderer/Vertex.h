@@ -27,7 +27,13 @@ namespace hw3dexp
 			BGRAColor,
 			Count,
 		};
+		// template metaprogramming
+		// make struct templated on ElementType
+		// becomes compile-time lookup
+		// and allows storing all settings in one place
 		template<ElementType> struct Map;
+
+		// "Template specializations" in above Map
 		template<> struct Map<Position2D>
 		{
 			using SysType = DirectX::XMFLOAT2;
@@ -110,13 +116,16 @@ namespace hw3dexp
 				case BGRAColor:
 					return sizeof(Map<BGRAColor>::SysType);
 				}
-				assert("Invalid element type" && false);
+				THROW_GFX_EXCEPT("Invalid element type");
 				return 0u;
 			}
 			ElementType GetType() const noexcept
 			{
 				return type;
 			}
+			///
+			/// Get layout description
+			///
 			D3D11_INPUT_ELEMENT_DESC GetDesc() const noexcept(!IS_DEBUG)
 			{
 				switch (type)
@@ -136,14 +145,23 @@ namespace hw3dexp
 				case BGRAColor:
 					return GenerateDesc<BGRAColor>(GetOffset());
 				}
-				assert("Invalid element type" && false);
+				THROW_GFX_EXCEPT("Invalid element type");
 				return { "INVALID",0,DXGI_FORMAT_UNKNOWN,0,0,D3D11_INPUT_PER_VERTEX_DATA,0 };
 			}
 		private:
 			template<ElementType type>
 			static constexpr D3D11_INPUT_ELEMENT_DESC GenerateDesc(size_t offset) noexcept(!IS_DEBUG)
 			{
-				return { Map<type>::semantic,0,Map<type>::dxgiFormat,0,(UINT)offset,D3D11_INPUT_PER_VERTEX_DATA,0 };
+				// IN ORDER:
+				// Semantic "Position" must match vertex shader semantic
+				// The 0 after = index of semantic
+				// Format = simple...
+				// Slot = ...
+				// Offset in bytes in structure
+				// Vert vs. instances
+				// Instance stuff
+				// EXAMPLE: { "Position", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+				return { Map<type>::semantic, 0, Map<type>::dxgiFormat, 0, (UINT)offset, D3D11_INPUT_PER_VERTEX_DATA, 0 };
 			}
 		private:
 			ElementType type;
@@ -161,7 +179,7 @@ namespace hw3dexp
 					return e;
 				}
 			}
-			assert("Could not resolve element type" && false);
+			THROW_GFX_EXCEPT("Could not resolve element type");
 			return elements.front();
 		}
 		const Element& ResolveByIndex(size_t i) const noexcept(!IS_DEBUG)
@@ -182,6 +200,9 @@ namespace hw3dexp
 		{
 			return elements.size();
 		}
+		///
+		/// Returns layout description, including shader semantics
+		///
 		std::vector<D3D11_INPUT_ELEMENT_DESC> GetD3DLayout() const noexcept(!IS_DEBUG)
 		{
 			std::vector<D3D11_INPUT_ELEMENT_DESC> desc;
@@ -244,7 +265,7 @@ namespace hw3dexp
 				SetAttribute<VertexLayout::BGRAColor>(pAttribute, std::forward<T>(val));
 				break;
 			default:
-				assert("Bad element type" && false);
+				THROW_GFX_EXCEPT("Bad element type");
 			}
 		}
 	public:
@@ -279,7 +300,7 @@ namespace hw3dexp
 			}
 			else
 			{
-				assert("Parameter attribute type mismatch" && false);
+				THROW_GFX_EXCEPT("Parameter attribute type mismatch");
 			}
 		}
 	private:

@@ -50,11 +50,6 @@ Mesh::Mesh(Graphics& gfx, DirectX::XMFLOAT3 materialColor, dx::XMFLOAT3 instance
 
 		AddStaticIndexBuffer(std::make_unique<IndexBuffer>(gfx, model.indices));
 
-		const std::vector<D3D11_INPUT_ELEMENT_DESC> ied =
-		{
-			{ "Position",0,DXGI_FORMAT_R32G32B32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0 },
-			{ "Normal",0,DXGI_FORMAT_R32G32B32_FLOAT,0,12u,D3D11_INPUT_PER_VERTEX_DATA,0 },
-		};
 		/*const std::vector<D3D11_INPUT_ELEMENT_DESC> ied = {
 			// IN ORDER:
 			// Semantic "Position" must match vertex shader semantic
@@ -67,7 +62,7 @@ Mesh::Mesh(Graphics& gfx, DirectX::XMFLOAT3 materialColor, dx::XMFLOAT3 instance
 			{ "Position", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 			//{ "Color", 0, DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM, 0, 12u, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		};*/
-		AddStaticBind(std::make_unique<InputLayout>(gfx, ied, pvsbc));
+		AddStaticBind(std::make_unique<InputLayout>(gfx, vbuf.GetLayout().GetD3DLayout(), pvsbc));
 
 		AddStaticBind(std::make_unique<Topology>(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
 	}
