@@ -7,7 +7,7 @@
 
 namespace dx = DirectX;
 
-Mesh::Mesh(Graphics& gfx, DirectX::XMFLOAT3 materialColor, dx::XMFLOAT3 scale)
+Mesh::Mesh(Graphics& gfx, DirectX::XMFLOAT3 materialColor, dx::XMFLOAT3 instanceScale)
 {
 
 	if (!IsStaticInitialized())
@@ -20,7 +20,7 @@ Mesh::Mesh(Graphics& gfx, DirectX::XMFLOAT3 materialColor, dx::XMFLOAT3 scale)
 		//auto model = Sphere::Make<Vertex>();
 		IndexedTriangleList<Vertex> model;
 		//FBXLoader::LoadFBX("Models\\CubeFBX.fbx", &model);
-		FBXLoader::LoadFBX("Models\\HeadTriangulated.fbx", &model);
+		FBXLoader::LoadFBX("Models\\HeadTriangulated.fbx", &model, 1.5f);
 		model.SetNormalsIndependentFlat();
 
 		//model.Transform(dx::XMMatrixScaling(1.f, 1.f, 1.2f));
@@ -74,7 +74,7 @@ Mesh::Mesh(Graphics& gfx, DirectX::XMFLOAT3 materialColor, dx::XMFLOAT3 scale)
 	AddBind(std::make_unique<PixelConstantBuffer<PSMaterialConstant>>(gfx, colorConst, 1u));
 
 	// Instance scaling
-	dx::XMStoreFloat3x3(&mt, dx::XMMatrixScaling(scale.x, scale.y, scale.z));
+	dx::XMStoreFloat3x3(&mt, dx::XMMatrixScaling(instanceScale.x, instanceScale.y, instanceScale.z));
 }
 
 void Mesh::Update(float dt)

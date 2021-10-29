@@ -17,6 +17,12 @@ cbuffer ObjectCBuf
 	float specularPower;
 };
 
+float SCurve(float x)
+{
+    // (3x^2 - 2x^3)
+    return (-2 * x + 3) * x * x; // OPS: [MAD] [MUL] [MUL]
+}
+
 float4 main(float3 positionVS : Position, float3 n : Normal) : SV_Target
 {
 	// fragment to light vector data
@@ -24,7 +30,7 @@ float4 main(float3 positionVS : Position, float3 n : Normal) : SV_Target
 	const float distToL = length(vToL);
 	const float3 dirToL = vToL / distToL;
 	// attenuation
-	const float att = 1.0f / (attConst + attLin * distToL + attQuad * (distToL * distToL));
+    const float att = SCurve(1.0f / (attConst + attLin * distToL + attQuad * (distToL * distToL)));
 	// diffuse intensity
 	const float3 diffuse = diffuseColor * diffuseIntensity * att * max(0.0f, dot(dirToL, n));
 	// reflected light vector

@@ -12,7 +12,7 @@ class FBXLoader
 
 public:
 	template<class V>
-	static HRESULT LoadFBX(const char* filename, IndexedTriangleList<V>* pResult)
+	static HRESULT LoadFBX(const char* filename, IndexedTriangleList<V>* pResult, float scale = 1.f)
 	{
 		if (g_pFbxSdkManager == nullptr)
 		{
@@ -54,11 +54,14 @@ public:
 				FbxVector4* pVertices = pMesh->GetControlPoints();
 				//pMesh->GetTextureUV()
 
+				// To convert to XMFLOAT3, use this:
+				// *reinterpret_cast<dx::XMFLOAT3*>(&pMesh->mNormals[i])
+
 				// Verts
 				for (int j = 0; j < pMesh->GetControlPointsCount(); ++j)
 				{
 					V vertex;
-					vertex.pos = { (float)pVertices[j].mData[0], (float)pVertices[j].mData[1], (float)pVertices[j].mData[2] };
+					vertex.pos = { (float)pVertices[j].mData[0] * scale, (float)pVertices[j].mData[1] * scale, (float)pVertices[j].mData[2] * scale };
 					pResult->vertices.push_back(vertex);
 				}
 
