@@ -11,6 +11,7 @@
 #include "Mesh.h"
 #include "GDIPlusManager.h"
 #include "Imgui/imgui.h"
+#include "Vertex.h" // temp
 
 namespace dx = DirectX;
 
@@ -22,6 +23,14 @@ App::App()
 	light(wnd.Gfx(), dx::XMFLOAT3(2.2f, 3.2f, 4.2f)),
 	cam(40.0f, (float)ResolutionX / (float)ResolutionY)
 {
+	// Quick test of VertexLayout
+	/*VertexLayout vl;
+	vl.Append(VertexLayout::Position3D)
+		.Append(VertexLayout::Normal);
+	VertexBuffer vb(std::move(vl));
+	vb.EmplaceBack(dx::XMFLOAT3{ 1.f, 1.f, 1.f }, dx::XMFLOAT3{ 1.f, 1.f, 1.f });
+	auto pos = vb[0].Attr<VertexLayout::Position3D>();*/
+
 	class Factory
 	{
 	public:
