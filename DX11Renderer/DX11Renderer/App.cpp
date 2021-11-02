@@ -9,6 +9,7 @@
 #include "Surface.h"
 #include "Cylinder.h"
 #include "Mesh.h"
+#include "ModelInstance.h"
 #include "GDIPlusManager.h"
 #include "Imgui/imgui.h"
 #include "VertexInclude.h" // temp
@@ -45,7 +46,8 @@ App::App()
 			switch (typedist(rng))
 			{
 			case 0:
-				return std::make_unique<Mesh>(gfx, materialColor, dx::XMFLOAT3(3.f, 3.f, 3.f));
+				return std::make_unique<ModelInstance>(gfx, materialColor, dx::XMFLOAT3(3.f, 3.f, 3.f));
+				//return std::make_unique<Mesh>(gfx, materialColor, dx::XMFLOAT3(3.f, 3.f, 3.f));
 			/*case 0:
 				return std::make_unique<Box>(
 					gfx, rng, adist, ddist,
