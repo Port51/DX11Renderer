@@ -12,6 +12,7 @@
 #include "ModelInstance.h"
 #include "GDIPlusManager.h"
 #include "Imgui/imgui.h"
+#include "FBXImporter.h"
 #include "VertexInclude.h" // temp
 
 namespace dx = DirectX;
@@ -32,6 +33,8 @@ App::App()
 	vb.EmplaceBack(dx::XMFLOAT3{ 1.f, 1.f, 1.f }, dx::XMFLOAT3{ 1.f, 1.f, 1.f });
 	auto pos = vb[0].Attr<VertexLayout::Position3D>();*/
 
+	auto pModelAsset = FBXImporter::LoadFBX("Models\\HeadTriangulated.fbx", true);
+
 	class Factory
 	{
 	public:
@@ -46,7 +49,7 @@ App::App()
 			switch (typedist(rng))
 			{
 			case 0:
-				return std::make_unique<ModelInstance>(gfx, materialColor, dx::XMFLOAT3(3.f, 3.f, 3.f));
+				return std::make_unique<ModelInstance>(gfx, "Models\\HeadTriangulated.fbx", materialColor, dx::XMFLOAT3(3.f, 3.f, 3.f));
 				//return std::make_unique<Mesh>(gfx, materialColor, dx::XMFLOAT3(3.f, 3.f, 3.f));
 			/*case 0:
 				return std::make_unique<Box>(

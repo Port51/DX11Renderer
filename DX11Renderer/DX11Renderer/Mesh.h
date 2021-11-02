@@ -4,10 +4,9 @@
 class Mesh : public DrawableTemplated<Mesh>
 {
 public:
-	Mesh(Graphics& gfx, DirectX::XMFLOAT3 materialColor, DirectX::XMFLOAT3 scale);
-	void Update(float dt) override;
+	Mesh(Graphics& gfx, std::vector<std::unique_ptr<Bindable>> pBindables);
+	void Draw(Graphics& gfx, DirectX::FXMMATRIX accumulatedTransform) const;
 	DirectX::XMMATRIX GetTransformXM() const override;
 private:
-	// model transform
-	DirectX::XMFLOAT3X3 mt;
+	mutable DirectX::XMFLOAT4X4 modelMatrix;
 };

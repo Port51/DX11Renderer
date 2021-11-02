@@ -10,16 +10,9 @@ class ModelInstanceUtil
 public:
 	static std::unique_ptr<ModelInstance> CreateModelInstance(std::unique_ptr<ModelAsset> const& pSource)
 	{
-		auto pSceneGraph = CreateModelInstanceSceneGraph(pSource->pSceneGraph);
+		auto pSceneGraph = CreateModelInstanceNode(pSource->pSceneGraph);
 		auto pInstance = std::make_unique<ModelInstance>(std::move(pSceneGraph));
 		return std::move(pInstance);
-	}
-
-	static std::unique_ptr<SceneGraph<MeshInstance>> CreateModelInstanceSceneGraph(std::unique_ptr<SceneGraph<MeshAsset>> const& pSourceGraph)
-	{
-		auto pRootNode = CreateModelInstanceNode(pSourceGraph->pRootNode);
-		auto pSceneGraph = std::make_unique<SceneGraph<MeshInstance>>(std::move(pRootNode));
-		return std::move(pSceneGraph);
 	}
 
 	static std::unique_ptr<SceneGraphNode<MeshInstance>> CreateModelInstanceNode(std::unique_ptr<SceneGraphNode<MeshAsset>> const& pSourceNode)

@@ -1,7 +1,7 @@
 #pragma once
 #include <assert.h>
 #include <stdio.h>
-#include "SceneGraph.h"
+#include "SceneGraphNode.h"
 #include "MeshAsset.h"
 #include "DebugHelper.h"
 
@@ -9,7 +9,7 @@ class ModelAsset
 {
 	friend class ModelInstanceUtil;
 public:
-	ModelAsset(std::unique_ptr<SceneGraph<MeshAsset>> _pSceneGraph)
+	ModelAsset(std::unique_ptr<SceneGraphNode<MeshAsset>> _pSceneGraph)
 		: pSceneGraph(std::move(_pSceneGraph))
 	{
 
@@ -29,5 +29,5 @@ public:
 	}
 
 private:
-	std::unique_ptr<SceneGraph<MeshAsset>> pSceneGraph;
+	std::unique_ptr<SceneGraphNode<MeshAsset>> pSceneGraph;
 };

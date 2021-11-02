@@ -73,6 +73,9 @@
     <Filter Include="Header Files\VertexData">
       <UniqueIdentifier>{47cdc64d-d4a1-4d88-9540-9dbd4d084d36}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\SceneGraphs">
+      <UniqueIdentifier>{2bbedfeb-842d-41ec-975e-26cf3c1bc159}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -401,12 +404,6 @@
     <ClInclude Include="ModelAsset.h">
       <Filter>Header Files\FBXImporter</Filter>
     </ClInclude>
-    <ClInclude Include="SceneGraph.h">
-      <Filter>Header Files\FBXImporter</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneGraphNode.h">
-      <Filter>Header Files\FBXImporter</Filter>
-    </ClInclude>
     <ClInclude Include="DebugHelper.h">
       <Filter>Header Files\FBXImporter</Filter>
     </ClInclude>
@@ -436,6 +433,9 @@
     </ClInclude>
     <ClInclude Include="VertexBufferData.h">
       <Filter>Header Files\VertexData</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneGraphNode.h">
+      <Filter>Header Files\SceneGraphs</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
