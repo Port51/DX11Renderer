@@ -25,7 +25,7 @@ public:
 
 		GFX_THROW_INFO(GetDevice(gfx)->CreateBuffer(&bd, &sd, &pVertexBuffer));
 	}
-	VertexBuffer(Graphics& gfx, const hw3dexp::VertexBuffer& vbuf)
+	VertexBuffer(Graphics& gfx, const VertexBufferData& vbuf)
 		: stride((UINT)vbuf.GetLayout().Size()) // size of single vertex
 	{
 		SETUP_LOGGING(gfx);

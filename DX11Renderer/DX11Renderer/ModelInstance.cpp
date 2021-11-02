@@ -19,7 +19,7 @@ ModelInstance::ModelInstance(Graphics& gfx, DirectX::XMFLOAT3 materialColor, dx:
 			dx::XMFLOAT3 pos;
 			dx::XMFLOAT3 normal;
 		};
-		hw3dexp::VertexBuffer vbuf(std::move(
+		VertexBufferData vbuf(std::move(
 			VertexLayout{}
 				.Append(VertexLayout::Position3D)
 				.Append(VertexLayout::Normal)
