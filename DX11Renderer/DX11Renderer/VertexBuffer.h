@@ -1,7 +1,7 @@
 #pragma once
 #include "Bindable.h"
 #include "GraphicsThrowMacros.h"
-#include "Vertex.h"
+#include "VertexInclude.h"
 
 class VertexBuffer : public Bindable
 {

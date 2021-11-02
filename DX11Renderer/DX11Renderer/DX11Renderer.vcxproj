@@ -185,6 +185,7 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Melon.cpp" />
     <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="ModelInstance.cpp" />
     <ClCompile Include="Mouse.cpp" />
     <ClCompile Include="PixelShader.cpp" />
     <ClCompile Include="PointLight.cpp" />
@@ -205,6 +206,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
+    <ClInclude Include="BaseMesh.h" />
+    <ClInclude Include="Colors.h" />
     <ClInclude Include="Bindable.h" />
     <ClInclude Include="BindableCodex_deprecated.h" />
     <ClInclude Include="BindableInclude.h" />
@@ -216,10 +219,12 @@
     <ClInclude Include="Cube.h" />
     <ClInclude Include="CustomException.h" />
     <ClInclude Include="Cylinder.h" />
+    <ClInclude Include="DebugHelper.h" />
     <ClInclude Include="Drawable.h" />
     <ClInclude Include="DrawableTemplated.h" />
     <ClInclude Include="dxerr.h" />
     <ClInclude Include="DxgiInfoManager.h" />
+    <ClInclude Include="FBXImporter.h" />
     <ClInclude Include="FBXLoader.h" />
     <ClInclude Include="GDIPlusManager.h" />
     <ClInclude Include="GeoMath.h" />
@@ -240,6 +245,10 @@
     <ClInclude Include="Keyboard.h" />
     <ClInclude Include="Melon.h" />
     <ClInclude Include="Mesh.h" />
+    <ClInclude Include="MeshAsset.h" />
+    <ClInclude Include="ModelAsset.h" />
+    <ClInclude Include="ModelInstance.h" />
+    <ClInclude Include="ModelInstanceUtil.h" />
     <ClInclude Include="Mouse.h" />
     <ClInclude Include="PixelConstantBuffer.h" />
     <ClInclude Include="PixelShader.h" />
@@ -249,6 +258,8 @@
     <ClInclude Include="Pyramid.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Sampler.h" />
+    <ClInclude Include="SceneGraph.h" />
+    <ClInclude Include="SceneGraphNode.h" />
     <ClInclude Include="Sheet.h" />
     <ClInclude Include="SkinnedBox.h" />
     <ClInclude Include="SolidSphere.h" />
@@ -262,6 +273,8 @@
     <ClInclude Include="Vertex.h" />
     <ClInclude Include="VertexBuffer.h" />
     <ClInclude Include="VertexConstantBuffer.h" />
+    <ClInclude Include="VertexInclude.h" />
+    <ClInclude Include="VertexLayout.h" />
     <ClInclude Include="VertexShader.h" />
     <ClInclude Include="Window.h" />
     <ClInclude Include="WindowsInclude.h" />

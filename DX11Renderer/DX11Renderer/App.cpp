@@ -11,7 +11,7 @@
 #include "Mesh.h"
 #include "GDIPlusManager.h"
 #include "Imgui/imgui.h"
-#include "Vertex.h" // temp
+#include "VertexInclude.h" // temp
 
 namespace dx = DirectX;
 

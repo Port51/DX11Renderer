@@ -1,4 +1,4 @@
-#include "Mesh.h"
+#include "ModelInstance.h"
 #include "BindableInclude.h"
 #include "GraphicsThrowMacros.h"
 #include "PixelConstantBuffer.h"
@@ -8,7 +8,7 @@
 
 namespace dx = DirectX;
 
-Mesh::Mesh(Graphics& gfx, DirectX::XMFLOAT3 materialColor, dx::XMFLOAT3 instanceScale)
+ModelInstance::ModelInstance(Graphics& gfx, DirectX::XMFLOAT3 materialColor, dx::XMFLOAT3 instanceScale)
 {
 
 	if (!IsStaticInitialized())
@@ -88,12 +88,12 @@ Mesh::Mesh(Graphics& gfx, DirectX::XMFLOAT3 materialColor, dx::XMFLOAT3 instance
 	dx::XMStoreFloat3x3(&mt, dx::XMMatrixScaling(instanceScale.x, instanceScale.y, instanceScale.z));
 }
 
-void Mesh::Update(float dt)
+void ModelInstance::Update(float dt)
 {
 	// nothing yet
 }
 
-DirectX::XMMATRIX Mesh::GetTransformXM() const
+DirectX::XMMATRIX ModelInstance::GetTransformXM() const
 {
 	return DirectX::XMLoadFloat3x3(&mt);
 }
