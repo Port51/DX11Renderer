@@ -7,7 +7,7 @@
 
 class ModelAsset
 {
-	friend class ModelInstanceUtil;
+	friend class ModelInstance;
 public:
 	ModelAsset(std::unique_ptr<SceneGraphNode<MeshAsset>> _pSceneGraph)
 		: pSceneGraph(std::move(_pSceneGraph))
@@ -20,7 +20,7 @@ public:
 		if (pSceneGraph)
 		{
 			printf("Model:\n");
-			pSceneGraph->Print();
+			pSceneGraph->Print(0);
 		}
 		else
 		{

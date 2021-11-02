@@ -9,6 +9,7 @@
 #include <DirectXMath.h>
 #include <memory>
 #include <random>
+#include "Log.h"
 
 class Graphics
 {
@@ -71,6 +72,8 @@ public:
 	DirectX::XMMATRIX GetProjectionMatrix() const;
 	void SetViewMatrix(DirectX::FXMMATRIX cam);
 	DirectX::XMMATRIX GetViewMatrix() const;
+public:
+	Log log;
 private:
 #ifndef NDEBUG
 	DxgiInfoManager infoManager;

@@ -10,7 +10,7 @@
 template<class M>
 class SceneGraphNode
 {
-	friend class ModelInstanceUtil;
+	friend class ModelInstance;
 public:
 	SceneGraphNode(std::unique_ptr<M> _pMesh, std::vector<std::unique_ptr<SceneGraphNode<M>>> _pChildNodes)
 		: pMesh(std::move(_pMesh)),
@@ -35,14 +35,14 @@ public:
 	{
 		if (pMesh)
 		{
-			PrintTabs(level);
+			DebugHelper::PrintTabs(level);
 			printf("<MESH NODE ");
 			printf(pMesh->name.c_str());
 			printf(">\n");
 		}
 		else
 		{
-			PrintTabs(level);
+			DebugHelper::PrintTabs(level);
 			printf("<empty node>\n");
 		}
 
@@ -55,4 +55,5 @@ public:
 private:
 	std::unique_ptr<M> pMesh;
 	std::vector<std::unique_ptr<SceneGraphNode<M>>> pChildNodes;
+	DirectX::XMMATRIX transform;
 };

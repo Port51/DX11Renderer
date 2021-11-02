@@ -34,13 +34,17 @@ App::App()
 	auto pos = vb[0].Attr<VertexLayout::Position3D>();*/
 
 	auto pModelAsset = FBXImporter::LoadFBX("Models\\HeadTriangulated.fbx", true);
+	wnd.Gfx().log.Info("Hello");
+	wnd.Gfx().log.Warning("Hello");
+	wnd.Gfx().log.Error("Ahhhhhh");
 
-	class Factory
+	return;
+	
+	/*class Factory
 	{
 	public:
-		Factory(Graphics& gfx)
-			:
-			gfx(gfx)
+		Factory(Graphics& gfx, std::unique_ptr<ModelAsset> const& pModelAssetRef)
+			: gfx(gfx), pModelAssetRef(pModelAssetRef)
 		{}
 		std::unique_ptr<Drawable> operator()()
 		{
@@ -49,43 +53,8 @@ App::App()
 			switch (typedist(rng))
 			{
 			case 0:
-				return std::make_unique<ModelInstance>(gfx, "Models\\HeadTriangulated.fbx", materialColor, dx::XMFLOAT3(3.f, 3.f, 3.f));
+				return std::make_unique<ModelInstance>(gfx, pModelAssetRef, materialColor, dx::XMFLOAT3(3.f, 3.f, 3.f));
 				//return std::make_unique<Mesh>(gfx, materialColor, dx::XMFLOAT3(3.f, 3.f, 3.f));
-			/*case 0:
-				return std::make_unique<Box>(
-					gfx, rng, adist, ddist,
-					odist, rdist, bdist, materialColor
-					);
-			case 1:
-				return std::make_unique<Cylinder>(
-					gfx, rng, adist, ddist, odist,
-					rdist, bdist, tessDist
-					);*/
-			/*case 0:
-				return std::make_unique<Pyramid>(
-					gfx, rng, adist, ddist,
-					odist, rdist
-					);
-			case 1:
-				return std::make_unique<Box>(
-					gfx, rng, adist, ddist,
-					odist, rdist, bdist
-					);
-			case 2:
-				return std::make_unique<Melon>(
-					gfx, rng, adist, ddist,
-					odist, rdist, longdist, latdist
-					);
-			case 3:
-				return std::make_unique<Sheet>(
-					gfx, rng, adist, ddist,
-					odist, rdist
-					);
-			case 4:
-				return std::make_unique<SkinnedBox>(
-					gfx, rng, adist, ddist,
-					odist, rdist
-					);*/
 			default:
 				assert(false && "bad drawable type in factory");
 				return {};
@@ -93,6 +62,7 @@ App::App()
 		}
 	private:
 		Graphics& gfx;
+		std::unique_ptr<ModelAsset> const& pModelAssetRef;
 		std::mt19937 rng{ std::random_device{}() };
 		std::uniform_int_distribution<int> tessDist{ 3,30 };
 		std::uniform_real_distribution<float> adist{ 0.0f,PI * 2.0f };
@@ -107,9 +77,9 @@ App::App()
 		std::uniform_int_distribution<int> typedist{ 0,0 };
 	};
 
-	Factory f(wnd.Gfx());
+	Factory f(wnd.Gfx(), pModelAsset);
 	drawables.reserve(nDrawables);
-	std::generate_n(std::back_inserter(drawables), nDrawables, f);
+	std::generate_n(std::back_inserter(drawables), nDrawables, f);*/
 
 	//wnd.Gfx().SetProjectionMatrix(dx::XMMatrixPerspectiveLH(1.0f, (float)ResolutionY / (float)ResolutionX, 0.5f, 40.0f));
 	//wnd.Gfx().SetProjectionMatrix(dx::XMMatrixPerspectiveFovLH(dx::XMConvertToRadians(40.0f), (float)ResolutionX / (float)ResolutionY, 0.5f, 100.0f));
@@ -157,9 +127,10 @@ void App::DoFrame()
 	}
 	ImGui::End();
 
-	// imgui windows to control camera and light
+	// imgui windows
 	cam.DrawImguiControlWindow();
 	light.DrawImguiControlWindow();
+	wnd.Gfx().log.DrawImguiControlWindow();
 
 	wnd.Gfx().EndFrame();
 

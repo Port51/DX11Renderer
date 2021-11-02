@@ -210,6 +210,9 @@
     <ClCompile Include="ModelInstance.cpp">
       <Filter>Source Files\Drawable</Filter>
     </ClCompile>
+    <ClCompile Include="Log.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WindowsInclude.h">
@@ -436,6 +439,9 @@
     </ClInclude>
     <ClInclude Include="SceneGraphNode.h">
       <Filter>Header Files\SceneGraphs</Filter>
+    </ClInclude>
+    <ClInclude Include="Log.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -7,7 +7,7 @@
 #include <DirectXMath.h>
 #include "ModelAsset.h"
 #include "MeshAsset.h"
-#include "SceneGraph.h"
+#include "SceneGraphNode.h"
 
 namespace dx = DirectX;
 
@@ -63,11 +63,10 @@ public:
 				if (pFbxRootNode)
 				{
 					//auto pSceneGraphRootNode = UnpackFbxSceneGraph(std::move(pFbxRootNode));
-					auto pSceneGraphRootNode = UnpackFbxSceneGraph(pFbxRootNode);
 #if defined(FBX_IMPORTER_VERBOSE)
 					printf("FBX Importer: Creating model scene graph...\n");
 #endif
-					auto pSceneGraph = std::make_unique<SceneGraph<MeshAsset>>(std::move(pSceneGraphRootNode));
+					auto pSceneGraph = UnpackFbxSceneGraph(pFbxRootNode);
 #if defined(FBX_IMPORTER_VERBOSE)
 					printf("FBX Importer: Creating model asset...\n");
 #endif
