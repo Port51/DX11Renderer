@@ -129,7 +129,6 @@ public:
 		auto pMesh = std::make_unique<MeshAsset>();
 		pMesh->name = name;
 
-		//auto pFbxVertices = std::make_unique<FbxVector4>(pFbxMesh->GetControlPoints());
 		FbxVector4* pFbxVertices = pFbxMesh->GetControlPoints();
 
 		// To convert to XMFLOAT3, use this:
@@ -141,8 +140,11 @@ public:
 			//auto fbxVertInfo = pFbxVertices.get()[j];
 			auto fbxVertInfo = pFbxVertices[j];
 			dx::XMFLOAT3 positionOS = { (float)fbxVertInfo.mData[0], (float)fbxVertInfo.mData[1], (float)fbxVertInfo.mData[2] };
+			
 			pMesh->vertices.push_back(positionOS);
 		}
+		pMesh->normals = std::move(GetNormals(pFbxMesh));
+		pMesh->hasNormals = pMesh->normals.size() > 0;
 
 		int* pIndices = pFbxMesh->GetPolygonVertices();
 
@@ -234,6 +236,74 @@ public:
 				}
 			}
 		}
+	}
+
+	//get mesh normals info
+	static std::vector<DirectX::XMFLOAT3> GetNormals(FbxMesh* pMesh)
+	{
+		std::vector<DirectX::XMFLOAT3> normals;
+
+		//get the normal element
+		FbxGeometryElementNormal* lNormalElement = pMesh->GetElementNormal();
+		if (lNormalElement)
+		{
+			//mapping mode is by control points. The mesh should be smooth and soft.
+			//we can get normals by retrieving each control point
+			if (lNormalElement->GetMappingMode() == FbxGeometryElement::eByControlPoint)
+			{
+				//Let's get normals of each vertex, since the mapping mode of normal element is by control point
+				for (int lVertexIndex = 0; lVertexIndex < pMesh->GetControlPointsCount(); lVertexIndex++)
+				{
+					int lNormalIndex = 0;
+					//reference mode is direct, the normal index is same as vertex index.
+					//get normals by the index of control vertex
+					if (lNormalElement->GetReferenceMode() == FbxGeometryElement::eDirect)
+						lNormalIndex = lVertexIndex;
+
+					//reference mode is index-to-direct, get normals by the index-to-direct
+					if (lNormalElement->GetReferenceMode() == FbxGeometryElement::eIndexToDirect)
+						lNormalIndex = lNormalElement->GetIndexArray().GetAt(lVertexIndex);
+
+					//Got normals of each vertex.
+					FbxVector4 lNormal = lNormalElement->GetDirectArray().GetAt(lNormalIndex);
+					normals.push_back(DirectX::XMFLOAT3(lNormal[0], lNormal[1], lNormal[2]));
+
+				}//end for lVertexIndex
+			}//end eByControlPoint
+			//mapping mode is by polygon-vertex.
+			//we can get normals by retrieving polygon-vertex.
+			else if (lNormalElement->GetMappingMode() == FbxGeometryElement::eByPolygonVertex)
+			{
+				int lIndexByPolygonVertex = 0;
+				//Let's get normals of each polygon, since the mapping mode of normal element is by polygon-vertex.
+				for (int lPolygonIndex = 0; lPolygonIndex < pMesh->GetPolygonCount(); lPolygonIndex++)
+				{
+					//get polygon size, you know how many vertices in current polygon.
+					int lPolygonSize = pMesh->GetPolygonSize(lPolygonIndex);
+					//retrieve each vertex of current polygon.
+					for (int i = 0; i < lPolygonSize; i++)
+					{
+						int lNormalIndex = 0;
+						//reference mode is direct, the normal index is same as lIndexByPolygonVertex.
+						if (lNormalElement->GetReferenceMode() == FbxGeometryElement::eDirect)
+							lNormalIndex = lIndexByPolygonVertex;
+
+						//reference mode is index-to-direct, get normals by the index-to-direct
+						if (lNormalElement->GetReferenceMode() == FbxGeometryElement::eIndexToDirect)
+							lNormalIndex = lNormalElement->GetIndexArray().GetAt(lIndexByPolygonVertex);
+
+						//Got normals of each polygon-vertex.
+						FbxVector4 lNormal = lNormalElement->GetDirectArray().GetAt(lNormalIndex);
+						normals.push_back(DirectX::XMFLOAT3(lNormal[0], lNormal[1], lNormal[2]));
+
+						lIndexByPolygonVertex++;
+					}//end for i //lPolygonSize
+				}//end for lPolygonIndex //PolygonCount
+
+			}//end eByPolygonVertex
+		}//end if lNormalElement
+
+		return std::move(normals);
 	}
 
 	// asserts face-independent vertices w/ normals cleared to zero
