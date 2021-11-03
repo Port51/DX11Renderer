@@ -75,7 +75,19 @@ public:
 
 					return std::move(pModelAsset);
 				}
+				else
+				{
+					assert("No root node was found in FBX" && false);
+				}
 			}
+			else
+			{
+				assert("Could not import FBX scene" && false);
+			}
+		}
+		else
+		{
+			assert("Could not initialize FBX importer" && false);
 		}
 
 		pImporter->Destroy();

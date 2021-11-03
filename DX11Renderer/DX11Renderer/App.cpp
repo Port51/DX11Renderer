@@ -26,8 +26,8 @@ App::App()
 	cam(40.0f, (float)ResolutionX / (float)ResolutionY)
 {
 	
-	//const char* fn = "Models\\SceneGraphTest.fbx";
-	const char* fn = "Models\\HeadTriangulated.fbx";
+	const char* fn = "Models\\SceneGraphTest.fbx";
+	//const char* fn = "Models\\HeadTriangulated.fbx";
 	auto pModelAsset = FBXImporter::LoadFBX(fn, true);
 	if (pModelAsset)
 	{
