@@ -4,11 +4,13 @@
 #include "PixelConstantBuffer.h"
 #include "FBXLoader.h"
 #include "VertexInclude.h"
+#include <exception>
 //#include "Sphere.h"
 
 namespace dx = DirectX;
 
-Mesh::Mesh(Graphics& gfx, std::vector<std::unique_ptr<Bindable>> pBindables)
+Mesh::Mesh(Graphics& gfx, std::string name, std::vector<std::unique_ptr<Bindable>> pBindables)
+	: name(name)
 {
 	if (!IsStaticInitialized())
 	{
@@ -16,9 +18,10 @@ Mesh::Mesh(Graphics& gfx, std::vector<std::unique_ptr<Bindable>> pBindables)
 	}
 	else
 	{
-		SetIndexFromStatic();
+		//SetIndexFromStatic();
 	}
 
+	bool hasIndexBuffer = false;
 	for (auto& pb : pBindables)
 	{
 		if (auto pi = dynamic_cast<IndexBuffer*>(pb.get()))
@@ -26,11 +29,16 @@ Mesh::Mesh(Graphics& gfx, std::vector<std::unique_ptr<Bindable>> pBindables)
 			// Special treatment for index buffer as we need a ptr to that
 			AddIndexBuffer(std::unique_ptr<IndexBuffer>{ pi });
 			pb.release();
+			hasIndexBuffer = true;
 		}
 		else
 		{
 			AddBind(std::move(pb));
 		}
+	}
+	if (!hasIndexBuffer)
+	{
+		throw std::runtime_error(std::string("Mesh '") + name + std::string("' is missing IndexBuffer!"));
 	}
 
 	// Instance bind

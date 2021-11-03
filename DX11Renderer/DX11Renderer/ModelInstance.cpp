@@ -4,6 +4,7 @@
 #include "PixelConstantBuffer.h"
 #include "ModelAsset.h"
 #include "VertexInclude.h"
+#include <exception>
 //#include "Sphere.h"
 
 namespace dx = DirectX;
@@ -60,6 +61,10 @@ std::unique_ptr<Mesh> ModelInstance::ParseMesh(Graphics& gfx, std::unique_ptr<Me
 		.Append(VertexLayout::Normal)
 	));
 
+	if (pMeshAsset->vertices.size() == 0)
+	{
+		throw std::runtime_error(std::string("Mesh '") + pMeshAsset->name + std::string("' has 0 vertices!"));
+	}
 	for (unsigned int i = 0; i < pMeshAsset->vertices.size(); ++i)
 	{
 		dx::XMFLOAT3 normals = (pMeshAsset->hasNormals) ? pMeshAsset->normals[i] : dx::XMFLOAT3(0, 0, 1);
@@ -75,6 +80,14 @@ std::unique_ptr<Mesh> ModelInstance::ParseMesh(Graphics& gfx, std::unique_ptr<Me
 	}
 
 	// todo: better way to copy this?
+	if (pMeshAsset->indices.size() == 0)
+	{
+		throw std::runtime_error(std::string("Mesh '") + pMeshAsset->name + std::string("' has 0 indices!"));
+	}
+	if (pMeshAsset->indices.size() % 3 != 0)
+	{
+		throw std::runtime_error(std::string("Mesh '") + pMeshAsset->name + std::string("' has indices which are not a multiple of 3!"));
+	}
 	std::vector<unsigned short> indices;
 	indices.reserve(pMeshAsset->indices.size());
 	for (unsigned int i = 0; i < pMeshAsset->indices.size(); ++i)
@@ -105,7 +118,7 @@ std::unique_ptr<Mesh> ModelInstance::ParseMesh(Graphics& gfx, std::unique_ptr<Me
 	} pmc;
 	bindablePtrs.push_back(std::make_unique<PixelConstantBuffer<PSMaterialConstant>>(gfx, pmc, 1u));
 
-	return std::make_unique<Mesh>(gfx, std::move(bindablePtrs));
+	return std::make_unique<Mesh>(gfx, pMeshAsset->name, std::move(bindablePtrs));
 }
 
 void Node::Draw(Graphics & gfx, DirectX::FXMMATRIX accumulatedTransform) const
