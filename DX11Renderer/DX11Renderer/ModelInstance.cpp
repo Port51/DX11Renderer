@@ -110,10 +110,12 @@ std::unique_ptr<Mesh> ModelInstance::ParseMesh(Graphics& gfx, std::unique_ptr<Me
 
 void Node::Draw(Graphics & gfx, DirectX::FXMMATRIX accumulatedTransform) const
 {
-	const auto combinedTransform =
+	auto combinedTransform =
 		//dx::XMLoadFloat4x4(&appliedTransform) *
 		dx::XMLoadFloat4x4(&transform) *
 		accumulatedTransform;
+
+	combinedTransform = dx::XMMatrixScaling(1.f, 1.f, 1.f); // debug --> todo: remove!!!!!!!
 
 	if (pMeshPtr)
 	{
