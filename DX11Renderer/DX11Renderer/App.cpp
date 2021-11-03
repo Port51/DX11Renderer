@@ -26,7 +26,9 @@ App::App()
 	cam(40.0f, (float)ResolutionX / (float)ResolutionY)
 {
 	
-	auto pModelAsset = FBXImporter::LoadFBX("Models\\HeadTriangulated.fbx", true);
+	//const char* fn = "Models\\SceneGraphTest.fbx";
+	const char* fn = "Models\\HeadTriangulated.fbx";
+	auto pModelAsset = FBXImporter::LoadFBX(fn, true);
 	if (pModelAsset)
 	{
 		wnd.Gfx().log.Info("Model loaded");

@@ -8,6 +8,7 @@
 #include "ModelAsset.h"
 #include "MeshAsset.h"
 #include "SceneGraphNode.h"
+#include "GraphicsThrowMacros.h"
 
 namespace dx = DirectX;
 
@@ -128,6 +129,7 @@ public:
 	{
 		auto pMesh = std::make_unique<MeshAsset>();
 		pMesh->name = name;
+		printf(name.c_str());
 
 		FbxVector4* pFbxVertices = pFbxMesh->GetControlPoints();
 
@@ -153,7 +155,7 @@ public:
 		}
 
 		//pMesh->normals = std::move(GetNormals(pFbxMesh));
-		pMesh->normals = GetFlatNormals(pMesh->vertices, pMesh->indices);
+		pMesh->normals = GetFlatNormals(pMesh->vertices, pFbxMesh);
 		pMesh->hasNormals = pMesh->normals.size() > 0;
 
 		return std::move(pMesh);
@@ -317,16 +319,23 @@ public:
 	}
 
 	// asserts face-independent vertices w/ normals cleared to zero
-	static std::vector<DirectX::XMFLOAT3> GetFlatNormals(const std::vector<DirectX::XMFLOAT3>& vertices, const std::vector<int>& indices)
+	static std::vector<DirectX::XMFLOAT3> GetFlatNormals(const std::vector<DirectX::XMFLOAT3>& vertices, const FbxMesh* pMesh)
 	{
 		using namespace DirectX;
 
 		std::vector<DirectX::XMFLOAT3> normals (vertices.size());
-		for (size_t i = 0; i < indices.size(); i += 3)
+
+		for (int pIdx = 0; pIdx < pMesh->GetPolygonCount(); pIdx++)
 		{
-			auto& v0 = vertices[indices[i]];
-			auto& v1 = vertices[indices[i + 1]];
-			auto& v2 = vertices[indices[i + 2]];
+			int lPolygonSize = pMesh->GetPolygonSize(pIdx);
+			int i0 = pMesh->GetPolygonVertex(pIdx, 0);
+			int i1 = pMesh->GetPolygonVertex(pIdx, 1);
+			int i2 = pMesh->GetPolygonVertex(pIdx, 2);
+
+			// For now, just take first 3 verts
+			auto& v0 = vertices[i0];
+			auto& v1 = vertices[i1];
+			auto& v2 = vertices[i2];
 
 			// Convert to vectors
 			const auto p0 = XMLoadFloat3(&v0);
@@ -335,9 +344,9 @@ public:
 
 			const auto n = XMVector3Normalize(XMVector3Cross((p1 - p0), (p2 - p0)));
 
-			XMStoreFloat3(&normals[indices[i]], n);
-			XMStoreFloat3(&normals[indices[i + 1]], n);
-			XMStoreFloat3(&normals[indices[i + 2]], n);
+			XMStoreFloat3(&normals[i0], n);
+			XMStoreFloat3(&normals[i1], n);
+			XMStoreFloat3(&normals[i2], n);
 		}
 
 		return normals;
