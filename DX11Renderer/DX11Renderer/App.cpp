@@ -25,18 +25,18 @@ App::App()
 	light(wnd.Gfx(), dx::XMFLOAT3(2.2f, 3.2f, 4.2f)),
 	cam(40.0f, (float)ResolutionX / (float)ResolutionY)
 {
-	// Quick test of VertexLayout
-	/*VertexLayout vl;
-	vl.Append(VertexLayout::Position3D)
-		.Append(VertexLayout::Normal);
-	VertexBuffer vb(std::move(vl));
-	vb.EmplaceBack(dx::XMFLOAT3{ 1.f, 1.f, 1.f }, dx::XMFLOAT3{ 1.f, 1.f, 1.f });
-	auto pos = vb[0].Attr<VertexLayout::Position3D>();*/
-
+	
 	auto pModelAsset = FBXImporter::LoadFBX("Models\\HeadTriangulated.fbx", true);
-	wnd.Gfx().log.Info("Hello");
-	wnd.Gfx().log.Warning("Hello");
-	wnd.Gfx().log.Error("Ahhhhhh");
+	if (pModelAsset)
+	{
+		wnd.Gfx().log.Info("Model loaded");
+	}
+	else
+	{
+		wnd.Gfx().log.Error("Failed to load model");
+	}
+
+	model = std::make_unique<ModelInstance>(wnd.Gfx(), pModelAsset, DirectX::XMFLOAT3{ 1.f, 1.f, 1.f }, dx::XMFLOAT3{ 1.f, 1.f, 1.f });
 
 	return;
 	
@@ -116,6 +116,7 @@ void App::DoFrame()
 		b->Update(wnd.kbd.KeyIsPressed(VK_SPACE) ? 0.f : dt);
 		b->Draw(wnd.Gfx());
 	}
+	model->Draw(wnd.Gfx());
 	light.Draw(wnd.Gfx());
 
 	// imgui window to control simulation speed

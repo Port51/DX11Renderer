@@ -9,6 +9,7 @@
 namespace dx = DirectX;
 
 ModelInstance::ModelInstance(Graphics& gfx, std::unique_ptr<ModelAsset> const& pModelAsset, DirectX::XMFLOAT3 materialColor, dx::XMFLOAT3 instanceScale)
+	: transform(dx::XMMatrixScaling(1.f, 1.f, 1.f))
 {
 	pSceneGraph = CreateModelInstanceNode(gfx, pModelAsset->pSceneGraph);
 
@@ -18,7 +19,7 @@ ModelInstance::ModelInstance(Graphics& gfx, std::unique_ptr<ModelAsset> const& p
 	}*/
 }
 
-void ModelInstance::Draw(Graphics& gfx, DirectX::FXMMATRIX transform) const
+void ModelInstance::Draw(Graphics& gfx) const
 {
 	pSceneGraph->Draw(gfx, transform);
 }
@@ -33,11 +34,16 @@ std::unique_ptr<Node> ModelInstance::CreateModelInstanceNode(Graphics& gfx, std:
 	}
 
 	auto pChildNodes = std::vector<std::unique_ptr<Node>>();
-	for (size_t i = 0; i < pSourceNode->pChildNodes.size(); ++i)
+	for (const auto& child : pSourceNode->pChildNodes)
 	{
-		auto pChildNode = CreateModelInstanceNode(gfx, pSourceNode->pChildNodes[i]);
+		auto pChildNode = CreateModelInstanceNode(gfx, child);
 		pChildNodes.emplace_back(std::move(pChildNode));
 	}
+	/*for (size_t i = 0; i < pSourceNode->pChildNodes.size(); ++i)
+	{
+		auto pChildNode = CreateModelInstanceNode(gfx, pSourceNode->pChildNodes[i]);
+		//pChildNodes.emplace_back(std::move(pChildNode));
+	}*/
 
 	auto pNode = std::make_unique<Node>(std::move(pMeshInstance), std::move(pChildNodes), pSourceNode->transform);
 	return std::move(pNode);
@@ -56,10 +62,16 @@ std::unique_ptr<Mesh> ModelInstance::ParseMesh(Graphics& gfx, std::unique_ptr<Me
 
 	for (unsigned int i = 0; i < pMeshAsset->vertices.size(); ++i)
 	{
+		dx::XMFLOAT3 normals = (pMeshAsset->hasNormals) ? pMeshAsset->normals[i] : dx::XMFLOAT3(0, 0, 1);
+
 		vbuf.EmplaceBack(
+			pMeshAsset->vertices[i],
+			normals
+		);
+		/*vbuf.EmplaceBack(
 			*reinterpret_cast<dx::XMFLOAT3*>(&pMeshAsset->vertices[i]),
 			*reinterpret_cast<dx::XMFLOAT3*>(&pMeshAsset->normals[i])
-		);
+		);*/
 	}
 
 	// todo: better way to copy this?

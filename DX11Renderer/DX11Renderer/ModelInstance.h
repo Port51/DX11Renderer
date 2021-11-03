@@ -26,7 +26,7 @@ class ModelInstance
 {
 public:
 	ModelInstance(Graphics& gfx, std::unique_ptr<ModelAsset> const& pModelAsset, DirectX::XMFLOAT3 materialColor, dx::XMFLOAT3 instanceScale);
-	void Draw(Graphics& gfx, DirectX::XMMATRIX transform) const;
+	void Draw(Graphics& gfx) const;
 private:
 	// todo: move these?
 	static std::unique_ptr<Mesh> ParseMesh(Graphics& gfx, std::unique_ptr<MeshAsset> const& pMeshAsset);
@@ -34,4 +34,5 @@ private:
 private:
 	std::unique_ptr<Node> pSceneGraph;
 	std::vector<std::unique_ptr<Mesh>> pMeshes;
+	DirectX::XMMATRIX transform;
 };

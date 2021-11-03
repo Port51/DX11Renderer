@@ -7,7 +7,7 @@ Log::Log()
 
 void Log::Info(const char* message)
 {
-	messages.push_back(LogMessage(LogMessage::LogMessageType::Info, std::string(message)));
+	Info(std::string(message));
 }
 
 void Log::Info(const std::string message)
@@ -17,7 +17,7 @@ void Log::Info(const std::string message)
 
 void Log::Warning(const char * message)
 {
-	messages.push_back(LogMessage(LogMessage::LogMessageType::Warning, std::string(message)));
+	Warning(std::string(message));
 }
 
 void Log::Warning(const std::string message)
@@ -27,7 +27,7 @@ void Log::Warning(const std::string message)
 
 void Log::Error(const char * message)
 {
-	messages.push_back(LogMessage(LogMessage::LogMessageType::Error, std::string(message)));
+	Error(std::string(message));
 }
 
 void Log::Error(const std::string message)

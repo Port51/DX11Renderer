@@ -4,6 +4,7 @@
 #include "ImguiManager.h"
 #include "Camera.h"
 #include "PointLight.h"
+#include "ModelInstance.h"
 
 class App
 {
@@ -21,6 +22,7 @@ private:
 	bool showDemoWindow = true;
 	Camera cam;
 	PointLight light;
+	std::unique_ptr<ModelInstance> model;
 	float simulationSpeed = 1.f;
 	std::vector<std::unique_ptr<class Drawable>> drawables;
 	static constexpr size_t nDrawables = 1;
