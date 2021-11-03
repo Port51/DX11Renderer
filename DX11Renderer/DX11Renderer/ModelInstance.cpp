@@ -9,8 +9,8 @@
 
 namespace dx = DirectX;
 
-ModelInstance::ModelInstance(Graphics& gfx, std::unique_ptr<ModelAsset> const& pModelAsset, DirectX::XMFLOAT3 materialColor, dx::XMFLOAT3 instanceScale)
-	: transform(dx::XMMatrixScaling(1.f, 1.f, 1.f))
+ModelInstance::ModelInstance(Graphics& gfx, std::unique_ptr<ModelAsset> const& pModelAsset, DirectX::XMFLOAT3 materialColor, dx::XMMATRIX transform)
+	: transform(transform) // todo: set position
 {
 	pSceneGraph = CreateModelInstanceNode(gfx, pModelAsset->pSceneGraph);
 
@@ -46,7 +46,7 @@ std::unique_ptr<Node> ModelInstance::CreateModelInstanceNode(Graphics& gfx, std:
 		//pChildNodes.emplace_back(std::move(pChildNode));
 	}*/
 
-	auto pNode = std::make_unique<Node>(std::move(pMeshInstance), std::move(pChildNodes), pSourceNode->transform);
+	auto pNode = std::make_unique<Node>(pSourceNode->localTransform, std::move(pMeshInstance), std::move(pChildNodes));
 	return std::move(pNode);
 }
 
@@ -125,10 +125,10 @@ void Node::Draw(Graphics & gfx, DirectX::FXMMATRIX accumulatedTransform) const
 {
 	auto combinedTransform =
 		//dx::XMLoadFloat4x4(&appliedTransform) *
-		dx::XMLoadFloat4x4(&transform) *
+		dx::XMLoadFloat4x4(&localTransform) *
 		accumulatedTransform;
 
-	combinedTransform = dx::XMMatrixScaling(1.f, 1.f, 1.f); // debug --> todo: remove!!!!!!!
+	//combinedTransform = dx::XMMatrixScaling(1.f, 1.f, 1.f); // debug --> todo: remove!!!!!!!
 
 	if (pMeshPtr)
 	{

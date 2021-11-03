@@ -38,7 +38,10 @@ App::App()
 		wnd.Gfx().log.Error("Failed to load model");
 	}
 
-	model = std::make_unique<ModelInstance>(wnd.Gfx(), pModelAsset, DirectX::XMFLOAT3{ 1.f, 1.f, 1.f }, dx::XMFLOAT3{ 1.f, 1.f, 1.f });
+	const auto modelTransform = 
+		dx::XMMatrixScaling(0.5f, 0.5f, 0.5f)
+		* dx::XMMatrixRotationRollPitchYaw(dx::XM_PI * -0.5f, 0.f, 0.f);
+	model = std::make_unique<ModelInstance>(wnd.Gfx(), pModelAsset, DirectX::XMFLOAT3{ 1.f, 1.f, 1.f }, modelTransform);
 
 	return;
 	

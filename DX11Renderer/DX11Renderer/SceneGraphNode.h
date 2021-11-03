@@ -12,8 +12,9 @@ class SceneGraphNode
 {
 	friend class ModelInstance;
 public:
-	SceneGraphNode(std::unique_ptr<M> _pMesh, std::vector<std::unique_ptr<SceneGraphNode<M>>> _pChildNodes)
-		: pMesh(std::move(_pMesh)),
+	SceneGraphNode(DirectX::XMMATRIX localTransform, std::unique_ptr<M> _pMesh, std::vector<std::unique_ptr<SceneGraphNode<M>>> _pChildNodes)
+		: localTransform(localTransform),
+		pMesh(std::move(_pMesh)),
 		pChildNodes(std::move(_pChildNodes))
 	{
 		// C++11 <type_traits> ensures M is a valid mesh type
@@ -55,5 +56,5 @@ public:
 private:
 	std::unique_ptr<M> pMesh;
 	std::vector<std::unique_ptr<SceneGraphNode<M>>> pChildNodes;
-	DirectX::XMMATRIX transform;
+	DirectX::XMMATRIX localTransform;
 };

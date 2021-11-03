@@ -12,7 +12,7 @@
 
 namespace dx = DirectX;
 
-#define FBX_IMPORTER_VERBOSE
+//#define FBX_IMPORTER_VERBOSE
 
 // Memory manager object
 static FbxManager* fbxSdkManager = nullptr;
@@ -32,45 +32,25 @@ public:
 		// Init memory manager if needed
 		if (fbxSdkManager == nullptr)
 		{
-#if defined(FBX_IMPORTER_VERBOSE)
-			printf("FBX Importer: Initializing FBX SDK manager...\n");
-#endif
 			fbxSdkManager = FbxManager::Create();
 
 			FbxIOSettings* pIOsettings = FbxIOSettings::Create(fbxSdkManager, IOSROOT);
 			fbxSdkManager->SetIOSettings(pIOsettings);
 		}
 
-#if defined(FBX_IMPORTER_VERBOSE)
-		printf("FBX Importer: Creating FBX importer...\n");
-#endif
 		FbxImporter* pImporter = FbxImporter::Create(fbxSdkManager, "");
 		if (pImporter->Initialize(filename, -1, fbxSdkManager->GetIOSettings()))
 		{
-#if defined(FBX_IMPORTER_VERBOSE)
-			printf("FBX Importer: Importing FBX scene...\n");
-#endif
 			FbxScene* pFbxScene = FbxScene::Create(fbxSdkManager, "");
 			if (pImporter->Import(pFbxScene))
 			{
 				pImporter->Destroy(); // no need to keep this around
-#if defined(FBX_IMPORTER_VERBOSE)
-				printf("FBX Importer: Processing scene graph...\n");
-#endif
 
 				// The root node should not contain any attributes
-				//auto pFbxRootNode = std::make_unique<FbxNode>(pFbxScene->GetRootNode());
 				FbxNode* pFbxRootNode = pFbxScene->GetRootNode();
 				if (pFbxRootNode)
 				{
-					//auto pSceneGraphRootNode = UnpackFbxSceneGraph(std::move(pFbxRootNode));
-#if defined(FBX_IMPORTER_VERBOSE)
-					printf("FBX Importer: Creating model scene graph...\n");
-#endif
 					auto pSceneGraph = UnpackFbxSceneGraph(pFbxRootNode);
-#if defined(FBX_IMPORTER_VERBOSE)
-					printf("FBX Importer: Creating model asset...\n");
-#endif
 					auto pModelAsset = std::make_unique<ModelAsset>(std::move(pSceneGraph));
 
 					return std::move(pModelAsset);
@@ -98,6 +78,23 @@ public:
 	//static std::unique_ptr<SceneGraphNode<MeshAsset>> UnpackFbxSceneGraph(std::unique_ptr<FbxNode> pFbxNode)
 	static std::unique_ptr<SceneGraphNode<MeshAsset>> UnpackFbxSceneGraph(FbxNode* pFbxNode)
 	{
+		const auto name = pFbxNode->GetName();
+
+		//
+		// Unpack transform
+		//
+		const auto fbxTransl = pFbxNode->LclTranslation.Get();
+		const auto fbxRot = pFbxNode->LclTranslation.Get();
+		const auto fbxScale = pFbxNode->LclTranslation.Get();
+		//dx::XMMatrixScaling()
+		const auto localTransform =
+			dx::XMMatrixScaling(1.f + fbxScale[0], 1.f + fbxScale[0], 1.f + fbxScale[0])
+			* dx::XMMatrixRotationRollPitchYaw(fbxRot[0], fbxRot[1], fbxRot[2]) // untested!
+			* dx::XMMatrixTranslation(fbxTransl[0], fbxTransl[1], fbxTransl[2]);
+
+		//
+		// Unpack mesh
+		//
 		auto pMeshAsset = std::unique_ptr<MeshAsset>();
 		if (pFbxNode->GetNodeAttribute())
 		{
@@ -118,7 +115,9 @@ public:
 			}
 		}
 
+		//
 		// Iterate through children
+		//
 		auto pChildNodes = std::vector<std::unique_ptr<SceneGraphNode<MeshAsset>>>();
 		for (int i = 0; i < pFbxNode->GetChildCount(); i++)
 		{
@@ -132,7 +131,7 @@ public:
 		}
 
 		auto pResult
-			= std::make_unique<SceneGraphNode<MeshAsset>>(std::move(pMeshAsset), std::move(pChildNodes));
+			= std::make_unique<SceneGraphNode<MeshAsset>>(localTransform, std::move(pMeshAsset), std::move(pChildNodes));
 		return std::move(pResult);
 	}
 
