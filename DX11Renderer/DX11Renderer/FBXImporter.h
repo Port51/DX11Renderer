@@ -139,12 +139,10 @@ public:
 		{
 			//auto fbxVertInfo = pFbxVertices.get()[j];
 			auto fbxVertInfo = pFbxVertices[j];
-			dx::XMFLOAT3 positionOS = { (float)fbxVertInfo.mData[0], (float)fbxVertInfo.mData[1], (float)fbxVertInfo.mData[2] };
+			dx::XMFLOAT3 positionOS = Vec4ToFloat3(fbxVertInfo);
 			
 			pMesh->vertices.push_back(positionOS);
 		}
-		pMesh->normals = std::move(GetNormals(pFbxMesh));
-		pMesh->hasNormals = pMesh->normals.size() > 0;
 
 		int* pIndices = pFbxMesh->GetPolygonVertices();
 
@@ -153,6 +151,10 @@ public:
 		{
 			pMesh->indices.push_back(pIndices[j]);
 		}
+
+		//pMesh->normals = std::move(GetNormals(pFbxMesh));
+		pMesh->normals = GetFlatNormals(pMesh->vertices, pMesh->indices);
+		pMesh->hasNormals = pMesh->normals.size() > 0;
 
 		return std::move(pMesh);
 	}
@@ -266,7 +268,7 @@ public:
 
 					//Got normals of each vertex.
 					FbxVector4 lNormal = lNormalElement->GetDirectArray().GetAt(lNormalIndex);
-					normals.push_back(DirectX::XMFLOAT3(lNormal[0], lNormal[1], lNormal[2]));
+					normals.push_back(Vec4ToFloat3(lNormal));
 
 				}//end for lVertexIndex
 			}//end eByControlPoint
@@ -294,7 +296,7 @@ public:
 
 						//Got normals of each polygon-vertex.
 						FbxVector4 lNormal = lNormalElement->GetDirectArray().GetAt(lNormalIndex);
-						normals.push_back(DirectX::XMFLOAT3(lNormal[0], lNormal[1], lNormal[2]));
+						normals.push_back(Vec4ToFloat3(lNormal));
 
 						lIndexByPolygonVertex++;
 					}//end for i //lPolygonSize
@@ -306,26 +308,39 @@ public:
 		return std::move(normals);
 	}
 
+	static DirectX::XMFLOAT3 Vec4ToFloat3(FbxVector4 vec)
+	{
+		return DirectX::XMFLOAT3(
+			static_cast<float>(vec[0]),
+			static_cast<float>(vec[1]),
+			static_cast<float>(vec[2]));
+	}
+
 	// asserts face-independent vertices w/ normals cleared to zero
-	/*void SetNormalsIndependentFlat()
+	static std::vector<DirectX::XMFLOAT3> GetFlatNormals(const std::vector<DirectX::XMFLOAT3>& vertices, const std::vector<int>& indices)
 	{
 		using namespace DirectX;
-		assert(indices.size() % 3 == 0 && indices.size() > 0);
+
+		std::vector<DirectX::XMFLOAT3> normals (vertices.size());
 		for (size_t i = 0; i < indices.size(); i += 3)
 		{
 			auto& v0 = vertices[indices[i]];
 			auto& v1 = vertices[indices[i + 1]];
 			auto& v2 = vertices[indices[i + 2]];
-			const auto p0 = XMLoadFloat3(&v0.pos);
-			const auto p1 = XMLoadFloat3(&v1.pos);
-			const auto p2 = XMLoadFloat3(&v2.pos);
+
+			// Convert to vectors
+			const auto p0 = XMLoadFloat3(&v0);
+			const auto p1 = XMLoadFloat3(&v1);
+			const auto p2 = XMLoadFloat3(&v2);
 
 			const auto n = XMVector3Normalize(XMVector3Cross((p1 - p0), (p2 - p0)));
 
-			XMStoreFloat3(&v0.normal, n);
-			XMStoreFloat3(&v1.normal, n);
-			XMStoreFloat3(&v2.normal, n);
+			XMStoreFloat3(&normals[indices[i]], n);
+			XMStoreFloat3(&normals[indices[i + 1]], n);
+			XMStoreFloat3(&normals[indices[i + 2]], n);
 		}
-	}*/
+
+		return normals;
+	}
 
 };

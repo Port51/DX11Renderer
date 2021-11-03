@@ -59,6 +59,7 @@ void Log::DrawImguiControlWindow()
 
 void Log::Clear()
 {
+	messages.clear();
 }
 
 void Log::LogMessage::DrawImGui()
