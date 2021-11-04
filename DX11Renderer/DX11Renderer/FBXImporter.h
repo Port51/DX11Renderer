@@ -151,24 +151,6 @@ public:
 
 		FbxVector4* pFbxVertices = pFbxMesh->GetControlPoints();
 
-
-		// new method
-		/*pMesh->vertices = GetFbxVertices(pFbxMesh);
-		for (size_t i = 0; i < pFbxMesh->GetPolygonCount(); ++i)
-		{
-			for (size_t j = 0; j < pFbxMesh->GetPolygonVertexCount(); ++j)
-			{
-				int index = pFbxMesh->GetPolygonVertex(i, j);
-				pMesh->indices.push_back(index);
-				pMesh->vertices.push_back(Vec4ToFloat3(pFbxMesh->GetControlPointAt(index)));
-			}
-		}
-
-		return std::move(pMesh);*/
-		// end new method
-
-
-
 		// To convert to XMFLOAT3, use this:
 		// *reinterpret_cast<dx::XMFLOAT3*>(&pMesh->mNormals[i])
 
@@ -310,7 +292,7 @@ public:
 	}
 
 	// https://stackoverflow.com/questions/50926809/fetching-indices-with-fbx-sdk
-	static FbxVector4 getNormal(FbxGeometryElementNormal* normalElement, int polyIndex, int posIndex) {
+	/*static FbxVector4 getNormal(FbxGeometryElementNormal* normalElement, int polyIndex, int posIndex) {
 		if (normalElement->GetMappingMode() == FbxGeometryElement::eByControlPoint) {
 			if (normalElement->GetReferenceMode() == FbxGeometryElement::eDirect)
 				return normalElement->GetDirectArray().GetAt(posIndex);
@@ -324,7 +306,7 @@ public:
 			return normalElement->GetDirectArray().GetAt(i);
 		}
 		return FbxVector4();
-	}
+	}*/
 
 	static FbxVector2 getUV(FbxGeometryElementUV* uvElement, int polyIndex, int posIndex) {
 		if (uvElement->GetMappingMode() == FbxGeometryElement::eByControlPoint) {
@@ -342,90 +324,9 @@ public:
 		return FbxVector2();
 	}
 
-	static FbxVector4 getNormal2(FbxMesh *mesh, int vertexIndex, int vertexCounter)
-	{
-		FbxVector4 normal;
-		if (mesh->GetElementNormalCount() < 1) {
-			return normal;
-		}
-		
-		FbxGeometryElementNormal *vertexNormal = mesh->GetElementNormal(0);
-		switch (vertexNormal->GetMappingMode())
-		{
-		case FbxGeometryElement::eByControlPoint:
-			switch (vertexNormal->GetReferenceMode())
-			{
-			case FbxGeometryElement::eDirect:
-				normal = vertexNormal->GetDirectArray().GetAt(vertexIndex).mData;
-				break;
-			case FbxGeometryElement::eIndexToDirect:
-			{
-				int index = vertexNormal->GetIndexArray().GetAt(vertexIndex);
-				normal = vertexNormal->GetDirectArray().GetAt(index).mData;
-				break;
-			}
-			default:
-				throw std::exception("Invalid Reference");
-			}
-			break;
-		case FbxGeometryElement::eByPolygonVertex:
-			switch (vertexNormal->GetReferenceMode())
-			{
-			case FbxGeometryElement::eDirect:
-				normal = vertexNormal->GetDirectArray().GetAt(vertexCounter).mData;
-				break;
-			case FbxGeometryElement::eIndexToDirect:
-			{
-				int index = vertexNormal->GetIndexArray().GetAt(vertexCounter);
-				normal = vertexNormal->GetDirectArray().GetAt(index).mData;
-				break;
-			}
-			default:
-				throw std::exception("Invalid Reference");
-			}
-		default:
-			break;
-		}
-		return normal;
-	}
-
 	//get mesh normals info
 	static std::vector<DirectX::XMFLOAT3> GetFbxNormals(FbxMesh* pFbxMesh)
 	{
-		/*std::vector<DirectX::XMFLOAT3> normals;
-
-		int polygonCount = pFbxMesh->GetPolygonCount();
-		int vertexCounter = 0;
-		for (int i = 0; i != polygonCount; ++i) {
-			int polygonSize = pFbxMesh->GetPolygonSize(i);
-			//	normals.resize(polygonSize);
-
-			for (int j = 0; j != polygonSize; ++j) {
-				int vertexIndex = pFbxMesh->GetPolygonVertex(i, j);
-				//FbxVector4 vec = controlPointsInfo[vertexIndex].ctrlPoint;
-				normals.push_back(Vec4ToFloat3(getNormal2(pFbxMesh, vertexIndex, vertexCounter)));
-
-				//polygonPoints.push_back(vec);
-				++vertexCounter;
-			}
-		}
-
-		return std::move(normals);
-		// end
-
-		FbxGeometryElementNormal* normalElement = pFbxMesh->GetElementNormal();
-
-		int v0 = 0;
-		for (int p = 0; p < pFbxMesh->GetPolygonCount(); ++p)
-		{
-			for (int v = 0; v < pFbxMesh->GetPolygonSize(p); ++v)
-			{
-				normals.push_back(Vec4ToFloat3(getNormal(normalElement, p, v0)));
-				v0++;
-			}
-		}
-
-		return std::move(normals);*/
 
 		FbxGeometryElementNormal* normalElement = pFbxMesh->GetElementNormal();
 		std::vector<DirectX::XMFLOAT3> normals(pFbxMesh->GetControlPointsCount(), DirectX::XMFLOAT3(0, 0, 0));
@@ -484,8 +385,9 @@ public:
 
 						int vertexIndex = pFbxMesh->GetPolygonVertex(p, i);
 
+						// note: When testing, normals for same indices were the same
+						// so for now, just overwriting normals by vert index
 						FbxVector4 lNormal = normalElement->GetDirectArray().GetAt(normalIndex);
-						//normals.push_back(Vec4ToFloat3(lNormal));
 						normals[vertexIndex] = Vec4ToFloat3(lNormal);
 					}
 				}

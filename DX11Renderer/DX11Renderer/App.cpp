@@ -38,7 +38,7 @@ App::App()
 		fn = std::string("Models\\HeadTriangulated.fbx");
 		modelTransform = 
 			dx::XMMatrixTranslation(0.f, -4.7f, 0.f)
-			* dx::XMMatrixScaling(2.f, 2.f, 2.f); // hack to keep model centered
+			* dx::XMMatrixScaling(5.f, 5.f, 5.f); // hack to keep model centered
 		break;
 	case 1:
 		fn = std::string("Models\\SceneGraphTest.fbx");
