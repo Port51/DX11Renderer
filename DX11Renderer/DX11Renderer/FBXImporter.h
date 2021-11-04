@@ -1,28 +1,36 @@
 #pragma once
+#include <fbxsdk.h>
+#include <fbxgeometryconverter.h>
 #include <assert.h>
 #include <stdio.h>
-#include <fbxsdk.h>
 #include <vector>
 #include <string>
 #include <DirectXMath.h>
+#include <exception>
 #include "ModelAsset.h"
 #include "MeshAsset.h"
 #include "SceneGraphNode.h"
 #include "GraphicsThrowMacros.h"
 
-namespace dx = DirectX;
+// Blender export settings:
+// - Use "FBX Units Scale"
+// - Apply Unit = OFF
 
-//#define FBX_IMPORTER_VERBOSE
+namespace dx = DirectX;
 
 // Memory manager object
 static FbxManager* fbxSdkManager = nullptr;
 
-//template<class V> // template on vector type
 class FBXImporter
 {
 public:
-	//template<class V>
-	static std::unique_ptr<ModelAsset> LoadFBX(const char* filename, bool verbose = false)
+	enum FBXNormalsMode
+	{
+		Import,
+		FlatShaded,
+	};
+
+	static std::unique_ptr<ModelAsset> LoadFBX(const char* filename, FBXNormalsMode normalsMode, bool triangulate = true)
 	{
 		// Refs:
 		// * http://help.autodesk.com/view/FBX/2020/ENU/?guid=FBX_Developer_Help_getting_started_your_first_fbx_sdk_program_html
@@ -46,11 +54,17 @@ public:
 			{
 				pImporter->Destroy(); // no need to keep this around
 
+				if (triangulate)
+				{
+					FbxGeometryConverter clsConverter(fbxSdkManager);
+					clsConverter.Triangulate(pFbxScene, true);
+				}
+
 				// The root node should not contain any attributes
 				FbxNode* pFbxRootNode = pFbxScene->GetRootNode();
 				if (pFbxRootNode)
 				{
-					auto pSceneGraph = UnpackFbxSceneGraph(pFbxRootNode);
+					auto pSceneGraph = UnpackFbxSceneGraph(pFbxRootNode, normalsMode);
 					auto pModelAsset = std::make_unique<ModelAsset>(std::move(pSceneGraph));
 
 					return std::move(pModelAsset);
@@ -76,7 +90,7 @@ public:
 
 	// Recursively unpack scene graph and return root node
 	//static std::unique_ptr<SceneGraphNode<MeshAsset>> UnpackFbxSceneGraph(std::unique_ptr<FbxNode> pFbxNode)
-	static std::unique_ptr<SceneGraphNode<MeshAsset>> UnpackFbxSceneGraph(FbxNode* pFbxNode)
+	static std::unique_ptr<SceneGraphNode<MeshAsset>> UnpackFbxSceneGraph(FbxNode* pFbxNode, FBXNormalsMode normalsMode)
 	{
 		const auto name = pFbxNode->GetName();
 
@@ -84,13 +98,13 @@ public:
 		// Unpack transform
 		//
 		const auto fbxTransl = pFbxNode->LclTranslation.Get();
-		const auto fbxRot = pFbxNode->LclTranslation.Get();
-		const auto fbxScale = pFbxNode->LclTranslation.Get();
-		//dx::XMMatrixScaling()
+		const auto fbxRot = pFbxNode->LclRotation.Get();
+		const auto fbxScale = pFbxNode->LclScaling.Get();
 		const auto localTransform =
-			dx::XMMatrixScaling(1.f + fbxScale[0], 1.f + fbxScale[0], 1.f + fbxScale[0])
-			* dx::XMMatrixRotationRollPitchYaw(fbxRot[0], fbxRot[1], fbxRot[2]) // untested!
+			dx::XMMatrixScaling(fbxScale[0], fbxScale[1], fbxScale[2])
+			* dx::XMMatrixRotationRollPitchYaw(dx::XMConvertToRadians(fbxRot[0]), dx::XMConvertToRadians(fbxRot[1]), dx::XMConvertToRadians(fbxRot[2])) // untested!
 			* dx::XMMatrixTranslation(fbxTransl[0], fbxTransl[1], fbxTransl[2]);
+		assert("Incorrect node scale - was FBX exported with 'FBX Units Scale' option?" && fbxScale[0] < 9999.f);
 
 		//
 		// Unpack mesh
@@ -105,13 +119,7 @@ public:
 				//auto pFbxMesh = std::make_unique<FbxMesh>((FbxMesh*)pFbxNode->GetNodeAttribute());
 				//pMeshAsset = LoadFbxMesh(std::move(pFbxMesh));
 				FbxMesh* pFbxMesh = (FbxMesh*)pFbxNode->GetNodeAttribute();
-
-#if defined(FBX_IMPORTER_VERBOSE)
-				printf("FBX Importer: Import mesh ");
-				printf(pFbxNode->GetName());
-				printf("...\n");
-#endif
-				pMeshAsset = LoadFbxMesh(std::string(pFbxNode->GetName()), pFbxMesh);
+				pMeshAsset = LoadFbxMesh(std::string(pFbxNode->GetName()), pFbxMesh, normalsMode);
 			}
 		}
 
@@ -126,7 +134,7 @@ public:
 			if (pFbxChildNode->GetNodeAttribute())
 			{
 				//pChildNodes.emplace_back(UnpackFbxSceneGraph(std::move(pFbxChildNode)));
-				pChildNodes.emplace_back(UnpackFbxSceneGraph(pFbxChildNode));
+				pChildNodes.emplace_back(UnpackFbxSceneGraph(pFbxChildNode, normalsMode));
 			}
 		}
 
@@ -136,26 +144,35 @@ public:
 	}
 
 	//static std::unique_ptr<MeshAsset> LoadFbxMesh(std::unique_ptr<FbxMesh> pFbxMesh)
-	static std::unique_ptr<MeshAsset> LoadFbxMesh(std::string name, FbxMesh* pFbxMesh)
+	static std::unique_ptr<MeshAsset> LoadFbxMesh(std::string name, FbxMesh* pFbxMesh, FBXNormalsMode normalsMode)
 	{
 		auto pMesh = std::make_unique<MeshAsset>();
 		pMesh->name = name;
-		printf(name.c_str());
 
 		FbxVector4* pFbxVertices = pFbxMesh->GetControlPoints();
+
+
+		// new method
+		pMesh->vertices = GetFbxVertices(pFbxMesh);
+		for (size_t i = 0; i < pFbxMesh->GetPolygonCount(); ++i)
+		{
+			for (size_t j = 0; j < pFbxMesh->GetPolygonVertexCount(); ++j)
+			{
+				int index = pFbxMesh->GetPolygonVertex(i, j);
+				pMesh->indices.push_back(index);
+				pMesh->vertices.push_back(Vec4ToFloat3(pFbxMesh->GetControlPointAt(index)));
+			}
+		}
+
+		return std::move(pMesh);
+		// end new method
+
+
 
 		// To convert to XMFLOAT3, use this:
 		// *reinterpret_cast<dx::XMFLOAT3*>(&pMesh->mNormals[i])
 
-		// Vertices
-		for (int j = 0; j < pFbxMesh->GetControlPointsCount(); ++j)
-		{
-			//auto fbxVertInfo = pFbxVertices.get()[j];
-			auto fbxVertInfo = pFbxVertices[j];
-			dx::XMFLOAT3 positionOS = Vec4ToFloat3(fbxVertInfo);
-			
-			pMesh->vertices.push_back(positionOS);
-		}
+		pMesh->vertices = GetFbxVertices(pFbxMesh);
 
 		int* pIndices = pFbxMesh->GetPolygonVertices();
 
@@ -165,8 +182,15 @@ public:
 			pMesh->indices.push_back(pIndices[j]);
 		}
 
-		//pMesh->normals = std::move(GetNormals(pFbxMesh));
-		pMesh->normals = GetFlatNormals(pMesh->vertices, pFbxMesh);
+		switch (normalsMode)
+		{
+		case FBXNormalsMode::Import:
+			pMesh->normals = std::move(GetFbxNormals(pFbxMesh));
+			break;
+		case FBXNormalsMode::FlatShaded:
+			pMesh->normals = GetFlatNormals(pMesh->vertices, pFbxMesh);
+			break;
+		}
 		pMesh->hasNormals = pMesh->normals.size() > 0;
 
 		return std::move(pMesh);
@@ -253,76 +277,387 @@ public:
 		}
 	}
 
+	static std::vector<int> GetFbxIndices(FbxMesh* pFbxMesh)
+	{
+		std::vector<int> indices;
+		for (int p = 0; p < pFbxMesh->GetPolygonCount(); ++p)
+		{
+			for (int v = 0; v < pFbxMesh->GetPolygonSize(p); ++v)
+			{
+				indices.push_back(pFbxMesh->GetPolygonVertex(p, v));
+			}
+		}
+		return std::move(indices);
+	}
+
+	static std::vector<dx::XMFLOAT3> GetFbxVertices(FbxMesh* pFbxMesh)
+	{
+		std::vector<DirectX::XMFLOAT3> vertices;
+		FbxVector4* pFbxVertices = pFbxMesh->GetControlPoints();
+
+		for (int j = 0; j < pFbxMesh->GetControlPointsCount(); ++j)
+		{
+			dx::XMFLOAT3 positionOS = Vec4ToFloat3(pFbxVertices[j]);
+			vertices.push_back(positionOS);
+		}
+
+		return std::move(vertices);
+	}
+
+	// https://stackoverflow.com/questions/50926809/fetching-indices-with-fbx-sdk
+	static FbxVector4 getNormal(FbxGeometryElementNormal* normalElement, int polyIndex, int posIndex) {
+		if (normalElement->GetMappingMode() == FbxGeometryElement::eByControlPoint) {
+			if (normalElement->GetReferenceMode() == FbxGeometryElement::eDirect)
+				return normalElement->GetDirectArray().GetAt(posIndex);
+			int i = normalElement->GetIndexArray().GetAt(posIndex);
+			return normalElement->GetDirectArray().GetAt(i);
+		}
+		else if (normalElement->GetMappingMode() == FbxGeometryElement::eByPolygonVertex) {
+			if (normalElement->GetReferenceMode() == FbxGeometryElement::eDirect)
+				return normalElement->GetDirectArray().GetAt(polyIndex);
+			int i = normalElement->GetIndexArray().GetAt(polyIndex);
+			return normalElement->GetDirectArray().GetAt(i);
+		}
+		return FbxVector4();
+	}
+
+	static FbxVector2 getUV(FbxGeometryElementUV* uvElement, int polyIndex, int posIndex) {
+		if (uvElement->GetMappingMode() == FbxGeometryElement::eByControlPoint) {
+			if (uvElement->GetReferenceMode() == FbxGeometryElement::eDirect)
+				return uvElement->GetDirectArray().GetAt(posIndex);
+			int i = uvElement->GetIndexArray().GetAt(posIndex);
+			return uvElement->GetDirectArray().GetAt(i);
+		}
+		else if (uvElement->GetMappingMode() == FbxGeometryElement::eByPolygonVertex) {
+			if (uvElement->GetReferenceMode() == FbxGeometryElement::eDirect)
+				return uvElement->GetDirectArray().GetAt(polyIndex);
+			int i = uvElement->GetIndexArray().GetAt(polyIndex);
+			return uvElement->GetDirectArray().GetAt(i);
+		}
+		return FbxVector2();
+	}
+
+	static FbxVector4 getNormal2(FbxMesh *mesh, int vertexIndex, int vertexCounter)
+	{
+		FbxVector4 normal;
+		if (mesh->GetElementNormalCount() < 1) {
+			return normal;
+		}
+		
+		FbxGeometryElementNormal *vertexNormal = mesh->GetElementNormal(0);
+		switch (vertexNormal->GetMappingMode())
+		{
+		case FbxGeometryElement::eByControlPoint:
+			switch (vertexNormal->GetReferenceMode())
+			{
+			case FbxGeometryElement::eDirect:
+				normal = vertexNormal->GetDirectArray().GetAt(vertexIndex).mData;
+				break;
+			case FbxGeometryElement::eIndexToDirect:
+			{
+				int index = vertexNormal->GetIndexArray().GetAt(vertexIndex);
+				normal = vertexNormal->GetDirectArray().GetAt(index).mData;
+				break;
+			}
+			default:
+				throw std::exception("Invalid Reference");
+			}
+			break;
+		case FbxGeometryElement::eByPolygonVertex:
+			switch (vertexNormal->GetReferenceMode())
+			{
+			case FbxGeometryElement::eDirect:
+				normal = vertexNormal->GetDirectArray().GetAt(vertexCounter).mData;
+				break;
+			case FbxGeometryElement::eIndexToDirect:
+			{
+				int index = vertexNormal->GetIndexArray().GetAt(vertexCounter);
+				normal = vertexNormal->GetDirectArray().GetAt(index).mData;
+				break;
+			}
+			default:
+				throw std::exception("Invalid Reference");
+			}
+		default:
+			break;
+		}
+		return normal;
+	}
+
 	//get mesh normals info
-	static std::vector<DirectX::XMFLOAT3> GetNormals(FbxMesh* pMesh)
+	static std::vector<DirectX::XMFLOAT3> GetFbxNormals(FbxMesh* pFbxMesh)
 	{
 		std::vector<DirectX::XMFLOAT3> normals;
 
-		//get the normal element
-		FbxGeometryElementNormal* lNormalElement = pMesh->GetElementNormal();
-		if (lNormalElement)
+		int polygonCount = pFbxMesh->GetPolygonCount();
+		int vertexCounter = 0;
+		for (int i = 0; i != polygonCount; ++i) {
+			int polygonSize = pFbxMesh->GetPolygonSize(i);
+			//	normals.resize(polygonSize);
+
+			for (int j = 0; j != polygonSize; ++j) {
+				int vertexIndex = pFbxMesh->GetPolygonVertex(i, j);
+				//FbxVector4 vec = controlPointsInfo[vertexIndex].ctrlPoint;
+				normals.push_back(Vec4ToFloat3(getNormal2(pFbxMesh, vertexIndex, vertexCounter)));
+
+				//polygonPoints.push_back(vec);
+				++vertexCounter;
+			}
+		}
+
+		return std::move(normals);
+		// end
+
+		FbxGeometryElementNormal* normalElement = pFbxMesh->GetElementNormal();
+
+		int v0 = 0;
+		for (int p = 0; p < pFbxMesh->GetPolygonCount(); ++p)
 		{
-			//mapping mode is by control points. The mesh should be smooth and soft.
-			//we can get normals by retrieving each control point
-			if (lNormalElement->GetMappingMode() == FbxGeometryElement::eByControlPoint)
+			for (int v = 0; v < pFbxMesh->GetPolygonSize(p); ++v)
 			{
-				//Let's get normals of each vertex, since the mapping mode of normal element is by control point
-				for (int lVertexIndex = 0; lVertexIndex < pMesh->GetControlPointsCount(); lVertexIndex++)
+				normals.push_back(Vec4ToFloat3(getNormal(normalElement, p, v0)));
+				v0++;
+			}
+		}
+
+		return std::move(normals);
+
+		if (normalElement)
+		{
+			if (normalElement->GetMappingMode() == FbxGeometryElement::eByControlPoint)
+			{
+				// If mapping mode is by control points, the mesh should be smooth and soft.
+
+				// Iterate verts
+				for (int i = 0; i < pFbxMesh->GetControlPointsCount(); ++i)
 				{
-					int lNormalIndex = 0;
-					//reference mode is direct, the normal index is same as vertex index.
-					//get normals by the index of control vertex
-					if (lNormalElement->GetReferenceMode() == FbxGeometryElement::eDirect)
-						lNormalIndex = lVertexIndex;
+					int normalIndex = 0;
 
-					//reference mode is index-to-direct, get normals by the index-to-direct
-					if (lNormalElement->GetReferenceMode() == FbxGeometryElement::eIndexToDirect)
-						lNormalIndex = lNormalElement->GetIndexArray().GetAt(lVertexIndex);
+					// If reference mode is direct, the normal index is same as vertex index.
+					if (normalElement->GetReferenceMode() == FbxGeometryElement::eDirect)
+					{
+						normalIndex = i;
+					}
 
-					//Got normals of each vertex.
-					FbxVector4 lNormal = lNormalElement->GetDirectArray().GetAt(lNormalIndex);
+					// Reference mode is index-to-direct, get normals by the index-to-direct
+					if (normalElement->GetReferenceMode() == FbxGeometryElement::eIndexToDirect)
+					{
+						normalIndex = normalElement->GetIndexArray().GetAt(i);
+					}
+
+					// Got normals of each vertex.
+					FbxVector4 lNormal = normalElement->GetDirectArray().GetAt(normalIndex);
 					normals.push_back(Vec4ToFloat3(lNormal));
 
-				}//end for lVertexIndex
-			}//end eByControlPoint
-			//mapping mode is by polygon-vertex.
-			//we can get normals by retrieving polygon-vertex.
-			else if (lNormalElement->GetMappingMode() == FbxGeometryElement::eByPolygonVertex)
+				}
+			}
+			else if (normalElement->GetMappingMode() == FbxGeometryElement::eByPolygonVertex)
 			{
-				int lIndexByPolygonVertex = 0;
-				//Let's get normals of each polygon, since the mapping mode of normal element is by polygon-vertex.
-				for (int lPolygonIndex = 0; lPolygonIndex < pMesh->GetPolygonCount(); lPolygonIndex++)
+				// Mapping mode is by polygon - vertex.
+
+				int indexByPolygonVertex = 0;
+				for (int p = 0; p < pFbxMesh->GetPolygonCount(); ++p)
 				{
-					//get polygon size, you know how many vertices in current polygon.
-					int lPolygonSize = pMesh->GetPolygonSize(lPolygonIndex);
-					//retrieve each vertex of current polygon.
-					for (int i = 0; i < lPolygonSize; i++)
+					// Get number of vertices in current polygon
+					int lPolygonSize = pFbxMesh->GetPolygonSize(p);
+					for (int i = 0; i < lPolygonSize; ++i)
 					{
-						int lNormalIndex = 0;
-						//reference mode is direct, the normal index is same as lIndexByPolygonVertex.
-						if (lNormalElement->GetReferenceMode() == FbxGeometryElement::eDirect)
-							lNormalIndex = lIndexByPolygonVertex;
+						int positionIndex = pFbxMesh->GetPolygonVertexIndex(p) + i;
+						int normalIndex;
+						if (normalElement->GetReferenceMode() == FbxGeometryElement::eDirect)
+						{
+							normalIndex = positionIndex;
+						}
 
-						//reference mode is index-to-direct, get normals by the index-to-direct
-						if (lNormalElement->GetReferenceMode() == FbxGeometryElement::eIndexToDirect)
-							lNormalIndex = lNormalElement->GetIndexArray().GetAt(lIndexByPolygonVertex);
+						if (normalElement->GetReferenceMode() == FbxGeometryElement::eIndexToDirect)
+						{
+							normalIndex = normalElement->GetIndexArray().GetAt(positionIndex);
+						}
 
-						//Got normals of each polygon-vertex.
-						FbxVector4 lNormal = lNormalElement->GetDirectArray().GetAt(lNormalIndex);
+						FbxVector4 lNormal = normalElement->GetDirectArray().GetAt(normalIndex);
 						normals.push_back(Vec4ToFloat3(lNormal));
+					}
+				}
+			}
+			else
+			{
+				throw std::runtime_error("Mesh has unrecognized normal mapping mode");
+			}
+		}
+		else
+		{
+			throw std::runtime_error("Mesh does not have FbxGeometryElementNormal");
+		}
+		/*
+		for (int l = 0; l < pFbxMesh->GetLayerCount(); ++l) {
+			KFbxLayerElementUV* texCoords = texCoordsFound ? NULL : pFbxMesh->GetLayer(l)->GetUVs();
+			KFbxLayerElementNormal* normals = normalsFound ? NULL : pFbxMesh->GetLayer(l)->GetNormals();
+			KFbxLayerElementTangent* tangents = tangentsFound ? NULL : pFbxMesh->GetLayer(l)->GetTangents();
+			KFbxLayerElementBinormal* binormals = binormalsFound ? NULL : pFbxMesh->GetLayer(l)->GetBinormals();
 
-						lIndexByPolygonVertex++;
-					}//end for i //lPolygonSize
-				}//end for lPolygonIndex //PolygonCount
-
-			}//end eByPolygonVertex
-		}//end if lNormalElement
+			// loop through triangles				
+			for (int i = 0; i < triCount; ++i) {
+				// get a reference to it					
+				Triangle & tri = triangles;
+				// for each vertex in the triangle					
+				for (int v = 0; v < 3; ++v) {
+					// get a reference to it						
+					Vertex & vert = tri.vertices[v];
+					//int positionIndex = mesh->GetPolygonVertex( i, v );						
+					int positionIndex = mesh->GetPolygonVertexIndex(i) + v;
+					// set its texture coordinate						
+					if (texCoords != NULL) {
+						texCoordsFound = true;
+						switch (texCoords->GetMappingMode())
+						{
+						case KFbxLayerElement::eBY_CONTROL_POINT:
+							switch (texCoords->GetReferenceMode())
+							{
+							case KFbxLayerElement::eDIRECT:
+								for (int p = 0; p < 2; ++p)
+									vert.texCoord = (float)texCoords->GetDirectArray().GetAt(positionIndex);
+								break;
+							case KFbxLayerElement::eINDEX_TO_DIRECT:
+							{
+								int index = texCoords->GetIndexArray().GetAt(positionIndex);
+								for (int p = 0; p < 2; ++p)
+									vert.texCoord = (float)texCoords->GetDirectArray().GetAt(index);
+							}
+							break;
+							default:
+								cout << "        Error: invalid texture coordinate reference mode\n";
+								error = true;
+							}
+							break;
+						case KFbxLayerElement::eBY_POLYGON_VERTEX:
+						{
+							int index = mesh->GetTextureUVIndex(i, v);
+							switch (texCoords->GetReferenceMode())
+							{
+							case KFbxLayerElement::eDIRECT:
+							case KFbxLayerElement::eINDEX_TO_DIRECT:
+								for (int p = 0; p < 2; ++p)
+									vert.texCoord = (float)texCoords->GetDirectArray().GetAt(index);
+								break;
+							default:
+								cout << "        Error: invalid texture coordinate reference mode\n";
+								error = true;
+							}
+						}
+						break;
+						case KFbxLayerElement::eBY_POLYGON:
+						case KFbxLayerElement::eALL_SAME:
+						case KFbxLayerElement::eNONE:
+							cout << "        Error: invalid texture coordinate mapping mode\n";
+							error = true;
+						}
+					}
+					// set its normal						
+					if (normals != NULL)
+					{
+						normalsFound = true;
+						if (normals->GetMappingMode() == KFbxLayerElement::eBY_POLYGON_VERTEX)
+						{
+							switch (normals->GetReferenceMode())
+							{
+							case KFbxLayerElement::eDIRECT:
+								for (int p = 0; p < 3; ++p)
+									vert.normal = (float)normals->GetDirectArray().GetAt(positionIndex);
+								break;
+							case KFbxLayerElement::eINDEX_TO_DIRECT:
+							{
+								int index = normals->GetIndexArray().GetAt(positionIndex);
+								for (int p = 0; p < 3; ++p)
+									vert.normal = (float)normals->GetDirectArray().GetAt(index);
+							}
+							break;
+							default:
+								cout << "        Error: invalid normal reference mode\n";
+								error = true;
+							}
+						}
+						else
+						{
+							cout << "        Error: invalid normal mapping mode\n";
+							error = true;
+						}
+					}
+					// set its tangent						
+					if (tangents != NULL)
+					{
+						tangentsFound = true;
+						if (tangents->GetMappingMode() == KFbxLayerElement::eBY_POLYGON_VERTEX)
+						{
+							switch (tangents->GetReferenceMode())
+							{
+							case KFbxLayerElement::eDIRECT:
+								for (int p = 0; p < 3; ++p)
+									vert.tangent = (float)tangents->GetDirectArray().GetAt(positionIndex);
+								break;
+							case KFbxLayerElement::eINDEX_TO_DIRECT:
+							{
+								int index = tangents->GetIndexArray().GetAt(positionIndex);
+								for (int p = 0; p < 3; ++p)
+									vert.tangent = (float)tangents->GetDirectArray().GetAt(index);
+							}
+							break;
+							default:
+								cout << "        Error: invalid tangent reference mode\n";
+								error = true;
+							}
+						}
+						else {
+							cout << "        Error: invalid tangent mapping mode\n";
+							error = true;
+						}
+					}
+					// set its binormals						
+					if (binormals != NULL) {
+						binormalsFound = true;
+						if (binormals->GetMappingMode() == KFbxLayerElement::eBY_POLYGON_VERTEX)
+						{
+							switch (binormals->GetReferenceMode())
+							{
+							case KFbxLayerElement::eDIRECT:
+								for (int p = 0; p < 3; ++p)
+									vert.binormal = (float)binormals->GetDirectArray().GetAt(positionIndex);
+								break;
+							case KFbxLayerElement::eINDEX_TO_DIRECT:
+							{
+								int index = binormals->GetIndexArray().GetAt(positionIndex);
+								for (int p = 0; p < 3; ++p)
+									vert.binormal = (float)binormals->GetDirectArray().GetAt(index);
+							}
+							break;
+							default:
+								cout << "        Error: invalid binormal reference mode\n";
+								error = true;
+							}
+						}
+						else {
+							cout << "        Error: invalid binormal mapping mode\n";
+							error = true;
+						}
+					}
+					if (error)
+						break;
+				}
+				if (error)
+					break;
+			}
+			if (error)
+				break;
+		}*/
 
 		return std::move(normals);
 	}
 
 	static DirectX::XMFLOAT3 Vec4ToFloat3(FbxVector4 vec)
 	{
+		return DirectX::XMFLOAT3(
+			(float)(vec.mData[0]),
+			(float)(vec.mData[1]),
+			(float)(vec.mData[2]));
 		return DirectX::XMFLOAT3(
 			static_cast<float>(vec[0]),
 			static_cast<float>(vec[1]),
@@ -334,7 +669,7 @@ public:
 	{
 		using namespace DirectX;
 
-		std::vector<DirectX::XMFLOAT3> normals (vertices.size());
+		std::vector<DirectX::XMFLOAT3> normals(vertices.size());
 
 		for (int pIdx = 0; pIdx < pMesh->GetPolygonCount(); pIdx++)
 		{

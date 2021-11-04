@@ -25,10 +25,48 @@ App::App()
 	light(wnd.Gfx(), dx::XMFLOAT3(2.2f, 3.2f, 4.2f)),
 	cam(40.0f, (float)ResolutionX / (float)ResolutionY)
 {
+
+	std::string fn;
+	dx::XMMATRIX modelTransform;
+
+	// temporary...
+	int select = 1;
+	switch (select)
+	{
+	case 0:
+		//fn = std::string("Models\\Head.fbx");
+		fn = std::string("Models\\HeadTriangulated.fbx");
+		modelTransform = 
+			dx::XMMatrixTranslation(0.f, -4.7f, 0.f)
+			* dx::XMMatrixScaling(2.f, 2.f, 2.f); // hack to keep model centered
+		break;
+	case 1:
+		fn = std::string("Models\\SceneGraphTest.fbx");
+		modelTransform =
+			dx::XMMatrixScaling(0.5f, 0.5f, 0.5f)
+			* dx::XMMatrixRotationRollPitchYaw(dx::XM_PI * -0.5f, 0.f, 0.f);
+		break;
+	case 2:
+		fn = std::string("Models\\TransformTest.fbx");
+		modelTransform = dx::XMMatrixIdentity();
+			//dx::XMMatrixScaling(0.5f, 0.5f, 0.5f)
+			//* dx::XMMatrixRotationRollPitchYaw(dx::XM_PI * -0.5f, 0.f, 0.f);
+		break;
+	case 3:
+		fn = std::string("Models\\TransformTestMultiLevel.fbx");
+		modelTransform = dx::XMMatrixIdentity();
+			//dx::XMMatrixScaling(0.5f, 0.5f, 0.5f)
+			//* dx::XMMatrixRotationRollPitchYaw(dx::XM_PI * -0.5f, 0.f, 0.f);
+		break;
+	case 4:
+		fn = std::string("Models\\TransformTestOneLevel.fbx");
+		modelTransform = dx::XMMatrixIdentity();
+			//dx::XMMatrixScaling(0.5f, 0.5f, 0.5f)
+			//* dx::XMMatrixRotationRollPitchYaw(dx::XM_PI * -0.5f, 0.f, 0.f);
+		break;
+	}
 	
-	const char* fn = "Models\\SceneGraphTest.fbx";
-	//const char* fn = "Models\\HeadTriangulated.fbx";
-	auto pModelAsset = FBXImporter::LoadFBX(fn, true);
+	auto pModelAsset = FBXImporter::LoadFBX(fn.c_str(), FBXImporter::FBXNormalsMode::Import, false);
 	if (pModelAsset)
 	{
 		wnd.Gfx().log.Info("Model loaded");
@@ -38,9 +76,6 @@ App::App()
 		wnd.Gfx().log.Error("Failed to load model");
 	}
 
-	const auto modelTransform = 
-		dx::XMMatrixScaling(0.5f, 0.5f, 0.5f)
-		* dx::XMMatrixRotationRollPitchYaw(dx::XM_PI * -0.5f, 0.f, 0.f);
 	model = std::make_unique<ModelInstance>(wnd.Gfx(), pModelAsset, DirectX::XMFLOAT3{ 1.f, 1.f, 1.f }, modelTransform);
 
 	return;
