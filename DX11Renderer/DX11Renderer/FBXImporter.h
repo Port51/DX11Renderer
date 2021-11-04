@@ -153,7 +153,7 @@ public:
 
 
 		// new method
-		pMesh->vertices = GetFbxVertices(pFbxMesh);
+		/*pMesh->vertices = GetFbxVertices(pFbxMesh);
 		for (size_t i = 0; i < pFbxMesh->GetPolygonCount(); ++i)
 		{
 			for (size_t j = 0; j < pFbxMesh->GetPolygonVertexCount(); ++j)
@@ -164,7 +164,7 @@ public:
 			}
 		}
 
-		return std::move(pMesh);
+		return std::move(pMesh);*/
 		// end new method
 
 
@@ -192,6 +192,11 @@ public:
 			break;
 		}
 		pMesh->hasNormals = pMesh->normals.size() > 0;
+
+		if (pMesh->hasNormals)
+		{
+			assert("Normal count must match vertex count!" && pMesh->normals.size() == pMesh->vertices.size());
+		}
 
 		return std::move(pMesh);
 	}
@@ -387,7 +392,7 @@ public:
 	//get mesh normals info
 	static std::vector<DirectX::XMFLOAT3> GetFbxNormals(FbxMesh* pFbxMesh)
 	{
-		std::vector<DirectX::XMFLOAT3> normals;
+		/*std::vector<DirectX::XMFLOAT3> normals;
 
 		int polygonCount = pFbxMesh->GetPolygonCount();
 		int vertexCounter = 0;
@@ -420,8 +425,10 @@ public:
 			}
 		}
 
-		return std::move(normals);
+		return std::move(normals);*/
 
+		FbxGeometryElementNormal* normalElement = pFbxMesh->GetElementNormal();
+		std::vector<DirectX::XMFLOAT3> normals(pFbxMesh->GetControlPointsCount(), DirectX::XMFLOAT3(0, 0, 0));
 		if (normalElement)
 		{
 			if (normalElement->GetMappingMode() == FbxGeometryElement::eByControlPoint)
@@ -447,7 +454,8 @@ public:
 
 					// Got normals of each vertex.
 					FbxVector4 lNormal = normalElement->GetDirectArray().GetAt(normalIndex);
-					normals.push_back(Vec4ToFloat3(lNormal));
+					//normals.push_back(Vec4ToFloat3(lNormal));
+					normals[i] = Vec4ToFloat3(lNormal);
 
 				}
 			}
@@ -474,8 +482,11 @@ public:
 							normalIndex = normalElement->GetIndexArray().GetAt(positionIndex);
 						}
 
+						int vertexIndex = pFbxMesh->GetPolygonVertex(p, i);
+
 						FbxVector4 lNormal = normalElement->GetDirectArray().GetAt(normalIndex);
-						normals.push_back(Vec4ToFloat3(lNormal));
+						//normals.push_back(Vec4ToFloat3(lNormal));
+						normals[vertexIndex] = Vec4ToFloat3(lNormal);
 					}
 				}
 			}

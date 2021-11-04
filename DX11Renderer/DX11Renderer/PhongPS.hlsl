@@ -25,7 +25,7 @@ float SCurve(float x)
 
 float4 main(float3 positionVS : Position, float3 n : Normal) : SV_Target
 {
-    return n.z;
+    //return n.z;
     
 	// fragment to light vector data
 	const float3 vToL = lightPos - positionVS;

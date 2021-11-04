@@ -30,7 +30,7 @@ App::App()
 	dx::XMMATRIX modelTransform;
 
 	// temporary...
-	int select = 1;
+	int select = 0;
 	switch (select)
 	{
 	case 0:
