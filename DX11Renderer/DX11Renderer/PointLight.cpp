@@ -3,7 +3,6 @@
 
 PointLight::PointLight(Graphics& gfx, DirectX::XMFLOAT3 position, float radius)
 	:
-	mesh(gfx, radius),
 	cbuf(gfx),
 	initialPositionWS(position)
 {
@@ -44,7 +43,7 @@ void PointLight::Reset()
 		{ initialPositionWS.x, initialPositionWS.y, initialPositionWS.z },
 		{ 0.05f, 0.05f, 0.05f },
 		{ 1.0f, 1.0f, 1.0f },
-		1.0f,
+		0.41f,
 		1.0f,
 		0.045f,
 		0.0075f,
@@ -53,8 +52,8 @@ void PointLight::Reset()
 
 void PointLight::Draw(Graphics& gfx) const
 {
-	mesh.SetPos(cbData.posVS);
-	mesh.Draw(gfx);
+	//mesh.SetPos(cbData.posVS);
+	//mesh.Draw(gfx);
 }
 
 void PointLight::Bind(Graphics& gfx, DirectX::FXMMATRIX viewMatrix) const

@@ -95,19 +95,19 @@ std::unique_ptr<Mesh> ModelInstance::ParseMesh(Graphics& gfx, std::unique_ptr<Me
 		indices.push_back(pMeshAsset->indices[i]);
 	}
 
-	std::vector<std::unique_ptr<Bindable>> bindablePtrs;
+	std::vector<std::shared_ptr<Bindable>> bindablePtrs;
 
-	bindablePtrs.push_back(std::make_unique<VertexBuffer>(gfx, vbuf));
+	bindablePtrs.push_back(std::make_shared<VertexBuffer>(gfx, vbuf));
 
-	bindablePtrs.push_back(std::make_unique<IndexBuffer>(gfx, indices));
+	bindablePtrs.push_back(std::make_shared<IndexBuffer>(gfx, indices));
 
-	auto pvs = std::make_unique<VertexShader>(gfx, L"PhongVS.cso");
+	auto pvs = std::make_shared<VertexShader>(gfx, "PhongVS.cso");
 	auto pvsbc = pvs->GetBytecode();
 	bindablePtrs.push_back(std::move(pvs));
 
-	bindablePtrs.push_back(std::make_unique<PixelShader>(gfx, L"PhongPS.cso"));
+	bindablePtrs.push_back(std::make_shared<PixelShader>(gfx, L"PhongPS.cso"));
 
-	bindablePtrs.push_back(std::make_unique<InputLayout>(gfx, vbuf.GetLayout().GetD3DLayout(), pvsbc));
+	bindablePtrs.push_back(std::make_shared<InputLayout>(gfx, vbuf.GetLayout().GetD3DLayout(), pvsbc));
 
 	struct PSMaterialConstant
 	{
@@ -116,7 +116,7 @@ std::unique_ptr<Mesh> ModelInstance::ParseMesh(Graphics& gfx, std::unique_ptr<Me
 		float specularPower = 30.0f;
 		float padding[3];
 	} pmc;
-	bindablePtrs.push_back(std::make_unique<PixelConstantBuffer<PSMaterialConstant>>(gfx, pmc, 1u));
+	bindablePtrs.push_back(std::make_shared<PixelConstantBuffer<PSMaterialConstant>>(gfx, pmc, 1u));
 
 	return std::make_unique<Mesh>(gfx, pMeshAsset->name, std::move(bindablePtrs));
 }

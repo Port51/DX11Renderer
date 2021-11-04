@@ -1,13 +1,7 @@
 #include "App.h"
-#include "Melon.h"
-#include "Pyramid.h"
-#include "Box.h"
-#include "SkinnedBox.h"
-#include "Sheet.h"
 #include <memory>
 #include "GeoMath.h"
 #include "Surface.h"
-#include "Cylinder.h"
 #include "Mesh.h"
 #include "ModelInstance.h"
 #include "GDIPlusManager.h"
@@ -42,9 +36,9 @@ App::App()
 		break;
 	case 1:
 		fn = std::string("Models\\SceneGraphTest.fbx");
-		modelTransform =
-			dx::XMMatrixScaling(0.5f, 0.5f, 0.5f)
-			* dx::XMMatrixRotationRollPitchYaw(dx::XM_PI * -0.5f, 0.f, 0.f);
+		modelTransform = dx::XMMatrixIdentity();
+			//dx::XMMatrixScaling(0.5f, 0.5f, 0.5f)
+			//* dx::XMMatrixRotationRollPitchYaw(dx::XM_PI * -0.5f, 0.f, 0.f);
 		break;
 	case 2:
 		fn = std::string("Models\\TransformTest.fbx");
@@ -153,7 +147,6 @@ void App::DoFrame()
 	light.Bind(wnd.Gfx(), cam.GetViewMatrix());
 	for (auto& b : drawables)
 	{
-		b->Update(wnd.kbd.KeyIsPressed(VK_SPACE) ? 0.f : dt);
 		b->Draw(wnd.Gfx());
 	}
 	model->Draw(wnd.Gfx());

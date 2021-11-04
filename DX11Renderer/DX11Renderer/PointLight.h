@@ -1,6 +1,5 @@
 #pragma once
 #include "Graphics.h"
-#include "SolidSphere.h"
 #include "ConstantBuffer.h"
 #include "PixelConstantBuffer.h"
 
@@ -26,6 +25,5 @@ private:
 private:
 	DirectX::XMFLOAT3 initialPositionWS;
 	PointLightCBuf cbData;
-	mutable SolidSphere mesh;
 	mutable PixelConstantBuffer<PointLightCBuf> cbuf;
 };

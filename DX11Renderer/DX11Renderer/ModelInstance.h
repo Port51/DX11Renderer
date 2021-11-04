@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include "TestObject.h"
+#include "Drawable.h"
 #include "Mesh.h"
 #include "SceneGraphNode.h"
 #include "ModelAsset.h"

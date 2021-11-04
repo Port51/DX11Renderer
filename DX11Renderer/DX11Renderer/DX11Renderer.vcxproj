@@ -161,11 +161,9 @@
   <ItemGroup>
     <ClCompile Include="App.cpp" />
     <ClCompile Include="Bindable.cpp" />
-    <ClCompile Include="Box.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="ChiliUtil.cpp" />
     <ClCompile Include="CustomException.cpp" />
-    <ClCompile Include="Cylinder.cpp" />
     <ClCompile Include="Drawable.cpp" />
     <ClCompile Include="dxerr.cpp" />
     <ClCompile Include="DxgiInfoManager.cpp" />
@@ -184,17 +182,12 @@
     <ClCompile Include="Keyboard.cpp" />
     <ClCompile Include="Log.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="Melon.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="ModelInstance.cpp" />
     <ClCompile Include="Mouse.cpp" />
     <ClCompile Include="PixelShader.cpp" />
     <ClCompile Include="PointLight.cpp" />
-    <ClCompile Include="Pyramid.cpp" />
     <ClCompile Include="Sampler.cpp" />
-    <ClCompile Include="Sheet.cpp" />
-    <ClCompile Include="SkinnedBox.cpp" />
-    <ClCompile Include="SolidSphere.cpp" />
     <ClCompile Include="Surface.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Timer.cpp" />
@@ -210,9 +203,8 @@
     <ClInclude Include="BaseMesh.h" />
     <ClInclude Include="Colors.h" />
     <ClInclude Include="Bindable.h" />
-    <ClInclude Include="BindableCodex_deprecated.h" />
+    <ClInclude Include="BindableCodex.h" />
     <ClInclude Include="BindableInclude.h" />
-    <ClInclude Include="Box.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="ChiliUtil.h" />
     <ClInclude Include="Cone.h" />
@@ -220,10 +212,8 @@
     <ClInclude Include="ConstVertex.h" />
     <ClInclude Include="Cube.h" />
     <ClInclude Include="CustomException.h" />
-    <ClInclude Include="Cylinder.h" />
     <ClInclude Include="DebugHelper.h" />
     <ClInclude Include="Drawable.h" />
-    <ClInclude Include="DrawableTemplated.h" />
     <ClInclude Include="dxerr.h" />
     <ClInclude Include="DxgiInfoManager.h" />
     <ClInclude Include="FBXImporter.h" />
@@ -246,7 +236,6 @@
     <ClInclude Include="InputLayout.h" />
     <ClInclude Include="Keyboard.h" />
     <ClInclude Include="Log.h" />
-    <ClInclude Include="Melon.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshAsset.h" />
     <ClInclude Include="ModelAsset.h" />
@@ -258,16 +247,11 @@
     <ClInclude Include="Plane.h" />
     <ClInclude Include="PointLight.h" />
     <ClInclude Include="Prism.h" />
-    <ClInclude Include="Pyramid.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Sampler.h" />
     <ClInclude Include="SceneGraphNode.h" />
-    <ClInclude Include="Sheet.h" />
-    <ClInclude Include="SkinnedBox.h" />
-    <ClInclude Include="SolidSphere.h" />
     <ClInclude Include="Sphere.h" />
     <ClInclude Include="Surface.h" />
-    <ClInclude Include="TestObject.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Topology.h" />

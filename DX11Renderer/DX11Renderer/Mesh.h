@@ -1,11 +1,11 @@
 #pragma once
-#include "TestObject.h"
+#include "Drawable.h"
 #include <string>
 
-class Mesh : public DrawableTemplated<Mesh>
+class Mesh : public Drawable
 {
 public:
-	Mesh(Graphics& gfx, std::string name, std::vector<std::unique_ptr<Bindable>> pBindables);
+	Mesh(Graphics& gfx, std::string name, std::vector<std::shared_ptr<Bindable>> pBindables);
 	void Draw(Graphics& gfx, DirectX::FXMMATRIX accumulatedTransform) const;
 	DirectX::XMMATRIX GetTransformXM() const override;
 private:

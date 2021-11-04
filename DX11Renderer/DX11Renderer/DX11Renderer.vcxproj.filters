@@ -114,9 +114,6 @@
     <ClCompile Include="Bindable.cpp">
       <Filter>Source Files\Bindable</Filter>
     </ClCompile>
-    <ClCompile Include="Box.cpp">
-      <Filter>Source Files\Drawable</Filter>
-    </ClCompile>
     <ClCompile Include="Drawable.cpp">
       <Filter>Source Files\Drawable</Filter>
     </ClCompile>
@@ -141,12 +138,6 @@
     <ClCompile Include="ChiliUtil.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Pyramid.cpp">
-      <Filter>Source Files\Drawable</Filter>
-    </ClCompile>
-    <ClCompile Include="Melon.cpp">
-      <Filter>Source Files\Drawable</Filter>
-    </ClCompile>
     <ClCompile Include="Surface.cpp">
       <Filter>Source Files\Chili</Filter>
     </ClCompile>
@@ -158,12 +149,6 @@
     </ClCompile>
     <ClCompile Include="Sampler.cpp">
       <Filter>Source Files\Bindable</Filter>
-    </ClCompile>
-    <ClCompile Include="Sheet.cpp">
-      <Filter>Source Files\Drawable</Filter>
-    </ClCompile>
-    <ClCompile Include="SkinnedBox.cpp">
-      <Filter>Source Files\Drawable</Filter>
     </ClCompile>
     <ClCompile Include="Imgui\imgui.cpp">
       <Filter>Imgui\Source</Filter>
@@ -194,12 +179,6 @@
     </ClCompile>
     <ClCompile Include="PointLight.cpp">
       <Filter>Source Files\Lights</Filter>
-    </ClCompile>
-    <ClCompile Include="SolidSphere.cpp">
-      <Filter>Source Files\Drawable</Filter>
-    </ClCompile>
-    <ClCompile Include="Cylinder.cpp">
-      <Filter>Source Files\Drawable</Filter>
     </ClCompile>
     <ClCompile Include="Mesh.cpp">
       <Filter>Source Files\Drawable</Filter>
@@ -263,9 +242,6 @@
     <ClInclude Include="VertexShader.h">
       <Filter>Header Files\Bindable</Filter>
     </ClInclude>
-    <ClInclude Include="Box.h">
-      <Filter>Header Files\Drawable</Filter>
-    </ClInclude>
     <ClInclude Include="Drawable.h">
       <Filter>Header Files\Drawable</Filter>
     </ClInclude>
@@ -290,9 +266,6 @@
     <ClInclude Include="ChiliUtil.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DrawableTemplated.h">
-      <Filter>Header Files\Drawable</Filter>
-    </ClInclude>
     <ClInclude Include="IndexedTriangleList.h">
       <Filter>Header Files\GeometryHelpers</Filter>
     </ClInclude>
@@ -314,12 +287,6 @@
     <ClInclude Include="Sphere.h">
       <Filter>Header Files\GeometryHelpers</Filter>
     </ClInclude>
-    <ClInclude Include="Pyramid.h">
-      <Filter>Header Files\Drawable</Filter>
-    </ClInclude>
-    <ClInclude Include="Melon.h">
-      <Filter>Header Files\Drawable</Filter>
-    </ClInclude>
     <ClInclude Include="Surface.h">
       <Filter>Header Files\Chili</Filter>
     </ClInclude>
@@ -331,12 +298,6 @@
     </ClInclude>
     <ClInclude Include="Sampler.h">
       <Filter>Header Files\Bindable</Filter>
-    </ClInclude>
-    <ClInclude Include="Sheet.h">
-      <Filter>Header Files\Drawable</Filter>
-    </ClInclude>
-    <ClInclude Include="SkinnedBox.h">
-      <Filter>Header Files\Drawable</Filter>
     </ClInclude>
     <ClInclude Include="Imgui\imconfig.h">
       <Filter>Imgui\Headers</Filter>
@@ -370,18 +331,6 @@
     </ClInclude>
     <ClInclude Include="PointLight.h">
       <Filter>Header Files\Lights</Filter>
-    </ClInclude>
-    <ClInclude Include="SolidSphere.h">
-      <Filter>Header Files\Drawable</Filter>
-    </ClInclude>
-    <ClInclude Include="TestObject.h">
-      <Filter>Header Files\Drawable</Filter>
-    </ClInclude>
-    <ClInclude Include="Cylinder.h">
-      <Filter>Header Files\Drawable</Filter>
-    </ClInclude>
-    <ClInclude Include="BindableCodex_deprecated.h">
-      <Filter>Header Files\Bindable</Filter>
     </ClInclude>
     <ClInclude Include="ConstantBuffer.h">
       <Filter>Header Files\Bindable\Buffers</Filter>
@@ -442,6 +391,9 @@
     </ClInclude>
     <ClInclude Include="Log.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BindableCodex.h">
+      <Filter>Header Files\Bindable</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
