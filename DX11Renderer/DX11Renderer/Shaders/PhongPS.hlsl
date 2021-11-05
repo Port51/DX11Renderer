@@ -32,8 +32,10 @@ float4 main(v2f i) : SV_Target
     //return n.z;
     i.normalVS = normalize(i.normalVS);
     
-	// fragment to light vector data
     const float3 vToL = lightPos - i.positionVS;
+    
+    /*
+	// fragment to light vector data
 	const float distToL = length(vToL);
 	const float3 dirToL = vToL / distToL;
 	// attenuation
@@ -47,7 +49,7 @@ float4 main(v2f i) : SV_Target
 	const float3 specular = att * (diffuseColor * diffuseIntensity) * specularIntensity * pow(max(0.0f, dot(normalize(-r), normalize(i.positionVS))), specularPower);
 	// final color
 	//return float4(saturate((diffuse + ambient + specular) * materialColor), 1.0f);
-    
+    */
     
     float3 normalVS = i.normalVS;
     float3 viewDirVS = normalize(i.positionVS);

@@ -1,5 +1,6 @@
 #pragma once
 #include "Drawable.h"
+#include "Material.h"
 #include <string>
 
 class Mesh : public Drawable
@@ -11,4 +12,6 @@ public:
 private:
 	mutable DirectX::XMFLOAT4X4 modelMatrix;
 	std::string name;
+	// todo: replace with codex
+	std::unique_ptr<Material> pMaterial;
 };
