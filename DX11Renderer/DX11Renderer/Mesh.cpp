@@ -14,15 +14,14 @@ Mesh::Mesh(Graphics& gfx, std::string name, std::vector<std::shared_ptr<Bindable
 {
 	AddBind(std::make_shared<Topology>(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
 
-	bool hasIndexBuffer = false;
 	for (auto& pb : pBindables)
 	{
 		AddBind(std::move(pb));
 	}
-	if (!hasIndexBuffer)
+	/*if (!hasIndexBuffer)
 	{
 		throw std::runtime_error(std::string("Mesh '") + name + std::string("' is missing IndexBuffer!"));
-	}
+	}*/
 
 	AddBind(std::make_shared<TransformCbuf>(gfx, *this));
 }
