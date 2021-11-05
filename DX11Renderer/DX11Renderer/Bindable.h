@@ -1,5 +1,6 @@
 #pragma once
 #include "Graphics.h"
+#include "BindableCodex.h"
 
 class Bindable
 {

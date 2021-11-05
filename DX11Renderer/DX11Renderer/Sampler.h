@@ -10,6 +10,10 @@ public:
 	Sampler(Graphics& gfx, D3D11_TEXTURE_ADDRESS_MODE wrapU, D3D11_TEXTURE_ADDRESS_MODE wrapV, D3D11_TEXTURE_ADDRESS_MODE wrapW);
 	Sampler(Graphics& gfx, D3D11_SAMPLER_DESC samplerDesc);
 	void Bind(Graphics& gfx) override;
+	std::string GetUID() const override;
+public:
+	static std::shared_ptr<Bindable> Resolve(Graphics& gfx);
+	static std::string GenerateUID();
 protected:
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> pSampler;
 };

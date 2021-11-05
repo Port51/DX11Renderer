@@ -37,13 +37,7 @@ ID3DBlob* VertexShader::GetBytecode() const
 ///
 std::shared_ptr<Bindable> VertexShader::Resolve(Graphics& gfx, const std::string& path)
 {
-	auto bind = Bind::Codex::Resolve(GenerateUID(path));
-	if (!bind)
-	{
-		bind = std::make_shared<VertexShader>(gfx, path);
-		Bind::Codex::Store(bind);
-	}
-	return bind;
+	return Bind::Codex::Resolve<VertexShader>(gfx, path);
 }
 
 std::string VertexShader::GenerateUID(const std::string& path)

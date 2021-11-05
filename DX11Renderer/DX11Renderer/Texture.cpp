@@ -1,12 +1,17 @@
 #include "Texture.h"
 #include "Surface.h"
 #include "GraphicsThrowMacros.h"
+#include "BindableCodex.h"
 
 namespace wrl = Microsoft::WRL;
 
-Texture::Texture(Graphics& gfx, const Surface& s)
+Texture::Texture(Graphics& gfx, const std::string& path, UINT slot)
+	: path(path), slot(slot)
 {
 	SETUP_LOGGING(gfx);
+
+	// load surface
+	const auto s = Surface::FromFile(path);
 
 	// create texture resource
 	D3D11_TEXTURE2D_DESC textureDesc = {};
@@ -42,9 +47,13 @@ Texture::Texture(Graphics& gfx, const Surface& s)
 	));
 }
 
-Texture::Texture(Graphics& gfx, const Surface& s, D3D11_TEXTURE2D_DESC textureDesc)
+Texture::Texture(Graphics& gfx, const std::string& path, UINT slot, D3D11_TEXTURE2D_DESC textureDesc)
+	: path(path), slot(slot)
 {
 	SETUP_LOGGING(gfx);
+
+	// load surface
+	const auto s = Surface::FromFile(path);
 
 	D3D11_SUBRESOURCE_DATA sd = {};
 	sd.pSysMem = s.GetBufferPtr();
@@ -66,9 +75,13 @@ Texture::Texture(Graphics& gfx, const Surface& s, D3D11_TEXTURE2D_DESC textureDe
 	));
 }
 
-Texture::Texture(Graphics& gfx, const Surface& s, D3D11_TEXTURE2D_DESC textureDesc, D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc)
+Texture::Texture(Graphics& gfx, const std::string& path, UINT slot, D3D11_TEXTURE2D_DESC textureDesc, D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc)
+	: path(path), slot(slot)
 {
 	SETUP_LOGGING(gfx);
+
+	// load surface
+	const auto s = Surface::FromFile(path);
 
 	D3D11_SUBRESOURCE_DATA sd = {};
 	sd.pSysMem = s.GetBufferPtr();
@@ -87,4 +100,20 @@ Texture::Texture(Graphics& gfx, const Surface& s, D3D11_TEXTURE2D_DESC textureDe
 void Texture::Bind(Graphics& gfx)
 {
 	GetContext(gfx)->PSSetShaderResources(0u, 1u, pTextureView.GetAddressOf());
+}
+
+std::string Texture::GetUID() const
+{
+	return GenerateUID(path, slot);
+}
+
+std::shared_ptr<Bindable> Texture::Resolve(Graphics& gfx, const std::string& path, UINT slot)
+{
+	return Bind::Codex::Resolve<Texture>(gfx, path, slot);
+}
+
+std::string Texture::GenerateUID(const std::string& path, UINT slot)
+{
+	using namespace std::string_literals;
+	return typeid(Texture).name() + "#"s + path + "#" + std::to_string(slot);
 }

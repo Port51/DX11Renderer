@@ -1,5 +1,6 @@
 #include "Sampler.h"
 #include "GraphicsThrowMacros.h"
+#include "BindableCodex.h"
 
 Sampler::Sampler(Graphics& gfx)
 	: Sampler(gfx, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP)
@@ -36,4 +37,19 @@ void Sampler::Bind(Graphics& gfx)
 {
 	// First argument = slot that shader will use
 	GetContext(gfx)->PSSetSamplers(0u, 1u, pSampler.GetAddressOf());
+}
+
+std::string Sampler::GetUID() const
+{
+	return GenerateUID();
+}
+
+std::shared_ptr<Bindable> Sampler::Resolve(Graphics & gfx)
+{
+	return Bind::Codex::Resolve<Sampler>(gfx);
+}
+
+std::string Sampler::GenerateUID()
+{
+	return typeid(Sampler).name();
 }

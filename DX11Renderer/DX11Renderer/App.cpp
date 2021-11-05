@@ -8,6 +8,9 @@
 #include "Imgui/imgui.h"
 #include "FBXImporter.h"
 #include "VertexInclude.h" // temp
+#include "BindableCodex.h"
+#include "VertexShader.h"
+#include "Sampler.h"
 
 namespace dx = DirectX;
 
@@ -19,7 +22,6 @@ App::App()
 	light(wnd.Gfx(), dx::XMFLOAT3(2.2f, 3.2f, 4.2f)),
 	cam(40.0f, (float)ResolutionX / (float)ResolutionY)
 {
-
 	std::string fn;
 	dx::XMMATRIX modelTransform;
 

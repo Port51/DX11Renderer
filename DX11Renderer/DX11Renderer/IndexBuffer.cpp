@@ -1,8 +1,14 @@
 #include "IndexBuffer.h"
 #include "GraphicsThrowMacros.h"
+#include "BindableCodex.h"
 
 IndexBuffer::IndexBuffer(Graphics& gfx, const std::vector<unsigned short>& indices)
+	: IndexBuffer(gfx, "?", indices)
+{}
+
+IndexBuffer::IndexBuffer(Graphics& gfx, std::string tag, const std::vector<unsigned short>& indices)
 	:
+	tag(tag),
 	count((UINT)indices.size())
 {
 	SETUP_LOGGING(gfx);
@@ -27,4 +33,22 @@ void IndexBuffer::Bind(Graphics& gfx)
 UINT IndexBuffer::GetCount() const
 {
 	return count;
+}
+
+std::shared_ptr<IndexBuffer> IndexBuffer::Resolve(Graphics& gfx, const std::string& tag,
+	const std::vector<unsigned short>& indices)
+{
+	assert(tag != "?");
+	return Bind::Codex::Resolve<IndexBuffer>(gfx, tag, indices);
+}
+
+std::string IndexBuffer::GenerateNontemplatedUID(const std::string& tag)
+{
+	using namespace std::string_literals;
+	return typeid(IndexBuffer).name() + "#"s + tag;
+}
+
+std::string IndexBuffer::GetUID() const noexcept
+{
+	return GenerateNontemplatedUID(tag);
 }

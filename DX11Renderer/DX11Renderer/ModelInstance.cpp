@@ -105,9 +105,9 @@ std::unique_ptr<Mesh> ModelInstance::ParseMesh(Graphics& gfx, std::unique_ptr<Me
 	auto pvsbc = pvs->GetBytecode();
 	bindablePtrs.push_back(std::move(pvs));
 
-	bindablePtrs.push_back(std::make_shared<PixelShader>(gfx, L"PhongPS.cso"));
+	bindablePtrs.push_back(std::make_shared<PixelShader>(gfx, "PhongPS.cso"));
 
-	bindablePtrs.push_back(std::make_shared<InputLayout>(gfx, vbuf.GetLayout().GetD3DLayout(), pvsbc));
+	bindablePtrs.push_back(std::make_shared<InputLayout>(gfx, vbuf.GetLayout(), pvsbc));
 
 	struct PSMaterialConstant
 	{
