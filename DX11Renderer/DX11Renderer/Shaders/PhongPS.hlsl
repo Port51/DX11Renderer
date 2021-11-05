@@ -17,6 +17,8 @@ cbuffer ObjectCBuf
 	float specularPower;
 };
 
+#include "Lighting/BRDF.hlsli"
+
 float SCurve(float x)
 {
     // (3x^2 - 2x^3)
@@ -26,6 +28,7 @@ float SCurve(float x)
 float4 main(float3 positionVS : Position, float3 n : Normal) : SV_Target
 {
     //return n.z;
+    n = normalize(n);
     
 	// fragment to light vector data
 	const float3 vToL = lightPos - positionVS;

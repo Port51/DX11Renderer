@@ -6,7 +6,7 @@
 class PointLight
 {
 public:
-	PointLight(Graphics& gfx, DirectX::XMFLOAT3 position, float radius = 0.5f);
+	PointLight(Graphics& gfx, DirectX::XMFLOAT3 position, float intensity = 1.f, float radius = 0.5f);
 	void DrawImguiControlWindow();
 	void Reset();
 	void Draw(Graphics& gfx) const;
@@ -24,6 +24,7 @@ private:
 	};
 private:
 	DirectX::XMFLOAT3 initialPositionWS;
+	float initialIntensity;
 	PointLightCBuf cbData;
 	mutable PixelConstantBuffer<PointLightCBuf> cbuf;
 };

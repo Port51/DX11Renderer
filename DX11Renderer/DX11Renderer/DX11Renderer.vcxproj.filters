@@ -76,6 +76,9 @@
     <Filter Include="Header Files\SceneGraphs">
       <UniqueIdentifier>{2bbedfeb-842d-41ec-975e-26cf3c1bc159}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders\Lighting">
+      <UniqueIdentifier>{8b626847-c6f5-4083-89ac-81878a1bf0cc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -418,31 +421,34 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="ColorIndexPS.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
     <FxCompile Include="ColorIndexVS.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="TextureVS.hlsl">
+    <FxCompile Include="BRDF.hlsli">
+      <Filter>Shaders\Lighting</Filter>
+    </FxCompile>
+    <FxCompile Include="Shaders\TextureVS.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="TexturePS.hlsl">
+    <FxCompile Include="Shaders\TexturePS.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="PhongVS.hlsl">
+    <FxCompile Include="Shaders\SolidPS.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="PhongPS.hlsl">
+    <FxCompile Include="Shaders\SolidVS.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="SolidVS.hlsl">
+    <FxCompile Include="Shaders\PhongPS.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="SolidPS.hlsl">
+    <FxCompile Include="Shaders\PhongVS.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="IndexedPhongPS.hlsl">
+    <FxCompile Include="Shaders\IndexedPhongPS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Shaders\ColorIndexPS.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>

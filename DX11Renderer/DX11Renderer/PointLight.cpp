@@ -1,10 +1,11 @@
 #include "PointLight.h"
 #include "imgui/imgui.h"
 
-PointLight::PointLight(Graphics& gfx, DirectX::XMFLOAT3 position, float radius)
+PointLight::PointLight(Graphics& gfx, DirectX::XMFLOAT3 position, float intensity, float radius)
 	:
 	cbuf(gfx),
-	initialPositionWS(position)
+	initialPositionWS(position),
+	initialIntensity(intensity)
 {
 	Reset();
 }
@@ -43,7 +44,7 @@ void PointLight::Reset()
 		{ initialPositionWS.x, initialPositionWS.y, initialPositionWS.z },
 		{ 0.05f, 0.05f, 0.05f },
 		{ 1.0f, 1.0f, 1.0f },
-		0.41f,
+		initialIntensity,
 		1.0f,
 		0.045f,
 		0.0075f,
