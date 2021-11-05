@@ -1,3 +1,6 @@
+
+#include "PhongCommon.hlsli"
+
 cbuffer CBuf
 {
 	matrix model;
@@ -5,18 +8,12 @@ cbuffer CBuf
 	matrix modelViewProj;
 };
 
-struct VSOut
+v2f main(float3 pos : Position, float3 n : Normal)
 {
-	float3 positionVS : Position;
-	float3 normal : Normal;
-	float4 pos : SV_Position;
-};
-
-VSOut main(float3 pos : Position, float3 n : Normal)
-{
-	VSOut vso;
-	vso.positionVS = (float3) mul(modelView, float4(pos, 1.0f));
-    vso.normal = mul((float3x3) modelView, n);
+    v2f vso;
+    vso.positionVS = (float3) mul(modelView, float4(pos, 1.0f));
+    vso.normalWS = n;
+    vso.normalVS = mul((float3x3) modelView, n);
 	vso.pos = mul(modelViewProj, float4(pos, 1.0f));
 	return vso;
 }

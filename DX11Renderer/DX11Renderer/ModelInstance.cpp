@@ -106,14 +106,17 @@ std::unique_ptr<Mesh> ModelInstance::ParseMesh(Graphics& gfx, std::unique_ptr<Me
 
 	bindablePtrs.push_back(std::make_shared<IndexBuffer>(gfx, indices));
 
+	// todo: move!
 	auto pvs = std::make_shared<VertexShader>(gfx, "Shaders\\Built\\PhongVS.cso");
 	auto pvsbc = pvs->GetBytecode();
 	bindablePtrs.push_back(std::move(pvs));
 
+	// todo: move!
 	bindablePtrs.push_back(std::make_shared<PixelShader>(gfx, "Shaders\\Built\\PhongPS.cso"));
 
 	bindablePtrs.push_back(std::make_shared<InputLayout>(gfx, vbuf.GetLayout(), pvsbc));
 
+	// todo: move!
 	struct PSMaterialConstant
 	{
 		DirectX::XMFLOAT3 color = { 0.6f,0.6f,0.8f };

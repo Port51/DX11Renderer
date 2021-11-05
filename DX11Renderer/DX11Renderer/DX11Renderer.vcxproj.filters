@@ -79,6 +79,12 @@
     <Filter Include="Shaders\Lighting">
       <UniqueIdentifier>{8b626847-c6f5-4083-89ac-81878a1bf0cc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Materials">
+      <UniqueIdentifier>{a28c58ad-fe00-4b8d-9c02-4f9377f18793}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Material">
+      <UniqueIdentifier>{e49e0e2d-dccc-4a67-9a6d-0c2c87dd162a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -194,6 +200,9 @@
     </ClCompile>
     <ClCompile Include="Log.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Material.cpp">
+      <Filter>Source Files\Material</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -395,6 +404,9 @@
     <ClInclude Include="BindableCodex.h">
       <Filter>Header Files\Bindable</Filter>
     </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Header Files\Materials</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DX11Renderer.rc">
@@ -423,6 +435,9 @@
       <Filter>Shaders\Lighting</Filter>
     </None>
     <None Include="Shaders\Lighting\BRDF.hlsli" />
+    <None Include="Shaders\PhongCommon.hlsli">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="ColorIndexVS.hlsl">
