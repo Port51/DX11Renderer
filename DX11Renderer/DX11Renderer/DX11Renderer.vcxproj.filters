@@ -419,6 +419,12 @@
     <None Include="DXGetErrorString.inl">
       <Filter>Source Files\ChiliErrors</Filter>
     </None>
+    <None Include="Shaders\Lighting\Schlick.hlsli">
+      <Filter>Shaders\Lighting</Filter>
+    </None>
+    <None Include="Shaders\Lighting\Diffuse.hlsli">
+      <Filter>Shaders\Lighting</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="ColorIndexVS.hlsl">

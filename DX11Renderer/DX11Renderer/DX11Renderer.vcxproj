@@ -274,11 +274,13 @@
     <Image Include="icon1.ico" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Shaders\Lighting\Diffuse.hlsli" />
     <None Include="DXGetErrorDescription.inl" />
     <None Include="DXGetErrorString.inl" />
     <None Include="DXTrace.inl" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Shaders\Lighting\Schlick.hlsli" />
     <None Include="Shaders\Lighting\BRDF.hlsli">
       <FileType>Document</FileType>
     </None>

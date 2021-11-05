@@ -44,5 +44,19 @@ float4 main(float3 positionVS : Position, float3 n : Normal) : SV_Target
 	// calculate specular intensity based on angle between viewing vector and reflection vector, narrow with power function
 	const float3 specular = att * (diffuseColor * diffuseIntensity) * specularIntensity * pow(max(0.0f, dot(normalize(-r), normalize(positionVS))), specularPower);
 	// final color
-	return float4(saturate((diffuse + ambient + specular) * materialColor), 1.0f);
+	//return float4(saturate((diffuse + ambient + specular) * materialColor), 1.0f);
+    
+    
+    float3 normalVS = n;
+    float3 viewDirVS = normalize(positionVS);
+    float3 f0 = 0.5;
+    float f90 = 1;
+    float linearRoughness = 0.75;
+    float roughness = pow(linearRoughness, 2);
+    BRDFLighting brdf = BRDF(f0, f90, roughness, linearRoughness, normalVS, -viewDirVS, normalize(vToL));
+    
+    float3 ambient = 0.025;
+    
+    return float4(brdf.diffuseLight + brdf.specularLight + ambient, 1);
+    
 }
