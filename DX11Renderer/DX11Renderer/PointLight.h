@@ -2,6 +2,7 @@
 #include "Graphics.h"
 #include "ConstantBuffer.h"
 #include "PixelConstantBuffer.h"
+#include "ModelInstance.h"
 
 class PointLight
 {
@@ -23,6 +24,8 @@ private:
 		float attQuad;
 	};
 private:
+	DirectX::XMFLOAT3 positionWS;
+	std::unique_ptr<ModelInstance> pModel;
 	DirectX::XMFLOAT3 initialPositionWS;
 	float initialIntensity;
 	PointLightCBuf cbData;

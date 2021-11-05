@@ -11,6 +11,7 @@
 #include "BindableCodex.h"
 #include "VertexShader.h"
 #include "Sampler.h"
+#include <d3d11.h>
 
 namespace dx = DirectX;
 

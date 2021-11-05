@@ -71,17 +71,17 @@ public:
 				}
 				else
 				{
-					assert("No root node was found in FBX" && false);
+					throw std::runtime_error("No root node was found in FBX for filename '" + std::string(filename) + "'");
 				}
 			}
 			else
 			{
-				assert("Could not import FBX scene" && false);
+				throw std::runtime_error("Could not import FBX scene for filename '" + std::string(filename) + "'");
 			}
 		}
 		else
 		{
-			assert("Could not initialize FBX importer" && false);
+			throw std::runtime_error("Could not initialize FBX importer for filename '" + std::string(filename) + "'");
 		}
 
 		pImporter->Destroy();

@@ -1,5 +1,7 @@
 #include "PointLight.h"
 #include "imgui/imgui.h"
+#include "FBXImporter.h"
+#include <d3d11.h>
 
 PointLight::PointLight(Graphics& gfx, DirectX::XMFLOAT3 position, float intensity, float radius)
 	:
@@ -8,6 +10,9 @@ PointLight::PointLight(Graphics& gfx, DirectX::XMFLOAT3 position, float intensit
 	initialIntensity(intensity)
 {
 	Reset();
+
+	auto pModelAsset = FBXImporter::LoadFBX("Models\\DefaultSphere.fbx", FBXImporter::FBXNormalsMode::Import, false);
+	pModel = std::make_unique<ModelInstance>(gfx, pModelAsset, DirectX::XMFLOAT3{ 1.f, 1.f, 1.f }, DirectX::XMMatrixIdentity());
 }
 
 void PointLight::DrawImguiControlWindow()
@@ -15,9 +20,9 @@ void PointLight::DrawImguiControlWindow()
 	if (ImGui::Begin("Light"))
 	{
 		ImGui::Text("Position");
-		ImGui::SliderFloat("X", &cbData.posVS.x, -60.0f, 60.0f, "%.1f");
-		ImGui::SliderFloat("Y", &cbData.posVS.y, -60.0f, 60.0f, "%.1f");
-		ImGui::SliderFloat("Z", &cbData.posVS.z, -60.0f, 60.0f, "%.1f");
+		ImGui::SliderFloat("X", &positionWS.x, -60.0f, 60.0f, "%.1f");
+		ImGui::SliderFloat("Y", &positionWS.y, -60.0f, 60.0f, "%.1f");
+		ImGui::SliderFloat("Z", &positionWS.z, -60.0f, 60.0f, "%.1f");
 
 		ImGui::Text("Intensity/Color");
 		// ImGuiSliderFlags_Logarithmic makes it power of 2?
@@ -40,8 +45,9 @@ void PointLight::DrawImguiControlWindow()
 
 void PointLight::Reset()
 {
+	positionWS = initialPositionWS;
 	cbData = {
-		{ initialPositionWS.x, initialPositionWS.y, initialPositionWS.z },
+		{ positionWS.x, positionWS.y, positionWS.z },
 		{ 0.05f, 0.05f, 0.05f },
 		{ 1.0f, 1.0f, 1.0f },
 		initialIntensity,
@@ -53,17 +59,17 @@ void PointLight::Reset()
 
 void PointLight::Draw(Graphics& gfx) const
 {
-	//mesh.SetPos(cbData.posVS);
-	//mesh.Draw(gfx);
+	pModel->SetPositionWS(positionWS);
+	pModel->Draw(gfx);
 }
 
 void PointLight::Bind(Graphics& gfx, DirectX::FXMMATRIX viewMatrix) const
 {
 	auto dataCopy = cbData;
-	const auto pos = DirectX::XMLoadFloat3(&cbData.posVS);
+	const auto posWS_Vector = DirectX::XMLoadFloat3(&positionWS);
 
 	// Transform WS to VS
-	DirectX::XMStoreFloat3(&dataCopy.posVS, DirectX::XMVector3Transform(pos, viewMatrix));
+	DirectX::XMStoreFloat3(&dataCopy.posVS, DirectX::XMVector3Transform(posWS_Vector, viewMatrix));
 
 	cbuf.Update(gfx, PointLightCBuf{ dataCopy });
 	cbuf.Bind(gfx);

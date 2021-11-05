@@ -25,6 +25,11 @@ void ModelInstance::Draw(Graphics& gfx) const
 	pSceneGraph->Draw(gfx, transform);
 }
 
+void ModelInstance::SetPositionWS(DirectX::XMFLOAT3 positionWS)
+{
+	transform = DirectX::XMMatrixTranslation(positionWS.x, positionWS.y, positionWS.z);
+}
+
 std::unique_ptr<Node> ModelInstance::CreateModelInstanceNode(Graphics& gfx, std::unique_ptr<SceneGraphNode<MeshAsset>> const& pSourceNode)
 {
 	// Copy mesh if needed
