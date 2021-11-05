@@ -217,7 +217,6 @@
     <ClInclude Include="dxerr.h" />
     <ClInclude Include="DxgiInfoManager.h" />
     <ClInclude Include="FBXImporter.h" />
-    <ClInclude Include="FBXLoader.h" />
     <ClInclude Include="GDIPlusManager.h" />
     <ClInclude Include="GeoMath.h" />
     <ClInclude Include="Graphics.h" />

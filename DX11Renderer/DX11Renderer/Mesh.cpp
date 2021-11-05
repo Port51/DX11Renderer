@@ -2,7 +2,6 @@
 #include "BindableInclude.h"
 #include "GraphicsThrowMacros.h"
 #include "PixelConstantBuffer.h"
-#include "FBXLoader.h"
 #include "VertexInclude.h"
 #include <exception>
 //#include "Sphere.h"

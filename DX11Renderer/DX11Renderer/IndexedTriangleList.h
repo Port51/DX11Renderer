@@ -12,8 +12,8 @@ public:
 		vertices(std::move(verts_in)),
 		indices(std::move(indices_in))
 	{
-		assert(vertices.size() > 2);
-		assert(indices.size() % 3 == 0);
+		assert("Triangle list has fewer than 3 verts" && vertices.size() > 2);
+		assert("Triangle list indicies not a multiple of 3" && indices.size() % 3 == 0);
 	}
 
 	void Transform(DirectX::FXMMATRIX matrix)

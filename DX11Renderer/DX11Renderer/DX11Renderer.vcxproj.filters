@@ -344,9 +344,6 @@
     <ClInclude Include="PixelConstantBuffer.h">
       <Filter>Header Files\Bindable\Buffers</Filter>
     </ClInclude>
-    <ClInclude Include="FBXLoader.h">
-      <Filter>Header Files\GeometryHelpers</Filter>
-    </ClInclude>
     <ClInclude Include="Mesh.h">
       <Filter>Header Files\Drawable</Filter>
     </ClInclude>
@@ -425,13 +422,11 @@
     <None Include="Shaders\Lighting\Diffuse.hlsli">
       <Filter>Shaders\Lighting</Filter>
     </None>
+    <None Include="Shaders\Lighting\BRDF.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="ColorIndexVS.hlsl">
       <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="BRDF.hlsli">
-      <Filter>Shaders\Lighting</Filter>
     </FxCompile>
     <FxCompile Include="Shaders\TextureVS.hlsl">
       <Filter>Shaders</Filter>
