@@ -27,15 +27,10 @@ Texture::Texture(Graphics& gfx, const std::string& path, UINT slot)
 	textureDesc.CPUAccessFlags = 0;
 	textureDesc.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
 
-	/*D3D11_SUBRESOURCE_DATA sd = {};
-	sd.pSysMem = s.GetBufferPtr();
-	sd.SysMemPitch = s.GetWidth() * sizeof(Surface::Color); // distance in bytes between rows - keep in mind padding!
-	*/
-
 	wrl::ComPtr<ID3D11Texture2D> pTexture;
 	GFX_THROW_INFO(GetDevice(gfx)->CreateTexture2D(
 		&textureDesc, nullptr, &pTexture
-	)); // can also pass &sd
+	));
 
 	// write image data into top mip level
 	GetContext(gfx)->UpdateSubresource(
