@@ -13,9 +13,8 @@
 using namespace std::string_literals;
 
 // todo: pass actual VertexLayout class?
-Material::Material(Graphics& gfx, const std::string_view assetPath) //, const VertexLayout& _vertexLayout)
-	: assetPath(std::string(assetPath)) //, vertexLayout(_vertexLayout)
-	//: assetPath({ assetPath.begin(), assetPath.end() })
+Material::Material(Graphics& gfx, const std::string_view assetPath)
+	: assetPath(std::string(assetPath))
 {
 	DirectX::XMFLOAT3 colorProp = { 0.8f,0.8f,0.8f };
 
@@ -97,15 +96,15 @@ void Material::Bind(Graphics& gfx)
 
 std::string Material::GetUID() const
 {
-	return GenerateUID(assetPath); // , vertexLayout);
+	return GenerateUID(assetPath);
 }
 
-std::shared_ptr<Bindable> Material::Resolve(Graphics & gfx, const std::string_view assetPath) //, const VertexLayout& vertexLayout)
+std::shared_ptr<Bindable> Material::Resolve(Graphics & gfx, const std::string_view assetPath)
 {
-	return Bind::Codex::Resolve<Material>(gfx, assetPath);//, vertexLayout);
+	return Bind::Codex::Resolve<Material>(gfx, assetPath);
 }
 
-std::string Material::GenerateUID(const std::string_view assetPath)//, const VertexLayout& vertexLayout)
+std::string Material::GenerateUID(const std::string_view assetPath)
 {
 	return typeid(Material).name() + "#"s + std::string(assetPath);
 }

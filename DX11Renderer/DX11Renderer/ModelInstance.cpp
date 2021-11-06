@@ -121,12 +121,9 @@ std::unique_ptr<MeshRenderer> ModelInstance::ParseMesh(Graphics& gfx, std::uniqu
 	pBindablePtrs.push_back(VertexBuffer::Resolve(gfx, meshTag, vbuf)); // vbuf is passed as const&
 	pBindablePtrs.push_back(IndexBuffer::Resolve(gfx, meshTag, indices));
 
-	//, vbuf.GetLayout()
-	//std::shared_ptr<Material> pMaterial = std::dynamic_pointer_cast<Material>(Material::Resolve(gfx, "Assets\\Materials\\TestMaterial.asset"));
 	auto pMaterial = pMaterials[0]; // todo: select via mesh
 	pBindablePtrs.push_back(InputLayout::Resolve(gfx, vbuf.GetLayout(), pMaterial->pVertexShader->GetBytecode()));
 
-	// todo: replace nullptr with material
 	return std::make_unique<MeshRenderer>(gfx, pMeshAsset->name, pMaterial, std::move(pBindablePtrs));
 }
 
@@ -136,8 +133,6 @@ void Node::Draw(Graphics & gfx, DirectX::FXMMATRIX accumulatedTransform) const
 		//dx::XMLoadFloat4x4(&appliedTransform) *
 		dx::XMLoadFloat4x4(&localTransform) *
 		accumulatedTransform;
-
-	//combinedTransform = dx::XMMatrixScaling(1.f, 1.f, 1.f); // debug --> todo: remove!!!!!!!
 
 	if (pMeshPtr)
 	{
