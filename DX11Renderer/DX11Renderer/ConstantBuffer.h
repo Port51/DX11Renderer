@@ -9,7 +9,7 @@ class ConstantBuffer : public Bindable
 public:
 	// Init with constants
 	ConstantBuffer(Graphics & gfx, std::string identifier, const C & data, UINT slot = 0u)
-		: slot(slot)
+		: slot(slot), identifier(identifier)
 	{
 		SETUP_LOGGING(gfx);
 
@@ -28,7 +28,7 @@ public:
 
 	// Don't init
 	ConstantBuffer(Graphics & gfx, std::string identifier, UINT slot = 0u)
-		: slot(slot)
+		: slot(slot), identifier(identifier)
 	{
 		SETUP_LOGGING(gfx);
 
