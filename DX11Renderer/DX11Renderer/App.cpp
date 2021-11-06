@@ -73,7 +73,7 @@ App::App()
 		wnd.Gfx().log.Error("Failed to load model");
 	}
 
-	model = std::make_unique<ModelInstance>(wnd.Gfx(), pModelAsset, DirectX::XMFLOAT3{ 1.f, 1.f, 1.f }, modelTransform);
+	model = std::make_unique<ModelInstance>(wnd.Gfx(), pModelAsset, "Assets\\Materials\\TestMaterial.asset", modelTransform);
 
 	return;
 	

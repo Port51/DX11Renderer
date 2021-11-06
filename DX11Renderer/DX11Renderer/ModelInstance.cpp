@@ -10,15 +10,26 @@
 
 namespace dx = DirectX;
 
-ModelInstance::ModelInstance(Graphics& gfx, std::unique_ptr<ModelAsset> const& pModelAsset, DirectX::XMFLOAT3 materialColor, dx::XMMATRIX transform)
+ModelInstance::ModelInstance(Graphics& gfx, std::unique_ptr<ModelAsset> const& pModelAsset, std::string materialPath, dx::XMMATRIX transform)
 	: transform(transform) // todo: set position
 {
-	pSceneGraph = CreateModelInstanceNode(gfx, pModelAsset->pSceneGraph);
+	std::shared_ptr<Material> pMaterial = std::dynamic_pointer_cast<Material>(Material::Resolve(gfx, materialPath.c_str()));
+	pMaterials.push_back(pMaterial);
 
-	/*for (size_t i = 0; i < pModelAsset->mNumMeshes; i++)
+	pSceneGraph = CreateModelInstanceNode(gfx, pModelAsset->pSceneGraph);
+}
+
+ModelInstance::ModelInstance(Graphics& gfx, std::unique_ptr<ModelAsset> const& pModelAsset, std::vector<std::string> materialPaths, dx::XMMATRIX transform)
+	: transform(transform) // todo: set position
+{
+	pMaterials.reserve(materialPaths.size());
+	for (const auto& path : materialPaths)
 	{
-		meshPtrs.push_back(ParseMesh(gfx, *pScene->mMeshes[i]));
-	}*/
+		std::shared_ptr<Material> pMaterial = std::dynamic_pointer_cast<Material>(Material::Resolve(gfx, path.c_str()));
+		pMaterials.push_back(pMaterial);
+	}
+
+	pSceneGraph = CreateModelInstanceNode(gfx, pModelAsset->pSceneGraph);
 }
 
 void ModelInstance::Draw(Graphics& gfx) const
@@ -110,14 +121,10 @@ std::unique_ptr<MeshRenderer> ModelInstance::ParseMesh(Graphics& gfx, std::uniqu
 	pBindablePtrs.push_back(VertexBuffer::Resolve(gfx, meshTag, vbuf)); // vbuf is passed as const&
 	pBindablePtrs.push_back(IndexBuffer::Resolve(gfx, meshTag, indices));
 
-	// todo: move!
-	//auto pvs = std::make_shared<VertexShader>(gfx, "Shaders\\Built\\PhongVS.cso");
-	//auto pvsbc = pvs->GetBytecode();
-	//bindablePtrs.push_back(std::move(pvs));
-
-	//bindablePtrs.push_back(std::make_shared<InputLayout>(gfx, vbuf.GetLayout(), pvsbc));
-
-	std::shared_ptr<Material> pMaterial = std::dynamic_pointer_cast<Material>(Material::Resolve(gfx, "Assets\\Materials\\TestMaterial.asset", vbuf.GetLayout()));
+	//, vbuf.GetLayout()
+	//std::shared_ptr<Material> pMaterial = std::dynamic_pointer_cast<Material>(Material::Resolve(gfx, "Assets\\Materials\\TestMaterial.asset"));
+	auto pMaterial = pMaterials[0]; // todo: select via mesh
+	pBindablePtrs.push_back(InputLayout::Resolve(gfx, vbuf.GetLayout(), pMaterial->pVertexShader->GetBytecode()));
 
 	// todo: replace nullptr with material
 	return std::make_unique<MeshRenderer>(gfx, pMeshAsset->name, pMaterial, std::move(pBindablePtrs));

@@ -5,7 +5,14 @@ cbuffer CBuf
 	matrix modelViewProj;
 };
 
-float4 main(float3 pos : Position) : SV_Position
+struct attrib
 {
-	return mul(modelViewProj, float4(pos, 1.0f));
+    float3 pos : Position;
+    float3 n : Normal;
+    float2 uv0 : TEXCOORD0;
+};
+
+float4 main(attrib i) : SV_Position
+{
+	return mul(modelViewProj, float4(i.pos, 1.0f));
 }

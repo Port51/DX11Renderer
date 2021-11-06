@@ -25,14 +25,15 @@ private:
 class ModelInstance
 {
 public:
-	ModelInstance(Graphics& gfx, std::unique_ptr<ModelAsset> const& pModelAsset, DirectX::XMFLOAT3 materialColor, dx::XMMATRIX transform);
+	ModelInstance(Graphics& gfx, std::unique_ptr<ModelAsset> const& pModelAsset, std::string materialPath, dx::XMMATRIX transform);
+	ModelInstance(Graphics& gfx, std::unique_ptr<ModelAsset> const& pModelAsset, std::vector<std::string> materialPaths, dx::XMMATRIX transform);
 	void Draw(Graphics& gfx) const;
 	void SetPositionWS(DirectX::XMFLOAT3 positionWS);
 private:
-	// todo: move these?
-	static std::unique_ptr<MeshRenderer> ParseMesh(Graphics& gfx, std::unique_ptr<MeshAsset> const& pMeshAsset);
-	static std::unique_ptr<Node> CreateModelInstanceNode(Graphics& gfx, std::unique_ptr<SceneGraphNode<MeshAsset>> const& pSourceNode);
+	std::unique_ptr<MeshRenderer> ParseMesh(Graphics& gfx, std::unique_ptr<MeshAsset> const& pMeshAsset);
+	std::unique_ptr<Node> CreateModelInstanceNode(Graphics& gfx, std::unique_ptr<SceneGraphNode<MeshAsset>> const& pSourceNode);
 private:
+	std::vector<std::shared_ptr<Material>> pMaterials;
 	std::unique_ptr<Node> pSceneGraph;
 	std::vector<std::unique_ptr<MeshRenderer>> pMeshes;
 	DirectX::XMMATRIX transform;
