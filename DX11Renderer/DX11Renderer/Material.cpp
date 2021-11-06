@@ -67,12 +67,13 @@ Material::Material(Graphics& gfx, const std::string_view assetPath)
 	}
 
 	// todo: read from file
-	struct PSMaterialConstant
+	struct PSMaterialConstant // must be multiple of 16 bytes
 	{
 		DirectX::XMFLOAT3 materialColor;
 		float specularIntensity = 0.6f;
+		BOOL normalMappingEnabled = TRUE; // BOOL uses 4 bytes as it's an int, rather than bool
 		float specularPower = 30.0f;
-		float padding[3];
+		float padding[2];
 	} pmc;
 	pmc.materialColor = colorProp;
 

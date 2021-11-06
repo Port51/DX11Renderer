@@ -16,8 +16,14 @@ cbuffer ObjectCBuf : register(b1)
 {
 	float3 materialColor;
 	float specularIntensity;
+    bool normalMapEnabled; // 4 bytes in HLSL, so use BOOL in C++ to match
 	float specularPower;
+    float padding[2];
 };
+
+Texture2D tex;
+Texture2D nmap;
+SamplerState splr;
 
 #include "Lighting/BRDF.hlsli"
 
@@ -32,6 +38,15 @@ float4 main(v2f i) : SV_Target
     //return frac(i.uv0.x * 10);
     
     i.normalVS = normalize(i.normalVS);
+    
+    float3 n;
+    if (normalMapEnabled)
+    {
+        const float3 normalSample = nmap.Sample(splr, i.uv0).xyz;
+        n.x = normalSample.x * 2.0f - 1.0f;
+        n.y = -normalSample.y * 2.0f + 1.0f;
+        n.z = -normalSample.z;
+    }
     
     const float3 vToL = lightPos - i.positionVS;
     
