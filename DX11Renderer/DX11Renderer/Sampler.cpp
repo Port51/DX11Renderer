@@ -19,13 +19,14 @@ Sampler::Sampler(Graphics& gfx, D3D11_TEXTURE_ADDRESS_MODE wrapU, D3D11_TEXTURE_
 	SETUP_LOGGING(gfx);
 
 	D3D11_SAMPLER_DESC samplerDesc = {};
-	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	samplerDesc.Filter = D3D11_FILTER_ANISOTROPIC;
 	samplerDesc.AddressU = wrapU;
 	samplerDesc.AddressV = wrapV;
 	samplerDesc.AddressW = wrapW;
 	samplerDesc.MipLODBias = 0.f;
 	samplerDesc.MinLOD = 0.f;
 	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+	samplerDesc.MaxAnisotropy = D3D11_REQ_MAXANISOTROPY;
 
 	GFX_THROW_INFO(GetDevice(gfx)->CreateSamplerState(&samplerDesc, &pSampler));
 }
