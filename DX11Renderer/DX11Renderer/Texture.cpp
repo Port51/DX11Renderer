@@ -99,7 +99,7 @@ Texture::Texture(Graphics& gfx, const std::string& path, UINT slot, D3D11_TEXTUR
 
 void Texture::Bind(Graphics& gfx)
 {
-	GetContext(gfx)->PSSetShaderResources(0u, 1u, pTextureView.GetAddressOf());
+	GetContext(gfx)->PSSetShaderResources(slot, 1u, pTextureView.GetAddressOf());
 }
 
 std::string Texture::GetUID() const

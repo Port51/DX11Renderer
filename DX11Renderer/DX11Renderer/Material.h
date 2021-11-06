@@ -17,6 +17,8 @@ public:
 public:
 	static std::shared_ptr<Bindable> Resolve(Graphics& gfx, const std::string_view assetPath);
 	static std::string GenerateUID(const std::string_view assetPath);
+private:
+	void AddBindable(std::shared_ptr<Bindable> pBindable);
 public:
 	std::shared_ptr<VertexShader> pVertexShader;
 	std::shared_ptr<PixelShader> pPixelShader;

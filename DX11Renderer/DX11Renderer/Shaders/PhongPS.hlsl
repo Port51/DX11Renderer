@@ -21,9 +21,9 @@ cbuffer ObjectCBuf : register(b1)
     float padding[2];
 };
 
-Texture2D tex;
-Texture2D nmap;
-SamplerState splr;
+Texture2D tex : register(t0);
+Texture2D nmap : register(t1);
+SamplerState splr : register(s0);
 
 #include "Lighting/BRDF.hlsli"
 
@@ -38,6 +38,9 @@ float4 main(v2f i) : SV_Target
     //return frac(i.uv0.x * 10);
     
     i.normalVS = normalize(i.normalVS);
+    
+    i.uv0.y = 1 - i.uv0.y;
+    float4 diffuseTex = tex.Sample(splr, i.uv0);
     
     float3 n;
     if (normalMapEnabled)
@@ -78,6 +81,9 @@ float4 main(v2f i) : SV_Target
     // cheap ambient gradient
     float3 ambient = pow(i.normalVS.y * -0.5 + 0.5, 2) * 0.15 * float3(0.75, 0.95, 1.0);
     
-    return float4((brdf.diffuseLight + brdf.specularLight + ambient) * materialColor, 1);
+    brdf.diffuseLight += ambient;
+    
+    //return diffuseTex;
+    return float4((brdf.diffuseLight * diffuseTex.rgb + brdf.specularLight) * materialColor, 1);
     
 }

@@ -6,6 +6,8 @@
 #include "PixelShader.h"
 #include "PixelConstantBuffer.h"
 #include "InputLayout.h"
+#include "Texture.h"
+#include "Sampler.h"
 
 #include <fstream>
 #include <sstream>
@@ -47,7 +49,7 @@ Material::Material(Graphics& gfx, const std::string_view assetPath)
 				// Bind vertex shader and input layout
 				pVertexShader = std::make_shared<VertexShader>(gfx, values[0].c_str());
 				auto pvsbc = pVertexShader->GetBytecode();
-				pBindables.push_back(pVertexShader);
+				AddBindable(pVertexShader);
 
 				// moved:
 				//pBindables.push_back(InputLayout::Resolve(gfx, _vertexLayout, pvsbc));
@@ -55,7 +57,7 @@ Material::Material(Graphics& gfx, const std::string_view assetPath)
 			else if (key == "PS")
 			{
 				pPixelShader = PixelShader::Resolve(gfx, values[0].c_str());
-				pBindables.push_back(pPixelShader);
+				AddBindable(pPixelShader);
 			}
 			else if (key == "Color")
 			{
@@ -77,7 +79,11 @@ Material::Material(Graphics& gfx, const std::string_view assetPath)
 	} pmc;
 	pmc.materialColor = colorProp;
 
-	pBindables.push_back(PixelConstantBuffer<PSMaterialConstant>::Resolve(gfx, std::string(assetPath), pmc, 1u));
+	AddBindable(PixelConstantBuffer<PSMaterialConstant>::Resolve(gfx, std::string(assetPath), pmc, 1u));
+
+	AddBindable(Texture::Resolve(gfx, "Models\\HeadTextures\\face.jpg", 0u));
+	AddBindable(Texture::Resolve(gfx, "Models\\HeadTextures\\normal.jpg", 1u));
+	AddBindable(Sampler::Resolve(gfx));
 
 	if (pVertexShader == nullptr)
 		throw std::runtime_error("Material at " + std::string(assetPath) + " is missing vertex shader!");
@@ -108,4 +114,9 @@ std::shared_ptr<Bindable> Material::Resolve(Graphics & gfx, const std::string_vi
 std::string Material::GenerateUID(const std::string_view assetPath)
 {
 	return typeid(Material).name() + "#"s + std::string(assetPath);
+}
+
+void Material::AddBindable(std::shared_ptr<Bindable> pBindable)
+{
+	pBindables.push_back(pBindable);
 }
