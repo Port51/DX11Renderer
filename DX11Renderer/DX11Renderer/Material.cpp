@@ -87,8 +87,8 @@ Material::Material(Graphics& gfx, const std::string_view assetPath)
 
 	AddBindable(PixelConstantBuffer<PSMaterialConstant>::Resolve(gfx, std::string(assetPath), pmc, 1u));
 
-	AddBindable(Texture::Resolve(gfx, "Models\\HeadTextures\\face.jpg", 0u));
-	AddBindable(Texture::Resolve(gfx, "Models\\HeadTextures\\normal.jpg", 1u));
+	AddBindable(Texture::Resolve(gfx, "Models\\HeadTextures\\face_albedo.png", 0u));
+	AddBindable(Texture::Resolve(gfx, "Models\\HeadTextures\\face_normal.png", 1u));
 	AddBindable(Sampler::Resolve(gfx));
 
 	if (pVertexShader == nullptr)

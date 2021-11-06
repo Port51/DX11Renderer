@@ -64,7 +64,7 @@ float4 main(v2f i) : SV_Target
         n = mul(n, tbnMatrix); // no need to transpose
         //return i.tangentVS.y;
         //return n.x;
-        i.normalVS = -n;
+        i.normalVS = normalize(-n); // fix sampling interpolation
     }
     
     const float3 vToL = lightPos - i.positionVS;
