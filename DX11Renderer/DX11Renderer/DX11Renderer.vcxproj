@@ -183,7 +183,7 @@
     <ClCompile Include="Log.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Material.cpp" />
-    <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="MeshRenderer.cpp" />
     <ClCompile Include="ModelInstance.cpp" />
     <ClCompile Include="Mouse.cpp" />
     <ClCompile Include="PixelShader.cpp" />
@@ -237,7 +237,7 @@
     <ClInclude Include="Keyboard.h" />
     <ClInclude Include="Log.h" />
     <ClInclude Include="Material.h" />
-    <ClInclude Include="Mesh.h" />
+    <ClInclude Include="MeshRenderer.h" />
     <ClInclude Include="MeshAsset.h" />
     <ClInclude Include="ModelAsset.h" />
     <ClInclude Include="ModelInstance.h" />
@@ -275,6 +275,7 @@
     <Image Include="icon1.ico" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\Materials\TestMaterial.asset" />
     <None Include="Shaders\PhongCommon.hlsli" />
     <None Include="Shaders\Lighting\Diffuse.hlsli" />
     <None Include="DXGetErrorDescription.inl" />

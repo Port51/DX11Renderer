@@ -2,7 +2,7 @@
 #include <memory>
 #include "GeoMath.h"
 #include "Surface.h"
-#include "Mesh.h"
+#include "MeshRenderer.h"
 #include "ModelInstance.h"
 #include "GDIPlusManager.h"
 #include "Imgui/imgui.h"

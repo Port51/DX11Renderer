@@ -1,16 +1,19 @@
-#include "Mesh.h"
+#include "MeshRenderer.h"
 #include "BindableInclude.h"
 #include "GraphicsThrowMacros.h"
 #include "PixelConstantBuffer.h"
 #include "VertexInclude.h"
 #include <exception>
+#include <assert.h>
 //#include "Sphere.h"
 
 namespace dx = DirectX;
 
-Mesh::Mesh(Graphics& gfx, std::string name, std::vector<std::shared_ptr<Bindable>> pBindables)
-	: name(name)
+MeshRenderer::MeshRenderer(Graphics& gfx, std::string name, std::shared_ptr<Material> pMaterial, std::vector<std::shared_ptr<Bindable>> pBindables)
+	: name(name),
+	pMaterial(pMaterial)
 {
+	assert("Material cannot be null" && pMaterial);
 	AddBind(std::make_shared<Topology>(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
 
 	for (auto& pb : pBindables)
@@ -25,14 +28,14 @@ Mesh::Mesh(Graphics& gfx, std::string name, std::vector<std::shared_ptr<Bindable
 	AddBind(std::make_shared<TransformCbuf>(gfx, *this));
 }
 
-void Mesh::Draw(Graphics& gfx, DirectX::FXMMATRIX accumulatedTransform) const noexcept(!IS_DEBUG)
+void MeshRenderer::Draw(Graphics& gfx, DirectX::FXMMATRIX accumulatedTransform) const noexcept(!IS_DEBUG)
 {
 	DirectX::XMStoreFloat4x4(&modelMatrix, accumulatedTransform);
 	pMaterial->Bind(gfx);
 	Drawable::Draw(gfx);
 }
 
-DirectX::XMMATRIX Mesh::GetTransformXM() const
+DirectX::XMMATRIX MeshRenderer::GetTransformXM() const
 {
 	return DirectX::XMLoadFloat4x4(&modelMatrix);
 }

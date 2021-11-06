@@ -5,6 +5,7 @@
 #include "ModelAsset.h"
 #include "VertexInclude.h"
 #include <exception>
+#include <assert.h>
 //#include "Sphere.h"
 
 namespace dx = DirectX;
@@ -33,7 +34,7 @@ void ModelInstance::SetPositionWS(DirectX::XMFLOAT3 positionWS)
 std::unique_ptr<Node> ModelInstance::CreateModelInstanceNode(Graphics& gfx, std::unique_ptr<SceneGraphNode<MeshAsset>> const& pSourceNode)
 {
 	// Copy mesh if needed
-	auto pMeshInstance = std::unique_ptr<Mesh>();
+	auto pMeshInstance = std::unique_ptr<MeshRenderer>();
 	if (pSourceNode->pMesh)
 	{
 		pMeshInstance = ParseMesh(gfx, pSourceNode->pMesh);
@@ -55,7 +56,7 @@ std::unique_ptr<Node> ModelInstance::CreateModelInstanceNode(Graphics& gfx, std:
 	return std::move(pNode);
 }
 
-std::unique_ptr<Mesh> ModelInstance::ParseMesh(Graphics& gfx, std::unique_ptr<MeshAsset> const& pMeshAsset)
+std::unique_ptr<MeshRenderer> ModelInstance::ParseMesh(Graphics& gfx, std::unique_ptr<MeshAsset> const& pMeshAsset)
 {
 	namespace dx = DirectX;
 	//using VertexLayout;
@@ -100,21 +101,21 @@ std::unique_ptr<Mesh> ModelInstance::ParseMesh(Graphics& gfx, std::unique_ptr<Me
 		indices.push_back(pMeshAsset->indices[i]);
 	}
 
-	std::vector<std::shared_ptr<Bindable>> bindablePtrs;
+	std::vector<std::shared_ptr<Bindable>> pBindablePtrs;
 
-	bindablePtrs.push_back(std::make_shared<VertexBuffer>(gfx, vbuf));
-
-	bindablePtrs.push_back(std::make_shared<IndexBuffer>(gfx, indices));
-
-	// todo: move!
-	auto pvs = std::make_shared<VertexShader>(gfx, "Shaders\\Built\\PhongVS.cso");
-	auto pvsbc = pvs->GetBytecode();
-	bindablePtrs.push_back(std::move(pvs));
+	auto meshTag = "Mesh%" + pMeshAsset->name;
+	pBindablePtrs.push_back(VertexBuffer::Resolve(gfx, meshTag, vbuf)); // vbuf is passed as const&
+	pBindablePtrs.push_back(IndexBuffer::Resolve(gfx, meshTag, indices));
 
 	// todo: move!
-	bindablePtrs.push_back(std::make_shared<PixelShader>(gfx, "Shaders\\Built\\PhongPS.cso"));
+	//auto pvs = std::make_shared<VertexShader>(gfx, "Shaders\\Built\\PhongVS.cso");
+	//auto pvsbc = pvs->GetBytecode();
+	//bindablePtrs.push_back(std::move(pvs));
 
-	bindablePtrs.push_back(std::make_shared<InputLayout>(gfx, vbuf.GetLayout(), pvsbc));
+	// todo: move!
+	pBindablePtrs.push_back(PixelShader::Resolve(gfx, "Shaders\\Built\\PhongPS.cso"));
+
+	//bindablePtrs.push_back(std::make_shared<InputLayout>(gfx, vbuf.GetLayout(), pvsbc));
 
 	// todo: move!
 	struct PSMaterialConstant
@@ -124,9 +125,12 @@ std::unique_ptr<Mesh> ModelInstance::ParseMesh(Graphics& gfx, std::unique_ptr<Me
 		float specularPower = 30.0f;
 		float padding[3];
 	} pmc;
-	bindablePtrs.push_back(std::make_shared<PixelConstantBuffer<PSMaterialConstant>>(gfx, pmc, 1u));
+	pBindablePtrs.push_back(PixelConstantBuffer<PSMaterialConstant>::Resolve(gfx, pmc, 1u));
 
-	return std::make_unique<Mesh>(gfx, pMeshAsset->name, std::move(bindablePtrs));
+	std::shared_ptr<Material> pMaterial = std::dynamic_pointer_cast<Material>(Material::Resolve(gfx, "Assets\\Materials\\TestMaterial.asset", vbuf.GetLayout()));
+
+	// todo: replace nullptr with material
+	return std::make_unique<MeshRenderer>(gfx, pMeshAsset->name, pMaterial, std::move(pBindablePtrs));
 }
 
 void Node::Draw(Graphics & gfx, DirectX::FXMMATRIX accumulatedTransform) const
