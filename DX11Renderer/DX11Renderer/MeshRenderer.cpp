@@ -3,6 +3,7 @@
 #include "GraphicsThrowMacros.h"
 #include "PixelConstantBuffer.h"
 #include "VertexInclude.h"
+#include "TransformCbufWithPixelBind.h"
 #include <exception>
 #include <assert.h>
 //#include "Sphere.h"
@@ -25,7 +26,7 @@ MeshRenderer::MeshRenderer(Graphics& gfx, std::string name, std::shared_ptr<Mate
 		throw std::runtime_error(std::string("Mesh '") + name + std::string("' is missing IndexBuffer!"));
 	}*/
 
-	AddBind(std::make_shared<TransformCbuf>(gfx, *this));
+	AddBind(std::make_shared<TransformCbufWithPixelBind>(gfx, *this, 0u, 2u));
 }
 
 void MeshRenderer::Draw(Graphics& gfx, DirectX::FXMMATRIX accumulatedTransform) const noexcept(!IS_DEBUG)

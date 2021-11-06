@@ -1,7 +1,7 @@
 
 #include "PhongCommon.hlsli"
 
-cbuffer LightCBuf
+cbuffer LightCBuf : register(b0)
 {
 	float3 lightPos;
 	float3 ambient;
@@ -19,6 +19,13 @@ cbuffer ObjectCBuf : register(b1)
     bool normalMapEnabled; // 4 bytes in HLSL, so use BOOL in C++ to match
 	float specularPower;
     float padding[2];
+};
+
+cbuffer CBuf : register(b2)
+{
+    matrix model;
+    matrix modelView;
+    matrix modelViewProj;
 };
 
 Texture2D tex : register(t0);
@@ -48,8 +55,9 @@ float4 main(v2f i) : SV_Target
         const float3 normalSample = nmap.Sample(splr, i.uv0).xyz;
         n.x = normalSample.x * 2.0f - 1.0f;
         n.y = -normalSample.y * 2.0f + 1.0f; // Convert from OpenGL to DX style
-        n.z = normalSample.z;
-        //return n.z;
+        n.z = -normalSample.z;
+        n = mul((float3x3) modelView, n);
+        return n.z;
     }
     
     const float3 vToL = lightPos - i.positionVS;

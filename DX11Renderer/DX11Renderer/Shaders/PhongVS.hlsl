@@ -1,7 +1,7 @@
 
 #include "PhongCommon.hlsli"
 
-cbuffer CBuf
+cbuffer CBuf : register(b0)
 {
 	matrix model;
 	matrix modelView;
