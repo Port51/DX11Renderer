@@ -65,6 +65,7 @@ std::unique_ptr<MeshRenderer> ModelInstance::ParseMesh(Graphics& gfx, std::uniqu
 		VertexLayout{}
 		.Append(VertexLayout::Position3D)
 		.Append(VertexLayout::Normal)
+		.Append(VertexLayout::Texture2D)
 	));
 
 	if (pMeshAsset->vertices.size() == 0)
@@ -74,10 +75,12 @@ std::unique_ptr<MeshRenderer> ModelInstance::ParseMesh(Graphics& gfx, std::uniqu
 	for (unsigned int i = 0; i < pMeshAsset->vertices.size(); ++i)
 	{
 		dx::XMFLOAT3 normals = (pMeshAsset->hasNormals) ? pMeshAsset->normals[i] : dx::XMFLOAT3(0, 0, 1);
+		dx::XMFLOAT2 uv0 = (pMeshAsset->texcoords.size() > 0) ? pMeshAsset->texcoords[0][i] : dx::XMFLOAT2(0, 0);
 
 		vbuf.EmplaceBack(
 			pMeshAsset->vertices[i],
-			normals
+			normals,
+			uv0
 		);
 		/*vbuf.EmplaceBack(
 			*reinterpret_cast<dx::XMFLOAT3*>(&pMeshAsset->vertices[i]),

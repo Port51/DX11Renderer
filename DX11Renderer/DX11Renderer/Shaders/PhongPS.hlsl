@@ -29,7 +29,8 @@ float SCurve(float x)
 
 float4 main(v2f i) : SV_Target
 {
-    //return n.z;
+    //return frac(i.uv0.x * 10);
+    
     i.normalVS = normalize(i.normalVS);
     
     const float3 vToL = lightPos - i.positionVS;

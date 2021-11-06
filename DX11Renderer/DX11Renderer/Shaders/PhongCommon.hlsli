@@ -7,6 +7,7 @@ struct v2f
     float3 normalVS : Normal;
     float3 positionVS : TEXCOORD0;
     float3 normalWS : TEXCOORD1;
+    float2 uv0 : TEXCOORD2;
 };
 
 #endif

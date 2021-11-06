@@ -154,7 +154,7 @@ public:
 		// To convert to XMFLOAT3, use this:
 		// *reinterpret_cast<dx::XMFLOAT3*>(&pMesh->mNormals[i])
 
-		pMesh->vertices = GetFbxVertices(pFbxMesh);
+		pMesh->vertices = std::move(GetFbxVertices(pFbxMesh));
 
 		int* pIndices = pFbxMesh->GetPolygonVertices();
 
@@ -170,7 +170,7 @@ public:
 			pMesh->normals = std::move(GetFbxNormals(pFbxMesh));
 			break;
 		case FBXNormalsMode::FlatShaded:
-			pMesh->normals = GetFlatNormals(pMesh->vertices, pFbxMesh);
+			pMesh->normals = std::move(GetFlatNormals(pMesh->vertices, pFbxMesh));
 			break;
 		}
 		pMesh->hasNormals = pMesh->normals.size() > 0;
@@ -180,88 +180,90 @@ public:
 			assert("Normal count must match vertex count!" && pMesh->normals.size() == pMesh->vertices.size());
 		}
 
+		pMesh->texcoords = std::move(LoadUVInformation(pFbxMesh));
+
 		return std::move(pMesh);
 	}
 
 	// From AutoDesk SDK examples
-	void LoadUVInformation(FbxMesh* pMesh)
+	static std::vector<std::vector<DirectX::XMFLOAT2>> LoadUVInformation(FbxMesh* pFbxMesh)
 	{
-		//get all UV set names
-		FbxStringList lUVSetNameList;
-		pMesh->GetUVSetNames(lUVSetNameList);
+		std::vector<std::vector<DirectX::XMFLOAT2>> result;
 
-		//iterating over all uv sets
-		for (int lUVSetIndex = 0; lUVSetIndex < lUVSetNameList.GetCount(); lUVSetIndex++)
+		FbxStringList uvSetNameList;
+		pFbxMesh->GetUVSetNames(uvSetNameList);
+
+		for (int uvIdx = 0; uvIdx < uvSetNameList.GetCount(); uvIdx++)
 		{
-			//get lUVSetIndex-th uv set
-			const char* lUVSetName = lUVSetNameList.GetStringAt(lUVSetIndex);
-			const FbxGeometryElementUV* lUVElement = pMesh->GetElementUV(lUVSetName);
+			std::vector<DirectX::XMFLOAT2> uv(pFbxMesh->GetControlPointsCount(), DirectX::XMFLOAT2(0, 0));
 
-			if (!lUVElement)
+			const FbxGeometryElementUV* uvSetElement = pFbxMesh->GetElementUV(uvSetNameList.GetStringAt(uvIdx));
+
+			if (!uvSetElement)
 				continue;
 
-			// only support mapping mode eByPolygonVertex and eByControlPoint
-			if (lUVElement->GetMappingMode() != FbxGeometryElement::eByPolygonVertex &&
-				lUVElement->GetMappingMode() != FbxGeometryElement::eByControlPoint)
-				return;
+			if (uvSetElement->GetMappingMode() != FbxGeometryElement::eByPolygonVertex &&
+				uvSetElement->GetMappingMode() != FbxGeometryElement::eByControlPoint)
+				return result;
 
-			//index array, where holds the index referenced to the uv data
-			const bool lUseIndex = lUVElement->GetReferenceMode() != FbxGeometryElement::eDirect;
-			const int lIndexCount = (lUseIndex) ? lUVElement->GetIndexArray().GetCount() : 0;
+			// Index array, where holds the index referenced to the uv data
+			const bool useIndex = uvSetElement->GetReferenceMode() != FbxGeometryElement::eDirect;
+			const int indexCount = (useIndex) ? uvSetElement->GetIndexArray().GetCount() : 0;
+			const int polyCount = pFbxMesh->GetPolygonCount();
 
-			//iterating through the data by polygon
-			const int lPolyCount = pMesh->GetPolygonCount();
-
-			if (lUVElement->GetMappingMode() == FbxGeometryElement::eByControlPoint)
+			if (uvSetElement->GetMappingMode() == FbxGeometryElement::eByControlPoint)
 			{
-				for (int lPolyIndex = 0; lPolyIndex < lPolyCount; ++lPolyIndex)
+				// Iterate verts
+				for (int i = 0; i < pFbxMesh->GetControlPointsCount(); ++i)
 				{
-					// build the max index array that we need to pass into MakePoly
-					const int lPolySize = pMesh->GetPolygonSize(lPolyIndex);
-					for (int lVertIndex = 0; lVertIndex < lPolySize; ++lVertIndex)
+					int normalIndex = 0;
+
+					// If reference mode is direct, the normal index is same as vertex index.
+					if (uvSetElement->GetReferenceMode() == FbxGeometryElement::eDirect)
 					{
-						FbxVector2 lUVValue;
-
-						//get the index of the current vertex in control points array
-						int lPolyVertIndex = pMesh->GetPolygonVertex(lPolyIndex, lVertIndex);
-
-						//the UV index depends on the reference mode
-						int lUVIndex = lUseIndex ? lUVElement->GetIndexArray().GetAt(lPolyVertIndex) : lPolyVertIndex;
-
-						lUVValue = lUVElement->GetDirectArray().GetAt(lUVIndex);
-
-						//User TODO:
-						//Print out the value of UV(lUVValue) or log it to a file
+						normalIndex = i;
 					}
+
+					// Reference mode is index-to-direct, get normals by the index-to-direct
+					if (uvSetElement->GetReferenceMode() == FbxGeometryElement::eIndexToDirect)
+					{
+						normalIndex = uvSetElement->GetIndexArray().GetAt(i);
+					}
+
+					// Got normals of each vertex.
+					FbxVector2 uvValue = uvSetElement->GetDirectArray().GetAt(normalIndex);
+					uv[i] = Vec2ToFloat2(uvValue);
+
 				}
 			}
-			else if (lUVElement->GetMappingMode() == FbxGeometryElement::eByPolygonVertex)
+			else if (uvSetElement->GetMappingMode() == FbxGeometryElement::eByPolygonVertex)
 			{
-				int lPolyIndexCounter = 0;
-				for (int lPolyIndex = 0; lPolyIndex < lPolyCount; ++lPolyIndex)
+				int polyIndexCounter = 0;
+				for (int p = 0; p < polyCount; ++p)
 				{
 					// build the max index array that we need to pass into MakePoly
-					const int lPolySize = pMesh->GetPolygonSize(lPolyIndex);
-					for (int lVertIndex = 0; lVertIndex < lPolySize; ++lVertIndex)
+					const int polySize = pFbxMesh->GetPolygonSize(p);
+					for (int i = 0; i < polySize; ++i)
 					{
-						if (lPolyIndexCounter < lIndexCount)
+						if (polyIndexCounter < indexCount)
 						{
-							FbxVector2 lUVValue;
-
 							//the UV index depends on the reference mode
-							int lUVIndex = lUseIndex ? lUVElement->GetIndexArray().GetAt(lPolyIndexCounter) : lPolyIndexCounter;
+							int lUVIndex = useIndex ? uvSetElement->GetIndexArray().GetAt(polyIndexCounter) : polyIndexCounter;
 
-							lUVValue = lUVElement->GetDirectArray().GetAt(lUVIndex);
+							FbxVector2 uvValue = uvSetElement->GetDirectArray().GetAt(lUVIndex);
 
-							//User TODO:
-							//Print out the value of UV(lUVValue) or log it to a file
+							int vertexIndex = pFbxMesh->GetPolygonVertex(p, i);
+							uv[vertexIndex] = Vec2ToFloat2(uvValue);
 
-							lPolyIndexCounter++;
+							polyIndexCounter++;
 						}
 					}
 				}
 			}
+
+			result.push_back(std::move(uv));
 		}
+		return std::move(result);
 	}
 
 	static std::vector<int> GetFbxIndices(FbxMesh* pFbxMesh)
@@ -327,7 +329,6 @@ public:
 	//get mesh normals info
 	static std::vector<DirectX::XMFLOAT3> GetFbxNormals(FbxMesh* pFbxMesh)
 	{
-
 		FbxGeometryElementNormal* normalElement = pFbxMesh->GetElementNormal();
 		std::vector<DirectX::XMFLOAT3> normals(pFbxMesh->GetControlPointsCount(), DirectX::XMFLOAT3(0, 0, 0));
 		if (normalElement)
@@ -401,166 +402,6 @@ public:
 		{
 			throw std::runtime_error("Mesh does not have FbxGeometryElementNormal");
 		}
-		/*
-		for (int l = 0; l < pFbxMesh->GetLayerCount(); ++l) {
-			KFbxLayerElementUV* texCoords = texCoordsFound ? NULL : pFbxMesh->GetLayer(l)->GetUVs();
-			KFbxLayerElementNormal* normals = normalsFound ? NULL : pFbxMesh->GetLayer(l)->GetNormals();
-			KFbxLayerElementTangent* tangents = tangentsFound ? NULL : pFbxMesh->GetLayer(l)->GetTangents();
-			KFbxLayerElementBinormal* binormals = binormalsFound ? NULL : pFbxMesh->GetLayer(l)->GetBinormals();
-
-			// loop through triangles				
-			for (int i = 0; i < triCount; ++i) {
-				// get a reference to it					
-				Triangle & tri = triangles;
-				// for each vertex in the triangle					
-				for (int v = 0; v < 3; ++v) {
-					// get a reference to it						
-					Vertex & vert = tri.vertices[v];
-					//int positionIndex = mesh->GetPolygonVertex( i, v );						
-					int positionIndex = mesh->GetPolygonVertexIndex(i) + v;
-					// set its texture coordinate						
-					if (texCoords != NULL) {
-						texCoordsFound = true;
-						switch (texCoords->GetMappingMode())
-						{
-						case KFbxLayerElement::eBY_CONTROL_POINT:
-							switch (texCoords->GetReferenceMode())
-							{
-							case KFbxLayerElement::eDIRECT:
-								for (int p = 0; p < 2; ++p)
-									vert.texCoord = (float)texCoords->GetDirectArray().GetAt(positionIndex);
-								break;
-							case KFbxLayerElement::eINDEX_TO_DIRECT:
-							{
-								int index = texCoords->GetIndexArray().GetAt(positionIndex);
-								for (int p = 0; p < 2; ++p)
-									vert.texCoord = (float)texCoords->GetDirectArray().GetAt(index);
-							}
-							break;
-							default:
-								cout << "        Error: invalid texture coordinate reference mode\n";
-								error = true;
-							}
-							break;
-						case KFbxLayerElement::eBY_POLYGON_VERTEX:
-						{
-							int index = mesh->GetTextureUVIndex(i, v);
-							switch (texCoords->GetReferenceMode())
-							{
-							case KFbxLayerElement::eDIRECT:
-							case KFbxLayerElement::eINDEX_TO_DIRECT:
-								for (int p = 0; p < 2; ++p)
-									vert.texCoord = (float)texCoords->GetDirectArray().GetAt(index);
-								break;
-							default:
-								cout << "        Error: invalid texture coordinate reference mode\n";
-								error = true;
-							}
-						}
-						break;
-						case KFbxLayerElement::eBY_POLYGON:
-						case KFbxLayerElement::eALL_SAME:
-						case KFbxLayerElement::eNONE:
-							cout << "        Error: invalid texture coordinate mapping mode\n";
-							error = true;
-						}
-					}
-					// set its normal						
-					if (normals != NULL)
-					{
-						normalsFound = true;
-						if (normals->GetMappingMode() == KFbxLayerElement::eBY_POLYGON_VERTEX)
-						{
-							switch (normals->GetReferenceMode())
-							{
-							case KFbxLayerElement::eDIRECT:
-								for (int p = 0; p < 3; ++p)
-									vert.normal = (float)normals->GetDirectArray().GetAt(positionIndex);
-								break;
-							case KFbxLayerElement::eINDEX_TO_DIRECT:
-							{
-								int index = normals->GetIndexArray().GetAt(positionIndex);
-								for (int p = 0; p < 3; ++p)
-									vert.normal = (float)normals->GetDirectArray().GetAt(index);
-							}
-							break;
-							default:
-								cout << "        Error: invalid normal reference mode\n";
-								error = true;
-							}
-						}
-						else
-						{
-							cout << "        Error: invalid normal mapping mode\n";
-							error = true;
-						}
-					}
-					// set its tangent						
-					if (tangents != NULL)
-					{
-						tangentsFound = true;
-						if (tangents->GetMappingMode() == KFbxLayerElement::eBY_POLYGON_VERTEX)
-						{
-							switch (tangents->GetReferenceMode())
-							{
-							case KFbxLayerElement::eDIRECT:
-								for (int p = 0; p < 3; ++p)
-									vert.tangent = (float)tangents->GetDirectArray().GetAt(positionIndex);
-								break;
-							case KFbxLayerElement::eINDEX_TO_DIRECT:
-							{
-								int index = tangents->GetIndexArray().GetAt(positionIndex);
-								for (int p = 0; p < 3; ++p)
-									vert.tangent = (float)tangents->GetDirectArray().GetAt(index);
-							}
-							break;
-							default:
-								cout << "        Error: invalid tangent reference mode\n";
-								error = true;
-							}
-						}
-						else {
-							cout << "        Error: invalid tangent mapping mode\n";
-							error = true;
-						}
-					}
-					// set its binormals						
-					if (binormals != NULL) {
-						binormalsFound = true;
-						if (binormals->GetMappingMode() == KFbxLayerElement::eBY_POLYGON_VERTEX)
-						{
-							switch (binormals->GetReferenceMode())
-							{
-							case KFbxLayerElement::eDIRECT:
-								for (int p = 0; p < 3; ++p)
-									vert.binormal = (float)binormals->GetDirectArray().GetAt(positionIndex);
-								break;
-							case KFbxLayerElement::eINDEX_TO_DIRECT:
-							{
-								int index = binormals->GetIndexArray().GetAt(positionIndex);
-								for (int p = 0; p < 3; ++p)
-									vert.binormal = (float)binormals->GetDirectArray().GetAt(index);
-							}
-							break;
-							default:
-								cout << "        Error: invalid binormal reference mode\n";
-								error = true;
-							}
-						}
-						else {
-							cout << "        Error: invalid binormal mapping mode\n";
-							error = true;
-						}
-					}
-					if (error)
-						break;
-				}
-				if (error)
-					break;
-			}
-			if (error)
-				break;
-		}*/
 
 		return std::move(normals);
 	}
@@ -571,10 +412,13 @@ public:
 			(float)(vec.mData[0]),
 			(float)(vec.mData[1]),
 			(float)(vec.mData[2]));
-		return DirectX::XMFLOAT3(
-			static_cast<float>(vec[0]),
-			static_cast<float>(vec[1]),
-			static_cast<float>(vec[2]));
+	}
+
+	static DirectX::XMFLOAT2 Vec2ToFloat2(FbxVector2 vec)
+	{
+		return DirectX::XMFLOAT2(
+			(float)(vec.mData[0]),
+			(float)(vec.mData[1]));
 	}
 
 	// asserts face-independent vertices w/ normals cleared to zero
