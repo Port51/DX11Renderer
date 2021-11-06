@@ -13,6 +13,8 @@ Texture::Texture(Graphics& gfx, const std::string& path, UINT slot)
 	// load surface
 	const auto s = Surface::FromFile(path);
 
+	// todo: use staging texture for mips, and copy into immutable texture
+
 	// create texture resource
 	D3D11_TEXTURE2D_DESC textureDesc = {};
 	textureDesc.Width = s.GetWidth();
