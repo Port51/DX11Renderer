@@ -70,14 +70,14 @@ Material::Material(Graphics& gfx, const std::string_view assetPath) //, const Ve
 	// todo: read from file
 	struct PSMaterialConstant
 	{
-		DirectX::XMFLOAT3 color;
+		DirectX::XMFLOAT3 materialColor;
 		float specularIntensity = 0.6f;
 		float specularPower = 30.0f;
 		float padding[3];
 	} pmc;
-	pmc.color = colorProp;
+	pmc.materialColor = colorProp;
 
-	pBindables.push_back(PixelConstantBuffer<PSMaterialConstant>::Resolve(gfx, pmc, 1u));
+	pBindables.push_back(PixelConstantBuffer<PSMaterialConstant>::Resolve(gfx, std::string(assetPath), pmc, 1u));
 
 	if (pVertexShader == nullptr)
 		throw std::runtime_error("Material at " + std::string(assetPath) + " is missing vertex shader!");

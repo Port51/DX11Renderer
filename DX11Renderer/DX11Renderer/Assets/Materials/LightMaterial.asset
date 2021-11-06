@@ -1,4 +1,4 @@
 VS, Shaders\\Built\\SolidVS.cso
 PS, Shaders\\Built\\SolidPS.cso
-Color, 1.0, 1.0, 0.1, 1.0
+Color, 1.0, 0.1, 0.1, 1.0
 Roughness, 0.75

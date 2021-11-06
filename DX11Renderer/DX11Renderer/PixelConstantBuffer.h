@@ -6,6 +6,7 @@ template<typename C>
 class PixelConstantBuffer : public ConstantBuffer<C>
 {
 	using ConstantBuffer<C>::pConstantBuffer;
+	using ConstantBuffer<C>::identifier;
 	using ConstantBuffer<C>::slot;
 	using Bindable::GetContext;
 public:
@@ -15,25 +16,25 @@ public:
 	{
 		GetContext(gfx)->PSSetConstantBuffers(slot, 1u, pConstantBuffer.GetAddressOf());
 	}
-	static std::shared_ptr<PixelConstantBuffer> Resolve(Graphics& gfx, const C& consts, UINT slot = 0)
+	static std::shared_ptr<PixelConstantBuffer> Resolve(Graphics& gfx, std::string identifier, const C& consts, UINT slot = 0)
 	{
-		return Bind::Codex::Resolve<PixelConstantBuffer>(gfx, consts, slot);
+		return Bind::Codex::Resolve<PixelConstantBuffer>(gfx, identifier, consts, slot);
 	}
-	static std::shared_ptr<PixelConstantBuffer> Resolve(Graphics& gfx, UINT slot = 0)
+	static std::shared_ptr<PixelConstantBuffer> Resolve(Graphics& gfx, std::string identifier, UINT slot = 0)
 	{
-		return Bind::Codex::Resolve<PixelConstantBuffer>(gfx, slot);
+		return Bind::Codex::Resolve<PixelConstantBuffer>(gfx, identifier, slot);
 	}
-	static std::string GenerateUID(const C&, UINT slot)
+	static std::string GenerateUID(std::string identifier, const C&, UINT slot)
 	{
-		return GenerateUID(slot);
+		return GenerateUID(identifier, slot);
 	}
-	static std::string GenerateUID(UINT slot = 0)
+	static std::string GenerateUID(std::string identifier, UINT slot = 0)
 	{
 		using namespace std::string_literals;
-		return typeid(PixelConstantBuffer).name() + "#"s + std::to_string(slot);
+		return typeid(PixelConstantBuffer).name() + "#"s + identifier + "#"s + std::to_string(slot);
 	}
 	std::string GetUID() const noexcept override
 	{
-		return GenerateUID(slot);
+		return GenerateUID(identifier, slot);
 	}
 };

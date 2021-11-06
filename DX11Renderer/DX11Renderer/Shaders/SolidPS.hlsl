@@ -1,9 +1,11 @@
-cbuffer CBuf
+cbuffer ObjectCBuf
 {
-	float4 color;
+    float3 materialColor;
+    float specularIntensity;
+    float specularPower;
 };
 
 float4 main() : SV_Target
 {
-	return color;
+    return float4(materialColor.rgb, 1);
 }

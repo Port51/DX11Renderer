@@ -1,13 +1,14 @@
 #pragma once
 #include "Bindable.h"
 #include "GraphicsThrowMacros.h"
+#include <string>
 
 template<typename C>
 class ConstantBuffer : public Bindable
 {
 public:
 	// Init with constants
-	ConstantBuffer(Graphics & gfx, const C & data, UINT slot = 0u)
+	ConstantBuffer(Graphics & gfx, std::string identifier, const C & data, UINT slot = 0u)
 		: slot(slot)
 	{
 		SETUP_LOGGING(gfx);
@@ -26,7 +27,7 @@ public:
 	}
 
 	// Don't init
-	ConstantBuffer(Graphics & gfx, UINT slot = 0u)
+	ConstantBuffer(Graphics & gfx, std::string identifier, UINT slot = 0u)
 		: slot(slot)
 	{
 		SETUP_LOGGING(gfx);
@@ -59,5 +60,6 @@ public:
 	}
 protected:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> pConstantBuffer;
+	std::string identifier;
 	UINT slot;
 };

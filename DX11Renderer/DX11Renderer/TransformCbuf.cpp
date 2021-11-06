@@ -6,7 +6,7 @@ TransformCbuf::TransformCbuf(Graphics& gfx, const Drawable& parent, UINT slot)
 {
 	if (!pVcbuf)
 	{
-		pVcbuf = std::make_unique<VertexConstantBuffer<Transforms>>(gfx, slot);
+		pVcbuf = std::make_unique<VertexConstantBuffer<Transforms>>(gfx, "NotInCodex", slot);
 	}
 }
 

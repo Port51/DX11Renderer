@@ -29,5 +29,5 @@ private:
 	DirectX::XMFLOAT3 initialPositionWS;
 	float initialIntensity;
 	PointLightCBuf cbData;
-	mutable PixelConstantBuffer<PointLightCBuf> cbuf;
+	mutable PixelConstantBuffer<PointLightCBuf> globalLightCbuf;
 };

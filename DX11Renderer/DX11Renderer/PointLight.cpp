@@ -5,7 +5,7 @@
 
 PointLight::PointLight(Graphics& gfx, DirectX::XMFLOAT3 position, float intensity, float radius)
 	:
-	cbuf(gfx),
+	globalLightCbuf(gfx, "Light0"),
 	initialPositionWS(position),
 	initialIntensity(intensity)
 {
@@ -71,6 +71,6 @@ void PointLight::Bind(Graphics& gfx, DirectX::FXMMATRIX viewMatrix) const
 	// Transform WS to VS
 	DirectX::XMStoreFloat3(&dataCopy.posVS, DirectX::XMVector3Transform(posWS_Vector, viewMatrix));
 
-	cbuf.Update(gfx, PointLightCBuf{ dataCopy });
-	cbuf.Bind(gfx);
+	globalLightCbuf.Update(gfx, PointLightCBuf{ dataCopy });
+	globalLightCbuf.Bind(gfx);
 }
