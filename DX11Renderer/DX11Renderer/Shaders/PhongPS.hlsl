@@ -15,7 +15,7 @@ cbuffer LightCBuf
 cbuffer ObjectCBuf : register(b1)
 {
 	float3 materialColor;
-	float specularIntensity;
+    float roughness;
     bool normalMapEnabled; // 4 bytes in HLSL, so use BOOL in C++ to match
 	float specularPower;
     float padding[2];
@@ -74,9 +74,8 @@ float4 main(v2f i) : SV_Target
     float3 viewDirVS = normalize(i.positionVS);
     float3 f0 = 0.5;
     float f90 = 1;
-    float linearRoughness = 0.75;
-    float roughness = pow(linearRoughness, 2);
-    BRDFLighting brdf = BRDF(f0, f90, roughness, linearRoughness, normalVS, -viewDirVS, normalize(vToL));
+    float roughnessSqr = pow(roughness, 2);
+    BRDFLighting brdf = BRDF(f0, f90, roughnessSqr, roughness, normalVS, -viewDirVS, normalize(vToL));
     
     // cheap ambient gradient
     float3 ambient = pow(i.normalVS.y * -0.5 + 0.5, 2) * 0.15 * float3(0.75, 0.95, 1.0);

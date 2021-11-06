@@ -19,6 +19,7 @@ Material::Material(Graphics& gfx, const std::string_view assetPath)
 	: assetPath(std::string(assetPath))
 {
 	DirectX::XMFLOAT3 colorProp = { 0.8f,0.8f,0.8f };
+	float roughnessProp = 0.75f;
 
 	// todo: move this to asset reader class
 	std::ifstream file(std::string(assetPath).c_str());
@@ -63,6 +64,10 @@ Material::Material(Graphics& gfx, const std::string_view assetPath)
 			{
 				colorProp = { std::stof(values[0]), std::stof(values[1]), std::stof(values[2]) };
 			}
+			else if (key == "Roughness")
+			{
+				roughnessProp = std::stof(values[0]);
+			}
 
 		}
 		file.close();
@@ -72,12 +77,13 @@ Material::Material(Graphics& gfx, const std::string_view assetPath)
 	struct PSMaterialConstant // must be multiple of 16 bytes
 	{
 		DirectX::XMFLOAT3 materialColor;
-		float specularIntensity = 0.6f;
+		float roughness;
 		BOOL normalMappingEnabled = TRUE; // BOOL uses 4 bytes as it's an int, rather than bool
 		float specularPower = 30.0f;
 		float padding[2];
 	} pmc;
 	pmc.materialColor = colorProp;
+	pmc.roughness = roughnessProp;
 
 	AddBindable(PixelConstantBuffer<PSMaterialConstant>::Resolve(gfx, std::string(assetPath), pmc, 1u));
 
