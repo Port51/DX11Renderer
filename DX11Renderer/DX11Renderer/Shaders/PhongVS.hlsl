@@ -22,7 +22,7 @@ v2f main(attrib i)
     vso.positionVS = (float3) mul(modelView, float4(i.pos, 1.0f));
     vso.normalWS = mul((float3x3) model, i.n);;
     vso.normalVS = mul((float3x3) modelView, i.n);
-    vso.tangentVS = i.t; //mul((float3x3) modelView, i.t);
+    vso.tangentVS = mul((float3x3) modelView, i.t);
 	vso.pos = mul(modelViewProj, float4(i.pos, 1.0f));
     vso.uv0 = i.uv0;
 	return vso;

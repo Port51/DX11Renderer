@@ -42,10 +42,13 @@ float SCurve(float x)
 
 float4 main(v2f i) : SV_Target
 {
-    return abs(i.tangentVS.xyzz);
+    //return abs(i.tangentVS.xyzz);
     //return frac(i.uv0.x * 10);
     
     i.normalVS = normalize(i.normalVS);
+    i.tangentVS = normalize(i.tangentVS);
+    float3 bitangentVS = cross(i.tangentVS, i.normalVS);
+    float3x3 tbnMatrix = float3x3(i.tangentVS.xyz, bitangentVS.xyz, i.normalVS.xyz);
     
     i.uv0.y = 1 - i.uv0.y;
     float4 diffuseTex = tex.Sample(splr, i.uv0);
@@ -57,8 +60,11 @@ float4 main(v2f i) : SV_Target
         n.x = normalSample.x * 2.0f - 1.0f;
         n.y = -normalSample.y * 2.0f + 1.0f; // Convert from OpenGL to DX style
         n.z = -normalSample.z;
-        n = mul((float3x3) modelView, n);
-        return n.z;
+        //n = float3(0, 0, 1);
+        n = mul(n, tbnMatrix); // no need to transpose
+        //return i.tangentVS.y;
+        //return n.x;
+        i.normalVS = -n;
     }
     
     const float3 vToL = lightPos - i.positionVS;
