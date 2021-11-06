@@ -3,6 +3,8 @@
 #include <string>
 #include "Graphics.h"
 #include "VertexShader.h"
+#include "PixelShader.h"
+#include "PixelConstantBuffer.h"
 #include "InputLayout.h"
 
 #include <fstream>
@@ -16,6 +18,9 @@ Material::Material(Graphics& gfx, const std::string_view assetPath, const Vertex
 	vertexLayout(_vertexLayout)
 	//: assetPath({ assetPath.begin(), assetPath.end() })
 {
+	bool hasVertexShader = false;
+	bool hasPixelShader = false;
+	DirectX::XMFLOAT3 colorProp = { 0.8f,0.8f,0.8f };
 
 	// todo: move this to asset reader class
 	std::ifstream file(std::string(assetPath).c_str());
@@ -49,11 +54,39 @@ Material::Material(Graphics& gfx, const std::string_view assetPath, const Vertex
 				pBindables.push_back(std::move(pvs));
 
 				pBindables.push_back(InputLayout::Resolve(gfx, _vertexLayout, pvsbc));
+				hasVertexShader = true;
+			}
+			else if (key == "PS")
+			{
+				pBindables.push_back(PixelShader::Resolve(gfx, values[0].c_str()));
+				hasPixelShader = true;
+			}
+			else if (key == "Color")
+			{
+				colorProp = { std::stof(values[0]), std::stof(values[1]), std::stof(values[2]) };
 			}
 
 		}
 		file.close();
 	}
+
+	// todo: read from file
+	struct PSMaterialConstant
+	{
+		DirectX::XMFLOAT3 color;
+		float specularIntensity = 0.6f;
+		float specularPower = 30.0f;
+		float padding[3];
+	} pmc;
+	pmc.color = colorProp;
+
+	pBindables.push_back(PixelConstantBuffer<PSMaterialConstant>::Resolve(gfx, pmc, 1u));
+
+	if (!hasVertexShader)
+		throw std::runtime_error("Material at " + std::string(assetPath) + " is missing vertex shader!");
+	if (!hasPixelShader)
+		throw std::runtime_error("Material at " + std::string(assetPath) + " is missing pixel shader!");
+
 }
 
 void Material::Bind(Graphics& gfx)

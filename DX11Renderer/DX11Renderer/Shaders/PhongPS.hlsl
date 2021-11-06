@@ -61,8 +61,8 @@ float4 main(v2f i) : SV_Target
     BRDFLighting brdf = BRDF(f0, f90, roughness, linearRoughness, normalVS, -viewDirVS, normalize(vToL));
     
     // cheap ambient gradient
-    float3 ambient = pow(i.normalVS.y * -0.5 + 0.5, 2) * 0.15 * float3(0.5, 0.75, 1.0);
+    float3 ambient = pow(i.normalVS.y * -0.5 + 0.5, 2) * 0.15 * float3(0.75, 0.95, 1.0);
     
-    return float4(brdf.diffuseLight + brdf.specularLight + ambient, 1);
+    return float4((brdf.diffuseLight + brdf.specularLight + ambient) * materialColor, 1);
     
 }

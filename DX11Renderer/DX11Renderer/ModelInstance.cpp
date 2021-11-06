@@ -115,20 +115,7 @@ std::unique_ptr<MeshRenderer> ModelInstance::ParseMesh(Graphics& gfx, std::uniqu
 	//auto pvsbc = pvs->GetBytecode();
 	//bindablePtrs.push_back(std::move(pvs));
 
-	// todo: move!
-	pBindablePtrs.push_back(PixelShader::Resolve(gfx, "Shaders\\Built\\PhongPS.cso"));
-
 	//bindablePtrs.push_back(std::make_shared<InputLayout>(gfx, vbuf.GetLayout(), pvsbc));
-
-	// todo: move!
-	struct PSMaterialConstant
-	{
-		DirectX::XMFLOAT3 color = { 0.6f,0.6f,0.8f };
-		float specularIntensity = 0.6f;
-		float specularPower = 30.0f;
-		float padding[3];
-	} pmc;
-	pBindablePtrs.push_back(PixelConstantBuffer<PSMaterialConstant>::Resolve(gfx, pmc, 1u));
 
 	std::shared_ptr<Material> pMaterial = std::dynamic_pointer_cast<Material>(Material::Resolve(gfx, "Assets\\Materials\\TestMaterial.asset", vbuf.GetLayout()));
 
