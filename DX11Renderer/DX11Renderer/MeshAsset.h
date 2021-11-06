@@ -23,6 +23,9 @@ public:
 	bool hasNormals;
 	std::vector<dx::XMFLOAT3> normals;
 
+	bool hasTangents;
+	std::vector<dx::XMFLOAT3> tangents;
+
 	std::vector<std::vector<DirectX::XMFLOAT2>> texcoords;
 
 	size_t numFaces;

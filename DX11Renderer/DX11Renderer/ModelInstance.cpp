@@ -76,6 +76,7 @@ std::unique_ptr<MeshRenderer> ModelInstance::ParseMesh(Graphics& gfx, std::uniqu
 		VertexLayout{}
 		.Append(VertexLayout::Position3D)
 		.Append(VertexLayout::Normal)
+		.Append(VertexLayout::Tangent)
 		.Append(VertexLayout::Texture2D)
 	));
 
@@ -83,14 +84,20 @@ std::unique_ptr<MeshRenderer> ModelInstance::ParseMesh(Graphics& gfx, std::uniqu
 	{
 		throw std::runtime_error(std::string("Mesh '") + pMeshAsset->name + std::string("' has 0 vertices!"));
 	}
+
+	if (pMeshAsset->hasTangents)
+		gfx.log.Info(std::string("Mesh ") + pMeshAsset->name + std::string(" has tangents"));
+
 	for (unsigned int i = 0; i < pMeshAsset->vertices.size(); ++i)
 	{
-		dx::XMFLOAT3 normals = (pMeshAsset->hasNormals) ? pMeshAsset->normals[i] : dx::XMFLOAT3(0, 0, 1);
+		dx::XMFLOAT3 normal = (pMeshAsset->hasNormals) ? pMeshAsset->normals[i] : dx::XMFLOAT3(0, 0, 1);
+		dx::XMFLOAT3 tangent = (pMeshAsset->hasTangents) ? pMeshAsset->tangents[i] : dx::XMFLOAT3(0, 0, 1);
 		dx::XMFLOAT2 uv0 = (pMeshAsset->texcoords.size() > 0) ? pMeshAsset->texcoords[0][i] : dx::XMFLOAT2(0, 0);
 
 		vbuf.EmplaceBack(
 			pMeshAsset->vertices[i],
-			normals,
+			normal,
+			tangent,
 			uv0
 		);
 		/*vbuf.EmplaceBack(

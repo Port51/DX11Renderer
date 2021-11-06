@@ -42,6 +42,9 @@ public:
 		case VertexLayout::Normal:
 			SetAttribute<VertexLayout::Normal>(pAttribute, std::forward<T>(val));
 			break;
+		case VertexLayout::Tangent:
+			SetAttribute<VertexLayout::Tangent>(pAttribute, std::forward<T>(val));
+			break;
 		case VertexLayout::Float3Color:
 			SetAttribute<VertexLayout::Float3Color>(pAttribute, std::forward<T>(val));
 			break;
@@ -52,7 +55,7 @@ public:
 			SetAttribute<VertexLayout::BGRAColor>(pAttribute, std::forward<T>(val));
 			break;
 		default:
-			THROW_GFX_EXCEPT("Bad element type");
+			THROW_GFX_EXCEPT("Unrecognized vertex element type");
 		}
 	}
 public:

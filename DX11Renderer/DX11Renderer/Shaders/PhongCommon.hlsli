@@ -8,8 +8,7 @@ struct v2f
     float3 positionVS : TEXCOORD0;
     float3 normalWS : TEXCOORD1;
     float3 tangentVS : TEXCOORD2;
-    float3 bitangentVS : TEXCOORD3;
-    float2 uv0 : TEXCOORD4;
+    float2 uv0 : TEXCOORD3;
 };
 
 #endif

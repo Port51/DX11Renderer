@@ -32,7 +32,7 @@ App::App()
 	{
 	case 0:
 		//fn = std::string("Models\\Head.fbx");
-		fn = std::string("Models\\HeadTriangulated.fbx");
+		fn = std::string("Models\\Head-triangulated.fbx");
 		modelTransform = 
 			dx::XMMatrixTranslation(0.f, -4.7f, 0.f)
 			* dx::XMMatrixScaling(5.f, 5.f, 5.f); // hack to keep model centered

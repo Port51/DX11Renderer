@@ -17,6 +17,7 @@ public:
 		Position3D,
 		Texture2D,
 		Normal,
+		Tangent,
 		Float3Color,
 		Float4Color,
 		BGRAColor,
@@ -56,6 +57,13 @@ public:
 		static constexpr DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R32G32B32_FLOAT;
 		static constexpr const char* semantic = "Normal";
 		static constexpr const char* code = "N";
+	};
+	template<> struct Map<Tangent>
+	{
+		using SysType = DirectX::XMFLOAT3;
+		static constexpr DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R32G32B32_FLOAT;
+		static constexpr const char* semantic = "Tangent";
+		static constexpr const char* code = "TG";
 	};
 	template<> struct Map<Float3Color>
 	{
@@ -111,6 +119,8 @@ public:
 				return sizeof(Map<Texture2D>::SysType);
 			case Normal:
 				return sizeof(Map<Normal>::SysType);
+			case Tangent:
+				return sizeof(Map<Tangent>::SysType);
 			case Float3Color:
 				return sizeof(Map<Float3Color>::SysType);
 			case Float4Color:
@@ -140,6 +150,8 @@ public:
 				return GenerateDesc<Texture2D>(GetOffset());
 			case Normal:
 				return GenerateDesc<Normal>(GetOffset());
+			case Tangent:
+				return GenerateDesc<Tangent>(GetOffset());
 			case Float3Color:
 				return GenerateDesc<Float3Color>(GetOffset());
 			case Float4Color:
@@ -162,6 +174,8 @@ public:
 				return Map<Texture2D>::code;
 			case Normal:
 				return Map<Normal>::code;
+			case Tangent:
+				return Map<Tangent>::code;
 			case Float3Color:
 				return Map<Float3Color>::code;
 			case Float4Color:

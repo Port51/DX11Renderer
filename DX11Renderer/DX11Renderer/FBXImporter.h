@@ -168,16 +168,23 @@ public:
 		{
 		case FBXNormalsMode::Import:
 			pMesh->normals = std::move(GetFbxNormals(pFbxMesh));
+			pMesh->tangents = std::move(GetFbxTangents(pFbxMesh));
 			break;
 		case FBXNormalsMode::FlatShaded:
 			pMesh->normals = std::move(GetFlatNormals(pMesh->vertices, pFbxMesh));
+			// todo: tangents
 			break;
 		}
 		pMesh->hasNormals = pMesh->normals.size() > 0;
+		pMesh->hasTangents = pMesh->tangents.size() > 0;
 
 		if (pMesh->hasNormals)
 		{
 			assert("Normal count must match vertex count!" && pMesh->normals.size() == pMesh->vertices.size());
+		}
+		if (pMesh->hasTangents)
+		{
+			assert("Tangent count must match vertex count!" && pMesh->tangents.size() == pMesh->vertices.size());
 		}
 
 		pMesh->texcoords = std::move(LoadUVInformation(pFbxMesh));
@@ -395,15 +402,94 @@ public:
 			}
 			else
 			{
-				throw std::runtime_error("Mesh has unrecognized normal mapping mode");
+				throw std::runtime_error("Mesh " + std::string(pFbxMesh->GetName()) + " has unrecognized normal mapping mode");
 			}
 		}
 		else
 		{
-			throw std::runtime_error("Mesh does not have FbxGeometryElementNormal");
+			throw std::runtime_error("Mesh " + std::string(pFbxMesh->GetName()) + " does not have FbxGeometryElementNormal");
 		}
 
 		return std::move(normals);
+	}
+
+	//get mesh normals info
+	static std::vector<DirectX::XMFLOAT3> GetFbxTangents(FbxMesh* pFbxMesh)
+	{
+		FbxGeometryElementTangent* tangentElement = pFbxMesh->GetElementTangent();
+		std::vector<DirectX::XMFLOAT3> tangents(pFbxMesh->GetControlPointsCount(), DirectX::XMFLOAT3(0, 0, 0));
+		if (tangentElement)
+		{
+			if (tangentElement->GetMappingMode() == FbxGeometryElement::eByControlPoint)
+			{
+				// If mapping mode is by control points, the mesh should be smooth and soft.
+
+				// Iterate verts
+				for (int i = 0; i < pFbxMesh->GetControlPointsCount(); ++i)
+				{
+					int normalIndex = 0;
+
+					// If reference mode is direct, the normal index is same as vertex index.
+					if (tangentElement->GetReferenceMode() == FbxGeometryElement::eDirect)
+					{
+						normalIndex = i;
+					}
+
+					// Reference mode is index-to-direct, get normals by the index-to-direct
+					if (tangentElement->GetReferenceMode() == FbxGeometryElement::eIndexToDirect)
+					{
+						normalIndex = tangentElement->GetIndexArray().GetAt(i);
+					}
+
+					// Got normals of each vertex.
+					FbxVector4 tangentVec4 = tangentElement->GetDirectArray().GetAt(normalIndex);
+					tangents[i] = Vec4ToFloat3(tangentVec4);
+
+				}
+			}
+			else if (tangentElement->GetMappingMode() == FbxGeometryElement::eByPolygonVertex)
+			{
+				// Mapping mode is by polygon - vertex.
+
+				int indexByPolygonVertex = 0;
+				for (int p = 0; p < pFbxMesh->GetPolygonCount(); ++p)
+				{
+					// Get number of vertices in current polygon
+					int lPolygonSize = pFbxMesh->GetPolygonSize(p);
+					for (int i = 0; i < lPolygonSize; ++i)
+					{
+						int positionIndex = pFbxMesh->GetPolygonVertexIndex(p) + i;
+						int normalIndex;
+						if (tangentElement->GetReferenceMode() == FbxGeometryElement::eDirect)
+						{
+							normalIndex = positionIndex;
+						}
+
+						if (tangentElement->GetReferenceMode() == FbxGeometryElement::eIndexToDirect)
+						{
+							normalIndex = tangentElement->GetIndexArray().GetAt(positionIndex);
+						}
+
+						int vertexIndex = pFbxMesh->GetPolygonVertex(p, i);
+
+						// note: When testing, normals for same indices were the same
+						// so for now, just overwriting normals by vert index
+						FbxVector4 tangentVec4 = tangentElement->GetDirectArray().GetAt(normalIndex);
+						tangents[vertexIndex] = Vec4ToFloat3(tangentVec4);
+					}
+				}
+			}
+			else
+			{
+				throw std::runtime_error("Mesh " + std::string(pFbxMesh->GetName()) + " has unrecognized tangent mapping mode");
+			}
+		}
+		else
+		{
+			throw std::runtime_error("Mesh " + std::string(pFbxMesh->GetName()) + " does not have FbxGeometryElementTangent");
+		}
+
+		return std::move(tangents);
 	}
 
 	static DirectX::XMFLOAT3 Vec4ToFloat3(FbxVector4 vec)
