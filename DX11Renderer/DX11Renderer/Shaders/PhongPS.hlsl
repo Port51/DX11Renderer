@@ -47,8 +47,9 @@ float4 main(v2f i) : SV_Target
     {
         const float3 normalSample = nmap.Sample(splr, i.uv0).xyz;
         n.x = normalSample.x * 2.0f - 1.0f;
-        n.y = -normalSample.y * 2.0f + 1.0f;
-        n.z = -normalSample.z;
+        n.y = -normalSample.y * 2.0f + 1.0f; // Convert from OpenGL to DX style
+        n.z = normalSample.z;
+        //return n.z;
     }
     
     const float3 vToL = lightPos - i.positionVS;
