@@ -12,7 +12,7 @@ cbuffer LightCBuf
 	float attQuad;
 };
 
-cbuffer ObjectCBuf
+cbuffer ObjectCBuf : register(b1)
 {
 	float3 materialColor;
 	float specularIntensity;
