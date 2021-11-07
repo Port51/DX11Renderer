@@ -20,7 +20,7 @@ GDIPlusManager gdipm;
 App::App()
 	:
 	wnd(ResolutionX, ResolutionY, "DX11 Renderer"),
-	light(wnd.Gfx(), dx::XMFLOAT3(2.2f, 3.2f, 4.2f), dx::XMFLOAT3(1.f, 1.f, 1.f), 2.5, 1.0f),
+	light(wnd.Gfx(), dx::XMFLOAT3(4.2f, 4.2f, -5.3f), dx::XMFLOAT3(1.f, 1.f, 1.f), 2.5, 1.0f),
 	cam(40.0f, (float)ResolutionX / (float)ResolutionY)
 {
 	std::string fn;
@@ -34,7 +34,8 @@ App::App()
 		//fn = std::string("Models\\Head.fbx");
 		fn = std::string("Models\\Head-triangulated.fbx");
 		modelTransform = 
-			dx::XMMatrixTranslation(0.f, -4.7f, 0.f)
+			dx::XMMatrixRotationY(3.1415f)
+			* dx::XMMatrixTranslation(0.f, -4.7f, 0.f)
 			* dx::XMMatrixScaling(5.f, 5.f, 5.f); // hack to keep model centered
 		break;
 	case 1:
