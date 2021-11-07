@@ -440,7 +440,6 @@
     <None Include="Shaders\Lighting\Diffuse.hlsli">
       <Filter>Shaders\Lighting</Filter>
     </None>
-    <None Include="Shaders\Lighting\BRDF.hlsli" />
     <None Include="Shaders\PhongCommon.hlsli">
       <Filter>Shaders</Filter>
     </None>
@@ -449,6 +448,9 @@
     </None>
     <None Include="Assets\Materials\LightMaterial.asset">
       <Filter>Assets\Materials</Filter>
+    </None>
+    <None Include="Shaders\Lighting\BRDF.hlsli">
+      <Filter>Shaders\Lighting</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

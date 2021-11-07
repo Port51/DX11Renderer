@@ -4,12 +4,9 @@
 cbuffer LightCBuf : register(b0)
 {
 	float3 lightPos;
-	float3 ambient;
-	float3 diffuseColor;
-	float diffuseIntensity;
-	float attConst;
-	float attLin;
-	float attQuad;
+    float lightRange;
+	float3 lightColor;
+	float lightIntensity;
 };
 
 cbuffer ObjectCBuf : register(b1)
@@ -86,6 +83,8 @@ float4 main(v2f i) : SV_Target
 	//return float4(saturate((diffuse + ambient + specular) * materialColor), 1.0f);
     */
     
+    float lightAttenuation = 1.0; // todo: calculate
+    
     float3 normalVS = i.normalVS;
     float3 viewDirVS = normalize(i.positionVS);
     float3 f0 = 0.5;
@@ -99,6 +98,6 @@ float4 main(v2f i) : SV_Target
     brdf.diffuseLight += ambient;
     
     //return diffuseTex;
-    return float4((brdf.diffuseLight * diffuseTex.rgb + brdf.specularLight) * materialColor, 1);
+    return float4((brdf.diffuseLight * diffuseTex.rgb + brdf.specularLight) * materialColor * lightColor * (lightIntensity * lightAttenuation), 1);
     
 }
