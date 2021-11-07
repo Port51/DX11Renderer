@@ -20,7 +20,7 @@ GDIPlusManager gdipm;
 App::App()
 	:
 	wnd(ResolutionX, ResolutionY, "DX11 Renderer"),
-	light(wnd.Gfx(), dx::XMFLOAT3(4.2f, 4.2f, -5.3f), dx::XMFLOAT3(1.f, 1.f, 1.f), 2.5, 1.0f),
+	light(wnd.Gfx(), dx::XMFLOAT3(4.2f, 4.2f, -5.3f), dx::XMFLOAT3(1.f, 1.f, 1.f), 2.0, 9.0f),
 	cam(40.0f, (float)ResolutionX / (float)ResolutionY)
 {
 	std::string fn;

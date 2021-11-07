@@ -16,7 +16,7 @@ private:
 	{
 		//alignas(16) 
 		DirectX::XMFLOAT3 positionVS;
-		float range;
+		float invRangeSqr;
 		DirectX::XMFLOAT3 color;
 		float intensity;
 	};

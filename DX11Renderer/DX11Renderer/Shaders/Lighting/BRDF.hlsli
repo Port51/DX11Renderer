@@ -17,6 +17,81 @@ struct BRDFLighting
     float3 specularLight;
 };
 
+// Attenuation function f(d):
+// f(d) = 2 / [ d^2 + rad^2 + d*sqrt(d^2 + rad^2) ]
+// f(d) = 2 / [ d^2 + rad^2 + sqrt(d^4 + d^2 * rad^2) ] <-- optimized
+// Range attenuation functions a(d):
+// a(d) = saturate(1 - d^2 / range^2)
+// a(d) = saturate(1 - d^4 / range^4)
+// Modified attenuation function:
+// v = d / range
+// f(v) = 2 / ( v^2 + rad^2 + v * sqrt(v^2 + rad^2) )
+// f(v) = 2 / ( v^2 + rad^2 + sqrt(v^4 + v^2rad^2) ) <-- optimized
+
+float GetSphericalLightAttenuation(float distanceRatioSqr, float lightSphereRadiusSqr)
+{
+    return 2.0 / (distanceRatioSqr + lightSphereRadiusSqr + sqrt(distanceRatioSqr * distanceRatioSqr + distanceRatioSqr * lightSphereRadiusSqr));
+}
+
+// Multiply this by an attenuation that converges to 0 at infinite distance in order to limit it
+float GetLightRangeAttenuation(float distanceSquare, float invRangeSqr)
+{
+    float falloff = distanceSquare * invRangeSqr;
+    return saturate(1.0 - falloff * falloff); // square factor so final formula is f(d) = 1 - d^4 / r^4
+}
+
+float GetSphericalLightDistanceAttenuation(float3 posToLight, float lightSphereRadiusSqr, float invRangeSqr)
+{
+    float distanceSqr = dot(posToLight, posToLight);
+    float attenuation = GetSphericalLightAttenuation(distanceSqr * invRangeSqr, lightSphereRadiusSqr);
+    attenuation *= GetLightRangeAttenuation(distanceSqr, invRangeSqr);
+    return attenuation;
+}
+
+// From buffer
+struct LightData
+{
+    float4 positionRangeOrDirectionVS;
+    float4 color;
+};
+
+struct Light
+{
+    float4 colorIntensity; // rgb, pre-exposed intensity
+    float3 direction;
+    float attenuation;
+    float NdotL;
+    bool castsShadows;
+    bool contactShadows;
+    uint shadowIndex;
+    uint shadowLayer;
+};
+
+Light GetPointLight(LightData data, float3 positionVS, float3 normalVS)
+{
+    float3 posToLight = data.positionRangeOrDirectionVS.xyz - positionVS;
+
+    Light light;
+    light.colorIntensity.rgb = data.color.rgb;
+    light.colorIntensity.w = 1; //computePreExposedIntensity(data.color.w, frameUniforms.exposure);
+    light.direction = normalize(posToLight);
+    light.attenuation = GetSphericalLightDistanceAttenuation(posToLight, pow(1.4, 2), data.positionRangeOrDirectionVS.w);
+    //light.attenuation = (1.f / data.positionRangeOrDirectionVS.w) / dot(posToLight, posToLight);
+    light.NdotL = saturate(dot(normalVS, light.direction));
+
+    //uint type = floatBitsToUint(scaleOffsetShadowType.w);
+    /*if (type == LIGHT_TYPE_SPOT) {
+        light.attenuation *= getAngleAttenuation(-directionIES.xyz, light.l, scaleOffsetShadowType.xy);
+        uint shadowBits = floatBitsToUint(scaleOffsetShadowType.z);
+        light.castsShadows = bool(shadowBits & 0x1u);
+        light.contactShadows = bool((shadowBits >> 1u) & 0x1u);
+        light.shadowIndex = (shadowBits >> 2u) & 0xFu;
+        light.shadowLayer = (shadowBits >> 6u) & 0xFu;
+    }*/
+
+    return light;
+}
+
 float SmithGGXCorrelated(float NdotL, float NdotV, float alphaG);
 float SmithGSF(float NdotL, float NdotV, float roughness);
 float GGX(float NdotH, float m);

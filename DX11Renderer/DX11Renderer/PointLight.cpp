@@ -27,7 +27,7 @@ void PointLight::DrawImguiControlWindow()
 		ImGui::Text("Intensity/Color");
 		// ImGuiSliderFlags_Logarithmic makes it power of 2?
 		ImGui::SliderFloat("Intensity", &intensity, 0.01f, 2.0f, "%.2f", ImGuiSliderFlags_Logarithmic);
-		ImGui::SliderFloat("Range", &range, 0.05f, 10.0f, "%.2f", ImGuiSliderFlags_Logarithmic);
+		ImGui::SliderFloat("Range", &range, 0.05f, 50.0f, "%.2f", ImGuiSliderFlags_Logarithmic);
 		ImGui::ColorEdit3("Diffuse Color", &color.x);
 	}
 	ImGui::End();
@@ -48,7 +48,7 @@ void PointLight::Bind(Graphics& gfx, DirectX::FXMMATRIX viewMatrix) const
 	DirectX::XMStoreFloat3(&dataCopy.positionVS, DirectX::XMVector3Transform(posWS_Vector, viewMatrix));
 	dataCopy.color = color;
 	dataCopy.intensity = intensity;
-	dataCopy.range = range;
+	dataCopy.invRangeSqr = 1.f / std::max(range * range, 0.0001f);
 
 	globalLightCbuf.Update(gfx, PointLightCBuf{ dataCopy });
 	globalLightCbuf.Bind(gfx);

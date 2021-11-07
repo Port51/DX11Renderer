@@ -4,7 +4,7 @@
 cbuffer LightCBuf : register(b0)
 {
 	float3 lightPos;
-    float lightRange;
+    float lightInvRangeSqr;
 	float3 lightColor;
 	float lightIntensity;
 };
@@ -64,6 +64,12 @@ float4 main(v2f i) : SV_Target
         i.normalVS = normalize(-n); // fix sampling interpolation
     }
     
+    LightData lightData;
+    lightData.positionRangeOrDirectionVS = float4(lightPos, lightInvRangeSqr),
+    lightData.color = float4(lightColor, 1);
+    
+    Light light = GetPointLight(lightData, i.positionVS, i.normalVS);
+    
     const float3 vToL = lightPos - i.positionVS;
     
     /*
@@ -83,14 +89,12 @@ float4 main(v2f i) : SV_Target
 	//return float4(saturate((diffuse + ambient + specular) * materialColor), 1.0f);
     */
     
-    float lightAttenuation = 1.0; // todo: calculate
-    
     float3 normalVS = i.normalVS;
     float3 viewDirVS = normalize(i.positionVS);
     float3 f0 = 0.5;
     float f90 = 1;
     float roughnessSqr = pow(roughness, 2);
-    BRDFLighting brdf = BRDF(f0, f90, roughnessSqr, roughness, normalVS, -viewDirVS, normalize(vToL));
+    BRDFLighting brdf = BRDF(f0, f90, roughnessSqr, roughness, normalVS, -viewDirVS, light.direction);
     
     // cheap ambient gradient
     float3 ambient = pow(i.normalVS.y * -0.5 + 0.5, 2) * 0.15 * float3(0.75, 0.95, 1.0);
@@ -98,6 +102,6 @@ float4 main(v2f i) : SV_Target
     brdf.diffuseLight += ambient;
     
     //return diffuseTex;
-    return float4((brdf.diffuseLight * diffuseTex.rgb + brdf.specularLight) * materialColor * lightColor * (lightIntensity * lightAttenuation), 1);
+    return float4((brdf.diffuseLight * diffuseTex.rgb + brdf.specularLight) * materialColor * lightColor * (lightIntensity * light.attenuation), 1);
     
 }
