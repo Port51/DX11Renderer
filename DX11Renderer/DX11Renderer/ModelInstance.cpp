@@ -85,8 +85,8 @@ std::unique_ptr<MeshRenderer> ModelInstance::ParseMesh(Graphics& gfx, std::uniqu
 		throw std::runtime_error(std::string("Mesh '") + pMeshAsset->name + std::string("' has 0 vertices!"));
 	}
 
-	if (pMeshAsset->hasTangents)
-		gfx.log.Info(std::string("Mesh ") + pMeshAsset->name + std::string(" has tangents"));
+	//if (pMeshAsset->hasTangents)
+	//	gfx.log.Info(std::string("Mesh ") + pMeshAsset->name + std::string(" has tangents"));
 
 	for (unsigned int i = 0; i < pMeshAsset->vertices.size(); ++i)
 	{

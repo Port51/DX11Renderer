@@ -40,7 +40,7 @@ RenderTarget::RenderTarget(Graphics& gfx, UINT width, UINT height)
 	D3D11_RENDER_TARGET_VIEW_DESC rtvDesc = {};
 	rtvDesc.Format = textureDesc.Format;
 	rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
-	rtvDesc.Texture2D = D3D11_TEX2D_RTV{ 0 };
+	rtvDesc.Texture2D = D3D11_TEX2D_RTV{ 0 }; // render to mip 0
 	GFX_THROW_INFO(GetDevice(gfx)->CreateRenderTargetView(
 		pTexture.Get(), &rtvDesc, &pTargetView
 	));

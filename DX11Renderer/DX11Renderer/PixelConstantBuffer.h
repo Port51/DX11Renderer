@@ -1,6 +1,11 @@
 #pragma once
 #include "ConstantBuffer.h"
 #include "Bindable.h"
+#include "WindowsInclude.h"
+#include <wrl.h>
+#include <d3d11.h>
+
+class Graphics;
 
 template<typename C>
 class PixelConstantBuffer : public ConstantBuffer<C>

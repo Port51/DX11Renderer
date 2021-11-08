@@ -2,6 +2,11 @@
 #include "Bindable.h"
 #include "GraphicsThrowMacros.h"
 #include <string>
+#include "WindowsInclude.h"
+#include <wrl.h>
+#include <d3d11.h>
+
+class Graphics;
 
 template<typename C>
 class ConstantBuffer : public Bindable
