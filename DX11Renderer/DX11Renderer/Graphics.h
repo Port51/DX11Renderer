@@ -13,7 +13,7 @@
 
 class Graphics
 {
-	friend class Bindable;
+	//friend class Bindable;
 public:
 	class Exception : public CustomException
 	{
@@ -74,10 +74,15 @@ public:
 	DirectX::XMMATRIX GetViewMatrix() const;
 public:
 	Log log;
-private:
 #ifndef NDEBUG
 	DxgiInfoManager infoManager;
 #endif
+	// Allocating stuff
+	Microsoft::WRL::ComPtr<ID3D11Device> pDevice;
+	// Used for configuring pipeline and executing render commands
+	Microsoft::WRL::ComPtr<ID3D11DeviceContext> pContext;
+
+private:
 	bool imguiEnabled = true;
 
 	// Matrices
@@ -85,12 +90,8 @@ private:
 	DirectX::XMMATRIX viewMatrix;
 
 private:
-	// Allocating stuff
-	Microsoft::WRL::ComPtr<ID3D11Device> pDevice;
-	Microsoft::WRL::ComPtr<IDXGISwapChain> pSwapChain;
 
-	// Used for configuring pipeline and executing render commands
-	Microsoft::WRL::ComPtr<ID3D11DeviceContext> pContext;
+	Microsoft::WRL::ComPtr<IDXGISwapChain> pSwapChain;
 
 	// RT view of backbuffer
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pRenderTargetView;

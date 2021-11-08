@@ -1,5 +1,8 @@
 #pragma once
 
+#include "DxgiInfoManager.h"
+#include "Graphics.h"
+
 #define THROW_GFX_EXCEPT(message) assert(message && false)
 
 // Graphics exception checking/throwing macros (some with dxgi infos)

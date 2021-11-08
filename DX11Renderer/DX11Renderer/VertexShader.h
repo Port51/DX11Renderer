@@ -1,6 +1,10 @@
 #pragma once
 #include "Bindable.h"
 #include <string>
+#include <wrl.h>
+#include <d3d11.h>
+
+class Graphics;
 
 class VertexShader : public Bindable
 {

@@ -1,4 +1,12 @@
 #include "Bindable.h"
+#include <assert.h>
+#include "Graphics.h"
+
+std::string Bindable::GetUID() const
+{
+	assert("GetUID() not set yet" && false);
+	return "";
+}
 
 ID3D11DeviceContext* Bindable::GetContext(Graphics& gfx)
 {

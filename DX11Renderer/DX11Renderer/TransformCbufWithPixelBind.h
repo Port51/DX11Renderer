@@ -1,6 +1,10 @@
 #pragma once
-#include "TransformCbuf.h"
 #include "PixelConstantBuffer.h"
+#include "TransformCbuf.h"
+#include "WindowsInclude.h"
+
+class Graphics;
+class Drawable;
 
 class TransformCbufWithPixelBind : public TransformCbuf
 {

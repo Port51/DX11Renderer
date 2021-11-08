@@ -1,4 +1,6 @@
 #include "TransformCbufWithPixelBind.h"
+#include "Drawable.h"
+#include "Graphics.h"
 
 TransformCbufWithPixelBind::TransformCbufWithPixelBind(Graphics& gfx, const Drawable& parent, UINT slotV, UINT slotP)
 	: TransformCbuf(gfx, parent, slotV)

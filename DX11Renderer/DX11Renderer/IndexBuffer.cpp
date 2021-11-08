@@ -1,6 +1,7 @@
 #include "IndexBuffer.h"
 #include "GraphicsThrowMacros.h"
 #include "BindableCodex.h"
+#include <d3d11.h>
 
 IndexBuffer::IndexBuffer(Graphics& gfx, const std::vector<unsigned short>& indices)
 	: IndexBuffer(gfx, "?", indices)

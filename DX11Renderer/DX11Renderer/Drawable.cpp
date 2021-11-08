@@ -2,6 +2,7 @@
 #include "GraphicsThrowMacros.h"
 #include "IndexBuffer.h"
 #include <cassert>
+#include "Bindable.h"
 
 void Drawable::Draw(Graphics& gfx) const
 {

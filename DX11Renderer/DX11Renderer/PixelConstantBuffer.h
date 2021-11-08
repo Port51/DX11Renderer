@@ -18,11 +18,11 @@ public:
 	}
 	static std::shared_ptr<PixelConstantBuffer> Resolve(Graphics& gfx, std::string identifier, const C& consts, UINT slot = 0)
 	{
-		return Bind::Codex::Resolve<PixelConstantBuffer>(gfx, identifier, consts, slot);
+		return Bind::Codex::template Resolve<PixelConstantBuffer>(gfx, identifier, consts, slot);
 	}
 	static std::shared_ptr<PixelConstantBuffer> Resolve(Graphics& gfx, std::string identifier, UINT slot = 0)
 	{
-		return Bind::Codex::Resolve<PixelConstantBuffer>(gfx, identifier, slot);
+		return Bind::Codex::template Resolve<PixelConstantBuffer>(gfx, identifier, slot);
 	}
 	static std::string GenerateUID(std::string identifier, const C&, UINT slot)
 	{

@@ -1,4 +1,6 @@
 #include "TransformCbuf.h"
+#include "Drawable.h"
+#include "Graphics.h"
 
 TransformCbuf::TransformCbuf(Graphics& gfx, const Drawable& parent, UINT slot)
 	:

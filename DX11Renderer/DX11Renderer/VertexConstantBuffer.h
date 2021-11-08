@@ -22,11 +22,11 @@ public:
 	}
 	static std::shared_ptr<VertexConstantBuffer> Resolve(Graphics& gfx, std::string identifier, const C& consts, UINT slot = 0)
 	{
-		return Bind::Codex::Resolve<VertexConstantBuffer>(gfx, identifier, consts, slot);
+		return Bind::Codex::template Resolve<VertexConstantBuffer>(gfx, identifier, consts, slot);
 	}
 	static std::shared_ptr<VertexConstantBuffer> Resolve(Graphics& gfx, std::string identifier, UINT slot = 0)
 	{
-		return Bind::Codex::Resolve<VertexConstantBuffer>(gfx, identifier, slot);
+		return Bind::Codex::template Resolve<VertexConstantBuffer>(gfx, identifier, slot);
 	}
 	static std::string GenerateUID(std::string identifier, const C&, UINT slot)
 	{

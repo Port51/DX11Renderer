@@ -8,6 +8,7 @@
 #include "InputLayout.h"
 #include "Texture.h"
 #include "Sampler.h"
+#include "BindableCodex.h"
 
 #include <fstream>
 #include <sstream>

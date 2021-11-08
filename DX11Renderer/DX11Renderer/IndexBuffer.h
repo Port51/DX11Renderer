@@ -1,5 +1,12 @@
 #pragma once
 #include "Bindable.h"
+#include <string>
+#include <vector>
+#include "WindowsInclude.h" // must be before D3D11
+#include <wrl.h>
+#include <d3d11.h>
+
+class Graphics;
 
 class IndexBuffer : public Bindable
 {

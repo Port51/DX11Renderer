@@ -1,7 +1,11 @@
 #pragma once
+#include "Bindable.h"
+#include "WindowsInclude.h"
 #include "VertexConstantBuffer.h"
-#include "Drawable.h"
 #include <DirectXMath.h>
+
+class Graphics;
+class Drawable;
 
 class TransformCbuf : public Bindable
 {
