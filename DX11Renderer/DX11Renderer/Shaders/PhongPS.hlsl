@@ -18,12 +18,12 @@ cbuffer ObjectCBuf : register(b1)
     float padding[2];
 };
 
-cbuffer CBuf : register(b2)
+/*cbuffer CBuf : register(b2)
 {
     matrix model;
     matrix modelView;
     matrix modelViewProj;
-};
+};*/
 
 Texture2D tex : register(t0);
 Texture2D nmap : register(t1);
