@@ -15,6 +15,13 @@
 
 using namespace std::string_literals;
 
+enum MaterialParseState { None, Properties, Technique };
+
+bool isWhitespace(unsigned char c) {
+	return (c == ' ' || c == '\n' || c == '\r' ||
+		c == '\t' || c == '\v' || c == '\f');
+}
+
 // todo: pass actual VertexLayout class?
 Material::Material(Graphics& gfx, const std::string_view assetPath)
 	: assetPath(std::string(assetPath))
@@ -29,13 +36,19 @@ Material::Material(Graphics& gfx, const std::string_view assetPath)
 	DirectX::XMFLOAT3 colorProp = { 0.8f,0.8f,0.8f };
 	float roughnessProp = 0.75f;
 
-	// todo: move this to asset reader class
+	// todo: move this to asset reader class and clean it up!
 	std::ifstream file(std::string(assetPath).c_str());
+
+	MaterialParseState state = MaterialParseState::None;
+	std::string techniqueName;
 	if (file.is_open())
 	{
 		std::string line;
 		while (std::getline(file, line))
 		{
+			// Clean up line first
+			line.erase(std::remove_if(line.begin(), line.end(), isWhitespace), line.end());
+
 			std::istringstream iss(line);
 
 			// Read property key
@@ -47,34 +60,60 @@ Material::Material(Graphics& gfx, const std::string_view assetPath)
 			std::string token;
 			while (getline(iss, token, ','))
 			{
-				// Remove spaces
-				token.erase(std::remove_if(token.begin(), token.end(), isspace), token.end());
 				values.push_back(token);
 			}
 
 			// Apply
-			if (key == "VS")
+			if (key == "Properties")
 			{
-				// Bind vertex shader and input layout
-				pVertexShader = std::make_shared<VertexShader>(gfx, values[0].c_str());
-				auto pvsbc = pVertexShader->GetBytecode();
-				AddBindable(pVertexShader);
+				state = MaterialParseState::Properties;
+			}
+			else if (key == "Technique")
+			{
+				state = MaterialParseState::Technique;
+			}
+			else if (key == "Name")
+			{
+				if (state == MaterialParseState::Technique)
+				{
+					// Read technique name
+					techniqueName = std::move(values[0]);
+				}
+			}
+			else if (key == "VS")
+			{
+				if (state == MaterialParseState::Technique)
+				{
+					// Bind vertex shader and input layout
+					pVertexShader = std::make_shared<VertexShader>(gfx, values[0].c_str());
+					auto pvsbc = pVertexShader->GetBytecode();
+					AddBindable(pVertexShader);
 
-				// moved:
-				//pBindables.push_back(InputLayout::Resolve(gfx, _vertexLayout, pvsbc));
+					// moved:
+					//pBindables.push_back(InputLayout::Resolve(gfx, _vertexLayout, pvsbc));
+				}
 			}
 			else if (key == "PS")
 			{
-				pPixelShader = PixelShader::Resolve(gfx, values[0].c_str());
-				AddBindable(pPixelShader);
+				if (state == MaterialParseState::Technique)
+				{
+					pPixelShader = PixelShader::Resolve(gfx, values[0].c_str());
+					AddBindable(pPixelShader);
+				}
 			}
 			else if (key == "Color")
 			{
-				colorProp = { std::stof(values[0]), std::stof(values[1]), std::stof(values[2]) };
+				if (state == MaterialParseState::Properties)
+				{
+					colorProp = { std::stof(values[0]), std::stof(values[1]), std::stof(values[2]) };
+				}
 			}
 			else if (key == "Roughness")
 			{
-				roughnessProp = std::stof(values[0]);
+				if (state == MaterialParseState::Properties)
+				{
+					roughnessProp = std::stof(values[0]);
+				}
 			}
 
 		}

@@ -22,16 +22,19 @@ public:
 
 		// Can do global binds here
 
-		// main phong lighting pass
-		Bind::Stencil::Resolve(gfx, Bind::Stencil::Mode::Off)->Bind(gfx);
-		passes[0].Execute(gfx);
+		// GBuffer pass
+		{
+			Bind::Stencil::Resolve(gfx, Bind::Stencil::Mode::Off)->Bind(gfx);
+			passes[0].Execute(gfx);
+		}
+		
 		// outline masking pass
-		Bind::Stencil::Resolve(gfx, Bind::Stencil::Mode::Write)->Bind(gfx);
+		/*Bind::Stencil::Resolve(gfx, Bind::Stencil::Mode::Write)->Bind(gfx);
 		Bind::NullPixelShader::Resolve(gfx)->Bind(gfx);
 		passes[1].Execute(gfx);
 		// outline drawing pass
 		Bind::Stencil::Resolve(gfx, Bind::Stencil::Mode::Mask)->Bind(gfx);
-		passes[2].Execute(gfx);
+		passes[2].Execute(gfx);*/
 	}
 	void Reset() noexcept
 	{
@@ -41,5 +44,5 @@ public:
 		}
 	}
 private:
-	std::array<Pass, 3> passes;
+	std::array<Pass, 1> passes;
 };

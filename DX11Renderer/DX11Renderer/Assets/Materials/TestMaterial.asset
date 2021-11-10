@@ -1,4 +1,13 @@
-VS, Shaders\\Built\\PhongVS.cso
-PS, Shaders\\Built\\PhongPS.cso
-Color, 1.0, 1.0, 1.0, 1.0
-Roughness, 0.9
+Properties
+{
+	Texture, tex, Models\\HeadTextures\\face_albedo.png
+	Texture, nmap, Models\\HeadTextures\\face_normal.png
+	Color, 1.0, 1.0, 1.0, 1.0
+	Roughness, 0.9
+}
+Technique
+{
+	Name, GBuffer
+	VS, Shaders\\Built\\PhongVS.cso
+	PS, Shaders\\Built\\PhongPS.cso
+}
