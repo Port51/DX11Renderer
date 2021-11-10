@@ -33,10 +33,10 @@ void PointLight::DrawImguiControlWindow()
 	ImGui::End();
 }
 
-void PointLight::Draw(Graphics& gfx) const
+void PointLight::Submit(FrameCommander& frame) const
 {
 	pModel->SetPositionWS(positionWS);
-	pModel->Draw(gfx);
+	pModel->Submit(frame);
 }
 
 void PointLight::Bind(Graphics& gfx, DirectX::FXMMATRIX viewMatrix) const

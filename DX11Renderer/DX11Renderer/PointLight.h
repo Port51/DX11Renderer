@@ -9,7 +9,7 @@ class PointLight
 public:
 	PointLight(Graphics& gfx, DirectX::XMFLOAT3 positionWS, DirectX::XMFLOAT3 color, float intensity = 1.f, float range = 2.5f);
 	void DrawImguiControlWindow();
-	void Draw(Graphics& gfx) const;
+	void Submit(class FrameCommander& frame) const;
 	void Bind(Graphics& gfx, DirectX::FXMMATRIX viewMatrix) const;
 private:
 	struct PointLightCBuf

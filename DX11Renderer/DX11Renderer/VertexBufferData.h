@@ -9,8 +9,8 @@
 class VertexBufferData
 {
 public:
-	VertexBufferData(VertexLayout layout) noexcept(!IS_DEBUG)
-		: layout(std::move(layout))
+	VertexBufferData(const VertexLayout& layout) noexcept(!IS_DEBUG)
+		: layout(layout)
 	{}
 	const char* GetData() const noexcept(!IS_DEBUG)
 	{
@@ -70,5 +70,5 @@ public:
 	}
 private:
 	std::vector<char> buffer; // vector of bytes
-	VertexLayout layout; // structure of these bytes
+	const VertexLayout& layout; // structure of these bytes
 };

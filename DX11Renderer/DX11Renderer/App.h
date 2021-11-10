@@ -5,6 +5,7 @@
 #include "Camera.h"
 #include "PointLight.h"
 #include "ModelInstance.h"
+#include "FrameCommander.h"
 
 class App
 {
@@ -18,6 +19,7 @@ private:
 private:
 	ImguiManager imgui; // must be initialized before wnd
 	Window wnd;
+	FrameCommander fc;
 	Timer timer;
 	bool showDemoWindow = true;
 	Camera cam;

@@ -2,9 +2,9 @@
 #include <memory>
 #include <vector>
 #include <string_view>
+#include "VertexLayout.h"
 #include "Bindable.h"
 
-class VertexLayout;
 class VertexShader;
 class PixelShader;
 
@@ -15,6 +15,7 @@ public:
 	void Bind(Graphics& gfx);
 	std::string GetUID() const override;
 public:
+	const VertexLayout& GetVertexLayout() const;
 	static std::shared_ptr<Bindable> Resolve(Graphics& gfx, const std::string_view assetPath);
 	static std::string GenerateUID(const std::string_view assetPath);
 private:
@@ -25,4 +26,5 @@ public:
 private:
 	std::vector<std::shared_ptr<Bindable>> pBindables; // shaders and such
 	std::string assetPath;
+	VertexLayout vertexLayout;
 };

@@ -1,5 +1,6 @@
 #pragma once
 #include "Bindable.h"
+#include "BindableCodex.h"
 #include <d3d11.h>
 #include <wrl.h>
 
@@ -15,6 +16,7 @@ namespace Bind
 			Mask
 		};
 		Stencil(Graphics& gfx, Mode mode)
+			: mode(mode)
 		{
 			D3D11_DEPTH_STENCIL_DESC dsDesc = CD3D11_DEPTH_STENCIL_DESC{ CD3D11_DEFAULT{} };
 
@@ -56,10 +58,32 @@ namespace Bind
 		{
 			GetContext(gfx)->OMSetDepthStencilState(pStencil.Get(), 0x01);
 		}
-		//static std::shared_ptr<Stencil> Resolve( Graphics& gfx,bool blending,std::optional<float> factor = {} );
-		//static std::string GenerateUID( bool blending,std::optional<float> factor );
-		//std::string GetUID() const noexcept override;
+		static std::shared_ptr<Stencil> Resolve(Graphics& gfx, Mode mode)
+		{
+			return Codex::Resolve<Stencil>(gfx, mode);
+		}
+		static std::string GenerateUID(Mode mode)
+		{
+			using namespace std::string_literals;
+			const auto modeName = [mode]() {
+				switch (mode) {
+				case Mode::Off:
+					return "off"s;
+				case Mode::Write:
+					return "write"s;
+				case Mode::Mask:
+					return "mask"s;
+				}
+				return "ERROR"s;
+			};
+			return typeid(Stencil).name() + "#"s + modeName();
+		}
+		std::string GetUID() const noexcept override
+		{
+			return GenerateUID(mode);
+		}
 	private:
+		Mode mode;
 		Microsoft::WRL::ComPtr<ID3D11DepthStencilState> pStencil;
 	};
 }

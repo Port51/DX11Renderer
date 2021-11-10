@@ -19,6 +19,13 @@ using namespace std::string_literals;
 Material::Material(Graphics& gfx, const std::string_view assetPath)
 	: assetPath(std::string(assetPath))
 {
+	// todo: make this not always the same
+	vertexLayout
+		.Append(VertexLayout::Position3D)
+		.Append(VertexLayout::Normal)
+		.Append(VertexLayout::Tangent)
+		.Append(VertexLayout::Texture2D);
+	
 	DirectX::XMFLOAT3 colorProp = { 0.8f,0.8f,0.8f };
 	float roughnessProp = 0.75f;
 
@@ -74,6 +81,11 @@ Material::Material(Graphics& gfx, const std::string_view assetPath)
 		file.close();
 	}
 
+	if (pVertexShader == nullptr)
+		throw std::runtime_error("Material at " + std::string(assetPath) + " is missing vertex shader!");
+	if (pPixelShader == nullptr)
+		throw std::runtime_error("Material at " + std::string(assetPath) + " is missing pixel shader!");
+
 	// todo: read from file
 	struct PSMaterialConstant // must be multiple of 16 bytes
 	{
@@ -86,16 +98,13 @@ Material::Material(Graphics& gfx, const std::string_view assetPath)
 	pmc.materialColor = colorProp;
 	pmc.roughness = roughnessProp;
 
+	std::shared_ptr<InputLayout> pInputLayout = InputLayout::Resolve(gfx, vertexLayout, pVertexShader->GetBytecode());
+
 	AddBindable(PixelConstantBuffer<PSMaterialConstant>::Resolve(gfx, std::string(assetPath), pmc, 1u));
 
 	AddBindable(Texture::Resolve(gfx, "Models\\HeadTextures\\face_albedo.png", 0u));
 	AddBindable(Texture::Resolve(gfx, "Models\\HeadTextures\\face_normal.png", 1u));
 	AddBindable(Sampler::Resolve(gfx));
-
-	if (pVertexShader == nullptr)
-		throw std::runtime_error("Material at " + std::string(assetPath) + " is missing vertex shader!");
-	if (pPixelShader == nullptr)
-		throw std::runtime_error("Material at " + std::string(assetPath) + " is missing pixel shader!");
 
 }
 
@@ -111,6 +120,11 @@ void Material::Bind(Graphics& gfx)
 std::string Material::GetUID() const
 {
 	return GenerateUID(assetPath);
+}
+
+const VertexLayout & Material::GetVertexLayout() const
+{
+	return vertexLayout;
 }
 
 std::shared_ptr<Bindable> Material::Resolve(Graphics & gfx, const std::string_view assetPath)

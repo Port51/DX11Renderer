@@ -32,9 +32,9 @@ ModelInstance::ModelInstance(Graphics& gfx, std::unique_ptr<ModelAsset> const& p
 	pSceneGraph = CreateModelInstanceNode(gfx, pModelAsset->pSceneGraph);
 }
 
-void ModelInstance::Draw(Graphics& gfx) const
+void ModelInstance::Submit(FrameCommander& frame) const
 {
-	pSceneGraph->Draw(gfx, transform);
+	pSceneGraph->Submit(frame, dx::XMMatrixIdentity());
 }
 
 void ModelInstance::SetPositionWS(DirectX::XMFLOAT3 positionWS)
@@ -42,6 +42,7 @@ void ModelInstance::SetPositionWS(DirectX::XMFLOAT3 positionWS)
 	transform = DirectX::XMMatrixTranslation(positionWS.x, positionWS.y, positionWS.z);
 }
 
+static int nextNodeId = 0; // todo: move
 std::unique_ptr<Node> ModelInstance::CreateModelInstanceNode(Graphics& gfx, std::unique_ptr<SceneGraphNode<MeshAsset>> const& pSourceNode)
 {
 	// Copy mesh if needed
@@ -63,7 +64,7 @@ std::unique_ptr<Node> ModelInstance::CreateModelInstanceNode(Graphics& gfx, std:
 		//pChildNodes.emplace_back(std::move(pChildNode));
 	}*/
 
-	auto pNode = std::make_unique<Node>(pSourceNode->localTransform, std::move(pMeshInstance), std::move(pChildNodes));
+	auto pNode = std::make_unique<Node>(nextNodeId++, pSourceNode->localTransform, std::move(pMeshInstance), std::move(pChildNodes));
 	return std::move(pNode);
 }
 
@@ -72,13 +73,15 @@ std::unique_ptr<MeshRenderer> ModelInstance::ParseMesh(Graphics& gfx, std::uniqu
 	namespace dx = DirectX;
 	//using VertexLayout;
 
-	VertexBufferData vbuf(std::move(
-		VertexLayout{}
+	/*VertexLayout{}
 		.Append(VertexLayout::Position3D)
 		.Append(VertexLayout::Normal)
 		.Append(VertexLayout::Tangent)
-		.Append(VertexLayout::Texture2D)
-	));
+		.Append(VertexLayout::Texture2D)*/
+
+	auto pMaterial = pMaterials[0]; // todo: select via mesh
+
+	VertexBufferData vbuf(pMaterial->GetVertexLayout());
 
 	if (pMeshAsset->vertices.size() == 0)
 	{
@@ -122,31 +125,46 @@ std::unique_ptr<MeshRenderer> ModelInstance::ParseMesh(Graphics& gfx, std::uniqu
 		indices.push_back(pMeshAsset->indices[i]);
 	}
 
-	std::vector<std::shared_ptr<Bindable>> pBindablePtrs;
-
 	auto meshTag = "Mesh%" + pMeshAsset->name;
-	pBindablePtrs.push_back(VertexBuffer::Resolve(gfx, meshTag, vbuf)); // vbuf is passed as const&
-	pBindablePtrs.push_back(IndexBuffer::Resolve(gfx, meshTag, indices));
+	std::shared_ptr<VertexBuffer> pVertexBuffer = VertexBuffer::Resolve(gfx, meshTag, vbuf); // vbuf is passed as const&
+	std::shared_ptr<IndexBuffer> pIndexBuffer = IndexBuffer::Resolve(gfx, meshTag, indices);
+	std::shared_ptr<Topology> pTopology = Topology::Resolve(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	auto pMaterial = pMaterials[0]; // todo: select via mesh
-	pBindablePtrs.push_back(InputLayout::Resolve(gfx, vbuf.GetLayout(), pMaterial->pVertexShader->GetBytecode()));
-
-	return std::make_unique<MeshRenderer>(gfx, pMeshAsset->name, pMaterial, std::move(pBindablePtrs));
+	return std::make_unique<MeshRenderer>(gfx, pMeshAsset->name, pMaterial, std::move(pVertexBuffer), std::move(pIndexBuffer), std::move(pTopology));
 }
 
-void Node::Draw(Graphics & gfx, DirectX::FXMMATRIX accumulatedTransform) const
+Node::Node(int id, const DirectX::XMMATRIX & _transform, std::unique_ptr<MeshRenderer> pMeshPtr, std::vector<std::unique_ptr<Node>> pChildNodes)
+	: pMeshPtr(std::move(pMeshPtr)), pChildNodes(std::move(pChildNodes))
 {
-	auto combinedTransform =
-		//dx::XMLoadFloat4x4(&appliedTransform) *
-		dx::XMLoadFloat4x4(&localTransform) *
+	dx::XMStoreFloat4x4(&transform, _transform);
+	dx::XMStoreFloat4x4(&appliedTransform, dx::XMMatrixIdentity());
+}
+
+void Node::Submit(FrameCommander& frame, DirectX::FXMMATRIX accumulatedTransform) const
+{
+	// todo: use this?
+	const auto built =
+		dx::XMLoadFloat4x4(&appliedTransform) *
+		dx::XMLoadFloat4x4(&transform) *
 		accumulatedTransform;
 
 	if (pMeshPtr)
 	{
-		pMeshPtr->Draw(gfx, combinedTransform);
+		pMeshPtr->Submit(frame, accumulatedTransform);
 	}
+
 	for (const auto& pc : pChildNodes)
 	{
-		pc->Draw(gfx, combinedTransform);
+		pc->Submit(frame, accumulatedTransform);
 	}
+}
+
+void Node::SetAppliedTransform(DirectX::FXMMATRIX transform) noexcept
+{
+	dx::XMStoreFloat4x4(&appliedTransform, transform);
+}
+
+const DirectX::XMFLOAT4X4& Node::GetAppliedTransform() const noexcept
+{
+	return appliedTransform;
 }

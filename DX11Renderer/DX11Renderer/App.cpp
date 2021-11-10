@@ -141,10 +141,11 @@ void App::DoFrame()
 	light.Bind(wnd.Gfx(), cam.GetViewMatrix());
 	for (auto& b : drawables)
 	{
-		b->Draw(wnd.Gfx());
+		b->Submit(fc);
 	}
-	model->Draw(wnd.Gfx());
-	light.Draw(wnd.Gfx());
+	model->Submit(fc);
+	light.Submit(fc);
+	fc.Execute(wnd.Gfx());
 
 	// imgui window to control simulation speed
 	if (ImGui::Begin("Simulation Speed")) // checks if window open
@@ -161,6 +162,7 @@ void App::DoFrame()
 	wnd.Gfx().log.DrawImguiControlWindow();
 
 	wnd.Gfx().EndFrame();
+	fc.Reset();
 
 	/*while (!wnd.mouse.IsEmpty())
 	{

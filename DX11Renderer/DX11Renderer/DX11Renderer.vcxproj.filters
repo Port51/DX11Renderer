@@ -85,6 +85,18 @@
     <Filter Include="Assets\Materials">
       <UniqueIdentifier>{60d3db6c-6340-4eee-b82f-f30610c7fe41}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\RenderJobs">
+      <UniqueIdentifier>{bca483fe-0738-45ec-8d54-fe4ff1adacd9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\RenderJobs">
+      <UniqueIdentifier>{3475f071-91f2-4ab0-b967-6e633f8ea2a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Bindable\Shaders">
+      <UniqueIdentifier>{a34e611c-f20c-40ec-98ed-6d7680b4b871}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Bindable\Shaders">
+      <UniqueIdentifier>{cda551ed-3740-4c56-9816-6c61d1172fe9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -117,9 +129,6 @@
     <ClCompile Include="DxgiInfoManager.cpp">
       <Filter>Source Files\ChiliErrors</Filter>
     </ClCompile>
-    <ClCompile Include="VertexShader.cpp">
-      <Filter>Source Files\Bindable</Filter>
-    </ClCompile>
     <ClCompile Include="Drawable.cpp">
       <Filter>Source Files\Drawable</Filter>
     </ClCompile>
@@ -127,9 +136,6 @@
       <Filter>Source Files\Bindable</Filter>
     </ClCompile>
     <ClCompile Include="InputLayout.cpp">
-      <Filter>Source Files\Bindable</Filter>
-    </ClCompile>
-    <ClCompile Include="PixelShader.cpp">
       <Filter>Source Files\Bindable</Filter>
     </ClCompile>
     <ClCompile Include="Topology.cpp">
@@ -219,6 +225,24 @@
     <ClCompile Include="Bindable.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Job.cpp">
+      <Filter>Source Files\RenderJobs</Filter>
+    </ClCompile>
+    <ClCompile Include="Step.cpp">
+      <Filter>Source Files\RenderJobs</Filter>
+    </ClCompile>
+    <ClCompile Include="Technique.cpp">
+      <Filter>Source Files\RenderJobs</Filter>
+    </ClCompile>
+    <ClCompile Include="NullPixelShader.cpp">
+      <Filter>Source Files\Bindable\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="VertexShader.cpp">
+      <Filter>Source Files\Bindable\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="PixelShader.cpp">
+      <Filter>Source Files\Bindable\Shaders</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WindowsInclude.h">
@@ -266,9 +290,6 @@
     <ClInclude Include="BindableInclude.h">
       <Filter>Header Files\Bindable</Filter>
     </ClInclude>
-    <ClInclude Include="VertexShader.h">
-      <Filter>Header Files\Bindable</Filter>
-    </ClInclude>
     <ClInclude Include="Drawable.h">
       <Filter>Header Files\Drawable</Filter>
     </ClInclude>
@@ -276,9 +297,6 @@
       <Filter>Header Files\Bindable</Filter>
     </ClInclude>
     <ClInclude Include="InputLayout.h">
-      <Filter>Header Files\Bindable</Filter>
-    </ClInclude>
-    <ClInclude Include="PixelShader.h">
       <Filter>Header Files\Bindable</Filter>
     </ClInclude>
     <ClInclude Include="Topology.h">
@@ -433,6 +451,30 @@
     </ClInclude>
     <ClInclude Include="Stencil.h">
       <Filter>Header Files\Bindable</Filter>
+    </ClInclude>
+    <ClInclude Include="FrameCommander.h">
+      <Filter>Header Files\RenderJobs</Filter>
+    </ClInclude>
+    <ClInclude Include="Job.h">
+      <Filter>Header Files\RenderJobs</Filter>
+    </ClInclude>
+    <ClInclude Include="Pass.h">
+      <Filter>Header Files\RenderJobs</Filter>
+    </ClInclude>
+    <ClInclude Include="Step.h">
+      <Filter>Header Files\RenderJobs</Filter>
+    </ClInclude>
+    <ClInclude Include="Technique.h">
+      <Filter>Header Files\RenderJobs</Filter>
+    </ClInclude>
+    <ClInclude Include="NullPixelShader.h">
+      <Filter>Header Files\Bindable\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexShader.h">
+      <Filter>Header Files\Bindable\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="PixelShader.h">
+      <Filter>Header Files\Bindable\Shaders</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

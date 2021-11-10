@@ -27,7 +27,7 @@ std::string InputLayout::GetUID() const
 	return GenerateUID(layout);
 }
 
-std::shared_ptr<Bindable> InputLayout::Resolve(Graphics & gfx, const VertexLayout & layout, ID3DBlob * pVertexShaderBytecode)
+std::shared_ptr<InputLayout> InputLayout::Resolve(Graphics & gfx, const VertexLayout & layout, ID3DBlob * pVertexShaderBytecode)
 {
 	return Bind::Codex::Resolve<InputLayout>(gfx, layout, pVertexShaderBytecode);
 }
