@@ -1,13 +1,13 @@
 #include "Step.h"
-#include "Drawable.h"
+#include "MeshRenderer.h"
 #include "FrameCommander.h"
 
-void Step::SubmitDrawCalls(FrameCommander& frame, const Drawable & drawable) const
+void Step::SubmitDrawCalls(FrameCommander& frame, const MeshRenderer& meshRenderer) const
 {
-	frame.Accept(Job{ this,&drawable }, targetPass);
+	frame.Accept(Job{ this,&meshRenderer }, targetPass);
 }
 
-void Step::InitializeParentReferences(const Drawable& parent) noexcept
+void Step::InitializeParentReferences(const MeshRenderer& parent) noexcept
 {
 	for (auto& b : bindables)
 	{

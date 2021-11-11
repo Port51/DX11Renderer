@@ -1,8 +1,8 @@
 #include "TransformCbuf.h"
-#include "Drawable.h"
+#include "MeshRenderer.h"
 #include "Graphics.h"
 
-TransformCbuf::TransformCbuf(Graphics& gfx, const Drawable& parent, UINT slot)
+TransformCbuf::TransformCbuf(Graphics& gfx, const MeshRenderer& parent, UINT slot)
 {
 	if (!pVcbuf)
 	{
@@ -18,7 +18,7 @@ void TransformCbuf::Bind(Graphics& gfx)
 	UpdateBindImpl(gfx, GetTransforms(gfx));
 }
 
-void TransformCbuf::InitializeParentReference(const Drawable& parent) 
+void TransformCbuf::InitializeParentReference(const MeshRenderer& parent)
 {
 	pParent = &parent;
 }

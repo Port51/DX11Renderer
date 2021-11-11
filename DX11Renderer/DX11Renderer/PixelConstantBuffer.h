@@ -17,7 +17,7 @@ class PixelConstantBuffer : public ConstantBuffer<C>
 public:
 	using ConstantBuffer<C>::ConstantBuffer;
 	
-	void PixelConstantBuffer<C>::Bind(Graphics& gfx)
+	void PixelConstantBuffer<C>::Bind(Graphics& gfx) override
 	{
 		GetContext(gfx)->PSSetConstantBuffers(slot, 1u, pConstantBuffer.GetAddressOf());
 	}

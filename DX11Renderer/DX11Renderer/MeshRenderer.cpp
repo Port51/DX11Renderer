@@ -13,7 +13,9 @@ namespace dx = DirectX;
 
 MeshRenderer::MeshRenderer(Graphics& gfx, std::string name, std::shared_ptr<Material> pMaterial,
 	std::shared_ptr<VertexBuffer> pVertexBuffer, std::shared_ptr<IndexBuffer> pIndexBuffer, std::shared_ptr<Topology> pTopologyBuffer)
-	: Drawable(pVertexBuffer, pIndexBuffer, pTopologyBuffer),
+	: pVertices(std::move(pVertexBuffer)),
+	pIndices(std::move(pIndexBuffer)),
+	pTopology(std::move(pTopologyBuffer)),
 	name(name),
 	pMaterial(pMaterial)
 {
@@ -35,8 +37,18 @@ DirectX::XMMATRIX MeshRenderer::GetTransformXM() const
 	//	DirectX::XMMatrixTranslation(pos.x, pos.y, pos.z);
 }
 
-void MeshRenderer::SubmitDrawCalls(FrameCommander & frame, dx::FXMMATRIX _accumulatedTranform) const
+void MeshRenderer::SubmitDrawCalls(FrameCommander& frame, dx::FXMMATRIX _accumulatedTranform) const
 {
 	dx::XMStoreFloat4x4(&transform, _accumulatedTranform);
-	Drawable::SubmitDrawCalls(frame);
+
+	// todo: use material instead
+	for (const auto& tech : techniques)
+	{
+		tech.SubmitDrawCalls(frame, *this);
+	}
+}
+
+UINT MeshRenderer::GetIndexCount() const
+{
+	return pIndices->GetCount();
 }

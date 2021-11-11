@@ -11,7 +11,7 @@ public:
 		:
 		name(name)
 	{}
-	void SubmitDrawCalls(class FrameCommander& frame, const class Drawable& drawable) const noexcept;
+	void SubmitDrawCalls(class FrameCommander& frame, const class MeshRenderer& renderer) const noexcept;
 	void AddStep(Step step) noexcept
 	{
 		steps.push_back(std::move(step));
@@ -24,7 +24,7 @@ public:
 	{
 		active = active_in;
 	}
-	void InitializeParentReferences(const class Drawable& parent) noexcept;
+	void InitializeParentReferences(const class MeshRenderer& parent) noexcept;
 	const std::string& GetName() const noexcept
 	{
 		return name;

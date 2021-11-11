@@ -1,19 +1,19 @@
 #include "Technique.h"
-#include "Drawable.h"
+#include "MeshRenderer.h"
 #include "FrameCommander.h"
 
-void Technique::SubmitDrawCalls(FrameCommander& frame, const Drawable& drawable) const noexcept
+void Technique::SubmitDrawCalls(FrameCommander& frame, const MeshRenderer& renderer) const noexcept
 {
 	if (active)
 	{
 		for (const auto& step : steps)
 		{
-			step.SubmitDrawCalls(frame, drawable);
+			step.SubmitDrawCalls(frame, renderer);
 		}
 	}
 }
 
-void Technique::InitializeParentReferences(const Drawable & parent) noexcept
+void Technique::InitializeParentReferences(const MeshRenderer & parent) noexcept
 {
 	for (auto& s : steps)
 	{

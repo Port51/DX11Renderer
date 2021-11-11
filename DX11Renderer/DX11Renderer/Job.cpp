@@ -1,17 +1,17 @@
 #include "Job.h"
 #include "Step.h"
-#include "Drawable.h"
+#include "MeshRenderer.h"
 
 
-Job::Job(const Step* pStep, const Drawable* pDrawable)
+Job::Job(const Step* pStep, const MeshRenderer* pRenderer)
 	:
-	pDrawable{ pDrawable },
+	pRenderer{ pRenderer },
 	pStep{ pStep }
 {}
 
 void Job::Execute(Graphics& gfx) const
 {
-	pDrawable->Bind(gfx);
+	pRenderer->Bind(gfx);
 	pStep->Bind(gfx);
-	gfx.DrawIndexed(pDrawable->GetIndexCount());
+	gfx.DrawIndexed(pRenderer->GetIndexCount());
 }

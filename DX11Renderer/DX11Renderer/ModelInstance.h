@@ -1,6 +1,5 @@
 #pragma once
 #include <string>
-#include "Drawable.h"
 #include "MeshRenderer.h"
 #include "SceneGraphNode.h"
 #include "ModelAsset.h"

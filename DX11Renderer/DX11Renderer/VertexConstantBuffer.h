@@ -21,7 +21,7 @@ class VertexConstantBuffer : public ConstantBuffer<C>
 public:
 	using ConstantBuffer<C>::ConstantBuffer;
 	
-	void VertexConstantBuffer<C>::Bind(Graphics & gfx)
+	void VertexConstantBuffer<C>::Bind(Graphics & gfx) override
 	{
 		GetContext(gfx)->VSSetConstantBuffers(slot, 1u, pConstantBuffer.GetAddressOf());
 	}

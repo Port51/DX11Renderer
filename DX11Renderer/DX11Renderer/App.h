@@ -7,6 +7,8 @@
 #include "ModelInstance.h"
 #include "FrameCommander.h"
 
+class MeshRenderer;
+
 class App
 {
 public:
@@ -26,6 +28,6 @@ private:
 	PointLight light;
 	std::unique_ptr<ModelInstance> model;
 	float simulationSpeed = 1.f;
-	std::vector<std::unique_ptr<class Drawable>> drawables;
+	std::vector<std::unique_ptr<MeshRenderer>> drawables;
 	static constexpr size_t nDrawables = 1;
 };

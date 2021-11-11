@@ -15,7 +15,7 @@ public:
 	{
 		bindables.push_back(std::move(bind_in));
 	}
-	void SubmitDrawCalls(class FrameCommander& frame, const class Drawable& drawable) const;
+	void SubmitDrawCalls(class FrameCommander& frame, const class MeshRenderer& renderer) const;
 	void Bind(Graphics& gfx) const
 	{
 		for (const auto& b : bindables)
@@ -23,7 +23,7 @@ public:
 			b->Bind(gfx);
 		}
 	}
-	void InitializeParentReferences(const class Drawable& parent) noexcept;
+	void InitializeParentReferences(const class MeshRenderer& parent) noexcept;
 private:
 	size_t targetPass;
 	std::vector<std::shared_ptr<Bindable>> bindables;
