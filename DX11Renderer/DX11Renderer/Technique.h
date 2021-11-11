@@ -11,7 +11,7 @@ public:
 		:
 		name(name)
 	{}
-	void Submit(class FrameCommander& frame, const class Drawable& drawable) const noexcept;
+	void SubmitDrawCalls(class FrameCommander& frame, const class Drawable& drawable) const noexcept;
 	void AddStep(Step step) noexcept
 	{
 		steps.push_back(std::move(step));

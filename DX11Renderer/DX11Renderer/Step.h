@@ -15,7 +15,7 @@ public:
 	{
 		bindables.push_back(std::move(bind_in));
 	}
-	void Submit(class FrameCommander& frame, const class Drawable& drawable) const;
+	void SubmitDrawCalls(class FrameCommander& frame, const class Drawable& drawable) const;
 	void Bind(Graphics& gfx) const
 	{
 		for (const auto& b : bindables)

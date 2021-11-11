@@ -12,7 +12,7 @@ class Node
 	friend class ModelInstance;
 public:
 	Node(int id, const DirectX::XMMATRIX& _transform, std::unique_ptr<MeshRenderer> pMeshPtr, std::vector<std::unique_ptr<Node>> pChildNodes);
-	void Submit(FrameCommander& frame, DirectX::FXMMATRIX accumulatedTransform) const;
+	void SubmitDrawCalls(FrameCommander& frame, DirectX::FXMMATRIX accumulatedTransform) const;
 	void SetAppliedTransform(DirectX::FXMMATRIX transform) noexcept;
 	const DirectX::XMFLOAT4X4& GetAppliedTransform() const noexcept;
 private:

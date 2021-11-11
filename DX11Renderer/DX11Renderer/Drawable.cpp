@@ -3,11 +3,12 @@
 #include "BindableInclude.h"
 #include "BindableCodex.h"
 
-void Drawable::Submit(FrameCommander& frame) const noexcept
+void Drawable::SubmitDrawCalls(FrameCommander& frame) const noexcept
 {
+	// todo: use material instead
 	for (const auto& tech : techniques)
 	{
-		tech.Submit(frame, *this);
+		tech.SubmitDrawCalls(frame, *this);
 	}
 }
 

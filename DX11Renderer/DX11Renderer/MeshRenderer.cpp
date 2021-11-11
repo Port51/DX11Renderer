@@ -35,8 +35,8 @@ DirectX::XMMATRIX MeshRenderer::GetTransformXM() const
 	//	DirectX::XMMatrixTranslation(pos.x, pos.y, pos.z);
 }
 
-void MeshRenderer::Submit(FrameCommander & frame, dx::FXMMATRIX _accumulatedTranform) const
+void MeshRenderer::SubmitDrawCalls(FrameCommander & frame, dx::FXMMATRIX _accumulatedTranform) const
 {
 	dx::XMStoreFloat4x4(&transform, _accumulatedTranform);
-	Drawable::Submit(frame);
+	Drawable::SubmitDrawCalls(frame);
 }

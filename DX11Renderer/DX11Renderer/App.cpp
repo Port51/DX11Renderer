@@ -141,10 +141,10 @@ void App::DoFrame()
 	light.Bind(wnd.Gfx(), cam.GetViewMatrix());
 	for (auto& b : drawables)
 	{
-		b->Submit(fc);
+		b->SubmitDrawCalls(fc);
 	}
 	model->Submit(fc);
-	light.Submit(fc);
+	light.SubmitDrawCalls(fc);
 	fc.Execute(wnd.Gfx());
 
 	// imgui window to control simulation speed

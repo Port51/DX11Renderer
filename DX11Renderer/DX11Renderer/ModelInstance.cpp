@@ -34,7 +34,7 @@ ModelInstance::ModelInstance(Graphics& gfx, std::unique_ptr<ModelAsset> const& p
 
 void ModelInstance::Submit(FrameCommander& frame) const
 {
-	pSceneGraph->Submit(frame, dx::XMMatrixIdentity());
+	pSceneGraph->SubmitDrawCalls(frame, dx::XMMatrixIdentity());
 }
 
 void ModelInstance::SetPositionWS(DirectX::XMFLOAT3 positionWS)
@@ -140,7 +140,7 @@ Node::Node(int id, const DirectX::XMMATRIX & _transform, std::unique_ptr<MeshRen
 	dx::XMStoreFloat4x4(&appliedTransform, dx::XMMatrixIdentity());
 }
 
-void Node::Submit(FrameCommander& frame, DirectX::FXMMATRIX accumulatedTransform) const
+void Node::SubmitDrawCalls(FrameCommander& frame, DirectX::FXMMATRIX accumulatedTransform) const
 {
 	// todo: use this?
 	const auto built =
@@ -150,12 +150,12 @@ void Node::Submit(FrameCommander& frame, DirectX::FXMMATRIX accumulatedTransform
 
 	if (pMeshPtr)
 	{
-		pMeshPtr->Submit(frame, accumulatedTransform);
+		pMeshPtr->SubmitDrawCalls(frame, accumulatedTransform);
 	}
 
 	for (const auto& pc : pChildNodes)
 	{
-		pc->Submit(frame, accumulatedTransform);
+		pc->SubmitDrawCalls(frame, accumulatedTransform);
 	}
 }
 

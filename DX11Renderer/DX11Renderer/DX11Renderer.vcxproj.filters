@@ -97,6 +97,12 @@
     <Filter Include="Source Files\Bindable\Shaders">
       <UniqueIdentifier>{cda551ed-3740-4c56-9816-6c61d1172fe9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Bindable\Materials">
+      <UniqueIdentifier>{ed422d5d-2c41-4834-bab6-62b540f50882}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Bindable\Materials">
+      <UniqueIdentifier>{f4f805a8-9683-4243-8f5c-d1728f617de9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -204,9 +210,6 @@
     <ClCompile Include="MeshRenderer.cpp">
       <Filter>Source Files\Drawable</Filter>
     </ClCompile>
-    <ClCompile Include="Material.cpp">
-      <Filter>Source Files\Bindable</Filter>
-    </ClCompile>
     <ClCompile Include="TransformCbufWithPixelBind.h">
       <Filter>Header Files\Bindable</Filter>
     </ClCompile>
@@ -242,6 +245,12 @@
     </ClCompile>
     <ClCompile Include="PixelShader.cpp">
       <Filter>Source Files\Bindable\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="Material.cpp">
+      <Filter>Source Files\Bindable\Materials</Filter>
+    </ClCompile>
+    <ClCompile Include="MaterialPass.cpp">
+      <Filter>Source Files\Bindable\Materials</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -437,9 +446,6 @@
     <ClInclude Include="MeshRenderer.h">
       <Filter>Header Files\Drawable</Filter>
     </ClInclude>
-    <ClInclude Include="Material.h">
-      <Filter>Header Files\Bindable</Filter>
-    </ClInclude>
     <ClInclude Include="RenderTarget.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -475,6 +481,12 @@
     </ClInclude>
     <ClInclude Include="PixelShader.h">
       <Filter>Header Files\Bindable\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Header Files\Bindable\Materials</Filter>
+    </ClInclude>
+    <ClInclude Include="MaterialPass.h">
+      <Filter>Header Files\Bindable\Materials</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

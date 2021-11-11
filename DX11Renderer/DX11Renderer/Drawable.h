@@ -19,7 +19,7 @@ public:
 	virtual DirectX::XMMATRIX GetTransformXM() const = 0;
 
 	// Submits draw call
-	void Submit(class FrameCommander& frame) const noexcept;
+	void SubmitDrawCalls(class FrameCommander& frame) const noexcept;
 	void Bind(Graphics& gfx) const noexcept;
 	UINT GetIndexCount() const;
 	virtual ~Drawable();

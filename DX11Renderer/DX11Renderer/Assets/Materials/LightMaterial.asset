@@ -5,7 +5,7 @@ Properties
 	Color, 1.0, 1.0, 1.0, 1.0
 	Roughness, 0.75
 }
-Technique
+Pass
 {
 	Name, GBuffer
 	VS, Shaders\\Built\\SolidVS.cso

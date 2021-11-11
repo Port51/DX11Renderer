@@ -9,13 +9,14 @@
 #include "Texture.h"
 #include "Sampler.h"
 #include "BindableCodex.h"
+#include "MaterialPass.h"
 
 #include <fstream>
 #include <sstream>
 
 using namespace std::string_literals;
 
-enum MaterialParseState { None, Properties, Technique };
+enum MaterialParseState { None, Properties, Pass };
 
 bool isWhitespace(unsigned char c) {
 	return (c == ' ' || c == '\n' || c == '\r' ||
@@ -40,7 +41,7 @@ Material::Material(Graphics& gfx, const std::string_view assetPath)
 	std::ifstream file(std::string(assetPath).c_str());
 
 	MaterialParseState state = MaterialParseState::None;
-	std::string techniqueName;
+	std::string passName;
 	if (file.is_open())
 	{
 		std::string line;
@@ -68,51 +69,57 @@ Material::Material(Graphics& gfx, const std::string_view assetPath)
 			{
 				state = MaterialParseState::Properties;
 			}
-			else if (key == "Technique")
+			else if (key == "Pass")
 			{
-				state = MaterialParseState::Technique;
+				state = MaterialParseState::Pass;
 			}
 			else if (key == "Name")
 			{
-				if (state == MaterialParseState::Technique)
+				if (state == MaterialParseState::Pass)
 				{
-					// Read technique name
-					techniqueName = std::move(values[0]);
+					// Read pass name
+					passName = std::move(values[0]);
+					passes.emplace(passName, std::make_unique<MaterialPass>()); // <-- this is a problem
 				}
 			}
-			else if (key == "VS")
+			else if (state == MaterialParseState::Pass)
 			{
-				if (state == MaterialParseState::Technique)
+				if (key == "VS")
 				{
 					// Bind vertex shader and input layout
 					pVertexShader = std::make_shared<VertexShader>(gfx, values[0].c_str());
 					auto pvsbc = pVertexShader->GetBytecode();
-					AddBindable(pVertexShader);
+					//AddBindable(pVertexShader);
+
+					// todo: make this work
+					passes[passName].AddBindable(pVertexShader);
 
 					// moved:
 					//pBindables.push_back(InputLayout::Resolve(gfx, _vertexLayout, pvsbc));
 				}
-			}
-			else if (key == "PS")
-			{
-				if (state == MaterialParseState::Technique)
+				else if (key == "PS")
 				{
 					pPixelShader = PixelShader::Resolve(gfx, values[0].c_str());
-					AddBindable(pPixelShader);
+					//AddBindable(pPixelShader);
+
+					// todo: make this work
+					passes[passName].AddBindable(pPixelShader);
 				}
 			}
-			else if (key == "Color")
+			else if (state == MaterialParseState::Properties)
 			{
-				if (state == MaterialParseState::Properties)
+				if (key == "Color")
 				{
 					colorProp = { std::stof(values[0]), std::stof(values[1]), std::stof(values[2]) };
 				}
-			}
-			else if (key == "Roughness")
-			{
-				if (state == MaterialParseState::Properties)
+				else if (key == "Roughness")
 				{
 					roughnessProp = std::stof(values[0]);
+				}
+				else if (key == "Texture")
+				{
+					// todo: read
+					auto texProp = std::move(values[0]);
 				}
 			}
 
@@ -147,12 +154,13 @@ Material::Material(Graphics& gfx, const std::string_view assetPath)
 
 }
 
-void Material::Bind(Graphics& gfx)
+void Material::Bind(Graphics& gfx, std::string passName)
 {
-	// Bind all resources
-	for (auto& b : pBindables) // instance binds
+	// Execute pass if there is one
+	const auto iter = passes.find(passName);
+	if (iter != passes.end())
 	{
-		b->Bind(gfx);
+		iter->second.Bind(gfx);
 	}
 }
 
