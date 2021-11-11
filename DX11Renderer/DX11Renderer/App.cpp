@@ -139,10 +139,10 @@ void App::DoFrame()
 	wnd.Gfx().SetProjectionMatrix(cam.GetProjectionMatrix());
 
 	light.Bind(wnd.Gfx(), cam.GetViewMatrix());
-	for (auto& b : drawables)
+	/*for (auto& b : drawables)
 	{
 		b->SubmitDrawCalls(fc);
-	}
+	}*/
 	model->Submit(fc);
 	light.SubmitDrawCalls(fc);
 	fc.Execute(wnd.Gfx());

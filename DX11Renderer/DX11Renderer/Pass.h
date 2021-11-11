@@ -3,6 +3,9 @@
 #include "Job.h"
 #include <vector>
 
+///
+/// Wrapper containing jobs
+///
 class Pass
 {
 public:

@@ -9,13 +9,16 @@
 class VertexShader;
 class PixelShader;
 class MaterialPass;
+class FrameCommander;
 
 class Material : public Bindable
 {
 public:
 	Material(Graphics& gfx, const std::string_view assetPath);
+	void Bind(Graphics& gfx) {} // todo: remove
 	void Bind(Graphics& gfx, std::string passName);
 	std::string GetUID() const override;
+	void SubmitDrawCalls(FrameCommander& frame) const;
 public:
 	const VertexLayout& GetVertexLayout() const;
 	static std::shared_ptr<Bindable> Resolve(Graphics& gfx, const std::string_view assetPath);

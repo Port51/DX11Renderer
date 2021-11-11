@@ -170,6 +170,10 @@ std::string Material::GetUID() const
 	return GenerateUID(assetPath);
 }
 
+void Material::SubmitDrawCalls(FrameCommander & frame) const
+{
+}
+
 const VertexLayout & Material::GetVertexLayout() const
 {
 	return vertexLayout;

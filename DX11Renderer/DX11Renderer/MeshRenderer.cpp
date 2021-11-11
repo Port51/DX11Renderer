@@ -37,15 +37,22 @@ DirectX::XMMATRIX MeshRenderer::GetTransformXM() const
 	//	DirectX::XMMatrixTranslation(pos.x, pos.y, pos.z);
 }
 
+// Called via Node
 void MeshRenderer::SubmitDrawCalls(FrameCommander& frame, dx::FXMMATRIX _accumulatedTranform) const
 {
 	dx::XMStoreFloat4x4(&transform, _accumulatedTranform);
 
+	pMaterial->SubmitDrawCalls(frame);
+
 	// todo: use material instead
-	for (const auto& tech : techniques)
+	/*for (const auto& tech : techniques)
 	{
 		tech.SubmitDrawCalls(frame, *this);
-	}
+	}*/
+}
+
+void MeshRenderer::Bind(Graphics& gfx) const
+{
 }
 
 UINT MeshRenderer::GetIndexCount() const

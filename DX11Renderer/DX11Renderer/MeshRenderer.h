@@ -9,7 +9,7 @@ class IndexBuffer;
 class Topology;
 class FrameCommander;
 class InputLayout;
-class Technique;
+//class Technique;
 
 namespace dx = DirectX;
 
@@ -19,6 +19,7 @@ public:
 	MeshRenderer(Graphics& gfx, std::string name, std::shared_ptr<Material> pMaterial, std::shared_ptr<VertexBuffer> pVertexBuffer, std::shared_ptr<IndexBuffer> pIndexBuffer, std::shared_ptr<Topology> pTopologyBuffer);
 	DirectX::XMMATRIX GetTransformXM() const;
 	void SubmitDrawCalls(FrameCommander& frame, dx::FXMMATRIX _accumulatedTranform) const;
+	void Bind(Graphics& gfx) const;
 	UINT GetIndexCount() const;
 private:
 	std::string name;
@@ -32,5 +33,5 @@ private:
 	std::shared_ptr<IndexBuffer> pIndices;
 	std::shared_ptr<VertexBuffer> pVertices;
 	std::shared_ptr<Topology> pTopology;
-	std::vector<Technique> techniques;
+	//std::vector<Technique> techniques;
 };

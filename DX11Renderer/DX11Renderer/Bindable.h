@@ -10,8 +10,7 @@ class MeshRenderer;
 class Bindable
 {
 public:
-	virtual void Bind(Graphics& gfx)
-	{}
+	virtual void Bind(Graphics& gfx) = 0;
 	virtual ~Bindable() = default;
 	virtual std::string GetUID() const;
 	virtual void InitializeParentReference(const MeshRenderer&)
