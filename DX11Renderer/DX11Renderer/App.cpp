@@ -143,7 +143,7 @@ void App::DoFrame()
 	{
 		b->SubmitDrawCalls(fc);
 	}*/
-	model->Submit(fc);
+	model->SubmitDrawCalls(fc);
 	light.SubmitDrawCalls(fc);
 	fc.Execute(wnd.Gfx());
 

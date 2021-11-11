@@ -4,6 +4,9 @@
 #include "Bindable.h"
 #include "Graphics.h"
 
+class MeshRenderer;
+class FrameCommander;
+
 class Step
 {
 public:
@@ -13,18 +16,18 @@ public:
 	{}
 	void AddBindable(std::shared_ptr<Bindable> bind_in) noexcept
 	{
-		bindables.push_back(std::move(bind_in));
+		pBindables.push_back(std::move(bind_in));
 	}
-	void SubmitDrawCalls(class FrameCommander& frame, const class MeshRenderer& renderer) const;
+	void SubmitDrawCalls(FrameCommander& frame, const MeshRenderer& renderer) const;
 	void Bind(Graphics& gfx) const
 	{
-		for (const auto& b : bindables)
+		for (const auto& b : pBindables)
 		{
 			b->Bind(gfx);
 		}
 	}
-	void InitializeParentReferences(const class MeshRenderer& parent) noexcept;
+	void InitializeParentReferences(const MeshRenderer& parent) noexcept;
 private:
 	size_t targetPass;
-	std::vector<std::shared_ptr<Bindable>> bindables;
+	std::vector<std::shared_ptr<Bindable>> pBindables;
 };

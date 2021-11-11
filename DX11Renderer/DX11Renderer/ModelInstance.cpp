@@ -32,7 +32,7 @@ ModelInstance::ModelInstance(Graphics& gfx, std::unique_ptr<ModelAsset> const& p
 	pSceneGraph = CreateModelInstanceNode(gfx, pModelAsset->pSceneGraph);
 }
 
-void ModelInstance::Submit(FrameCommander& frame) const
+void ModelInstance::SubmitDrawCalls(FrameCommander& frame) const
 {
 	pSceneGraph->SubmitDrawCalls(frame, dx::XMMatrixIdentity());
 }

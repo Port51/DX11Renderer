@@ -36,7 +36,7 @@ void PointLight::DrawImguiControlWindow()
 void PointLight::SubmitDrawCalls(FrameCommander& frame) const
 {
 	pModel->SetPositionWS(positionWS);
-	pModel->Submit(frame);
+	pModel->SubmitDrawCalls(frame);
 }
 
 void PointLight::Bind(Graphics& gfx, DirectX::FXMMATRIX viewMatrix) const
