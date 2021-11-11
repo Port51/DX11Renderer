@@ -26,7 +26,7 @@ public:
 	std::shared_ptr<VertexShader> pVertexShader;
 	std::shared_ptr<PixelShader> pPixelShader;
 private:
-	std::unordered_map<std::string, MaterialPass> passes;
+	std::unordered_map<std::string, std::unique_ptr<MaterialPass>> passes;
 	std::vector<std::shared_ptr<Bindable>> pBindables; // shaders and such
 	std::string assetPath;
 	VertexLayout vertexLayout;

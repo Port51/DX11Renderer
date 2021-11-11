@@ -15,7 +15,7 @@ class Material;
 class MaterialPass
 {
 public:
-	MaterialPass();
+	MaterialPass() {}
 public:
 	void AddBindable(std::shared_ptr<Bindable> pBindable);
 	void Bind(Graphics& gfx);

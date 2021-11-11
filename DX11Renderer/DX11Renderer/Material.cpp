@@ -79,6 +79,7 @@ Material::Material(Graphics& gfx, const std::string_view assetPath)
 				{
 					// Read pass name
 					passName = std::move(values[0]);
+					//const auto pMaterialPass = std::make_unique<MaterialPass>();
 					passes.emplace(passName, std::make_unique<MaterialPass>()); // <-- this is a problem
 				}
 			}
@@ -92,7 +93,7 @@ Material::Material(Graphics& gfx, const std::string_view assetPath)
 					//AddBindable(pVertexShader);
 
 					// todo: make this work
-					passes[passName].AddBindable(pVertexShader);
+					passes[passName]->AddBindable(pVertexShader);
 
 					// moved:
 					//pBindables.push_back(InputLayout::Resolve(gfx, _vertexLayout, pvsbc));
@@ -103,7 +104,7 @@ Material::Material(Graphics& gfx, const std::string_view assetPath)
 					//AddBindable(pPixelShader);
 
 					// todo: make this work
-					passes[passName].AddBindable(pPixelShader);
+					passes[passName]->AddBindable(pPixelShader);
 				}
 			}
 			else if (state == MaterialParseState::Properties)
@@ -160,7 +161,7 @@ void Material::Bind(Graphics& gfx, std::string passName)
 	const auto iter = passes.find(passName);
 	if (iter != passes.end())
 	{
-		iter->second.Bind(gfx);
+		iter->second->Bind(gfx);
 	}
 }
 
