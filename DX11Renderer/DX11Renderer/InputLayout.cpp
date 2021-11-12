@@ -17,7 +17,7 @@ InputLayout::InputLayout(Graphics& gfx, VertexLayout _layout, ID3DBlob* pVertexS
 	));
 }
 
-void InputLayout::Bind(Graphics& gfx)
+void InputLayout::Bind(Graphics& gfx, UINT slot)
 {
 	GetContext(gfx)->IASetInputLayout(pInputLayout.Get());
 }

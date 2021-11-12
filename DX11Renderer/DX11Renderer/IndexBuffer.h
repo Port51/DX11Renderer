@@ -13,7 +13,7 @@ class IndexBuffer : public Bindable
 public:
 	IndexBuffer(Graphics& gfx, const std::vector<unsigned short>& indices);
 	IndexBuffer(Graphics& gfx, std::string tag, const std::vector<unsigned short>& indices);
-	void Bind(Graphics& gfx) override;
+	void Bind(Graphics& gfx, UINT slot) override;
 	UINT GetCount() const;
 	std::string GetUID() const noexcept override;
 public:

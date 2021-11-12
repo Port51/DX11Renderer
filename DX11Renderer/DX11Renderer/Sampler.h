@@ -13,7 +13,7 @@ public:
 	Sampler(Graphics& gfx, D3D11_TEXTURE_ADDRESS_MODE wrapU, D3D11_TEXTURE_ADDRESS_MODE wrapV);
 	Sampler(Graphics& gfx, D3D11_TEXTURE_ADDRESS_MODE wrapU, D3D11_TEXTURE_ADDRESS_MODE wrapV, D3D11_TEXTURE_ADDRESS_MODE wrapW);
 	Sampler(Graphics& gfx, D3D11_SAMPLER_DESC samplerDesc);
-	void Bind(Graphics& gfx) override;
+	void Bind(Graphics& gfx, UINT slot) override;
 	std::string GetUID() const override;
 public:
 	static std::shared_ptr<Bindable> Resolve(Graphics& gfx);

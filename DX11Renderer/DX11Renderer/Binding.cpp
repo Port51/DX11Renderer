@@ -8,7 +8,7 @@ Binding::Binding(std::shared_ptr<Bindable> _pBindable, UINT _slot)
 
 void Binding::Bind(Graphics& gfx) const
 {
-	pBindable->Bind(gfx);// , slot);
+	pBindable->Bind(gfx, slot);
 }
 
 std::shared_ptr<Bindable> Binding::GetBindable() const

@@ -17,8 +17,8 @@ protected:
 		DirectX::XMMATRIX modelViewProj;
 	};
 public:
-	TransformCbuf(Graphics& gfx, const MeshRenderer& parent, UINT slot = 0u);
-	void Bind(Graphics& gfx) override;
+	TransformCbuf(Graphics& gfx, const MeshRenderer& parent);
+	void Bind(Graphics& gfx, UINT slot) override;
 	void InitializeParentReference(const MeshRenderer& parent) override;
 protected:
 	virtual void UpdateBindImpl(Graphics& gfx, const Transforms& transforms);

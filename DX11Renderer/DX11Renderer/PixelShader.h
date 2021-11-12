@@ -10,7 +10,7 @@ class PixelShader : public Bindable
 {
 public:
 	PixelShader(Graphics& gfx, const std::string& path);
-	void Bind(Graphics& gfx) override;
+	void Bind(Graphics& gfx, UINT slot) override;
 	std::string GetUID() const noexcept override;
 public:
 	static std::shared_ptr<PixelShader> Resolve(Graphics& gfx, const std::string& path);

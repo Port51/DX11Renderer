@@ -27,12 +27,12 @@ void MaterialPass::AddBinding(Binding binding)
 
 void MaterialPass::Bind(Graphics& gfx)
 {
-	pVertexShader->Bind(gfx);
+	/*pVertexShader->Bind(gfx);
 	pPixelShader->Bind(gfx);
 	for (const auto& binding : bindings)
 	{
 		binding.Bind(gfx);
-	}
+	}*/
 }
 
 void MaterialPass::SubmitDrawCalls(FrameCommander& frame, const MeshRenderer& renderer) const

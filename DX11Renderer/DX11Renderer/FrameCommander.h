@@ -25,7 +25,7 @@ public:
 
 		// GBuffer pass
 		{
-			Bind::Stencil::Resolve(gfx, Bind::Stencil::Mode::Off)->Bind(gfx);
+			Bind::Stencil::Resolve(gfx, Bind::Stencil::Mode::Off)->Bind(gfx, 0u);
 			passes[std::string("GBuffer")].Execute(gfx);
 		}
 		

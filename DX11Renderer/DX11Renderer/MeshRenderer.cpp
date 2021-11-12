@@ -26,7 +26,7 @@ MeshRenderer::MeshRenderer(Graphics& gfx, std::string name, std::shared_ptr<Mate
 		throw std::runtime_error(std::string("Mesh '") + name + std::string("' is missing IndexBuffer!"));
 	}*/
 
-	pTransformCbuf = std::make_shared<TransformCbuf>(gfx, *this, 0u);
+	pTransformCbuf = std::make_shared<TransformCbuf>(gfx, *this);
 }
 
 DirectX::XMMATRIX MeshRenderer::GetTransformXM() const
@@ -53,10 +53,10 @@ void MeshRenderer::SubmitDrawCalls(FrameCommander& frame, dx::FXMMATRIX _accumul
 
 void MeshRenderer::Bind(Graphics& gfx) const
 {
-	pTopology->Bind(gfx);
-	pIndices->Bind(gfx);
-	pVertices->Bind(gfx);
-	pTransformCbuf->Bind(gfx);
+	pTopology->Bind(gfx, 0u);
+	pIndices->Bind(gfx, 0u);
+	pVertices->Bind(gfx, 0u);
+	pTransformCbuf->Bind(gfx, 0u);
 }
 
 UINT MeshRenderer::GetIndexCount() const

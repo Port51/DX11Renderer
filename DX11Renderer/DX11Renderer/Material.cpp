@@ -177,7 +177,7 @@ Material::Material(Graphics& gfx, const std::string_view assetPath)
 
 	std::shared_ptr<InputLayout> pInputLayout = InputLayout::Resolve(gfx, vertexLayout, pVertexShader->GetBytecode());
 
-	AddBindable(PixelConstantBuffer<PSMaterialConstant>::Resolve(gfx, std::string(assetPath), pmc, 1u));
+	//AddBindable(PixelConstantBuffer<PSMaterialConstant>::Resolve(gfx, std::string(assetPath), pmc, 1u));
 
 	AddBindable(Texture::Resolve(gfx, "Models\\HeadTextures\\face_albedo.png", 0u));
 	AddBindable(Texture::Resolve(gfx, "Models\\HeadTextures\\face_normal.png", 1u));

@@ -5,7 +5,7 @@ Topology::Topology(Graphics& gfx, D3D11_PRIMITIVE_TOPOLOGY type)
 	: type(type)
 {}
 
-void Topology::Bind(Graphics& gfx)
+void Topology::Bind(Graphics& gfx, UINT slot)
 {
 	GetContext(gfx)->IASetPrimitiveTopology(type);
 }

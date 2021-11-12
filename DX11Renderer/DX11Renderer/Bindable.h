@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include "WindowsInclude.h"
 
 class Graphics;
 struct ID3D11DeviceContext;
@@ -10,7 +11,7 @@ class MeshRenderer;
 class Bindable
 {
 public:
-	virtual void Bind(Graphics& gfx) = 0;
+	virtual void Bind(Graphics& gfx, UINT slot) = 0;
 	virtual ~Bindable() = default;
 	virtual std::string GetUID() const;
 	virtual void InitializeParentReference(const MeshRenderer&)

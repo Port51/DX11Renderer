@@ -15,7 +15,7 @@ class Material : public Bindable
 {
 public:
 	Material(Graphics& gfx, const std::string_view assetPath);
-	void Bind(Graphics& gfx) {} // todo: remove
+	void Bind(Graphics& gfx, UINT slot) {} // todo: remove
 	void Bind(Graphics& gfx, std::string passName);
 	std::string GetUID() const override;
 	void SubmitDrawCalls(FrameCommander& frame, const MeshRenderer& renderer) const;

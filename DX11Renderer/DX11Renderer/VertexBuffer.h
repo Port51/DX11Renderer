@@ -8,7 +8,7 @@ class VertexBuffer : public Bindable
 public:
 	VertexBuffer(Graphics& gfx, const std::string& tag, const VertexBufferData& vbuf);
 	VertexBuffer(Graphics& gfx, const VertexBufferData& vbuf);
-	void Bind(Graphics& gfx) override;
+	void Bind(Graphics& gfx, UINT slot) override;
 	std::string GetUID() const override;
 public:
 	static std::shared_ptr<VertexBuffer> Resolve(Graphics& gfx, const std::string& tag, const VertexBufferData& vbuf);

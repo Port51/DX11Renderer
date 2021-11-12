@@ -37,10 +37,10 @@ Sampler::Sampler(Graphics& gfx, D3D11_SAMPLER_DESC samplerDesc)
 	GFX_THROW_INFO(GetDevice(gfx)->CreateSamplerState(&samplerDesc, &pSampler));
 }
 
-void Sampler::Bind(Graphics& gfx)
+void Sampler::Bind(Graphics& gfx, UINT slot)
 {
 	// First argument = slot that shader will use
-	GetContext(gfx)->PSSetSamplers(0u, 1u, pSampler.GetAddressOf());
+	GetContext(gfx)->PSSetSamplers(slot, 1u, pSampler.GetAddressOf());
 }
 
 std::string Sampler::GetUID() const
