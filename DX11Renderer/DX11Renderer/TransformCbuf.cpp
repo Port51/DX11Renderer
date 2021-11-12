@@ -3,6 +3,7 @@
 #include "Graphics.h"
 
 TransformCbuf::TransformCbuf(Graphics& gfx, const MeshRenderer& parent, UINT slot)
+	: pParent(&parent)
 {
 	if (!pVcbuf)
 	{

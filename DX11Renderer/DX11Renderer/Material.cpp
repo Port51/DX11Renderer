@@ -10,6 +10,7 @@
 #include "Sampler.h"
 #include "BindableCodex.h"
 #include "MaterialPass.h"
+#include "TransformCbuf.h"
 
 #include <fstream>
 #include <sstream>
@@ -112,6 +113,8 @@ Material::Material(Graphics& gfx, const std::string_view assetPath)
 					// todo: choose one!?
 					pMaterialPass->AddBindable(pVertexShader);
 					pPassStep->AddBindable(pVertexShader);
+
+					pPassStep->AddBindable(InputLayout::Resolve(gfx, vertexLayout, pvsbc));
 
 					// moved:
 					//pBindables.push_back(InputLayout::Resolve(gfx, _vertexLayout, pvsbc));

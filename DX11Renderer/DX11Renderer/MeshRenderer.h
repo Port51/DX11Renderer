@@ -9,6 +9,7 @@ class IndexBuffer;
 class Topology;
 class FrameCommander;
 class InputLayout;
+class TransformCbuf;
 //class Technique;
 
 namespace dx = DirectX;
@@ -33,5 +34,5 @@ private:
 	std::shared_ptr<IndexBuffer> pIndices;
 	std::shared_ptr<VertexBuffer> pVertices;
 	std::shared_ptr<Topology> pTopology;
-	//std::vector<Technique> techniques;
+	std::shared_ptr<TransformCbuf> pTransformCbuf;
 };
