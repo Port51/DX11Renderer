@@ -2,21 +2,21 @@
 #include "MeshRenderer.h"
 #include "FrameCommander.h"
 
-void Technique::SubmitDrawCalls(FrameCommander& frame, const MeshRenderer& renderer) const noexcept
+void Technique::SubmitDrawCalls(FrameCommander& frame, const MeshRenderer& renderer) const
 {
 	if (active)
 	{
-		for (const auto& step : steps)
+		for (const auto& step : pSteps)
 		{
-			step.SubmitDrawCalls(frame, renderer);
+			step->SubmitDrawCalls(frame, renderer);
 		}
 	}
 }
 
-void Technique::InitializeParentReferences(const MeshRenderer & parent) noexcept
+void Technique::InitializeParentReferences(const MeshRenderer & parent)
 {
-	for (auto& s : steps)
+	for (auto& s : pSteps)
 	{
-		s.InitializeParentReferences(parent);
+		s->InitializeParentReferences(parent);
 	}
 }

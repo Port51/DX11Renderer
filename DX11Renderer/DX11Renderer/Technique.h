@@ -1,36 +1,39 @@
 #pragma once
 #include "Step.h"
 #include <vector>
+#include <memory>
 
+class MeshRenderer;
+class FrameCommander;
 
 class Technique
 {
 public:
 	Technique() = default;
-	Technique(std::string name) noexcept
+	Technique(std::string name)
 		:
 		name(name)
 	{}
-	void SubmitDrawCalls(class FrameCommander& frame, const class MeshRenderer& renderer) const noexcept;
-	void AddStep(Step step) noexcept
+	void SubmitDrawCalls(FrameCommander& frame, const MeshRenderer& renderer) const;
+	void AddStep(std::unique_ptr<Step> step)
 	{
-		steps.push_back(std::move(step));
+		pSteps.push_back(std::move(step));
 	}
-	bool IsActive() const noexcept
+	bool IsActive() const
 	{
 		return active;
 	}
-	void SetActiveState(bool active_in) noexcept
+	void SetActiveState(bool active_in)
 	{
 		active = active_in;
 	}
-	void InitializeParentReferences(const class MeshRenderer& parent) noexcept;
-	const std::string& GetName() const noexcept
+	void InitializeParentReferences(const MeshRenderer& parent);
+	const std::string& GetName() const
 	{
 		return name;
 	}
 private:
 	bool active = true;
-	std::vector<Step> steps;
+	std::vector<std::unique_ptr<Step>> pSteps;
 	std::string name = "Nameless Tech";
 };

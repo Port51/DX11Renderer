@@ -41,7 +41,13 @@ Material::Material(Graphics& gfx, const std::string_view assetPath)
 	std::ifstream file(std::string(assetPath).c_str());
 
 	MaterialParseState state = MaterialParseState::None;
-	std::string passName;
+
+	// For unpacking material passes
+	std::string materialPassName;
+	std::unique_ptr<MaterialPass> pMaterialPass;
+	std::unique_ptr<Technique> pTechnique;
+	std::unique_ptr<Step> pPassStep;
+
 	if (file.is_open())
 	{
 		std::string line;
@@ -72,15 +78,27 @@ Material::Material(Graphics& gfx, const std::string_view assetPath)
 			else if (key == "Pass")
 			{
 				state = MaterialParseState::Pass;
+				pMaterialPass = std::make_unique<MaterialPass>();
+				pTechnique = std::make_unique<Technique>();
+			}
+			else if (key == "}")
+			{
+				// End scope
+				if (state == MaterialParseState::Pass)
+				{
+					// End pass
+					pTechnique->AddStep(std::move(pPassStep));
+					pMaterialPass->AddTechnique(std::move(pTechnique));
+					passes.emplace(materialPassName, std::move(pMaterialPass));
+				}
 			}
 			else if (key == "Name")
 			{
 				if (state == MaterialParseState::Pass)
 				{
 					// Read pass name
-					passName = std::move(values[0]);
-					//const auto pMaterialPass = std::make_unique<MaterialPass>();
-					passes.emplace(passName, std::make_unique<MaterialPass>()); // <-- this is a problem
+					pPassStep = std::make_unique<Step>(values[0]);
+					materialPassName = std::move(values[0]);
 				}
 			}
 			else if (state == MaterialParseState::Pass)
@@ -93,7 +111,7 @@ Material::Material(Graphics& gfx, const std::string_view assetPath)
 					//AddBindable(pVertexShader);
 
 					// todo: make this work
-					passes[passName]->AddBindable(pVertexShader);
+					pMaterialPass->AddBindable(pVertexShader);
 
 					// moved:
 					//pBindables.push_back(InputLayout::Resolve(gfx, _vertexLayout, pvsbc));
@@ -104,7 +122,7 @@ Material::Material(Graphics& gfx, const std::string_view assetPath)
 					//AddBindable(pPixelShader);
 
 					// todo: make this work
-					passes[passName]->AddBindable(pPixelShader);
+					pMaterialPass->AddBindable(pPixelShader);
 				}
 			}
 			else if (state == MaterialParseState::Properties)
@@ -170,8 +188,12 @@ std::string Material::GetUID() const
 	return GenerateUID(assetPath);
 }
 
-void Material::SubmitDrawCalls(FrameCommander & frame) const
+void Material::SubmitDrawCalls(FrameCommander& frame, const MeshRenderer& renderer) const
 {
+	for (const auto& pass : passes)
+	{
+		pass.second->SubmitDrawCalls(frame, renderer);
+	}
 }
 
 const VertexLayout & Material::GetVertexLayout() const

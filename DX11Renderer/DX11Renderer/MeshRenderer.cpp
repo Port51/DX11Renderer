@@ -42,7 +42,7 @@ void MeshRenderer::SubmitDrawCalls(FrameCommander& frame, dx::FXMMATRIX _accumul
 {
 	dx::XMStoreFloat4x4(&transform, _accumulatedTranform);
 
-	pMaterial->SubmitDrawCalls(frame);
+	pMaterial->SubmitDrawCalls(frame, *this);
 
 	// todo: use material instead
 	/*for (const auto& tech : techniques)
@@ -53,6 +53,7 @@ void MeshRenderer::SubmitDrawCalls(FrameCommander& frame, dx::FXMMATRIX _accumul
 
 void MeshRenderer::Bind(Graphics& gfx) const
 {
+	auto b = 0;
 }
 
 UINT MeshRenderer::GetIndexCount() const

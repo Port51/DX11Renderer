@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <memory>
+#include <string>
 #include "Bindable.h"
 #include "Graphics.h"
 
@@ -10,9 +11,8 @@ class FrameCommander;
 class Step
 {
 public:
-	Step(size_t targetPass_in)
-		:
-		targetPass{ targetPass_in }
+	Step(std::string _targetPass)
+		: targetPass{ _targetPass }
 	{}
 	void AddBindable(std::shared_ptr<Bindable> bind_in) noexcept
 	{
@@ -28,6 +28,6 @@ public:
 	}
 	void InitializeParentReferences(const MeshRenderer& parent) noexcept;
 private:
-	size_t targetPass;
+	std::string targetPass;
 	std::vector<std::shared_ptr<Bindable>> pBindables;
 };

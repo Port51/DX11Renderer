@@ -1,5 +1,6 @@
 #pragma once
 #include <array>
+#include <string>
 #include "BindableInclude.h"
 #include "Stencil.h"
 #include "Graphics.h"
@@ -10,11 +11,11 @@
 class FrameCommander
 {
 public:
-	void Accept(Job job, size_t target) noexcept
+	void Accept(Job job, std::string targetPass) noexcept
 	{
-		passes[target].Accept(job);
+		passes[targetPass].Accept(job);
 	}
-	void Execute(Graphics& gfx) const
+	void Execute(Graphics& gfx)
 	{
 		// normally this would be a loop with each pass defining it setup / etc.
 		// and later on it would be a complex graph with parallel execution contingent
@@ -25,7 +26,7 @@ public:
 		// GBuffer pass
 		{
 			Bind::Stencil::Resolve(gfx, Bind::Stencil::Mode::Off)->Bind(gfx);
-			passes[0].Execute(gfx);
+			passes[std::string("GBuffer")].Execute(gfx);
 		}
 		
 		// outline masking pass
@@ -40,9 +41,9 @@ public:
 	{
 		for (auto& p : passes)
 		{
-			p.Reset();
+			p.second.Reset();
 		}
 	}
 private:
-	std::array<Pass, 1> passes;
+	std::unordered_map<std::string, Pass> passes;
 };
