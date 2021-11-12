@@ -39,6 +39,7 @@ float SCurve(float x)
 
 float4 main(v2f i) : SV_Target
 {
+    return 1;
     //return abs(i.tangentVS.xyzz);
     //return frac(i.uv0.x * 10);
     
