@@ -102,32 +102,6 @@ Material::Material(Graphics& gfx, const std::string_view assetPath)
 					materialPassName = std::move(values[0]);
 				}
 			}
-			else if (state == MaterialParseState::Pass)
-			{
-				if (key == "VS")
-				{
-					// Bind vertex shader and input layout
-					pVertexShader = std::make_shared<VertexShader>(gfx, values[0].c_str());
-					auto pvsbc = pVertexShader->GetBytecode();
-
-					// todo: choose one!?
-					pMaterialPass->AddBindable(pVertexShader);
-					pPassStep->AddBindable(pVertexShader);
-
-					pPassStep->AddBindable(InputLayout::Resolve(gfx, vertexLayout, pvsbc));
-
-					// moved:
-					//pBindables.push_back(InputLayout::Resolve(gfx, _vertexLayout, pvsbc));
-				}
-				else if (key == "PS")
-				{
-					pPixelShader = PixelShader::Resolve(gfx, values[0].c_str());
-
-					// todo: choose one!?
-					pMaterialPass->AddBindable(pPixelShader);
-					pPassStep->AddBindable(pPixelShader);
-				}
-			}
 			else if (state == MaterialParseState::Properties)
 			{
 				if (key == "Color")
@@ -140,8 +114,43 @@ Material::Material(Graphics& gfx, const std::string_view assetPath)
 				}
 				else if (key == "Texture")
 				{
-					// todo: read
+					// Format: Texture, PropName, Path
 					auto texProp = std::move(values[0]);
+				}
+			}
+			else if (state == MaterialParseState::Pass)
+			{
+				if (key == "VS")
+				{
+					// Bind vertex shader and input layout
+					pVertexShader = std::make_shared<VertexShader>(gfx, values[0].c_str());
+					auto pvsbc = pVertexShader->GetBytecode();
+
+					// todo: choose one!?
+					pMaterialPass->AddBinding(pVertexShader);
+					pPassStep->AddBinding(pVertexShader);
+
+					pPassStep->AddBinding(InputLayout::Resolve(gfx, vertexLayout, pvsbc));
+
+					// moved:
+					//pBindables.push_back(InputLayout::Resolve(gfx, _vertexLayout, pvsbc));
+				}
+				else if (key == "PS")
+				{
+					pPixelShader = PixelShader::Resolve(gfx, values[0].c_str());
+
+					// todo: choose one!?
+					pMaterialPass->AddBinding(pPixelShader);
+					pPassStep->AddBinding(pPixelShader);
+				}
+				else if (key == "Texture")
+				{
+					// Format: Texture, PropName, Slot
+					auto texProp = std::move(values[0]);
+					auto slotIdx = std::stoi(std::move(values[1]));
+
+					pPassStep->AddBinding(Texture::Resolve(gfx, "Models\\HeadTextures\\face_albedo.png", (UINT)slotIdx), (UINT)slotIdx);
+					pPassStep->AddBinding(Sampler::Resolve(gfx));
 				}
 			}
 

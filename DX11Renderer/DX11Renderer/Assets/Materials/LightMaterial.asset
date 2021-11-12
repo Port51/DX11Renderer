@@ -10,4 +10,6 @@ Pass
 	Name, GBuffer
 	VS, Shaders\\Built\\SolidVS.cso
 	PS, Shaders\\Built\\SolidPS.cso
+	Texture, tex, 0
+	Texture, nmap, 1
 }

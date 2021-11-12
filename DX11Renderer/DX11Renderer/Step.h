@@ -3,6 +3,7 @@
 #include <memory>
 #include <string>
 #include "Bindable.h"
+#include "Binding.h"
 #include "Graphics.h"
 
 class MeshRenderer;
@@ -14,20 +15,24 @@ public:
 	Step(std::string _targetPass)
 		: targetPass{ _targetPass }
 	{}
-	void AddBindable(std::shared_ptr<Bindable> bind_in) noexcept
+	void AddBinding(std::shared_ptr<Bindable> pBindable, UINT slot = 0u)
 	{
-		pBindables.push_back(std::move(bind_in));
+		bindings.push_back(Binding(std::move(pBindable), slot));
+	}
+	void AddBinding(Binding pBinding)
+	{
+		bindings.push_back(std::move(pBinding));
 	}
 	void SubmitDrawCalls(FrameCommander& frame, const MeshRenderer& renderer) const;
 	void Bind(Graphics& gfx) const
 	{
-		for (const auto& b : pBindables)
+		for (const auto& b : bindings)
 		{
-			b->Bind(gfx);
+			b.Bind(gfx);
 		}
 	}
 	void InitializeParentReferences(const MeshRenderer& parent) noexcept;
 private:
 	std::string targetPass;
-	std::vector<std::shared_ptr<Bindable>> pBindables;
+	std::vector<Binding> bindings;
 };

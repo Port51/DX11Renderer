@@ -9,8 +9,8 @@ void Step::SubmitDrawCalls(FrameCommander& frame, const MeshRenderer& meshRender
 
 void Step::InitializeParentReferences(const MeshRenderer& parent) noexcept
 {
-	for (auto& b : pBindables)
+	for (const auto& b : bindings)
 	{
-		b->InitializeParentReference(parent);
+		b.GetBindable()->InitializeParentReference(parent);
 	}
 }

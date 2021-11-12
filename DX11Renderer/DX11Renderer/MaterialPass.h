@@ -11,6 +11,7 @@ class VertexShader;
 class PixelShader;
 class Material;
 class FrameCommander;
+class Binding;
 
 ///
 /// Collection of bindables needed to execute a material pass in a technique
@@ -21,14 +22,15 @@ public:
 	MaterialPass();
 public:
 	void AddTechnique(std::unique_ptr<Technique> _pTechnique);
-	void AddBindable(std::shared_ptr<Bindable> pBindable);
+	void AddBinding(std::shared_ptr<Bindable> pBindable, UINT slot = 0u);
+	void AddBinding(Binding binding);
 	void Bind(Graphics& gfx);
 	void SubmitDrawCalls(FrameCommander& frame, const MeshRenderer& renderer) const;
 public:
 	std::shared_ptr<VertexShader> pVertexShader;
 	std::shared_ptr<PixelShader> pPixelShader;
 private:
-	std::vector<std::shared_ptr<Bindable>> pBindables; // non-shader bindables
+	std::vector<Binding> bindings;
 	Material* pParent;
 	std::unique_ptr<Technique> pTechnique;
 };
