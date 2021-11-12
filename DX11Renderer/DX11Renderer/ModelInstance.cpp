@@ -35,7 +35,6 @@ ModelInstance::ModelInstance(Graphics& gfx, std::unique_ptr<ModelAsset> const& p
 void ModelInstance::SubmitDrawCalls(FrameCommander& frame) const
 {
 	pSceneGraph->SubmitDrawCalls(frame, transform);
-	//pSceneGraph->SubmitDrawCalls(frame, dx::XMMatrixIdentity());
 }
 
 void ModelInstance::SetPositionWS(DirectX::XMFLOAT3 positionWS)
