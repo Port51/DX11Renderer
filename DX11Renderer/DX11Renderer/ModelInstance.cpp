@@ -34,7 +34,8 @@ ModelInstance::ModelInstance(Graphics& gfx, std::unique_ptr<ModelAsset> const& p
 
 void ModelInstance::SubmitDrawCalls(FrameCommander& frame) const
 {
-	pSceneGraph->SubmitDrawCalls(frame, dx::XMMatrixIdentity());
+	pSceneGraph->SubmitDrawCalls(frame, transform);
+	//pSceneGraph->SubmitDrawCalls(frame, dx::XMMatrixIdentity());
 }
 
 void ModelInstance::SetPositionWS(DirectX::XMFLOAT3 positionWS)
@@ -150,18 +151,18 @@ void Node::SubmitDrawCalls(FrameCommander& frame, DirectX::FXMMATRIX accumulated
 
 	if (pMeshPtr)
 	{
-		pMeshPtr->SubmitDrawCalls(frame, accumulatedTransform);
+		pMeshPtr->SubmitDrawCalls(frame, built);
 	}
 
 	for (const auto& pc : pChildNodes)
 	{
-		pc->SubmitDrawCalls(frame, accumulatedTransform);
+		pc->SubmitDrawCalls(frame, built);
 	}
 }
 
-void Node::SetAppliedTransform(DirectX::FXMMATRIX transform) noexcept
+void Node::SetAppliedTransform(DirectX::FXMMATRIX _transform) noexcept
 {
-	dx::XMStoreFloat4x4(&appliedTransform, transform);
+	dx::XMStoreFloat4x4(&appliedTransform, _transform);
 }
 
 const DirectX::XMFLOAT4X4& Node::GetAppliedTransform() const noexcept

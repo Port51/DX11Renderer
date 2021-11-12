@@ -144,7 +144,7 @@ void App::DoFrame()
 		b->SubmitDrawCalls(fc);
 	}*/
 	model->SubmitDrawCalls(fc);
-	light.SubmitDrawCalls(fc);
+	//light.SubmitDrawCalls(fc);
 	fc.Execute(wnd.Gfx());
 
 	// imgui window to control simulation speed
