@@ -1,6 +1,8 @@
 #include "MaterialPass.h"
 #include "Technique.h"
 #include "MeshRenderer.h"
+#include "VertexShader.h"
+#include "PixelShader.h"
 
 MaterialPass::MaterialPass()
 {
@@ -19,6 +21,8 @@ void MaterialPass::AddBindable(std::shared_ptr<Bindable> pBindable)
 
 void MaterialPass::Bind(Graphics& gfx)
 {
+	pVertexShader->Bind(gfx);
+	pPixelShader->Bind(gfx);
 	for (const auto& bindable : pBindables)
 	{
 		bindable->Bind(gfx);

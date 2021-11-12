@@ -108,10 +108,10 @@ Material::Material(Graphics& gfx, const std::string_view assetPath)
 					// Bind vertex shader and input layout
 					pVertexShader = std::make_shared<VertexShader>(gfx, values[0].c_str());
 					auto pvsbc = pVertexShader->GetBytecode();
-					//AddBindable(pVertexShader);
 
-					// todo: make this work
+					// todo: choose one!?
 					pMaterialPass->AddBindable(pVertexShader);
+					pPassStep->AddBindable(pVertexShader);
 
 					// moved:
 					//pBindables.push_back(InputLayout::Resolve(gfx, _vertexLayout, pvsbc));
@@ -119,10 +119,10 @@ Material::Material(Graphics& gfx, const std::string_view assetPath)
 				else if (key == "PS")
 				{
 					pPixelShader = PixelShader::Resolve(gfx, values[0].c_str());
-					//AddBindable(pPixelShader);
 
-					// todo: make this work
+					// todo: choose one!?
 					pMaterialPass->AddBindable(pPixelShader);
+					pPassStep->AddBindable(pPixelShader);
 				}
 			}
 			else if (state == MaterialParseState::Properties)
