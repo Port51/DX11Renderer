@@ -1,5 +1,5 @@
 #include "FullscreenPass.h"
-#include "BindableCommon.h"
+#include "BindableInclude.h"
 
 
 namespace Rendergraph

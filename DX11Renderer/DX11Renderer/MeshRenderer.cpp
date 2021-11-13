@@ -7,12 +7,13 @@
 #include <exception>
 #include <assert.h>
 #include "Stencil.h"
+#include "FrameCommander.h"
 //#include "Sphere.h"
 
 namespace dx = DirectX;
 
-MeshRenderer::MeshRenderer(Graphics& gfx, std::string name, std::shared_ptr<Material> pMaterial,
-	std::shared_ptr<VertexBuffer> pVertexBuffer, std::shared_ptr<IndexBuffer> pIndexBuffer, std::shared_ptr<Topology> pTopologyBuffer)
+MeshRenderer::MeshRenderer(Graphics& gfx, std::string name, std::shared_ptr<Bind::Material> pMaterial,
+	std::shared_ptr<Bind::VertexBuffer> pVertexBuffer, std::shared_ptr<Bind::IndexBuffer> pIndexBuffer, std::shared_ptr<Bind::Topology> pTopologyBuffer)
 	: pVertices(std::move(pVertexBuffer)),
 	pIndices(std::move(pIndexBuffer)),
 	pTopology(std::move(pTopologyBuffer)),
@@ -38,7 +39,7 @@ DirectX::XMMATRIX MeshRenderer::GetTransformXM() const
 }
 
 // Called via Node
-void MeshRenderer::SubmitDrawCalls(FrameCommander& frame, dx::FXMMATRIX _accumulatedTranform) const
+void MeshRenderer::SubmitDrawCalls(Rendergraph::FrameCommander& frame, dx::FXMMATRIX _accumulatedTranform) const
 {
 	dx::XMStoreFloat4x4(&transform, _accumulatedTranform);
 

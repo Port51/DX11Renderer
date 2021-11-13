@@ -8,42 +8,48 @@
 #include "RenderPass.h"
 #include "NullPixelShader.h"
 
-class FrameCommander
+namespace Rendergraph
 {
-public:
-	void Accept(RenderJob job, std::string targetPass)
-	{
-		renderPasses[targetPass].EnqueueJob(job);
-	}
-	void Execute(Graphics& gfx)
-	{
-		// normally this would be a loop with each pass defining it setup / etc.
-		// and later on it would be a complex graph with parallel execution contingent
-		// on input / output requirements
+	class RenderJob;
+	class RenderPass;
 
-		// Can do global binds here
-
-		// GBuffer pass
-		{
-			Bind::Stencil::Resolve(gfx, Bind::Stencil::Mode::Off)->Bind(gfx, 0u);
-			renderPasses[std::string("GBuffer")].Execute(gfx);
-		}
-		
-		// outline masking pass
-		/*Bind::Stencil::Resolve(gfx, Bind::Stencil::Mode::Write)->Bind(gfx);
-		Bind::NullPixelShader::Resolve(gfx)->Bind(gfx);
-		passes[1].Execute(gfx);
-		// outline drawing pass
-		Bind::Stencil::Resolve(gfx, Bind::Stencil::Mode::Mask)->Bind(gfx);
-		passes[2].Execute(gfx);*/
-	}
-	void Reset()
+	class FrameCommander
 	{
-		for (auto& p : renderPasses)
+	public:
+		void Accept(RenderJob job, std::string targetPass)
 		{
-			p.second.Reset();
+			renderPasses[targetPass].EnqueueJob(job);
 		}
-	}
-private:
-	std::unordered_map<std::string, RenderPass> renderPasses;
-};
+		void Execute(Graphics& gfx)
+		{
+			// normally this would be a loop with each pass defining it setup / etc.
+			// and later on it would be a complex graph with parallel execution contingent
+			// on input / output requirements
+
+			// Can do global binds here
+
+			// GBuffer pass
+			{
+				Bind::Stencil::Resolve(gfx, Bind::Stencil::Mode::Off)->Bind(gfx, 0u);
+				renderPasses[std::string("GBuffer")].Execute(gfx);
+			}
+
+			// outline masking pass
+			/*Bind::Stencil::Resolve(gfx, Bind::Stencil::Mode::Write)->Bind(gfx);
+			Bind::NullPixelShader::Resolve(gfx)->Bind(gfx);
+			passes[1].Execute(gfx);
+			// outline drawing pass
+			Bind::Stencil::Resolve(gfx, Bind::Stencil::Mode::Mask)->Bind(gfx);
+			passes[2].Execute(gfx);*/
+		}
+		void Reset()
+		{
+			for (auto& p : renderPasses)
+			{
+				p.second.Reset();
+			}
+		}
+	private:
+		std::unordered_map<std::string, RenderPass> renderPasses;
+	};
+}

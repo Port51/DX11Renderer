@@ -2,16 +2,18 @@
 #include "RenderStep.h"
 #include "MeshRenderer.h"
 
-
-RenderJob::RenderJob(const RenderStep* pStep, const MeshRenderer* pRenderer)
-	:
-	pRenderer{ pRenderer },
-	pStep{ pStep }
-{}
-
-void RenderJob::Execute(Graphics& gfx) const
+namespace Rendergraph
 {
-	pRenderer->Bind(gfx);
-	pStep->Bind(gfx);
-	gfx.DrawIndexed(pRenderer->GetIndexCount());
+	RenderJob::RenderJob(const RenderStep* pStep, const MeshRenderer* pRenderer)
+		:
+		pRenderer{ pRenderer },
+		pStep{ pStep }
+	{}
+
+	void RenderJob::Execute(Graphics& gfx) const
+	{
+		pRenderer->Bind(gfx);
+		pStep->Bind(gfx);
+		gfx.DrawIndexed(pRenderer->GetIndexCount());
+	}
 }

@@ -2,21 +2,24 @@
 #include "MeshRenderer.h"
 #include "FrameCommander.h"
 
-void Technique::SubmitDrawCalls(FrameCommander& frame, const MeshRenderer& renderer) const
+namespace Rendergraph
 {
-	if (active)
+	void Technique::SubmitDrawCalls(FrameCommander& frame, const MeshRenderer& renderer) const
 	{
-		for (const auto& step : pSteps)
+		if (active)
 		{
-			step->SubmitDrawCalls(frame, renderer);
+			for (const auto& step : pSteps)
+			{
+				step->SubmitDrawCalls(frame, renderer);
+			}
 		}
 	}
-}
 
-void Technique::InitializeParentReferences(const MeshRenderer & parent)
-{
-	for (auto& s : pSteps)
+	void Technique::InitializeParentReferences(const MeshRenderer & parent)
 	{
-		s->InitializeParentReferences(parent);
+		for (auto& s : pSteps)
+		{
+			s->InitializeParentReferences(parent);
+		}
 	}
 }
