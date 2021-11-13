@@ -2,6 +2,8 @@
 /*#include "Drawable.h"
 #include "Graphics.h"
 
+namespace Bind
+{
 TransformCbufWithPixelBind::TransformCbufWithPixelBind(Graphics& gfx, const Drawable& parent, UINT slotV, UINT slotP)
 	: TransformCbuf(gfx, parent, slotV)
 {
@@ -25,4 +27,5 @@ void TransformCbufWithPixelBind::UpdateBindImpl(Graphics& gfx, const Transforms&
 }
 
 std::unique_ptr<PixelConstantBuffer<TransformCbuf::Transforms>> TransformCbufWithPixelBind::pPcbuf;
+}
 */

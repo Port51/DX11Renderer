@@ -7,24 +7,27 @@
 class Graphics;
 class MeshRenderer;
 
-class TransformCbuf : public Bindable
+namespace Bind
 {
-protected:
-	struct Transforms
+	class TransformCbuf : public Bindable
 	{
-		DirectX::XMMATRIX model;
-		DirectX::XMMATRIX modelView;
-		DirectX::XMMATRIX modelViewProj;
+	protected:
+		struct Transforms
+		{
+			DirectX::XMMATRIX model;
+			DirectX::XMMATRIX modelView;
+			DirectX::XMMATRIX modelViewProj;
+		};
+	public:
+		TransformCbuf(Graphics& gfx, const MeshRenderer& parent);
+		void Bind(Graphics& gfx, UINT slot) override;
+		void InitializeParentReference(const MeshRenderer& parent) override;
+	protected:
+		virtual void UpdateBindImpl(Graphics& gfx, const Transforms& transforms);
+		Transforms GetTransforms(Graphics& gfx);
+	private:
+		// Static so can be re-used each drawcall
+		static std::unique_ptr<VertexConstantBuffer<Transforms>> pVcbuf;
+		const MeshRenderer* pParent = nullptr;
 	};
-public:
-	TransformCbuf(Graphics& gfx, const MeshRenderer& parent);
-	void Bind(Graphics& gfx, UINT slot) override;
-	void InitializeParentReference(const MeshRenderer& parent) override;
-protected:
-	virtual void UpdateBindImpl(Graphics& gfx, const Transforms& transforms);
-	Transforms GetTransforms(Graphics& gfx);
-private:
-	// Static so can be re-used each drawcall
-	static std::unique_ptr<VertexConstantBuffer<Transforms>> pVcbuf;
-	const MeshRenderer* pParent = nullptr;
-};
+}

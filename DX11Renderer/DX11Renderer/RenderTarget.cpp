@@ -138,14 +138,14 @@ namespace Bind
 		));
 	}
 
-	void ShaderInputRenderTarget::Bind(Graphics& gfx)
+	void ShaderInputRenderTarget::Bind(Graphics& gfx, UINT _slot)
 	{
 		SETUP_LOGGING_NOHR(gfx);
 		GFX_THROW_INFO_ONLY(GetContext(gfx)->PSSetShaderResources(slot, 1, pShaderResourceView.GetAddressOf()));
 	}
 
 
-	void OutputOnlyRenderTarget::Bind(Graphics& gfx)
+	void OutputOnlyRenderTarget::Bind(Graphics& gfx, UINT slot)
 	{
 		assert("Cannot bind OuputOnlyRenderTarget as shader input" && false);
 	}

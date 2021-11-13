@@ -3,32 +3,35 @@
 #include "BindableCodex.h"
 #include <d3d11.h>
 
-PixelShader::PixelShader(Graphics& gfx, const std::string& path)
-	: path(path)
+namespace Bind
 {
-	SETUP_LOGGING(gfx);
+	PixelShader::PixelShader(Graphics& gfx, const std::string& path)
+		: path(path)
+	{
+		SETUP_LOGGING(gfx);
 
-	Microsoft::WRL::ComPtr<ID3DBlob> pBlob;
-	std::wstring wide{ path.begin(), path.end() }; // convert to wide for file read <-- won't work for special characters
-	GFX_THROW_INFO(D3DReadFileToBlob(wide.c_str(), &pBlob));
-	GFX_THROW_INFO(GetDevice(gfx)->CreatePixelShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pPixelShader));
-}
+		Microsoft::WRL::ComPtr<ID3DBlob> pBlob;
+		std::wstring wide{ path.begin(), path.end() }; // convert to wide for file read <-- won't work for special characters
+		GFX_THROW_INFO(D3DReadFileToBlob(wide.c_str(), &pBlob));
+		GFX_THROW_INFO(GetDevice(gfx)->CreatePixelShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pPixelShader));
+	}
 
-void PixelShader::Bind(Graphics& gfx, UINT slot)
-{
-	GetContext(gfx)->PSSetShader(pPixelShader.Get(), nullptr, 0u);
-}
+	void PixelShader::Bind(Graphics& gfx, UINT slot)
+	{
+		GetContext(gfx)->PSSetShader(pPixelShader.Get(), nullptr, 0u);
+	}
 
-std::shared_ptr<PixelShader> PixelShader::Resolve(Graphics& gfx, const std::string& path)
-{
-	return Bind::Codex::Resolve<PixelShader>(gfx, path);
-}
-std::string PixelShader::GenerateUID(const std::string& path)
-{
-	using namespace std::string_literals;
-	return typeid(PixelShader).name() + "#"s + path;
-}
-std::string PixelShader::GetUID() const
-{
-	return GenerateUID(path);
+	std::shared_ptr<PixelShader> PixelShader::Resolve(Graphics& gfx, const std::string& path)
+	{
+		return Bind::Codex::Resolve<PixelShader>(gfx, path);
+	}
+	std::string PixelShader::GenerateUID(const std::string& path)
+	{
+		using namespace std::string_literals;
+		return typeid(PixelShader).name() + "#"s + path;
+	}
+	std::string PixelShader::GetUID() const
+	{
+		return GenerateUID(path);
+	}
 }

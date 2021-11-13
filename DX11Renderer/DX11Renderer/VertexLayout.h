@@ -95,7 +95,7 @@ public:
 			type(type),
 			offset(offset)
 		{}
-		size_t GetOffsetAfter() const(!IS_DEBUG)
+		size_t GetOffsetAfter() const
 		{
 			return offset + Size();
 		}
@@ -103,11 +103,11 @@ public:
 		{
 			return offset;
 		}
-		size_t Size() const(!IS_DEBUG)
+		size_t Size() const
 		{
 			return SizeOf(type);
 		}
-		static constexpr size_t SizeOf(ElementType type)(!IS_DEBUG)
+		static constexpr size_t SizeOf(ElementType type)
 		{
 			switch (type)
 			{
@@ -138,7 +138,7 @@ public:
 		///
 		/// Get layout description
 		///
-		D3D11_INPUT_ELEMENT_DESC GetDesc() const(!IS_DEBUG)
+		D3D11_INPUT_ELEMENT_DESC GetDesc() const
 		{
 			switch (type)
 			{
@@ -189,7 +189,7 @@ public:
 
 	private:
 		template<ElementType type>
-		static constexpr D3D11_INPUT_ELEMENT_DESC GenerateDesc(size_t offset)(!IS_DEBUG)
+		static constexpr D3D11_INPUT_ELEMENT_DESC GenerateDesc(size_t offset)
 		{
 			// IN ORDER:
 			// Semantic "Position" must match vertex shader semantic
@@ -210,7 +210,7 @@ public:
 public:
 	// Accessor
 	template<ElementType Type>
-	const Element& Resolve() const(!IS_DEBUG)
+	const Element& Resolve() const
 	{
 		for (auto& e : elements)
 		{
@@ -222,17 +222,17 @@ public:
 		THROW_GFX_EXCEPT("Could not resolve element type");
 		return elements.front();
 	}
-	const Element& ResolveByIndex(size_t i) const(!IS_DEBUG)
+	const Element& ResolveByIndex(size_t i) const
 	{
 		return elements[i];
 	}
-	VertexLayout& Append(ElementType type)(!IS_DEBUG)
+	VertexLayout& Append(ElementType type)
 	{
 		elements.emplace_back(type, Size());
 		return *this;
 	}
 	// Size in bytes
-	size_t Size() const(!IS_DEBUG)
+	size_t Size() const
 	{
 		return elements.empty() ? 0u : elements.back().GetOffsetAfter();
 	}
@@ -243,7 +243,7 @@ public:
 	///
 	/// Returns layout description, including shader semantics
 	///
-	std::vector<D3D11_INPUT_ELEMENT_DESC> GetD3DLayout() const(!IS_DEBUG)
+	std::vector<D3D11_INPUT_ELEMENT_DESC> GetD3DLayout() const
 	{
 		std::vector<D3D11_INPUT_ELEMENT_DESC> desc;
 		desc.reserve(GetElementCount());

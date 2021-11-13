@@ -7,32 +7,36 @@
 #include "Graphics.h"
 
 class MeshRenderer;
-class FrameCommander;
 
-class RenderStep
+namespace Rendergraph
 {
-public:
-	RenderStep(std::string _targetPass)
-		: targetPass{ _targetPass }
-	{}
-	void AddBinding(std::shared_ptr<Bindable> pBindable, UINT slot = 0u)
+	class FrameCommander;
+
+	class RenderStep
 	{
-		bindings.push_back(Binding(std::move(pBindable), slot));
-	}
-	void AddBinding(Binding pBinding)
-	{
-		bindings.push_back(std::move(pBinding));
-	}
-	void SubmitDrawCalls(FrameCommander& frame, const MeshRenderer& renderer) const;
-	void Bind(Graphics& gfx) const
-	{
-		for (const auto& b : bindings)
+	public:
+		RenderStep(std::string _targetPass)
+			: targetPass{ _targetPass }
+		{}
+		void AddBinding(std::shared_ptr<Bind::Bindable> pBindable, UINT slot = 0u)
 		{
-			b.Bind(gfx);
+			bindings.push_back(Bind::Binding(std::move(pBindable), slot));
 		}
-	}
-	void InitializeParentReferences(const MeshRenderer& parent);
-private:
-	std::string targetPass;
-	std::vector<Binding> bindings;
-};
+		void AddBinding(Bind::Binding pBinding)
+		{
+			bindings.push_back(std::move(pBinding));
+		}
+		void SubmitDrawCalls(FrameCommander& frame, const MeshRenderer& renderer) const;
+		void Bind(Graphics& gfx) const
+		{
+			for (const auto& b : bindings)
+			{
+				b.Bind(gfx);
+			}
+		}
+		void InitializeParentReferences(const MeshRenderer& parent);
+	private:
+		std::string targetPass;
+		std::vector<Bind::Binding> bindings;
+	};
+}
