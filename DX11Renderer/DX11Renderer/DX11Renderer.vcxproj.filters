@@ -103,6 +103,12 @@
     <Filter Include="Source Files\Bindable\Materials">
       <UniqueIdentifier>{f4f805a8-9683-4243-8f5c-d1728f617de9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Assets\Models">
+      <UniqueIdentifier>{38cbeb08-97d5-4af1-96ed-727e42e8a125}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Util">
+      <UniqueIdentifier>{61312ed5-1bd1-4456-b9e5-271c16d6a2b3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -488,6 +494,9 @@
     <ClInclude Include="Binding.h">
       <Filter>Header Files\Bindable</Filter>
     </ClInclude>
+    <ClInclude Include="TextParser.h">
+      <Filter>Header Files\Util</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DX11Renderer.rc">
@@ -518,14 +527,17 @@
     <None Include="Shaders\PhongCommon.hlsli">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="Assets\Materials\TestMaterial.asset">
-      <Filter>Assets\Materials</Filter>
-    </None>
     <None Include="Assets\Materials\LightMaterial.asset">
       <Filter>Assets\Materials</Filter>
     </None>
     <None Include="Shaders\Lighting\BRDF.hlsli">
       <Filter>Shaders\Lighting</Filter>
+    </None>
+    <None Include="Assets\Models\Head.asset">
+      <Filter>Assets\Models</Filter>
+    </None>
+    <None Include="Assets\Materials\HeadMaterial.asset">
+      <Filter>Assets\Materials</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

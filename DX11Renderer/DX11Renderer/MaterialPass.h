@@ -22,15 +22,11 @@ public:
 	MaterialPass();
 public:
 	void AddTechnique(std::unique_ptr<Technique> _pTechnique);
-	void AddBinding(std::shared_ptr<Bindable> pBindable, UINT slot = 0u);
-	void AddBinding(Binding binding);
-	void Bind(Graphics& gfx);
 	void SubmitDrawCalls(FrameCommander& frame, const MeshRenderer& renderer) const;
 public:
 	std::shared_ptr<VertexShader> pVertexShader;
 	std::shared_ptr<PixelShader> pPixelShader;
 private:
-	std::vector<Binding> bindings;
 	Material* pParent;
 	std::unique_ptr<Technique> pTechnique;
 };

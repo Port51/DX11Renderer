@@ -32,8 +32,7 @@ public:
 
 	static std::unique_ptr<ModelAsset> LoadFBX(const char* filename, FBXNormalsMode normalsMode, bool triangulate = true)
 	{
-		// Refs:
-		// * http://help.autodesk.com/view/FBX/2020/ENU/?guid=FBX_Developer_Help_getting_started_your_first_fbx_sdk_program_html
+		// todo: load model asset instead, which contains an FBX path
 
 		std::unique_ptr<ModelAsset> pOutputModel;
 

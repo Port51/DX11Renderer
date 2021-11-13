@@ -39,7 +39,7 @@ float SCurve(float x)
 
 float4 main(v2f i) : SV_Target
 {
-    return 1;
+    //return float4(lightColor, 1);
     //return abs(i.tangentVS.xyzz);
     //return frac(i.uv0.x * 10);
     
@@ -103,6 +103,7 @@ float4 main(v2f i) : SV_Target
     brdf.diffuseLight += ambient;
     
     //return diffuseTex;
+    //return materialColor.rgbb;
     return float4((brdf.diffuseLight * diffuseTex.rgb + brdf.specularLight) * materialColor * lightColor * (lightIntensity * light.attenuation), 1);
     
 }

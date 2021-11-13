@@ -25,9 +25,12 @@ bool isWhitespace(unsigned char c) {
 }
 
 // todo: pass actual VertexLayout class?
-Material::Material(Graphics& gfx, const std::string_view assetPath)
-	: assetPath(std::string(assetPath))
+Material::Material(Graphics& gfx, const std::string_view _materialAssetPath)
+	: materialAssetPath(std::string(_materialAssetPath))
 {
+	// NOTE: This is very WIP and should be replaced by something entirely different later
+	// with most of the parsing logic moved to a different class
+
 	// todo: make this not always the same
 	vertexLayout
 		.Append(VertexLayout::Position3D)
@@ -39,9 +42,22 @@ Material::Material(Graphics& gfx, const std::string_view assetPath)
 	float roughnessProp = 0.75f;
 
 	// todo: move this to asset reader class and clean it up!
-	std::ifstream file(std::string(assetPath).c_str());
+	std::ifstream file(std::string(_materialAssetPath).c_str());
 
 	MaterialParseState state = MaterialParseState::None;
+
+	// For unpacking main properties
+	struct PSMaterialConstant // must be multiple of 16 bytes
+	{
+		DirectX::XMFLOAT3 materialColor;
+		float roughness;
+		BOOL normalMappingEnabled = TRUE; // BOOL uses 4 bytes as it's an int, rather than bool
+		float specularPower = 30.0f;
+		float padding[2];
+	} pmc;
+	std::unordered_map<std::string, std::shared_ptr<Bindable>> pTexturesByPropName;
+
+	//AddBindable(PixelConstantBuffer<PSMaterialConstant>::Resolve(gfx, std::string(assetPath), pmc, 1u));
 
 	// For unpacking material passes
 	std::string materialPassName;
@@ -100,22 +116,28 @@ Material::Material(Graphics& gfx, const std::string_view assetPath)
 					// Read pass name
 					pPassStep = std::make_unique<Step>(values[0]);
 					materialPassName = std::move(values[0]);
+
+					// Init cbuffer
+					pPassStep->AddBinding(PixelConstantBuffer<PSMaterialConstant>::Resolve(gfx, std::string(_materialAssetPath), pmc), 1u);
 				}
 			}
 			else if (state == MaterialParseState::Properties)
 			{
 				if (key == "Color")
 				{
-					colorProp = { std::stof(values[0]), std::stof(values[1]), std::stof(values[2]) };
+					colorProp = { std::stof(std::move(values[0])), std::stof(std::move(values[1])), std::stof(std::move(values[2])) };
+					pmc.materialColor = colorProp;
 				}
 				else if (key == "Roughness")
 				{
-					roughnessProp = std::stof(values[0]);
+					roughnessProp = std::stof(std::move(values[0]));
+					pmc.roughness = roughnessProp;
 				}
 				else if (key == "Texture")
 				{
 					// Format: Texture, PropName, Path
-					auto texProp = std::move(values[0]);
+					const auto texProp = std::move(values[0]);
+					pTexturesByPropName.emplace(texProp, Texture::Resolve(gfx, values[1].c_str()));
 				}
 			}
 			else if (state == MaterialParseState::Pass)
@@ -124,32 +146,31 @@ Material::Material(Graphics& gfx, const std::string_view assetPath)
 				{
 					// Bind vertex shader and input layout
 					pVertexShader = std::make_shared<VertexShader>(gfx, values[0].c_str());
-					auto pvsbc = pVertexShader->GetBytecode();
+					const auto pvsbc = pVertexShader->GetBytecode();
 
-					// todo: choose one!?
-					pMaterialPass->AddBinding(pVertexShader);
 					pPassStep->AddBinding(pVertexShader);
-
 					pPassStep->AddBinding(InputLayout::Resolve(gfx, vertexLayout, pvsbc));
-
-					// moved:
-					//pBindables.push_back(InputLayout::Resolve(gfx, _vertexLayout, pvsbc));
 				}
 				else if (key == "PS")
 				{
 					pPixelShader = PixelShader::Resolve(gfx, values[0].c_str());
-
-					// todo: choose one!?
-					pMaterialPass->AddBinding(pPixelShader);
 					pPassStep->AddBinding(pPixelShader);
 				}
 				else if (key == "Texture")
 				{
 					// Format: Texture, PropName, Slot
-					auto texProp = std::move(values[0]);
-					auto slotIdx = std::stoi(std::move(values[1]));
+					const auto texProp = std::move(std::move(values[0]));
+					const auto slotIdx = std::stoi(std::move(values[1]));
 
-					pPassStep->AddBinding(Texture::Resolve(gfx, "Models\\HeadTextures\\face_albedo.png", (UINT)slotIdx), (UINT)slotIdx);
+					const auto iter = pTexturesByPropName.find(texProp);
+					if (iter != pTexturesByPropName.end())
+					{
+						pPassStep->AddBinding(iter->second, (UINT)slotIdx);
+					}
+					else
+					{
+						throw std::runtime_error("Material at " + std::string(_materialAssetPath) + " does not have texture property " + texProp + "!");
+					}
 					pPassStep->AddBinding(Sampler::Resolve(gfx));
 				}
 			}
@@ -159,45 +180,31 @@ Material::Material(Graphics& gfx, const std::string_view assetPath)
 	}
 
 	if (pVertexShader == nullptr)
-		throw std::runtime_error("Material at " + std::string(assetPath) + " is missing vertex shader!");
+		throw std::runtime_error("Material at " + std::string(_materialAssetPath) + " is missing vertex shader!");
 	if (pPixelShader == nullptr)
-		throw std::runtime_error("Material at " + std::string(assetPath) + " is missing pixel shader!");
+		throw std::runtime_error("Material at " + std::string(_materialAssetPath) + " is missing pixel shader!");
 
-	// todo: read from file
-	struct PSMaterialConstant // must be multiple of 16 bytes
-	{
-		DirectX::XMFLOAT3 materialColor;
-		float roughness;
-		BOOL normalMappingEnabled = TRUE; // BOOL uses 4 bytes as it's an int, rather than bool
-		float specularPower = 30.0f;
-		float padding[2];
-	} pmc;
-	pmc.materialColor = colorProp;
-	pmc.roughness = roughnessProp;
+	
 
-	std::shared_ptr<InputLayout> pInputLayout = InputLayout::Resolve(gfx, vertexLayout, pVertexShader->GetBytecode());
-
-	//AddBindable(PixelConstantBuffer<PSMaterialConstant>::Resolve(gfx, std::string(assetPath), pmc, 1u));
-
-	AddBindable(Texture::Resolve(gfx, "Models\\HeadTextures\\face_albedo.png", 0u));
-	AddBindable(Texture::Resolve(gfx, "Models\\HeadTextures\\face_normal.png", 1u));
-	AddBindable(Sampler::Resolve(gfx));
+	//AddBindable(Texture::Resolve(gfx, "Models\\HeadTextures\\face_albedo.png", 0u));
+	//AddBindable(Texture::Resolve(gfx, "Models\\HeadTextures\\face_normal.png", 1u));
+	//AddBindable(Sampler::Resolve(gfx));
 
 }
 
 void Material::Bind(Graphics& gfx, std::string passName)
 {
 	// Execute pass if there is one
-	const auto iter = passes.find(passName);
+	/*const auto iter = passes.find(passName);
 	if (iter != passes.end())
 	{
 		iter->second->Bind(gfx);
-	}
+	}*/
 }
 
 std::string Material::GetUID() const
 {
-	return GenerateUID(assetPath);
+	return GenerateUID(materialAssetPath);
 }
 
 void Material::SubmitDrawCalls(FrameCommander& frame, const MeshRenderer& renderer) const

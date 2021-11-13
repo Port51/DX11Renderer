@@ -5,8 +5,8 @@
 
 namespace wrl = Microsoft::WRL;
 
-Texture::Texture(Graphics& gfx, const std::string& path, UINT slot)
-	: path(path), slot(slot)
+Texture::Texture(Graphics& gfx, const std::string& path)
+	: path(path)
 {
 	SETUP_LOGGING(gfx);
 
@@ -52,8 +52,8 @@ Texture::Texture(Graphics& gfx, const std::string& path, UINT slot)
 	GetContext(gfx)->GenerateMips(pTextureView.Get());
 }
 
-Texture::Texture(Graphics& gfx, const std::string& path, UINT slot, D3D11_TEXTURE2D_DESC textureDesc)
-	: path(path), slot(slot)
+Texture::Texture(Graphics& gfx, const std::string& path, D3D11_TEXTURE2D_DESC textureDesc)
+	: path(path)
 {
 	SETUP_LOGGING(gfx);
 
@@ -80,8 +80,8 @@ Texture::Texture(Graphics& gfx, const std::string& path, UINT slot, D3D11_TEXTUR
 	));
 }
 
-Texture::Texture(Graphics& gfx, const std::string& path, UINT slot, D3D11_TEXTURE2D_DESC textureDesc, D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc)
-	: path(path), slot(slot)
+Texture::Texture(Graphics& gfx, const std::string& path, D3D11_TEXTURE2D_DESC textureDesc, D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc)
+	: path(path)
 {
 	SETUP_LOGGING(gfx);
 
@@ -109,16 +109,16 @@ void Texture::Bind(Graphics& gfx, UINT slot)
 
 std::string Texture::GetUID() const
 {
-	return GenerateUID(path, slot);
+	return GenerateUID(path);
 }
 
-std::shared_ptr<Bindable> Texture::Resolve(Graphics& gfx, const std::string& path, UINT slot)
+std::shared_ptr<Bindable> Texture::Resolve(Graphics& gfx, const std::string& path)
 {
-	return Bind::Codex::Resolve<Texture>(gfx, path, slot);
+	return Bind::Codex::Resolve<Texture>(gfx, path);
 }
 
-std::string Texture::GenerateUID(const std::string& path, UINT slot)
+std::string Texture::GenerateUID(const std::string& path)
 {
 	using namespace std::string_literals;
-	return typeid(Texture).name() + "#"s + path + "#" + std::to_string(slot);
+	return typeid(Texture).name() + "#"s + path;
 }

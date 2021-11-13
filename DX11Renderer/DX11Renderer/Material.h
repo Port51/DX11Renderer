@@ -31,6 +31,6 @@ public:
 private:
 	std::unordered_map<std::string, std::unique_ptr<MaterialPass>> passes;
 	std::vector<std::shared_ptr<Bindable>> pBindables; // shaders and such
-	std::string assetPath;
+	std::string materialAssetPath;
 	VertexLayout vertexLayout;
 };

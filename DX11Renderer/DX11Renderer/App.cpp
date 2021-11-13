@@ -74,7 +74,7 @@ App::App()
 		wnd.Gfx().log.Error("Failed to load model");
 	}
 
-	model = std::make_unique<ModelInstance>(wnd.Gfx(), pModelAsset, "Assets\\Materials\\TestMaterial.asset", modelTransform);
+	model = std::make_unique<ModelInstance>(wnd.Gfx(), pModelAsset, "Assets\\Materials\\HeadMaterial.asset", modelTransform);
 
 	return;
 	
@@ -144,7 +144,7 @@ void App::DoFrame()
 		b->SubmitDrawCalls(fc);
 	}*/
 	model->SubmitDrawCalls(fc);
-	//light.SubmitDrawCalls(fc);
+	light.SubmitDrawCalls(fc);
 	fc.Execute(wnd.Gfx());
 
 	// imgui window to control simulation speed
