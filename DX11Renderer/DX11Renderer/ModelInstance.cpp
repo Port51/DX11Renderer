@@ -10,16 +10,20 @@
 
 namespace dx = DirectX;
 
-ModelInstance::ModelInstance(Graphics& gfx, std::unique_ptr<ModelAsset> const& pModelAsset, std::string materialPath, dx::XMMATRIX transform)
+ModelInstance::ModelInstance(Graphics& gfx, std::unique_ptr<ModelAsset> const& pModelAsset, dx::XMMATRIX transform)
 	: transform(transform) // todo: set position
 {
-	std::shared_ptr<Material> pMaterial = std::dynamic_pointer_cast<Material>(Material::Resolve(gfx, materialPath.c_str()));
-	pMaterials.push_back(pMaterial);
+	pMaterials.reserve(pModelAsset->materialPaths.size());
+	for (const auto& materialPath : pModelAsset->materialPaths)
+	{
+		std::shared_ptr<Material> pMaterial = std::dynamic_pointer_cast<Material>(Material::Resolve(gfx, materialPath.c_str()));
+		pMaterials.push_back(pMaterial);
+	}
 
 	pSceneGraph = CreateModelInstanceNode(gfx, pModelAsset->pSceneGraph);
 }
 
-ModelInstance::ModelInstance(Graphics& gfx, std::unique_ptr<ModelAsset> const& pModelAsset, std::vector<std::string> materialPaths, dx::XMMATRIX transform)
+/*ModelInstance::ModelInstance(Graphics& gfx, std::unique_ptr<ModelAsset> const& pModelAsset, std::vector<std::string> materialPaths, dx::XMMATRIX transform)
 	: transform(transform) // todo: set position
 {
 	pMaterials.reserve(materialPaths.size());
@@ -30,7 +34,7 @@ ModelInstance::ModelInstance(Graphics& gfx, std::unique_ptr<ModelAsset> const& p
 	}
 
 	pSceneGraph = CreateModelInstanceNode(gfx, pModelAsset->pSceneGraph);
-}
+}*/
 
 void ModelInstance::SubmitDrawCalls(FrameCommander& frame) const
 {
@@ -79,7 +83,7 @@ std::unique_ptr<MeshRenderer> ModelInstance::ParseMesh(Graphics& gfx, std::uniqu
 		.Append(VertexLayout::Tangent)
 		.Append(VertexLayout::Texture2D)*/
 
-	auto pMaterial = pMaterials[0]; // todo: select via mesh
+	auto pMaterial = pMaterials[pMeshAsset->materialIndex];
 
 	VertexBufferData vbuf(pMaterial->GetVertexLayout());
 

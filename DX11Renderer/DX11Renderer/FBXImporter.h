@@ -28,8 +28,8 @@ private:
 	class FBXImporterMaterialSources
 	{
 	public:
-		std::unordered_map<std::string, std::string> materialPathByName;
-		std::string defaultMaterialPath;
+		std::vector<std::string> materialPaths;
+		std::unordered_map<std::string, int> materialIndicesByName;
 	};
 public:
 	enum FBXNormalsMode
@@ -56,11 +56,8 @@ public:
 			}
 			else if (p.key == "Map")
 			{
-				materialSources.materialPathByName[p.values[0]] = p.values[1];
-				if (materialSources.defaultMaterialPath == "")
-				{
-					materialSources.defaultMaterialPath = p.values[1];
-				}
+				materialSources.materialPaths.emplace_back(p.values[1]);
+				materialSources.materialIndicesByName[p.values[0]] = materialSources.materialPaths.size() - 1;
 			}
 		}
 		parser.Dispose();
@@ -94,8 +91,9 @@ public:
 				FbxNode* pFbxRootNode = pFbxScene->GetRootNode();
 				if (pFbxRootNode)
 				{
+					std::vector<std::string> materials;
 					auto pSceneGraph = UnpackFbxSceneGraph(pFbxRootNode, normalsMode, materialSources);
-					auto pModelAsset = std::make_unique<ModelAsset>(std::move(pSceneGraph));
+					auto pModelAsset = std::make_unique<ModelAsset>(std::move(pSceneGraph), std::move(materialSources.materialPaths));
 
 					return std::move(pModelAsset);
 				}
@@ -184,21 +182,21 @@ public:
 			// todo: allow submeshes
 			const auto material0 = pFbxNode->GetMaterial(0);
 			const auto materialName = material0->GetName();
-			const auto iter = materialSources.materialPathByName.find(materialName);
-			if (iter != materialSources.materialPathByName.end())
+			const auto iter = materialSources.materialIndicesByName.find(materialName);
+			if (iter != materialSources.materialIndicesByName.end())
 			{
-				pMesh->materialPath = iter->second;
+				pMesh->materialIndex = iter->second;
 			}
 			else
 			{
 				// Use default as backup
-				pMesh->materialPath = materialSources.defaultMaterialPath;
+				pMesh->materialIndex = 0;
 			}
 		}
 		else
 		{
 			// Use default
-			pMesh->materialPath = materialSources.defaultMaterialPath;
+			pMesh->materialIndex = 0;
 		}
 
 		FbxVector4* pFbxVertices = pFbxMesh->GetControlPoints();

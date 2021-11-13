@@ -74,8 +74,8 @@ App::App()
 		wnd.Gfx().log.Error("Failed to load model");
 	}
 
-	pModel0 = std::make_unique<ModelInstance>(wnd.Gfx(), pModelAsset, "Assets\\Materials\\HeadMaterial.asset", modelTransform);
-	pModel1 = std::make_unique<ModelInstance>(wnd.Gfx(), pModelAsset, "Assets\\Materials\\HeadMaterial.asset", modelTransform * dx::XMMatrixTranslation(4.5f, 0.f, 0.f));
+	pModel0 = std::make_unique<ModelInstance>(wnd.Gfx(), pModelAsset, modelTransform);
+	pModel1 = std::make_unique<ModelInstance>(wnd.Gfx(), pModelAsset, modelTransform * dx::XMMatrixTranslation(4.5f, 0.f, 0.f));
 
 	return;
 	

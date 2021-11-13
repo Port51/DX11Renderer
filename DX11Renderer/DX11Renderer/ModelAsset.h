@@ -9,8 +9,8 @@ class ModelAsset
 {
 	friend class ModelInstance;
 public:
-	ModelAsset(std::unique_ptr<SceneGraphNode<MeshAsset>> _pSceneGraph)
-		: pSceneGraph(std::move(_pSceneGraph))
+	ModelAsset(std::unique_ptr<SceneGraphNode<MeshAsset>> _pSceneGraph, std::vector<std::string> _materialPaths)
+		: pSceneGraph(std::move(_pSceneGraph)), materialPaths(std::move(_materialPaths))
 	{
 
 	}
@@ -30,4 +30,5 @@ public:
 
 private:
 	std::unique_ptr<SceneGraphNode<MeshAsset>> pSceneGraph;
+	std::vector<std::string> materialPaths;
 };

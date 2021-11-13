@@ -12,7 +12,7 @@ PointLight::PointLight(Graphics& gfx, DirectX::XMFLOAT3 positionWS, DirectX::XMF
 {
 
 	auto pModelAsset = FBXImporter::LoadFBX("Assets\\Models\\DefaultSphere.asset", FBXImporter::FBXNormalsMode::Import, false);
-	pModel = std::make_unique<ModelInstance>(gfx, pModelAsset, "Assets\\Materials\\LightMaterial.asset", DirectX::XMMatrixIdentity());
+	pModel = std::make_unique<ModelInstance>(gfx, pModelAsset, DirectX::XMMatrixIdentity());
 }
 
 void PointLight::DrawImguiControlWindow()

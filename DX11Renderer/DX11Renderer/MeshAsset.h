@@ -31,5 +31,5 @@ public:
 	size_t numFaces;
 	std::vector<int> indices;
 
-	std::string materialPath;
+	int materialIndex;
 };

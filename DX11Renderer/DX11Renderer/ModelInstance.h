@@ -25,8 +25,8 @@ private:
 class ModelInstance
 {
 public:
-	ModelInstance(Graphics& gfx, std::unique_ptr<ModelAsset> const& pModelAsset, std::string materialPath, dx::XMMATRIX transform);
-	ModelInstance(Graphics& gfx, std::unique_ptr<ModelAsset> const& pModelAsset, std::vector<std::string> materialPaths, dx::XMMATRIX transform);
+	ModelInstance(Graphics& gfx, std::unique_ptr<ModelAsset> const& pModelAsset, dx::XMMATRIX transform);
+	//ModelInstance(Graphics& gfx, std::unique_ptr<ModelAsset> const& pModelAsset, std::vector<std::string> materialPaths, dx::XMMATRIX transform);
 	void SubmitDrawCalls(FrameCommander& frame) const;
 	void SetPositionWS(DirectX::XMFLOAT3 positionWS);
 private:
