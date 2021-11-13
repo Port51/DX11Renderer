@@ -11,6 +11,7 @@
 #include "MeshAsset.h"
 #include "SceneGraphNode.h"
 #include "GraphicsThrowMacros.h"
+#include "TextParser.h"
 
 // Blender export settings:
 // - Use "FBX Units Scale"
@@ -23,6 +24,13 @@ static FbxManager* fbxSdkManager = nullptr;
 
 class FBXImporter
 {
+private:
+	class FBXImporterMaterialSources
+	{
+	public:
+		std::unordered_map<std::string, std::string> materialPathByName;
+		std::string defaultMaterialPath;
+	};
 public:
 	enum FBXNormalsMode
 	{
@@ -33,6 +41,29 @@ public:
 	static std::unique_ptr<ModelAsset> LoadFBX(const char* filename, FBXNormalsMode normalsMode, bool triangulate = true)
 	{
 		// todo: load model asset instead, which contains an FBX path
+
+		TextParser parser(filename);
+		TextParser::ParsedKeyValues p;
+
+		// Parse asset
+		std::string fbxPath;
+		FBXImporterMaterialSources materialSources;
+		while (parser.ReadParsedLine(p))
+		{
+			if (p.key == "FBX")
+			{
+				fbxPath = p.values[0];
+			}
+			else if (p.key == "Map")
+			{
+				materialSources.materialPathByName[p.values[0]] = p.values[1];
+				if (materialSources.defaultMaterialPath == "")
+				{
+					materialSources.defaultMaterialPath = p.values[1];
+				}
+			}
+		}
+		parser.Dispose();
 
 		std::unique_ptr<ModelAsset> pOutputModel;
 
@@ -46,7 +77,7 @@ public:
 		}
 
 		FbxImporter* pImporter = FbxImporter::Create(fbxSdkManager, "");
-		if (pImporter->Initialize(filename, -1, fbxSdkManager->GetIOSettings()))
+		if (pImporter->Initialize(fbxPath.c_str(), -1, fbxSdkManager->GetIOSettings()))
 		{
 			FbxScene* pFbxScene = FbxScene::Create(fbxSdkManager, "");
 			if (pImporter->Import(pFbxScene))
@@ -63,24 +94,24 @@ public:
 				FbxNode* pFbxRootNode = pFbxScene->GetRootNode();
 				if (pFbxRootNode)
 				{
-					auto pSceneGraph = UnpackFbxSceneGraph(pFbxRootNode, normalsMode);
+					auto pSceneGraph = UnpackFbxSceneGraph(pFbxRootNode, normalsMode, materialSources);
 					auto pModelAsset = std::make_unique<ModelAsset>(std::move(pSceneGraph));
 
 					return std::move(pModelAsset);
 				}
 				else
 				{
-					throw std::runtime_error("No root node was found in FBX for filename '" + std::string(filename) + "'");
+					throw std::runtime_error("No root node was found in FBX for filename '" + fbxPath + "'");
 				}
 			}
 			else
 			{
-				throw std::runtime_error("Could not import FBX scene for filename '" + std::string(filename) + "'");
+				throw std::runtime_error("Could not import FBX scene for filename '" + fbxPath + "'");
 			}
 		}
 		else
 		{
-			throw std::runtime_error("Could not initialize FBX importer for filename '" + std::string(filename) + "'");
+			throw std::runtime_error("Could not initialize FBX importer for filename '" + fbxPath + "'");
 		}
 
 		pImporter->Destroy();
@@ -89,7 +120,7 @@ public:
 
 	// Recursively unpack scene graph and return root node
 	//static std::unique_ptr<SceneGraphNode<MeshAsset>> UnpackFbxSceneGraph(std::unique_ptr<FbxNode> pFbxNode)
-	static std::unique_ptr<SceneGraphNode<MeshAsset>> UnpackFbxSceneGraph(FbxNode* pFbxNode, FBXNormalsMode normalsMode)
+	static std::unique_ptr<SceneGraphNode<MeshAsset>> UnpackFbxSceneGraph(FbxNode* pFbxNode, FBXNormalsMode normalsMode, const FBXImporterMaterialSources& materialSources)
 	{
 		const auto name = pFbxNode->GetName();
 
@@ -118,7 +149,7 @@ public:
 				//auto pFbxMesh = std::make_unique<FbxMesh>((FbxMesh*)pFbxNode->GetNodeAttribute());
 				//pMeshAsset = LoadFbxMesh(std::move(pFbxMesh));
 				FbxMesh* pFbxMesh = (FbxMesh*)pFbxNode->GetNodeAttribute();
-				pMeshAsset = LoadFbxMesh(std::string(pFbxNode->GetName()), pFbxMesh, normalsMode);
+				pMeshAsset = LoadFbxMesh(std::string(pFbxNode->GetName()), pFbxMesh, pFbxNode, normalsMode, materialSources);
 			}
 		}
 
@@ -133,7 +164,7 @@ public:
 			if (pFbxChildNode->GetNodeAttribute())
 			{
 				//pChildNodes.emplace_back(UnpackFbxSceneGraph(std::move(pFbxChildNode)));
-				pChildNodes.emplace_back(UnpackFbxSceneGraph(pFbxChildNode, normalsMode));
+				pChildNodes.emplace_back(UnpackFbxSceneGraph(pFbxChildNode, normalsMode, materialSources));
 			}
 		}
 
@@ -143,10 +174,32 @@ public:
 	}
 
 	//static std::unique_ptr<MeshAsset> LoadFbxMesh(std::unique_ptr<FbxMesh> pFbxMesh)
-	static std::unique_ptr<MeshAsset> LoadFbxMesh(std::string name, FbxMesh* pFbxMesh, FBXNormalsMode normalsMode)
+	static std::unique_ptr<MeshAsset> LoadFbxMesh(std::string name, FbxMesh* pFbxMesh, FbxNode* pFbxNode, FBXNormalsMode normalsMode, const FBXImporterMaterialSources& materialSources)
 	{
 		auto pMesh = std::make_unique<MeshAsset>();
 		pMesh->name = name;
+
+		if (pFbxNode->GetMaterialCount() > 0)
+		{
+			// todo: allow submeshes
+			const auto material0 = pFbxNode->GetMaterial(0);
+			const auto materialName = material0->GetName();
+			const auto iter = materialSources.materialPathByName.find(materialName);
+			if (iter != materialSources.materialPathByName.end())
+			{
+				pMesh->materialPath = iter->second;
+			}
+			else
+			{
+				// Use default as backup
+				pMesh->materialPath = materialSources.defaultMaterialPath;
+			}
+		}
+		else
+		{
+			// Use default
+			pMesh->materialPath = materialSources.defaultMaterialPath;
+		}
 
 		FbxVector4* pFbxVertices = pFbxMesh->GetControlPoints();
 

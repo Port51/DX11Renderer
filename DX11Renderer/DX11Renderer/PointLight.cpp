@@ -11,7 +11,7 @@ PointLight::PointLight(Graphics& gfx, DirectX::XMFLOAT3 positionWS, DirectX::XMF
 	intensity(intensity)
 {
 
-	auto pModelAsset = FBXImporter::LoadFBX("Models\\DefaultSphere.fbx", FBXImporter::FBXNormalsMode::Import, false);
+	auto pModelAsset = FBXImporter::LoadFBX("Assets\\Models\\DefaultSphere.asset", FBXImporter::FBXNormalsMode::Import, false);
 	pModel = std::make_unique<ModelInstance>(gfx, pModelAsset, "Assets\\Materials\\LightMaterial.asset", DirectX::XMMatrixIdentity());
 }
 

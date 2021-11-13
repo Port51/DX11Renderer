@@ -32,7 +32,7 @@ App::App()
 	{
 	case 0:
 		//fn = std::string("Models\\Head.fbx");
-		fn = std::string("Models\\Head-triangulated.fbx");
+		fn = std::string("Assets\\Models\\Head.asset");
 		modelTransform = 
 			dx::XMMatrixRotationY(3.1415f)
 			* dx::XMMatrixTranslation(0.f, -4.7f, 0.f)
@@ -74,7 +74,8 @@ App::App()
 		wnd.Gfx().log.Error("Failed to load model");
 	}
 
-	model = std::make_unique<ModelInstance>(wnd.Gfx(), pModelAsset, "Assets\\Materials\\HeadMaterial.asset", modelTransform);
+	pModel0 = std::make_unique<ModelInstance>(wnd.Gfx(), pModelAsset, "Assets\\Materials\\HeadMaterial.asset", modelTransform);
+	pModel1 = std::make_unique<ModelInstance>(wnd.Gfx(), pModelAsset, "Assets\\Materials\\HeadMaterial.asset", modelTransform * dx::XMMatrixTranslation(4.5f, 0.f, 0.f));
 
 	return;
 	
@@ -143,7 +144,8 @@ void App::DoFrame()
 	{
 		b->SubmitDrawCalls(fc);
 	}*/
-	model->SubmitDrawCalls(fc);
+	pModel0->SubmitDrawCalls(fc);
+	pModel1->SubmitDrawCalls(fc);
 	light.SubmitDrawCalls(fc);
 	fc.Execute(wnd.Gfx());
 

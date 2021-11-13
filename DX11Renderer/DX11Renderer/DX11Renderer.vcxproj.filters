@@ -539,6 +539,12 @@
     <None Include="Assets\Materials\HeadMaterial.asset">
       <Filter>Assets\Materials</Filter>
     </None>
+    <None Include="Assets\Materials\HairMaterial.asset">
+      <Filter>Assets\Materials</Filter>
+    </None>
+    <None Include="Assets\Models\DefaultSphere.asset">
+      <Filter>Assets\Models</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="ColorIndexVS.hlsl">

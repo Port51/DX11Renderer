@@ -26,7 +26,8 @@ private:
 	bool showDemoWindow = true;
 	Camera cam;
 	PointLight light;
-	std::unique_ptr<ModelInstance> model;
+	std::unique_ptr<ModelInstance> pModel0;
+	std::unique_ptr<ModelInstance> pModel1;
 	float simulationSpeed = 1.f;
 	std::vector<std::unique_ptr<MeshRenderer>> drawables;
 	static constexpr size_t nDrawables = 1;
