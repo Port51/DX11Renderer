@@ -67,6 +67,8 @@ public:
 	void EnableImgui();
 	void DisableImgui();
 	bool IsImguiEnabled() const;
+	UINT GetWidth() const;
+	UINT GetHeight() const;
 public:
 	void SetProjectionMatrix(DirectX::FXMMATRIX proj);
 	DirectX::XMMATRIX GetProjectionMatrix() const;
@@ -84,6 +86,8 @@ public:
 
 private:
 	bool imguiEnabled = true;
+	UINT width;
+	UINT height;
 
 	// Matrices
 	DirectX::XMMATRIX projectionMatrix;

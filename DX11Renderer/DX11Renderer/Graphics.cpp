@@ -16,6 +16,7 @@ namespace dx = DirectX;
 #pragma comment(lib,"D3DCompiler.lib") // for loading and compiling shaders
 
 Graphics::Graphics(HWND hWnd, int windowWidth, int windowHeight)
+	: width(windowWidth), height(windowHeight)
 {
 	DXGI_SWAP_CHAIN_DESC swapChainDesc = {};
 	swapChainDesc.BufferDesc.Width = 0; // use window size
@@ -190,6 +191,16 @@ void Graphics::DisableImgui()
 bool Graphics::IsImguiEnabled() const
 {
 	return imguiEnabled;
+}
+
+UINT Graphics::GetWidth() const
+{
+	return width;
+}
+
+UINT Graphics::GetHeight() const
+{
+	return height;
 }
 
 void Graphics::DrawIndexed(UINT count)
