@@ -228,12 +228,6 @@
     <ClCompile Include="DepthStencil.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Job.cpp">
-      <Filter>Source Files\RenderJobs</Filter>
-    </ClCompile>
-    <ClCompile Include="Step.cpp">
-      <Filter>Source Files\RenderJobs</Filter>
-    </ClCompile>
     <ClCompile Include="Technique.cpp">
       <Filter>Source Files\RenderJobs</Filter>
     </ClCompile>
@@ -257,6 +251,15 @@
     </ClCompile>
     <ClCompile Include="Binding.cpp">
       <Filter>Source Files\Bindable</Filter>
+    </ClCompile>
+    <ClCompile Include="RasterizerState.cpp">
+      <Filter>Source Files\Bindable</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderJob.cpp">
+      <Filter>Source Files\RenderJobs</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderStep.cpp">
+      <Filter>Source Files\RenderJobs</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -464,15 +467,6 @@
     <ClInclude Include="FrameCommander.h">
       <Filter>Header Files\RenderJobs</Filter>
     </ClInclude>
-    <ClInclude Include="Job.h">
-      <Filter>Header Files\RenderJobs</Filter>
-    </ClInclude>
-    <ClInclude Include="Pass.h">
-      <Filter>Header Files\RenderJobs</Filter>
-    </ClInclude>
-    <ClInclude Include="Step.h">
-      <Filter>Header Files\RenderJobs</Filter>
-    </ClInclude>
     <ClInclude Include="Technique.h">
       <Filter>Header Files\RenderJobs</Filter>
     </ClInclude>
@@ -496,6 +490,18 @@
     </ClInclude>
     <ClInclude Include="TextParser.h">
       <Filter>Header Files\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="RasterizerState.h">
+      <Filter>Header Files\Bindable</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderPass.h">
+      <Filter>Header Files\RenderJobs</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderJob.h">
+      <Filter>Header Files\RenderJobs</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderStep.h">
+      <Filter>Header Files\RenderJobs</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

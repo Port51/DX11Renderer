@@ -4,16 +4,16 @@
 #include "BindableInclude.h"
 #include "Stencil.h"
 #include "Graphics.h"
-#include "Job.h"
-#include "Pass.h"
+#include "RenderJob.h"
+#include "RenderPass.h"
 #include "NullPixelShader.h"
 
 class FrameCommander
 {
 public:
-	void Accept(Job job, std::string targetPass) noexcept
+	void Accept(RenderJob job, std::string targetPass) noexcept
 	{
-		passes[targetPass].Accept(job);
+		renderPasses[targetPass].EnqueueJob(job);
 	}
 	void Execute(Graphics& gfx)
 	{
@@ -26,7 +26,7 @@ public:
 		// GBuffer pass
 		{
 			Bind::Stencil::Resolve(gfx, Bind::Stencil::Mode::Off)->Bind(gfx, 0u);
-			passes[std::string("GBuffer")].Execute(gfx);
+			renderPasses[std::string("GBuffer")].Execute(gfx);
 		}
 		
 		// outline masking pass
@@ -39,11 +39,11 @@ public:
 	}
 	void Reset() noexcept
 	{
-		for (auto& p : passes)
+		for (auto& p : renderPasses)
 		{
 			p.second.Reset();
 		}
 	}
 private:
-	std::unordered_map<std::string, Pass> passes;
+	std::unordered_map<std::string, RenderPass> renderPasses;
 };

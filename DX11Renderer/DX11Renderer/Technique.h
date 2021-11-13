@@ -1,5 +1,5 @@
 #pragma once
-#include "Step.h"
+#include "RenderStep.h"
 #include <vector>
 #include <memory>
 
@@ -15,7 +15,7 @@ public:
 		name(name)
 	{}
 	void SubmitDrawCalls(FrameCommander& frame, const MeshRenderer& renderer) const;
-	void AddStep(std::unique_ptr<Step> step)
+	void AddStep(std::unique_ptr<RenderStep> step)
 	{
 		pSteps.push_back(std::move(step));
 	}
@@ -34,6 +34,6 @@ public:
 	}
 private:
 	bool active = true;
-	std::vector<std::unique_ptr<Step>> pSteps;
+	std::vector<std::unique_ptr<RenderStep>> pSteps;
 	std::string name = "Nameless Tech";
 };

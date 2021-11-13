@@ -56,7 +56,7 @@ Material::Material(Graphics& gfx, const std::string_view _materialAssetPath)
 	std::string materialPassName;
 	std::unique_ptr<MaterialPass> pMaterialPass;
 	std::unique_ptr<Technique> pTechnique;
-	std::unique_ptr<Step> pPassStep;
+	std::unique_ptr<RenderStep> pPassStep;
 
 	TextParser parser(_materialAssetPath);
 	TextParser::ParsedKeyValues p;
@@ -89,7 +89,7 @@ Material::Material(Graphics& gfx, const std::string_view _materialAssetPath)
 			if (state == MaterialParseState::Pass)
 			{
 				// Read pass name
-				pPassStep = std::make_unique<Step>(p.values[0]);
+				pPassStep = std::make_unique<RenderStep>(p.values[0]);
 				materialPassName = std::move(p.values[0]);
 
 				// Init cbuffer

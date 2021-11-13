@@ -1,15 +1,15 @@
 #pragma once
 #include "Graphics.h"
-#include "Job.h"
+#include "RenderJob.h"
 #include <vector>
 
 ///
 /// Wrapper containing jobs
 ///
-class Pass
+class RenderPass
 {
 public:
-	void Accept(Job job) noexcept
+	void EnqueueJob(RenderJob job) noexcept
 	{
 		jobs.push_back(job);
 	}
@@ -25,5 +25,5 @@ public:
 		jobs.clear();
 	}
 private:
-	std::vector<Job> jobs; // will be replaced by render graph
+	std::vector<RenderJob> jobs; // will be replaced by render graph
 };

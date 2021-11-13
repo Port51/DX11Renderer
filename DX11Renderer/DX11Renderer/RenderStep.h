@@ -9,10 +9,10 @@
 class MeshRenderer;
 class FrameCommander;
 
-class Step
+class RenderStep
 {
 public:
-	Step(std::string _targetPass)
+	RenderStep(std::string _targetPass)
 		: targetPass{ _targetPass }
 	{}
 	void AddBinding(std::shared_ptr<Bindable> pBindable, UINT slot = 0u)
