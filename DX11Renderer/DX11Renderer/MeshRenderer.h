@@ -4,15 +4,9 @@
 #include <string>
 #include <memory>
 
-class VertexBuffer;
-class IndexBuffer;
-class Topology;
-class FrameCommander;
-class InputLayout;
-class TransformCbuf;
-//class Technique;
-
 namespace dx = DirectX;
+
+class Graphics;
 
 namespace Bind
 {

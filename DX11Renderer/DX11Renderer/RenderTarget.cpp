@@ -1,4 +1,5 @@
 #include "RenderTarget.h"
+#include "Graphics.h"
 #include "GraphicsThrowMacros.h"
 #include "DepthStencil.h"
 #include <array>

@@ -15,7 +15,7 @@ namespace Rendergraph
 	}
 	void RenderStep::SubmitDrawCalls(FrameCommander& frame, const MeshRenderer& meshRenderer) const
 	{
-		frame.Accept(RenderJob{ this,&meshRenderer }, targetPass);
+		frame.Accept(RenderJob{ this, &meshRenderer }, targetPass);
 	}
 
 	void RenderStep::Bind(Graphics & gfx) const

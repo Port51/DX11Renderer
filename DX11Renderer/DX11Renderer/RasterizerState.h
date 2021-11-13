@@ -3,7 +3,7 @@
 #include <array>
 #include <wrl.h>
 
-class ID3D11RasterizerState;
+struct ID3D11RasterizerState;
 
 namespace Bind
 {

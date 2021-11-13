@@ -59,7 +59,7 @@ public:
 			{
 				log.Info(p.values[0]);
 				materialSources.materialPaths.emplace_back(p.values[1]);
-				materialSources.materialIndicesByName[p.values[0]] = materialSources.materialPaths.size() - 1;
+				materialSources.materialIndicesByName[p.values[0]] = (int)materialSources.materialPaths.size() - 1;
 			}
 		}
 		parser.Dispose();

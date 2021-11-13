@@ -27,7 +27,7 @@ MeshRenderer::MeshRenderer(Graphics& gfx, std::string name, std::shared_ptr<Bind
 		throw std::runtime_error(std::string("Mesh '") + name + std::string("' is missing IndexBuffer!"));
 	}*/
 
-	pTransformCbuf = std::make_shared<TransformCbuf>(gfx, *this);
+	pTransformCbuf = std::make_shared<Bind::TransformCbuf>(gfx, *this);
 }
 
 DirectX::XMMATRIX MeshRenderer::GetTransformXM() const
