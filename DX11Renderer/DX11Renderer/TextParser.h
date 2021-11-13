@@ -48,7 +48,7 @@ public:
 		if (std::getline(file, line))
 		{
 			// Clean up line first
-			line.erase(std::remove_if(line.begin(), line.end(), IsWhitespace), line.end());
+			line.erase(std::remove_if(line.begin(), line.end(), &IsWhitespace), line.end());
 
 			std::istringstream iss(line);
 
@@ -68,7 +68,7 @@ public:
 		return false;
 	}
 private:
-	bool IsWhitespace(unsigned char c)
+	static bool IsWhitespace(unsigned char c)
 	{
 		return (c == ' ' || c == '\n' || c == '\r' ||
 			c == '\t' || c == '\v' || c == '\f');
