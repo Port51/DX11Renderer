@@ -5,9 +5,10 @@
 
 class Graphics;
 class DepthStencil;
-class ID3D11DepthStencilView;
-class ID3D11Texture2D;
-class ID3D11RenderTargetView;
+struct ID3D11DepthStencilView;
+struct ID3D11Texture2D;
+struct ID3D11RenderTargetView;
+struct ID3D11ShaderResourceView;
 
 namespace Bind
 {

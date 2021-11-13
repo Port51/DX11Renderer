@@ -57,8 +57,8 @@ namespace Bind
 		// For unpacking material passes
 		std::string materialPassName;
 		std::unique_ptr<MaterialPass> pMaterialPass;
-		std::unique_ptr<Technique> pTechnique;
-		std::unique_ptr<RenderStep> pPassStep;
+		std::unique_ptr<Rendergraph::Technique> pTechnique;
+		std::unique_ptr<Rendergraph::RenderStep> pPassStep;
 
 		TextParser parser(_materialAssetPath);
 		TextParser::ParsedKeyValues p;
@@ -73,7 +73,7 @@ namespace Bind
 			{
 				state = MaterialParseState::Pass;
 				pMaterialPass = std::make_unique<MaterialPass>();
-				pTechnique = std::make_unique<Technique>();
+				pTechnique = std::make_unique<Rendergraph::Technique>();
 			}
 			else if (p.key == "}")
 			{
@@ -91,7 +91,7 @@ namespace Bind
 				if (state == MaterialParseState::Pass)
 				{
 					// Read pass name
-					pPassStep = std::make_unique<RenderStep>(p.values[0]);
+					pPassStep = std::make_unique<Rendergraph::RenderStep>(p.values[0]);
 					materialPassName = std::move(p.values[0]);
 
 					// Init cbuffer
@@ -177,7 +177,7 @@ namespace Bind
 		return GenerateUID(materialAssetPath);
 	}
 
-	void Material::SubmitDrawCalls(FrameCommander& frame, const MeshRenderer& renderer) const
+	void Material::SubmitDrawCalls(Rendergraph::FrameCommander& frame, const MeshRenderer& renderer) const
 	{
 		for (const auto& pass : passes)
 		{

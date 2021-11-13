@@ -2,7 +2,7 @@
 
 namespace Rendergraph
 {
-	void RenderQueuePass::Accept(Job job)
+	void RenderQueuePass::Accept(RenderJob job)
 	{
 		jobs.push_back(job);
 	}
