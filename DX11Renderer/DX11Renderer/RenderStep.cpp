@@ -7,7 +7,7 @@ void RenderStep::SubmitDrawCalls(FrameCommander& frame, const MeshRenderer& mesh
 	frame.Accept(RenderJob{ this,&meshRenderer }, targetPass);
 }
 
-void RenderStep::InitializeParentReferences(const MeshRenderer& parent) noexcept
+void RenderStep::InitializeParentReferences(const MeshRenderer& parent)
 {
 	for (const auto& b : bindings)
 	{

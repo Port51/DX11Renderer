@@ -16,7 +16,7 @@ namespace Bind
 		GFX_THROW_INFO(GetDevice(gfx)->CreateRasterizerState(&rasterDesc, &pRasterizer));
 	}
 
-	void RasterizerState::Bind(Graphics& gfx, UINT slot) noexcept
+	void RasterizerState::Bind(Graphics& gfx, UINT slot)
 	{
 		GetContext(gfx)->RSSetState(pRasterizer.Get());
 	}
@@ -30,7 +30,7 @@ namespace Bind
 		using namespace std::string_literals;
 		return typeid(RasterizerState).name() + "#"s + (twoSided ? "2s" : "1s");
 	}
-	std::string RasterizerState::GetUID() const noexcept
+	std::string RasterizerState::GetUID() const
 	{
 		return GenerateUID(twoSided);
 	}

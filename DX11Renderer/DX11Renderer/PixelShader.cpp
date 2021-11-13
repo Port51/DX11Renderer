@@ -28,7 +28,7 @@ std::string PixelShader::GenerateUID(const std::string& path)
 	using namespace std::string_literals;
 	return typeid(PixelShader).name() + "#"s + path;
 }
-std::string PixelShader::GetUID() const noexcept
+std::string PixelShader::GetUID() const
 {
 	return GenerateUID(path);
 }

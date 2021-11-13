@@ -3,27 +3,36 @@
 #include "RenderJob.h"
 #include <vector>
 
-///
-/// Wrapper containing jobs
-///
-class RenderPass
+namespace Rendergraph
 {
-public:
-	void EnqueueJob(RenderJob job) noexcept
+	class Sink;
+	class Source;
+
+	///
+	/// Wrapper containing jobs
+	///
+	class RenderPass
 	{
-		jobs.push_back(job);
-	}
-	void Execute(Graphics& gfx) const
-	{
-		for (const auto& j : jobs)
+	public:
+		RenderPass(std::string name);
+		virtual ~RenderPass();
+		void EnqueueJob(RenderJob job)
 		{
-			j.Execute(gfx);
+			jobs.push_back(job);
 		}
-	}
-	void Reset() noexcept
-	{
-		jobs.clear();
-	}
-private:
-	std::vector<RenderJob> jobs; // will be replaced by render graph
-};
+		virtual void Execute(Graphics& gfx) const = 0;
+		void Reset();
+		const std::string& GetName() const;
+		const std::vector<std::unique_ptr<Sink>>& GetSinks() const;
+		Source& GetSource(const std::string& registeredName) const;
+		Sink& GetSink(const std::string& registeredName) const;
+		void SetSinkLinkage(const std::string& registeredName, const std::string& target);
+		virtual void Finalize();
+	private:
+		std::vector<RenderJob> jobs; // will be replaced by render graph
+	private:
+		std::vector<std::unique_ptr<Sink>> sinks;
+		std::vector<std::unique_ptr<Source>> sources;
+		std::string name;
+	};
+}

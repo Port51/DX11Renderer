@@ -14,7 +14,7 @@ public:
 	// View into attribute of vertex
 	// Usage: vBuffer[vertIdx].Attr<Pos3D>() = { 0, 0, 0 }
 	template<VertexLayout::ElementType Type>
-	auto& Attr() noexcept(!IS_DEBUG)
+	auto& Attr()(!IS_DEBUG)
 	{
 		// pData = ptr to start of data
 		auto pAttribute = pData + layout.Resolve<Type>().GetOffset();
@@ -24,7 +24,7 @@ public:
 	// Allows forwarding param without losing any info or modifiers on it
 	// std::forward() forwards as-is
 	template<typename T>
-	void SetAttributeByIndex(size_t i, T&& val) noexcept(!IS_DEBUG)
+	void SetAttributeByIndex(size_t i, T&& val)(!IS_DEBUG)
 	{
 		const auto& element = layout.ResolveByIndex(i);
 		auto pAttribute = pData + element.GetOffset();
@@ -59,7 +59,7 @@ public:
 		}
 	}
 public:
-	Vertex(char* pData, const VertexLayout& layout) noexcept(!IS_DEBUG)
+	Vertex(char* pData, const VertexLayout& layout)(!IS_DEBUG)
 		:
 		pData(pData),
 		layout(layout)
@@ -70,7 +70,7 @@ private:
 	template<typename First, typename ...Rest>
 	// enables parameter pack setting of multiple parameters by element index
 	// make sure to only call this if 2+ params!
-	void SetAttributeByIndex(size_t i, First&& first, Rest&&... rest) noexcept(!IS_DEBUG)
+	void SetAttributeByIndex(size_t i, First&& first, Rest&&... rest)(!IS_DEBUG)
 	{
 		// keep peeling one off and calling again for others, until all done
 		// last call will be other overload of SetAttributeByIndex()
@@ -79,7 +79,7 @@ private:
 	}
 	// helper to reduce code duplication in SetAttributeByIndex
 	template<VertexLayout::ElementType DestLayoutType, typename SrcType>
-	void SetAttribute(char* pAttribute, SrcType&& val) noexcept(!IS_DEBUG)
+	void SetAttribute(char* pAttribute, SrcType&& val)(!IS_DEBUG)
 	{
 		using Dest = typename VertexLayout::Map<DestLayoutType>::SysType;
 		// SrcType = from T&&

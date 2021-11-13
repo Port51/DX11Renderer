@@ -12,8 +12,8 @@ class Node
 public:
 	Node(int id, const DirectX::XMMATRIX& _transform, std::unique_ptr<MeshRenderer> pMeshPtr, std::vector<std::unique_ptr<Node>> pChildNodes);
 	void SubmitDrawCalls(FrameCommander& frame, DirectX::FXMMATRIX accumulatedTransform) const;
-	void SetAppliedTransform(DirectX::FXMMATRIX transform) noexcept;
-	const DirectX::XMFLOAT4X4& GetAppliedTransform() const noexcept;
+	void SetAppliedTransform(DirectX::FXMMATRIX transform);
+	const DirectX::XMFLOAT4X4& GetAppliedTransform() const;
 private:
 	int id;
 	std::vector<std::unique_ptr<Node>> pChildNodes;

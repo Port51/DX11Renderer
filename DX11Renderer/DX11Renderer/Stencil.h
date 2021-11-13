@@ -54,7 +54,7 @@ namespace Bind
 
 			GetDevice(gfx)->CreateDepthStencilState(&dsDesc, &pStencil);
 		}
-		void Bind(Graphics& gfx, UINT slot) noexcept override
+		void Bind(Graphics& gfx, UINT slot) override
 		{
 			GetContext(gfx)->OMSetDepthStencilState(pStencil.Get(), 0x01);
 		}
@@ -78,7 +78,7 @@ namespace Bind
 			};
 			return typeid(Stencil).name() + "#"s + modeName();
 		}
-		std::string GetUID() const noexcept override
+		std::string GetUID() const override
 		{
 			return GenerateUID(mode);
 		}
