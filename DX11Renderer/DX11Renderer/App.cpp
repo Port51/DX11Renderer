@@ -64,7 +64,7 @@ App::App()
 		break;
 	}
 	
-	auto pModelAsset = FBXImporter::LoadFBX(fn.c_str(), FBXImporter::FBXNormalsMode::Import, false);
+	auto pModelAsset = FBXImporter::LoadFBX(wnd.Gfx().log, fn.c_str(), FBXImporter::FBXNormalsMode::Import, false);
 	if (pModelAsset)
 	{
 		wnd.Gfx().log.Info("Model loaded");
