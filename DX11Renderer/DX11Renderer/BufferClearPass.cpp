@@ -4,7 +4,7 @@
 #include "Sink.h"
 #include "Source.h"
 
-namespace Rendergraph
+namespace Rgph
 {
 	BufferClearPass::BufferClearPass(std::string name)
 		:

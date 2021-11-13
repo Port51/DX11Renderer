@@ -18,7 +18,7 @@ namespace Bind
 	class Bindable;
 }
 
-namespace Rendergraph
+namespace Rgph
 {
 	class Pass;
 

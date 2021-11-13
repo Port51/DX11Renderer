@@ -4,7 +4,7 @@
 #include "DepthStencil.h"
 #include "RenderGraphCompileException.h"
 
-namespace Rendergraph
+namespace Rgph
 {
 	BindingPass::BindingPass(std::string name, std::vector<std::shared_ptr<Bind::Bindable>> binds)
 		:

@@ -2,7 +2,7 @@
 #include <sstream>
 
 
-namespace Rendergraph
+namespace Rgph
 {
 	RenderGraphCompileException::RenderGraphCompileException(std::string message, int line, const char* file) noexcept
 		:

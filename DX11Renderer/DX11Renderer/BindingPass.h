@@ -9,7 +9,7 @@ namespace Bind
 	class RenderTarget;
 }
 
-namespace Rendergraph
+namespace Rgph
 {
 	class BindingPass : public RenderPass
 	{

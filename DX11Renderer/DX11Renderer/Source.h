@@ -9,7 +9,7 @@ namespace Bind
 	class BufferResource;
 }
 
-namespace Rendergraph
+namespace Rgph
 {
 	class Source
 	{

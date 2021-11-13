@@ -3,7 +3,7 @@
 
 #define RGC_EXCEPTION( message ) RenderGraphCompileException( (message),__LINE__,__FILE__ )
 
-namespace Rendergraph
+namespace Rgph
 {
 	class RenderGraphCompileException : public CustomException
 	{

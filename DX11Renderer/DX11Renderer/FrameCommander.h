@@ -8,7 +8,7 @@
 #include "RenderPass.h"
 #include "NullPixelShader.h"
 
-namespace Rendergraph
+namespace Rgph
 {
 	class RenderJob;
 	class RenderPass;

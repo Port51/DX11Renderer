@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <cctype>
 
-namespace Rendergraph
+namespace Rgph
 {
 	Source::Source(std::string nameIn)
 		:

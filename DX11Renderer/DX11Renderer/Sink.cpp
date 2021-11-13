@@ -7,7 +7,7 @@
 #include <sstream>
 #include <cctype>
 
-namespace Rendergraph
+namespace Rgph
 {
 	Sink::Sink(std::string registeredNameIn)
 		:

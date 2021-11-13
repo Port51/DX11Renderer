@@ -4,19 +4,21 @@
 
 namespace Bind
 {
-	Sampler::Sampler(Graphics& gfx)
-		: Sampler(gfx, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP)
+	Sampler::Sampler(Graphics& gfx, Type type, bool reflect)
+		: Sampler(gfx, type, reflect, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP)
 	{}
 
-	Sampler::Sampler(Graphics& gfx, D3D11_TEXTURE_ADDRESS_MODE wrapU)
-		: Sampler(gfx, wrapU, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP)
+	Sampler::Sampler(Graphics& gfx, Type type, bool reflect, D3D11_TEXTURE_ADDRESS_MODE wrapU)
+		: Sampler(gfx, type, reflect, wrapU, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP)
 	{}
 
-	Sampler::Sampler(Graphics& gfx, D3D11_TEXTURE_ADDRESS_MODE wrapU, D3D11_TEXTURE_ADDRESS_MODE wrapV)
-		: Sampler(gfx, wrapU, wrapV, D3D11_TEXTURE_ADDRESS_WRAP)
+	Sampler::Sampler(Graphics& gfx, Type type, bool reflect, D3D11_TEXTURE_ADDRESS_MODE wrapU, D3D11_TEXTURE_ADDRESS_MODE wrapV)
+		: Sampler(gfx, type, reflect, wrapU, wrapV, D3D11_TEXTURE_ADDRESS_WRAP)
 	{}
 
-	Sampler::Sampler(Graphics& gfx, D3D11_TEXTURE_ADDRESS_MODE wrapU, D3D11_TEXTURE_ADDRESS_MODE wrapV, D3D11_TEXTURE_ADDRESS_MODE wrapW)
+	Sampler::Sampler(Graphics& gfx, Type type, bool reflect, D3D11_TEXTURE_ADDRESS_MODE wrapU, D3D11_TEXTURE_ADDRESS_MODE wrapV, D3D11_TEXTURE_ADDRESS_MODE wrapW)
+		: type(type),
+		reflect(reflect)
 	{
 		SETUP_LOGGING(gfx);
 
@@ -33,7 +35,9 @@ namespace Bind
 		GFX_THROW_INFO(GetDevice(gfx)->CreateSamplerState(&samplerDesc, &pSampler));
 	}
 
-	Sampler::Sampler(Graphics& gfx, D3D11_SAMPLER_DESC samplerDesc)
+	Sampler::Sampler(Graphics& gfx, Type type, bool reflect, D3D11_SAMPLER_DESC samplerDesc)
+		: type(type),
+		reflect(reflect)
 	{
 		SETUP_LOGGING(gfx);
 		GFX_THROW_INFO(GetDevice(gfx)->CreateSamplerState(&samplerDesc, &pSampler));
