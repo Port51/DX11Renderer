@@ -36,7 +36,7 @@ namespace Bind
 		GFX_THROW_INFO(GetDevice(gfx)->CreateBlendState(&blendDesc, &pBlender));
 	}
 
-	void Blender::Bind(Graphics& gfx)
+	void Blender::Bind(Graphics& gfx, UINT slot)
 	{
 		SETUP_LOGGING_NOHR(gfx);
 		const float* data = factors ? factors->data() : nullptr;

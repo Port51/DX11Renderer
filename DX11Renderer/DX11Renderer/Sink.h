@@ -27,7 +27,7 @@ namespace Rgph
 	public:
 		const std::string& GetRegisteredName() const noexcept;
 		const std::string& GetPassName() const noexcept;
-		const std::string& GetOutputName() const noexcept;
+		const std::string& GetSourceName() const noexcept;
 		void SetTarget(std::string passName, std::string outputName);
 		virtual void Bind(Source& source) = 0;
 		virtual void PostLinkValidate() const = 0;
@@ -58,11 +58,12 @@ namespace Rgph
 		}
 		void Bind(Source& source) override
 		{
+			// Ensure source is type T
 			auto p = std::dynamic_pointer_cast<T>(source.YieldBuffer());
 			if (!p)
 			{
 				std::ostringstream oss;
-				oss << "Binding input [" << GetRegisteredName() << "] to output [" << GetPassName() << "." << GetOutputName() << "] "
+				oss << "Binding input [" << GetRegisteredName() << "] to output [" << GetPassName() << "." << GetSourceName() << "] "
 					<< " { " << typeid(T).name() << " } not compatible with { " << typeid(*source.YieldBuffer().get()).name() << " }";
 				throw RGC_EXCEPTION(oss.str());
 			}
@@ -97,7 +98,7 @@ namespace Rgph
 			if (!p)
 			{
 				std::ostringstream oss;
-				oss << "Binding input [" << GetRegisteredName() << "] to output [" << GetPassName() << "." << GetOutputName() << "] "
+				oss << "Binding input [" << GetRegisteredName() << "] to output [" << GetPassName() << "." << GetSourceName() << "] "
 					<< " { " << typeid(T).name() << " } does not match { " << typeid(*source.YieldBindable().get()).name() << " }";
 				throw RGC_EXCEPTION(oss.str());
 			}
@@ -138,7 +139,7 @@ namespace Rgph
 			if (!p)
 			{
 				std::ostringstream oss;
-				oss << "Binding input [" << GetRegisteredName() << "] to output [" << GetPassName() << "." << GetOutputName() << "] "
+				oss << "Binding input [" << GetRegisteredName() << "] to output [" << GetPassName() << "." << GetSourceName() << "] "
 					<< " { " << typeid(T).name() << " } does not match { " << typeid(*source.YieldBindable().get()).name() << " }";
 				throw RGC_EXCEPTION(oss.str());
 			}

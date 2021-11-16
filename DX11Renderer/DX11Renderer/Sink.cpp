@@ -36,7 +36,7 @@ namespace Rgph
 		return passName;
 	}
 
-	const std::string& Sink::GetOutputName() const noexcept
+	const std::string& Sink::GetSourceName() const noexcept
 	{
 		return outputName;
 	}

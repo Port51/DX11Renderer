@@ -2,6 +2,9 @@
 #include "Bindable.h"
 #include <array>
 #include <optional>
+#include <wrl.h>
+
+struct ID3D11BlendState;
 
 namespace Bind
 {
@@ -9,7 +12,7 @@ namespace Bind
 	{
 	public:
 		Blender(Graphics& gfx, bool blending, std::optional<float> factor = {});
-		void Bind(Graphics& gfx) override;
+		void Bind(Graphics& gfx, UINT slot) override;
 		void SetFactor(float factor);
 		float GetFactor() const;
 		static std::shared_ptr<Blender> Resolve(Graphics& gfx, bool blending, std::optional<float> factor = {});
