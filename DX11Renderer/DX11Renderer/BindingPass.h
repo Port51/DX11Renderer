@@ -5,8 +5,6 @@
 namespace Bind
 {
 	class Bindable;
-	class DepthStencil;
-	class RenderTarget;
 }
 
 namespace Rendergraph

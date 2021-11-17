@@ -8,7 +8,7 @@ namespace Rendergraph
 {
 	BufferClearPass::BufferClearPass(std::string name)
 		:
-		RenderPass(std::move(name))
+		Pass(std::move(name))
 	{
 		RegisterSink(DirectBufferSink<Bind::BufferResource>::Make("buffer", buffer));
 		RegisterSource(DirectBufferSource<Bind::BufferResource>::Make("buffer", buffer));

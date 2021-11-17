@@ -1,19 +1,11 @@
 #pragma once
 
-class MeshRenderer;
-class Graphics;
-
-namespace Rendergraph
+class RenderJob
 {
-	class RenderStep;
-
-	class RenderJob
-	{
-	public:
-		RenderJob(const RenderStep* pStep, const MeshRenderer* pRenderer);
-		void Execute(Graphics& gfx) const;
-	private:
-		const MeshRenderer* pRenderer;
-		const RenderStep* pStep;
-	};
-}
+public:
+	RenderJob(const class RenderStep* pStep, const class MeshRenderer* pRenderer);
+	void Execute(class Graphics& gfx) const;
+private:
+	const class MeshRenderer* pRenderer;
+	const class RenderStep* pStep;
+};

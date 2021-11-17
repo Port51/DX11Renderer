@@ -28,9 +28,6 @@ namespace Rendergraph
 		Sink& GetSink(const std::string& registeredName) const;
 		void SetSinkLinkage(const std::string& registeredName, const std::string& target);
 		virtual void Finalize();
-	protected:
-		void RegisterSink(std::unique_ptr<Sink> sink);
-		void RegisterSource(std::unique_ptr<Source> source);
 	private:
 		std::vector<RenderJob> jobs; // will be replaced by render graph
 	private:
