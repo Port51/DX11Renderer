@@ -37,7 +37,7 @@ public:
 		using namespace std::string_literals;
 		return typeid(PixelConstantBuffer).name() + "#"s + identifier + "#"s + std::to_string(slot);
 	}
-	std::string GetUID() const override
+	std::string GetUID() const noexcept override
 	{
 		return GenerateUID(identifier);
 	}

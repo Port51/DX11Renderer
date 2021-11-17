@@ -49,7 +49,7 @@ std::string IndexBuffer::GenerateNontemplatedUID(const std::string& tag)
 	return typeid(IndexBuffer).name() + "#"s + tag;
 }
 
-std::string IndexBuffer::GetUID() const
+std::string IndexBuffer::GetUID() const noexcept
 {
 	return GenerateNontemplatedUID(tag);
 }

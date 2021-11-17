@@ -11,7 +11,7 @@
 class FrameCommander
 {
 public:
-	void Accept(RenderJob job, std::string targetPass)
+	void Accept(RenderJob job, std::string targetPass) noexcept
 	{
 		renderPasses[targetPass].EnqueueJob(job);
 	}
@@ -37,7 +37,7 @@ public:
 		Bind::Stencil::Resolve(gfx, Bind::Stencil::Mode::Mask)->Bind(gfx);
 		passes[2].Execute(gfx);*/
 	}
-	void Reset()
+	void Reset() noexcept
 	{
 		for (auto& p : renderPasses)
 		{

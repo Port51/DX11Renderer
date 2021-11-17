@@ -8,7 +8,7 @@ namespace Bind
 	NullPixelShader::NullPixelShader(Graphics& gfx)
 	{
 	}
-	void NullPixelShader::Bind(Graphics& gfx, UINT slot)
+	void NullPixelShader::Bind(Graphics& gfx, UINT slot) noexcept
 	{
 		GetContext(gfx)->PSSetShader(nullptr, nullptr, 0u);
 	}
@@ -20,7 +20,7 @@ namespace Bind
 	{
 		return typeid(NullPixelShader).name();
 	}
-	std::string NullPixelShader::GetUID() const
+	std::string NullPixelShader::GetUID() const noexcept
 	{
 		return GenerateUID();
 	}

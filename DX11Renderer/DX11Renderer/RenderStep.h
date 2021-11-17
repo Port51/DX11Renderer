@@ -31,7 +31,7 @@ public:
 			b.Bind(gfx);
 		}
 	}
-	void InitializeParentReferences(const MeshRenderer& parent);
+	void InitializeParentReferences(const MeshRenderer& parent) noexcept;
 private:
 	std::string targetPass;
 	std::vector<Binding> bindings;

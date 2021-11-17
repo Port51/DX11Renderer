@@ -19,7 +19,7 @@ std::string Topology::GenerateUID(D3D11_PRIMITIVE_TOPOLOGY type)
 	using namespace std::string_literals;
 	return typeid(Topology).name() + "#"s + std::to_string(type);
 }
-std::string Topology::GetUID() const
+std::string Topology::GetUID() const noexcept
 {
 	return GenerateUID(type);
 }

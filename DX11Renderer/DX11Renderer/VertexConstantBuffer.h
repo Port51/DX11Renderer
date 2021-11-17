@@ -41,7 +41,7 @@ public:
 		using namespace std::string_literals;
 		return typeid(VertexConstantBuffer).name() + "#"s + identifier;
 	}
-	std::string GetUID() const override
+	std::string GetUID() const noexcept override
 	{
 		return GenerateUID(identifier);
 	}
