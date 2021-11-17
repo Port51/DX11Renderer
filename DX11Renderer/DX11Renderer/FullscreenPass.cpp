@@ -1,8 +1,5 @@
 #include "FullscreenPass.h"
 #include "BindableInclude.h"
-#include "VertexBuffer.h"
-#include "VertexBufferData.h"
-#include "RasterizerState.h"
 
 
 namespace Rendergraph
@@ -14,9 +11,9 @@ namespace Rendergraph
 	BindingPass(std::move(name))
 	{
 		// setup fullscreen geometry
-		VertexLayout lay;
-		lay.Append(VertexLayout::Position2D);
-		VertexBufferData bufFull{ lay };
+		Dvtx::VertexLayout lay;
+		lay.Append(Dvtx::VertexLayout::Position2D);
+		Dvtx::VertexBuffer bufFull{ lay };
 		bufFull.EmplaceBack(dx::XMFLOAT2{ -1,1 });
 		bufFull.EmplaceBack(dx::XMFLOAT2{ 1,1 });
 		bufFull.EmplaceBack(dx::XMFLOAT2{ -1,-1 });
@@ -28,8 +25,8 @@ namespace Rendergraph
 		auto vs = Bind::VertexShader::Resolve(gfx, "Fullscreen_VS.cso");
 		AddBind(Bind::InputLayout::Resolve(gfx, lay, vs->GetBytecode()));
 		AddBind(std::move(vs));
-		AddBind(Bind::Topology::Resolve(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
-		AddBind(Bind::RasterizerState::Resolve(gfx, false));
+		AddBind(Bind::Topology::Resolve(gfx));
+		AddBind(Bind::Rasterizer::Resolve(gfx, false));
 	}
 
 	void FullscreenPass::Execute(Graphics& gfx) const

@@ -31,9 +31,3 @@
 #else
 #define SETUP_LOGGING(gfx) HRESULT hr; DxgiInfoManager& infoManager = GetInfoManager((gfx))
 #endif
-
-#ifdef NDEBUG
-#define SETUP_LOGGING_NOHR(gfx)
-#else
-#define SETUP_LOGGING_NOHR(gfx) DxgiInfoManager& infoManager = GetInfoManager((gfx))
-#endif
