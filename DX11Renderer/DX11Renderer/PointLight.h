@@ -4,19 +4,12 @@
 #include "PixelConstantBuffer.h"
 #include "ModelInstance.h"
 
-class Graphics;
-
-namespace Rendergraph
-{
-	class FrameCommander;
-}
-
 class PointLight
 {
 public:
 	PointLight(Graphics& gfx, DirectX::XMFLOAT3 positionWS, DirectX::XMFLOAT3 color, float intensity = 1.f, float range = 2.5f);
 	void DrawImguiControlWindow();
-	void SubmitDrawCalls(Rendergraph::FrameCommander& frame) const;
+	void SubmitDrawCalls(class FrameCommander& frame) const;
 	void Bind(Graphics& gfx, DirectX::FXMMATRIX viewMatrix) const;
 private:
 	struct PointLightCBuf
@@ -35,5 +28,5 @@ private:
 	float range;
 
 	std::unique_ptr<ModelInstance> pModel;
-	mutable Bind::PixelConstantBuffer<PointLightCBuf> globalLightCbuf;
+	mutable PixelConstantBuffer<PointLightCBuf> globalLightCbuf;
 };

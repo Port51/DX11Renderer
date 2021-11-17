@@ -6,16 +6,12 @@
 #include "VertexLayout.h"
 #include "Bindable.h"
 
-namespace Rendergraph
-{
-	class FrameCommander;
-}
-
 namespace Bind
 {
 	class VertexShader;
 	class PixelShader;
 	class MaterialPass;
+	class FrameCommander;
 
 	class Material : public Bindable
 	{
@@ -24,7 +20,7 @@ namespace Bind
 		void Bind(Graphics& gfx, UINT slot) {} // todo: remove
 		void Bind(Graphics& gfx, std::string passName);
 		std::string GetUID() const override;
-		void SubmitDrawCalls(Rendergraph::FrameCommander& frame, const MeshRenderer& renderer) const;
+		void SubmitDrawCalls(FrameCommander& frame, const MeshRenderer& renderer) const;
 	public:
 		const VertexLayout& GetVertexLayout() const;
 		static std::shared_ptr<Bindable> Resolve(Graphics& gfx, const std::string_view assetPath);

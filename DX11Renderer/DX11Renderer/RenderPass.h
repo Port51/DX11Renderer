@@ -16,9 +16,12 @@ namespace Rendergraph
 	public:
 		RenderPass(std::string name);
 		virtual ~RenderPass();
-		void EnqueueJob(RenderJob job);
+		void EnqueueJob(RenderJob job)
+		{
+			jobs.push_back(job);
+		}
 		virtual void Execute(Graphics& gfx) const = 0;
-		virtual void Reset();
+		void Reset();
 		const std::string& GetName() const;
 		const std::vector<std::unique_ptr<Sink>>& GetSinks() const;
 		Source& GetSource(const std::string& registeredName) const;

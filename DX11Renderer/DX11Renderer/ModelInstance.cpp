@@ -16,7 +16,7 @@ ModelInstance::ModelInstance(Graphics& gfx, std::unique_ptr<ModelAsset> const& p
 	pMaterials.reserve(pModelAsset->materialPaths.size());
 	for (const auto& materialPath : pModelAsset->materialPaths)
 	{
-		std::shared_ptr<Bind::Material> pMaterial = std::dynamic_pointer_cast<Bind::Material>(Bind::Material::Resolve(gfx, materialPath.c_str()));
+		std::shared_ptr<Material> pMaterial = std::dynamic_pointer_cast<Material>(Material::Resolve(gfx, materialPath.c_str()));
 		pMaterials.push_back(pMaterial);
 	}
 
@@ -36,7 +36,7 @@ ModelInstance::ModelInstance(Graphics& gfx, std::unique_ptr<ModelAsset> const& p
 	pSceneGraph = CreateModelInstanceNode(gfx, pModelAsset->pSceneGraph);
 }*/
 
-void ModelInstance::SubmitDrawCalls(Rendergraph::FrameCommander& frame) const
+void ModelInstance::SubmitDrawCalls(FrameCommander& frame) const
 {
 	pSceneGraph->SubmitDrawCalls(frame, transform);
 }
@@ -130,9 +130,9 @@ std::unique_ptr<MeshRenderer> ModelInstance::ParseMesh(Graphics& gfx, std::uniqu
 	}
 
 	auto meshTag = "Mesh%" + pMeshAsset->name;
-	auto pVertexBuffer = Bind::VertexBuffer::Resolve(gfx, meshTag, vbuf); // vbuf is passed as const&
-	auto pIndexBuffer = Bind::IndexBuffer::Resolve(gfx, meshTag, indices);
-	auto pTopology = Bind::Topology::Resolve(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	std::shared_ptr<VertexBuffer> pVertexBuffer = VertexBuffer::Resolve(gfx, meshTag, vbuf); // vbuf is passed as const&
+	std::shared_ptr<IndexBuffer> pIndexBuffer = IndexBuffer::Resolve(gfx, meshTag, indices);
+	std::shared_ptr<Topology> pTopology = Topology::Resolve(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	return std::make_unique<MeshRenderer>(gfx, pMeshAsset->name, pMaterial, std::move(pVertexBuffer), std::move(pIndexBuffer), std::move(pTopology));
 }
@@ -144,7 +144,7 @@ Node::Node(int id, const DirectX::XMMATRIX & _transform, std::unique_ptr<MeshRen
 	dx::XMStoreFloat4x4(&appliedTransform, dx::XMMatrixIdentity());
 }
 
-void Node::SubmitDrawCalls(Rendergraph::FrameCommander& frame, DirectX::FXMMATRIX accumulatedTransform) const
+void Node::SubmitDrawCalls(FrameCommander& frame, DirectX::FXMMATRIX accumulatedTransform) const
 {
 	// todo: use this?
 	const auto built =

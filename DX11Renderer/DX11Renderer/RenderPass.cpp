@@ -37,11 +37,6 @@ namespace Rendergraph
 	RenderPass::~RenderPass()
 	{}
 
-	void RenderPass::EnqueueJob(RenderJob job)
-	{
-		jobs.push_back(job);
-	}
-
 	const std::vector<std::unique_ptr<Sink>>& RenderPass::GetSinks() const
 	{
 		return sinks;

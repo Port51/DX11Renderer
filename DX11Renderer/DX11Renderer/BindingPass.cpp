@@ -22,7 +22,7 @@ namespace Rendergraph
 		BindBufferResources(gfx);
 		for (auto& bind : binds)
 		{
-			bind->Bind(gfx, 0u);
+			bind->Bind(gfx);
 		}
 	}
 
