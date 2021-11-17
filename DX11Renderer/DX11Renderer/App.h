@@ -21,7 +21,7 @@ private:
 private:
 	ImguiManager imgui; // must be initialized before wnd
 	Window wnd;
-	Rgph::FrameCommander fc;
+	Rendergraph::FrameCommander fc;
 	Timer timer;
 	bool showDemoWindow = true;
 	Camera cam;

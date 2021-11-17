@@ -3,7 +3,7 @@
 #include "RenderJob.h"
 #include <vector>
 
-namespace Rgph
+namespace Rendergraph
 {
 	class Sink;
 	class Source;

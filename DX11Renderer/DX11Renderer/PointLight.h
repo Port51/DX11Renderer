@@ -6,7 +6,7 @@
 
 class Graphics;
 
-namespace Rgph
+namespace Rendergraph
 {
 	class FrameCommander;
 }
@@ -16,7 +16,7 @@ class PointLight
 public:
 	PointLight(Graphics& gfx, DirectX::XMFLOAT3 positionWS, DirectX::XMFLOAT3 color, float intensity = 1.f, float range = 2.5f);
 	void DrawImguiControlWindow();
-	void SubmitDrawCalls(Rgph::FrameCommander& frame) const;
+	void SubmitDrawCalls(Rendergraph::FrameCommander& frame) const;
 	void Bind(Graphics& gfx, DirectX::FXMMATRIX viewMatrix) const;
 private:
 	struct PointLightCBuf

@@ -5,7 +5,7 @@
 #include "RasterizerState.h"
 
 
-namespace Rgph
+namespace Rendergraph
 {
 	namespace dx = DirectX;
 

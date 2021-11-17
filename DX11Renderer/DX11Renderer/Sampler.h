@@ -10,18 +10,11 @@ namespace Bind
 	class Sampler : public Bindable
 	{
 	public:
-		enum class Type
-		{
-			Anisotropic,
-			Bilinear,
-			Point,
-		};
-	public:
-		Sampler(Graphics& gfx, Type type, bool reflect);
-		Sampler(Graphics& gfx, Type type, bool reflect, D3D11_TEXTURE_ADDRESS_MODE wrapU);
-		Sampler(Graphics& gfx, Type type, bool reflect, D3D11_TEXTURE_ADDRESS_MODE wrapU, D3D11_TEXTURE_ADDRESS_MODE wrapV);
-		Sampler(Graphics& gfx, Type type, bool reflect, D3D11_TEXTURE_ADDRESS_MODE wrapU, D3D11_TEXTURE_ADDRESS_MODE wrapV, D3D11_TEXTURE_ADDRESS_MODE wrapW);
-		Sampler(Graphics& gfx, Type type, bool reflect, D3D11_SAMPLER_DESC samplerDesc);
+		Sampler(Graphics& gfx);
+		Sampler(Graphics& gfx, D3D11_TEXTURE_ADDRESS_MODE wrapU);
+		Sampler(Graphics& gfx, D3D11_TEXTURE_ADDRESS_MODE wrapU, D3D11_TEXTURE_ADDRESS_MODE wrapV);
+		Sampler(Graphics& gfx, D3D11_TEXTURE_ADDRESS_MODE wrapU, D3D11_TEXTURE_ADDRESS_MODE wrapV, D3D11_TEXTURE_ADDRESS_MODE wrapW);
+		Sampler(Graphics& gfx, D3D11_SAMPLER_DESC samplerDesc);
 		void Bind(Graphics& gfx, UINT slot) override;
 		std::string GetUID() const override;
 	public:
@@ -29,7 +22,5 @@ namespace Bind
 		static std::string GenerateUID();
 	protected:
 		Microsoft::WRL::ComPtr<ID3D11SamplerState> pSampler;
-		Type type;
-		bool reflect;
 	};
 }

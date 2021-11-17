@@ -7,7 +7,7 @@
 #include "Sink.h"
 #include "Source.h"
 
-namespace Rgph
+namespace Rendergraph
 {
 	RenderPass::RenderPass(std::string name)
 		:

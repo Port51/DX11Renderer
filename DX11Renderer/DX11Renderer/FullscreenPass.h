@@ -9,7 +9,7 @@ namespace Bind
 	class InputLayout;
 }
 
-namespace Rgph
+namespace Rendergraph
 {
 	class FullscreenPass : public BindingPass
 	{

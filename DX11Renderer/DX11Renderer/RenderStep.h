@@ -8,7 +8,7 @@
 class MeshRenderer;
 class Graphics;
 
-namespace Rgph
+namespace Rendergraph
 {
 	class FrameCommander;
 

@@ -85,6 +85,12 @@
     <Filter Include="Assets\Materials">
       <UniqueIdentifier>{60d3db6c-6340-4eee-b82f-f30610c7fe41}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\RenderJobs">
+      <UniqueIdentifier>{bca483fe-0738-45ec-8d54-fe4ff1adacd9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\RenderJobs">
+      <UniqueIdentifier>{3475f071-91f2-4ab0-b967-6e633f8ea2a5}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Header Files\Bindable\Shaders">
       <UniqueIdentifier>{a34e611c-f20c-40ec-98ed-6d7680b4b871}</UniqueIdentifier>
     </Filter>
@@ -103,29 +109,17 @@
     <Filter Include="Header Files\Util">
       <UniqueIdentifier>{61312ed5-1bd1-4456-b9e5-271c16d6a2b3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\RenderGraph">
-      <UniqueIdentifier>{bca483fe-0738-45ec-8d54-fe4ff1adacd9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\RenderGraph\Passes">
-      <UniqueIdentifier>{55a59753-cc02-402c-8820-7ccc02d71a3d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\RenderGraph\Util">
-      <UniqueIdentifier>{ad392a7f-9dc0-4a51-8165-3d777f1306e7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\RenderGraph">
-      <UniqueIdentifier>{3475f071-91f2-4ab0-b967-6e633f8ea2a5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\RenderGraph\Passes">
+    <Filter Include="Source Files\RenderJobs\Passes">
       <UniqueIdentifier>{4b2e0112-f9b8-49b7-a5fb-8030f1b5f116}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\RenderGraph\Util">
+    <Filter Include="Header Files\RenderJobs\Passes">
+      <UniqueIdentifier>{55a59753-cc02-402c-8820-7ccc02d71a3d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\RenderJobs\Util">
+      <UniqueIdentifier>{ad392a7f-9dc0-4a51-8165-3d777f1306e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\RenderJobs\Util">
       <UniqueIdentifier>{eb5d49ee-c6bf-495a-a0a8-0131abf3eaf4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\RenderGraph\Graphs">
-      <UniqueIdentifier>{06486aee-d0fa-4e7e-8238-4e587601ec21}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\RenderGraph\Graphs">
-      <UniqueIdentifier>{88754759-07a8-43fd-b26a-18b801880133}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -244,7 +238,7 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Technique.cpp">
-      <Filter>Source Files\RenderGraph</Filter>
+      <Filter>Source Files\RenderJobs</Filter>
     </ClCompile>
     <ClCompile Include="NullPixelShader.cpp">
       <Filter>Source Files\Bindable\Shaders</Filter>
@@ -271,49 +265,37 @@
       <Filter>Source Files\Bindable</Filter>
     </ClCompile>
     <ClCompile Include="RenderJob.cpp">
-      <Filter>Source Files\RenderGraph</Filter>
+      <Filter>Source Files\RenderJobs</Filter>
     </ClCompile>
     <ClCompile Include="RenderStep.cpp">
-      <Filter>Source Files\RenderGraph</Filter>
+      <Filter>Source Files\RenderJobs</Filter>
     </ClCompile>
     <ClCompile Include="RenderPass.cpp">
-      <Filter>Source Files\RenderGraph</Filter>
+      <Filter>Source Files\RenderJobs</Filter>
     </ClCompile>
     <ClCompile Include="BufferClearPass.cpp">
-      <Filter>Source Files\RenderGraph\Passes</Filter>
+      <Filter>Source Files\RenderJobs\Passes</Filter>
     </ClCompile>
     <ClCompile Include="BindingPass.cpp">
-      <Filter>Source Files\RenderGraph\Passes</Filter>
+      <Filter>Source Files\RenderJobs\Passes</Filter>
     </ClCompile>
     <ClCompile Include="RenderTarget.cpp">
       <Filter>Source Files\Bindable</Filter>
     </ClCompile>
     <ClCompile Include="FullscreenPass.cpp">
-      <Filter>Source Files\RenderGraph\Passes</Filter>
+      <Filter>Source Files\RenderJobs\Passes</Filter>
     </ClCompile>
     <ClCompile Include="RenderQueuePass.cpp">
-      <Filter>Source Files\RenderGraph\Passes</Filter>
+      <Filter>Source Files\RenderJobs\Passes</Filter>
     </ClCompile>
     <ClCompile Include="Sink.cpp">
-      <Filter>Source Files\RenderGraph\Util</Filter>
+      <Filter>Source Files\RenderJobs\Util</Filter>
     </ClCompile>
     <ClCompile Include="Source.cpp">
-      <Filter>Source Files\RenderGraph\Util</Filter>
+      <Filter>Source Files\RenderJobs\Util</Filter>
     </ClCompile>
     <ClCompile Include="RenderGraphCompileException.cpp">
-      <Filter>Source Files\RenderGraph\Util</Filter>
-    </ClCompile>
-    <ClCompile Include="RenderGraph.cpp">
-      <Filter>Source Files\RenderGraph</Filter>
-    </ClCompile>
-    <ClCompile Include="TiledRenderGraph.cpp">
-      <Filter>Source Files\RenderGraph\Graphs</Filter>
-    </ClCompile>
-    <ClCompile Include="HorizontalBlurPass.cpp">
-      <Filter>Source Files\RenderGraph\Passes</Filter>
-    </ClCompile>
-    <ClCompile Include="Blender.cpp">
-      <Filter>Source Files\Bindable</Filter>
+      <Filter>Source Files\RenderJobs\Util</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -516,10 +498,10 @@
       <Filter>Header Files\Bindable</Filter>
     </ClInclude>
     <ClInclude Include="FrameCommander.h">
-      <Filter>Header Files\RenderGraph</Filter>
+      <Filter>Header Files\RenderJobs</Filter>
     </ClInclude>
     <ClInclude Include="Technique.h">
-      <Filter>Header Files\RenderGraph</Filter>
+      <Filter>Header Files\RenderJobs</Filter>
     </ClInclude>
     <ClInclude Include="NullPixelShader.h">
       <Filter>Header Files\Bindable\Shaders</Filter>
@@ -546,19 +528,19 @@
       <Filter>Header Files\Bindable</Filter>
     </ClInclude>
     <ClInclude Include="RenderPass.h">
-      <Filter>Header Files\RenderGraph</Filter>
+      <Filter>Header Files\RenderJobs</Filter>
     </ClInclude>
     <ClInclude Include="RenderJob.h">
-      <Filter>Header Files\RenderGraph</Filter>
+      <Filter>Header Files\RenderJobs</Filter>
     </ClInclude>
     <ClInclude Include="RenderStep.h">
-      <Filter>Header Files\RenderGraph</Filter>
+      <Filter>Header Files\RenderJobs</Filter>
     </ClInclude>
     <ClInclude Include="BufferClearPass.h">
-      <Filter>Header Files\RenderGraph\Passes</Filter>
+      <Filter>Header Files\RenderJobs\Passes</Filter>
     </ClInclude>
     <ClInclude Include="BindingPass.h">
-      <Filter>Header Files\RenderGraph\Passes</Filter>
+      <Filter>Header Files\RenderJobs\Passes</Filter>
     </ClInclude>
     <ClInclude Include="RenderTarget.h">
       <Filter>Header Files\Bindable</Filter>
@@ -567,34 +549,19 @@
       <Filter>Header Files\Bindable\Buffers</Filter>
     </ClInclude>
     <ClInclude Include="FullscreenPass.h">
-      <Filter>Header Files\RenderGraph\Passes</Filter>
+      <Filter>Header Files\RenderJobs\Passes</Filter>
     </ClInclude>
     <ClInclude Include="RenderQueuePass.h">
-      <Filter>Header Files\RenderGraph\Passes</Filter>
+      <Filter>Header Files\RenderJobs\Passes</Filter>
     </ClInclude>
     <ClInclude Include="Sink.h">
-      <Filter>Header Files\RenderGraph\Util</Filter>
+      <Filter>Header Files\RenderJobs\Util</Filter>
     </ClInclude>
     <ClInclude Include="Source.h">
-      <Filter>Header Files\RenderGraph\Util</Filter>
+      <Filter>Header Files\RenderJobs\Util</Filter>
     </ClInclude>
     <ClInclude Include="RenderGraphCompileException.h">
-      <Filter>Header Files\RenderGraph\Util</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderGraph.h">
-      <Filter>Header Files\RenderGraph</Filter>
-    </ClInclude>
-    <ClInclude Include="TiledRenderGraph.h">
-      <Filter>Header Files\RenderGraph\Graphs</Filter>
-    </ClInclude>
-    <ClInclude Include="HorizontalBlurPass.h">
-      <Filter>Header Files\RenderGraph\Passes</Filter>
-    </ClInclude>
-    <ClInclude Include="Blender.h">
-      <Filter>Header Files\Bindable</Filter>
-    </ClInclude>
-    <ClInclude Include="ConstantBuffersEx.h">
-      <Filter>Header Files\Bindable\Buffers</Filter>
+      <Filter>Header Files\RenderJobs\Util</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

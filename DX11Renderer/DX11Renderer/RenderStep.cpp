@@ -3,7 +3,7 @@
 #include "FrameCommander.h"
 #include "Graphics.h"
 
-namespace Rgph
+namespace Rendergraph
 {
 	void RenderStep::AddBinding(std::shared_ptr<Bind::Bindable> pBindable, UINT slot)
 	{

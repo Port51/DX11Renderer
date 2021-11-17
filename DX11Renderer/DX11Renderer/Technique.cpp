@@ -2,7 +2,7 @@
 #include "MeshRenderer.h"
 #include "FrameCommander.h"
 
-namespace Rgph
+namespace Rendergraph
 {
 	void Technique::SubmitDrawCalls(FrameCommander& frame, const MeshRenderer& renderer) const
 	{

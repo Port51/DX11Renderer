@@ -12,12 +12,12 @@ namespace Bind
 
 	}
 
-	void MaterialPass::AddTechnique(std::unique_ptr<Rgph::Technique> _pTechnique)
+	void MaterialPass::AddTechnique(std::unique_ptr<Rendergraph::Technique> _pTechnique)
 	{
 		pTechnique = std::move(_pTechnique);
 	}
 
-	void MaterialPass::SubmitDrawCalls(Rgph::FrameCommander& frame, const MeshRenderer& renderer) const
+	void MaterialPass::SubmitDrawCalls(Rendergraph::FrameCommander& frame, const MeshRenderer& renderer) const
 	{
 		pTechnique->SubmitDrawCalls(frame, renderer);
 	}

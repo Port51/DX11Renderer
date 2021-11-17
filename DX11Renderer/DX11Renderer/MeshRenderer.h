@@ -16,7 +16,7 @@ namespace Bind
 	class Topology;
 	class TransformCbuf;
 }
-namespace Rgph
+namespace Rendergraph
 {
 	class FrameCommander;
 }
@@ -26,7 +26,7 @@ class MeshRenderer
 public:
 	MeshRenderer(Graphics& gfx, std::string name, std::shared_ptr<Bind::Material> pMaterial, std::shared_ptr<Bind::VertexBuffer> pVertexBuffer, std::shared_ptr<Bind::IndexBuffer> pIndexBuffer, std::shared_ptr<Bind::Topology> pTopologyBuffer);
 	DirectX::XMMATRIX GetTransformXM() const;
-	void SubmitDrawCalls(Rgph::FrameCommander& frame, dx::FXMMATRIX _accumulatedTranform) const;
+	void SubmitDrawCalls(Rendergraph::FrameCommander& frame, dx::FXMMATRIX _accumulatedTranform) const;
 	void Bind(Graphics& gfx) const;
 	UINT GetIndexCount() const;
 private:

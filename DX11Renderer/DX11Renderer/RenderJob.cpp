@@ -2,7 +2,7 @@
 #include "RenderStep.h"
 #include "MeshRenderer.h"
 
-namespace Rgph
+namespace Rendergraph
 {
 	RenderJob::RenderJob(const RenderStep* pStep, const MeshRenderer* pRenderer)
 		:

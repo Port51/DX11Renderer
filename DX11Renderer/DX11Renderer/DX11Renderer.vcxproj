@@ -163,7 +163,6 @@
     <ClCompile Include="Bindable.cpp" />
     <ClCompile Include="Binding.cpp" />
     <ClCompile Include="BindingPass.cpp" />
-    <ClCompile Include="Blender.cpp" />
     <ClCompile Include="BufferClearPass.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="ChiliUtil.cpp" />
@@ -175,7 +174,6 @@
     <ClCompile Include="GDIPlusManager.cpp" />
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="GraphicsResource.cpp" />
-    <ClCompile Include="HorizontalBlurPass.cpp" />
     <ClCompile Include="ImguiManager.cpp" />
     <ClCompile Include="Imgui\imgui.cpp" />
     <ClCompile Include="Imgui\imgui_demo.cpp" />
@@ -186,7 +184,6 @@
     <ClCompile Include="Imgui\imgui_impl_win32.cpp" />
     <ClCompile Include="IndexBuffer.cpp" />
     <ClCompile Include="InputLayout.cpp" />
-    <ClCompile Include="RenderGraph.cpp" />
     <ClCompile Include="RenderGraphCompileException.cpp" />
     <ClCompile Include="RenderJob.cpp" />
     <ClCompile Include="Keyboard.cpp" />
@@ -211,7 +208,6 @@
     <ClCompile Include="Surface.cpp" />
     <ClCompile Include="Technique.cpp" />
     <ClCompile Include="Texture.cpp" />
-    <ClCompile Include="TiledRenderGraph.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Topology.cpp" />
     <ClCompile Include="TransformCbuf.cpp" />
@@ -227,7 +223,6 @@
     <ClInclude Include="BaseMesh.h" />
     <ClInclude Include="Binding.h" />
     <ClInclude Include="BindingPass.h" />
-    <ClInclude Include="Blender.h" />
     <ClInclude Include="BufferClearPass.h" />
     <ClInclude Include="BufferResource.h" />
     <ClInclude Include="Colors.h" />
@@ -238,7 +233,6 @@
     <ClInclude Include="ChiliUtil.h" />
     <ClInclude Include="Cone.h" />
     <ClInclude Include="ConstantBuffer.h" />
-    <ClInclude Include="ConstantBuffersEx.h" />
     <ClInclude Include="ConstVertex.h" />
     <ClInclude Include="Cube.h" />
     <ClInclude Include="CustomException.h" />
@@ -254,7 +248,6 @@
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="GraphicsResource.h" />
     <ClInclude Include="GraphicsThrowMacros.h" />
-    <ClInclude Include="HorizontalBlurPass.h" />
     <ClInclude Include="ImguiManager.h" />
     <ClInclude Include="Imgui\imconfig.h" />
     <ClInclude Include="Imgui\imgui.h" />
@@ -267,7 +260,6 @@
     <ClInclude Include="IndexBuffer.h" />
     <ClInclude Include="IndexedTriangleList.h" />
     <ClInclude Include="InputLayout.h" />
-    <ClInclude Include="RenderGraph.h" />
     <ClInclude Include="RenderGraphCompileException.h" />
     <ClInclude Include="RenderJob.h" />
     <ClInclude Include="Keyboard.h" />
@@ -302,7 +294,6 @@
     <ClInclude Include="Surface.h" />
     <ClInclude Include="Technique.h" />
     <ClInclude Include="Texture.h" />
-    <ClInclude Include="TiledRenderGraph.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Topology.h" />
     <ClInclude Include="TransformCbuf.h" />

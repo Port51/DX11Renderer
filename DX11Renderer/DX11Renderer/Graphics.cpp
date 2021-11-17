@@ -4,7 +4,6 @@
 #include <d3dcompiler.h>
 #include <DirectXMath.h>
 #include "GraphicsThrowMacros.h"
-#include "RenderTarget.h"
 #include "Imgui/imgui_impl_dx11.h"
 #include "Imgui/imgui_impl_win32.h"
 
@@ -202,11 +201,6 @@ UINT Graphics::GetWidth() const
 UINT Graphics::GetHeight() const
 {
 	return height;
-}
-
-std::shared_ptr<Bind::RenderTarget> Graphics::GetTarget()
-{
-	return pTarget;
 }
 
 void Graphics::DrawIndexed(UINT count)

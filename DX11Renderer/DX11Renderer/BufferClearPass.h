@@ -6,7 +6,7 @@ namespace Bind
 	class BufferResource;
 }
 
-namespace Rgph
+namespace Rendergraph
 {
 	class BufferClearPass : public RenderPass
 	{

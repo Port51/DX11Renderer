@@ -6,7 +6,7 @@
 #include "Bindable.h"
 #include "Technique.h"
 
-namespace Rgph
+namespace Rendergraph
 {
 	class Technique;
 	class FrameCommander;
@@ -27,13 +27,13 @@ namespace Bind
 	public:
 		MaterialPass();
 	public:
-		void AddTechnique(std::unique_ptr<Rgph::Technique> _pTechnique);
-		void SubmitDrawCalls(Rgph::FrameCommander& frame, const MeshRenderer& renderer) const;
+		void AddTechnique(std::unique_ptr<Rendergraph::Technique> _pTechnique);
+		void SubmitDrawCalls(Rendergraph::FrameCommander& frame, const MeshRenderer& renderer) const;
 	public:
 		std::shared_ptr<VertexShader> pVertexShader;
 		std::shared_ptr<PixelShader> pPixelShader;
 	private:
 		Material* pParent;
-		std::unique_ptr<Rgph::Technique> pTechnique;
+		std::unique_ptr<Rendergraph::Technique> pTechnique;
 	};
 }

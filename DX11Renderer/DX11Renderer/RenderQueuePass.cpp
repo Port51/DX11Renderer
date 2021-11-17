@@ -1,6 +1,6 @@
 #include "RenderQueuePass.h"
 
-namespace Rgph
+namespace Rendergraph
 {
 	void RenderQueuePass::Accept(RenderJob job)
 	{

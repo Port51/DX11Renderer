@@ -11,11 +11,6 @@
 #include <random>
 #include "Log.h"
 
-namespace Bind
-{
-	class RenderTarget;
-}
-
 class Graphics
 {
 	//friend class Bindable;
@@ -74,7 +69,6 @@ public:
 	bool IsImguiEnabled() const;
 	UINT GetWidth() const;
 	UINT GetHeight() const;
-	std::shared_ptr<Bind::RenderTarget> GetTarget();
 public:
 	void SetProjectionMatrix(DirectX::FXMMATRIX proj);
 	DirectX::XMMATRIX GetProjectionMatrix() const;
@@ -89,7 +83,6 @@ public:
 	Microsoft::WRL::ComPtr<ID3D11Device> pDevice;
 	// Used for configuring pipeline and executing render commands
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> pContext;
-	std::shared_ptr<Bind::RenderTarget> pTarget;
 
 private:
 	bool imguiEnabled = true;
