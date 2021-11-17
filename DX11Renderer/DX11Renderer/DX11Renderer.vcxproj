@@ -228,7 +228,6 @@
     <ClInclude Include="Binding.h" />
     <ClInclude Include="BindingPass.h" />
     <ClInclude Include="Blender.h" />
-    <ClInclude Include="Buffer.h" />
     <ClInclude Include="BufferClearPass.h" />
     <ClInclude Include="BufferResource.h" />
     <ClInclude Include="Colors.h" />

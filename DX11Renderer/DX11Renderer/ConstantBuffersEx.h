@@ -1,6 +1,8 @@
 #pragma once
 #include "Bindable.h"
 #include "GraphicsThrowMacros.h"
+#include "DynamicConstant.h"
+#include "TechniqueProbe.h"
 
 namespace Bind
 {
@@ -59,7 +61,7 @@ namespace Bind
 	{
 	public:
 		using ConstantBufferEx::ConstantBufferEx;
-		void Bind(Graphics& gfx, UINT slot) override
+		void Bind(Graphics& gfx) noxnd override
 		{
 			SETUP_LOGGING_NOHR(gfx);
 			GFX_THROW_INFO_ONLY(GetContext(gfx)->PSSetConstantBuffers(slot, 1u, pConstantBuffer.GetAddressOf()));
@@ -70,7 +72,7 @@ namespace Bind
 	{
 	public:
 		using ConstantBufferEx::ConstantBufferEx;
-		void Bind(Graphics& gfx, UINT slot) override
+		void Bind(Graphics& gfx) noxnd override
 		{
 			SETUP_LOGGING_NOHR(gfx);
 			GFX_THROW_INFO_ONLY(GetContext(gfx)->VSSetConstantBuffers(slot, 1u, pConstantBuffer.GetAddressOf()));
@@ -104,7 +106,7 @@ namespace Bind
 			buf.CopyFrom(buf_in);
 			dirty = true;
 		}
-		void Bind(Graphics& gfx) override
+		void Bind(Graphics& gfx) noxnd override
 		{
 			if (dirty)
 			{

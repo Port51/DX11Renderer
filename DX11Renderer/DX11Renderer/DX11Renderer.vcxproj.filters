@@ -596,9 +596,6 @@
     <ClInclude Include="ConstantBuffersEx.h">
       <Filter>Header Files\Bindable\Buffers</Filter>
     </ClInclude>
-    <ClInclude Include="Buffer.h">
-      <Filter>Header Files\Bindable\Buffers</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DX11Renderer.rc">

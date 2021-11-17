@@ -5,25 +5,6 @@
 
 namespace Rgph
 {
-	RenderStep::RenderStep(std::string _targetPass)
-		: targetPass(std::move(_targetPass))
-	{}
-	RenderStep::RenderStep(const RenderStep & src)
-		: targetPass(src.targetPass)
-	{
-		bindings.reserve(src.bindings.size());
-		for (auto& pb : src.bindings)
-		{
-			if (auto* pCloning = dynamic_cast<const Bind::CloningBindable*>(pb.get()))
-			{
-				bindings.push_back(pCloning->Clone());
-			}
-			else
-			{
-				bindings.push_back(pb);
-			}
-		}
-	}
 	void RenderStep::AddBinding(std::shared_ptr<Bind::Bindable> pBindable, UINT slot)
 	{
 		bindings.push_back(Bind::Binding(std::move(pBindable), slot));
