@@ -4,6 +4,7 @@
 #include <wrl.h>
 
 class Graphics;
+class DepthStencil;
 struct ID3D11DepthStencilView;
 struct ID3D11Texture2D;
 struct ID3D11RenderTargetView;
@@ -11,7 +12,6 @@ struct ID3D11ShaderResourceView;
 
 namespace Bind
 {
-	class DepthStencil;
 
 	class RenderTarget : public Bindable, public BufferResource
 	{
