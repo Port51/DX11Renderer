@@ -5,50 +5,47 @@
 #include <string>
 #include "ChiliUtil.h"
 
-namespace Bind
+using namespace std::string_literals;
+
+VertexShader::VertexShader(Graphics& gfx, const std::string& path)
+	: path(path)
 {
-	using namespace std::string_literals;
+	SETUP_LOGGING(gfx);
 
-	VertexShader::VertexShader(Graphics& gfx, const std::string& path)
-		: path(path)
-	{
-		SETUP_LOGGING(gfx);
+	std::wstring wide{ path.begin(), path.end()}; // convert to wide for file read <-- won't work for special characters
+	GFX_THROW_INFO(D3DReadFileToBlob(wide.c_str(), &pBytecodeBlob));
+	GFX_THROW_INFO(GetDevice(gfx)->CreateVertexShader(
+		pBytecodeBlob->GetBufferPointer(),
+		pBytecodeBlob->GetBufferSize(),
+		nullptr,
+		&pVertexShader
+	));
+}
 
-		std::wstring wide{ path.begin(), path.end() }; // convert to wide for file read <-- won't work for special characters
-		GFX_THROW_INFO(D3DReadFileToBlob(wide.c_str(), &pBytecodeBlob));
-		GFX_THROW_INFO(GetDevice(gfx)->CreateVertexShader(
-			pBytecodeBlob->GetBufferPointer(),
-			pBytecodeBlob->GetBufferSize(),
-			nullptr,
-			&pVertexShader
-		));
-	}
+void VertexShader::Bind(Graphics& gfx, UINT slot)
+{
+	GetContext(gfx)->VSSetShader(pVertexShader.Get(), nullptr, 0u);
+}
 
-	void VertexShader::Bind(Graphics& gfx, UINT slot)
-	{
-		GetContext(gfx)->VSSetShader(pVertexShader.Get(), nullptr, 0u);
-	}
+ID3DBlob* VertexShader::GetBytecode() const
+{
+	return pBytecodeBlob.Get();
+}
 
-	ID3DBlob* VertexShader::GetBytecode() const
-	{
-		return pBytecodeBlob.Get();
-	}
+///
+/// If needed, will create bindable and add to bindable codex
+///
+std::shared_ptr<Bindable> VertexShader::Resolve(Graphics& gfx, const std::string& path)
+{
+	return Bind::Codex::Resolve<VertexShader>(gfx, path);
+}
 
-	///
-	/// If needed, will create bindable and add to bindable codex
-	///
-	std::shared_ptr<Bindable> VertexShader::Resolve(Graphics& gfx, const std::string& path)
-	{
-		return Bind::Codex::Resolve<VertexShader>(gfx, path);
-	}
+std::string VertexShader::GenerateUID(const std::string& path)
+{
+	return typeid(VertexShader).name() + "#"s + path;
+}
 
-	std::string VertexShader::GenerateUID(const std::string& path)
-	{
-		return typeid(VertexShader).name() + "#"s + path;
-	}
-
-	std::string VertexShader::GetUID() const
-	{
-		return GenerateUID(path);
-	}
+std::string VertexShader::GetUID() const
+{
+	return GenerateUID(path);
 }

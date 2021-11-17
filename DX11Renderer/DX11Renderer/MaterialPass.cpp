@@ -5,21 +5,17 @@
 #include "PixelShader.h"
 #include "Binding.h"
 
-namespace Bind
+MaterialPass::MaterialPass()
 {
-	MaterialPass::MaterialPass()
-	{
+	
+}
 
-	}
+void MaterialPass::AddTechnique(std::unique_ptr<Technique> _pTechnique)
+{
+	pTechnique = std::move(_pTechnique);
+}
 
-	void MaterialPass::AddTechnique(std::unique_ptr<Technique> _pTechnique)
-	{
-		pTechnique = std::move(_pTechnique);
-	}
-
-	void MaterialPass::SubmitDrawCalls(FrameCommander& frame, const MeshRenderer& renderer) const
-	{
-		pTechnique->SubmitDrawCalls(frame, renderer);
-	}
-
+void MaterialPass::SubmitDrawCalls(FrameCommander& frame, const MeshRenderer& renderer) const
+{
+	pTechnique->SubmitDrawCalls(frame, renderer);
 }

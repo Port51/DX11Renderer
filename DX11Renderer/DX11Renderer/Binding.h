@@ -3,20 +3,16 @@
 #include "WindowsInclude.h"
 
 class Graphics;
+class Bindable;
 
-namespace Bind
+class Binding
 {
-	class Bindable;
-
-	class Binding
-	{
-	public:
-		Binding(std::shared_ptr<Bindable> _pBindable, UINT _slot);
-		~Binding() = default;
-		void Bind(Graphics& gfx) const;
-		std::shared_ptr<Bindable> GetBindable() const;
-	private:
-		std::shared_ptr<Bindable> pBindable;
-		UINT slot;
-	};
-}
+public:
+	Binding(std::shared_ptr<Bindable> _pBindable, UINT _slot);
+	~Binding() = default;
+	void Bind(Graphics& gfx) const;
+	std::shared_ptr<Bindable> GetBindable() const;
+private:
+	std::shared_ptr<Bindable> pBindable;
+	UINT slot;
+};

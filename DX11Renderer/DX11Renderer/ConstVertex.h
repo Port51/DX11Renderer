@@ -7,12 +7,12 @@
 class ConstVertex
 {
 public:
-	ConstVertex(const Vertex& v)
+	ConstVertex(const Vertex& v)(!IS_DEBUG)
 		:
 		vertex(v)
 	{}
 	template<VertexLayout::ElementType Type>
-	const auto& Attr() const
+	const auto& Attr() const(!IS_DEBUG)
 	{
 		return const_cast<Vertex&>(vertex).Attr<Type>();
 	}

@@ -6,8 +6,6 @@
 class Graphics;
 class Drawable;
 
-namespace Bind
-{
 class TransformCbufWithPixelBind : public TransformCbuf
 {
 public:
@@ -17,6 +15,4 @@ protected:
 	void UpdateBindImpl(Graphics& gfx, const Transforms& transforms) override;
 private:
 	static std::unique_ptr<PixelConstantBuffer<Transforms>> pPcbuf;
-};
-}
-*/
+};*/

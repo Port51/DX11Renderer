@@ -3,14 +3,13 @@
 #include "BufferResource.h"
 #include <wrl.h>
 
-class Graphics;
-class DepthStencil;
-class ID3D11DepthStencilView;
-class ID3D11Texture2D;
-class ID3D11RenderTargetView;
-
 namespace Bind
 {
+	class Graphics;
+	class DepthStencil;
+	class ID3D11DepthStencilView;
+	class ID3D11Texture2D;
+	class ID3D11RenderTargetView;
 
 	class RenderTarget : public Bindable, public BufferResource
 	{
@@ -36,7 +35,7 @@ namespace Bind
 	{
 	public:
 		ShaderInputRenderTarget(Graphics& gfx, UINT width, UINT height, UINT slot);
-		void Bind(Graphics& gfx, UINT slot) override;
+		void Bind(Graphics& gfx) override;
 	private:
 		UINT slot;
 		Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pShaderResourceView;
@@ -47,7 +46,7 @@ namespace Bind
 	{
 		friend Graphics;
 	public:
-		void Bind(Graphics& gfx, UINT slot) override;
+		void Bind(Graphics& gfx) override;
 	private:
 		OutputOnlyRenderTarget(Graphics& gfx, ID3D11Texture2D* pTexture);
 	};

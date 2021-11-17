@@ -6,30 +6,27 @@
 #include "Bindable.h"
 #include "Technique.h"
 
-namespace Bind
-{
-	class Technique;
-	class VertexShader;
-	class PixelShader;
-	class Material;
-	class FrameCommander;
-	class Binding;
+class Technique;
+class VertexShader;
+class PixelShader;
+class Material;
+class FrameCommander;
+class Binding;
 
-	///
-	/// Collection of bindables needed to execute a material pass in a technique
-	///
-	class MaterialPass
-	{
-	public:
-		MaterialPass();
-	public:
-		void AddTechnique(std::unique_ptr<Technique> _pTechnique);
-		void SubmitDrawCalls(FrameCommander& frame, const MeshRenderer& renderer) const;
-	public:
-		std::shared_ptr<VertexShader> pVertexShader;
-		std::shared_ptr<PixelShader> pPixelShader;
-	private:
-		Material* pParent;
-		std::unique_ptr<Technique> pTechnique;
-	};
-}
+///
+/// Collection of bindables needed to execute a material pass in a technique
+///
+class MaterialPass
+{
+public:
+	MaterialPass();
+public:
+	void AddTechnique(std::unique_ptr<Technique> _pTechnique);
+	void SubmitDrawCalls(FrameCommander& frame, const MeshRenderer& renderer) const;
+public:
+	std::shared_ptr<VertexShader> pVertexShader;
+	std::shared_ptr<PixelShader> pPixelShader;
+private:
+	Material* pParent;
+	std::unique_ptr<Technique> pTechnique;
+};
