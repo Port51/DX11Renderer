@@ -9,7 +9,11 @@
 class RenderPass
 {
 public:
-	void EnqueueJob(RenderJob job) noexcept
+	RenderPass()
+	{
+
+	}
+	void EnqueueJob(RenderJob job)
 	{
 		jobs.push_back(job);
 	}
@@ -20,7 +24,7 @@ public:
 			j.Execute(gfx);
 		}
 	}
-	void Reset() noexcept
+	void Reset()
 	{
 		jobs.clear();
 	}

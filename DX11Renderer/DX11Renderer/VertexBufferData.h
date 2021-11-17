@@ -9,29 +9,29 @@
 class VertexBufferData
 {
 public:
-	VertexBufferData(const VertexLayout& layout) noexcept(!IS_DEBUG)
+	VertexBufferData(const VertexLayout& layout)
 		: layout(layout)
 	{}
-	const char* GetData() const noexcept(!IS_DEBUG)
+	const char* GetData() const
 	{
 		return buffer.data();
 	}
-	const VertexLayout& GetLayout() const noexcept
+	const VertexLayout& GetLayout() const
 	{
 		return layout;
 	}
 	// Vertex count
-	size_t Size() const noexcept(!IS_DEBUG)
+	size_t Size() const
 	{
 		return buffer.size() / layout.Size();
 	}
-	size_t SizeBytes() const noexcept(!IS_DEBUG)
+	size_t SizeBytes() const
 	{
 		return buffer.size();
 	}
 	// Place at back (end) of buffer
 	template<typename ...Params>
-	void EmplaceBack(Params&&... params) noexcept(!IS_DEBUG)
+	void EmplaceBack(Params&&... params)
 	{
 		assert(sizeof...(params) == layout.GetElementCount() && "Param count doesn't match number of vertex elements");
 		buffer.resize(buffer.size() + layout.Size());
@@ -40,31 +40,31 @@ public:
 		Back().SetAttributeByIndex(0u, std::forward<Params>(params)...);
 	}
 	// Last
-	Vertex Back() noexcept(!IS_DEBUG)
+	Vertex Back()
 	{
 		assert(buffer.size() != 0u);
 		return Vertex{ buffer.data() + buffer.size() - layout.Size(),layout };
 	}
 	// First
-	Vertex Front() noexcept(!IS_DEBUG)
+	Vertex Front()
 	{
 		assert(buffer.size() != 0u);
 		return Vertex{ buffer.data(),layout };
 	}
-	Vertex operator[](size_t i) noexcept(!IS_DEBUG)
+	Vertex operator[](size_t i)
 	{
 		assert(i < Size());
 		return Vertex{ buffer.data() + layout.Size() * i,layout };
 	}
-	ConstVertex Back() const noexcept(!IS_DEBUG)
+	ConstVertex Back() const
 	{
 		return const_cast<VertexBufferData*>(this)->Back();
 	}
-	ConstVertex Front() const noexcept(!IS_DEBUG)
+	ConstVertex Front() const
 	{
 		return const_cast<VertexBufferData*>(this)->Front();
 	}
-	ConstVertex operator[](size_t i) const noexcept(!IS_DEBUG)
+	ConstVertex operator[](size_t i) const
 	{
 		return const_cast<VertexBufferData&>(*this)[i];
 	}

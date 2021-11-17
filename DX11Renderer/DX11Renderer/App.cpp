@@ -1,6 +1,5 @@
 #include "App.h"
 #include <memory>
-#include "GeoMath.h"
 #include "Surface.h"
 #include "MeshRenderer.h"
 #include "ModelInstance.h"
@@ -31,7 +30,6 @@ App::App()
 	switch (select)
 	{
 	case 0:
-		//fn = std::string("Models\\Head.fbx");
 		fn = std::string("Assets\\Models\\Head.asset");
 		modelTransform = 
 			dx::XMMatrixRotationY(3.1415f)
@@ -41,26 +39,18 @@ App::App()
 	case 1:
 		fn = std::string("Models\\SceneGraphTest.fbx");
 		modelTransform = dx::XMMatrixIdentity();
-			//dx::XMMatrixScaling(0.5f, 0.5f, 0.5f)
-			//* dx::XMMatrixRotationRollPitchYaw(dx::XM_PI * -0.5f, 0.f, 0.f);
 		break;
 	case 2:
 		fn = std::string("Models\\TransformTest.fbx");
 		modelTransform = dx::XMMatrixIdentity();
-			//dx::XMMatrixScaling(0.5f, 0.5f, 0.5f)
-			//* dx::XMMatrixRotationRollPitchYaw(dx::XM_PI * -0.5f, 0.f, 0.f);
 		break;
 	case 3:
 		fn = std::string("Models\\TransformTestMultiLevel.fbx");
 		modelTransform = dx::XMMatrixIdentity();
-			//dx::XMMatrixScaling(0.5f, 0.5f, 0.5f)
-			//* dx::XMMatrixRotationRollPitchYaw(dx::XM_PI * -0.5f, 0.f, 0.f);
 		break;
 	case 4:
 		fn = std::string("Models\\TransformTestOneLevel.fbx");
 		modelTransform = dx::XMMatrixIdentity();
-			//dx::XMMatrixScaling(0.5f, 0.5f, 0.5f)
-			//* dx::XMMatrixRotationRollPitchYaw(dx::XM_PI * -0.5f, 0.f, 0.f);
 		break;
 	}
 	

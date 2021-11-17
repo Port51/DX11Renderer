@@ -11,22 +11,24 @@
 class FrameCommander
 {
 public:
-	void Accept(RenderJob job, std::string targetPass) noexcept
+	FrameCommander()
+	{
+		renderPasses.emplace(GBufferRenderPassName, RenderPass());
+	}
+	void Accept(RenderJob job, std::string targetPass)
 	{
 		renderPasses[targetPass].EnqueueJob(job);
 	}
 	void Execute(Graphics& gfx)
 	{
-		// normally this would be a loop with each pass defining it setup / etc.
-		// and later on it would be a complex graph with parallel execution contingent
-		// on input / output requirements
+		// todo: replace w/ rendergraph
 
 		// Can do global binds here
 
 		// GBuffer pass
 		{
 			Bind::Stencil::Resolve(gfx, Bind::Stencil::Mode::Off)->Bind(gfx, 0u);
-			renderPasses[std::string("GBuffer")].Execute(gfx);
+			renderPasses[GBufferRenderPassName].Execute(gfx);
 		}
 		
 		// outline masking pass
@@ -37,7 +39,7 @@ public:
 		Bind::Stencil::Resolve(gfx, Bind::Stencil::Mode::Mask)->Bind(gfx);
 		passes[2].Execute(gfx);*/
 	}
-	void Reset() noexcept
+	void Reset()
 	{
 		for (auto& p : renderPasses)
 		{
@@ -46,4 +48,6 @@ public:
 	}
 private:
 	std::unordered_map<std::string, RenderPass> renderPasses;
+private:
+	const std::string GBufferRenderPassName = std::string("GBuffer");
 };

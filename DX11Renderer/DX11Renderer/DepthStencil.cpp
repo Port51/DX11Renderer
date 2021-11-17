@@ -27,12 +27,12 @@ DepthStencil::DepthStencil(Graphics& gfx, UINT width, UINT height)
 	));
 }
 
-void DepthStencil::BindAsDepthStencil(Graphics& gfx) const noexcept
+void DepthStencil::BindAsDepthStencil(Graphics& gfx) const
 {
 	GetContext(gfx)->OMSetRenderTargets(0, nullptr, pDepthStencilView.Get());
 }
 
-void DepthStencil::Clear(Graphics& gfx) const noexcept
+void DepthStencil::Clear(Graphics& gfx) const
 {
 	GetContext(gfx)->ClearDepthStencilView(pDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0u);
 }

@@ -95,7 +95,7 @@ public:
 			type(type),
 			offset(offset)
 		{}
-		size_t GetOffsetAfter() const noexcept(!IS_DEBUG)
+		size_t GetOffsetAfter() const
 		{
 			return offset + Size();
 		}
@@ -103,11 +103,11 @@ public:
 		{
 			return offset;
 		}
-		size_t Size() const noexcept(!IS_DEBUG)
+		size_t Size() const
 		{
 			return SizeOf(type);
 		}
-		static constexpr size_t SizeOf(ElementType type) noexcept(!IS_DEBUG)
+		static constexpr size_t SizeOf(ElementType type)
 		{
 			switch (type)
 			{
@@ -131,14 +131,14 @@ public:
 			THROW_GFX_EXCEPT("Invalid element type");
 			return 0u;
 		}
-		ElementType GetType() const noexcept
+		ElementType GetType() const
 		{
 			return type;
 		}
 		///
 		/// Get layout description
 		///
-		D3D11_INPUT_ELEMENT_DESC GetDesc() const noexcept(!IS_DEBUG)
+		D3D11_INPUT_ELEMENT_DESC GetDesc() const
 		{
 			switch (type)
 			{
@@ -189,7 +189,7 @@ public:
 
 	private:
 		template<ElementType type>
-		static constexpr D3D11_INPUT_ELEMENT_DESC GenerateDesc(size_t offset) noexcept(!IS_DEBUG)
+		static constexpr D3D11_INPUT_ELEMENT_DESC GenerateDesc(size_t offset)
 		{
 			// IN ORDER:
 			// Semantic "Position" must match vertex shader semantic
@@ -210,7 +210,7 @@ public:
 public:
 	// Accessor
 	template<ElementType Type>
-	const Element& Resolve() const noexcept(!IS_DEBUG)
+	const Element& Resolve() const
 	{
 		for (auto& e : elements)
 		{
@@ -222,28 +222,28 @@ public:
 		THROW_GFX_EXCEPT("Could not resolve element type");
 		return elements.front();
 	}
-	const Element& ResolveByIndex(size_t i) const noexcept(!IS_DEBUG)
+	const Element& ResolveByIndex(size_t i) const
 	{
 		return elements[i];
 	}
-	VertexLayout& Append(ElementType type) noexcept(!IS_DEBUG)
+	VertexLayout& Append(ElementType type)
 	{
 		elements.emplace_back(type, Size());
 		return *this;
 	}
 	// Size in bytes
-	size_t Size() const noexcept(!IS_DEBUG)
+	size_t Size() const
 	{
 		return elements.empty() ? 0u : elements.back().GetOffsetAfter();
 	}
-	size_t GetElementCount() const noexcept
+	size_t GetElementCount() const
 	{
 		return elements.size();
 	}
 	///
 	/// Returns layout description, including shader semantics
 	///
-	std::vector<D3D11_INPUT_ELEMENT_DESC> GetD3DLayout() const noexcept(!IS_DEBUG)
+	std::vector<D3D11_INPUT_ELEMENT_DESC> GetD3DLayout() const
 	{
 		std::vector<D3D11_INPUT_ELEMENT_DESC> desc;
 		desc.reserve(GetElementCount());

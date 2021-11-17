@@ -163,12 +163,12 @@ void Node::SubmitDrawCalls(FrameCommander& frame, DirectX::FXMMATRIX accumulated
 	}
 }
 
-void Node::SetAppliedTransform(DirectX::FXMMATRIX _transform) noexcept
+void Node::SetAppliedTransform(DirectX::FXMMATRIX _transform)
 {
 	dx::XMStoreFloat4x4(&appliedTransform, _transform);
 }
 
-const DirectX::XMFLOAT4X4& Node::GetAppliedTransform() const noexcept
+const DirectX::XMFLOAT4X4& Node::GetAppliedTransform() const
 {
 	return appliedTransform;
 }
