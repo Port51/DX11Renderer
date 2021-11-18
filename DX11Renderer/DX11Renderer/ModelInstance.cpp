@@ -36,7 +36,7 @@ ModelInstance::ModelInstance(Graphics& gfx, std::unique_ptr<ModelAsset> const& p
 	pSceneGraph = CreateModelInstanceNode(gfx, pModelAsset->pSceneGraph);
 }*/
 
-void ModelInstance::SubmitDrawCalls(FrameCommander& frame) const
+void ModelInstance::SubmitDrawCalls(std::unique_ptr<FrameCommander>& frame) const
 {
 	pSceneGraph->SubmitDrawCalls(frame, transform);
 }
@@ -144,7 +144,7 @@ Node::Node(int id, const DirectX::XMMATRIX & _transform, std::unique_ptr<MeshRen
 	dx::XMStoreFloat4x4(&appliedTransform, dx::XMMatrixIdentity());
 }
 
-void Node::SubmitDrawCalls(FrameCommander& frame, DirectX::FXMMATRIX accumulatedTransform) const
+void Node::SubmitDrawCalls(std::unique_ptr<FrameCommander>& frame, DirectX::FXMMATRIX accumulatedTransform) const
 {
 	// todo: use this?
 	const auto built =

@@ -21,7 +21,6 @@ private:
 private:
 	ImguiManager imgui; // must be initialized before wnd
 	Window wnd;
-	FrameCommander fc;
 	Timer timer;
 	bool showDemoWindow = true;
 	Camera cam;
@@ -29,6 +28,7 @@ private:
 	std::unique_ptr<ModelInstance> pModel0;
 	std::unique_ptr<ModelInstance> pModel1;
 	float simulationSpeed = 1.f;
+	std::unique_ptr<FrameCommander> fc;
 	std::vector<std::unique_ptr<MeshRenderer>> drawables;
 	static constexpr size_t nDrawables = 1;
 };

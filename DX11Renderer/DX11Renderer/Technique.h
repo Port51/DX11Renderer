@@ -14,7 +14,7 @@ public:
 		:
 		name(name)
 	{}
-	void SubmitDrawCalls(FrameCommander& frame, const MeshRenderer& renderer) const;
+	void SubmitDrawCalls(std::unique_ptr<FrameCommander>& frame, const MeshRenderer& renderer) const;
 	void AddStep(std::unique_ptr<RenderStep> step)
 	{
 		pSteps.push_back(std::move(step));

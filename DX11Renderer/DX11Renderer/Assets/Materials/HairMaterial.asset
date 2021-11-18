@@ -1,8 +1,8 @@
 Properties
 {
 	// Properties shared between passes
-	Texture, tex, Models\\HeadTextures\\hair_color.png
-	Texture, nmap, Models\\HeadTextures\\face_normal.png
+	Texture, tex, Models\\HeadTextures\\hair_color_256.png
+	Texture, nmap, Models\\HeadTextures\\face_normal_256.png
 	Color, 1.0, 0.7, 0.05, 1.0
 	Roughness, 0.3
 }

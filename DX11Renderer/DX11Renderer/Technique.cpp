@@ -2,7 +2,7 @@
 #include "MeshRenderer.h"
 #include "FrameCommander.h"
 
-void Technique::SubmitDrawCalls(FrameCommander& frame, const MeshRenderer& renderer) const
+void Technique::SubmitDrawCalls(std::unique_ptr<FrameCommander>& frame, const MeshRenderer& renderer) const
 {
 	if (active)
 	{

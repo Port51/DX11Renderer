@@ -1,15 +1,10 @@
 Properties
 {
-	Texture, tex, Models\\HeadTextures\\face_albedo.png
-	Texture, nmap, Models\\HeadTextures\\face_normal.png
 	Color, 1.0, 1.0, 1.0, 1.0
-	Roughness, 0.75
 }
 Pass
 {
 	Name, GBuffer
 	VS, Shaders\\Built\\SolidVS.cso
 	PS, Shaders\\Built\\SolidPS.cso
-	Texture, tex, 0
-	Texture, nmap, 1
 }

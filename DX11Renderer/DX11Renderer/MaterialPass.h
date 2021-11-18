@@ -22,7 +22,7 @@ public:
 	MaterialPass();
 public:
 	void AddTechnique(std::unique_ptr<Technique> _pTechnique);
-	void SubmitDrawCalls(FrameCommander& frame, const MeshRenderer& renderer) const;
+	void SubmitDrawCalls(std::unique_ptr<FrameCommander>& frame, const MeshRenderer& renderer) const;
 public:
 	std::shared_ptr<VertexShader> pVertexShader;
 	std::shared_ptr<PixelShader> pPixelShader;

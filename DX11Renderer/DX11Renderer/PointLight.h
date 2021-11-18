@@ -4,12 +4,14 @@
 #include "PixelConstantBuffer.h"
 #include "ModelInstance.h"
 
+class FrameCommander;
+
 class PointLight
 {
 public:
 	PointLight(Graphics& gfx, DirectX::XMFLOAT3 positionWS, DirectX::XMFLOAT3 color, float intensity = 1.f, float range = 2.5f);
 	void DrawImguiControlWindow();
-	void SubmitDrawCalls(class FrameCommander& frame) const;
+	void SubmitDrawCalls(std::unique_ptr<FrameCommander>& frame) const;
 	void Bind(Graphics& gfx, DirectX::FXMMATRIX viewMatrix) const;
 private:
 	struct PointLightCBuf

@@ -6,15 +6,20 @@
 #include <wrl.h>
 
 class Graphics;
+struct ID3D11ShaderResourceView;
+struct D3D11_TEXTURE2D_DESC;
+struct D3D11_SHADER_RESOURCE_VIEW_DESC;
 
 class Texture : public Bindable
 {
 public:
+	Texture(Graphics& gfx);
 	Texture(Graphics& gfx, const std::string& path);
 	Texture(Graphics& gfx, const std::string& path, D3D11_TEXTURE2D_DESC textureDesc);
 	Texture(Graphics& gfx, const std::string& path, D3D11_TEXTURE2D_DESC textureDesc, D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc);
 	void Bind(Graphics& gfx, UINT slot) override;
 	std::string GetUID() const override;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> GetShaderResourceView();
 public:
 	static std::shared_ptr<Bindable> Resolve(Graphics& gfx, const std::string& path);
 	static std::string GenerateUID(const std::string& path);

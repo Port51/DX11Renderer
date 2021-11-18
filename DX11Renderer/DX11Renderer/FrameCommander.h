@@ -7,12 +7,14 @@
 #include "RenderJob.h"
 #include "RenderPass.h"
 #include "NullPixelShader.h"
+#include "RenderTexture.h"
 
 class FrameCommander
 {
 public:
-	FrameCommander()
+	FrameCommander(Graphics& gfx)
 	{
+		pCameraColor = std::make_unique<RenderTexture>(gfx);
 		renderPasses.emplace(GBufferRenderPassName, RenderPass());
 	}
 	void Accept(RenderJob job, std::string targetPass)
@@ -47,6 +49,7 @@ public:
 		}
 	}
 private:
+	std::unique_ptr<RenderTexture> pCameraColor;
 	std::unordered_map<std::string, RenderPass> renderPasses;
 private:
 	const std::string GBufferRenderPassName = std::string("GBuffer");

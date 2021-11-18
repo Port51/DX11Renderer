@@ -175,7 +175,7 @@ std::string Material::GetUID() const
 	return GenerateUID(materialAssetPath);
 }
 
-void Material::SubmitDrawCalls(FrameCommander& frame, const MeshRenderer& renderer) const
+void Material::SubmitDrawCalls(std::unique_ptr<FrameCommander>& frame, const MeshRenderer& renderer) const
 {
 	for (const auto& pass : passes)
 	{

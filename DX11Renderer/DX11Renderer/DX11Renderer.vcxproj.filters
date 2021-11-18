@@ -106,6 +106,12 @@
     <Filter Include="Header Files\Util">
       <UniqueIdentifier>{61312ed5-1bd1-4456-b9e5-271c16d6a2b3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\RenderPipeline">
+      <UniqueIdentifier>{72d987d9-603a-41a5-a01c-dd5b8784fa4e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\RenderPipeline">
+      <UniqueIdentifier>{8ac01db9-e142-4300-b89b-d08cd105274a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -257,6 +263,9 @@
     </ClCompile>
     <ClCompile Include="RenderStep.cpp">
       <Filter>Source Files\RenderJobs</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderTexture.cpp">
+      <Filter>Source Files\RenderPipeline</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -478,6 +487,9 @@
     </ClInclude>
     <ClInclude Include="RenderStep.h">
       <Filter>Header Files\RenderJobs</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderTexture.h">
+      <Filter>Header Files\RenderPipeline</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

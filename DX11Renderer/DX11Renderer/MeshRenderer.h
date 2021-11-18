@@ -19,7 +19,7 @@ class MeshRenderer
 public:
 	MeshRenderer(Graphics& gfx, std::string name, std::shared_ptr<Material> pMaterial, std::shared_ptr<VertexBuffer> pVertexBuffer, std::shared_ptr<IndexBuffer> pIndexBuffer, std::shared_ptr<Topology> pTopologyBuffer);
 	DirectX::XMMATRIX GetTransformXM() const;
-	void SubmitDrawCalls(FrameCommander& frame, dx::FXMMATRIX _accumulatedTranform) const;
+	void SubmitDrawCalls(std::unique_ptr<FrameCommander>& frame, dx::FXMMATRIX _accumulatedTranform) const;
 	void Bind(Graphics& gfx) const;
 	UINT GetIndexCount() const;
 private:

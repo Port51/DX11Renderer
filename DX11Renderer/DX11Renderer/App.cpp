@@ -22,6 +22,8 @@ App::App()
 	light(wnd.Gfx(), dx::XMFLOAT3(4.2f, 4.2f, -5.3f), dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 9.0f),
 	cam(40.0f, (float)ResolutionX / (float)ResolutionY)
 {
+	fc = std::make_unique<FrameCommander>(wnd.Gfx());
+
 	std::string fn;
 	dx::XMMATRIX modelTransform;
 
@@ -137,7 +139,7 @@ void App::DoFrame()
 	pModel0->SubmitDrawCalls(fc);
 	pModel1->SubmitDrawCalls(fc);
 	light.SubmitDrawCalls(fc);
-	fc.Execute(wnd.Gfx());
+	fc->Execute(wnd.Gfx());
 
 	// imgui window to control simulation speed
 	if (ImGui::Begin("Simulation Speed")) // checks if window open
@@ -154,7 +156,7 @@ void App::DoFrame()
 	wnd.Gfx().log.DrawImguiControlWindow();
 
 	wnd.Gfx().EndFrame();
-	fc.Reset();
+	fc->Reset();
 
 	/*while (!wnd.mouse.IsEmpty())
 	{

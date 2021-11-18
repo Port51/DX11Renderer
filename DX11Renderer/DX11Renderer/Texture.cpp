@@ -5,6 +5,11 @@
 
 namespace wrl = Microsoft::WRL;
 
+Texture::Texture(Graphics & gfx)
+{
+	SETUP_LOGGING(gfx);
+}
+
 Texture::Texture(Graphics& gfx, const std::string& path)
 	: path(path)
 {
@@ -110,6 +115,11 @@ void Texture::Bind(Graphics& gfx, UINT slot)
 std::string Texture::GetUID() const
 {
 	return GenerateUID(path);
+}
+
+Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> Texture::GetShaderResourceView()
+{
+	return pTextureView;
 }
 
 std::shared_ptr<Bindable> Texture::Resolve(Graphics& gfx, const std::string& path)
