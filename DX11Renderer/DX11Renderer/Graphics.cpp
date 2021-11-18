@@ -65,7 +65,7 @@ Graphics::Graphics(HWND hWnd, int windowWidth, int windowHeight)
 	GFX_THROW_INFO(pDevice->CreateRenderTargetView(
 		pBackBuffer.Get(),
 		nullptr,
-		&pRenderTargetView
+		&pBackBufferView
 	));
 
 	// No need to init depth/stencil state anymore
@@ -106,7 +106,7 @@ Graphics::Graphics(HWND hWnd, int windowWidth, int windowHeight)
 	));
 
 	// bind depth stencil view to OM
-	pContext->OMSetRenderTargets(1u, pRenderTargetView.GetAddressOf(), pDepthStencilView.Get());
+	pContext->OMSetRenderTargets(1u, pBackBufferView.GetAddressOf(), pDepthStencilView.Get());
 
 	//
 	// Setup viewport
@@ -135,7 +135,7 @@ void Graphics::BeginFrame(float red, float green, float blue)
 	}
 
 	const float color[] = { red,green,blue,1.0f };
-	pContext->ClearRenderTargetView(pRenderTargetView.Get(), color);
+	pContext->ClearRenderTargetView(pBackBufferView.Get(), color);
 	pContext->ClearDepthStencilView(pDepthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
 }
 
@@ -173,7 +173,7 @@ void Graphics::EndFrame()
 void Graphics::ClearBuffer(float red, float green, float blue)
 {
 	const float color[] = { red, green, blue, 1.0f };
-	pContext->ClearRenderTargetView(pRenderTargetView.Get(), color);
+	pContext->ClearRenderTargetView(pBackBufferView.Get(), color);
 	pContext->ClearDepthStencilView(pDepthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.f, 0u);
 }
 

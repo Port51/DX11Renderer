@@ -3,10 +3,12 @@
 #include "RasterizerState.h"
 #include "Binding.h"
 #include "Bindable.h"
+#include "Sampler.h"
+#include "Texture.h"
 
 namespace dx = DirectX;
 
-FullscreenPass::FullscreenPass(Graphics& gfx)
+FullscreenPass::FullscreenPass(Graphics& gfx, std::shared_ptr<Texture> pInput)
 	: RenderPass()
 {
 	// setup fullscreen geometry
@@ -30,6 +32,10 @@ FullscreenPass::FullscreenPass(Graphics& gfx)
 	AddBinding(std::move(vs), 0u);
 	AddBinding(Topology::Resolve(gfx, D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST), 0u);
 	AddBinding(Bind::RasterizerState::Resolve(gfx, false), 0u);
+
+	AddBinding(Sampler::Resolve(gfx, D3D11_TEXTURE_ADDRESS_MODE::D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_MODE::D3D11_TEXTURE_ADDRESS_CLAMP));
+	AddBinding(pInput, 0u);
+	//AddBinding(Texture::Resolve(gfx, "Models\\HeadTextures\\face_albedo_256.png"));
 
 	AddBinding(PixelShader::Resolve(gfx, "Shaders\\Built\\BlitPS.cso"), 0u);
 }

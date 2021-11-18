@@ -6,11 +6,12 @@
 
 //class Binding;
 //class Bindable;
+class Texture;
 
 class FullscreenPass : public RenderPass
 {
 public:
-	FullscreenPass(Graphics& gfx);
+	FullscreenPass(Graphics& gfx, std::shared_ptr<Texture> pInput);
 	void Execute(Graphics& gfx) const override;
 private:
 	void AddBinding(std::shared_ptr<Bindable> pBindable, UINT slot = 0u);

@@ -15,11 +15,11 @@ class FrameCommander
 public:
 	FrameCommander(Graphics& gfx)
 	{
-		pCameraColor = std::make_unique<RenderTexture>(gfx);
-		pCameraColor->Init(gfx.pDevice.Get(), 128, 128);
+		pCameraColor = std::make_shared<RenderTexture>(gfx);
+		pCameraColor->Init(gfx.pDevice.Get(), 1280 / 4, 720 / 4);
 
 		renderPasses.emplace(GBufferRenderPassName, std::make_unique<RenderPass>());
-		renderPasses.emplace(FinalBlitRenderPassName, std::make_unique<FullscreenPass>(gfx));
+		renderPasses.emplace(FinalBlitRenderPassName, std::make_unique<FullscreenPass>(gfx, pCameraColor));
 	}
 	void Accept(RenderJob job, std::string targetPass)
 	{
@@ -34,16 +34,23 @@ public:
 		// GBuffer pass
 		{
 			Bind::Stencil::Resolve(gfx, Bind::Stencil::Mode::Off)->Bind(gfx, 0u);
-			pCameraColor->SetRenderTarget(gfx.pContext.Get(), gfx.pDepthStencilView.Get());
+			//pCameraColor->SetRenderTarget(gfx.pContext.Get(), gfx.pDepthStencilView.Get());
+			pCameraColor->ClearRenderTarget(gfx.pContext.Get(), gfx.pDepthStencilView.Get(), 1.f, 0.f, 0.f, 1.f);
+			gfx.SetRenderTarget(pCameraColor->pRenderTargetView);
 			renderPasses[GBufferRenderPassName]->Execute(gfx);
 		}
 
 		// Final blit
 		{
 			Bind::Stencil::Resolve(gfx, Bind::Stencil::Mode::Off)->Bind(gfx, 0u);
-			gfx.SetRenderTarget(gfx.pRenderTargetView);
+			gfx.SetRenderTarget(gfx.pBackBufferView);
 			renderPasses[FinalBlitRenderPassName]->Execute(gfx);
 		}
+
+		// BLIT NOTES:
+		// - Blit seems to be working for solid color
+		// - pCameraColor can clear
+		// - Rendering to pCameraColor might not be working
 
 		// GBuffer pass
 		/*{
@@ -68,7 +75,7 @@ public:
 		}
 	}
 private:
-	std::unique_ptr<RenderTexture> pCameraColor;
+	std::shared_ptr<RenderTexture> pCameraColor;
 	std::unordered_map<std::string, std::unique_ptr<RenderPass>> renderPasses;
 private:
 	const std::string GBufferRenderPassName = std::string("GBuffer");

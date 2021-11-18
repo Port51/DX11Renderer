@@ -15,6 +15,7 @@ Sampler::Sampler(Graphics& gfx, D3D11_TEXTURE_ADDRESS_MODE wrapU, D3D11_TEXTURE_
 {}
 
 Sampler::Sampler(Graphics& gfx, D3D11_TEXTURE_ADDRESS_MODE wrapU, D3D11_TEXTURE_ADDRESS_MODE wrapV, D3D11_TEXTURE_ADDRESS_MODE wrapW)
+	: wrapU(wrapU), wrapV(wrapV), wrapW(wrapW)
 {
 	SETUP_LOGGING(gfx);
 
@@ -45,15 +46,48 @@ void Sampler::Bind(Graphics& gfx, UINT slot)
 
 std::string Sampler::GetUID() const
 {
-	return GenerateUID();
+	return GenerateUID(wrapU, wrapV, wrapW);
 }
 
-std::shared_ptr<Bindable> Sampler::Resolve(Graphics & gfx)
+std::shared_ptr<Bindable> Sampler::Resolve(Graphics& gfx)
 {
-	return Bind::Codex::Resolve<Sampler>(gfx);
+	return Resolve(gfx, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP);
+}
+
+std::shared_ptr<Bindable> Sampler::Resolve(Graphics& gfx, D3D11_TEXTURE_ADDRESS_MODE wrapU)
+{
+	return Resolve(gfx, wrapU, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP);
+}
+
+std::shared_ptr<Bindable> Sampler::Resolve(Graphics & gfx, D3D11_TEXTURE_ADDRESS_MODE wrapU, D3D11_TEXTURE_ADDRESS_MODE wrapV)
+{
+	return Resolve(gfx, wrapU, wrapV, D3D11_TEXTURE_ADDRESS_WRAP);
+}
+
+std::shared_ptr<Bindable> Sampler::Resolve(Graphics & gfx, D3D11_TEXTURE_ADDRESS_MODE wrapU, D3D11_TEXTURE_ADDRESS_MODE wrapV, D3D11_TEXTURE_ADDRESS_MODE wrapW)
+{
+	return Bind::Codex::Resolve<Sampler>(gfx, wrapU, wrapV, wrapW);
 }
 
 std::string Sampler::GenerateUID()
 {
-	return typeid(Sampler).name();
+	return GenerateUID(D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP);
+}
+
+std::string Sampler::GenerateUID(D3D11_TEXTURE_ADDRESS_MODE wrapU)
+{
+	return GenerateUID(wrapU, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP);
+}
+
+std::string Sampler::GenerateUID(D3D11_TEXTURE_ADDRESS_MODE wrapU, D3D11_TEXTURE_ADDRESS_MODE wrapV)
+{
+	return GenerateUID(wrapU, wrapV, D3D11_TEXTURE_ADDRESS_WRAP);
+}
+
+std::string Sampler::GenerateUID(D3D11_TEXTURE_ADDRESS_MODE wrapU, D3D11_TEXTURE_ADDRESS_MODE wrapV, D3D11_TEXTURE_ADDRESS_MODE wrapW)
+{
+	return std::string(typeid(Sampler).name()) + "|"
+		+ std::to_string(static_cast<uint32_t>(wrapU))
+		+ std::to_string(static_cast<uint32_t>(wrapV))
+		+ std::to_string(static_cast<uint32_t>(wrapW));
 }
