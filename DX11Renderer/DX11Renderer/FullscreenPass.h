@@ -1,17 +1,20 @@
 #pragma once
-#include "BindingPass.h"
+#include "RenderPass.h"
+#include <vector>
+#include "Binding.h"
+#include "Bindable.h"
 
-namespace Bind
-{
-	class IndexBuffer;
-	class VertexBuffer;
-	class VertexShader;
-	class InputLayout;
-}
+//class Binding;
+//class Bindable;
 
 class FullscreenPass : public RenderPass
 {
 public:
-	FullscreenPass(const std::string name, Graphics& gfx);
+	FullscreenPass(Graphics& gfx);
 	void Execute(Graphics& gfx) const override;
+private:
+	void AddBinding(std::shared_ptr<Bindable> pBindable, UINT slot = 0u);
+	void AddBinding(Binding pBinding);
+private:
+	std::vector<Binding> bindings;
 };

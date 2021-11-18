@@ -276,6 +276,9 @@
     <ClCompile Include="FullscreenPass.cpp">
       <Filter>Source Files\RenderJobs\Passes</Filter>
     </ClCompile>
+    <ClCompile Include="RenderPass.cpp">
+      <Filter>Source Files\RenderJobs</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WindowsInclude.h">

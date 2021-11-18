@@ -13,21 +13,9 @@ public:
 	{
 
 	}
-	void EnqueueJob(RenderJob job)
-	{
-		jobs.push_back(job);
-	}
-	void Execute(Graphics& gfx) const
-	{
-		for (const auto& j : jobs)
-		{
-			j.Execute(gfx);
-		}
-	}
-	void Reset()
-	{
-		jobs.clear();
-	}
+	void EnqueueJob(RenderJob job);
+	virtual void Execute(Graphics& gfx) const;
+	void Reset();
 private:
 	std::vector<RenderJob> jobs; // will be replaced by render graph
 };

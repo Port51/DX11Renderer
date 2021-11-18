@@ -18,12 +18,12 @@ public:
 		pCameraColor = std::make_unique<RenderTexture>(gfx);
 		pCameraColor->Init(gfx.pDevice.Get(), 128, 128);
 
-		renderPasses.emplace(GBufferRenderPassName, RenderPass());
-		renderPasses.emplace(FinalBlitRenderPassName, FullscreenPass());
+		renderPasses.emplace(GBufferRenderPassName, std::make_unique<RenderPass>());
+		renderPasses.emplace(FinalBlitRenderPassName, std::make_unique<FullscreenPass>(gfx));
 	}
 	void Accept(RenderJob job, std::string targetPass)
 	{
-		renderPasses[targetPass].EnqueueJob(job);
+		renderPasses[targetPass]->EnqueueJob(job);
 	}
 	void Execute(Graphics& gfx)
 	{
@@ -35,12 +35,14 @@ public:
 		{
 			Bind::Stencil::Resolve(gfx, Bind::Stencil::Mode::Off)->Bind(gfx, 0u);
 			pCameraColor->SetRenderTarget(gfx.pContext.Get(), gfx.pDepthStencilView.Get());
-			renderPasses[GBufferRenderPassName].Execute(gfx);
+			renderPasses[GBufferRenderPassName]->Execute(gfx);
 		}
 
 		// Final blit
 		{
-
+			Bind::Stencil::Resolve(gfx, Bind::Stencil::Mode::Off)->Bind(gfx, 0u);
+			gfx.SetRenderTarget(gfx.pRenderTargetView);
+			renderPasses[FinalBlitRenderPassName]->Execute(gfx);
 		}
 
 		// GBuffer pass
@@ -62,12 +64,12 @@ public:
 	{
 		for (auto& p : renderPasses)
 		{
-			p.second.Reset();
+			p.second->Reset();
 		}
 	}
 private:
 	std::unique_ptr<RenderTexture> pCameraColor;
-	std::unordered_map<std::string, RenderPass> renderPasses;
+	std::unordered_map<std::string, std::unique_ptr<RenderPass>> renderPasses;
 private:
 	const std::string GBufferRenderPassName = std::string("GBuffer");
 	const std::string FinalBlitRenderPassName = std::string("FinalBlit");
