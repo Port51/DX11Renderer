@@ -62,7 +62,7 @@ public:
 	void EndFrame();
 	void ClearBuffer(float red, float green, float blue);
 	void DrawIndexed(UINT count);
-	void DrawTestTriangle(float x, float y, float z, float angle);
+	void SetRenderTarget(Microsoft::WRL::ComPtr<ID3D11RenderTargetView> renderTargetView);
 public:
 	void EnableImgui();
 	void DisableImgui();
@@ -81,6 +81,9 @@ public:
 	Microsoft::WRL::ComPtr<ID3D11Device> pDevice;
 	// Used for configuring pipeline and executing render commands
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> pContext;
+	// RT view of backbuffer
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pRenderTargetView;
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> pDepthStencilView;
 
 private:
 	bool imguiEnabled = true;
@@ -93,7 +96,4 @@ private:
 
 	Microsoft::WRL::ComPtr<IDXGISwapChain> pSwapChain;
 
-	// RT view of backbuffer
-	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pRenderTargetView;
-	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> pDepthStencilView;
 };

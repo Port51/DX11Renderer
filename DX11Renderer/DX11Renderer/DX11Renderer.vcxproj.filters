@@ -112,6 +112,12 @@
     <Filter Include="Source Files\RenderPipeline">
       <UniqueIdentifier>{8ac01db9-e142-4300-b89b-d08cd105274a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\RenderJobs\Passes">
+      <UniqueIdentifier>{1ba6139c-dd0b-41a8-8c1c-ba4c7de4ce73}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\RenderJobs\Passes">
+      <UniqueIdentifier>{b6674e5f-e356-4011-8a70-fc294419f13d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -266,6 +272,9 @@
     </ClCompile>
     <ClCompile Include="RenderTexture.cpp">
       <Filter>Source Files\RenderPipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="FullscreenPass.cpp">
+      <Filter>Source Files\RenderJobs\Passes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -491,6 +500,9 @@
     <ClInclude Include="RenderTexture.h">
       <Filter>Header Files\RenderPipeline</Filter>
     </ClInclude>
+    <ClInclude Include="FullscreenPass.h">
+      <Filter>Header Files\RenderJobs\Passes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DX11Renderer.rc">
@@ -541,9 +553,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="ColorIndexVS.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
     <FxCompile Include="Shaders\TextureVS.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
@@ -565,7 +574,10 @@
     <FxCompile Include="Shaders\IndexedPhongPS.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="Shaders\ColorIndexPS.hlsl">
+    <FxCompile Include="FullscreenVS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Shaders\BlitPS.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>

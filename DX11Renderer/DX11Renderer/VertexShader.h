@@ -14,7 +14,7 @@ public:
 	ID3DBlob* GetBytecode() const;
 	std::string GetUID() const override;
 public:
-	static std::shared_ptr<Bindable> Resolve(Graphics& gfx, const std::string& path);
+	static std::shared_ptr<VertexShader> Resolve(Graphics& gfx, const std::string& path);
 	static std::string GenerateUID(const std::string& path);
 protected:
 	std::string path;

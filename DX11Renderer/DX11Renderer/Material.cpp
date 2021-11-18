@@ -120,7 +120,7 @@ Material::Material(Graphics& gfx, const std::string_view _materialAssetPath)
 			if (p.key == "VS")
 			{
 				// Bind vertex shader and input layout
-				pVertexShader = std::make_shared<VertexShader>(gfx, p.values[0].c_str());
+				pVertexShader = VertexShader::Resolve(gfx, p.values[0].c_str());
 				const auto pvsbc = pVertexShader->GetBytecode();
 
 				pPassStep->AddBinding(pVertexShader);

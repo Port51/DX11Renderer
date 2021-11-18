@@ -11,10 +11,10 @@ public:
 	bool Init(ID3D11Device* pDevice, int textureWidth, int textureHeight);
 	void Shutdown();
 
-	void SetRenderTarget(ID3D11DeviceContext*, ID3D11DepthStencilView*);
-	void ClearRenderTarget(ID3D11DeviceContext*, ID3D11DepthStencilView*, float, float, float, float);
+	void SetRenderTarget(ID3D11DeviceContext* deviceContext, ID3D11DepthStencilView* depthStencilView);
+	void ClearRenderTarget(ID3D11DeviceContext* deviceContext, ID3D11DepthStencilView* depthStencilView, float, float, float, float);
 
 private:
-	ID3D11Texture2D* m_renderTargetTexture;
-	ID3D11RenderTargetView* m_renderTargetView;
+	ID3D11Texture2D* pRenderTargetTexture;
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pRenderTargetView;
 };
