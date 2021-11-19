@@ -38,7 +38,8 @@ public:
 	{
 		for (int i = 0; i < GbufferSize; ++i)
 		{
-			delete pGbufferRenderViews[i];
+			// Causes an error when exiting built exe
+			//delete pGbufferRenderViews[i];
 		}
 	}
 
