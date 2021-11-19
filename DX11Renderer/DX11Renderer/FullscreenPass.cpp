@@ -25,7 +25,7 @@ FullscreenPass::FullscreenPass(Graphics& gfx, std::shared_ptr<Texture> pInput)
 	AddBinding(IndexBuffer::Resolve(gfx, "$Blit", std::move(indices)), 0u);
 
 	// setup other common fullscreen bindables
-	auto vs = VertexShader::Resolve(gfx, "Shaders\\Built\\FullscreenVS.cso");
+	auto vs = VertexShader::Resolve(gfx, "Assets\\Built\\Shaders\\FullscreenVS.cso");
 	const auto pvsbc = vs->GetBytecode();
 
 	AddBinding(InputLayout::Resolve(gfx, lay, pvsbc), 0u);
@@ -37,7 +37,7 @@ FullscreenPass::FullscreenPass(Graphics& gfx, std::shared_ptr<Texture> pInput)
 	AddBinding(pInput, 0u);
 	//AddBinding(Texture::Resolve(gfx, "Models\\HeadTextures\\face_albedo_256.png"));
 
-	AddBinding(PixelShader::Resolve(gfx, "Shaders\\Built\\BlitPS.cso"), 0u);
+	AddBinding(PixelShader::Resolve(gfx, "Assets\\Built\\Shaders\\BlitPS.cso"), 0u);
 }
 
 void FullscreenPass::Execute(Graphics& gfx) const

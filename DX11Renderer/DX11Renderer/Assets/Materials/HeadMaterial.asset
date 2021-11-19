@@ -1,16 +1,16 @@
 Properties
 {
 	// Properties shared between passes
-	Texture, tex, Models\\HeadTextures\\face_albedo_256.png
-	Texture, nmap, Models\\HeadTextures\\face_normal_256.png
+	Texture, tex, Assets\\Textures\\face_albedo_256.png
+	Texture, nmap, Assets\\Textures\\face_normal_256.png
 	Color, 1.0, 1.0, 1.0, 1.0
 	Roughness, 0.9
 }
 Pass
 {
 	Name, GBuffer
-	VS, Shaders\\Built\\PhongVS.cso
-	PS, Shaders\\Built\\PhongPS.cso
+	VS, Assets\\Built\\Shaders\\PhongVS.cso
+	PS, Assets\\Built\\Shaders\\PhongPS.cso
 	Texture, tex, 0
 	Texture, nmap, 1
 }
