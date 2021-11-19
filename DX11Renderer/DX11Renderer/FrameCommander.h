@@ -51,8 +51,6 @@ public:
 	{
 		// todo: replace w/ rendergraph
 
-		// Can do global binds here
-
 		// GBuffer pass
 		{
 			//pCameraColor->SetRenderTarget(gfx.pContext.Get(), gfx.pDepthStencilView.Get());
@@ -64,8 +62,6 @@ public:
 			pSmallDepthStencil->Clear(gfx);
 
 			// MRT bind
-			//pCameraColor->BindAsTarget(gfx, pSmallDepthStencil->GetView().Get());
-
 			gfx.pContext->OMSetRenderTargets(2, &pGbufferRenderViews[0], gfx.pDepthStencil->GetView().Get());
 			gfx.SetViewport(1280 / 2, 720 / 2);
 
@@ -82,21 +78,6 @@ public:
 
 			renderPasses[FinalBlitRenderPassName]->Execute(gfx);
 		}
-
-		// GBuffer pass
-		/*{
-			Bind::Stencil::Resolve(gfx, Bind::Stencil::Mode::Off)->Bind(gfx, 0u);
-			gfx.SetRenderTarget(gfx.pRenderTargetView);
-			renderPasses[GBufferRenderPassName].Execute(gfx);
-		}*/
-		
-		// outline masking pass
-		/*Bind::Stencil::Resolve(gfx, Bind::Stencil::Mode::Write)->Bind(gfx);
-		Bind::NullPixelShader::Resolve(gfx)->Bind(gfx);
-		passes[1].Execute(gfx);
-		// outline drawing pass
-		Bind::Stencil::Resolve(gfx, Bind::Stencil::Mode::Mask)->Bind(gfx);
-		passes[2].Execute(gfx);*/
 	}
 
 	void Reset()
