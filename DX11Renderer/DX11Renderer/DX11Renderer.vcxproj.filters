@@ -141,9 +141,6 @@
     <ClCompile Include="Timer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Graphics.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="dxerr.cpp">
       <Filter>Source Files\ChiliErrors</Filter>
     </ClCompile>
@@ -282,6 +279,9 @@
     <ClCompile Include="DepthStencilTarget.cpp">
       <Filter>Source Files\RenderPipeline</Filter>
     </ClCompile>
+    <ClCompile Include="Graphics.cpp">
+      <Filter>Source Files\RenderPipeline</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WindowsInclude.h">
@@ -306,9 +306,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Timer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Graphics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="dxerr.h">
@@ -510,6 +507,9 @@
       <Filter>Header Files\RenderPipeline</Filter>
     </ClInclude>
     <ClInclude Include="DepthStencilTarget.h">
+      <Filter>Header Files\RenderPipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics.h">
       <Filter>Header Files\RenderPipeline</Filter>
     </ClInclude>
   </ItemGroup>

@@ -11,6 +11,8 @@
 #include <random>
 #include "Log.h"
 
+class DepthStencilTarget;
+
 class Graphics
 {
 	//friend class Bindable;
@@ -84,7 +86,7 @@ public:
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> pContext;
 	// RT view of backbuffer
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pBackBufferView;
-	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> pDepthStencilView;
+	std::shared_ptr<DepthStencilTarget> pDepthStencil;
 
 private:
 	bool imguiEnabled = true;

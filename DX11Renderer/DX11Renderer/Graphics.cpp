@@ -4,6 +4,7 @@
 #include <d3dcompiler.h>
 #include <DirectXMath.h>
 #include "GraphicsThrowMacros.h"
+#include "DepthStencilTarget.h"
 #include "Imgui/imgui_impl_dx11.h"
 #include "Imgui/imgui_impl_win32.h"
 
@@ -82,31 +83,10 @@ Graphics::Graphics(HWND hWnd, int windowWidth, int windowHeight)
 	pContext->OMSetDepthStencilState(pDSState.Get(), 0u);
 	*/
 
-	// create depth stencil texture
-	wrl::ComPtr<ID3D11Texture2D> pDepthStencil;
-	D3D11_TEXTURE2D_DESC descDepth = {};
-	descDepth.Width = (UINT)windowWidth;
-	descDepth.Height = (UINT)windowHeight;
-	descDepth.MipLevels = 1u;
-	descDepth.ArraySize = 1u;
-	descDepth.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	descDepth.SampleDesc.Count = 1u; // for AA
-	descDepth.SampleDesc.Quality = 0u;
-	descDepth.Usage = D3D11_USAGE_DEFAULT;
-	descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-	GFX_THROW_INFO(pDevice->CreateTexture2D(&descDepth, nullptr, &pDepthStencil));
-
-	// create view of depth stencil texture
-	D3D11_DEPTH_STENCIL_VIEW_DESC descDSV = {};
-	descDSV.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
-	descDSV.Texture2D.MipSlice = 0u;
-	GFX_THROW_INFO(pDevice->CreateDepthStencilView(
-		pDepthStencil.Get(), &descDSV, &pDepthStencilView
-	));
+	pDepthStencil = std::make_shared<DepthStencilTarget>(*this, windowWidth, windowHeight);
 
 	// bind depth stencil view to OM
-	pContext->OMSetRenderTargets(1u, pBackBufferView.GetAddressOf(), pDepthStencilView.Get());
+	pContext->OMSetRenderTargets(1u, pBackBufferView.GetAddressOf(), pDepthStencil->GetView().Get());
 
 	//
 	// Setup viewport
@@ -128,7 +108,7 @@ void Graphics::BeginFrame(float red, float green, float blue)
 
 	const float color[] = { red,green,blue,1.0f };
 	pContext->ClearRenderTargetView(pBackBufferView.Get(), color);
-	pContext->ClearDepthStencilView(pDepthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
+	pContext->ClearDepthStencilView(pDepthStencil->GetView().Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
 }
 
 void Graphics::EndFrame()
@@ -166,7 +146,7 @@ void Graphics::ClearBuffer(float red, float green, float blue)
 {
 	const float color[] = { red, green, blue, 1.0f };
 	pContext->ClearRenderTargetView(pBackBufferView.Get(), color);
-	pContext->ClearDepthStencilView(pDepthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.f, 0u);
+	pContext->ClearDepthStencilView(pDepthStencil->GetView().Get(), D3D11_CLEAR_DEPTH, 1.f, 0u);
 }
 
 void Graphics::EnableImgui()
@@ -211,7 +191,7 @@ DirectX::XMMATRIX Graphics::GetViewMatrix() const
 
 void Graphics::SetRenderTarget(Microsoft::WRL::ComPtr<ID3D11RenderTargetView> renderTargetView)
 {
-	pContext->OMSetRenderTargets(1u, renderTargetView.GetAddressOf(), pDepthStencilView.Get());
+	pContext->OMSetRenderTargets(1u, renderTargetView.GetAddressOf(), pDepthStencil->GetView().Get());
 }
 
 void Graphics::SetViewport(int width, int height)

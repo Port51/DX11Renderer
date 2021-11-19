@@ -44,7 +44,7 @@ public:
 			//gfx.SetRenderTarget(pCameraColor->pRenderTargetView);
 
 			Bind::Stencil::Resolve(gfx, Bind::Stencil::Mode::Off)->Bind(gfx, 0u);
-			pGbufferNormalRough->ClearRenderTarget(gfx.pContext.Get(), gfx.pDepthStencilView.Get(), 1.f, 0.f, 0.f, 1.f);
+			pGbufferNormalRough->ClearRenderTarget(gfx.pContext.Get(), gfx.pDepthStencil->GetView().Get(), 1.f, 0.f, 0.f, 1.f);
 			pSmallDepthStencil->Clear(gfx);
 
 			// MRT bind
@@ -54,7 +54,7 @@ public:
 			m_pRenderViews[0] = pGbufferNormalRough->pRenderTargetView.Get(); //First target
 			m_pRenderViews[1] = pGbufferSecond->pRenderTargetView.Get(); //second target
 
-			gfx.pContext->OMSetRenderTargets(2, &m_pRenderViews[0], gfx.pDepthStencilView.Get());
+			gfx.pContext->OMSetRenderTargets(2, &m_pRenderViews[0], gfx.pDepthStencil->GetView().Get());
 			gfx.SetViewport(1280 / 2, 720 / 2);
 
 			renderPasses[GBufferRenderPassName]->Execute(gfx);
