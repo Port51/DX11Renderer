@@ -27,6 +27,9 @@ public:
 
 		renderPasses.emplace(GBufferRenderPassName, std::make_unique<RenderPass>());
 		renderPasses.emplace(FinalBlitRenderPassName, std::make_unique<FullscreenPass>(gfx, pGbufferSecond));
+
+		pGbufferRenderViews[0] = pGbufferNormalRough->pRenderTargetView.Get();
+		pGbufferRenderViews[1] = pGbufferSecond->pRenderTargetView.Get();
 	}
 	void Accept(RenderJob job, std::string targetPass)
 	{
@@ -50,12 +53,8 @@ public:
 
 			// MRT bind
 			//pCameraColor->BindAsTarget(gfx, pSmallDepthStencil->GetView().Get());
-			
-			ID3D11RenderTargetView* m_pRenderViews[2]; //Not more than D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT (8)
-			m_pRenderViews[0] = pGbufferNormalRough->pRenderTargetView.Get(); //First target
-			m_pRenderViews[1] = pGbufferSecond->pRenderTargetView.Get(); //second target
 
-			gfx.pContext->OMSetRenderTargets(2, &m_pRenderViews[0], gfx.pDepthStencil->GetView().Get());
+			gfx.pContext->OMSetRenderTargets(2, &pGbufferRenderViews[0], gfx.pDepthStencil->GetView().Get());
 			gfx.SetViewport(1280 / 2, 720 / 2);
 
 			renderPasses[GBufferRenderPassName]->Execute(gfx);
@@ -95,6 +94,7 @@ public:
 		}
 	}
 private:
+	ID3D11RenderTargetView* pGbufferRenderViews[2];
 	std::shared_ptr<DepthStencilTarget> pSmallDepthStencil;
 	std::shared_ptr<DepthStencilTarget> pFullDepthStencil;
 	std::shared_ptr<RenderTarget> pGbufferNormalRough;
