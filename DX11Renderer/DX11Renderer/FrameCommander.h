@@ -18,6 +18,7 @@ private:
 public:
 	FrameCommander(Graphics& gfx)
 	{
+		// Setup render targets
 		pGbufferNormalRough = std::make_shared<RenderTarget>(gfx);
 		pGbufferNormalRough->Init(gfx.pDevice.Get(), 1280 / 2, 720 / 2);
 
@@ -27,9 +28,11 @@ public:
 		pSmallDepthStencil = std::make_shared<DepthStencilTarget>(gfx, 1280 / 2, 720 / 2);
 		pFullDepthStencil = std::make_shared<DepthStencilTarget>(gfx, 1280, 720);
 
+		// Setup passes
 		renderPasses.emplace(GBufferRenderPassName, std::make_unique<RenderPass>());
 		renderPasses.emplace(FinalBlitRenderPassName, std::make_unique<FullscreenPass>(gfx, pGbufferSecond));
 
+		// Setup Gbuffer
 		pGbufferRenderViews[0] = pGbufferNormalRough->pRenderTargetView.Get();
 		pGbufferRenderViews[1] = pGbufferSecond->pRenderTargetView.Get();
 	}

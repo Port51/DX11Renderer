@@ -1,17 +1,12 @@
 #pragma once
 #include <memory>
-#include <vector>
-#include <string_view>
-#include "VertexLayout.h"
-#include "Bindable.h"
-#include "Technique.h"
 
 class Technique;
-class VertexShader;
-class PixelShader;
-class Material;
+class MeshRenderer;
 class FrameCommander;
 class Binding;
+//class VertexShader;
+//class PixelShader;
 
 ///
 /// Collection of bindables needed to execute a material pass in a technique
@@ -23,10 +18,9 @@ public:
 public:
 	void AddTechnique(std::unique_ptr<Technique> _pTechnique);
 	void SubmitDrawCalls(std::unique_ptr<FrameCommander>& frame, const MeshRenderer& renderer) const;
-public:
-	std::shared_ptr<VertexShader> pVertexShader;
-	std::shared_ptr<PixelShader> pPixelShader;
+//public:
+//	std::shared_ptr<VertexShader> pVertexShader;
+//	std::shared_ptr<PixelShader> pPixelShader;
 private:
-	Material* pParent;
 	std::unique_ptr<Technique> pTechnique;
 };

@@ -12,6 +12,8 @@
 #include "MaterialPass.h"
 #include "TransformCbuf.h"
 #include "TextParser.h"
+#include "RenderStep.h"
+#include "Technique.h"
 
 #include <fstream>
 #include <sstream>
@@ -33,7 +35,7 @@ Material::Material(Graphics& gfx, const std::string_view _materialAssetPath)
 		.Append(VertexLayout::Normal)
 		.Append(VertexLayout::Tangent)
 		.Append(VertexLayout::Texture2D);
-	
+
 	DirectX::XMFLOAT3 colorProp = { 0.8f,0.8f,0.8f };
 	float roughnessProp = 0.75f;
 
@@ -124,7 +126,7 @@ Material::Material(Graphics& gfx, const std::string_view _materialAssetPath)
 				const auto pvsbc = pVertexShader->GetBytecode();
 
 				pPassStep->AddBinding(pVertexShader);
-				pPassStep->AddBinding(InputLayout::Resolve(gfx, vertexLayout, pvsbc));
+				pPassStep->AddBinding(InputLayout::Resolve(gfx, std::move(vertexLayout), pvsbc));
 			}
 			else if (p.key == "PS")
 			{

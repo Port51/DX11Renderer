@@ -1,9 +1,9 @@
 #include "MaterialPass.h"
 #include "Technique.h"
 #include "MeshRenderer.h"
-#include "VertexShader.h"
-#include "PixelShader.h"
 #include "Binding.h"
+//#include "VertexShader.h"
+//#include "PixelShader.h"
 
 MaterialPass::MaterialPass()
 {
