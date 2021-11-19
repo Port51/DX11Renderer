@@ -41,3 +41,27 @@ void RenderTarget::BindAsTarget(Graphics& gfx, Microsoft::WRL::ComPtr<ID3D11Dept
 	GetContext(gfx)->OMSetRenderTargets(1, pRenderTargetView.GetAddressOf(), pDepthStencilView.Get());
 	GetContext(gfx)->RSSetViewports(1u, &viewport);
 }
+
+void RenderTarget::SetRenderTarget(ID3D11DeviceContext* deviceContext, Microsoft::WRL::ComPtr<ID3D11DepthStencilView> pDepthStencilView)
+{
+	// Bind the render target view and depth stencil buffer to the output render pipeline.
+	deviceContext->OMSetRenderTargets(1u, pRenderTargetView.GetAddressOf(), pDepthStencilView.Get());
+}
+
+void RenderTarget::ClearRenderTarget(ID3D11DeviceContext* deviceContext,
+	float red, float green, float blue, float alpha)
+{
+	float color[4];
+
+
+	// Setup the color to clear the buffer to.
+	color[0] = red;
+	color[1] = green;
+	color[2] = blue;
+	color[3] = alpha;
+
+	// Clear the back buffer.
+	deviceContext->ClearRenderTargetView(pRenderTargetView.Get(), color);
+
+	return;
+}

@@ -44,7 +44,8 @@ public:
 			//gfx.SetRenderTarget(pCameraColor->pRenderTargetView);
 
 			Bind::Stencil::Resolve(gfx, Bind::Stencil::Mode::Off)->Bind(gfx, 0u);
-			pGbufferNormalRough->ClearRenderTarget(gfx.pContext.Get(), gfx.pDepthStencil->GetView().Get(), 1.f, 0.f, 0.f, 1.f);
+			pGbufferNormalRough->ClearRenderTarget(gfx.pContext.Get(), 1.f, 0.f, 0.f, 1.f);
+			pGbufferSecond->ClearRenderTarget(gfx.pContext.Get(), 1.f, 0.f, 0.f, 1.f);
 			pSmallDepthStencil->Clear(gfx);
 
 			// MRT bind
@@ -70,11 +71,6 @@ public:
 
 			renderPasses[FinalBlitRenderPassName]->Execute(gfx);
 		}
-
-		// BLIT NOTES:
-		// - Blit seems to be working for solid color
-		// - pCameraColor can clear
-		// - Rendering to pCameraColor might not be working
 
 		// GBuffer pass
 		/*{

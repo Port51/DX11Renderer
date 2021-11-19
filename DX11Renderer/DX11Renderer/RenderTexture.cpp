@@ -91,30 +91,3 @@ void RenderTexture::Bind(Graphics& gfx, UINT slot)
 {
 	GetContext(gfx)->PSSetShaderResources(slot, 1u, pRenderTextureView.GetAddressOf());
 }
-
-void RenderTexture::SetRenderTarget(ID3D11DeviceContext* deviceContext, Microsoft::WRL::ComPtr<ID3D11DepthStencilView> pDepthStencilView)
-{
-	// Bind the render target view and depth stencil buffer to the output render pipeline.
-	deviceContext->OMSetRenderTargets(1u, pRenderTargetView.GetAddressOf(), pDepthStencilView.Get());
-}
-
-void RenderTexture::ClearRenderTarget(ID3D11DeviceContext* deviceContext, Microsoft::WRL::ComPtr<ID3D11DepthStencilView> pDepthStencilView,
-	float red, float green, float blue, float alpha)
-{
-	float color[4];
-
-
-	// Setup the color to clear the buffer to.
-	color[0] = red;
-	color[1] = green;
-	color[2] = blue;
-	color[3] = alpha;
-
-	// Clear the back buffer.
-	deviceContext->ClearRenderTargetView(pRenderTargetView.Get(), color);
-
-	// Clear the depth buffer.
-	deviceContext->ClearDepthStencilView(pDepthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
-
-	return;
-}

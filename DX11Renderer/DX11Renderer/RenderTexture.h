@@ -19,8 +19,6 @@ public:
 	void Shutdown();
 
 	void Bind(Graphics& gfx, UINT slot) override; // todo: don't override this
-	void SetRenderTarget(ID3D11DeviceContext* deviceContext, Microsoft::WRL::ComPtr<ID3D11DepthStencilView> depthStencilView);
-	void ClearRenderTarget(ID3D11DeviceContext* deviceContext, Microsoft::WRL::ComPtr<ID3D11DepthStencilView> depthStencilView, float, float, float, float);
 
 public:
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> pRenderTargetTexture;
