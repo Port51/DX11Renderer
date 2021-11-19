@@ -13,6 +13,8 @@
 
 class FrameCommander
 {
+private:
+	const static int GbufferSize = 2;
 public:
 	FrameCommander(Graphics& gfx)
 	{
@@ -31,10 +33,20 @@ public:
 		pGbufferRenderViews[0] = pGbufferNormalRough->pRenderTargetView.Get();
 		pGbufferRenderViews[1] = pGbufferSecond->pRenderTargetView.Get();
 	}
+
+	~FrameCommander()
+	{
+		for (int i = 0; i < GbufferSize; ++i)
+		{
+			delete pGbufferRenderViews[i];
+		}
+	}
+
 	void Accept(RenderJob job, std::string targetPass)
 	{
 		renderPasses[targetPass]->EnqueueJob(job);
 	}
+
 	void Execute(Graphics& gfx)
 	{
 		// todo: replace w/ rendergraph
@@ -86,6 +98,7 @@ public:
 		Bind::Stencil::Resolve(gfx, Bind::Stencil::Mode::Mask)->Bind(gfx);
 		passes[2].Execute(gfx);*/
 	}
+
 	void Reset()
 	{
 		for (auto& p : renderPasses)
@@ -93,8 +106,9 @@ public:
 			p.second->Reset();
 		}
 	}
+
 private:
-	ID3D11RenderTargetView* pGbufferRenderViews[2];
+	ID3D11RenderTargetView* pGbufferRenderViews[GbufferSize];
 	std::shared_ptr<DepthStencilTarget> pSmallDepthStencil;
 	std::shared_ptr<DepthStencilTarget> pFullDepthStencil;
 	std::shared_ptr<RenderTarget> pGbufferNormalRough;
