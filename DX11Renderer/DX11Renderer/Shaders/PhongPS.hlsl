@@ -37,8 +37,15 @@ float SCurve(float x)
     return (-2 * x + 3) * x * x; // OPS: [MAD] [MUL] [MUL]
 }
 
-float4 main(v2f i) : SV_Target
+struct PS_OUTPUT
 {
+    float4 NormalRough : SV_Target0;
+    float4 Second : SV_Target1;
+};
+
+PS_OUTPUT main(v2f i) : SV_Target
+{
+    PS_OUTPUT o;
     //return float4(lightColor, 1);
     //return abs(i.tangentVS.xyzz);
     //return frac(i.uv0.x * 10);
@@ -104,6 +111,7 @@ float4 main(v2f i) : SV_Target
     
     //return diffuseTex;
     //return materialColor.rgbb;
-    return float4((brdf.diffuseLight * diffuseTex.rgb + brdf.specularLight) * materialColor * lightColor * (lightIntensity * light.attenuation), 1);
-    
+    o.NormalRough = float4((brdf.diffuseLight * diffuseTex.rgb + brdf.specularLight) * materialColor * lightColor * (lightIntensity * light.attenuation), 1);
+    o.Second = i.normalVS.y;
+    return o;
 }

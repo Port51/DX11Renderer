@@ -16,14 +16,17 @@ class FrameCommander
 public:
 	FrameCommander(Graphics& gfx)
 	{
-		pCameraColor = std::make_shared<RenderTarget>(gfx);
-		pCameraColor->Init(gfx.pDevice.Get(), 1280 / 4, 720 / 4);
+		pGbufferNormalRough = std::make_shared<RenderTarget>(gfx);
+		pGbufferNormalRough->Init(gfx.pDevice.Get(), 1280 / 2, 720 / 2);
 
-		pSmallDepthStencil = std::make_shared<DepthStencilTarget>(gfx, 1280 / 4, 720 / 4);
+		pGbufferSecond = std::make_shared<RenderTarget>(gfx);
+		pGbufferSecond->Init(gfx.pDevice.Get(), 1280 / 2, 720 / 2);
+
+		pSmallDepthStencil = std::make_shared<DepthStencilTarget>(gfx, 1280 / 2, 720 / 2);
 		pFullDepthStencil = std::make_shared<DepthStencilTarget>(gfx, 1280, 720);
 
 		renderPasses.emplace(GBufferRenderPassName, std::make_unique<RenderPass>());
-		renderPasses.emplace(FinalBlitRenderPassName, std::make_unique<FullscreenPass>(gfx, pCameraColor));
+		renderPasses.emplace(FinalBlitRenderPassName, std::make_unique<FullscreenPass>(gfx, pGbufferSecond));
 	}
 	void Accept(RenderJob job, std::string targetPass)
 	{
@@ -41,9 +44,19 @@ public:
 			//gfx.SetRenderTarget(pCameraColor->pRenderTargetView);
 
 			Bind::Stencil::Resolve(gfx, Bind::Stencil::Mode::Off)->Bind(gfx, 0u);
-			pCameraColor->ClearRenderTarget(gfx.pContext.Get(), gfx.pDepthStencilView.Get(), 1.f, 0.f, 0.f, 1.f);
+			pGbufferNormalRough->ClearRenderTarget(gfx.pContext.Get(), gfx.pDepthStencilView.Get(), 1.f, 0.f, 0.f, 1.f);
 			pSmallDepthStencil->Clear(gfx);
-			pCameraColor->BindAsTarget(gfx, pSmallDepthStencil->GetView().Get());
+
+			// MRT bind
+			//pCameraColor->BindAsTarget(gfx, pSmallDepthStencil->GetView().Get());
+			
+			ID3D11RenderTargetView* m_pRenderViews[2]; //Not more than D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT (8)
+			m_pRenderViews[0] = pGbufferNormalRough->pRenderTargetView.Get(); //First target
+			m_pRenderViews[1] = pGbufferSecond->pRenderTargetView.Get(); //second target
+
+			gfx.pContext->OMSetRenderTargets(2, &m_pRenderViews[0], gfx.pDepthStencilView.Get());
+			gfx.SetViewport(1280 / 2, 720 / 2);
+
 			renderPasses[GBufferRenderPassName]->Execute(gfx);
 		}
 
@@ -88,7 +101,8 @@ public:
 private:
 	std::shared_ptr<DepthStencilTarget> pSmallDepthStencil;
 	std::shared_ptr<DepthStencilTarget> pFullDepthStencil;
-	std::shared_ptr<RenderTarget> pCameraColor;
+	std::shared_ptr<RenderTarget> pGbufferNormalRough;
+	std::shared_ptr<RenderTarget> pGbufferSecond;
 	std::unordered_map<std::string, std::unique_ptr<RenderPass>> renderPasses;
 private:
 	const std::string GBufferRenderPassName = std::string("GBuffer");
