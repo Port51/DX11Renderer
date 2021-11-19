@@ -111,16 +111,8 @@ Graphics::Graphics(HWND hWnd, int windowWidth, int windowHeight)
 	//
 	// Setup viewport
 	//
-	// (includes screen size, but could be sub-portion of screen too)
-	D3D11_VIEWPORT vp;
-	vp.Width = (FLOAT)windowWidth;
-	vp.Height = (FLOAT)windowHeight;
-	vp.MinDepth = 0;
-	vp.MaxDepth = 1;
-	vp.TopLeftX = 0;
-	vp.TopLeftY = 0;
-	pContext->RSSetViewports(1u, &vp);
-
+	SetViewport(windowWidth, windowHeight);
+	
 	ImGui_ImplDX11_Init(pDevice.Get(), pContext.Get());
 }
 
@@ -220,6 +212,18 @@ DirectX::XMMATRIX Graphics::GetViewMatrix() const
 void Graphics::SetRenderTarget(Microsoft::WRL::ComPtr<ID3D11RenderTargetView> renderTargetView)
 {
 	pContext->OMSetRenderTargets(1u, renderTargetView.GetAddressOf(), pDepthStencilView.Get());
+}
+
+void Graphics::SetViewport(int width, int height)
+{
+	D3D11_VIEWPORT vp;
+	vp.Width = (FLOAT)width;
+	vp.Height = (FLOAT)height;
+	vp.MinDepth = 0;
+	vp.MaxDepth = 1;
+	vp.TopLeftX = 0;
+	vp.TopLeftY = 0;
+	pContext->RSSetViewports(1u, &vp);
 }
 
 // Graphics exception stuff

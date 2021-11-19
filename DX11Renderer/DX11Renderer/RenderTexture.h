@@ -15,7 +15,7 @@ public:
 	RenderTexture(Graphics& gfx);
 	//~RenderTexture();
 
-	bool Init(ID3D11Device* pDevice, int textureWidth, int textureHeight);
+	virtual bool Init(ID3D11Device* pDevice, int textureWidth, int textureHeight);
 	void Shutdown();
 
 	void Bind(Graphics& gfx, UINT slot) override; // todo: don't override this

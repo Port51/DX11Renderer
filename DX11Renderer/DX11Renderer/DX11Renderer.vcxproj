@@ -166,6 +166,7 @@
     <ClCompile Include="ChiliUtil.cpp" />
     <ClCompile Include="CustomException.cpp" />
     <ClCompile Include="DepthStencil.cpp" />
+    <ClCompile Include="DepthStencilTarget.cpp" />
     <ClCompile Include="dxerr.cpp" />
     <ClCompile Include="DxgiInfoManager.cpp" />
     <ClCompile Include="FullscreenPass.cpp" />
@@ -228,6 +229,7 @@
     <ClInclude Include="CustomException.h" />
     <ClInclude Include="DebugHelper.h" />
     <ClInclude Include="DepthStencil.h" />
+    <ClInclude Include="DepthStencilTarget.h" />
     <ClInclude Include="dxerr.h" />
     <ClInclude Include="DxgiInfoManager.h" />
     <ClInclude Include="FBXImporter.h" />

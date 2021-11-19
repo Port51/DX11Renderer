@@ -279,6 +279,9 @@
     <ClCompile Include="RenderPass.cpp">
       <Filter>Source Files\RenderJobs</Filter>
     </ClCompile>
+    <ClCompile Include="DepthStencilTarget.cpp">
+      <Filter>Source Files\RenderPipeline</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WindowsInclude.h">
@@ -449,9 +452,6 @@
     <ClInclude Include="MeshRenderer.h">
       <Filter>Header Files\Drawable</Filter>
     </ClInclude>
-    <ClInclude Include="RenderTarget.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="GraphicsResource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -505,6 +505,12 @@
     </ClInclude>
     <ClInclude Include="FullscreenPass.h">
       <Filter>Header Files\RenderJobs\Passes</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderTarget.h">
+      <Filter>Header Files\RenderPipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="DepthStencilTarget.h">
+      <Filter>Header Files\RenderPipeline</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

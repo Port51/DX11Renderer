@@ -8,15 +8,19 @@
 #include "RenderPass.h"
 #include "FullscreenPass.h"
 #include "NullPixelShader.h"
-#include "RenderTexture.h"
+#include "RenderTarget.h"
+#include "DepthStencilTarget.h"
 
 class FrameCommander
 {
 public:
 	FrameCommander(Graphics& gfx)
 	{
-		pCameraColor = std::make_shared<RenderTexture>(gfx);
+		pCameraColor = std::make_shared<RenderTarget>(gfx);
 		pCameraColor->Init(gfx.pDevice.Get(), 1280 / 4, 720 / 4);
+
+		pSmallDepthStencil = std::make_shared<DepthStencilTarget>(gfx, 1280 / 4, 720 / 4);
+		pFullDepthStencil = std::make_shared<DepthStencilTarget>(gfx, 1280, 720);
 
 		renderPasses.emplace(GBufferRenderPassName, std::make_unique<RenderPass>());
 		renderPasses.emplace(FinalBlitRenderPassName, std::make_unique<FullscreenPass>(gfx, pCameraColor));
@@ -33,17 +37,24 @@ public:
 
 		// GBuffer pass
 		{
-			Bind::Stencil::Resolve(gfx, Bind::Stencil::Mode::Off)->Bind(gfx, 0u);
 			//pCameraColor->SetRenderTarget(gfx.pContext.Get(), gfx.pDepthStencilView.Get());
+			//gfx.SetRenderTarget(pCameraColor->pRenderTargetView);
+
+			Bind::Stencil::Resolve(gfx, Bind::Stencil::Mode::Off)->Bind(gfx, 0u);
 			pCameraColor->ClearRenderTarget(gfx.pContext.Get(), gfx.pDepthStencilView.Get(), 1.f, 0.f, 0.f, 1.f);
-			gfx.SetRenderTarget(pCameraColor->pRenderTargetView);
+			pSmallDepthStencil->Clear(gfx);
+			pCameraColor->BindAsTarget(gfx, pSmallDepthStencil->GetView().Get());
 			renderPasses[GBufferRenderPassName]->Execute(gfx);
 		}
 
 		// Final blit
 		{
 			Bind::Stencil::Resolve(gfx, Bind::Stencil::Mode::Off)->Bind(gfx, 0u);
-			gfx.SetRenderTarget(gfx.pBackBufferView);
+
+			pFullDepthStencil->Clear(gfx);
+			gfx.SetViewport(1280, 720);
+			gfx.pContext->OMSetRenderTargets(1u, gfx.pBackBufferView.GetAddressOf(), pFullDepthStencil->GetView().Get());
+
 			renderPasses[FinalBlitRenderPassName]->Execute(gfx);
 		}
 
@@ -75,7 +86,9 @@ public:
 		}
 	}
 private:
-	std::shared_ptr<RenderTexture> pCameraColor;
+	std::shared_ptr<DepthStencilTarget> pSmallDepthStencil;
+	std::shared_ptr<DepthStencilTarget> pFullDepthStencil;
+	std::shared_ptr<RenderTarget> pCameraColor;
 	std::unordered_map<std::string, std::unique_ptr<RenderPass>> renderPasses;
 private:
 	const std::string GBufferRenderPassName = std::string("GBuffer");

@@ -63,6 +63,7 @@ public:
 	void ClearBuffer(float red, float green, float blue);
 	void DrawIndexed(UINT count);
 	void SetRenderTarget(Microsoft::WRL::ComPtr<ID3D11RenderTargetView> renderTargetView);
+	void SetViewport(int width, int height);
 public:
 	void EnableImgui();
 	void DisableImgui();

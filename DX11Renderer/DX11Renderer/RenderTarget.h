@@ -1,17 +1,17 @@
 #pragma once
 #include "Graphics.h"
-#include "GraphicsResource.h"
+#include "RenderTexture.h"
 
 class DepthStencil;
 
-class RenderTarget : public GraphicsResource
+class RenderTarget : public RenderTexture
 {
 public:
-	RenderTarget(Graphics& gfx, UINT width, UINT height);
+	RenderTarget(Graphics& gfx);
+	bool Init(ID3D11Device* pDevice, int textureWidth, int textureHeight) override;
 	void BindAsTexture(Graphics& gfx, UINT slot) const;
 	void BindAsTarget(Graphics& gfx) const;
-	void BindAsTarget(Graphics& gfx, const DepthStencil& depthStencil) const;
+	void BindAsTarget(Graphics& gfx, Microsoft::WRL::ComPtr<ID3D11DepthStencilView> pDepthStencilView) const;
 private:
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pTextureView;
-	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pTargetView;
+	D3D11_VIEWPORT viewport;
 };
