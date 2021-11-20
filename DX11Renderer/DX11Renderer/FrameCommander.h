@@ -26,7 +26,6 @@ public:
 		pGbufferSecond->Init(gfx.pDevice.Get(), 1280 / 2, 720 / 2);
 
 		pSmallDepthStencil = std::make_shared<DepthStencilTarget>(gfx, 1280 / 2, 720 / 2);
-		pFullDepthStencil = std::make_shared<DepthStencilTarget>(gfx, 1280, 720);
 
 		// Setup passes
 		renderPasses.emplace(GBufferRenderPassName, std::make_unique<RenderPass>());
@@ -66,7 +65,7 @@ public:
 			pSmallDepthStencil->Clear(gfx);
 
 			// MRT bind
-			gfx.pContext->OMSetRenderTargets(2, &pGbufferRenderViews[0], gfx.pDepthStencil->GetView().Get());
+			gfx.pContext->OMSetRenderTargets(2, &pGbufferRenderViews[0], pSmallDepthStencil->GetView().Get());
 			gfx.SetViewport(1280 / 2, 720 / 2);
 
 			renderPasses[GBufferRenderPassName]->Execute(gfx);
@@ -76,9 +75,8 @@ public:
 		{
 			Bind::Stencil::Resolve(gfx, Bind::Stencil::Mode::Off)->Bind(gfx, 0u);
 
-			pFullDepthStencil->Clear(gfx);
 			gfx.SetViewport(1280, 720);
-			gfx.pContext->OMSetRenderTargets(1u, gfx.pBackBufferView.GetAddressOf(), pFullDepthStencil->GetView().Get());
+			gfx.pContext->OMSetRenderTargets(1u, gfx.pBackBufferView.GetAddressOf(), gfx.pDepthStencil->GetView().Get());
 
 			renderPasses[FinalBlitRenderPassName]->Execute(gfx);
 		}
@@ -95,7 +93,6 @@ public:
 private:
 	ID3D11RenderTargetView* pGbufferRenderViews[GbufferSize];
 	std::shared_ptr<DepthStencilTarget> pSmallDepthStencil;
-	std::shared_ptr<DepthStencilTarget> pFullDepthStencil;
 	std::shared_ptr<RenderTarget> pGbufferNormalRough;
 	std::shared_ptr<RenderTarget> pGbufferSecond;
 	std::unordered_map<std::string, std::unique_ptr<RenderPass>> renderPasses;
