@@ -13,7 +13,7 @@ struct attrib
     float3 pos : Position;
     float3 n : Normal;
     float3 t : Tangent;
-    float2 uv0 : TEXCOORD0;
+    float2 uv0 : Texcoord0;
 };
 
 v2f main(attrib i)

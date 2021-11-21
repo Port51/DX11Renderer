@@ -5,7 +5,7 @@
 #include "VertexLayout.h"
 
 ///
-/// Read-only view of vertex that exists in VertexBuffer
+/// View of vertex that exists in VertexBuffer
 ///
 class Vertex
 {
@@ -36,8 +36,8 @@ public:
 		case VertexLayout::Position3D:
 			SetAttribute<VertexLayout::Position3D>(pAttribute, std::forward<T>(val));
 			break;
-		case VertexLayout::Texture2D:
-			SetAttribute<VertexLayout::Texture2D>(pAttribute, std::forward<T>(val));
+		case VertexLayout::Texcoord2D:
+			SetAttribute<VertexLayout::Texcoord2D>(pAttribute, std::forward<T>(val));
 			break;
 		case VertexLayout::Normal:
 			SetAttribute<VertexLayout::Normal>(pAttribute, std::forward<T>(val));

@@ -15,7 +15,10 @@ public:
 	{
 		Position2D,
 		Position3D,
-		Texture2D,
+		Texcoord2D,
+		UV1,
+		UV2,
+		UV3,
 		Normal,
 		Tangent,
 		Float3Color,
@@ -44,12 +47,12 @@ public:
 		static constexpr const char* semantic = "Position";
 		static constexpr const char* code = "P3";
 	};
-	template<> struct Map<Texture2D>
+	template<> struct Map<Texcoord2D>
 	{
 		using SysType = DirectX::XMFLOAT2;
 		static constexpr DXGI_FORMAT dxgiFormat = DXGI_FORMAT_R32G32_FLOAT;
 		static constexpr const char* semantic = "Texcoord";
-		static constexpr const char* code = "T2";
+		static constexpr const char* code = "TC2";
 	};
 	template<> struct Map<Normal>
 	{
@@ -90,10 +93,11 @@ public:
 	class Element
 	{
 	public:
-		Element(ElementType type, size_t offset)
+		Element(ElementType type, size_t offset, UINT semanticIndex)
 			:
 			type(type),
-			offset(offset)
+			offset(offset),
+			semanticIndex(semanticIndex)
 		{}
 		size_t GetOffsetAfter() const
 		{
@@ -102,6 +106,10 @@ public:
 		size_t GetOffset() const
 		{
 			return offset;
+		}
+		UINT GetSemanticIndex() const
+		{
+			return semanticIndex;
 		}
 		size_t Size() const
 		{
@@ -115,8 +123,8 @@ public:
 				return sizeof(Map<Position2D>::SysType);
 			case Position3D:
 				return sizeof(Map<Position3D>::SysType);
-			case Texture2D:
-				return sizeof(Map<Texture2D>::SysType);
+			case Texcoord2D:
+				return sizeof(Map<Texcoord2D>::SysType);
 			case Normal:
 				return sizeof(Map<Normal>::SysType);
 			case Tangent:
@@ -143,21 +151,21 @@ public:
 			switch (type)
 			{
 			case Position2D:
-				return GenerateDesc<Position2D>(GetOffset());
+				return GenerateDesc<Position2D>(GetOffset(), GetSemanticIndex());
 			case Position3D:
-				return GenerateDesc<Position3D>(GetOffset());
-			case Texture2D:
-				return GenerateDesc<Texture2D>(GetOffset());
+				return GenerateDesc<Position3D>(GetOffset(), GetSemanticIndex());
+			case Texcoord2D:
+				return GenerateDesc<Texcoord2D>(GetOffset(), GetSemanticIndex());
 			case Normal:
-				return GenerateDesc<Normal>(GetOffset());
+				return GenerateDesc<Normal>(GetOffset(), GetSemanticIndex());
 			case Tangent:
-				return GenerateDesc<Tangent>(GetOffset());
+				return GenerateDesc<Tangent>(GetOffset(), GetSemanticIndex());
 			case Float3Color:
-				return GenerateDesc<Float3Color>(GetOffset());
+				return GenerateDesc<Float3Color>(GetOffset(), GetSemanticIndex());
 			case Float4Color:
-				return GenerateDesc<Float4Color>(GetOffset());
+				return GenerateDesc<Float4Color>(GetOffset(), GetSemanticIndex());
 			case BGRAColor:
-				return GenerateDesc<BGRAColor>(GetOffset());
+				return GenerateDesc<BGRAColor>(GetOffset(), GetSemanticIndex());
 			}
 			THROW_GFX_EXCEPT("Invalid element type");
 			return { "INVALID",0,DXGI_FORMAT_UNKNOWN,0,0,D3D11_INPUT_PER_VERTEX_DATA,0 };
@@ -170,8 +178,8 @@ public:
 				return Map<Position2D>::code;
 			case Position3D:
 				return Map<Position3D>::code;
-			case Texture2D:
-				return Map<Texture2D>::code;
+			case Texcoord2D:
+				return Map<Texcoord2D>::code;
 			case Normal:
 				return Map<Normal>::code;
 			case Tangent:
@@ -189,7 +197,7 @@ public:
 
 	private:
 		template<ElementType type>
-		static constexpr D3D11_INPUT_ELEMENT_DESC GenerateDesc(size_t offset)
+		static constexpr D3D11_INPUT_ELEMENT_DESC GenerateDesc(size_t offset, UINT semanticIndex)
 		{
 			// IN ORDER:
 			// Semantic "Position" must match vertex shader semantic
@@ -200,11 +208,12 @@ public:
 			// Vert vs. instances
 			// Instance stuff
 			// EXAMPLE: { "Position", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-			return { Map<type>::semantic, 0, Map<type>::dxgiFormat, 0, (UINT)offset, D3D11_INPUT_PER_VERTEX_DATA, 0 };
+			return { Map<type>::semantic, semanticIndex, Map<type>::dxgiFormat, 0, (UINT)offset, D3D11_INPUT_PER_VERTEX_DATA, 0 };
 		}
 	private:
 		ElementType type;
 		size_t offset;
+		UINT semanticIndex;
 	};
 
 public:
@@ -226,9 +235,9 @@ public:
 	{
 		return elements[i];
 	}
-	VertexLayout& Append(ElementType type)
+	VertexLayout& Append(ElementType type, UINT semanticIndex = 0u)
 	{
-		elements.emplace_back(type, Size());
+		elements.emplace_back(type, Size(), semanticIndex);
 		return *this;
 	}
 	// Size in bytes

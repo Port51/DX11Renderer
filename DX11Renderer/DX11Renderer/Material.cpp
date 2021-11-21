@@ -34,7 +34,7 @@ Material::Material(Graphics& gfx, const std::string_view _materialAssetPath)
 		.Append(VertexLayout::Position3D)
 		.Append(VertexLayout::Normal)
 		.Append(VertexLayout::Tangent)
-		.Append(VertexLayout::Texture2D);
+		.Append(VertexLayout::Texcoord2D, 0u);
 
 	DirectX::XMFLOAT3 colorProp = { 0.8f,0.8f,0.8f };
 	float roughnessProp = 0.75f;
