@@ -118,6 +118,12 @@
     <Filter Include="Source Files\RenderJobs\Passes">
       <UniqueIdentifier>{b6674e5f-e356-4011-8a70-fc294419f13d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\FBXImporter\Meshes">
+      <UniqueIdentifier>{d89bbeda-33c0-4f48-9e9b-df739a460b7d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\FBXImporter\Meshes\Attributes">
+      <UniqueIdentifier>{4be7f4f8-cbae-485d-a611-7af22aea27c3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -282,6 +288,9 @@
     <ClCompile Include="Graphics.cpp">
       <Filter>Source Files\RenderPipeline</Filter>
     </ClCompile>
+    <ClCompile Include="InstancedMeshRenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WindowsInclude.h">
@@ -401,16 +410,10 @@
     <ClInclude Include="FBXImporter.h">
       <Filter>Header Files\FBXImporter</Filter>
     </ClInclude>
-    <ClInclude Include="MeshAsset.h">
-      <Filter>Header Files\FBXImporter</Filter>
-    </ClInclude>
     <ClInclude Include="ModelAsset.h">
       <Filter>Header Files\FBXImporter</Filter>
     </ClInclude>
     <ClInclude Include="DebugHelper.h">
-      <Filter>Header Files\FBXImporter</Filter>
-    </ClInclude>
-    <ClInclude Include="BaseMesh.h">
       <Filter>Header Files\FBXImporter</Filter>
     </ClInclude>
     <ClInclude Include="ModelInstanceUtil.h">
@@ -511,6 +514,21 @@
     </ClInclude>
     <ClInclude Include="Graphics.h">
       <Filter>Header Files\RenderPipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseMesh.h">
+      <Filter>Header Files\FBXImporter\Meshes</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshAsset.h">
+      <Filter>Header Files\FBXImporter\Meshes</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexAttribute.h">
+      <Filter>Header Files\FBXImporter\Meshes\Attributes</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexAttributeDesc.h">
+      <Filter>Header Files\FBXImporter\Meshes\Attributes</Filter>
+    </ClInclude>
+    <ClInclude Include="InstancedMeshRenderer.h">
+      <Filter>Header Files\Drawable</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -13,6 +13,5 @@ void RenderJob::Execute(Graphics& gfx) const
 {
 	pRenderer->Bind(gfx);
 	pStep->Bind(gfx);
-	//gfx.DrawIndexed(pRenderer->GetIndexCount());
-	gfx.pContext->DrawIndexedInstanced(pRenderer->GetIndexCount(), 10u, 0u, 0, 0u);
+	pRenderer->IssueDrawCall(gfx); // calls DrawIndexed() or DrawIndexedInstanced()
 }

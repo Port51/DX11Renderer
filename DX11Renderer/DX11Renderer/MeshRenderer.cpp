@@ -68,3 +68,8 @@ UINT MeshRenderer::GetVertexCount() const
 {
 	return pVertices->GetVertexCount();
 }
+
+void MeshRenderer::IssueDrawCall(Graphics& gfx) const
+{
+	gfx.DrawIndexed(GetIndexCount());
+}

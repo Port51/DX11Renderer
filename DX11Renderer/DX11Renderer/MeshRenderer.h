@@ -4,6 +4,7 @@
 #include <string>
 #include <memory>
 
+class Graphics;
 class VertexBuffer;
 class IndexBuffer;
 class Topology;
@@ -20,9 +21,10 @@ public:
 	MeshRenderer(Graphics& gfx, std::string name, std::shared_ptr<Material> pMaterial, std::shared_ptr<VertexBuffer> pVertexBuffer, std::shared_ptr<IndexBuffer> pIndexBuffer, std::shared_ptr<Topology> pTopologyBuffer);
 	DirectX::XMMATRIX GetTransformXM() const;
 	void SubmitDrawCalls(std::unique_ptr<FrameCommander>& frame, dx::FXMMATRIX _accumulatedTranform) const;
-	void Bind(Graphics& gfx) const;
+	virtual void Bind(Graphics& gfx) const;
 	UINT GetIndexCount() const;
 	UINT GetVertexCount() const;
+	virtual void IssueDrawCall(Graphics& gfx) const;
 private:
 	std::string name;
 	std::shared_ptr<Material> pMaterial; // keep separate from other bindables for now...

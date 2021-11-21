@@ -45,7 +45,7 @@ public:
 		}
 	}
 
-	void Accept(RenderJob job, std::string targetPass)
+	void AcceptRenderJob(RenderJob job, std::string targetPass)
 	{
 		renderPasses[targetPass]->EnqueueJob(job);
 	}
