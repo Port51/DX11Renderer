@@ -10,6 +10,7 @@ public:
 	VertexBuffer(Graphics& gfx, const VertexBufferData& vbuf);
 	void Bind(Graphics& gfx, UINT slot) override;
 	std::string GetUID() const override;
+	UINT GetVertexCount() const;
 public:
 	static std::shared_ptr<VertexBuffer> Resolve(Graphics& gfx, const std::string& tag, const VertexBufferData& vbuf);
 	template<typename...Ignore>
@@ -22,5 +23,6 @@ private:
 protected:
 	std::string tag;
 	UINT stride;
+	UINT vertexCount;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> pVertexBuffer;
 };

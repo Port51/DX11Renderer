@@ -61,5 +61,10 @@ void MeshRenderer::Bind(Graphics& gfx) const
 
 UINT MeshRenderer::GetIndexCount() const
 {
-	return pIndices->GetCount();
+	return pIndices->GetIndexCount();
+}
+
+UINT MeshRenderer::GetVertexCount() const
+{
+	return pVertices->GetVertexCount();
 }

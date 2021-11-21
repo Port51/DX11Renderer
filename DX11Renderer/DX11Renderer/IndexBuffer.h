@@ -14,7 +14,7 @@ public:
 	IndexBuffer(Graphics& gfx, const std::vector<unsigned short>& indices);
 	IndexBuffer(Graphics& gfx, std::string tag, const std::vector<unsigned short>& indices);
 	void Bind(Graphics& gfx, UINT slot) override;
-	UINT GetCount() const;
+	UINT GetIndexCount() const;
 	std::string GetUID() const override;
 public:
 	static std::shared_ptr<IndexBuffer> Resolve(Graphics& gfx, const std::string& tag,

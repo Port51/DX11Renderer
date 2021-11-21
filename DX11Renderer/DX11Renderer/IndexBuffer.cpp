@@ -31,7 +31,7 @@ void IndexBuffer::Bind(Graphics& gfx, UINT slot)
 	GetContext(gfx)->IASetIndexBuffer(pIndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0u);
 }
 
-UINT IndexBuffer::GetCount() const
+UINT IndexBuffer::GetIndexCount() const
 {
 	return count;
 }

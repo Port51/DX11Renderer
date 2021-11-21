@@ -6,6 +6,7 @@ VertexBuffer::VertexBuffer(Graphics& gfx, const VertexBufferData& vbuf)
 {}
 VertexBuffer::VertexBuffer(Graphics& gfx, const std::string& tag, const VertexBufferData& vbuf)
 	: stride((UINT)vbuf.GetLayout().Size()),
+	vertexCount(vbuf.Size()),
 	tag(tag)
 {
 	SETUP_LOGGING(gfx);
@@ -43,4 +44,9 @@ std::string VertexBuffer::GenerateNontemplatedUID(const std::string& tag)
 std::string VertexBuffer::GetUID() const
 {
 	return GenerateUID(tag);
+}
+
+UINT VertexBuffer::GetVertexCount() const
+{
+	return vertexCount;
 }

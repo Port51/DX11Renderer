@@ -22,6 +22,7 @@ public:
 	void SubmitDrawCalls(std::unique_ptr<FrameCommander>& frame, dx::FXMMATRIX _accumulatedTranform) const;
 	void Bind(Graphics& gfx) const;
 	UINT GetIndexCount() const;
+	UINT GetVertexCount() const;
 private:
 	std::string name;
 	std::shared_ptr<Material> pMaterial; // keep separate from other bindables for now...
