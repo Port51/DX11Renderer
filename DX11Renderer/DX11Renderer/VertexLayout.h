@@ -16,9 +16,6 @@ public:
 		Position2D,
 		Position3D,
 		Texcoord2D,
-		UV1,
-		UV2,
-		UV3,
 		Normal,
 		Tangent,
 		Float3Color,
@@ -93,11 +90,12 @@ public:
 	class Element
 	{
 	public:
-		Element(ElementType type, size_t offset, UINT semanticIndex)
+		Element(ElementType type, size_t offset, UINT semanticIndex, D3D11_INPUT_CLASSIFICATION classification)
 			:
 			type(type),
 			offset(offset),
-			semanticIndex(semanticIndex)
+			semanticIndex(semanticIndex),
+			classification(classification)
 		{}
 		size_t GetOffsetAfter() const
 		{
@@ -151,21 +149,21 @@ public:
 			switch (type)
 			{
 			case Position2D:
-				return GenerateDesc<Position2D>(GetOffset(), GetSemanticIndex());
+				return GenerateDesc<Position2D>(offset, semanticIndex, classification);
 			case Position3D:
-				return GenerateDesc<Position3D>(GetOffset(), GetSemanticIndex());
+				return GenerateDesc<Position3D>(offset, semanticIndex, classification);
 			case Texcoord2D:
-				return GenerateDesc<Texcoord2D>(GetOffset(), GetSemanticIndex());
+				return GenerateDesc<Texcoord2D>(offset, semanticIndex, classification);
 			case Normal:
-				return GenerateDesc<Normal>(GetOffset(), GetSemanticIndex());
+				return GenerateDesc<Normal>(offset, semanticIndex, classification);
 			case Tangent:
-				return GenerateDesc<Tangent>(GetOffset(), GetSemanticIndex());
+				return GenerateDesc<Tangent>(offset, semanticIndex, classification);
 			case Float3Color:
-				return GenerateDesc<Float3Color>(GetOffset(), GetSemanticIndex());
+				return GenerateDesc<Float3Color>(offset, semanticIndex, classification);
 			case Float4Color:
-				return GenerateDesc<Float4Color>(GetOffset(), GetSemanticIndex());
+				return GenerateDesc<Float4Color>(offset, semanticIndex, classification);
 			case BGRAColor:
-				return GenerateDesc<BGRAColor>(GetOffset(), GetSemanticIndex());
+				return GenerateDesc<BGRAColor>(offset, semanticIndex, classification);
 			}
 			THROW_GFX_EXCEPT("Invalid element type");
 			return { "INVALID",0,DXGI_FORMAT_UNKNOWN,0,0,D3D11_INPUT_PER_VERTEX_DATA,0 };
@@ -197,7 +195,7 @@ public:
 
 	private:
 		template<ElementType type>
-		static constexpr D3D11_INPUT_ELEMENT_DESC GenerateDesc(size_t offset, UINT semanticIndex)
+		static constexpr D3D11_INPUT_ELEMENT_DESC GenerateDesc(size_t offset, UINT semanticIndex, D3D11_INPUT_CLASSIFICATION classification)
 		{
 			// IN ORDER:
 			// Semantic "Position" must match vertex shader semantic
@@ -208,12 +206,13 @@ public:
 			// Vert vs. instances
 			// Instance stuff
 			// EXAMPLE: { "Position", 0, DXGI_FORMAT::DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-			return { Map<type>::semantic, semanticIndex, Map<type>::dxgiFormat, 0, (UINT)offset, D3D11_INPUT_PER_VERTEX_DATA, 0 };
+			return { Map<type>::semantic, semanticIndex, Map<type>::dxgiFormat, 0, (UINT)offset, classification, 0 };
 		}
 	private:
 		ElementType type;
 		size_t offset;
 		UINT semanticIndex;
+		D3D11_INPUT_CLASSIFICATION classification;
 	};
 
 public:
@@ -235,9 +234,9 @@ public:
 	{
 		return elements[i];
 	}
-	VertexLayout& Append(ElementType type, UINT semanticIndex = 0u)
+	VertexLayout& Append(ElementType type, UINT semanticIndex = 0u, D3D11_INPUT_CLASSIFICATION classification = D3D11_INPUT_PER_VERTEX_DATA)
 	{
-		elements.emplace_back(type, Size(), semanticIndex);
+		elements.emplace_back(type, Size(), semanticIndex, classification);
 		return *this;
 	}
 	// Size in bytes
