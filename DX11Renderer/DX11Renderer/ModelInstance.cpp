@@ -85,7 +85,7 @@ std::unique_ptr<MeshRenderer> ModelInstance::ParseMesh(Graphics& gfx, std::uniqu
 
 	auto pMaterial = pMaterials[pMeshAsset->materialIndex];
 
-	VertexBufferData vbuf(pMaterial->GetVertexLayout());
+	VertexBufferData vbuf(pMaterial->GetVertexLayout(), pMeshAsset->vertices.size());
 
 	if (pMeshAsset->vertices.size() == 0)
 	{

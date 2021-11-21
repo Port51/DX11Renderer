@@ -14,7 +14,7 @@ FullscreenPass::FullscreenPass(Graphics& gfx, std::shared_ptr<Texture> pInput)
 	// setup fullscreen geometry
 	VertexLayout lay;
 	lay.Append(VertexLayout::Position2D);
-	VertexBufferData bufFull{ lay };
+	VertexBufferData bufFull(lay, (size_t)4);
 	bufFull.EmplaceBack(dx::XMFLOAT2{ -1,1 });
 	bufFull.EmplaceBack(dx::XMFLOAT2{ 1,1 });
 	bufFull.EmplaceBack(dx::XMFLOAT2{ -1,-1 });

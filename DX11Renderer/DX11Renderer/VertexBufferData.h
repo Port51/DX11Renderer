@@ -9,9 +9,11 @@
 class VertexBufferData
 {
 public:
-	VertexBufferData(const VertexLayout& layout)
-		: layout(layout)
-	{}
+	VertexBufferData(const VertexLayout& layout, const size_t vertCount)
+		: layout(layout), vertCount(vertCount)
+	{
+		buffer.resize(layout.Size() * vertCount);
+	}
 	const char* GetData() const
 	{
 		return buffer.data();
@@ -34,29 +36,30 @@ public:
 	void EmplaceBack(Params&&... params)
 	{
 		assert(sizeof...(params) == layout.GetElementCount() && "Param count doesn't match number of vertex elements");
-		buffer.resize(buffer.size() + layout.Size());
 		// Set all attributes by index
 		// Will trigger param unwrapping, so index will be 0, 1, 2, 3, etc.
-		Back().SetAttributeByIndex(0u, std::forward<Params>(params)...);
+
+		Vertex(buffer.data() + layout.Size() * nextInputVertex, layout).SetAttributeByIndex(0u, std::forward<Params>(params)...);
+		nextInputVertex++;
 	}
 	// Last
 	Vertex Back()
 	{
 		assert(buffer.size() != 0u);
-		return Vertex{ buffer.data() + buffer.size() - layout.Size(),layout };
+		return Vertex(buffer.data() + buffer.size() - layout.Size(), layout);
 	}
 	// First
 	Vertex Front()
 	{
 		assert(buffer.size() != 0u);
-		return Vertex{ buffer.data(),layout };
+		return Vertex(buffer.data(), layout);
 	}
 	Vertex operator[](size_t i)
 	{
 		assert(i < Size());
-		return Vertex{ buffer.data() + layout.Size() * i,layout };
+		return Vertex(buffer.data() + layout.Size() * i, layout);
 	}
-	ConstVertex Back() const
+	/*ConstVertex Back() const
 	{
 		return const_cast<VertexBufferData*>(this)->Back();
 	}
@@ -67,8 +70,10 @@ public:
 	ConstVertex operator[](size_t i) const
 	{
 		return const_cast<VertexBufferData&>(*this)[i];
-	}
+	}*/
 private:
 	std::vector<char> buffer; // vector of bytes
 	const VertexLayout& layout; // structure of these bytes
+	const size_t vertCount;
+	size_t nextInputVertex = 0;
 };
