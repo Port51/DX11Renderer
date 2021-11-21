@@ -121,9 +121,6 @@
     <Filter Include="Header Files\FBXImporter\Meshes">
       <UniqueIdentifier>{d89bbeda-33c0-4f48-9e9b-df739a460b7d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\FBXImporter\Meshes\Attributes">
-      <UniqueIdentifier>{4be7f4f8-cbae-485d-a611-7af22aea27c3}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -520,12 +517,6 @@
     </ClInclude>
     <ClInclude Include="MeshAsset.h">
       <Filter>Header Files\FBXImporter\Meshes</Filter>
-    </ClInclude>
-    <ClInclude Include="VertexAttribute.h">
-      <Filter>Header Files\FBXImporter\Meshes\Attributes</Filter>
-    </ClInclude>
-    <ClInclude Include="VertexAttributeDesc.h">
-      <Filter>Header Files\FBXImporter\Meshes\Attributes</Filter>
     </ClInclude>
     <ClInclude Include="InstancedMeshRenderer.h">
       <Filter>Header Files\Drawable</Filter>

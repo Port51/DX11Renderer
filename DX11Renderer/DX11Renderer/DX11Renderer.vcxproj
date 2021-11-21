@@ -219,7 +219,6 @@
     <ClInclude Include="App.h" />
     <ClInclude Include="BaseMesh.h" />
     <ClInclude Include="InstancedMeshRenderer.h" />
-    <ClInclude Include="VertexAttribute.h" />
     <ClInclude Include="Binding.h" />
     <ClInclude Include="Colors.h" />
     <ClInclude Include="Bindable.h" />
@@ -285,7 +284,6 @@
     <ClInclude Include="Topology.h" />
     <ClInclude Include="TransformCbuf.h" />
     <ClInclude Include="Vertex.h" />
-    <ClInclude Include="VertexAttributeDesc.h" />
     <ClInclude Include="VertexBuffer.h" />
     <ClInclude Include="VertexBufferData.h" />
     <ClInclude Include="VertexConstantBuffer.h" />

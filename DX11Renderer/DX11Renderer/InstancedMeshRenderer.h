@@ -17,4 +17,5 @@ public:
 	void IssueDrawCall(Graphics& gfx) const override;
 private:
 	UINT instanceCount;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> pInstanceBuffer;
 };
