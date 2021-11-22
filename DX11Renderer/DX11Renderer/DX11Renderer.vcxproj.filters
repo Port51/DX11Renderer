@@ -222,12 +222,6 @@
     <ClCompile Include="MeshRenderer.cpp">
       <Filter>Source Files\Drawable</Filter>
     </ClCompile>
-    <ClCompile Include="TransformCbufWithPixelBind.h">
-      <Filter>Header Files\Bindable</Filter>
-    </ClCompile>
-    <ClCompile Include="TransformCbufWithPixelBind.cpp">
-      <Filter>Source Files\Bindable</Filter>
-    </ClCompile>
     <ClCompile Include="RenderTarget.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

@@ -3,7 +3,6 @@
 #include "GraphicsThrowMacros.h"
 #include "PixelConstantBuffer.h"
 #include "VertexInclude.h"
-#include "TransformCbufWithPixelBind.h"
 #include <exception>
 #include <assert.h>
 #include "Stencil.h"
