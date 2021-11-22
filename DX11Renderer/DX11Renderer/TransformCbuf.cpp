@@ -9,6 +9,7 @@ TransformCbuf::TransformCbuf(Graphics& gfx, const MeshRenderer& parent)
 	if (!pVcbuf)
 	{
 		pVcbuf = std::make_unique<ConstantBuffer<Transforms>>(gfx, "NotInCodex");
+		pVcbuf->SetupVSBinding(0u);
 	}
 }
 

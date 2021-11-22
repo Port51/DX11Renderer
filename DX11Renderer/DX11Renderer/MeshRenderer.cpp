@@ -5,7 +5,6 @@
 #include <exception>
 #include <assert.h>
 #include "Stencil.h"
-//#include "Sphere.h"
 
 namespace dx = DirectX;
 
@@ -30,9 +29,6 @@ MeshRenderer::MeshRenderer(Graphics& gfx, std::string name, std::shared_ptr<Mate
 DirectX::XMMATRIX MeshRenderer::GetTransformXM() const
 {
 	return DirectX::XMLoadFloat4x4(&transform);
-
-	//return DirectX::XMMatrixRotationRollPitchYaw(roll, pitch, yaw) *
-	//	DirectX::XMMatrixTranslation(pos.x, pos.y, pos.z);
 }
 
 // Called via Node
@@ -41,12 +37,6 @@ void MeshRenderer::SubmitDrawCalls(std::unique_ptr<FrameCommander>& frame, dx::F
 	dx::XMStoreFloat4x4(&transform, _accumulatedTranform);
 
 	pMaterial->SubmitDrawCalls(frame, *this);
-
-	// todo: use material instead
-	/*for (const auto& tech : techniques)
-	{
-		tech.SubmitDrawCalls(frame, *this);
-	}*/
 }
 
 void MeshRenderer::Bind(Graphics& gfx) const
