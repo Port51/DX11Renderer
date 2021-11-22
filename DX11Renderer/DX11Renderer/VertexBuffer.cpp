@@ -23,6 +23,11 @@ VertexBuffer::VertexBuffer(Graphics& gfx, const std::string& tag, const VertexBu
 	GFX_THROW_INFO(GetDevice(gfx)->CreateBuffer(&bd, &sd, &pVertexBuffer));
 }
 
+Microsoft::WRL::ComPtr<ID3D11Buffer> VertexBuffer::GetVertexBuffer() const
+{
+	return pVertexBuffer;
+}
+
 void VertexBuffer::BindIA(Graphics& gfx, UINT slot)
 {
 	const UINT offset = 0u;
@@ -31,7 +36,6 @@ void VertexBuffer::BindIA(Graphics& gfx, UINT slot)
 
 std::shared_ptr<VertexBuffer> VertexBuffer::Resolve(Graphics& gfx, const std::string& tag, const VertexBufferData& vbuf)
 {
-	assert(tag != "?");
 	return Bind::Codex::Resolve<VertexBuffer>(gfx, tag, vbuf);
 }
 
@@ -49,4 +53,9 @@ std::string VertexBuffer::GetUID() const
 UINT VertexBuffer::GetVertexCount() const
 {
 	return vertexCount;
+}
+
+UINT VertexBuffer::GetStride() const
+{
+	return stride;
 }

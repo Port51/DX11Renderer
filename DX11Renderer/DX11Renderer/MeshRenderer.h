@@ -25,13 +25,13 @@ public:
 	UINT GetIndexCount() const;
 	UINT GetVertexCount() const;
 	virtual void IssueDrawCall(Graphics& gfx) const;
-private:
+protected:
 	std::string name;
 	std::shared_ptr<Material> pMaterial; // keep separate from other bindables for now...
 	mutable dx::XMFLOAT4X4 transform;
-private:
-	std::shared_ptr<IndexBuffer> pIndices;
-	std::shared_ptr<VertexBuffer> pVertices;
+protected:
+	std::shared_ptr<IndexBuffer> pIndexBuffer;
+	std::shared_ptr<VertexBuffer> pVertexBuffer;
 	std::shared_ptr<Topology> pTopology;
 	std::shared_ptr<TransformCbuf> pTransformCbuf;
 };

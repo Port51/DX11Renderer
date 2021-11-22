@@ -10,8 +10,8 @@ namespace dx = DirectX;
 
 MeshRenderer::MeshRenderer(Graphics& gfx, std::string name, std::shared_ptr<Material> pMaterial,
 	std::shared_ptr<VertexBuffer> pVertexBuffer, std::shared_ptr<IndexBuffer> pIndexBuffer, std::shared_ptr<Topology> pTopologyBuffer)
-	: pVertices(std::move(pVertexBuffer)),
-	pIndices(std::move(pIndexBuffer)),
+	: pVertexBuffer(std::move(pVertexBuffer)),
+	pIndexBuffer(std::move(pIndexBuffer)),
 	pTopology(std::move(pTopologyBuffer)),
 	name(name),
 	pMaterial(pMaterial)
@@ -42,19 +42,19 @@ void MeshRenderer::SubmitDrawCalls(std::unique_ptr<FrameCommander>& frame, dx::F
 void MeshRenderer::Bind(Graphics& gfx) const
 {
 	pTopology->BindIA(gfx, 0u);
-	pIndices->BindIA(gfx, 0u);
-	pVertices->BindIA(gfx, 0u);
+	pIndexBuffer->BindIA(gfx, 0u);
+	pVertexBuffer->BindIA(gfx, 0u);
 	pTransformCbuf->BindVS(gfx, 0u);
 }
 
 UINT MeshRenderer::GetIndexCount() const
 {
-	return pIndices->GetIndexCount();
+	return pIndexBuffer->GetIndexCount();
 }
 
 UINT MeshRenderer::GetVertexCount() const
 {
-	return pVertices->GetVertexCount();
+	return pVertexBuffer->GetVertexCount();
 }
 
 void MeshRenderer::IssueDrawCall(Graphics& gfx) const

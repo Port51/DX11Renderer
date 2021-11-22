@@ -1,8 +1,13 @@
 #include "InstancedMeshRenderer.h"
-#include <d3d11.h>
+#include "BindableInclude.h"
+#include "GraphicsThrowMacros.h"
+#include "VertexInclude.h"
+#include <exception>
+#include <assert.h>
+#include "Stencil.h"
 
-InstancedMeshRenderer::InstancedMeshRenderer(Graphics & gfx, std::string name, std::shared_ptr<Material> pMaterial, std::shared_ptr<VertexBuffer> pVertexBuffer, std::shared_ptr<IndexBuffer> pIndexBuffer, std::shared_ptr<Topology> pTopologyBuffer, UINT instanceCount)
-	: MeshRenderer(gfx, name, pMaterial, pVertexBuffer, pIndexBuffer, pTopologyBuffer),
+InstancedMeshRenderer::InstancedMeshRenderer(Graphics & gfx, std::string name, std::shared_ptr<Material> pMaterial, std::shared_ptr<VertexBuffer> _pVertexBuffer, std::shared_ptr<IndexBuffer> pIndexBuffer, std::shared_ptr<Topology> pTopologyBuffer, UINT instanceCount)
+	: MeshRenderer(gfx, name, pMaterial, _pVertexBuffer, pIndexBuffer, pTopologyBuffer),
 	instanceCount(instanceCount)
 {
 	struct InstanceData
@@ -38,11 +43,26 @@ InstancedMeshRenderer::InstancedMeshRenderer(Graphics & gfx, std::string name, s
 
 	// Release the instance array now that the instance buffer has been created and loaded.
 	delete[] instances;
+
+	// Setup arrays
+	pVertexBufferArray.push_back(pVertexBuffer->GetVertexBuffer());
+	pVertexBufferArray.push_back(pInstanceBuffer);
+
+	strides.push_back(pVertexBuffer->GetStride());
+	strides.push_back(sizeof(InstanceData));
+
+	offsets.push_back(0u);
+	offsets.push_back(0u);
 }
 
 void InstancedMeshRenderer::Bind(Graphics& gfx) const
 {
-	MeshRenderer::Bind(gfx);
+	pTopology->BindIA(gfx, 0u);
+	pIndexBuffer->BindIA(gfx, 0u);
+	pTransformCbuf->BindVS(gfx, 0u);
+
+	// Bind multiple vertex buffers
+	gfx.pContext->IASetVertexBuffers(0u, 2u, pVertexBufferArray[0].GetAddressOf(), &strides[0], &offsets[0]);
 }
 
 void InstancedMeshRenderer::IssueDrawCall(Graphics& gfx) const

@@ -1,6 +1,7 @@
 #pragma once
 #include "MeshRenderer.h"
 #include "WindowsInclude.h"
+#include <vector>
 
 class Graphics;
 class Material;
@@ -18,4 +19,7 @@ public:
 private:
 	UINT instanceCount;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> pInstanceBuffer;
+	std::vector<Microsoft::WRL::ComPtr<ID3D11Buffer>> pVertexBufferArray;
+	std::vector<UINT> offsets;
+	std::vector<UINT> strides;
 };

@@ -8,9 +8,12 @@ class VertexBuffer : public Bindable
 public:
 	VertexBuffer(Graphics& gfx, const std::string& tag, const VertexBufferData& vbuf);
 	VertexBuffer(Graphics& gfx, const VertexBufferData& vbuf);
+public:
+	Microsoft::WRL::ComPtr<ID3D11Buffer> GetVertexBuffer() const;
 	void BindIA(Graphics& gfx, UINT slot) override;
 	std::string GetUID() const override;
 	UINT GetVertexCount() const;
+	UINT GetStride() const;
 public:
 	static std::shared_ptr<VertexBuffer> Resolve(Graphics& gfx, const std::string& tag, const VertexBufferData& vbuf);
 	template<typename...Ignore>
