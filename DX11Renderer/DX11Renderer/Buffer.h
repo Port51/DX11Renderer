@@ -100,6 +100,10 @@ public:
 			GetContext(gfx)->PSSetConstantBuffers((UINT)bindToPixelStage, 1u, pBuffer.GetAddressOf());
 		}
 	}
+	Microsoft::WRL::ComPtr<ID3D11Buffer> GetD3DBuffer()
+	{
+		return pBuffer;
+	}
 	void Update(Graphics& gfx, const C& data)
 	{
 		SETUP_LOGGING(gfx);
