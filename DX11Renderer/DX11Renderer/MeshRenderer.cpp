@@ -41,10 +41,10 @@ void MeshRenderer::SubmitDrawCalls(std::unique_ptr<FrameCommander>& frame, dx::F
 
 void MeshRenderer::Bind(Graphics& gfx) const
 {
-	pTopology->Bind(gfx, 0u);
-	pIndices->Bind(gfx, 0u);
-	pVertices->Bind(gfx, 0u);
-	pTransformCbuf->Bind(gfx, 0u);
+	pTopology->BindIA(gfx, 0u);
+	pIndices->BindIA(gfx, 0u);
+	pVertices->BindIA(gfx, 0u);
+	pTransformCbuf->BindVS(gfx, 0u);
 }
 
 UINT MeshRenderer::GetIndexCount() const

@@ -107,7 +107,17 @@ Texture::Texture(Graphics& gfx, const std::string& path, D3D11_TEXTURE2D_DESC te
 	));
 }
 
-void Texture::Bind(Graphics& gfx, UINT slot)
+void Texture::BindCS(Graphics& gfx, UINT slot)
+{
+	GetContext(gfx)->CSSetShaderResources(slot, 1u, pTextureView.GetAddressOf());
+}
+
+void Texture::BindVS(Graphics& gfx, UINT slot)
+{
+	GetContext(gfx)->VSSetShaderResources(slot, 1u, pTextureView.GetAddressOf());
+}
+
+void Texture::BindPS(Graphics& gfx, UINT slot)
 {
 	GetContext(gfx)->PSSetShaderResources(slot, 1u, pTextureView.GetAddressOf());
 }

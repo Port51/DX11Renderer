@@ -15,13 +15,15 @@ public:
 	RenderStep(std::string _targetPass)
 		: targetPass{ _targetPass }
 	{}
-	void AddBinding(std::shared_ptr<Bindable> pBindable, UINT slot = 0u)
+	Binding& AddBinding(std::shared_ptr<Bindable> pBindable)
 	{
-		bindings.push_back(Binding(std::move(pBindable), slot));
+		bindings.push_back(Binding(std::move(pBindable)));
+		return bindings[bindings.size() - 1];
 	}
-	void AddBinding(Binding pBinding)
+	Binding& AddBinding(Binding pBinding)
 	{
 		bindings.push_back(std::move(pBinding));
+		return bindings[bindings.size() - 1];
 	}
 	void SubmitDrawCalls(std::unique_ptr<FrameCommander>& frame, const MeshRenderer& renderer) const;
 	void Bind(Graphics& gfx) const

@@ -73,32 +73,17 @@ public:
 		GFX_THROW_INFO(GetDevice(gfx)->CreateBuffer(&cbd, nullptr, &pBuffer));
 	}
 public:
-	void SetupCSBinding(UINT slot)
+	void BindCS(Graphics& gfx, UINT slot) override
 	{
-		bindToComputeStage = slot;
+		GetContext(gfx)->CSSetConstantBuffers(slot, 1u, pBuffer.GetAddressOf());
 	}
-	void SetupVSBinding(UINT slot)
+	void BindVS(Graphics& gfx, UINT slot) override
 	{
-		bindToVertexStage = slot;
+		GetContext(gfx)->VSSetConstantBuffers(slot, 1u, pBuffer.GetAddressOf());
 	}
-	void SetupPSBinding(UINT slot)
+	void BindPS(Graphics& gfx, UINT slot) override
 	{
-		bindToPixelStage = slot;
-	}
-	void Bind(Graphics& gfx, UINT slot) override
-	{
-		if (bindToComputeStage != -1)
-		{
-			GetContext(gfx)->CSSetConstantBuffers((UINT)bindToComputeStage, 1u, pBuffer.GetAddressOf());
-		}
-		if (bindToVertexStage != -1)
-		{
-			GetContext(gfx)->VSSetConstantBuffers((UINT)bindToVertexStage, 1u, pBuffer.GetAddressOf());
-		}
-		if (bindToPixelStage != -1)
-		{
-			GetContext(gfx)->PSSetConstantBuffers((UINT)bindToPixelStage, 1u, pBuffer.GetAddressOf());
-		}
+		GetContext(gfx)->PSSetConstantBuffers(slot, 1u, pBuffer.GetAddressOf());
 	}
 	Microsoft::WRL::ComPtr<ID3D11Buffer> GetD3DBuffer()
 	{
@@ -123,7 +108,4 @@ public:
 protected:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> pBuffer;
 	std::string identifier;
-	int bindToComputeStage = -1;
-	int bindToVertexStage = -1;
-	int bindToPixelStage = -1;
 };

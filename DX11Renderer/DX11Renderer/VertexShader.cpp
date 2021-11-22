@@ -22,7 +22,7 @@ VertexShader::VertexShader(Graphics& gfx, const std::string& path)
 	));
 }
 
-void VertexShader::Bind(Graphics& gfx, UINT slot)
+void VertexShader::BindVS(Graphics& gfx, UINT slot)
 {
 	GetContext(gfx)->VSSetShader(pVertexShader.Get(), nullptr, 0u);
 }

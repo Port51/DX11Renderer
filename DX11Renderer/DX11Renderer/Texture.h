@@ -17,7 +17,10 @@ public:
 	Texture(Graphics& gfx, const std::string& path);
 	Texture(Graphics& gfx, const std::string& path, D3D11_TEXTURE2D_DESC textureDesc);
 	Texture(Graphics& gfx, const std::string& path, D3D11_TEXTURE2D_DESC textureDesc, D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc);
-	void Bind(Graphics& gfx, UINT slot) override;
+public:
+	void BindCS(Graphics& gfx, UINT slot) override;
+	void BindVS(Graphics& gfx, UINT slot) override;
+	void BindPS(Graphics& gfx, UINT slot) override;
 	std::string GetUID() const override;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> GetShaderResourceView();
 public:

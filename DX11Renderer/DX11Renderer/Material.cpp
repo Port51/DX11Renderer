@@ -96,9 +96,8 @@ Material::Material(Graphics& gfx, const std::string_view _materialAssetPath)
 				materialPassName = std::move(p.values[0]);
 
 				// Init cbuffer
-				pPassStep->AddBinding(
-					std::move(std::make_shared<ConstantBuffer<PSMaterialConstant>>(gfx, std::string(_materialAssetPath), pmc))
-					, 1u);
+				pPassStep->AddBinding(std::move(std::make_shared<ConstantBuffer<PSMaterialConstant>>(gfx, std::string(_materialAssetPath), pmc)))
+					.SetupPSBinding(1u);
 			}
 		}
 		else if (state == MaterialParseState::Properties)
@@ -128,13 +127,16 @@ Material::Material(Graphics& gfx, const std::string_view _materialAssetPath)
 				pVertexShader = VertexShader::Resolve(gfx, p.values[0].c_str());
 				const auto pvsbc = pVertexShader->GetBytecode();
 
-				pPassStep->AddBinding(pVertexShader);
-				pPassStep->AddBinding(InputLayout::Resolve(gfx, std::move(vertexLayout), pvsbc));
+				pPassStep->AddBinding(pVertexShader)
+					.SetupVSBinding(0u);
+				pPassStep->AddBinding(InputLayout::Resolve(gfx, std::move(vertexLayout), pvsbc))
+					.SetupIABinding();
 			}
 			else if (p.key == "PS")
 			{
 				pPixelShader = PixelShader::Resolve(gfx, p.values[0].c_str());
-				pPassStep->AddBinding(pPixelShader);
+				pPassStep->AddBinding(pPixelShader)
+					.SetupPSBinding(0u);
 			}
 			else if (p.key == "Texture")
 			{
@@ -145,13 +147,17 @@ Material::Material(Graphics& gfx, const std::string_view _materialAssetPath)
 				const auto iter = pTexturesByPropName.find(texProp);
 				if (iter != pTexturesByPropName.end())
 				{
-					pPassStep->AddBinding(iter->second, (UINT)slotIdx);
+					pPassStep->AddBinding(iter->second)
+						.SetupPSBinding(slotIdx);
 				}
 				else
 				{
 					throw std::runtime_error("Material at " + std::string(_materialAssetPath) + " does not have texture property " + texProp + "!");
 				}
-				pPassStep->AddBinding(Sampler::Resolve(gfx));
+
+				const auto pSampler = Sampler::Resolve(gfx);
+				pPassStep->AddBinding(std::move(pSampler))
+					.SetupPSBinding(slotIdx);
 			}
 		}
 

@@ -8,7 +8,7 @@ namespace Bind
 	NullPixelShader::NullPixelShader(Graphics& gfx)
 	{
 	}
-	void NullPixelShader::Bind(Graphics& gfx, UINT slot)
+	void NullPixelShader::BindPS(Graphics& gfx, UINT slot)
 	{
 		GetContext(gfx)->PSSetShader(nullptr, nullptr, 0u);
 	}

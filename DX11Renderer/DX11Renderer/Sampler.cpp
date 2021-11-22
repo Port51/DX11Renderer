@@ -38,9 +38,18 @@ Sampler::Sampler(Graphics& gfx, D3D11_SAMPLER_DESC samplerDesc)
 	GFX_THROW_INFO(GetDevice(gfx)->CreateSamplerState(&samplerDesc, &pSampler));
 }
 
-void Sampler::Bind(Graphics& gfx, UINT slot)
+void Sampler::BindCS(Graphics & gfx, UINT slot)
 {
-	// First argument = slot that shader will use
+	GetContext(gfx)->CSSetSamplers(slot, 1u, pSampler.GetAddressOf());
+}
+
+void Sampler::BindVS(Graphics & gfx, UINT slot)
+{
+	GetContext(gfx)->VSSetSamplers(slot, 1u, pSampler.GetAddressOf());
+}
+
+void Sampler::BindPS(Graphics & gfx, UINT slot)
+{
 	GetContext(gfx)->PSSetSamplers(slot, 1u, pSampler.GetAddressOf());
 }
 

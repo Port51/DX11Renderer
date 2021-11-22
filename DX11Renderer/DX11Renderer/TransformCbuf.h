@@ -18,7 +18,7 @@ protected:
 	};
 public:
 	TransformCbuf(Graphics& gfx, const MeshRenderer& parent);
-	void Bind(Graphics& gfx, UINT slot) override;
+	void BindVS(Graphics& gfx, UINT slot) override;
 	void InitializeParentReference(const MeshRenderer& parent) override;
 protected:
 	virtual void UpdateBindImpl(Graphics& gfx, const Transforms& transforms);

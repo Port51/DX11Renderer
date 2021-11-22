@@ -11,7 +11,7 @@ namespace Bind
 	{
 	public:
 		RasterizerState(Graphics& gfx, bool twoSided);
-		void Bind(Graphics& gfx, UINT slot) override;
+		void BindRS(Graphics& gfx) override;
 		static std::shared_ptr<RasterizerState> Resolve(Graphics& gfx, bool twoSided);
 		static std::string GenerateUID(bool twoSided);
 		std::string GetUID() const override;

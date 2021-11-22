@@ -23,7 +23,7 @@ VertexBuffer::VertexBuffer(Graphics& gfx, const std::string& tag, const VertexBu
 	GFX_THROW_INFO(GetDevice(gfx)->CreateBuffer(&bd, &sd, &pVertexBuffer));
 }
 
-void VertexBuffer::Bind(Graphics& gfx, UINT slot)
+void VertexBuffer::BindIA(Graphics& gfx, UINT slot)
 {
 	const UINT offset = 0u;
 	GetContext(gfx)->IASetVertexBuffers(slot, 1u, pVertexBuffer.GetAddressOf(), &stride, &offset);

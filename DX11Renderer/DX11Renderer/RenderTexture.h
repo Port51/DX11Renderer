@@ -18,7 +18,9 @@ public:
 	virtual bool Init(ID3D11Device* pDevice, int textureWidth, int textureHeight);
 	void Shutdown();
 
-	void Bind(Graphics& gfx, UINT slot) override; // todo: don't override this
+	void BindCS(Graphics& gfx, UINT slot) override;
+	void BindVS(Graphics& gfx, UINT slot) override;
+	void BindPS(Graphics& gfx, UINT slot) override;
 
 public:
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> pRenderTargetTexture;

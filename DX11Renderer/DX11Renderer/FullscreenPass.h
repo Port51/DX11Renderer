@@ -14,8 +14,8 @@ public:
 	FullscreenPass(Graphics& gfx, std::shared_ptr<Texture> pInput);
 	void Execute(Graphics& gfx) const override;
 private:
-	void AddBinding(std::shared_ptr<Bindable> pBindable, UINT slot = 0u);
-	void AddBinding(Binding pBinding);
+	Binding& AddBinding(std::shared_ptr<Bindable> pBindable);
+	Binding& AddBinding(Binding pBinding);
 private:
 	std::vector<Binding> bindings;
 };

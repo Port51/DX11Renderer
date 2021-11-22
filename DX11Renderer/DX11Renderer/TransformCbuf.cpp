@@ -9,14 +9,13 @@ TransformCbuf::TransformCbuf(Graphics& gfx, const MeshRenderer& parent)
 	if (!pVcbuf)
 	{
 		pVcbuf = std::make_unique<ConstantBuffer<Transforms>>(gfx, "NotInCodex");
-		pVcbuf->SetupVSBinding(0u);
 	}
 }
 
 ///
 /// Update cbuffer based on transform, then bind
 ///
-void TransformCbuf::Bind(Graphics& gfx, UINT slot)
+void TransformCbuf::BindVS(Graphics& gfx, UINT slot)
 {
 	UpdateBindImpl(gfx, GetTransforms(gfx));
 }
@@ -30,7 +29,7 @@ void TransformCbuf::UpdateBindImpl(Graphics& gfx, const Transforms& transforms)
 {
 	assert(pParent != nullptr);
 	pVcbuf->Update(gfx, transforms);
-	pVcbuf->Bind(gfx, 0u);
+	pVcbuf->BindVS(gfx, 0u);
 }
 
 TransformCbuf::Transforms TransformCbuf::GetTransforms(Graphics& gfx)

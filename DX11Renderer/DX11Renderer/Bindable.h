@@ -11,8 +11,14 @@ class MeshRenderer;
 class Bindable
 {
 public:
-	virtual void Bind(Graphics& gfx, UINT slot) = 0;
+	virtual void BindIA(Graphics& gfx, UINT slot) {}
+	virtual void BindCS(Graphics& gfx, UINT slot) {}
+	virtual void BindVS(Graphics& gfx, UINT slot) {}
+	virtual void BindPS(Graphics& gfx, UINT slot) {}
+	virtual void BindRS(Graphics& gfx) {}
+	virtual void BindOM(Graphics& gfx) {}
 	virtual ~Bindable() = default;
+public:
 	virtual std::string GetUID() const;
 	virtual void InitializeParentReference(const MeshRenderer&)
 	{}
