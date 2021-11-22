@@ -28,10 +28,6 @@ public:
 private:
 	std::string name;
 	std::shared_ptr<Material> pMaterial; // keep separate from other bindables for now...
-	/*DirectX::XMFLOAT3 pos = { 0.0f, 0.0f, 0.0f };
-	float roll = 0.0f;
-	float pitch = 0.0f;
-	float yaw = 0.0f;*/
 	mutable dx::XMFLOAT4X4 transform;
 private:
 	std::shared_ptr<IndexBuffer> pIndices;

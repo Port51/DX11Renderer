@@ -76,13 +76,6 @@ std::unique_ptr<Node> ModelInstance::CreateModelInstanceNode(Graphics& gfx, std:
 std::unique_ptr<MeshRenderer> ModelInstance::ParseMesh(Graphics& gfx, std::unique_ptr<MeshAsset> const& pMeshAsset)
 {
 	namespace dx = DirectX;
-	//using VertexLayout;
-
-	/*VertexLayout{}
-		.Append(VertexLayout::Position3D)
-		.Append(VertexLayout::Normal)
-		.Append(VertexLayout::Tangent)
-		.Append(VertexLayout::Texture2D)*/
 
 	auto pMaterial = pMaterials[pMeshAsset->materialIndex];
 
@@ -105,13 +98,8 @@ std::unique_ptr<MeshRenderer> ModelInstance::ParseMesh(Graphics& gfx, std::uniqu
 			tangent,
 			uv0
 		);
-		/*vbuf.EmplaceBack(
-			*reinterpret_cast<dx::XMFLOAT3*>(&pMeshAsset->vertices[i]),
-			*reinterpret_cast<dx::XMFLOAT3*>(&pMeshAsset->normals[i])
-		);*/
 	}
 
-	// todo: better way to copy this?
 	if (pMeshAsset->indices.size() == 0)
 	{
 		throw std::runtime_error(std::string("Mesh '") + pMeshAsset->name + std::string("' has 0 indices!"));
@@ -120,6 +108,8 @@ std::unique_ptr<MeshRenderer> ModelInstance::ParseMesh(Graphics& gfx, std::uniqu
 	{
 		throw std::runtime_error(std::string("Mesh '") + pMeshAsset->name + std::string("' has indices which are not a multiple of 3!"));
 	}
+
+	// todo: better way to copy this?
 	std::vector<unsigned short> indices;
 	indices.reserve(pMeshAsset->indices.size());
 	for (unsigned int i = 0; i < pMeshAsset->indices.size(); ++i)
