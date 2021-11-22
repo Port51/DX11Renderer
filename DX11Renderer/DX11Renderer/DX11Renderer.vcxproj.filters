@@ -389,15 +389,6 @@
     <ClInclude Include="PointLight.h">
       <Filter>Header Files\Lights</Filter>
     </ClInclude>
-    <ClInclude Include="ConstantBuffer.h">
-      <Filter>Header Files\Bindable\Buffers</Filter>
-    </ClInclude>
-    <ClInclude Include="VertexConstantBuffer.h">
-      <Filter>Header Files\Bindable\Buffers</Filter>
-    </ClInclude>
-    <ClInclude Include="PixelConstantBuffer.h">
-      <Filter>Header Files\Bindable\Buffers</Filter>
-    </ClInclude>
     <ClInclude Include="FBXImporter.h">
       <Filter>Header Files\FBXImporter</Filter>
     </ClInclude>
@@ -514,6 +505,12 @@
     </ClInclude>
     <ClInclude Include="InstancedMeshRenderer.h">
       <Filter>Header Files\Drawable</Filter>
+    </ClInclude>
+    <ClInclude Include="Buffer.h">
+      <Filter>Header Files\Bindable\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="ConstantBuffer.h">
+      <Filter>Header Files\Bindable\Buffers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

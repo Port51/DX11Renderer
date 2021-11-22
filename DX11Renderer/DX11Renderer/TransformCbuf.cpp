@@ -1,13 +1,14 @@
 #include "TransformCbuf.h"
 #include "MeshRenderer.h"
 #include "Graphics.h"
+#include "ConstantBuffer.h"
 
 TransformCbuf::TransformCbuf(Graphics& gfx, const MeshRenderer& parent)
 	: pParent(&parent)
 {
 	if (!pVcbuf)
 	{
-		pVcbuf = std::make_unique<VertexConstantBuffer<Transforms>>(gfx, "NotInCodex");
+		pVcbuf = std::make_unique<ConstantBuffer<Transforms>>(gfx, "NotInCodex");
 	}
 }
 
@@ -46,4 +47,4 @@ TransformCbuf::Transforms TransformCbuf::GetTransforms(Graphics& gfx)
 }
 
 // Because static
-std::unique_ptr<VertexConstantBuffer<TransformCbuf::Transforms>> TransformCbuf::pVcbuf;
+std::unique_ptr<ConstantBuffer<TransformCbuf::Transforms>> TransformCbuf::pVcbuf;

@@ -1,7 +1,7 @@
 #pragma once
 #include "Bindable.h"
 #include "WindowsInclude.h"
-#include "VertexConstantBuffer.h"
+#include "ConstantBuffer.h"
 #include <DirectXMath.h>
 
 class Graphics;
@@ -25,6 +25,6 @@ protected:
 	Transforms GetTransforms(Graphics& gfx);
 private:
 	// Static so can be re-used each drawcall
-	static std::unique_ptr<VertexConstantBuffer<Transforms>> pVcbuf;
+	static std::unique_ptr<ConstantBuffer<Transforms>> pVcbuf;
 	const MeshRenderer* pParent = nullptr;
 };

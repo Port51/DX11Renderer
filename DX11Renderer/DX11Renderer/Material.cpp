@@ -4,7 +4,6 @@
 #include "Graphics.h"
 #include "VertexShader.h"
 #include "PixelShader.h"
-#include "PixelConstantBuffer.h"
 #include "InputLayout.h"
 #include "Texture.h"
 #include "Sampler.h"
@@ -14,6 +13,8 @@
 #include "TextParser.h"
 #include "RenderStep.h"
 #include "Technique.h"
+#include "Buffer.h"
+#include "ConstantBuffer.h"
 
 #include <fstream>
 #include <sstream>
@@ -36,7 +37,7 @@ Material::Material(Graphics& gfx, const std::string_view _materialAssetPath)
 		.Append(VertexLayout::Tangent)
 		.Append(VertexLayout::Texcoord2D, 0u);
 
-	DirectX::XMFLOAT3 colorProp = { 0.8f,0.8f,0.8f };
+	DirectX::XMFLOAT3 colorProp = { 0.8f, 0.8f, 0.8f };
 	float roughnessProp = 0.75f;
 
 	MaterialParseState state = MaterialParseState::None;
@@ -95,7 +96,9 @@ Material::Material(Graphics& gfx, const std::string_view _materialAssetPath)
 				materialPassName = std::move(p.values[0]);
 
 				// Init cbuffer
-				pPassStep->AddBinding(PixelConstantBuffer<PSMaterialConstant>::Resolve(gfx, std::string(_materialAssetPath), pmc), 1u);
+				pPassStep->AddBinding(
+					std::move(std::make_shared<ConstantBuffer<PSMaterialConstant>>(gfx, std::string(_materialAssetPath), pmc))
+					, 1u);
 			}
 		}
 		else if (state == MaterialParseState::Properties)

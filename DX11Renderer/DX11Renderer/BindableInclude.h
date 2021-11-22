@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ConstantBuffer.h"
+#include "Buffer.h"
 #include "IndexBuffer.h"
 #include "InputLayout.h"
 #include "PixelShader.h"

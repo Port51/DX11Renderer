@@ -224,7 +224,7 @@
     <ClInclude Include="BindableInclude.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="ChiliUtil.h" />
-    <ClInclude Include="ConstantBuffer.h" />
+    <ClInclude Include="Buffer.h" />
     <ClInclude Include="ConstVertex.h" />
     <ClInclude Include="CustomException.h" />
     <ClInclude Include="DebugHelper.h" />
@@ -266,7 +266,7 @@
     <ClInclude Include="RenderTexture.h" />
     <ClInclude Include="TextParser.h" />
     <ClInclude Include="RenderPass.h" />
-    <ClInclude Include="PixelConstantBuffer.h" />
+    <ClInclude Include="ConstantBuffer.h" />
     <ClInclude Include="PixelShader.h" />
     <ClInclude Include="PointLight.h" />
     <ClInclude Include="RenderTarget.h" />
@@ -284,7 +284,6 @@
     <ClInclude Include="Vertex.h" />
     <ClInclude Include="VertexBuffer.h" />
     <ClInclude Include="VertexBufferData.h" />
-    <ClInclude Include="VertexConstantBuffer.h" />
     <ClInclude Include="VertexInclude.h" />
     <ClInclude Include="VertexLayout.h" />
     <ClInclude Include="VertexShader.h" />

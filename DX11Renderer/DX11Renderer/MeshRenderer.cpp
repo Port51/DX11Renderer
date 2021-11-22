@@ -1,7 +1,6 @@
 #include "MeshRenderer.h"
 #include "BindableInclude.h"
 #include "GraphicsThrowMacros.h"
-#include "PixelConstantBuffer.h"
 #include "VertexInclude.h"
 #include <exception>
 #include <assert.h>
