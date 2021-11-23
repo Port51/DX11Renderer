@@ -77,7 +77,7 @@ std::unique_ptr<MeshRenderer> ModelInstance::ParseMesh(Graphics& gfx, std::uniqu
 	namespace dx = DirectX;
 
 	const auto pMaterial = pMaterials[pMeshAsset->materialIndex];
-	VertexBufferData vbuf(pMeshAsset->vertices.size(), pMaterial->GetVertexLayout().SizeInBytes());
+	VertexBufferData vbuf(pMeshAsset->vertices.size(), pMaterial->GetVertexLayout().GetPerVertexStride(), pMaterial->GetVertexLayout().GetPerVertexPadding());
 
 	if (pMeshAsset->vertices.size() == 0)
 	{
@@ -94,6 +94,7 @@ std::unique_ptr<MeshRenderer> ModelInstance::ParseMesh(Graphics& gfx, std::uniqu
 		vbuf.EmplaceBack<dx::XMFLOAT3>(normal);
 		vbuf.EmplaceBack<dx::XMFLOAT3>(tangent);
 		vbuf.EmplaceBack<dx::XMFLOAT2>(uv0);
+		vbuf.EmplacePadding();
 	}
 
 	if (pMeshAsset->indices.size() == 0)

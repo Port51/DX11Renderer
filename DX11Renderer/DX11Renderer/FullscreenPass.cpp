@@ -13,13 +13,14 @@ FullscreenPass::FullscreenPass(Graphics& gfx, std::shared_ptr<Texture> pInputTex
 {
 	// setup fullscreen geometry
 	VertexLayout vertexLayout;
-	vertexLayout.Append({ "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 }, 8);
+	vertexLayout.AppendVertexDesc<dx::XMFLOAT2>({ "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 });
 
-	VertexBufferData bufFull((size_t)4, vertexLayout.SizeInBytes());
+	VertexBufferData bufFull((size_t)4, vertexLayout.GetPerVertexStride(), vertexLayout.GetPerVertexPadding());
 	bufFull.EmplaceBack(dx::XMFLOAT2{ -1,1 });
 	bufFull.EmplaceBack(dx::XMFLOAT2{ 1,1 });
 	bufFull.EmplaceBack(dx::XMFLOAT2{ -1,-1 });
 	bufFull.EmplaceBack(dx::XMFLOAT2{ 1,-1 });
+	bufFull.EmplacePadding();
 	AddBinding(VertexBuffer::Resolve(gfx, "$Blit", std::move(bufFull)))
 		.SetupIABinding();
 

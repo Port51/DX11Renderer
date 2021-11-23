@@ -9,8 +9,8 @@
 class VertexBufferData
 {
 public:
-	VertexBufferData(const size_t vertCount, const size_t stride)
-		: vertCount(vertCount), stride(stride)
+	VertexBufferData(const size_t vertCount, const size_t stride, const size_t padding)
+		: vertCount(vertCount), stride(stride), padding(padding)
 	{
 		buffer.resize(stride * vertCount);
 		nextInput = buffer.data();
@@ -38,9 +38,14 @@ public:
 		memcpy(nextInput, &value, sizeof(T));
 		nextInput += sizeof(T);
 	}
+	void EmplacePadding()
+	{
+		nextInput += padding;
+	}
 private:
 	std::vector<char> buffer; // vector of bytes
 	const size_t stride; // structure of these bytes
+	const size_t padding;
 	const size_t vertCount;
 	char* nextInput;
 };

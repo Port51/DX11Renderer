@@ -13,17 +13,45 @@ class VertexLayout
 public:
 	VertexLayout() {}
 public:
-	VertexLayout& Append(D3D11_INPUT_ELEMENT_DESC desc, size_t bytes)
+	template <class T> // T should be the CPU type
+	VertexLayout& AppendVertexDesc(D3D11_INPUT_ELEMENT_DESC desc)
 	{
+		// Assign offset automatically
+		desc.AlignedByteOffset = perVertexStride;
+
 		elements.emplace_back(desc);
-		size += bytes;
+		perVertexStride += sizeof(T);
+		perVertexPadding = (16 - (perVertexStride % 16)) % 16;
 		code += desc.SemanticName + std::to_string(desc.SemanticIndex);
 		return *this;
 	}
-	// Size in bytes
-	size_t SizeInBytes() const
+	template <class T> // T should be the CPU type
+	VertexLayout& AppendInstanceDesc(D3D11_INPUT_ELEMENT_DESC desc)
 	{
-		return size;
+		// Assign offset automatically
+		desc.AlignedByteOffset = perInstanceStride;
+
+		elements.emplace_back(desc);
+		perInstanceStride += sizeof(T);
+		perVertexPadding = (16 - (perInstanceStride % 16)) % 16;
+		code += desc.SemanticName + std::to_string(desc.SemanticIndex);
+		return *this;
+	}
+	size_t GetPerVertexStride() const
+	{
+		return perVertexStride + perVertexPadding;
+	}
+	size_t GetPerInstanceStride() const
+	{
+		return perInstanceStride + perVertexPadding;
+	}
+	size_t GetPerVertexPadding() const
+	{
+		return perVertexPadding;
+	}
+	size_t GetPerInstancePadding() const
+	{
+		return perInstanceStride;
 	}
 	size_t GetElementCount() const
 	{
@@ -40,6 +68,8 @@ public:
 
 private:
 	std::vector<D3D11_INPUT_ELEMENT_DESC> elements;
-	size_t size = 0;
+	size_t perVertexStride = 0;
+	size_t perInstanceStride = 0;
+	size_t perVertexPadding = 0;
 	std::string code = "";
 };
