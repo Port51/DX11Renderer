@@ -136,9 +136,9 @@ void App::DoFrame()
 	{
 		b->SubmitDrawCalls(fc);
 	}*/
-	//pModel0->SubmitDrawCalls(fc);
-	//pModel1->SubmitDrawCalls(fc);
-	//light.SubmitDrawCalls(fc);
+	pModel0->SubmitDrawCalls(fc);
+	pModel1->SubmitDrawCalls(fc);
+	light.SubmitDrawCalls(fc);
 	fc->Execute(wnd.Gfx());
 
 	// imgui window to control simulation speed
