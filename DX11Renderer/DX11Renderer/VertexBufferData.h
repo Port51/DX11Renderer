@@ -13,6 +13,7 @@ public:
 		: vertCount(vertCount), stride(stride)
 	{
 		buffer.resize(stride * vertCount);
+		nextInput = buffer.data();
 	}
 	const char* GetData() const
 	{
@@ -26,16 +27,20 @@ public:
 	{
 		return buffer.size();
 	}
+	size_t GetStride() const
+	{
+		return stride;
+	}
 	// Place at back (end) of buffer
 	template<class T>
 	void EmplaceBack(T value)
 	{
-		*reinterpret_cast<T*>(buffer.data() + nextInputOffset) = value;
-		nextInputOffset += sizeof(T);
+		memcpy(nextInput, &value, sizeof(T));
+		nextInput += sizeof(T);
 	}
 private:
 	std::vector<char> buffer; // vector of bytes
 	const size_t stride; // structure of these bytes
 	const size_t vertCount;
-	size_t nextInputOffset = 0;
+	char* nextInput;
 };

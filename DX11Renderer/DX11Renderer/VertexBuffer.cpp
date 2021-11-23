@@ -5,7 +5,7 @@ VertexBuffer::VertexBuffer(Graphics& gfx, const VertexBufferData& vbuf)
 	: VertexBuffer(gfx, "?", vbuf)
 {}
 VertexBuffer::VertexBuffer(Graphics& gfx, const std::string& tag, const VertexBufferData& vbuf)
-	: stride(vbuf.GetSizeInBytes()),
+	: stride(vbuf.GetStride()),
 	vertexCount(vbuf.GetVertexCount()),
 	tag(tag)
 {
