@@ -17,9 +17,13 @@ FullscreenPass::FullscreenPass(Graphics& gfx, std::shared_ptr<Texture> pInputTex
 
 	VertexBufferData bufFull((size_t)4, vertexLayout.GetPerVertexStride(), vertexLayout.GetPerVertexPadding());
 	bufFull.EmplaceBack(dx::XMFLOAT2{ -1,1 });
+	bufFull.EmplacePadding();
 	bufFull.EmplaceBack(dx::XMFLOAT2{ 1,1 });
+	bufFull.EmplacePadding();
 	bufFull.EmplaceBack(dx::XMFLOAT2{ -1,-1 });
+	bufFull.EmplacePadding();
 	bufFull.EmplaceBack(dx::XMFLOAT2{ 1,-1 });
+	bufFull.EmplacePadding();
 	bufFull.EmplacePadding();
 	AddBinding(VertexBuffer::Resolve(gfx, "$Blit", std::move(bufFull)))
 		.SetupIABinding();
