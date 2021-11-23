@@ -29,7 +29,7 @@ public:
 
 		// Setup passes
 		renderPasses.emplace(GBufferRenderPassName, std::make_unique<RenderPass>());
-		renderPasses.emplace(FinalBlitRenderPassName, std::make_unique<FullscreenPass>(gfx, pGbufferSecond));
+		renderPasses.emplace(FinalBlitRenderPassName, std::make_unique<FullscreenPass>(gfx, pGbufferNormalRough));
 
 		// Setup Gbuffer
 		pGbufferRenderViews[0] = pGbufferNormalRough->pRenderTargetView.Get();

@@ -12,9 +12,10 @@ FullscreenPass::FullscreenPass(Graphics& gfx, std::shared_ptr<Texture> pInputTex
 	: RenderPass()
 {
 	// setup fullscreen geometry
-	VertexLayout lay;
-	lay.Append(VertexLayout::Position2D);
-	VertexBufferData bufFull(lay, (size_t)4);
+	VertexLayout vertexLayout;
+	vertexLayout.Append({ "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 }, 8);
+
+	VertexBufferData bufFull((size_t)4, vertexLayout.SizeInBytes());
 	bufFull.EmplaceBack(dx::XMFLOAT2{ -1,1 });
 	bufFull.EmplaceBack(dx::XMFLOAT2{ 1,1 });
 	bufFull.EmplaceBack(dx::XMFLOAT2{ -1,-1 });
@@ -30,7 +31,7 @@ FullscreenPass::FullscreenPass(Graphics& gfx, std::shared_ptr<Texture> pInputTex
 	auto vs = VertexShader::Resolve(gfx, "Assets\\Built\\Shaders\\FullscreenVS.cso");
 	const auto pvsbc = vs->GetBytecode();
 
-	AddBinding(InputLayout::Resolve(gfx, lay, pvsbc))
+	AddBinding(InputLayout::Resolve(gfx, vertexLayout, pvsbc))
 		.SetupIABinding();
 	AddBinding(std::move(vs))
 		.SetupVSBinding(0u);

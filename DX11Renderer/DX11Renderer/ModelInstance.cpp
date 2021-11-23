@@ -76,9 +76,8 @@ std::unique_ptr<MeshRenderer> ModelInstance::ParseMesh(Graphics& gfx, std::uniqu
 {
 	namespace dx = DirectX;
 
-	auto pMaterial = pMaterials[pMeshAsset->materialIndex];
-
-	VertexBufferData vbuf(pMaterial->GetVertexLayout(), pMeshAsset->vertices.size());
+	const auto pMaterial = pMaterials[pMeshAsset->materialIndex];
+	VertexBufferData vbuf(pMeshAsset->vertices.size(), pMaterial->GetVertexLayout().SizeInBytes());
 
 	if (pMeshAsset->vertices.size() == 0)
 	{
@@ -91,12 +90,10 @@ std::unique_ptr<MeshRenderer> ModelInstance::ParseMesh(Graphics& gfx, std::uniqu
 		dx::XMFLOAT3 tangent = (pMeshAsset->hasTangents) ? pMeshAsset->tangents[i] : dx::XMFLOAT3(0, 0, 1);
 		dx::XMFLOAT2 uv0 = (pMeshAsset->texcoords.size() > 0) ? pMeshAsset->texcoords[0][i] : dx::XMFLOAT2(0, 0);
 
-		vbuf.EmplaceBack(
-			pMeshAsset->vertices[i],
-			normal,
-			tangent,
-			uv0
-		);
+		vbuf.EmplaceBack<dx::XMFLOAT3>(pMeshAsset->vertices[i]);
+		vbuf.EmplaceBack<dx::XMFLOAT3>(normal);
+		vbuf.EmplaceBack<dx::XMFLOAT3>(tangent);
+		vbuf.EmplaceBack<dx::XMFLOAT2>(uv0);
 	}
 
 	if (pMeshAsset->indices.size() == 0)

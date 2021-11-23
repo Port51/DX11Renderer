@@ -1,5 +1,5 @@
 #pragma once
-#include "Vertex.h"
+/*#include "Vertex.h"
 
 ///
 /// Read-only view of vertex data that exists in VertexBuffer
@@ -18,4 +18,4 @@ public:
 	}
 private:
 	Vertex vertex;
-};
+};*/

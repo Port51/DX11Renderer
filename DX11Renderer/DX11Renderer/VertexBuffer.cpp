@@ -5,8 +5,8 @@ VertexBuffer::VertexBuffer(Graphics& gfx, const VertexBufferData& vbuf)
 	: VertexBuffer(gfx, "?", vbuf)
 {}
 VertexBuffer::VertexBuffer(Graphics& gfx, const std::string& tag, const VertexBufferData& vbuf)
-	: stride((UINT)vbuf.GetLayout().Size()),
-	vertexCount(vbuf.Size()),
+	: stride(vbuf.GetSizeInBytes()),
+	vertexCount(vbuf.GetVertexCount()),
 	tag(tag)
 {
 	SETUP_LOGGING(gfx);
@@ -16,7 +16,7 @@ VertexBuffer::VertexBuffer(Graphics& gfx, const std::string& tag, const VertexBu
 	bd.Usage = D3D11_USAGE_DEFAULT;
 	bd.CPUAccessFlags = 0u;
 	bd.MiscFlags = 0u;
-	bd.ByteWidth = UINT(vbuf.SizeBytes());
+	bd.ByteWidth = UINT(vbuf.GetSizeInBytes());
 	bd.StructureByteStride = stride;
 	D3D11_SUBRESOURCE_DATA sd = {};
 	sd.pSysMem = vbuf.GetData();

@@ -1,5 +1,5 @@
 #pragma once
-#include <vector>
+/*#include <vector>
 #include <type_traits>
 #include "Graphics.h"
 #include "VertexLayout.h"
@@ -97,3 +97,4 @@ private:
 	char* pData = nullptr;
 	const VertexLayout& layout;
 };
+*/

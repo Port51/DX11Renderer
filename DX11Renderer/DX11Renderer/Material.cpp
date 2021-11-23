@@ -32,10 +32,11 @@ Material::Material(Graphics& gfx, const std::string_view _materialAssetPath)
 
 	// todo: make this not always the same
 	vertexLayout
-		.Append(VertexLayout::Position3D)
-		.Append(VertexLayout::Normal)
-		.Append(VertexLayout::Tangent)
-		.Append(VertexLayout::Texcoord2D, 0u);
+		.Append({ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 }, 24)
+		.Append({ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 20, D3D11_INPUT_PER_VERTEX_DATA, 0 }, 24)
+		.Append({ "TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 20, D3D11_INPUT_PER_VERTEX_DATA, 0 }, 24)
+		.Append({ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }, 16)
+		.Append({ "INSTANCEPOS", 0, DXGI_FORMAT_R32G32B32_FLOAT, 1, 0, D3D11_INPUT_PER_INSTANCE_DATA, 1 }, 24);
 
 	DirectX::XMFLOAT3 colorProp = { 0.8f, 0.8f, 0.8f };
 	float roughnessProp = 0.75f;
