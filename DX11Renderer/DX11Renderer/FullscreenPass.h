@@ -6,6 +6,7 @@
 
 //class Binding;
 //class Bindable;
+class VertexBufferWrapper;
 class Texture;
 
 class FullscreenPass : public RenderPass
@@ -18,4 +19,5 @@ private:
 	Binding& AddBinding(Binding pBinding);
 private:
 	std::vector<Binding> bindings;
+	std::unique_ptr<VertexBufferWrapper> pVertexBufferWrapper;
 };

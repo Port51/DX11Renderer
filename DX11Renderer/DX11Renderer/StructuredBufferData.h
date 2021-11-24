@@ -3,16 +3,17 @@
 #include <vector>
 
 ///
-/// Contains actual data of a mesh
+/// Contains actual instance data
 ///
-class VertexBufferData : public BaseBufferData
+template <class T>
+class StructuredBufferData : BaseBufferData
 {
 public:
-	VertexBufferData(const size_t elementCount, const size_t stride, const size_t padding)
+	StructuredBufferData(const size_t elementCount, const size_t stride, const size_t padding)
 		: elementCount(elementCount), stride(stride), padding(padding)
 	{
-		buffer.resize(stride * elementCount);
-		nextInput = buffer.data();
+		data.resize(elementCount);
+		nextInput = data.data();
 	}
 	D3D11_SUBRESOURCE_DATA GetSubresourceData() const override
 	{
@@ -20,32 +21,27 @@ public:
 		sd.pSysMem = buffer.data();
 		return sd;
 	}
-	size_t GetElementCount() const override
+	size_t GetInstanceCount() const override
 	{
 		return elementCount;
 	}
 	size_t GetSizeInBytes() const override
 	{
-		return buffer.size();
+		return elementCount * stride;
 	}
 	size_t GetStride() const override
 	{
 		return stride;
 	}
-	template<class T>
+	template<T>
 	void EmplaceBack(T value)
 	{
-		memcpy(nextInput, &value, sizeof(T));
-		nextInput += sizeof(T);
-	}
-	void EmplacePadding()
-	{
-		nextInput += padding;
+		data[nextInputIdx++] = std::move(value);
 	}
 private:
-	std::vector<char> buffer; // vector of bytes
+	std::vector<T> data; // vector of bytes
 	const size_t stride; // structure of these bytes
 	const size_t padding;
 	const size_t elementCount;
-	char* nextInput;
+	size_t nextInputIdx;
 };

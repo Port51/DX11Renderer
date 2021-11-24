@@ -209,13 +209,15 @@
     <ClCompile Include="Topology.cpp" />
     <ClCompile Include="TransformCbuf.cpp" />
     <ClCompile Include="Vertex.cpp" />
-    <ClCompile Include="VertexBuffer.cpp" />
+    <ClCompile Include="VertexBufferWrapper.cpp" />
     <ClCompile Include="VertexShader.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
+    <ClInclude Include="BaseBufferData.h" />
     <ClInclude Include="BaseMesh.h" />
+    <ClInclude Include="StructuredBufferData.h" />
     <ClInclude Include="InstancedMeshRenderer.h" />
     <ClInclude Include="Binding.h" />
     <ClInclude Include="Colors.h" />
@@ -225,7 +227,6 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="ChiliUtil.h" />
     <ClInclude Include="Buffer.h" />
-    <ClInclude Include="ConstVertex.h" />
     <ClInclude Include="CustomException.h" />
     <ClInclude Include="DebugHelper.h" />
     <ClInclude Include="DepthStencil.h" />
@@ -281,10 +282,8 @@
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Topology.h" />
     <ClInclude Include="TransformCbuf.h" />
-    <ClInclude Include="Vertex.h" />
-    <ClInclude Include="VertexBuffer.h" />
+    <ClInclude Include="VertexBufferWrapper.h" />
     <ClInclude Include="VertexBufferData.h" />
-    <ClInclude Include="VertexInclude.h" />
     <ClInclude Include="VertexLayout.h" />
     <ClInclude Include="VertexShader.h" />
     <ClInclude Include="Window.h" />

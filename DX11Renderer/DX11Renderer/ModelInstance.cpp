@@ -2,11 +2,10 @@
 #include "BindableInclude.h"
 #include "GraphicsThrowMacros.h"
 #include "ModelAsset.h"
-#include "VertexInclude.h"
 #include <exception>
 #include <assert.h>
 #include "InstancedMeshRenderer.h"
-//#include "Sphere.h"
+#include "VertexBufferData.h"
 
 namespace dx = DirectX;
 
@@ -115,7 +114,7 @@ std::unique_ptr<MeshRenderer> ModelInstance::ParseMesh(Graphics& gfx, std::uniqu
 	}
 
 	auto meshTag = "Mesh%" + pMeshAsset->name;
-	std::shared_ptr<VertexBuffer> pVertexBuffer = VertexBuffer::Resolve(gfx, meshTag, vbuf); // vbuf is passed as const&
+	std::unique_ptr<VertexBufferWrapper> pVertexBuffer = std::make_unique<VertexBufferWrapper>(gfx, meshTag, vbuf);
 	std::shared_ptr<IndexBuffer> pIndexBuffer = IndexBuffer::Resolve(gfx, meshTag, indices);
 	std::shared_ptr<Topology> pTopology = Topology::Resolve(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 

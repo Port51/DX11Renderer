@@ -6,7 +6,6 @@
 #include "GDIPlusManager.h"
 #include "Imgui/imgui.h"
 #include "FBXImporter.h"
-#include "VertexInclude.h" // temp
 #include "BindableCodex.h"
 #include "VertexShader.h"
 #include "Sampler.h"

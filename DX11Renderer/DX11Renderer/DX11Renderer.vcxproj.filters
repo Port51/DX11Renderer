@@ -121,6 +121,9 @@
     <Filter Include="Header Files\FBXImporter\Meshes">
       <UniqueIdentifier>{d89bbeda-33c0-4f48-9e9b-df739a460b7d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Bindable\Buffers\Data">
+      <UniqueIdentifier>{2e56d0d8-798b-41fb-b2ca-97f6a10a736c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -160,9 +163,6 @@
       <Filter>Source Files\Bindable</Filter>
     </ClCompile>
     <ClCompile Include="TransformCbuf.cpp">
-      <Filter>Source Files\Bindable</Filter>
-    </ClCompile>
-    <ClCompile Include="VertexBuffer.cpp">
       <Filter>Source Files\Bindable</Filter>
     </ClCompile>
     <ClCompile Include="ChiliUtil.cpp">
@@ -282,6 +282,9 @@
     <ClCompile Include="InstancedMeshRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="VertexBufferWrapper.cpp">
+      <Filter>Source Files\Bindable</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WindowsInclude.h">
@@ -336,9 +339,6 @@
       <Filter>Header Files\Bindable</Filter>
     </ClInclude>
     <ClInclude Include="TransformCbuf.h">
-      <Filter>Header Files\Bindable</Filter>
-    </ClInclude>
-    <ClInclude Include="VertexBuffer.h">
       <Filter>Header Files\Bindable</Filter>
     </ClInclude>
     <ClInclude Include="ChiliUtil.h">
@@ -404,22 +404,10 @@
     <ClInclude Include="ModelInstance.h">
       <Filter>Header Files\Drawable</Filter>
     </ClInclude>
-    <ClInclude Include="Vertex.h">
-      <Filter>Header Files\VertexData</Filter>
-    </ClInclude>
     <ClInclude Include="VertexLayout.h">
       <Filter>Header Files\VertexData</Filter>
     </ClInclude>
     <ClInclude Include="Colors.h">
-      <Filter>Header Files\VertexData</Filter>
-    </ClInclude>
-    <ClInclude Include="VertexInclude.h">
-      <Filter>Header Files\VertexData</Filter>
-    </ClInclude>
-    <ClInclude Include="ConstVertex.h">
-      <Filter>Header Files\VertexData</Filter>
-    </ClInclude>
-    <ClInclude Include="VertexBufferData.h">
       <Filter>Header Files\VertexData</Filter>
     </ClInclude>
     <ClInclude Include="SceneGraphNode.h">
@@ -511,6 +499,18 @@
     </ClInclude>
     <ClInclude Include="ConstantBuffer.h">
       <Filter>Header Files\Bindable\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexBufferWrapper.h">
+      <Filter>Header Files\Bindable</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexBufferData.h">
+      <Filter>Header Files\Bindable\Buffers\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="StructuredBufferData.h">
+      <Filter>Header Files\Bindable\Buffers\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseBufferData.h">
+      <Filter>Header Files\Bindable\Buffers\Data</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -5,6 +5,7 @@
 #include "Bindable.h"
 #include "Sampler.h"
 #include "Texture.h"
+#include "VertexBufferData.h"
 
 namespace dx = DirectX;
 
@@ -24,8 +25,7 @@ FullscreenPass::FullscreenPass(Graphics& gfx, std::shared_ptr<Texture> pInputTex
 	bufFull.EmplacePadding();
 	bufFull.EmplaceBack(dx::XMFLOAT2{ 1,-1 });
 	bufFull.EmplacePadding();
-	AddBinding(VertexBuffer::Resolve(gfx, "$Blit", std::move(bufFull)))
-		.SetupIABinding();
+	pVertexBufferWrapper = std::make_unique<VertexBufferWrapper>(gfx, "$Blit", std::move(bufFull));
 
 	std::vector<unsigned short> indices = { 0,1,2,1,3,2 };
 	AddBinding(IndexBuffer::Resolve(gfx, "$Blit", std::move(indices)))
@@ -60,6 +60,7 @@ void FullscreenPass::Execute(Graphics& gfx) const
 	{
 		binding.Bind(gfx);
 	}
+	pVertexBufferWrapper->BindIA(gfx, 0u);
 	gfx.DrawIndexed(6u);
 }
 
