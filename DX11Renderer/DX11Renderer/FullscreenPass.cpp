@@ -24,7 +24,6 @@ FullscreenPass::FullscreenPass(Graphics& gfx, std::shared_ptr<Texture> pInputTex
 	bufFull.EmplacePadding();
 	bufFull.EmplaceBack(dx::XMFLOAT2{ 1,-1 });
 	bufFull.EmplacePadding();
-	bufFull.EmplacePadding();
 	AddBinding(VertexBuffer::Resolve(gfx, "$Blit", std::move(bufFull)))
 		.SetupIABinding();
 
