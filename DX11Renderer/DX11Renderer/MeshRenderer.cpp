@@ -24,9 +24,9 @@ MeshRenderer::MeshRenderer(Graphics& gfx, std::string name, std::shared_ptr<Mate
 	pVertexBufferWrapper = std::move(pVertexBuffer);
 }
 
-DirectX::XMMATRIX MeshRenderer::GetTransformXM() const
+dx::XMMATRIX MeshRenderer::GetTransformXM() const
 {
-	return DirectX::XMLoadFloat4x4(&transform);
+	return dx::XMLoadFloat4x4(&transform);
 }
 
 // Called via Node

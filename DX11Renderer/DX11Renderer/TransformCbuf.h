@@ -12,9 +12,9 @@ class TransformCbuf : public Bindable
 protected:
 	struct Transforms
 	{
-		DirectX::XMMATRIX model;
-		DirectX::XMMATRIX modelView;
-		DirectX::XMMATRIX modelViewProj;
+		dx::XMMATRIX model;
+		dx::XMMATRIX modelView;
+		dx::XMMATRIX modelViewProj;
 	};
 public:
 	TransformCbuf(Graphics& gfx, const MeshRenderer& parent);

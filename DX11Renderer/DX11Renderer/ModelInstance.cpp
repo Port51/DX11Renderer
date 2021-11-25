@@ -41,9 +41,9 @@ void ModelInstance::SubmitDrawCalls(std::unique_ptr<FrameCommander>& frame) cons
 	pSceneGraph->SubmitDrawCalls(frame, transform);
 }
 
-void ModelInstance::SetPositionWS(DirectX::XMFLOAT3 positionWS)
+void ModelInstance::SetPositionWS(dx::XMFLOAT3 positionWS)
 {
-	transform = DirectX::XMMatrixTranslation(positionWS.x, positionWS.y, positionWS.z);
+	transform = dx::XMMatrixTranslation(positionWS.x, positionWS.y, positionWS.z);
 }
 
 static int nextNodeId = 0; // todo: move
@@ -109,7 +109,7 @@ std::unique_ptr<MeshRenderer> ModelInstance::ParseMesh(Graphics& gfx, std::uniqu
 	// todo: move instance stuff somewhere else!
 	struct InstanceData
 	{
-		DirectX::XMFLOAT3 positionWS;
+		dx::XMFLOAT3 positionWS;
 		float padding;
 	};
 
@@ -118,7 +118,7 @@ std::unique_ptr<MeshRenderer> ModelInstance::ParseMesh(Graphics& gfx, std::uniqu
 	StructuredBufferData<InstanceData> instanceBuf(instanceCount);
 	for (int i = 0; i < instanceCount; ++i)
 	{
-		instanceBuf.EmplaceBack(InstanceData{ DirectX::XMFLOAT3(i, 0, 0), 0.f });
+		instanceBuf.EmplaceBack(InstanceData{ dx::XMFLOAT3(i, 0, 0), 0.f });
 	}
 
 	// Release the instance array now that the instance buffer has been created and loaded.

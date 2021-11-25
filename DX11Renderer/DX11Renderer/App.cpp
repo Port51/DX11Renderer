@@ -79,7 +79,7 @@ App::App()
 		{}
 		std::unique_ptr<Drawable> operator()()
 		{
-			const DirectX::XMFLOAT3 materialColor = { cdist(rng),cdist(rng),cdist(rng) };
+			const dx::XMFLOAT3 materialColor = { cdist(rng),cdist(rng),cdist(rng) };
 
 			switch (typedist(rng))
 			{

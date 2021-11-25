@@ -247,16 +247,16 @@ public:
 	}
 
 	// From AutoDesk SDK examples
-	static std::vector<std::vector<DirectX::XMFLOAT2>> LoadUVInformation(Log& log, FbxMesh* pFbxMesh)
+	static std::vector<std::vector<dx::XMFLOAT2>> LoadUVInformation(Log& log, FbxMesh* pFbxMesh)
 	{
-		std::vector<std::vector<DirectX::XMFLOAT2>> result;
+		std::vector<std::vector<dx::XMFLOAT2>> result;
 
 		FbxStringList uvSetNameList;
 		pFbxMesh->GetUVSetNames(uvSetNameList);
 
 		for (int uvIdx = 0; uvIdx < uvSetNameList.GetCount(); uvIdx++)
 		{
-			std::vector<DirectX::XMFLOAT2> uv(pFbxMesh->GetControlPointsCount(), DirectX::XMFLOAT2(0, 0));
+			std::vector<dx::XMFLOAT2> uv(pFbxMesh->GetControlPointsCount(), dx::XMFLOAT2(0, 0));
 
 			const FbxGeometryElementUV* uvSetElement = pFbxMesh->GetElementUV(uvSetNameList.GetStringAt(uvIdx));
 
@@ -342,7 +342,7 @@ public:
 
 	static std::vector<dx::XMFLOAT3> GetFbxVertices(Log& log, FbxMesh* pFbxMesh)
 	{
-		std::vector<DirectX::XMFLOAT3> vertices;
+		std::vector<dx::XMFLOAT3> vertices;
 		FbxVector4* pFbxVertices = pFbxMesh->GetControlPoints();
 
 		for (int j = 0; j < pFbxMesh->GetControlPointsCount(); ++j)
@@ -388,10 +388,10 @@ public:
 	}
 
 	//get mesh normals info
-	static std::vector<DirectX::XMFLOAT3> GetFbxNormals(Log& log, FbxMesh* pFbxMesh)
+	static std::vector<dx::XMFLOAT3> GetFbxNormals(Log& log, FbxMesh* pFbxMesh)
 	{
 		FbxGeometryElementNormal* normalElement = pFbxMesh->GetElementNormal();
-		std::vector<DirectX::XMFLOAT3> normals(pFbxMesh->GetControlPointsCount(), DirectX::XMFLOAT3(0, 0, 0));
+		std::vector<dx::XMFLOAT3> normals(pFbxMesh->GetControlPointsCount(), dx::XMFLOAT3(0, 0, 0));
 		if (normalElement)
 		{
 			if (normalElement->GetMappingMode() == FbxGeometryElement::eByControlPoint)
@@ -468,10 +468,10 @@ public:
 	}
 
 	//get mesh normals info
-	static std::vector<DirectX::XMFLOAT3> GetFbxTangents(Log& log, FbxMesh* pFbxMesh)
+	static std::vector<dx::XMFLOAT3> GetFbxTangents(Log& log, FbxMesh* pFbxMesh)
 	{
 		FbxGeometryElementTangent* tangentElement = pFbxMesh->GetElementTangent();
-		std::vector<DirectX::XMFLOAT3> tangents(pFbxMesh->GetControlPointsCount(), DirectX::XMFLOAT3(0, 0, 0));
+		std::vector<dx::XMFLOAT3> tangents(pFbxMesh->GetControlPointsCount(), dx::XMFLOAT3(0, 0, 0));
 		if (tangentElement)
 		{
 			if (tangentElement->GetMappingMode() == FbxGeometryElement::eByControlPoint)
@@ -546,27 +546,27 @@ public:
 		return std::move(tangents);
 	}
 
-	static DirectX::XMFLOAT3 Vec4ToFloat3(FbxVector4 vec)
+	static dx::XMFLOAT3 Vec4ToFloat3(FbxVector4 vec)
 	{
-		return DirectX::XMFLOAT3(
+		return dx::XMFLOAT3(
 			(float)(vec.mData[0]),
 			(float)(vec.mData[1]),
 			(float)(vec.mData[2]));
 	}
 
-	static DirectX::XMFLOAT2 Vec2ToFloat2(FbxVector2 vec)
+	static dx::XMFLOAT2 Vec2ToFloat2(FbxVector2 vec)
 	{
-		return DirectX::XMFLOAT2(
+		return dx::XMFLOAT2(
 			(float)(vec.mData[0]),
 			(float)(vec.mData[1]));
 	}
 
 	// asserts face-independent vertices w/ normals cleared to zero
-	static std::vector<DirectX::XMFLOAT3> GetFlatNormals(Log& log, const std::vector<DirectX::XMFLOAT3>& vertices, const FbxMesh* pMesh)
+	static std::vector<dx::XMFLOAT3> GetFlatNormals(Log& log, const std::vector<dx::XMFLOAT3>& vertices, const FbxMesh* pMesh)
 	{
 		using namespace DirectX;
 
-		std::vector<DirectX::XMFLOAT3> normals(vertices.size());
+		std::vector<dx::XMFLOAT3> normals(vertices.size());
 
 		for (int pIdx = 0; pIdx < pMesh->GetPolygonCount(); pIdx++)
 		{

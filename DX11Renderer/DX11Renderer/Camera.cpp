@@ -9,7 +9,7 @@ Camera::Camera(float fov, float aspect)
 	UpdateProjectionMatrix();
 }
 
-DirectX::XMMATRIX Camera::GetViewMatrix() const
+dx::XMMATRIX Camera::GetViewMatrix() const
 {
 	// LookAt fails if position = target
 	const auto safeRad = dx::XMMax(r, 0.01f);
@@ -24,7 +24,7 @@ DirectX::XMMATRIX Camera::GetViewMatrix() const
 		* dx::XMMatrixRotationRollPitchYaw(pitch, -yaw, roll);
 }
 
-DirectX::XMMATRIX Camera::GetProjectionMatrix() const
+dx::XMMATRIX Camera::GetProjectionMatrix() const
 {
 	return projectionMatrix;
 }

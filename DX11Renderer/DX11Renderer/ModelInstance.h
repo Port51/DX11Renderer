@@ -21,9 +21,9 @@ namespace DirectX
 class ModelInstance
 {
 public:
-	ModelInstance(Graphics& gfx, std::unique_ptr<ModelAsset> const& pModelAsset, DirectX::XMMATRIX transform);
+	ModelInstance(Graphics& gfx, std::unique_ptr<ModelAsset> const& pModelAsset, dx::XMMATRIX transform);
 	void SubmitDrawCalls(std::unique_ptr<FrameCommander>& frame) const;
-	void SetPositionWS(DirectX::XMFLOAT3 positionWS);
+	void SetPositionWS(dx::XMFLOAT3 positionWS);
 private:
 	std::unique_ptr<MeshRenderer> ParseMesh(Graphics& gfx, std::unique_ptr<MeshAsset> const& pMeshAsset);
 	std::unique_ptr<ModelNode> CreateModelInstanceNode(Graphics& gfx, std::unique_ptr<SceneGraphNode<MeshAsset>> const& pSourceNode);
@@ -31,5 +31,5 @@ private:
 	std::vector<std::shared_ptr<Material>> pMaterials;
 	std::unique_ptr<ModelNode> pSceneGraph;
 	std::vector<std::unique_ptr<MeshRenderer>> pMeshes;
-	DirectX::XMMATRIX transform;
+	dx::XMMATRIX transform;
 };

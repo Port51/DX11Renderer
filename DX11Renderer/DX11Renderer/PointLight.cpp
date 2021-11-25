@@ -5,7 +5,7 @@
 #include "ModelNode.h"
 #include "MeshRenderer.h"
 
-PointLight::PointLight(Graphics& gfx, DirectX::XMFLOAT3 positionWS, DirectX::XMFLOAT3 color, float intensity, float range)
+PointLight::PointLight(Graphics& gfx, dx::XMFLOAT3 positionWS, dx::XMFLOAT3 color, float intensity, float range)
 	: globalLightCbuf(gfx, "Light0"),
 	positionWS(positionWS),
 	color(color),
@@ -14,7 +14,7 @@ PointLight::PointLight(Graphics& gfx, DirectX::XMFLOAT3 positionWS, DirectX::XMF
 {
 
 	auto pModelAsset = FBXImporter::LoadFBX(gfx.log, "Assets\\Models\\DefaultSphere.asset", FBXImporter::FBXNormalsMode::Import, false);
-	pModel = std::make_unique<ModelInstance>(gfx, pModelAsset, DirectX::XMMatrixIdentity());
+	pModel = std::make_unique<ModelInstance>(gfx, pModelAsset, dx::XMMatrixIdentity());
 }
 
 void PointLight::DrawImguiControlWindow()
@@ -41,13 +41,13 @@ void PointLight::SubmitDrawCalls(std::unique_ptr<FrameCommander>& frame) const
 	pModel->SubmitDrawCalls(frame);
 }
 
-void PointLight::Bind(Graphics& gfx, DirectX::FXMMATRIX viewMatrix) const
+void PointLight::Bind(Graphics& gfx, dx::FXMMATRIX viewMatrix) const
 {
 	auto dataCopy = cbData;
-	const auto posWS_Vector = DirectX::XMLoadFloat3(&positionWS);
+	const auto posWS_Vector = dx::XMLoadFloat3(&positionWS);
 
 	// Transform WS to VS
-	DirectX::XMStoreFloat3(&dataCopy.positionVS, DirectX::XMVector3Transform(posWS_Vector, viewMatrix));
+	dx::XMStoreFloat3(&dataCopy.positionVS, dx::XMVector3Transform(posWS_Vector, viewMatrix));
 	dataCopy.color = color;
 	dataCopy.intensity = intensity;
 	dataCopy.invRangeSqr = 1.f / std::max(range * range, 0.0001f);

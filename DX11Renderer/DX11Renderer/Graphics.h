@@ -71,10 +71,10 @@ public:
 	void DisableImgui();
 	bool IsImguiEnabled() const;
 public:
-	void SetProjectionMatrix(DirectX::FXMMATRIX proj);
-	DirectX::XMMATRIX GetProjectionMatrix() const;
-	void SetViewMatrix(DirectX::FXMMATRIX cam);
-	DirectX::XMMATRIX GetViewMatrix() const;
+	void SetProjectionMatrix(dx::FXMMATRIX proj);
+	dx::XMMATRIX GetProjectionMatrix() const;
+	void SetViewMatrix(dx::FXMMATRIX cam);
+	dx::XMMATRIX GetViewMatrix() const;
 public:
 	Log log;
 #ifndef NDEBUG
@@ -92,8 +92,8 @@ private:
 	bool imguiEnabled = true;
 
 	// Matrices
-	DirectX::XMMATRIX projectionMatrix;
-	DirectX::XMMATRIX viewMatrix;
+	dx::XMMATRIX projectionMatrix;
+	dx::XMMATRIX viewMatrix;
 
 private:
 

@@ -26,7 +26,7 @@ public:
 	bool hasTangents;
 	std::vector<dx::XMFLOAT3> tangents;
 
-	std::vector<std::vector<DirectX::XMFLOAT2>> texcoords;
+	std::vector<std::vector<dx::XMFLOAT2>> texcoords;
 
 	size_t numFaces;
 	std::vector<int> indices;

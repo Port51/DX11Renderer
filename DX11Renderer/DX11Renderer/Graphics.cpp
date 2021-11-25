@@ -169,22 +169,22 @@ void Graphics::DrawIndexed(UINT count)
 	GFX_THROW_INFO_ONLY(pContext->DrawIndexed(count, 0u, 0u));
 }
 
-void Graphics::SetProjectionMatrix(DirectX::FXMMATRIX proj)
+void Graphics::SetProjectionMatrix(dx::FXMMATRIX proj)
 {
 	projectionMatrix = proj;
 }
 
-DirectX::XMMATRIX Graphics::GetProjectionMatrix() const
+dx::XMMATRIX Graphics::GetProjectionMatrix() const
 {
 	return projectionMatrix;
 }
 
-void Graphics::SetViewMatrix(DirectX::FXMMATRIX _viewMatrix)
+void Graphics::SetViewMatrix(dx::FXMMATRIX _viewMatrix)
 {
 	viewMatrix = _viewMatrix;
 }
 
-DirectX::XMMATRIX Graphics::GetViewMatrix() const
+dx::XMMATRIX Graphics::GetViewMatrix() const
 {
 	return viewMatrix;
 }

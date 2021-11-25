@@ -8,23 +8,23 @@ class FrameCommander;
 class PointLight
 {
 public:
-	PointLight(Graphics& gfx, DirectX::XMFLOAT3 positionWS, DirectX::XMFLOAT3 color, float intensity = 1.f, float range = 2.5f);
+	PointLight(Graphics& gfx, dx::XMFLOAT3 positionWS, dx::XMFLOAT3 color, float intensity = 1.f, float range = 2.5f);
 	void DrawImguiControlWindow();
 	void SubmitDrawCalls(std::unique_ptr<FrameCommander>& frame) const;
-	void Bind(Graphics& gfx, DirectX::FXMMATRIX viewMatrix) const;
+	void Bind(Graphics& gfx, dx::FXMMATRIX viewMatrix) const;
 private:
 	struct PointLightCBuf
 	{
 		//alignas(16) 
-		DirectX::XMFLOAT3 positionVS;
+		dx::XMFLOAT3 positionVS;
 		float invRangeSqr;
-		DirectX::XMFLOAT3 color;
+		dx::XMFLOAT3 color;
 		float intensity;
 	};
 private:
 	PointLightCBuf cbData;
-	DirectX::XMFLOAT3 positionWS;
-	DirectX::XMFLOAT3 color;
+	dx::XMFLOAT3 positionWS;
+	dx::XMFLOAT3 color;
 	float intensity;
 	float range;
 

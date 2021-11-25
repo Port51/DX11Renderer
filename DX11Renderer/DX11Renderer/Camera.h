@@ -6,8 +6,8 @@ class Camera
 public:
 	Camera(float fov, float aspect);
 public:
-	DirectX::XMMATRIX GetViewMatrix() const;
-	DirectX::XMMATRIX GetProjectionMatrix() const;
+	dx::XMMATRIX GetViewMatrix() const;
+	dx::XMMATRIX GetProjectionMatrix() const;
 	void SetFOV(float fov);
 	void SetAspect(float aspect);
 	void DrawImguiControlWindow();
@@ -23,5 +23,5 @@ private:
 	float roll = 0.0f;
 	float fov = 40.0f;
 	float aspect = 0.75f;
-	DirectX::XMMATRIX projectionMatrix;
+	dx::XMMATRIX projectionMatrix;
 };

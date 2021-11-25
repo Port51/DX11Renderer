@@ -41,7 +41,7 @@ Material::Material(Graphics& gfx, const std::string_view _materialAssetPath)
 	assert(vertexLayout.GetPerVertexStride() % 16 == 0);
 	//assert(vertexLayout.GetPerInstanceStride() % 16 == 0);
 
-	DirectX::XMFLOAT3 colorProp = { 0.8f, 0.8f, 0.8f };
+	dx::XMFLOAT3 colorProp = { 0.8f, 0.8f, 0.8f };
 	float roughnessProp = 0.75f;
 
 	MaterialParseState state = MaterialParseState::None;
@@ -49,7 +49,7 @@ Material::Material(Graphics& gfx, const std::string_view _materialAssetPath)
 	// For unpacking main properties
 	struct PSMaterialConstant // must be multiple of 16 bytes
 	{
-		DirectX::XMFLOAT3 materialColor;
+		dx::XMFLOAT3 materialColor;
 		float roughness;
 		BOOL normalMappingEnabled = TRUE; // BOOL uses 4 bytes as it's an int, rather than bool
 		float specularPower = 30.0f;
