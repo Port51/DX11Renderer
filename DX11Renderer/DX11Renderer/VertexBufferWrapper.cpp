@@ -11,6 +11,7 @@ VertexBufferWrapper::VertexBufferWrapper(Graphics& gfx, const std::string& tag, 
 	tag(tag)
 {
 	pBufferArray.resize(1);
+	SetupVertexBuffer(gfx, vbuf);
 }
 
 Microsoft::WRL::ComPtr<ID3D11Buffer> VertexBufferWrapper::GetVertexBuffer() const
@@ -42,11 +43,6 @@ void VertexBufferWrapper::SetupVertexBuffer(Graphics& gfx, const BaseBufferData&
 
 void VertexBufferWrapper::SetupInstanceBuffer(Graphics& gfx, const BaseBufferData& data)
 {
-	// Create our trees instance buffer
-	// Pretty much the same thing as a regular vertex buffer, except that this buffers data
-	// will be used per "instance" instead of per "vertex". Each instance of the geometry
-	// gets it's own instanceData data, similar to how each vertex of the geometry gets its own
-	// Vertex data
 	D3D11_BUFFER_DESC bd;
 	ZeroMemory(&bd, sizeof(bd));
 
