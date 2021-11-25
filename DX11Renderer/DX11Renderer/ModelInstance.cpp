@@ -5,7 +5,7 @@
 #include <exception>
 #include <assert.h>
 #include "InstancedMeshRenderer.h"
-#include "VertexBufferData.h"
+#include "RawBufferData.h"
 #include "StructuredBufferData.h"
 
 namespace dx = DirectX;
@@ -77,7 +77,7 @@ std::unique_ptr<MeshRenderer> ModelInstance::ParseMesh(Graphics& gfx, std::uniqu
 	namespace dx = DirectX;
 
 	const auto pMaterial = pMaterials[pMeshAsset->materialIndex];
-	VertexBufferData vbuf(pMeshAsset->vertices.size(), pMaterial->GetVertexLayout().GetPerVertexStride(), pMaterial->GetVertexLayout().GetPerVertexPadding());
+	RawBufferData vbuf(pMeshAsset->vertices.size(), pMaterial->GetVertexLayout().GetPerVertexStride(), pMaterial->GetVertexLayout().GetPerVertexPadding());
 
 	if (pMeshAsset->vertices.size() == 0)
 	{

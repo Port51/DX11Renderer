@@ -5,7 +5,7 @@
 #include "Bindable.h"
 #include "Sampler.h"
 #include "Texture.h"
-#include "VertexBufferData.h"
+#include "RawBufferData.h"
 
 namespace dx = DirectX;
 
@@ -16,7 +16,7 @@ FullscreenPass::FullscreenPass(Graphics& gfx, std::shared_ptr<Texture> pInputTex
 	VertexLayout vertexLayout;
 	vertexLayout.AppendVertexDesc<dx::XMFLOAT2>({ "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 });
 
-	VertexBufferData bufFull((size_t)4, vertexLayout.GetPerVertexStride(), vertexLayout.GetPerVertexPadding());
+	RawBufferData bufFull((size_t)4, vertexLayout.GetPerVertexStride(), vertexLayout.GetPerVertexPadding());
 	bufFull.EmplaceBack(dx::XMFLOAT2{ -1,1 });
 	bufFull.EmplacePadding();
 	bufFull.EmplaceBack(dx::XMFLOAT2{ 1,1 });

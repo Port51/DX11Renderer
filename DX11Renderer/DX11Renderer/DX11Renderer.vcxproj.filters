@@ -503,13 +503,13 @@
     <ClInclude Include="VertexBufferWrapper.h">
       <Filter>Header Files\Bindable</Filter>
     </ClInclude>
-    <ClInclude Include="VertexBufferData.h">
-      <Filter>Header Files\Bindable\Buffers\Data</Filter>
-    </ClInclude>
     <ClInclude Include="StructuredBufferData.h">
       <Filter>Header Files\Bindable\Buffers\Data</Filter>
     </ClInclude>
     <ClInclude Include="BaseBufferData.h">
+      <Filter>Header Files\Bindable\Buffers\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="RawBufferData.h">
       <Filter>Header Files\Bindable\Buffers\Data</Filter>
     </ClInclude>
   </ItemGroup>
