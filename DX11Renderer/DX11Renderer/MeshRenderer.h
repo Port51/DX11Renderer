@@ -12,8 +12,6 @@ class FrameCommander;
 class InputLayout;
 class TransformCbuf;
 
-namespace dx = DirectX;
-
 class MeshRenderer
 {
 public:

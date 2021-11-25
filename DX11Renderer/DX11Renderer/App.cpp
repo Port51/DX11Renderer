@@ -12,8 +12,6 @@
 #include "Sampler.h"
 #include <d3d11.h>
 
-namespace dx = DirectX;
-
 GDIPlusManager gdipm;
 
 App::App()

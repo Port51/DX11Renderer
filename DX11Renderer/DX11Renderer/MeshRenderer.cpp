@@ -5,8 +5,6 @@
 #include <assert.h>
 #include "Stencil.h"
 
-namespace dx = DirectX;
-
 MeshRenderer::MeshRenderer(Graphics& gfx, std::string name, std::shared_ptr<Material> pMaterial, std::shared_ptr<IndexBuffer> pIndexBuffer, std::shared_ptr<Topology> pTopologyBuffer)
 	: pIndexBuffer(std::move(pIndexBuffer)),
 	pTopology(std::move(pTopologyBuffer)),

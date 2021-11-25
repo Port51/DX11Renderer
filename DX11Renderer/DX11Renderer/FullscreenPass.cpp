@@ -7,8 +7,6 @@
 #include "Texture.h"
 #include "RawBufferData.h"
 
-namespace dx = DirectX;
-
 FullscreenPass::FullscreenPass(Graphics& gfx, std::shared_ptr<Texture> pInputTexture)
 	: RenderPass()
 {

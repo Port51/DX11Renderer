@@ -31,7 +31,6 @@ Material::Material(Graphics& gfx, const std::string_view _materialAssetPath)
 	// with most of the parsing logic moved to a different class
 
 	// todo: make this not always the same
-	namespace dx = DirectX;
 	vertexLayout
 		.AppendVertexDesc<dx::XMFLOAT3>({ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 })
 		.AppendVertexDesc<dx::XMFLOAT3>({ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 })

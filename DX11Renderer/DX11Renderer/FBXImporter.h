@@ -19,8 +19,6 @@
 // - Use "FBX Units Scale"
 // - Apply Unit = OFF
 
-namespace dx = DirectX;
-
 // Memory manager object
 static FbxManager* fbxSdkManager = nullptr;
 

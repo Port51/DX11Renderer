@@ -10,7 +10,6 @@
 
 // Only do this in .cpp files
 namespace wrl = Microsoft::WRL;
-namespace dx = DirectX;
 
 // Sets up linker settings
 #pragma comment(lib,"d3d11.lib")
@@ -69,24 +68,7 @@ Graphics::Graphics(HWND hWnd, int windowWidth, int windowHeight)
 		&pBackBufferView
 	));
 
-	// No need to init depth/stencil state anymore
-
-	// create depth stencil state
-	/*D3D11_DEPTH_STENCIL_DESC dsDesc = {};
-	dsDesc.DepthEnable = TRUE;
-	dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-	dsDesc.DepthFunc = D3D11_COMPARISON_LESS;
-	wrl::ComPtr<ID3D11DepthStencilState> pDSState;
-	GFX_THROW_INFO(pDevice->CreateDepthStencilState(&dsDesc, &pDSState));
-
-	// bind depth state
-	pContext->OMSetDepthStencilState(pDSState.Get(), 0u);
-	*/
-
 	pDepthStencil = std::make_shared<DepthStencilTarget>(*this, windowWidth, windowHeight);
-
-	// bind depth stencil view to OM
-	pContext->OMSetRenderTargets(1u, pBackBufferView.GetAddressOf(), pDepthStencil->GetView().Get());
 
 	//
 	// Setup viewport
@@ -107,7 +89,6 @@ void Graphics::BeginFrame(float red, float green, float blue)
 	}
 
 	const float color[] = { red,green,blue,1.0f };
-	pContext->ClearRenderTargetView(pBackBufferView.Get(), color);
 	pContext->ClearDepthStencilView(pDepthStencil->GetView().Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
 }
 

@@ -7,8 +7,9 @@
 #include "DebugHelper.h"
 #include "BaseMesh.h"
 
-namespace dx = DirectX;
-
+///
+/// Storage class that can be used to make mesh instances
+///
 class MeshAsset : public BaseMesh
 {
 public:
@@ -17,7 +18,7 @@ public:
 	}
 
 public:
-	// Store vertex attributes separately, and combine them before sending to GPU
+	// Store vertex attributes separately, and combine when making instances based on what attributes are needed
 	std::vector<dx::XMFLOAT3> vertices;
 
 	bool hasNormals;

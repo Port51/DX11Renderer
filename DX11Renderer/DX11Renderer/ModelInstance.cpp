@@ -74,8 +74,6 @@ std::unique_ptr<ModelNode> ModelInstance::CreateModelInstanceNode(Graphics& gfx,
 
 std::unique_ptr<MeshRenderer> ModelInstance::ParseMesh(Graphics& gfx, std::unique_ptr<MeshAsset> const& pMeshAsset)
 {
-	namespace dx = DirectX;
-
 	const auto pMaterial = pMaterials[pMeshAsset->materialIndex];
 	RawBufferData vbuf(pMeshAsset->vertices.size(), pMaterial->GetVertexLayout().GetPerVertexStride(), pMaterial->GetVertexLayout().GetPerVertexPadding());
 

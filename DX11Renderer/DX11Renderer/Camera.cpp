@@ -1,8 +1,6 @@
 #include "Camera.h"
 #include "imgui/imgui.h"
 
-namespace dx = DirectX;
-
 Camera::Camera(float fov, float aspect)
 	: fov(fov), aspect(aspect)
 {
