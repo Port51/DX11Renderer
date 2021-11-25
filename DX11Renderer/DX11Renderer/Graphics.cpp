@@ -78,7 +78,7 @@ Graphics::Graphics(HWND hWnd, int windowWidth, int windowHeight)
 	ImGui_ImplDX11_Init(pDevice.Get(), pContext.Get());
 }
 
-void Graphics::BeginFrame(float red, float green, float blue)
+void Graphics::BeginFrame()
 {
 	// imgui begin frame
 	if (imguiEnabled)
@@ -87,9 +87,6 @@ void Graphics::BeginFrame(float red, float green, float blue)
 		ImGui_ImplWin32_NewFrame();
 		ImGui::NewFrame();
 	}
-
-	const float color[] = { red,green,blue,1.0f };
-	pContext->ClearDepthStencilView(pDepthStencil->GetView().Get(), D3D11_CLEAR_DEPTH, 1.0f, 0u);
 }
 
 void Graphics::EndFrame()

@@ -1,8 +1,8 @@
-#include "Stencil.h"
+#include "DepthStencilState.h"
 
 namespace Bind
 {
-	Stencil::Stencil(Graphics& gfx, Mode mode)
+	DepthStencilState::DepthStencilState(Graphics& gfx, Mode mode)
 		: mode(mode)
 	{
 		D3D11_DEPTH_STENCIL_DESC dsDesc = CD3D11_DEPTH_STENCIL_DESC{ CD3D11_DEFAULT{} };
@@ -42,17 +42,22 @@ namespace Bind
 		GetDevice(gfx)->CreateDepthStencilState(&dsDesc, &pStencil);
 	}
 
-	void Stencil::BindOM(Graphics& gfx)
+	DepthStencilState::DepthStencilState(Graphics & gfx, D3D11_DEPTH_STENCIL_DESC desc)
+	{
+		GetDevice(gfx)->CreateDepthStencilState(&desc, &pStencil);
+	}
+
+	void DepthStencilState::BindOM(Graphics& gfx)
 	{
 		GetContext(gfx)->OMSetDepthStencilState(pStencil.Get(), 0x01);
 	}
 
-	std::shared_ptr<Stencil> Stencil::Resolve(Graphics& gfx, Mode mode)
+	std::shared_ptr<DepthStencilState> DepthStencilState::Resolve(Graphics& gfx, Mode mode)
 	{
-		return Codex::Resolve<Stencil>(gfx, mode);
+		return Codex::Resolve<DepthStencilState>(gfx, mode);
 	}
 
-	std::string Stencil::GenerateUID(Mode mode)
+	std::string DepthStencilState::GenerateUID(Mode mode)
 	{
 		using namespace std::string_literals;
 		const auto modeName = [mode]() {
@@ -67,10 +72,10 @@ namespace Bind
 			}
 			return "ERROR"s;
 		};
-		return typeid(Stencil).name() + "#"s + modeName();
+		return typeid(DepthStencilState).name() + "#"s + modeName();
 	}
 
-	std::string Stencil::GetUID() const
+	std::string DepthStencilState::GetUID() const
 	{
 		return GenerateUID(mode);
 	}

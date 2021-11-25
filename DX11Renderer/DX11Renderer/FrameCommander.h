@@ -2,7 +2,7 @@
 #include <array>
 #include <string>
 #include "BindableInclude.h"
-#include "Stencil.h"
+#include "DepthStencilState.h"
 #include "Graphics.h"
 #include "RenderJob.h"
 #include "RenderPass.h"
@@ -59,7 +59,7 @@ public:
 			//pCameraColor->SetRenderTarget(gfx.pContext.Get(), gfx.pDepthStencilView.Get());
 			//gfx.SetRenderTarget(pCameraColor->pRenderTargetView);
 
-			Bind::Stencil::Resolve(gfx, Bind::Stencil::Mode::Off)->BindOM(gfx);
+			Bind::DepthStencilState::Resolve(gfx, Bind::DepthStencilState::Mode::Off)->BindOM(gfx);
 			pGbufferNormalRough->ClearRenderTarget(gfx.pContext.Get(), 1.f, 0.f, 0.f, 1.f);
 			pGbufferSecond->ClearRenderTarget(gfx.pContext.Get(), 1.f, 0.f, 0.f, 1.f);
 			pSmallDepthStencil->Clear(gfx);
@@ -73,7 +73,7 @@ public:
 
 		// Final blit
 		{
-			Bind::Stencil::Resolve(gfx, Bind::Stencil::Mode::Off)->BindOM(gfx);
+			Bind::DepthStencilState::Resolve(gfx, Bind::DepthStencilState::Mode::Off)->BindOM(gfx);
 
 			gfx.SetViewport(1280, 720);
 			gfx.pContext->OMSetRenderTargets(1u, gfx.pBackBufferView.GetAddressOf(), gfx.pDepthStencil->GetView().Get());

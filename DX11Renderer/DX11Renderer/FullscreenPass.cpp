@@ -6,6 +6,7 @@
 #include "Sampler.h"
 #include "Texture.h"
 #include "RawBufferData.h"
+#include "DepthStencilState.h"
 
 FullscreenPass::FullscreenPass(Graphics& gfx, std::shared_ptr<Texture> pInputTexture)
 	: RenderPass()
@@ -42,6 +43,15 @@ FullscreenPass::FullscreenPass(Graphics& gfx, std::shared_ptr<Texture> pInputTex
 		.SetupIABinding();
 	AddBinding(Bind::RasterizerState::Resolve(gfx, false))
 		.SetupRSBinding();
+
+	// Setup depth stencil state
+	// todo: make this an option in DepthStencilState?
+	D3D11_DEPTH_STENCIL_DESC dsDesc = CD3D11_DEPTH_STENCIL_DESC{ CD3D11_DEFAULT{} };
+	dsDesc.DepthEnable = FALSE;
+	//dsDesc.DepthFunc = D3D11_COMPARISON_FUNC::D3D11_COMPARISON_ALWAYS;
+	dsDesc.StencilEnable = FALSE;
+	AddBinding(std::move(std::make_shared<Bind::DepthStencilState>(gfx, dsDesc)))
+		.SetupOMBinding();
 
 	AddBinding(Sampler::Resolve(gfx, D3D11_TEXTURE_ADDRESS_MODE::D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_MODE::D3D11_TEXTURE_ADDRESS_CLAMP))
 		.SetupPSBinding(0u);

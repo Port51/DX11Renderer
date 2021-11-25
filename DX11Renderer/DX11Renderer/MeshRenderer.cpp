@@ -3,7 +3,7 @@
 #include "GraphicsThrowMacros.h"
 #include <exception>
 #include <assert.h>
-#include "Stencil.h"
+#include "DepthStencilState.h"
 
 MeshRenderer::MeshRenderer(Graphics& gfx, std::string name, std::shared_ptr<Material> pMaterial, std::shared_ptr<IndexBuffer> pIndexBuffer, std::shared_ptr<Topology> pTopologyBuffer)
 	: pIndexBuffer(std::move(pIndexBuffer)),

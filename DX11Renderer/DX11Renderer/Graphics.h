@@ -60,7 +60,7 @@ public:
 	Graphics(const Graphics&) = delete; // here because of destructor, but don't want this...
 	Graphics& operator=(const Graphics&) = delete; // here because of destructor, but don't want this...
 	~Graphics() = default;
-	void BeginFrame(float red, float green, float blue);
+	void BeginFrame();
 	void EndFrame();
 	void ClearBuffer(float red, float green, float blue);
 	void DrawIndexed(UINT count);

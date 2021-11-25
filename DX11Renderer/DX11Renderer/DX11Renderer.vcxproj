@@ -203,7 +203,7 @@
     <ClCompile Include="RenderTexture.cpp" />
     <ClCompile Include="Sampler.cpp" />
     <ClCompile Include="RenderStep.cpp" />
-    <ClCompile Include="Stencil.cpp" />
+    <ClCompile Include="DepthStencilState.cpp" />
     <ClCompile Include="Surface.cpp" />
     <ClCompile Include="Technique.cpp" />
     <ClCompile Include="Texture.cpp" />
@@ -278,7 +278,7 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="Sampler.h" />
     <ClInclude Include="SceneGraphNode.h" />
-    <ClInclude Include="Stencil.h" />
+    <ClInclude Include="DepthStencilState.h" />
     <ClInclude Include="RenderStep.h" />
     <ClInclude Include="Surface.h" />
     <ClInclude Include="Technique.h" />

@@ -6,7 +6,7 @@
 
 namespace Bind
 {
-	class Stencil : public Bindable
+	class DepthStencilState : public Bindable
 	{
 	public:
 		enum class Mode
@@ -15,9 +15,10 @@ namespace Bind
 			Write,
 			Mask
 		};
-		Stencil(Graphics& gfx, Mode mode);
+		DepthStencilState(Graphics& gfx, Mode mode);
+		DepthStencilState(Graphics& gfx, D3D11_DEPTH_STENCIL_DESC desc);
 		void BindOM(Graphics& gfx) override;
-		static std::shared_ptr<Stencil> Resolve(Graphics& gfx, Mode mode);
+		static std::shared_ptr<DepthStencilState> Resolve(Graphics& gfx, Mode mode);
 		static std::string GenerateUID(Mode mode);
 		std::string GetUID() const override;
 	private:
