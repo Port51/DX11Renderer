@@ -2,16 +2,21 @@
 #include "BaseBufferData.h"
 #include "BindableCodex.h"
 
-VertexBufferWrapper::VertexBufferWrapper(Graphics& gfx, const BaseBufferData& vbuf)
-	: VertexBufferWrapper(gfx, "?", vbuf)
-{}
-VertexBufferWrapper::VertexBufferWrapper(Graphics& gfx, const std::string& tag, const BaseBufferData& vbuf)
-	: strides(vbuf.GetStride()),
-	vertexCount(vbuf.GetElementCount()),
-	tag(tag)
+VertexBufferWrapper::VertexBufferWrapper(Graphics& gfx, const BaseBufferData& vertexBuffer)
 {
+	strides.resize(1);
+	offsets.resize(1);
 	pBufferArray.resize(1);
-	SetupVertexBuffer(gfx, vbuf);
+	SetupVertexBuffer(gfx, vertexBuffer);
+}
+
+VertexBufferWrapper::VertexBufferWrapper(Graphics& gfx, const BaseBufferData& vertexBuffer, const BaseBufferData& instanceBuffer)
+{
+	strides.resize(2);
+	offsets.resize(2);
+	pBufferArray.resize(2);
+	SetupVertexBuffer(gfx, vertexBuffer);
+	SetupInstanceBuffer(gfx, instanceBuffer);
 }
 
 Microsoft::WRL::ComPtr<ID3D11Buffer> VertexBufferWrapper::GetVertexBuffer() const
@@ -21,8 +26,7 @@ Microsoft::WRL::ComPtr<ID3D11Buffer> VertexBufferWrapper::GetVertexBuffer() cons
 
 void VertexBufferWrapper::BindIA(Graphics& gfx, UINT slot)
 {
-	const UINT offsets = 0u;
-	gfx.pContext->IASetVertexBuffers(slot, pBufferArray.size(), pBufferArray[0].GetAddressOf(), &strides, &offsets);
+	gfx.pContext->IASetVertexBuffers(slot, pBufferArray.size(), pBufferArray[0].GetAddressOf(), &strides[0], &offsets[0]);
 }
 
 void VertexBufferWrapper::SetupVertexBuffer(Graphics& gfx, const BaseBufferData& data)
@@ -37,8 +41,15 @@ void VertexBufferWrapper::SetupVertexBuffer(Graphics& gfx, const BaseBufferData&
 	bd.ByteWidth = UINT(data.GetSizeInBytes());
 	bd.StructureByteStride = data.GetStride();
 
+	strides[0] = data.GetStride();
+	offsets[0] = 0;
+
+	assert(data.GetStride() % 16 == 0 && "Vertex buffer stride must be a multiple of 16");
+
 	D3D11_SUBRESOURCE_DATA sd = data.GetSubresourceData();
 	gfx.pDevice->CreateBuffer(&bd, &sd, &pBufferArray[0]);
+
+	vertexCount = data.GetElementCount();
 }
 
 void VertexBufferWrapper::SetupInstanceBuffer(Graphics& gfx, const BaseBufferData& data)
@@ -53,16 +64,16 @@ void VertexBufferWrapper::SetupInstanceBuffer(Graphics& gfx, const BaseBufferDat
 	bd.MiscFlags = 0u;
 	bd.StructureByteStride = data.GetStride();
 
+	strides[1] = data.GetStride();
+	offsets[1] = 0;
+
+	assert(data.GetStride() % 16 == 0 && "Instance buffer stride must be a multiple of 16");
+
 	D3D11_SUBRESOURCE_DATA sd = data.GetSubresourceData();
 	gfx.pDevice->CreateBuffer(&bd, &sd, &pBufferArray[1]);
 }
 
-UINT VertexBufferWrapper::GetVertexCount() const
+size_t VertexBufferWrapper::GetVertexCount() const
 {
 	return vertexCount;
-}
-
-UINT VertexBufferWrapper::GetStride() const
-{
-	return strides;
 }

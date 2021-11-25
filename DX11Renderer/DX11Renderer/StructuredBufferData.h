@@ -6,22 +6,22 @@
 /// Contains actual instance data
 ///
 template <class T>
-class StructuredBufferData : BaseBufferData
+class StructuredBufferData : public BaseBufferData
 {
 public:
-	StructuredBufferData(const size_t elementCount, const size_t stride, const size_t padding)
-		: elementCount(elementCount), stride(stride), padding(padding)
+	StructuredBufferData(const size_t elementCount)
+		: elementCount(elementCount), stride(sizeof(T))
 	{
 		data.resize(elementCount);
-		nextInput = data.data();
+		nextInputIdx = 0u;
 	}
 	D3D11_SUBRESOURCE_DATA GetSubresourceData() const override
 	{
 		D3D11_SUBRESOURCE_DATA sd = {};
-		sd.pSysMem = buffer.data();
+		sd.pSysMem = data.data();
 		return sd;
 	}
-	size_t GetInstanceCount() const override
+	size_t GetElementCount() const override
 	{
 		return elementCount;
 	}
@@ -33,7 +33,6 @@ public:
 	{
 		return stride;
 	}
-	template<T>
 	void EmplaceBack(T value)
 	{
 		data[nextInputIdx++] = std::move(value);
@@ -41,7 +40,6 @@ public:
 private:
 	std::vector<T> data; // vector of bytes
 	const size_t stride; // structure of these bytes
-	const size_t padding;
 	const size_t elementCount;
 	size_t nextInputIdx;
 };

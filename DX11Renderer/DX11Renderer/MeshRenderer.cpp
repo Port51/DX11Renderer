@@ -7,22 +7,21 @@
 
 namespace dx = DirectX;
 
-MeshRenderer::MeshRenderer(Graphics& gfx, std::string name, std::shared_ptr<Material> pMaterial,
-	std::shared_ptr<VertexBufferWrapper> pVertexBuffer, std::shared_ptr<IndexBuffer> pIndexBuffer, std::shared_ptr<Topology> pTopologyBuffer)
-	: pVertexBufferWrapper(std::move(pVertexBuffer)),
-	pIndexBuffer(std::move(pIndexBuffer)),
+MeshRenderer::MeshRenderer(Graphics& gfx, std::string name, std::shared_ptr<Material> pMaterial, std::shared_ptr<IndexBuffer> pIndexBuffer, std::shared_ptr<Topology> pTopologyBuffer)
+	: pIndexBuffer(std::move(pIndexBuffer)),
 	pTopology(std::move(pTopologyBuffer)),
 	name(name),
 	pMaterial(pMaterial)
 {
 	assert("Material cannot be null" && pMaterial);
 
-	/*if (!hasIndexBuffer)
-	{
-		throw std::runtime_error(std::string("Mesh '") + name + std::string("' is missing IndexBuffer!"));
-	}*/
-
 	pTransformCbuf = std::make_shared<TransformCbuf>(gfx, *this);
+}
+
+MeshRenderer::MeshRenderer(Graphics& gfx, std::string name, std::shared_ptr<Material> pMaterial, std::shared_ptr<VertexBufferWrapper> pVertexBuffer, std::shared_ptr<IndexBuffer> pIndexBuffer, std::shared_ptr<Topology> pTopologyBuffer)
+	: MeshRenderer(gfx, name, pMaterial, pIndexBuffer, pTopologyBuffer)
+{
+	pVertexBufferWrapper = std::move(pVertexBuffer);
 }
 
 DirectX::XMMATRIX MeshRenderer::GetTransformXM() const

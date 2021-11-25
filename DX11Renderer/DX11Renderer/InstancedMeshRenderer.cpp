@@ -9,21 +9,7 @@ InstancedMeshRenderer::InstancedMeshRenderer(Graphics & gfx, std::string name, s
 	: MeshRenderer(gfx, name, pMaterial, _pVertexBuffer, pIndexBuffer, pTopologyBuffer),
 	instanceCount(instanceCount)
 {
-	struct InstanceData
-	{
-		DirectX::XMFLOAT3 positionWS;
-	};
-
-	InstanceData* instances = new InstanceData[instanceCount];
-	for (int i = 0; i < instanceCount; ++i)
-	{
-		instances[i].positionWS = DirectX::XMFLOAT3(i, 0, 0);
-	}
-
 	
-
-	// Release the instance array now that the instance buffer has been created and loaded.
-	delete[] instances;
 }
 
 void InstancedMeshRenderer::IssueDrawCall(Graphics& gfx) const

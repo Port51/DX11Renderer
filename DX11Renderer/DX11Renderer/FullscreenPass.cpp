@@ -25,7 +25,7 @@ FullscreenPass::FullscreenPass(Graphics& gfx, std::shared_ptr<Texture> pInputTex
 	bufFull.EmplacePadding();
 	bufFull.EmplaceBack(dx::XMFLOAT2{ 1,-1 });
 	bufFull.EmplacePadding();
-	pVertexBufferWrapper = std::make_unique<VertexBufferWrapper>(gfx, "$Blit", std::move(bufFull));
+	pVertexBufferWrapper = std::make_unique<VertexBufferWrapper>(gfx, std::move(bufFull));
 
 	std::vector<unsigned short> indices = { 0,1,2,1,3,2 };
 	AddBinding(IndexBuffer::Resolve(gfx, "$Blit", std::move(indices)))

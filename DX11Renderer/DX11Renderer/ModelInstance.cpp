@@ -6,6 +6,7 @@
 #include <assert.h>
 #include "InstancedMeshRenderer.h"
 #include "VertexBufferData.h"
+#include "StructuredBufferData.h"
 
 namespace dx = DirectX;
 
@@ -105,6 +106,24 @@ std::unique_ptr<MeshRenderer> ModelInstance::ParseMesh(Graphics& gfx, std::uniqu
 		throw std::runtime_error(std::string("Mesh '") + pMeshAsset->name + std::string("' has indices which are not a multiple of 3!"));
 	}
 
+	// todo: move instance stuff somewhere else!
+	struct InstanceData
+	{
+		DirectX::XMFLOAT3 positionWS;
+		float padding;
+	};
+
+	const UINT instanceCount = 10u;
+	//InstanceData* instances = new InstanceData[instanceCount];
+	StructuredBufferData<InstanceData> instanceBuf(instanceCount);
+	for (int i = 0; i < instanceCount; ++i)
+	{
+		instanceBuf.EmplaceBack(InstanceData{ DirectX::XMFLOAT3(i, 0, 0), 0.f });
+	}
+
+	// Release the instance array now that the instance buffer has been created and loaded.
+	//delete[] instances;
+
 	// todo: better way to copy this?
 	std::vector<unsigned short> indices;
 	indices.reserve(pMeshAsset->indices.size());
@@ -114,14 +133,14 @@ std::unique_ptr<MeshRenderer> ModelInstance::ParseMesh(Graphics& gfx, std::uniqu
 	}
 
 	auto meshTag = "Mesh%" + pMeshAsset->name;
-	std::unique_ptr<VertexBufferWrapper> pVertexBuffer = std::make_unique<VertexBufferWrapper>(gfx, meshTag, vbuf);
+	std::unique_ptr<VertexBufferWrapper> pVertexBuffer = std::make_unique<VertexBufferWrapper>(gfx, vbuf, instanceBuf);
 	std::shared_ptr<IndexBuffer> pIndexBuffer = IndexBuffer::Resolve(gfx, meshTag, indices);
 	std::shared_ptr<Topology> pTopology = Topology::Resolve(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	// temporary
 	const bool IsInstance = true;
 	if (IsInstance)
-		return std::make_unique<InstancedMeshRenderer>(gfx, pMeshAsset->name, pMaterial, std::move(pVertexBuffer), std::move(pIndexBuffer), std::move(pTopology), 10u);
+		return std::make_unique<InstancedMeshRenderer>(gfx, pMeshAsset->name, pMaterial, std::move(pVertexBuffer), std::move(pIndexBuffer), std::move(pTopology), instanceCount);
 	else
 		return std::make_unique<MeshRenderer>(gfx, pMeshAsset->name, pMaterial, std::move(pVertexBuffer), std::move(pIndexBuffer), std::move(pTopology));
 }
