@@ -33,7 +33,6 @@ public:
 
 		elements.emplace_back(desc);
 		perInstanceStride += sizeof(T);
-		perVertexPadding = (16 - (perInstanceStride % 16)) % 16;
 		code += desc.SemanticName + std::to_string(desc.SemanticIndex);
 		return *this;
 	}
@@ -43,15 +42,11 @@ public:
 	}
 	size_t GetPerInstanceStride() const
 	{
-		return perInstanceStride + perVertexPadding;
+		return perInstanceStride;
 	}
 	size_t GetPerVertexPadding() const
 	{
 		return perVertexPadding;
-	}
-	size_t GetPerInstancePadding() const
-	{
-		return perInstanceStride;
 	}
 	size_t GetElementCount() const
 	{

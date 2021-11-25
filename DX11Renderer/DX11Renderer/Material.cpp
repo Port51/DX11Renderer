@@ -37,8 +37,9 @@ Material::Material(Graphics& gfx, const std::string_view _materialAssetPath)
 		.AppendVertexDesc<dx::XMFLOAT3>({ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 })
 		.AppendVertexDesc<dx::XMFLOAT3>({ "TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 })
 		.AppendVertexDesc<dx::XMFLOAT2>({ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 })
-		.AppendInstanceDesc<dx::XMFLOAT3>({ "INSTANCEPOS", 0, DXGI_FORMAT_R32G32B32_FLOAT, 1, 0, D3D11_INPUT_PER_INSTANCE_DATA, 1 });
+		.AppendInstanceDesc<dx::XMFLOAT3>({ "INSTANCEPOS", 0, DXGI_FORMAT_R32G32B32_FLOAT, 1, 0, D3D11_INPUT_PER_INSTANCE_DATA, 1 }); // last = # instances to draw before moving onto next instance
 	assert(vertexLayout.GetPerVertexStride() % 16 == 0);
+	//assert(vertexLayout.GetPerInstanceStride() % 16 == 0);
 
 	DirectX::XMFLOAT3 colorProp = { 0.8f, 0.8f, 0.8f };
 	float roughnessProp = 0.75f;

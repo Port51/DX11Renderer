@@ -18,6 +18,8 @@ public:
 	{
 		D3D11_SUBRESOURCE_DATA sd = {};
 		sd.pSysMem = buffer.data();
+		sd.SysMemPitch = 0;
+		sd.SysMemSlicePitch = 0;
 		return sd;
 	}
 	size_t GetElementCount() const override

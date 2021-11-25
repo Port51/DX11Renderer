@@ -14,11 +14,13 @@ struct attrib
     float3 n : Normal;
     float3 t : Tangent;
     float2 uv0 : Texcoord0;
+    float3 instancePosition : INSTANCEPOS;
 };
 
 v2f main(attrib i)
 {
     v2f vso;
+    i.pos += i.instancePosition;
     vso.positionVS = (float3) mul(modelView, float4(i.pos, 1.0f));
     vso.normalWS = mul((float3x3) model, i.n);;
     vso.normalVS = mul((float3x3) modelView, i.n);
