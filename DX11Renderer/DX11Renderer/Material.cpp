@@ -128,12 +128,13 @@ Material::Material(Graphics& gfx, const std::string_view _materialAssetPath)
 			if (p.key == "VS")
 			{
 				// Bind vertex shader and input layout
-				pVertexShader = VertexShader::Resolve(gfx, p.values[0].c_str());
+				const auto vertexShaderName = p.values[0];
+				pVertexShader = VertexShader::Resolve(gfx, vertexShaderName.c_str());
 				const auto pvsbc = pVertexShader->GetBytecode();
 
 				pPassStep->AddBinding(pVertexShader)
 					.SetupVSBinding(0u);
-				pPassStep->AddBinding(InputLayout::Resolve(gfx, std::move(vertexLayout), pvsbc))
+				pPassStep->AddBinding(InputLayout::Resolve(gfx, std::move(vertexLayout), vertexShaderName, pvsbc))
 					.SetupIABinding();
 			}
 			else if (p.key == "PS")

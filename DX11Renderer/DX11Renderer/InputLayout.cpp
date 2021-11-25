@@ -3,8 +3,9 @@
 #include "BindableCodex.h"
 #include "VertexLayout.h"
 
-InputLayout::InputLayout(Graphics& gfx, VertexLayout _layout, ID3DBlob* pVertexShaderBytecode)
-	: layout(std::move(_layout))
+InputLayout::InputLayout(Graphics& gfx, VertexLayout _layout, std::string vertexShaderName, ID3DBlob* pVertexShaderBytecode)
+	: layout(std::move(_layout)),
+	vertexShaderName(vertexShaderName)
 {
 	SETUP_LOGGING(gfx);
 
@@ -24,16 +25,16 @@ void InputLayout::BindIA(Graphics& gfx, UINT slot)
 
 std::string InputLayout::GetUID() const
 {
-	return GenerateUID(layout);
+	return GenerateUID(layout, vertexShaderName);
 }
 
-std::shared_ptr<InputLayout> InputLayout::Resolve(Graphics & gfx, const VertexLayout & layout, ID3DBlob * pVertexShaderBytecode)
+std::shared_ptr<InputLayout> InputLayout::Resolve(Graphics & gfx, const VertexLayout & layout, std::string vertexShaderName, ID3DBlob * pVertexShaderBytecode)
 {
-	return Bind::Codex::Resolve<InputLayout>(gfx, layout, pVertexShaderBytecode);
+	return Bind::Codex::Resolve<InputLayout>(gfx, layout, vertexShaderName, pVertexShaderBytecode);
 }
 
-std::string InputLayout::GenerateUID(const VertexLayout & layout, ID3DBlob * pVertexShaderBytecode)
+std::string InputLayout::GenerateUID(const VertexLayout & layout, std::string vertexShaderName, ID3DBlob * pVertexShaderBytecode)
 {
 	using namespace std::string_literals;
-	return typeid(InputLayout).name() + "#"s + layout.GetCode();
+	return typeid(InputLayout).name() + "#"s + layout.GetCode() + "|" + vertexShaderName;
 }

@@ -32,10 +32,11 @@ FullscreenPass::FullscreenPass(Graphics& gfx, std::shared_ptr<Texture> pInputTex
 		.SetupIABinding();
 
 	// setup other common fullscreen bindables
-	auto vs = VertexShader::Resolve(gfx, "Assets\\Built\\Shaders\\FullscreenVS.cso");
+	std::string vertexShaderName("Assets\\Built\\Shaders\\FullscreenVS.cso");
+	auto vs = VertexShader::Resolve(gfx, vertexShaderName.c_str());
 	const auto pvsbc = vs->GetBytecode();
 
-	AddBinding(InputLayout::Resolve(gfx, vertexLayout, pvsbc))
+	AddBinding(InputLayout::Resolve(gfx, vertexLayout, vertexShaderName, pvsbc))
 		.SetupIABinding();
 	AddBinding(std::move(vs))
 		.SetupVSBinding(0u);

@@ -26,7 +26,13 @@ Microsoft::WRL::ComPtr<ID3D11Buffer> VertexBufferWrapper::GetVertexBuffer() cons
 
 void VertexBufferWrapper::BindIA(Graphics& gfx, UINT slot)
 {
-	/*static ID3D11Buffer* temp[2];
+	if (pBufferArray.size() == 1)
+	{
+		gfx.pContext->IASetVertexBuffers(slot, pBufferArray.size(), pBufferArray[0].GetAddressOf(), &strides[0], &offsets[0]);
+		return;
+	}
+
+	static ID3D11Buffer* temp[2];
 	temp[0] = pBufferArray[0].Get();
 	temp[1] = pBufferArray[1].Get();
 
@@ -36,10 +42,10 @@ void VertexBufferWrapper::BindIA(Graphics& gfx, UINT slot)
 
 	static UINT o[2];
 	o[0] = offsets[0];
-	o[1] = offsets[1];*/
+	o[1] = offsets[1];
 
-	gfx.pContext->IASetVertexBuffers(slot, pBufferArray.size(), pBufferArray[0].GetAddressOf(), &strides[0], &offsets[0]);
-	//gfx.pContext->IASetVertexBuffers(slot, pBufferArray.size(), temp, s, o);
+	//gfx.pContext->IASetVertexBuffers(slot, pBufferArray.size(), pBufferArray[0].GetAddressOf(), &strides[0], &offsets[0]);
+	gfx.pContext->IASetVertexBuffers(slot, pBufferArray.size(), temp, s, o);
 	//delete[] temp;
 }
 

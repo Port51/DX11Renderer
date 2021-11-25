@@ -20,7 +20,7 @@ struct attrib
 v2f main(attrib i)
 {
     v2f vso;
-    i.pos += i.instancePosition;
+    i.pos -= i.instancePosition * 0.5;
     vso.positionVS = (float3) mul(modelView, float4(i.pos, 1.0f));
     vso.normalWS = mul((float3x3) model, i.n);;
     vso.normalVS = mul((float3x3) modelView, i.n);
