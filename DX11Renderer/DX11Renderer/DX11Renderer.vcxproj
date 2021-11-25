@@ -220,7 +220,7 @@
     <ClInclude Include="BaseBufferData.h" />
     <ClInclude Include="BaseMesh.h" />
     <ClInclude Include="DX11Include.h" />
-    <ClInclude Include="DX11MathInclude.h" />
+    <ClInclude Include="DXMathInclude.h" />
     <ClInclude Include="ModelNode.h" />
     <ClInclude Include="StructuredBufferData.h" />
     <ClInclude Include="InstancedMeshRenderer.h" />

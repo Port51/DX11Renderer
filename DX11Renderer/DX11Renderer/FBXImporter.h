@@ -6,7 +6,7 @@
 #include <vector>
 #include <string>
 #include <unordered_map>
-#include <DirectXMath.h>
+#include "DXMathInclude.h"
 #include <exception>
 #include "ModelAsset.h"
 #include "MeshAsset.h"

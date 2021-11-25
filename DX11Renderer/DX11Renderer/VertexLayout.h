@@ -1,5 +1,5 @@
 #pragma once
-#include <DirectXMath.h>
+#include "DXMathInclude.h"
 #include <type_traits>
 #include "Graphics.h"
 #include "Colors.h"

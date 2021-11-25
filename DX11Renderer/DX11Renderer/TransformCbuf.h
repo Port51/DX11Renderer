@@ -2,7 +2,7 @@
 #include "Bindable.h"
 #include "WindowsInclude.h"
 #include "ConstantBuffer.h"
-#include <DirectXMath.h>
+#include "DXMathInclude.h"
 
 class Graphics;
 class MeshRenderer;

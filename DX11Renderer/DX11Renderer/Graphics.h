@@ -6,7 +6,7 @@
 #include <vector>
 #include "DxgiInfoManager.h"
 #include <d3dcompiler.h>
-#include <DirectXMath.h>
+#include "DXMathInclude.h"
 #include <memory>
 #include <random>
 #include "Log.h"

@@ -4,7 +4,7 @@
 #include <vector>
 #include <memory>
 #include <type_traits>
-#include "DX11MathInclude.h"
+#include "DXMathInclude.h"
 #include "DebugHelper.h"
 #include "BaseMesh.h"
 

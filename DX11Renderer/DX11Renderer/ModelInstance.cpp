@@ -7,7 +7,7 @@
 #include "InstancedMeshRenderer.h"
 #include "RawBufferData.h"
 #include "StructuredBufferData.h"
-#include "DX11MathInclude.h"
+#include "DXMathInclude.h"
 #include "ModelNode.h"
 
 ModelInstance::ModelInstance(Graphics& gfx, std::unique_ptr<ModelAsset> const& pModelAsset, dx::XMMATRIX transform)

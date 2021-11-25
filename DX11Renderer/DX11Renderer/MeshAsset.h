@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <string>
 #include <vector>
-#include <DirectXMath.h>
+#include "DXMathInclude.h"
 #include "DebugHelper.h"
 #include "BaseMesh.h"
 

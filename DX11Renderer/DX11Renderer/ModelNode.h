@@ -3,7 +3,7 @@
 #include <string>
 #include <memory>
 #include <d3d11.h>
-#include "DX11MathInclude.h"
+#include "DXMathInclude.h"
 #include "SceneGraphNode.h"
 
 class ModelNode;

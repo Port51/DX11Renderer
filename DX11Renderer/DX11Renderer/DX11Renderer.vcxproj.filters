@@ -524,7 +524,7 @@
     <ClInclude Include="DX11Include.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DX11MathInclude.h">
+    <ClInclude Include="DXMathInclude.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

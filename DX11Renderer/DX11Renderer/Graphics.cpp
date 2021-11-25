@@ -2,7 +2,7 @@
 #include "dxerr.h"
 #include <sstream>
 #include <d3dcompiler.h>
-#include <DirectXMath.h>
+#include "DXMathInclude.h"
 #include "GraphicsThrowMacros.h"
 #include "DepthStencilTarget.h"
 #include "Imgui/imgui_impl_dx11.h"
