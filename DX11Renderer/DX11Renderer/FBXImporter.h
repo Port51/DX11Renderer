@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <vector>
 #include <string>
+#include <unordered_map>
 #include <DirectXMath.h>
 #include <exception>
 #include "ModelAsset.h"

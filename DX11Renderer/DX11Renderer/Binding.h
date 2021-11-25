@@ -1,6 +1,6 @@
 #pragma once
-#include <string>
 #include "WindowsInclude.h"
+#include <memory>
 
 class Graphics;
 class Bindable;

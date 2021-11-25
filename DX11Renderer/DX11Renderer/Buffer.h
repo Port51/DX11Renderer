@@ -17,9 +17,9 @@ public:
 	{
 		SETUP_LOGGING(gfx);
 
-		D3D11_SUBRESOURCE_DATA csd = {};
-		csd.pSysMem = &data;
-		GFX_THROW_INFO(GetDevice(gfx)->CreateBuffer(&bufferDesc, &csd, &pBuffer));
+		D3D11_SUBRESOURCE_DATA sd = {};
+		sd.pSysMem = &data;
+		GFX_THROW_INFO(GetDevice(gfx)->CreateBuffer(&bufferDesc, &sd, &pBuffer));
 	}
 
 	// Init with constants
@@ -28,17 +28,17 @@ public:
 	{
 		SETUP_LOGGING(gfx);
 
-		D3D11_BUFFER_DESC cbd;
-		cbd.BindFlags = bindFlag;
-		cbd.Usage = usage;
-		cbd.CPUAccessFlags = cpuAccessFlag;
-		cbd.MiscFlags = miscFlags;
-		cbd.ByteWidth = sizeof(data);
-		cbd.StructureByteStride = 0u;
+		D3D11_BUFFER_DESC bd;
+		bd.BindFlags = bindFlag;
+		bd.Usage = usage;
+		bd.CPUAccessFlags = cpuAccessFlag;
+		bd.MiscFlags = miscFlags;
+		bd.ByteWidth = sizeof(data);
+		bd.StructureByteStride = 0u;
 
 		D3D11_SUBRESOURCE_DATA csd = {};
 		csd.pSysMem = &data;
-		GFX_THROW_INFO(GetDevice(gfx)->CreateBuffer(&cbd, &csd, &pBuffer));
+		GFX_THROW_INFO(GetDevice(gfx)->CreateBuffer(&bd, &csd, &pBuffer));
 	}
 
 	Buffer(Graphics& gfx, std::string identifier, D3D11_BIND_FLAG bindFlag, D3D11_USAGE usage, D3D11_CPU_ACCESS_FLAG cpuAccessFlag, UINT miscFlags)
@@ -46,15 +46,15 @@ public:
 	{
 		SETUP_LOGGING(gfx);
 
-		D3D11_BUFFER_DESC cbd;
-		cbd.BindFlags = bindFlag;
-		cbd.Usage = usage;
-		cbd.CPUAccessFlags = cpuAccessFlag;
-		cbd.MiscFlags = miscFlags;
-		cbd.ByteWidth = sizeof(C);
-		cbd.StructureByteStride = 0u;
+		D3D11_BUFFER_DESC bd;
+		bd.BindFlags = bindFlag;
+		bd.Usage = usage;
+		bd.CPUAccessFlags = cpuAccessFlag;
+		bd.MiscFlags = miscFlags;
+		bd.ByteWidth = sizeof(C);
+		bd.StructureByteStride = 0u;
 
-		GFX_THROW_INFO(GetDevice(gfx)->CreateBuffer(&cbd, nullptr, &pBuffer));
+		GFX_THROW_INFO(GetDevice(gfx)->CreateBuffer(&bd, nullptr, &pBuffer));
 	}
 
 	// Don't init
@@ -63,14 +63,14 @@ public:
 	{
 		SETUP_LOGGING(gfx);
 
-		D3D11_BUFFER_DESC cbd;
-		cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-		cbd.Usage = D3D11_USAGE_DYNAMIC;
-		cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-		cbd.MiscFlags = 0u;
-		cbd.ByteWidth = sizeof(C);
-		cbd.StructureByteStride = 0u;
-		GFX_THROW_INFO(GetDevice(gfx)->CreateBuffer(&cbd, nullptr, &pBuffer));
+		D3D11_BUFFER_DESC bd;
+		bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+		bd.Usage = D3D11_USAGE_DYNAMIC;
+		bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+		bd.MiscFlags = 0u;
+		bd.ByteWidth = sizeof(C);
+		bd.StructureByteStride = 0u;
+		GFX_THROW_INFO(GetDevice(gfx)->CreateBuffer(&bd, nullptr, &pBuffer));
 	}
 public:
 	void BindCS(Graphics& gfx, UINT slot) override

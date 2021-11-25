@@ -7,8 +7,8 @@
 #include "InstancedMeshRenderer.h"
 #include "RawBufferData.h"
 #include "StructuredBufferData.h"
-
-namespace dx = DirectX;
+#include "DX11MathInclude.h"
+#include "ModelNode.h"
 
 ModelInstance::ModelInstance(Graphics& gfx, std::unique_ptr<ModelAsset> const& pModelAsset, dx::XMMATRIX transform)
 	: transform(transform) // todo: set position
@@ -47,7 +47,7 @@ void ModelInstance::SetPositionWS(DirectX::XMFLOAT3 positionWS)
 }
 
 static int nextNodeId = 0; // todo: move
-std::unique_ptr<Node> ModelInstance::CreateModelInstanceNode(Graphics& gfx, std::unique_ptr<SceneGraphNode<MeshAsset>> const& pSourceNode)
+std::unique_ptr<ModelNode> ModelInstance::CreateModelInstanceNode(Graphics& gfx, std::unique_ptr<SceneGraphNode<MeshAsset>> const& pSourceNode)
 {
 	// Copy mesh if needed
 	auto pMeshInstance = std::unique_ptr<MeshRenderer>();
@@ -56,7 +56,7 @@ std::unique_ptr<Node> ModelInstance::CreateModelInstanceNode(Graphics& gfx, std:
 		pMeshInstance = ParseMesh(gfx, pSourceNode->pMesh);
 	}
 
-	auto pChildNodes = std::vector<std::unique_ptr<Node>>();
+	auto pChildNodes = std::vector<std::unique_ptr<ModelNode>>();
 	for (const auto& child : pSourceNode->pChildNodes)
 	{
 		auto pChildNode = CreateModelInstanceNode(gfx, child);
@@ -68,7 +68,7 @@ std::unique_ptr<Node> ModelInstance::CreateModelInstanceNode(Graphics& gfx, std:
 		//pChildNodes.emplace_back(std::move(pChildNode));
 	}*/
 
-	auto pNode = std::make_unique<Node>(nextNodeId++, pSourceNode->localTransform, std::move(pMeshInstance), std::move(pChildNodes));
+	auto pNode = std::make_unique<ModelNode>(nextNodeId++, pSourceNode->localTransform, std::move(pMeshInstance), std::move(pChildNodes));
 	return std::move(pNode);
 }
 
@@ -143,40 +143,4 @@ std::unique_ptr<MeshRenderer> ModelInstance::ParseMesh(Graphics& gfx, std::uniqu
 		return std::make_unique<InstancedMeshRenderer>(gfx, pMeshAsset->name, pMaterial, std::move(pVertexBuffer), std::move(pIndexBuffer), std::move(pTopology), instanceCount);
 	else
 		return std::make_unique<MeshRenderer>(gfx, pMeshAsset->name, pMaterial, std::move(pVertexBuffer), std::move(pIndexBuffer), std::move(pTopology));
-}
-
-Node::Node(int id, const DirectX::XMMATRIX & _transform, std::unique_ptr<MeshRenderer> pMeshPtr, std::vector<std::unique_ptr<Node>> pChildNodes)
-	: pMeshPtr(std::move(pMeshPtr)), pChildNodes(std::move(pChildNodes))
-{
-	dx::XMStoreFloat4x4(&transform, _transform);
-	dx::XMStoreFloat4x4(&appliedTransform, dx::XMMatrixIdentity());
-}
-
-void Node::SubmitDrawCalls(std::unique_ptr<FrameCommander>& frame, DirectX::FXMMATRIX accumulatedTransform) const
-{
-	// todo: use this?
-	const auto built =
-		dx::XMLoadFloat4x4(&appliedTransform) *
-		dx::XMLoadFloat4x4(&transform) *
-		accumulatedTransform;
-
-	if (pMeshPtr)
-	{
-		pMeshPtr->SubmitDrawCalls(frame, built);
-	}
-
-	for (const auto& pc : pChildNodes)
-	{
-		pc->SubmitDrawCalls(frame, built);
-	}
-}
-
-void Node::SetAppliedTransform(DirectX::FXMMATRIX _transform)
-{
-	dx::XMStoreFloat4x4(&appliedTransform, _transform);
-}
-
-const DirectX::XMFLOAT4X4& Node::GetAppliedTransform() const
-{
-	return appliedTransform;
 }

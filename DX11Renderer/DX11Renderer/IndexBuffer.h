@@ -7,6 +7,7 @@
 #include <d3d11.h>
 
 class Graphics;
+struct ID3D11Buffer;
 
 class IndexBuffer : public Bindable
 {

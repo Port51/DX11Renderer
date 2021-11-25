@@ -4,6 +4,7 @@
 #include <vector>
 #include <memory>
 #include <type_traits>
+#include "DX11MathInclude.h"
 #include "DebugHelper.h"
 #include "BaseMesh.h"
 
@@ -12,7 +13,7 @@ class SceneGraphNode
 {
 	friend class ModelInstance;
 public:
-	SceneGraphNode(DirectX::XMMATRIX localTransform, std::unique_ptr<M> _pMesh, std::vector<std::unique_ptr<SceneGraphNode<M>>> _pChildNodes)
+	SceneGraphNode(dx::XMMATRIX localTransform, std::unique_ptr<M> _pMesh, std::vector<std::unique_ptr<SceneGraphNode<M>>> _pChildNodes)
 		: localTransform(localTransform),
 		pMesh(std::move(_pMesh)),
 		pChildNodes(std::move(_pChildNodes))
@@ -56,5 +57,5 @@ public:
 private:
 	std::unique_ptr<M> pMesh;
 	std::vector<std::unique_ptr<SceneGraphNode<M>>> pChildNodes;
-	DirectX::XMMATRIX localTransform;
+	dx::XMMATRIX localTransform;
 };

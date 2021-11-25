@@ -178,12 +178,7 @@ Material::Material(Graphics& gfx, const std::string_view _materialAssetPath)
 
 void Material::Bind(Graphics& gfx, std::string passName)
 {
-	// Execute pass if there is one
-	/*const auto iter = passes.find(passName);
-	if (iter != passes.end())
-	{
-		iter->second->Bind(gfx);
-	}*/
+	// Is this needed?
 }
 
 std::string Material::GetUID() const
@@ -199,12 +194,12 @@ void Material::SubmitDrawCalls(std::unique_ptr<FrameCommander>& frame, const Mes
 	}
 }
 
-const VertexLayout & Material::GetVertexLayout() const
+const VertexLayout& Material::GetVertexLayout() const
 {
 	return vertexLayout;
 }
 
-std::shared_ptr<Bindable> Material::Resolve(Graphics & gfx, const std::string_view assetPath)
+std::shared_ptr<Bindable> Material::Resolve(Graphics& gfx, const std::string_view assetPath)
 {
 	return Bind::Codex::Resolve<Material>(gfx, assetPath);
 }

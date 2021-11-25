@@ -2,6 +2,8 @@
 #include "imgui/imgui.h"
 #include "FBXImporter.h"
 #include <d3d11.h>
+#include "ModelNode.h"
+#include "MeshRenderer.h"
 
 PointLight::PointLight(Graphics& gfx, DirectX::XMFLOAT3 positionWS, DirectX::XMFLOAT3 color, float intensity, float range)
 	: globalLightCbuf(gfx, "Light0"),

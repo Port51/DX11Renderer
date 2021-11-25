@@ -4,10 +4,11 @@
 #include <unordered_map>
 #include "Bindable.h"
 
+class Graphics;
+class Bindable;
+
 namespace Bind
 {
-	//class Bindable;
-	
 	class Codex
 	{
 	public:

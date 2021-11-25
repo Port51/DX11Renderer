@@ -3,6 +3,7 @@
 #include "Surface.h"
 #include "MeshRenderer.h"
 #include "ModelInstance.h"
+#include "ModelNode.h"
 #include "GDIPlusManager.h"
 #include "Imgui/imgui.h"
 #include "FBXImporter.h"

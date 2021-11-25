@@ -6,10 +6,13 @@
 #include "VertexLayout.h"
 #include "Bindable.h"
 
+class Graphics;
 class VertexShader;
 class PixelShader;
 class MaterialPass;
+class MeshRenderer;
 class FrameCommander;
+class VertexLayout;
 
 class Material : public Bindable
 {

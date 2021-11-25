@@ -3,6 +3,7 @@
 #include "VertexLayout.h"
 
 class Graphics;
+class VertexLayout;
 struct ID3D11InputLayout;
 
 class InputLayout : public Bindable

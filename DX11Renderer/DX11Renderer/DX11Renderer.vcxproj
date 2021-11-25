@@ -184,6 +184,7 @@
     <ClCompile Include="IndexBuffer.cpp" />
     <ClCompile Include="InputLayout.cpp" />
     <ClCompile Include="InstancedMeshRenderer.cpp" />
+    <ClCompile Include="ModelNode.cpp" />
     <ClCompile Include="RenderJob.cpp" />
     <ClCompile Include="Keyboard.cpp" />
     <ClCompile Include="Log.cpp" />
@@ -202,6 +203,7 @@
     <ClCompile Include="RenderTexture.cpp" />
     <ClCompile Include="Sampler.cpp" />
     <ClCompile Include="RenderStep.cpp" />
+    <ClCompile Include="Stencil.cpp" />
     <ClCompile Include="Surface.cpp" />
     <ClCompile Include="Technique.cpp" />
     <ClCompile Include="Texture.cpp" />
@@ -217,6 +219,9 @@
     <ClInclude Include="App.h" />
     <ClInclude Include="BaseBufferData.h" />
     <ClInclude Include="BaseMesh.h" />
+    <ClInclude Include="DX11Include.h" />
+    <ClInclude Include="DX11MathInclude.h" />
+    <ClInclude Include="ModelNode.h" />
     <ClInclude Include="StructuredBufferData.h" />
     <ClInclude Include="InstancedMeshRenderer.h" />
     <ClInclude Include="Binding.h" />
