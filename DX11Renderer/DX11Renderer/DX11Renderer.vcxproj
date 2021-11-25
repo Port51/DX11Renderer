@@ -265,7 +265,6 @@
     <ClInclude Include="MeshAsset.h" />
     <ClInclude Include="ModelAsset.h" />
     <ClInclude Include="ModelInstance.h" />
-    <ClInclude Include="ModelInstanceUtil.h" />
     <ClInclude Include="Mouse.h" />
     <ClInclude Include="NullPixelShader.h" />
     <ClInclude Include="RasterizerState.h" />

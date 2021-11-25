@@ -64,9 +64,6 @@
     <Filter Include="Header Files\FBXImporter">
       <UniqueIdentifier>{c77c837e-d2e8-4dab-a2f2-f2310fda3244}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\FBXImporter\Instances">
-      <UniqueIdentifier>{f718406e-88ea-4845-a89e-8e9a591b55e1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\VertexData">
       <UniqueIdentifier>{47cdc64d-d4a1-4d88-9540-9dbd4d084d36}</UniqueIdentifier>
     </Filter>
@@ -403,9 +400,6 @@
     </ClInclude>
     <ClInclude Include="DebugHelper.h">
       <Filter>Header Files\FBXImporter</Filter>
-    </ClInclude>
-    <ClInclude Include="ModelInstanceUtil.h">
-      <Filter>Header Files\FBXImporter\Instances</Filter>
     </ClInclude>
     <ClInclude Include="ModelInstance.h">
       <Filter>Header Files\Drawable</Filter>
