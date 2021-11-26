@@ -7,7 +7,15 @@ namespace Bind
 	{
 		D3D11_DEPTH_STENCIL_DESC dsDesc = CD3D11_DEPTH_STENCIL_DESC{ CD3D11_DEFAULT{} };
 
-		if (mode == Mode::Write)
+		// todo: set this somewhere else
+		if (mode == Mode::Gbuffer)
+		{
+			dsDesc.StencilEnable = FALSE;
+			dsDesc.DepthEnable = TRUE;
+			dsDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL; // allow less because maybe not everything will be in prepass
+			// note - allow z-write for now
+		}
+		else if (mode == Mode::Write)
 		{
 			dsDesc.StencilEnable = TRUE;
 			dsDesc.StencilWriteMask = 0x01;
@@ -63,7 +71,7 @@ namespace Bind
 		const auto modeName = [mode]() {
 			switch (mode)
 			{
-			case Mode::Off:
+			case Mode::StencilOff:
 				return "off"s;
 			case Mode::Write:
 				return "write"s;

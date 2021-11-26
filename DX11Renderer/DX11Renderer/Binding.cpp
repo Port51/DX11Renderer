@@ -42,7 +42,7 @@ void Binding::Bind(Graphics& gfx) const
 	}
 	if (bindings == 0)
 	{
-		throw std::runtime_error("Binding object has no binds setup!");
+		throw std::runtime_error("Binding object has no binds setup! Please call something like 'SetupVSBinding()'.");
 	}
 }
 

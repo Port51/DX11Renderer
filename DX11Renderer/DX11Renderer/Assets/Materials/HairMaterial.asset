@@ -8,6 +8,11 @@ Properties
 }
 Pass
 {
+	Name, DepthPrepass
+	VS, Assets\\Built\\Shaders\\PhongVS.cso
+}
+Pass
+{
 	Name, GBuffer
 	VS, Assets\\Built\\Shaders\\PhongVS.cso
 	PS, Assets\\Built\\Shaders\\PhongPS.cso

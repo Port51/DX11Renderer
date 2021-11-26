@@ -15,6 +15,7 @@
 #include "Technique.h"
 #include "Buffer.h"
 #include "ConstantBuffer.h"
+#include "NullPixelShader.h"
 
 #include <fstream>
 #include <sstream>
@@ -85,9 +86,24 @@ Material::Material(Graphics& gfx, const std::string_view _materialAssetPath)
 			if (state == MaterialParseState::Pass)
 			{
 				// End pass
+
+				// If no pixel shader, bind null
+				if (pPixelShader == nullptr)
+				{
+					pPassStep->AddBinding(Bind::NullPixelShader::Resolve(gfx))
+						.SetupPSBinding(0u);
+				}
+
 				pTechnique->AddStep(std::move(pPassStep));
 				pMaterialPass->AddTechnique(std::move(pTechnique));
 				passes.emplace(materialPassName, std::move(pMaterialPass));
+
+				// Error check
+				if (pVertexShader == nullptr)
+					throw std::runtime_error("Material at " + std::string(_materialAssetPath) + " is missing vertex shader!");
+				
+				pVertexShader = nullptr;
+				pPixelShader = nullptr;
 			}
 		}
 		else if (p.key == "Name")
@@ -167,11 +183,6 @@ Material::Material(Graphics& gfx, const std::string_view _materialAssetPath)
 
 	}
 	parser.Dispose();
-
-	if (pVertexShader == nullptr)
-		throw std::runtime_error("Material at " + std::string(_materialAssetPath) + " is missing vertex shader!");
-	if (pPixelShader == nullptr)
-		throw std::runtime_error("Material at " + std::string(_materialAssetPath) + " is missing pixel shader!");
 
 }
 

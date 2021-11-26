@@ -11,7 +11,8 @@ namespace Bind
 	public:
 		enum class Mode
 		{
-			Off,
+			StencilOff,
+			Gbuffer,
 			Write,
 			Mask
 		};
