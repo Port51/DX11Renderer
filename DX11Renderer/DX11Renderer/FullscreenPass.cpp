@@ -36,7 +36,6 @@ FullscreenPass::FullscreenPass(Graphics& gfx, std::shared_ptr<Texture> pInputTex
 		.SetupPSBinding(0u);
 	AddBinding(pInputTexture)
 		.SetupPSBinding(0u);
-	//AddBinding(Texture::Resolve(gfx, "Models\\HeadTextures\\face_albedo_256.png"));
 
 	AddBinding(PixelShader::Resolve(gfx, pixelShader))
 		.SetupPSBinding(0u);
@@ -49,7 +48,7 @@ void FullscreenPass::Execute(Graphics& gfx) const
 		binding.Bind(gfx);
 	}
 	pVertexBufferWrapper->BindIA(gfx, 0u);
-	gfx.DrawIndexed(6u);
+	gfx.DrawIndexed(3u);
 }
 
 Binding& FullscreenPass::AddBinding(std::shared_ptr<Bindable> pBindable)
@@ -66,7 +65,8 @@ Binding& FullscreenPass::AddBinding(Binding pBinding)
 
 void FullscreenPass::SetupFullscreenQuadBindings(Graphics& gfx, std::string vertexShaderName, std::shared_ptr<VertexShader> vertexShader)
 {
-	// setup fullscreen geometry
+	// Setup fullscreen geometry
+	// Use 1 large triangle instead of 2 for better caching
 	VertexLayout vertexLayout;
 	vertexLayout.AppendVertexDesc<dx::XMFLOAT2>({ "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 });
 
@@ -74,18 +74,16 @@ void FullscreenPass::SetupFullscreenQuadBindings(Graphics& gfx, std::string vert
 	AddBinding(InputLayout::Resolve(gfx, vertexLayout, vertexShaderName, pvsbc))
 		.SetupIABinding();
 
-	RawBufferData vbuf((size_t)4, vertexLayout.GetPerVertexStride(), vertexLayout.GetPerVertexPadding());
-	vbuf.EmplaceBack(dx::XMFLOAT2{ -1,1 });
+	RawBufferData vbuf((size_t)3, vertexLayout.GetPerVertexStride(), vertexLayout.GetPerVertexPadding());
+	vbuf.EmplaceBack(dx::XMFLOAT2{ 0, 0 });
 	vbuf.EmplacePadding();
-	vbuf.EmplaceBack(dx::XMFLOAT2{ 1,1 });
+	vbuf.EmplaceBack(dx::XMFLOAT2{ 0, 2 });
 	vbuf.EmplacePadding();
-	vbuf.EmplaceBack(dx::XMFLOAT2{ -1,-1 });
-	vbuf.EmplacePadding();
-	vbuf.EmplaceBack(dx::XMFLOAT2{ 1,-1 });
+	vbuf.EmplaceBack(dx::XMFLOAT2{ 2, 0 });
 	vbuf.EmplacePadding();
 	pVertexBufferWrapper = std::make_unique<VertexBufferWrapper>(gfx, std::move(vbuf));
 
-	std::vector<unsigned short> indices = { 0,1,2,1,3,2 };
+	std::vector<unsigned short> indices = { 0, 1, 2 };
 	AddBinding(IndexBuffer::Resolve(gfx, "$Blit", std::move(indices)))
 		.SetupIABinding();
 }
