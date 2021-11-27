@@ -30,7 +30,7 @@ public:
 		// Setup passes
 		renderPasses.emplace(DepthPrepassName, std::make_unique<RenderPass>());
 		renderPasses.emplace(GBufferRenderPassName, std::make_unique<RenderPass>());
-		renderPasses.emplace(FinalBlitRenderPassName, std::make_unique<FullscreenPass>(gfx, pGbufferNormalRough));
+		renderPasses.emplace(FinalBlitRenderPassName, std::make_unique<FullscreenPass>(gfx, pGbufferNormalRough, "Assets\\Built\\Shaders\\BlitPS.cso"));
 
 		// Setup Gbuffer
 		pGbufferRenderViews[0] = pGbufferNormalRough->pRenderTargetView.Get();

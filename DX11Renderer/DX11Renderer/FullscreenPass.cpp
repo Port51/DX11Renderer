@@ -8,35 +8,14 @@
 #include "RawBufferData.h"
 #include "DepthStencilState.h"
 
-FullscreenPass::FullscreenPass(Graphics& gfx, std::shared_ptr<Texture> pInputTexture)
+FullscreenPass::FullscreenPass(Graphics& gfx, std::shared_ptr<Texture> pInputTexture, const char* pixelShader)
 	: RenderPass()
 {
-	// setup fullscreen geometry
-	VertexLayout vertexLayout;
-	vertexLayout.AppendVertexDesc<dx::XMFLOAT2>({ "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 });
-
-	RawBufferData bufFull((size_t)4, vertexLayout.GetPerVertexStride(), vertexLayout.GetPerVertexPadding());
-	bufFull.EmplaceBack(dx::XMFLOAT2{ -1,1 });
-	bufFull.EmplacePadding();
-	bufFull.EmplaceBack(dx::XMFLOAT2{ 1,1 });
-	bufFull.EmplacePadding();
-	bufFull.EmplaceBack(dx::XMFLOAT2{ -1,-1 });
-	bufFull.EmplacePadding();
-	bufFull.EmplaceBack(dx::XMFLOAT2{ 1,-1 });
-	bufFull.EmplacePadding();
-	pVertexBufferWrapper = std::make_unique<VertexBufferWrapper>(gfx, std::move(bufFull));
-
-	std::vector<unsigned short> indices = { 0,1,2,1,3,2 };
-	AddBinding(IndexBuffer::Resolve(gfx, "$Blit", std::move(indices)))
-		.SetupIABinding();
-
-	// setup other common fullscreen bindables
 	std::string vertexShaderName("Assets\\Built\\Shaders\\FullscreenVS.cso");
 	auto vs = VertexShader::Resolve(gfx, vertexShaderName.c_str());
-	const auto pvsbc = vs->GetBytecode();
 
-	AddBinding(InputLayout::Resolve(gfx, vertexLayout, vertexShaderName, pvsbc))
-		.SetupIABinding();
+	SetupFullscreenQuadBindings(gfx, vertexShaderName, vs);
+
 	AddBinding(std::move(vs))
 		.SetupVSBinding(0u);
 	AddBinding(Topology::Resolve(gfx, D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST))
@@ -59,7 +38,7 @@ FullscreenPass::FullscreenPass(Graphics& gfx, std::shared_ptr<Texture> pInputTex
 		.SetupPSBinding(0u);
 	//AddBinding(Texture::Resolve(gfx, "Models\\HeadTextures\\face_albedo_256.png"));
 
-	AddBinding(PixelShader::Resolve(gfx, "Assets\\Built\\Shaders\\BlitPS.cso"))
+	AddBinding(PixelShader::Resolve(gfx, pixelShader))
 		.SetupPSBinding(0u);
 }
 
@@ -83,4 +62,30 @@ Binding& FullscreenPass::AddBinding(Binding pBinding)
 {
 	bindings.push_back(std::move(pBinding));
 	return bindings[bindings.size() - 1];
+}
+
+void FullscreenPass::SetupFullscreenQuadBindings(Graphics& gfx, std::string vertexShaderName, std::shared_ptr<VertexShader> vertexShader)
+{
+	// setup fullscreen geometry
+	VertexLayout vertexLayout;
+	vertexLayout.AppendVertexDesc<dx::XMFLOAT2>({ "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 });
+
+	const auto pvsbc = vertexShader->GetBytecode();
+	AddBinding(InputLayout::Resolve(gfx, vertexLayout, vertexShaderName, pvsbc))
+		.SetupIABinding();
+
+	RawBufferData vbuf((size_t)4, vertexLayout.GetPerVertexStride(), vertexLayout.GetPerVertexPadding());
+	vbuf.EmplaceBack(dx::XMFLOAT2{ -1,1 });
+	vbuf.EmplacePadding();
+	vbuf.EmplaceBack(dx::XMFLOAT2{ 1,1 });
+	vbuf.EmplacePadding();
+	vbuf.EmplaceBack(dx::XMFLOAT2{ -1,-1 });
+	vbuf.EmplacePadding();
+	vbuf.EmplaceBack(dx::XMFLOAT2{ 1,-1 });
+	vbuf.EmplacePadding();
+	pVertexBufferWrapper = std::make_unique<VertexBufferWrapper>(gfx, std::move(vbuf));
+
+	std::vector<unsigned short> indices = { 0,1,2,1,3,2 };
+	AddBinding(IndexBuffer::Resolve(gfx, "$Blit", std::move(indices)))
+		.SetupIABinding();
 }
