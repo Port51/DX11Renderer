@@ -58,6 +58,17 @@ Graphics::Graphics(HWND hWnd, int windowWidth, int windowHeight)
 		&pContext
 	));
 
+	// Verify compute shader is supported
+	if (pDevice->GetFeatureLevel() < D3D_FEATURE_LEVEL_11_0)
+	{
+		D3D11_FEATURE_DATA_D3D10_X_HARDWARE_OPTIONS hwopts = { 0 };
+		(void)pDevice->CheckFeatureSupport(D3D11_FEATURE_D3D10_X_HARDWARE_OPTIONS, &hwopts, sizeof(hwopts));
+		if (!hwopts.ComputeShaders_Plus_RawAndStructuredBuffers_Via_Shader_4_x)
+		{
+			throw std::runtime_error("DirectCompute is not supported by this device");
+		}
+	}
+
 	// Gain access to texture subresource in swap chain (back buffer)
 	wrl::ComPtr<ID3D11Resource> pBackBuffer;
 	// Reinterpret here = creating pointer to a pointer
