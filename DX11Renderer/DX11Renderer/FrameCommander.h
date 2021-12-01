@@ -1,6 +1,7 @@
 #pragma once
 #include <array>
 #include <string>
+#include <vector>
 #include "BindableInclude.h"
 #include "DepthStencilState.h"
 #include "Graphics.h"
@@ -28,11 +29,12 @@ public:
 		pSmallDepthStencil = std::make_shared<DepthStencilTarget>(gfx, 1280 / 2, 720 / 2);
 
 		// Setup passes
-		renderPasses.emplace(DepthPrepassName, std::make_unique<RenderPass>());
-		renderPasses.emplace(GBufferRenderPassName, std::make_unique<RenderPass>());
-		renderPasses.emplace(FinalBlitRenderPassName, std::make_unique<FullscreenPass>(gfx, pGbufferNormalRough, "Assets\\Built\\Shaders\\BlitPS.cso"));
+		pRenderPasses.emplace(DepthPrepassName, std::make_unique<RenderPass>());
+		pRenderPasses.emplace(GBufferRenderPassName, std::make_unique<RenderPass>());
+		pRenderPasses.emplace(FinalBlitRenderPassName, std::make_unique<FullscreenPass>(gfx, pGbufferNormalRough, "Assets\\Built\\Shaders\\BlitPS.cso"));
 
 		// Setup Gbuffer
+		pGbufferRenderViews.resize(GbufferSize);
 		pGbufferRenderViews[0] = pGbufferNormalRough->pRenderTargetView.Get();
 		pGbufferRenderViews[1] = pGbufferSecond->pRenderTargetView.Get();
 	}
@@ -48,7 +50,7 @@ public:
 
 	void AcceptRenderJob(RenderJob job, std::string targetPass)
 	{
-		renderPasses[targetPass]->EnqueueJob(job);
+		pRenderPasses[targetPass]->EnqueueJob(job);
 	}
 
 	void Execute(Graphics& gfx)
@@ -62,10 +64,10 @@ public:
 			pSmallDepthStencil->Clear(gfx);
 
 			// MRT bind
-			gfx.pContext->OMSetRenderTargets(1, &pGbufferRenderViews[0], pSmallDepthStencil->GetView().Get());
+			gfx.pContext->OMSetRenderTargets(1, pGbufferRenderViews.data(), pSmallDepthStencil->GetView().Get());
 			gfx.SetViewport(1280 / 2, 720 / 2);
 
-			renderPasses[DepthPrepassName]->Execute(gfx);
+			pRenderPasses[DepthPrepassName]->Execute(gfx);
 		}
 
 		// GBuffer pass
@@ -81,7 +83,7 @@ public:
 			gfx.pContext->OMSetRenderTargets(2, &pGbufferRenderViews[0], pSmallDepthStencil->GetView().Get());
 			gfx.SetViewport(1280 / 2, 720 / 2);
 
-			renderPasses[GBufferRenderPassName]->Execute(gfx);
+			pRenderPasses[GBufferRenderPassName]->Execute(gfx);
 		}
 
 		// Final blit
@@ -91,24 +93,24 @@ public:
 			gfx.SetViewport(1280, 720);
 			gfx.pContext->OMSetRenderTargets(1u, gfx.pBackBufferView.GetAddressOf(), gfx.pDepthStencil->GetView().Get());
 
-			renderPasses[FinalBlitRenderPassName]->Execute(gfx);
+			pRenderPasses[FinalBlitRenderPassName]->Execute(gfx);
 		}
 	}
 
 	void Reset()
 	{
-		for (auto& p : renderPasses)
+		for (auto& p : pRenderPasses)
 		{
 			p.second->Reset();
 		}
 	}
 
 private:
-	ID3D11RenderTargetView* pGbufferRenderViews[GbufferSize];
+	std::vector<ID3D11RenderTargetView*> pGbufferRenderViews;
 	std::shared_ptr<DepthStencilTarget> pSmallDepthStencil;
 	std::shared_ptr<RenderTarget> pGbufferNormalRough;
 	std::shared_ptr<RenderTarget> pGbufferSecond;
-	std::unordered_map<std::string, std::unique_ptr<RenderPass>> renderPasses;
+	std::unordered_map<std::string, std::unique_ptr<RenderPass>> pRenderPasses;
 private:
 	const std::string DepthPrepassName = std::string("DepthPrepass");
 	const std::string GBufferRenderPassName = std::string("GBuffer");
