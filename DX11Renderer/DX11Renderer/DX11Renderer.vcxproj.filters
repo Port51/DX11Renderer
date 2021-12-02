@@ -121,6 +121,12 @@
     <Filter Include="Header Files\Bindable\Buffers\Data">
       <UniqueIdentifier>{2e56d0d8-798b-41fb-b2ca-97f6a10a736c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Bindable\Compute">
+      <UniqueIdentifier>{ceb31e4f-d1e2-43e2-b8e5-9b0c19ee68c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Bindable\Compute">
+      <UniqueIdentifier>{4e85884d-fe7d-431c-9301-3ac8da07113d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -290,6 +296,9 @@
     </ClCompile>
     <ClCompile Include="ComputeShader.cpp">
       <Filter>Source Files\Bindable\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="ComputeKernel.cpp">
+      <Filter>Source Files\Bindable\Compute</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -526,6 +535,12 @@
     </ClInclude>
     <ClInclude Include="ComputeShader.h">
       <Filter>Header Files\Bindable\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="RawBuffer.h">
+      <Filter>Header Files\Bindable\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="ComputeKernel.h">
+      <Filter>Header Files\Bindable\Compute</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

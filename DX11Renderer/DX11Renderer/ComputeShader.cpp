@@ -9,6 +9,16 @@ ComputeShader::ComputeShader(Graphics& gfx, const std::string& path, const std::
 {
 	SETUP_LOGGING(gfx);
 
+	std::wstring wide{ path.begin(), path.end() }; // convert to wide for file read <-- won't work for special characters
+	GFX_THROW_INFO(D3DReadFileToBlob(wide.c_str(), &pBytecodeBlob));
+	GFX_THROW_INFO(GetDevice(gfx)->CreateComputeShader(
+		pBytecodeBlob->GetBufferPointer(),
+		pBytecodeBlob->GetBufferSize(),
+		nullptr,
+		&pComputeShader
+	));
+
+	/*
 	UINT flags = D3DCOMPILE_ENABLE_STRICTNESS;
 #if defined( DEBUG ) || defined( _DEBUG )
 	flags |= D3DCOMPILE_DEBUG;
@@ -29,6 +39,7 @@ ComputeShader::ComputeShader(Graphics& gfx, const std::string& path, const std::
 	hr = D3DCompileFromFile(wide.c_str(), defines, D3D_COMPILE_STANDARD_FILE_INCLUDE,
 		kernelName.c_str(), profile,
 		flags, 0, &pBytecodeBlob, &errorBlob);
+
 	if (FAILED(hr))
 	{
 		if (errorBlob)
@@ -36,8 +47,19 @@ ComputeShader::ComputeShader(Graphics& gfx, const std::string& path, const std::
 			OutputDebugStringA((char*)errorBlob->GetBufferPointer());
 			errorBlob->Release();
 		}
-	}
+	}*/
 
+}
+
+void ComputeShader::Dispatch(Graphics & gfx, UINT threadGroupCountX, UINT threadGroupCountY, UINT threadGroupCountZ) const
+{
+	GetContext(gfx)->CSSetShader(pComputeShader.Get(), nullptr, 0);
+	GetContext(gfx)->Dispatch(threadGroupCountX, threadGroupCountY, threadGroupCountZ);
+}
+
+Microsoft::WRL::ComPtr<ID3D11ComputeShader> ComputeShader::GetComputeShader() const
+{
+	return pComputeShader;
 }
 
 ID3DBlob* ComputeShader::GetBytecode() const

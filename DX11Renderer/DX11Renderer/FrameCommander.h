@@ -11,6 +11,8 @@
 #include "NullPixelShader.h"
 #include "RenderTarget.h"
 #include "DepthStencilTarget.h"
+#include "ComputeShader.h"
+#include "ComputeKernel.h"
 
 class FrameCommander
 {
@@ -37,6 +39,10 @@ public:
 		pGbufferRenderViews.resize(GbufferSize);
 		pGbufferRenderViews[0] = pGbufferNormalRough->pRenderTargetView.Get();
 		pGbufferRenderViews[1] = pGbufferSecond->pRenderTargetView.Get();
+
+		testKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, std::string("Assets\\Built\\Shaders\\ComputeTest.cso"), std::string("CSMain")));
+
+		testCB = std::make_shared<ConstantBuffer>();
 	}
 
 	~FrameCommander()
@@ -56,6 +62,11 @@ public:
 	void Execute(Graphics& gfx)
 	{
 		// todo: replace w/ rendergraph
+
+		// Compute test pass
+		{
+
+		}
 
 		// Early Z pass
 		// todo: put position into separate vert buffer and only bind that here
@@ -111,6 +122,9 @@ private:
 	std::shared_ptr<RenderTarget> pGbufferNormalRough;
 	std::shared_ptr<RenderTarget> pGbufferSecond;
 	std::unordered_map<std::string, std::unique_ptr<RenderPass>> pRenderPasses;
+
+	std::shared_ptr<Buffer> testCB;
+	std::unique_ptr<ComputeKernel> testKernel;
 private:
 	const std::string DepthPrepassName = std::string("DepthPrepass");
 	const std::string GBufferRenderPassName = std::string("GBuffer");

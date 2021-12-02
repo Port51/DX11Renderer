@@ -164,6 +164,7 @@
     <ClCompile Include="Binding.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="ChiliUtil.cpp" />
+    <ClCompile Include="ComputeKernel.cpp" />
     <ClCompile Include="ComputeShader.cpp" />
     <ClCompile Include="CustomException.cpp" />
     <ClCompile Include="DepthStencil.cpp" />
@@ -220,10 +221,12 @@
     <ClInclude Include="App.h" />
     <ClInclude Include="BaseBufferData.h" />
     <ClInclude Include="BaseMesh.h" />
+    <ClInclude Include="ComputeKernel.h" />
     <ClInclude Include="ComputeShader.h" />
     <ClInclude Include="DX11Include.h" />
     <ClInclude Include="DXMathInclude.h" />
     <ClInclude Include="ModelNode.h" />
+    <ClInclude Include="RawBuffer.h" />
     <ClInclude Include="StructuredBufferData.h" />
     <ClInclude Include="InstancedMeshRenderer.h" />
     <ClInclude Include="Binding.h" />
