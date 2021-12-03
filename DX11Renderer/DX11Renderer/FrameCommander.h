@@ -23,10 +23,10 @@ public:
 	{
 		// Setup render targets
 		pGbufferNormalRough = std::make_shared<RenderTarget>(gfx);
-		pGbufferNormalRough->Init(gfx.pDevice.Get(), 1280 / 2, 720 / 2);
+		pGbufferNormalRough->Init(gfx.GetDevice().Get(), 1280 / 2, 720 / 2);
 
 		pGbufferSecond = std::make_shared<RenderTarget>(gfx);
-		pGbufferSecond->Init(gfx.pDevice.Get(), 1280 / 2, 720 / 2);
+		pGbufferSecond->Init(gfx.GetDevice().Get(), 1280 / 2, 720 / 2);
 
 		pSmallDepthStencil = std::make_shared<DepthStencilTarget>(gfx, 1280 / 2, 720 / 2);
 
@@ -75,7 +75,7 @@ public:
 			pSmallDepthStencil->Clear(gfx);
 
 			// MRT bind
-			gfx.pContext->OMSetRenderTargets(1, pGbufferRenderViews.data(), pSmallDepthStencil->GetView().Get());
+			gfx.GetContext()->OMSetRenderTargets(1, pGbufferRenderViews.data(), pSmallDepthStencil->GetView().Get());
 			gfx.SetViewport(1280 / 2, 720 / 2);
 
 			pRenderPasses[DepthPrepassName]->Execute(gfx);
@@ -83,15 +83,15 @@ public:
 
 		// GBuffer pass
 		{
-			//pCameraColor->SetRenderTarget(gfx.pContext.Get(), gfx.pDepthStencilView.Get());
+			//pCameraColor->SetRenderTarget(gfx.GetContext().Get(), gfx.pDepthStencilView.Get());
 			//gfx.SetRenderTarget(pCameraColor->pRenderTargetView);
 
 			Bind::DepthStencilState::Resolve(gfx, Bind::DepthStencilState::Mode::Gbuffer)->BindOM(gfx);
-			pGbufferNormalRough->ClearRenderTarget(gfx.pContext.Get(), 1.f, 0.f, 0.f, 1.f);
-			pGbufferSecond->ClearRenderTarget(gfx.pContext.Get(), 1.f, 0.f, 0.f, 1.f);
+			pGbufferNormalRough->ClearRenderTarget(gfx.GetContext().Get(), 1.f, 0.f, 0.f, 1.f);
+			pGbufferSecond->ClearRenderTarget(gfx.GetContext().Get(), 1.f, 0.f, 0.f, 1.f);
 
 			// MRT bind
-			gfx.pContext->OMSetRenderTargets(2, &pGbufferRenderViews[0], pSmallDepthStencil->GetView().Get());
+			gfx.GetContext()->OMSetRenderTargets(2, &pGbufferRenderViews[0], pSmallDepthStencil->GetView().Get());
 			gfx.SetViewport(1280 / 2, 720 / 2);
 
 			pRenderPasses[GBufferRenderPassName]->Execute(gfx);
@@ -102,7 +102,7 @@ public:
 			Bind::DepthStencilState::Resolve(gfx, Bind::DepthStencilState::Mode::StencilOff)->BindOM(gfx);
 
 			gfx.SetViewport(1280, 720);
-			gfx.pContext->OMSetRenderTargets(1u, gfx.pBackBufferView.GetAddressOf(), gfx.pDepthStencil->GetView().Get());
+			gfx.GetContext()->OMSetRenderTargets(1u, gfx.pBackBufferView.GetAddressOf(), gfx.pDepthStencil->GetView().Get());
 
 			pRenderPasses[FinalBlitRenderPassName]->Execute(gfx);
 		}

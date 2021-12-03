@@ -115,7 +115,8 @@ Material::Material(Graphics& gfx, const std::string_view _materialAssetPath)
 				materialPassName = std::move(p.values[0]);
 
 				// Init cbuffer
-				pPassStep->AddBinding(std::move(std::make_shared<ConstantBuffer<PSMaterialConstant>>(gfx, std::string(_materialAssetPath), pmc)))
+				// todo: add to codex using std::string(_materialAssetPath)?
+				pPassStep->AddBinding(std::move(std::make_shared<ConstantBuffer<PSMaterialConstant>>(gfx, D3D11_USAGE_IMMUTABLE, pmc)))
 					.SetupPSBinding(1u);
 			}
 		}

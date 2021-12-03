@@ -1,4 +1,5 @@
 #include "DepthStencilState.h"
+#include "Graphics.h"
 
 namespace Bind
 {
@@ -47,17 +48,17 @@ namespace Bind
 			dsDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP::D3D11_STENCIL_OP_KEEP;
 		}
 
-		GetDevice(gfx)->CreateDepthStencilState(&dsDesc, &pStencil);
+		gfx.GetDevice()->CreateDepthStencilState(&dsDesc, &pStencil);
 	}
 
 	DepthStencilState::DepthStencilState(Graphics & gfx, D3D11_DEPTH_STENCIL_DESC desc)
 	{
-		GetDevice(gfx)->CreateDepthStencilState(&desc, &pStencil);
+		gfx.GetDevice()->CreateDepthStencilState(&desc, &pStencil);
 	}
 
 	void DepthStencilState::BindOM(Graphics& gfx)
 	{
-		GetContext(gfx)->OMSetDepthStencilState(pStencil.Get(), 0x01);
+		gfx.GetContext()->OMSetDepthStencilState(pStencil.Get(), 0x01);
 	}
 
 	std::shared_ptr<DepthStencilState> DepthStencilState::Resolve(Graphics& gfx, Mode mode)

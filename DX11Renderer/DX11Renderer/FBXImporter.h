@@ -38,7 +38,7 @@ public:
 		FlatShaded,
 	};
 
-	static std::unique_ptr<ModelAsset> LoadFBX(Log& log, const char* filename, FBXNormalsMode normalsMode, bool triangulate = true)
+	static std::unique_ptr<ModelAsset> LoadFBX(Log log, const char* filename, FBXNormalsMode normalsMode, bool triangulate = true)
 	{
 		// todo: load model asset instead, which contains an FBX path
 

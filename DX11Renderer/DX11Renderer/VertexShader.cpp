@@ -14,7 +14,7 @@ VertexShader::VertexShader(Graphics& gfx, const std::string& path)
 
 	std::wstring wide{ path.begin(), path.end()}; // convert to wide for file read <-- won't work for special characters
 	GFX_THROW_INFO(D3DReadFileToBlob(wide.c_str(), &pBytecodeBlob));
-	GFX_THROW_INFO(GetDevice(gfx)->CreateVertexShader(
+	GFX_THROW_INFO(gfx.GetDevice()->CreateVertexShader(
 		pBytecodeBlob->GetBufferPointer(),
 		pBytecodeBlob->GetBufferSize(),
 		nullptr,
@@ -24,7 +24,7 @@ VertexShader::VertexShader(Graphics& gfx, const std::string& path)
 
 void VertexShader::BindVS(Graphics& gfx, UINT slot)
 {
-	GetContext(gfx)->VSSetShader(pVertexShader.Get(), nullptr, 0u);
+	gfx.GetContext()->VSSetShader(pVertexShader.Get(), nullptr, 0u);
 }
 
 ID3DBlob* VertexShader::GetBytecode() const

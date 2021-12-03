@@ -10,7 +10,7 @@ InputLayout::InputLayout(Graphics& gfx, VertexLayout _layout, std::string vertex
 	SETUP_LOGGING(gfx);
 
 	const auto d3dLayout = layout.GetD3DLayout();
-	GFX_THROW_INFO(GetDevice(gfx)->CreateInputLayout(
+	GFX_THROW_INFO(gfx.GetDevice()->CreateInputLayout(
 		d3dLayout.data(), (UINT)d3dLayout.size(),
 		pVertexShaderBytecode->GetBufferPointer(),
 		pVertexShaderBytecode->GetBufferSize(),
@@ -20,7 +20,7 @@ InputLayout::InputLayout(Graphics& gfx, VertexLayout _layout, std::string vertex
 
 void InputLayout::BindIA(Graphics& gfx, UINT slot)
 {
-	GetContext(gfx)->IASetInputLayout(pInputLayout.Get());
+	gfx.GetContext()->IASetInputLayout(pInputLayout.Get());
 }
 
 std::shared_ptr<InputLayout> InputLayout::Resolve(Graphics & gfx, const VertexLayout & layout, std::string vertexShaderName, ID3DBlob * pVertexShaderBytecode)

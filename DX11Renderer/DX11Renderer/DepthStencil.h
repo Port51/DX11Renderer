@@ -1,9 +1,8 @@
 #pragma once
 #include "Graphics.h"
-#include "GraphicsResource.h"
 
 
-class DepthStencil : public GraphicsResource
+class DepthStencil
 {
 	friend class RenderTarget;
 	friend class Graphics;

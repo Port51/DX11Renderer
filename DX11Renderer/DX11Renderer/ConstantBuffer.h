@@ -8,36 +8,89 @@ template<typename C>
 class ConstantBuffer : public Buffer
 {
 public:
-	ConstantBuffer(Graphics& gfx)
-		: Buffer(gfx, D3D11_BIND_CONSTANT_BUFFER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE, 0u)
-	{}
-public:
-	void BindCS(Graphics& gfx, UINT slot) override
-	{
-		gfx.pContext->CSSetConstantBuffers(slot, 1u, pBuffer.GetAddressOf());
-	}
-	void BindVS(Graphics& gfx, UINT slot) override
-	{
-		gfx.pContext->VSSetConstantBuffers(slot, 1u, pBuffer.GetAddressOf());
-	}
-	void BindPS(Graphics& gfx, UINT slot) override
-	{
-		gfx.pContext->PSSetConstantBuffers(slot, 1u, pBuffer.GetAddressOf());
-	}
-	void Update(Graphics& gfx, const std::vector<C> data)
+	ConstantBuffer(Graphics& gfx, D3D11_USAGE usage)
 	{
 		SETUP_LOGGING_NOINFO(gfx);
 
-		D3D11_MAPPED_SUBRESOURCE subresource;
-		// Map() locks resource and gives ptr to resource
-		GFX_THROW_NOINFO(gfx.pContext->Map(
-			pBuffer.Get(), 0u,
-			D3D11_MAP_WRITE_DISCARD, 0u,
-			&subresource // msr gets assigned to resource ptr
-		));
-		// Handle write
-		memcpy(subresource.pData, data.data(), sizeof(C) * data.size());
-		// Unlock via Unmap()
-		gfx.pContext->Unmap(pBuffer.Get(), 0u);
+		D3D11_BUFFER_DESC bd;
+		ZeroMemory(&bd, sizeof(bd));
+		bd.Usage = usage;
+		bd.ByteWidth = GetCBufferSize(sizeof(C));
+		bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+		bd.CPUAccessFlags = (usage == D3D11_USAGE_DYNAMIC) ? D3D11_CPU_ACCESS_WRITE : 0;
+		bd.StructureByteStride = 0u;
+
+		D3D11_SUBRESOURCE_DATA sd;
+		ZeroMemory(&sd, sizeof(sd));
+		//sd.pSysMem = (void*)&initialData;
+		GFX_THROW_NOINFO(gfx.GetDevice()->CreateBuffer(&bd, &sd, &pBuffer));
+	}
+	ConstantBuffer(Graphics& gfx, D3D11_USAGE usage, const C& initialData)
+	{
+		SETUP_LOGGING_NOINFO(gfx);
+
+		D3D11_BUFFER_DESC bd;
+		ZeroMemory(&bd, sizeof(bd));
+		bd.Usage = usage;
+		bd.ByteWidth = GetCBufferSize(sizeof(C));
+		bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+		bd.CPUAccessFlags = (usage == D3D11_USAGE_DYNAMIC) ? D3D11_CPU_ACCESS_WRITE : 0;
+		bd.StructureByteStride = 0u;
+
+		D3D11_SUBRESOURCE_DATA sd;
+		ZeroMemory(&sd, sizeof(sd));
+		sd.pSysMem = (void*)&initialData;
+		GFX_THROW_NOINFO(gfx.GetDevice()->CreateBuffer(&bd, &sd, &pBuffer));
+	}
+public:
+	void BindCS(Graphics& gfx, UINT slot) override
+	{
+		gfx.GetContext()->CSSetConstantBuffers(slot, 1u, pBuffer.GetAddressOf());
+	}
+	void BindVS(Graphics& gfx, UINT slot) override
+	{
+		gfx.GetContext()->VSSetConstantBuffers(slot, 1u, pBuffer.GetAddressOf());
+	}
+	void BindPS(Graphics& gfx, UINT slot) override
+	{
+		gfx.GetContext()->PSSetConstantBuffers(slot, 1u, pBuffer.GetAddressOf());
+	}
+	void Update(Graphics& gfx, const C& data)
+	{
+		Update(gfx, &data, sizeof(C));
+	}
+	void Update(Graphics& gfx, const void* data, size_t dataSize)
+	{
+		SETUP_LOGGING_NOINFO(gfx);
+
+		if (usage == D3D11_USAGE_DYNAMIC) // Can be continuously modified by CPU
+		{
+			D3D11_MAPPED_SUBRESOURCE subresource;
+			// Map() locks resource and gives ptr to resource
+			GFX_THROW_NOINFO(gfx.GetContext()->Map(
+				pBuffer.Get(), 0u,
+				D3D11_MAP_WRITE_DISCARD, 0u,
+				&subresource // msr gets assigned to resource ptr
+			));
+			// Handle write
+			memcpy(subresource.pData, data, dataSize);
+			// Unlock via Unmap()
+			gfx.GetContext()->Unmap(pBuffer.Get(), 0u);
+		}
+		else if (usage == D3D11_USAGE_DEFAULT
+			|| usage == D3D11_USAGE_STAGING)
+		{
+			// Doesn't work for dynamic or immutable
+			gfx.GetContext()->UpdateSubresource(pBuffer.Get(), 0, nullptr, &data, 0, 0);
+		}
+		else
+		{
+			throw std::runtime_error("Cannot update immutable constant buffer!");
+		}
+	}
+private:
+	static constexpr UINT GetCBufferSize(UINT buffer_size)
+	{
+		return (buffer_size + (64 - 1)) & ~(64 - 1);
 	}
 };

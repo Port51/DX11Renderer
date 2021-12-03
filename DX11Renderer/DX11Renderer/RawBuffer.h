@@ -18,14 +18,14 @@ public:
 
 	void BindCS(Graphics& gfx, UINT slot) override
 	{
-		GetContext(gfx)->CSSetShaderResources(slot, 1u, pBuffer.GetAddressOf());
+		gfx.GetContext()->CSSetShaderResources(slot, 1u, pBuffer.GetAddressOf());
 	}
 	void BindVS(Graphics& gfx, UINT slot) override
 	{
-		GetContext(gfx)->VSSetShaderResources(slot, 1u, pBuffer.GetAddressOf());
+		gfx.GetContext()->VSSetShaderResources(slot, 1u, pBuffer.GetAddressOf());
 	}
 	void BindPS(Graphics& gfx, UINT slot) override
 	{
-		GetContext(gfx)->PSSetShaderResources(slot, 1u, pBuffer.GetAddressOf());
+		gfx.GetContext()->PSSetShaderResources(slot, 1u, pBuffer.GetAddressOf());
 	}
 };

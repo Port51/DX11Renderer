@@ -29,28 +29,28 @@ Sampler::Sampler(Graphics& gfx, D3D11_TEXTURE_ADDRESS_MODE wrapU, D3D11_TEXTURE_
 	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
 	samplerDesc.MaxAnisotropy = D3D11_REQ_MAXANISOTROPY;
 
-	GFX_THROW_INFO(GetDevice(gfx)->CreateSamplerState(&samplerDesc, &pSampler));
+	GFX_THROW_INFO(gfx.GetDevice()->CreateSamplerState(&samplerDesc, &pSampler));
 }
 
 Sampler::Sampler(Graphics& gfx, D3D11_SAMPLER_DESC samplerDesc)
 {
 	SETUP_LOGGING(gfx);
-	GFX_THROW_INFO(GetDevice(gfx)->CreateSamplerState(&samplerDesc, &pSampler));
+	GFX_THROW_INFO(gfx.GetDevice()->CreateSamplerState(&samplerDesc, &pSampler));
 }
 
 void Sampler::BindCS(Graphics & gfx, UINT slot)
 {
-	GetContext(gfx)->CSSetSamplers(slot, 1u, pSampler.GetAddressOf());
+	gfx.GetContext()->CSSetSamplers(slot, 1u, pSampler.GetAddressOf());
 }
 
 void Sampler::BindVS(Graphics & gfx, UINT slot)
 {
-	GetContext(gfx)->VSSetSamplers(slot, 1u, pSampler.GetAddressOf());
+	gfx.GetContext()->VSSetSamplers(slot, 1u, pSampler.GetAddressOf());
 }
 
 void Sampler::BindPS(Graphics & gfx, UINT slot)
 {
-	GetContext(gfx)->PSSetSamplers(slot, 1u, pSampler.GetAddressOf());
+	gfx.GetContext()->PSSetSamplers(slot, 1u, pSampler.GetAddressOf());
 }
 
 std::shared_ptr<Bindable> Sampler::Resolve(Graphics& gfx)

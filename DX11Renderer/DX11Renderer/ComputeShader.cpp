@@ -11,7 +11,7 @@ ComputeShader::ComputeShader(Graphics& gfx, const std::string& path, const std::
 
 	std::wstring wide{ path.begin(), path.end() }; // convert to wide for file read <-- won't work for special characters
 	GFX_THROW_INFO(D3DReadFileToBlob(wide.c_str(), &pBytecodeBlob));
-	GFX_THROW_INFO(GetDevice(gfx)->CreateComputeShader(
+	GFX_THROW_INFO(gfx.GetDevice()->CreateComputeShader(
 		pBytecodeBlob->GetBufferPointer(),
 		pBytecodeBlob->GetBufferSize(),
 		nullptr,
@@ -25,7 +25,7 @@ ComputeShader::ComputeShader(Graphics& gfx, const std::string& path, const std::
 #endif
 
 	// We generally prefer to use the higher CS shader profile when possible as CS 5.0 is better performance on 11-class hardware
-	LPCSTR profile = (GetDevice(gfx)->GetFeatureLevel() >= D3D_FEATURE_LEVEL_11_0) ? "cs_5_0" : "cs_4_0";
+	LPCSTR profile = (gfx.GetDevice()->GetFeatureLevel() >= D3D_FEATURE_LEVEL_11_0) ? "cs_5_0" : "cs_4_0";
 
 	const D3D_SHADER_MACRO defines[] =
 	{
@@ -53,8 +53,8 @@ ComputeShader::ComputeShader(Graphics& gfx, const std::string& path, const std::
 
 void ComputeShader::Dispatch(Graphics & gfx, UINT threadGroupCountX, UINT threadGroupCountY, UINT threadGroupCountZ) const
 {
-	GetContext(gfx)->CSSetShader(pComputeShader.Get(), nullptr, 0);
-	GetContext(gfx)->Dispatch(threadGroupCountX, threadGroupCountY, threadGroupCountZ);
+	gfx.GetContext()->CSSetShader(pComputeShader.Get(), nullptr, 0);
+	gfx.GetContext()->Dispatch(threadGroupCountX, threadGroupCountY, threadGroupCountZ);
 }
 
 Microsoft::WRL::ComPtr<ID3D11ComputeShader> ComputeShader::GetComputeShader() const

@@ -35,12 +35,12 @@ Texture::Texture(Graphics& gfx, const std::string& path)
 	textureDesc.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
 
 	wrl::ComPtr<ID3D11Texture2D> pTexture;
-	GFX_THROW_INFO(GetDevice(gfx)->CreateTexture2D(
+	GFX_THROW_INFO(gfx.GetDevice()->CreateTexture2D(
 		&textureDesc, nullptr, &pTexture
 	));
 
 	// write image data into top mip level
-	GetContext(gfx)->UpdateSubresource(
+	gfx.GetContext()->UpdateSubresource(
 		pTexture.Get(), 0u, nullptr, s.GetBufferPtrConst(), s.GetWidth() * sizeof(Surface::Color), 0u
 	);
 
@@ -50,11 +50,11 @@ Texture::Texture(Graphics& gfx, const std::string& path)
 	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 	srvDesc.Texture2D.MostDetailedMip = 0;
 	srvDesc.Texture2D.MipLevels = -1;
-	GFX_THROW_INFO(GetDevice(gfx)->CreateShaderResourceView(
+	GFX_THROW_INFO(gfx.GetDevice()->CreateShaderResourceView(
 		pTexture.Get(), &srvDesc, &pTextureView
 	));
 
-	GetContext(gfx)->GenerateMips(pTextureView.Get());
+	gfx.GetContext()->GenerateMips(pTextureView.Get());
 }
 
 Texture::Texture(Graphics& gfx, const std::string& path, D3D11_TEXTURE2D_DESC textureDesc)
@@ -70,7 +70,7 @@ Texture::Texture(Graphics& gfx, const std::string& path, D3D11_TEXTURE2D_DESC te
 	sd.SysMemPitch = s.GetWidth() * sizeof(Surface::Color); // distance in bytes between rows - keep in mind padding!
 	wrl::ComPtr<ID3D11Texture2D> pTexture;
 
-	GFX_THROW_INFO(GetDevice(gfx)->CreateTexture2D(
+	GFX_THROW_INFO(gfx.GetDevice()->CreateTexture2D(
 		&textureDesc, &sd, &pTexture
 	));
 
@@ -80,7 +80,7 @@ Texture::Texture(Graphics& gfx, const std::string& path, D3D11_TEXTURE2D_DESC te
 	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 	srvDesc.Texture2D.MostDetailedMip = 0;
 	srvDesc.Texture2D.MipLevels = 1;
-	GFX_THROW_INFO(GetDevice(gfx)->CreateShaderResourceView(
+	GFX_THROW_INFO(gfx.GetDevice()->CreateShaderResourceView(
 		pTexture.Get(), &srvDesc, &pTextureView
 	));
 }
@@ -98,28 +98,28 @@ Texture::Texture(Graphics& gfx, const std::string& path, D3D11_TEXTURE2D_DESC te
 	sd.SysMemPitch = s.GetWidth() * sizeof(Surface::Color); // distance in bytes between rows - keep in mind padding!
 	wrl::ComPtr<ID3D11Texture2D> pTexture;
 
-	GFX_THROW_INFO(GetDevice(gfx)->CreateTexture2D(
+	GFX_THROW_INFO(gfx.GetDevice()->CreateTexture2D(
 		&textureDesc, &sd, &pTexture
 	));
 
-	GFX_THROW_INFO(GetDevice(gfx)->CreateShaderResourceView(
+	GFX_THROW_INFO(gfx.GetDevice()->CreateShaderResourceView(
 		pTexture.Get(), &srvDesc, &pTextureView
 	));
 }
 
 void Texture::BindCS(Graphics& gfx, UINT slot)
 {
-	GetContext(gfx)->CSSetShaderResources(slot, 1u, pTextureView.GetAddressOf());
+	gfx.GetContext()->CSSetShaderResources(slot, 1u, pTextureView.GetAddressOf());
 }
 
 void Texture::BindVS(Graphics& gfx, UINT slot)
 {
-	GetContext(gfx)->VSSetShaderResources(slot, 1u, pTextureView.GetAddressOf());
+	gfx.GetContext()->VSSetShaderResources(slot, 1u, pTextureView.GetAddressOf());
 }
 
 void Texture::BindPS(Graphics& gfx, UINT slot)
 {
-	GetContext(gfx)->PSSetShaderResources(slot, 1u, pTextureView.GetAddressOf());
+	gfx.GetContext()->PSSetShaderResources(slot, 1u, pTextureView.GetAddressOf());
 }
 
 Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> Texture::GetShaderResourceView()

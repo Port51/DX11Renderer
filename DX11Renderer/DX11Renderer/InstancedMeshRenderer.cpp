@@ -14,5 +14,5 @@ InstancedMeshRenderer::InstancedMeshRenderer(Graphics & gfx, std::string name, s
 
 void InstancedMeshRenderer::IssueDrawCall(Graphics& gfx) const
 {
-	gfx.pContext->DrawIndexedInstanced(GetIndexCount(), instanceCount, 0u, 0, 0u);
+	gfx.GetContext()->DrawIndexedInstanced(GetIndexCount(), instanceCount, 0u, 0, 0u);
 }

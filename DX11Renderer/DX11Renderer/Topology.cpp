@@ -1,5 +1,6 @@
 #include "Topology.h"
 #include "SharedCodex.h"
+#include "Graphics.h"
 
 Topology::Topology(Graphics& gfx, D3D11_PRIMITIVE_TOPOLOGY type)
 	: type(type)
@@ -7,7 +8,7 @@ Topology::Topology(Graphics& gfx, D3D11_PRIMITIVE_TOPOLOGY type)
 
 void Topology::BindIA(Graphics& gfx, UINT slot)
 {
-	GetContext(gfx)->IASetPrimitiveTopology(type);
+	gfx.GetContext()->IASetPrimitiveTopology(type);
 }
 
 std::shared_ptr<Topology> Topology::Resolve(Graphics& gfx, D3D11_PRIMITIVE_TOPOLOGY type)

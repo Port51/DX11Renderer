@@ -54,14 +54,14 @@ App::App()
 		break;
 	}
 	
-	auto pModelAsset = FBXImporter::LoadFBX(wnd.Gfx().log, fn.c_str(), FBXImporter::FBXNormalsMode::Import, false);
+	auto pModelAsset = FBXImporter::LoadFBX(wnd.Gfx().GetLog(), fn.c_str(), FBXImporter::FBXNormalsMode::Import, false);
 	if (pModelAsset)
 	{
-		wnd.Gfx().log.Info("Model loaded");
+		wnd.Gfx().GetLog().Info("Model loaded");
 	}
 	else
 	{
-		wnd.Gfx().log.Error("Failed to load model");
+		wnd.Gfx().GetLog().Error("Failed to load model");
 	}
 
 	pModel0 = std::make_unique<ModelInstance>(wnd.Gfx(), pModelAsset, modelTransform);
@@ -151,7 +151,7 @@ void App::DoFrame()
 	// imgui windows
 	cam.DrawImguiControlWindow();
 	light.DrawImguiControlWindow();
-	wnd.Gfx().log.DrawImguiControlWindow();
+	wnd.Gfx().GetLog().DrawImguiControlWindow();
 
 	wnd.Gfx().EndFrame();
 	fc->Reset();

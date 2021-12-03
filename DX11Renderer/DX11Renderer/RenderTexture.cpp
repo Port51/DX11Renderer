@@ -1,5 +1,6 @@
 #include "RenderTexture.h"
 #include <assert.h>
+#include "Graphics.h"
 
 RenderTexture::RenderTexture(Graphics& gfx)
 	: Texture::Texture(gfx)
@@ -89,15 +90,15 @@ void RenderTexture::Shutdown()
 
 void RenderTexture::BindCS(Graphics& gfx, UINT slot)
 {
-	GetContext(gfx)->CSSetShaderResources(slot, 1u, pRenderTextureView.GetAddressOf());
+	gfx.GetContext()->CSSetShaderResources(slot, 1u, pRenderTextureView.GetAddressOf());
 }
 
 void RenderTexture::BindVS(Graphics& gfx, UINT slot)
 {
-	GetContext(gfx)->VSSetShaderResources(slot, 1u, pRenderTextureView.GetAddressOf());
+	gfx.GetContext()->VSSetShaderResources(slot, 1u, pRenderTextureView.GetAddressOf());
 }
 
 void RenderTexture::BindPS(Graphics& gfx, UINT slot)
 {
-	GetContext(gfx)->PSSetShaderResources(slot, 1u, pRenderTextureView.GetAddressOf());
+	gfx.GetContext()->PSSetShaderResources(slot, 1u, pRenderTextureView.GetAddressOf());
 }

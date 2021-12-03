@@ -231,9 +231,6 @@
     <ClCompile Include="RenderTarget.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GraphicsResource.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="DepthStencil.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -433,9 +430,6 @@
     </ClInclude>
     <ClInclude Include="MeshRenderer.h">
       <Filter>Header Files\Drawable</Filter>
-    </ClInclude>
-    <ClInclude Include="GraphicsResource.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DepthStencil.h">
       <Filter>Header Files</Filter>

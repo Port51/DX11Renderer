@@ -60,12 +60,26 @@ public:
 	Graphics(const Graphics&) = delete; // here because of destructor, but don't want this...
 	Graphics& operator=(const Graphics&) = delete; // here because of destructor, but don't want this...
 	~Graphics() = default;
+public:
 	void BeginFrame();
 	void EndFrame();
 	void ClearBuffer(float red, float green, float blue);
 	void DrawIndexed(UINT count);
 	void SetRenderTarget(Microsoft::WRL::ComPtr<ID3D11RenderTargetView> renderTargetView);
 	void SetViewport(int width, int height);
+public:
+	Microsoft::WRL::ComPtr<ID3D11Device> GetDevice() const
+	{
+		return pDevice;
+	}
+	Microsoft::WRL::ComPtr<ID3D11DeviceContext> GetContext() const
+	{
+		return pContext;
+	}
+	Log GetLog()
+	{
+		return log;
+	}
 public:
 	void EnableImgui();
 	void DisableImgui();
@@ -75,19 +89,17 @@ public:
 	dx::XMMATRIX GetProjectionMatrix() const;
 	void SetViewMatrix(dx::FXMMATRIX cam);
 	dx::XMMATRIX GetViewMatrix() const;
-public:
-	Log log;
 #ifndef NDEBUG
 	DxgiInfoManager infoManager;
 #endif
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pBackBufferView; // RT view of backbuffer
+	std::shared_ptr<DepthStencilTarget> pDepthStencil;
+private:
+	Log log;
 	// Allocating stuff
 	Microsoft::WRL::ComPtr<ID3D11Device> pDevice;
 	// Used for configuring pipeline and executing render commands
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> pContext;
-	// RT view of backbuffer
-	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pBackBufferView;
-	std::shared_ptr<DepthStencilTarget> pDepthStencil;
-
 private:
 	bool imguiEnabled = true;
 

@@ -19,20 +19,20 @@ DepthStencil::DepthStencil(Graphics& gfx, UINT width, UINT height)
 	descDepth.SampleDesc.Quality = 0u;
 	descDepth.Usage = D3D11_USAGE_DEFAULT;
 	descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-	GFX_THROW_INFO(GetDevice(gfx)->CreateTexture2D(&descDepth, nullptr, &pDepthStencil));
+	GFX_THROW_INFO(gfx.GetDevice()->CreateTexture2D(&descDepth, nullptr, &pDepthStencil));
 
 	// create target view of depth stensil texture
-	GFX_THROW_INFO(GetDevice(gfx)->CreateDepthStencilView(
+	GFX_THROW_INFO(gfx.GetDevice()->CreateDepthStencilView(
 		pDepthStencil.Get(), nullptr, &pDepthStencilView
 	));
 }
 
 void DepthStencil::BindAsDepthStencil(Graphics& gfx) const
 {
-	GetContext(gfx)->OMSetRenderTargets(0, nullptr, pDepthStencilView.Get());
+	gfx.GetContext()->OMSetRenderTargets(0, nullptr, pDepthStencilView.Get());
 }
 
 void DepthStencil::Clear(Graphics& gfx) const
 {
-	GetContext(gfx)->ClearDepthStencilView(pDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0u);
+	gfx.GetContext()->ClearDepthStencilView(pDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0u);
 }

@@ -11,12 +11,12 @@ PixelShader::PixelShader(Graphics& gfx, const std::string& path)
 	Microsoft::WRL::ComPtr<ID3DBlob> pBlob;
 	std::wstring wide{ path.begin(), path.end() }; // convert to wide for file read <-- won't work for special characters
 	GFX_THROW_INFO(D3DReadFileToBlob(wide.c_str(), &pBlob));
-	GFX_THROW_INFO(GetDevice(gfx)->CreatePixelShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pPixelShader));
+	GFX_THROW_INFO(gfx.GetDevice()->CreatePixelShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pPixelShader));
 }
 
 void PixelShader::BindPS(Graphics& gfx, UINT slot)
 {
-	GetContext(gfx)->PSSetShader(pPixelShader.Get(), nullptr, 0u);
+	gfx.GetContext()->PSSetShader(pPixelShader.Get(), nullptr, 0u);
 }
 
 std::shared_ptr<PixelShader> PixelShader::Resolve(Graphics& gfx, const std::string& path)

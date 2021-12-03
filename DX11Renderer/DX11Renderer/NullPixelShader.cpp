@@ -10,7 +10,7 @@ namespace Bind
 	}
 	void NullPixelShader::BindPS(Graphics& gfx, UINT slot)
 	{
-		GetContext(gfx)->PSSetShader(nullptr, nullptr, 0u);
+		gfx.GetContext()->PSSetShader(nullptr, nullptr, 0u);
 	}
 	std::shared_ptr<NullPixelShader> NullPixelShader::Resolve(Graphics& gfx)
 	{

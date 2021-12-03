@@ -29,6 +29,6 @@
 #ifdef NDEBUG
 #define SETUP_LOGGING(gfx) HRESULT hr
 #else
-#define SETUP_LOGGING(gfx) HRESULT hr; DxgiInfoManager& infoManager = GetInfoManager((gfx))
+#define SETUP_LOGGING(gfx) HRESULT hr; DxgiInfoManager& infoManager = gfx.infoManager
 #define SETUP_LOGGING_NOINFO(gfx) HRESULT hr;
 #endif

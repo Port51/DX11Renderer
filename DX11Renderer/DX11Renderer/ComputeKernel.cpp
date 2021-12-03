@@ -21,7 +21,7 @@ void ComputeKernel::AppendConstantBuffer(std::shared_ptr<Buffer> pConstantBuffer
 
 void ComputeKernel::Dispatch(Graphics& gfx, UINT threadGroupCountX, UINT threadGroupCountY, UINT threadGroupCountZ)
 {
-	gfx.pContext->CSSetShader(pComputeShader->GetComputeShader().Get(), nullptr, 0);
+	gfx.GetContext()->CSSetShader(pComputeShader->GetComputeShader().Get(), nullptr, 0);
 
 	// todo: remove this temporary code!
 	pD3DConstantBuffers.resize(pConstantBuffers.size());
@@ -29,7 +29,7 @@ void ComputeKernel::Dispatch(Graphics& gfx, UINT threadGroupCountX, UINT threadG
 	{
 		pD3DConstantBuffers[i] = pConstantBuffers[i]->GetD3DBuffer().Get();
 	}
-	gfx.pContext->CSSetConstantBuffers(0, pD3DConstantBuffers.size(), pD3DConstantBuffers.data());
+	gfx.GetContext()->CSSetConstantBuffers(0, pD3DConstantBuffers.size(), pD3DConstantBuffers.data());
 
-	gfx.pContext->Dispatch(threadGroupCountX, threadGroupCountY, threadGroupCountZ);
+	gfx.GetContext()->Dispatch(threadGroupCountX, threadGroupCountY, threadGroupCountZ);
 }

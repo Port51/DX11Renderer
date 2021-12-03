@@ -27,19 +27,19 @@ bool RenderTarget::Init(ID3D11Device * pDevice, int textureWidth, int textureHei
 
 void RenderTarget::BindAsTexture(Graphics& gfx, UINT slot) const
 {
-	GetContext(gfx)->PSSetShaderResources(slot, 1, pTextureView.GetAddressOf());
+	gfx.GetContext()->PSSetShaderResources(slot, 1, pTextureView.GetAddressOf());
 }
 
 void RenderTarget::BindAsTarget(Graphics& gfx) const
 {
-	GetContext(gfx)->OMSetRenderTargets(1, pRenderTargetView.GetAddressOf(), nullptr);
-	GetContext(gfx)->RSSetViewports(1u, &viewport);
+	gfx.GetContext()->OMSetRenderTargets(1, pRenderTargetView.GetAddressOf(), nullptr);
+	gfx.GetContext()->RSSetViewports(1u, &viewport);
 }
 
 void RenderTarget::BindAsTarget(Graphics& gfx, Microsoft::WRL::ComPtr<ID3D11DepthStencilView> pDepthStencilView) const
 {
-	GetContext(gfx)->OMSetRenderTargets(1, pRenderTargetView.GetAddressOf(), pDepthStencilView.Get());
-	GetContext(gfx)->RSSetViewports(1u, &viewport);
+	gfx.GetContext()->OMSetRenderTargets(1, pRenderTargetView.GetAddressOf(), pDepthStencilView.Get());
+	gfx.GetContext()->RSSetViewports(1u, &viewport);
 }
 
 void RenderTarget::SetRenderTarget(ID3D11DeviceContext* deviceContext, Microsoft::WRL::ComPtr<ID3D11DepthStencilView> pDepthStencilView)

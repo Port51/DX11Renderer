@@ -8,7 +8,7 @@ TransformCbuf::TransformCbuf(Graphics& gfx, const MeshRenderer& parent)
 {
 	if (!pVcbuf)
 	{
-		pVcbuf = std::make_unique<ConstantBuffer<Transforms>>(gfx, "NotInCodex");
+		pVcbuf = std::make_unique<ConstantBuffer<Transforms>>(gfx, D3D11_USAGE_DYNAMIC);
 	}
 }
 
@@ -29,7 +29,7 @@ void TransformCbuf::UpdateBindImpl(Graphics& gfx, const Transforms& transforms)
 {
 	assert(pParent != nullptr);
 	pVcbuf->Update(gfx, transforms);
-	gfx.pContext->VSSetConstantBuffers(0u, 1u, pVcbuf->GetD3DBuffer().GetAddressOf());
+	gfx.GetContext()->VSSetConstantBuffers(0u, 1u, pVcbuf->GetD3DBuffer().GetAddressOf());
 }
 
 TransformCbuf::Transforms TransformCbuf::GetTransforms(Graphics& gfx)

@@ -6,14 +6,14 @@
 #include "MeshRenderer.h"
 
 PointLight::PointLight(Graphics& gfx, dx::XMFLOAT3 positionWS, dx::XMFLOAT3 color, float intensity, float range)
-	: globalLightCbuf(gfx),
+	: globalLightCbuf(gfx, D3D11_USAGE_DYNAMIC),
 	positionWS(positionWS),
 	color(color),
 	range(range),
 	intensity(intensity)
 {
 
-	auto pModelAsset = FBXImporter::LoadFBX(gfx.log, "Assets\\Models\\DefaultSphere.asset", FBXImporter::FBXNormalsMode::Import, false);
+	auto pModelAsset = FBXImporter::LoadFBX(gfx.GetLog(), "Assets\\Models\\DefaultSphere.asset", FBXImporter::FBXNormalsMode::Import, false);
 	pModel = std::make_unique<ModelInstance>(gfx, pModelAsset, dx::XMMatrixIdentity());
 }
 
