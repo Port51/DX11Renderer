@@ -1,6 +1,6 @@
 #include "RasterizerState.h"
 #include "GraphicsThrowMacros.h"
-#include "BindableCodex.h"
+#include "SharedCodex.h"
 
 namespace Bind
 {
@@ -23,15 +23,12 @@ namespace Bind
 
 	std::shared_ptr<RasterizerState> RasterizerState::Resolve(Graphics& gfx, bool twoSided)
 	{
-		return Codex::Resolve<RasterizerState>(gfx, twoSided);
+		return Codex::Resolve<RasterizerState>(gfx, GenerateUID(twoSided), twoSided);
 	}
+
 	std::string RasterizerState::GenerateUID(bool twoSided)
 	{
 		using namespace std::string_literals;
 		return typeid(RasterizerState).name() + "#"s + (twoSided ? "2s" : "1s");
-	}
-	std::string RasterizerState::GetUID() const
-	{
-		return GenerateUID(twoSided);
 	}
 }

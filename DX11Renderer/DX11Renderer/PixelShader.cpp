@@ -1,6 +1,6 @@
 #include "PixelShader.h"
 #include "GraphicsThrowMacros.h"
-#include "BindableCodex.h"
+#include "SharedCodex.h"
 #include <d3d11.h>
 
 PixelShader::PixelShader(Graphics& gfx, const std::string& path)
@@ -21,14 +21,11 @@ void PixelShader::BindPS(Graphics& gfx, UINT slot)
 
 std::shared_ptr<PixelShader> PixelShader::Resolve(Graphics& gfx, const std::string& path)
 {
-	return Bind::Codex::Resolve<PixelShader>(gfx, path);
+	return Bind::Codex::Resolve<PixelShader>(gfx, GenerateUID(path), path);
 }
+
 std::string PixelShader::GenerateUID(const std::string& path)
 {
 	using namespace std::string_literals;
 	return typeid(PixelShader).name() + "#"s + path;
-}
-std::string PixelShader::GetUID() const
-{
-	return GenerateUID(path);
 }

@@ -1,6 +1,6 @@
 #include "Sampler.h"
 #include "GraphicsThrowMacros.h"
-#include "BindableCodex.h"
+#include "SharedCodex.h"
 
 Sampler::Sampler(Graphics& gfx)
 	: Sampler(gfx, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP)
@@ -53,11 +53,6 @@ void Sampler::BindPS(Graphics & gfx, UINT slot)
 	GetContext(gfx)->PSSetSamplers(slot, 1u, pSampler.GetAddressOf());
 }
 
-std::string Sampler::GetUID() const
-{
-	return GenerateUID(wrapU, wrapV, wrapW);
-}
-
 std::shared_ptr<Bindable> Sampler::Resolve(Graphics& gfx)
 {
 	return Resolve(gfx, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP);
@@ -75,22 +70,7 @@ std::shared_ptr<Bindable> Sampler::Resolve(Graphics & gfx, D3D11_TEXTURE_ADDRESS
 
 std::shared_ptr<Bindable> Sampler::Resolve(Graphics & gfx, D3D11_TEXTURE_ADDRESS_MODE wrapU, D3D11_TEXTURE_ADDRESS_MODE wrapV, D3D11_TEXTURE_ADDRESS_MODE wrapW)
 {
-	return Bind::Codex::Resolve<Sampler>(gfx, wrapU, wrapV, wrapW);
-}
-
-std::string Sampler::GenerateUID()
-{
-	return GenerateUID(D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP);
-}
-
-std::string Sampler::GenerateUID(D3D11_TEXTURE_ADDRESS_MODE wrapU)
-{
-	return GenerateUID(wrapU, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP);
-}
-
-std::string Sampler::GenerateUID(D3D11_TEXTURE_ADDRESS_MODE wrapU, D3D11_TEXTURE_ADDRESS_MODE wrapV)
-{
-	return GenerateUID(wrapU, wrapV, D3D11_TEXTURE_ADDRESS_WRAP);
+	return Bind::Codex::Resolve<Sampler>(gfx, GenerateUID(wrapU, wrapV, wrapW), wrapU, wrapV, wrapW);
 }
 
 std::string Sampler::GenerateUID(D3D11_TEXTURE_ADDRESS_MODE wrapU, D3D11_TEXTURE_ADDRESS_MODE wrapV, D3D11_TEXTURE_ADDRESS_MODE wrapW)

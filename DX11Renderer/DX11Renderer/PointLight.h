@@ -1,6 +1,6 @@
 #pragma once
 #include "Graphics.h"
-#include "Buffer.h"
+#include "ConstantBuffer.h"
 #include "ModelInstance.h"
 
 class FrameCommander;
@@ -29,5 +29,5 @@ private:
 	float range;
 
 	std::unique_ptr<ModelInstance> pModel;
-	mutable Buffer<PointLightCBuf> globalLightCbuf;
+	mutable ConstantBuffer<PointLightCBuf> globalLightCbuf;
 };

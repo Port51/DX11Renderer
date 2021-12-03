@@ -1,6 +1,6 @@
 #include "VertexShader.h"
 #include "GraphicsThrowMacros.h"
-#include "BindableCodex.h"
+#include "SharedCodex.h"
 #include <typeinfo>
 #include <string>
 #include "ChiliUtil.h"
@@ -37,15 +37,10 @@ ID3DBlob* VertexShader::GetBytecode() const
 ///
 std::shared_ptr<VertexShader> VertexShader::Resolve(Graphics& gfx, const std::string& path)
 {
-	return Bind::Codex::Resolve<VertexShader>(gfx, path);
+	return Bind::Codex::Resolve<VertexShader>(gfx, GenerateUID(path), path);
 }
 
 std::string VertexShader::GenerateUID(const std::string& path)
 {
 	return typeid(VertexShader).name() + "#"s + path;
-}
-
-std::string VertexShader::GetUID() const
-{
-	return GenerateUID(path);
 }

@@ -221,6 +221,7 @@
     <ClInclude Include="App.h" />
     <ClInclude Include="BaseBufferData.h" />
     <ClInclude Include="BaseMesh.h" />
+    <ClInclude Include="CodexElement.h" />
     <ClInclude Include="ComputeKernel.h" />
     <ClInclude Include="ComputeShader.h" />
     <ClInclude Include="DX11Include.h" />
@@ -232,7 +233,7 @@
     <ClInclude Include="Binding.h" />
     <ClInclude Include="Colors.h" />
     <ClInclude Include="Bindable.h" />
-    <ClInclude Include="BindableCodex.h" />
+    <ClInclude Include="SharedCodex.h" />
     <ClInclude Include="BindableInclude.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="ChiliUtil.h" />

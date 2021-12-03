@@ -1,6 +1,6 @@
 #include "ComputeShader.h"
 #include "GraphicsThrowMacros.h"
-#include "BindableCodex.h"
+#include "SharedCodex.h"
 
 using namespace std::string_literals;
 
@@ -69,15 +69,10 @@ ID3DBlob* ComputeShader::GetBytecode() const
 
 std::shared_ptr<ComputeShader> ComputeShader::Resolve(Graphics& gfx, const std::string& path, const std::string& kernelName)
 {
-	return Bind::Codex::Resolve<ComputeShader>(gfx, path, kernelName);
+	return Bind::Codex::Resolve<ComputeShader>(gfx, GenerateUID(path, kernelName), path, kernelName);
 }
 
 std::string ComputeShader::GenerateUID(const std::string& path, const std::string& kernelName)
 {
 	return typeid(ComputeShader).name() + "#"s + path + "#"s + kernelName;
-}
-
-std::string ComputeShader::GetUID() const
-{
-	return GenerateUID(path, kernelName);
 }

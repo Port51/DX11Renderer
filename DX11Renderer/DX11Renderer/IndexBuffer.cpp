@@ -1,16 +1,10 @@
 #include "IndexBuffer.h"
 #include "GraphicsThrowMacros.h"
-#include "BindableCodex.h"
+#include "SharedCodex.h"
 #include <d3d11.h>
 
 IndexBuffer::IndexBuffer(Graphics& gfx, const std::vector<unsigned short>& indices)
-	: IndexBuffer(gfx, "?", indices)
-{}
-
-IndexBuffer::IndexBuffer(Graphics& gfx, std::string tag, const std::vector<unsigned short>& indices)
-	:
-	tag(tag),
-	count((UINT)indices.size())
+	: count((UINT)indices.size())
 {
 	SETUP_LOGGING(gfx);
 
@@ -36,20 +30,13 @@ UINT IndexBuffer::GetIndexCount() const
 	return count;
 }
 
-std::shared_ptr<IndexBuffer> IndexBuffer::Resolve(Graphics& gfx, const std::string& tag,
-	const std::vector<unsigned short>& indices)
+std::shared_ptr<IndexBuffer> IndexBuffer::Resolve(Graphics& gfx, std::string id, const std::vector<unsigned short>& indices)
 {
-	assert(tag != "?");
-	return Bind::Codex::Resolve<IndexBuffer>(gfx, tag, indices);
+	return Bind::Codex::Resolve<IndexBuffer>(gfx, GenerateUID(id), indices);
 }
 
-std::string IndexBuffer::GenerateNontemplatedUID(const std::string& tag)
+std::string IndexBuffer::GenerateUID(const std::string& tag)
 {
 	using namespace std::string_literals;
 	return typeid(IndexBuffer).name() + "#"s + tag;
-}
-
-std::string IndexBuffer::GetUID() const
-{
-	return GenerateNontemplatedUID(tag);
 }

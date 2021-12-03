@@ -14,9 +14,9 @@ public:
 	void Dispatch(Graphics& gfx, UINT threadGroupCountX, UINT threadGroupCountY, UINT threadGroupCountZ) const;
 	Microsoft::WRL::ComPtr<ID3D11ComputeShader> GetComputeShader() const;
 	ID3DBlob* GetBytecode() const;
-	std::string GetUID() const override;
 public:
 	static std::shared_ptr<ComputeShader> Resolve(Graphics& gfx, const std::string& path, const std::string& kernelName);
+protected:
 	static std::string GenerateUID(const std::string& path, const std::string& kernelName);
 protected:
 	std::string path;

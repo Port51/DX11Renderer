@@ -127,6 +127,9 @@
     <Filter Include="Source Files\Bindable\Compute">
       <UniqueIdentifier>{4e85884d-fe7d-431c-9301-3ac8da07113d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Codex">
+      <UniqueIdentifier>{0a2caff0-c6e9-46de-bb16-d55e6675eb3a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -428,9 +431,6 @@
     <ClInclude Include="Log.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BindableCodex.h">
-      <Filter>Header Files\Bindable</Filter>
-    </ClInclude>
     <ClInclude Include="MeshRenderer.h">
       <Filter>Header Files\Drawable</Filter>
     </ClInclude>
@@ -541,6 +541,12 @@
     </ClInclude>
     <ClInclude Include="ComputeKernel.h">
       <Filter>Header Files\Bindable\Compute</Filter>
+    </ClInclude>
+    <ClInclude Include="SharedCodex.h">
+      <Filter>Header Files\Codex</Filter>
+    </ClInclude>
+    <ClInclude Include="CodexElement.h">
+      <Filter>Header Files\Codex</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

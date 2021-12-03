@@ -11,6 +11,5 @@ namespace Bind
 		void BindPS(Graphics& gfx, UINT slot) override;
 		static std::shared_ptr<NullPixelShader> Resolve(Graphics& gfx);
 		static std::string GenerateUID();
-		std::string GetUID() const override;
 	};
 }

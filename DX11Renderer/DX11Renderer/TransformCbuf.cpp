@@ -29,7 +29,7 @@ void TransformCbuf::UpdateBindImpl(Graphics& gfx, const Transforms& transforms)
 {
 	assert(pParent != nullptr);
 	pVcbuf->Update(gfx, transforms);
-	pVcbuf->BindVS(gfx, 0u);
+	gfx.pContext->VSSetConstantBuffers(0u, 1u, pVcbuf->GetD3DBuffer().GetAddressOf());
 }
 
 TransformCbuf::Transforms TransformCbuf::GetTransforms(Graphics& gfx)

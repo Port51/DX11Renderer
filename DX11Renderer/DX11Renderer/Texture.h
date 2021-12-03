@@ -21,10 +21,10 @@ public:
 	void BindCS(Graphics& gfx, UINT slot) override;
 	void BindVS(Graphics& gfx, UINT slot) override;
 	void BindPS(Graphics& gfx, UINT slot) override;
-	std::string GetUID() const override;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> GetShaderResourceView();
 public:
 	static std::shared_ptr<Bindable> Resolve(Graphics& gfx, const std::string& path);
+protected:
 	static std::string GenerateUID(const std::string& path);
 protected:
 	std::string path;

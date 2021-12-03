@@ -1,6 +1,6 @@
 #include "VertexBufferWrapper.h"
 #include "BaseBufferData.h"
-#include "BindableCodex.h"
+#include "SharedCodex.h"
 
 VertexBufferWrapper::VertexBufferWrapper(Graphics& gfx, const BaseBufferData& vertexBuffer)
 {

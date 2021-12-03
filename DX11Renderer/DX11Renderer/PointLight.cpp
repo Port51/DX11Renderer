@@ -6,7 +6,7 @@
 #include "MeshRenderer.h"
 
 PointLight::PointLight(Graphics& gfx, dx::XMFLOAT3 positionWS, dx::XMFLOAT3 color, float intensity, float range)
-	: globalLightCbuf(gfx, "Light0"),
+	: globalLightCbuf(gfx),
 	positionWS(positionWS),
 	color(color),
 	range(range),

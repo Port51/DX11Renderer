@@ -13,23 +13,14 @@ class IndexBuffer : public Bindable
 {
 public:
 	IndexBuffer(Graphics& gfx, const std::vector<unsigned short>& indices);
-	IndexBuffer(Graphics& gfx, std::string tag, const std::vector<unsigned short>& indices);
 public:
 	void BindIA(Graphics& gfx, UINT slot) override;
 	UINT GetIndexCount() const;
-	std::string GetUID() const override;
 public:
-	static std::shared_ptr<IndexBuffer> Resolve(Graphics& gfx, const std::string& tag,
-		const std::vector<unsigned short>& indices);
-	template<typename...Ignore>
-	static std::string GenerateUID(const std::string& tag, Ignore&&...ignore)
-	{
-		return GenerateNontemplatedUID(tag);
-	}
+	static std::shared_ptr<IndexBuffer> Resolve(Graphics& gfx, std::string id, const std::vector<unsigned short>& indices);
 private:
-	static std::string GenerateNontemplatedUID(const std::string& tag);
+	static std::string GenerateUID(const std::string& tag);
 protected:
-	std::string tag;
 	UINT count;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> pIndexBuffer;
 };

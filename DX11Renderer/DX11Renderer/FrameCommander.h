@@ -42,7 +42,7 @@ public:
 
 		testKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, std::string("Assets\\Built\\Shaders\\ComputeTest.cso"), std::string("CSMain")));
 
-		testCB = std::make_shared<ConstantBuffer>();
+		//testCB = std::make_shared<ConstantBuffer>(gfx);
 	}
 
 	~FrameCommander()

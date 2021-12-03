@@ -7,7 +7,7 @@
 #include "InputLayout.h"
 #include "Texture.h"
 #include "Sampler.h"
-#include "BindableCodex.h"
+#include "SharedCodex.h"
 #include "MaterialPass.h"
 #include "TransformCbuf.h"
 #include "TextParser.h"
@@ -191,11 +191,6 @@ void Material::Bind(Graphics& gfx, std::string passName)
 	// Is this needed?
 }
 
-std::string Material::GetUID() const
-{
-	return GenerateUID(materialAssetPath);
-}
-
 void Material::SubmitDrawCalls(std::unique_ptr<FrameCommander>& frame, const MeshRenderer& renderer) const
 {
 	for (const auto& pass : passes)
@@ -211,7 +206,7 @@ const VertexLayout& Material::GetVertexLayout() const
 
 std::shared_ptr<Bindable> Material::Resolve(Graphics& gfx, const std::string_view assetPath)
 {
-	return Bind::Codex::Resolve<Material>(gfx, assetPath);
+	return Bind::Codex::Resolve<Material>(gfx, GenerateUID(assetPath), assetPath);
 }
 
 std::string Material::GenerateUID(const std::string_view assetPath)

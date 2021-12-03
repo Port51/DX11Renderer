@@ -11,7 +11,6 @@ class PixelShader : public Bindable
 public:
 	PixelShader(Graphics& gfx, const std::string& path);
 	void BindPS(Graphics& gfx, UINT slot) override;
-	std::string GetUID() const override;
 public:
 	static std::shared_ptr<PixelShader> Resolve(Graphics& gfx, const std::string& path);
 	static std::string GenerateUID(const std::string& path);

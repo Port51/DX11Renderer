@@ -1,6 +1,6 @@
 #include "InputLayout.h"
 #include "GraphicsThrowMacros.h"
-#include "BindableCodex.h"
+#include "SharedCodex.h"
 #include "VertexLayout.h"
 
 InputLayout::InputLayout(Graphics& gfx, VertexLayout _layout, std::string vertexShaderName, ID3DBlob* pVertexShaderBytecode)
@@ -23,14 +23,9 @@ void InputLayout::BindIA(Graphics& gfx, UINT slot)
 	GetContext(gfx)->IASetInputLayout(pInputLayout.Get());
 }
 
-std::string InputLayout::GetUID() const
-{
-	return GenerateUID(layout, vertexShaderName);
-}
-
 std::shared_ptr<InputLayout> InputLayout::Resolve(Graphics & gfx, const VertexLayout & layout, std::string vertexShaderName, ID3DBlob * pVertexShaderBytecode)
 {
-	return Bind::Codex::Resolve<InputLayout>(gfx, layout, vertexShaderName, pVertexShaderBytecode);
+	return Bind::Codex::Resolve<InputLayout>(gfx, GenerateUID(layout, vertexShaderName, pVertexShaderBytecode), layout, vertexShaderName, pVertexShaderBytecode);
 }
 
 std::string InputLayout::GenerateUID(const VertexLayout & layout, std::string vertexShaderName, ID3DBlob * pVertexShaderBytecode)

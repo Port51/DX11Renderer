@@ -12,7 +12,6 @@ public:
 	VertexShader(Graphics& gfx, const std::string& path);
 	void BindVS(Graphics& gfx, UINT slot) override;
 	ID3DBlob* GetBytecode() const;
-	std::string GetUID() const override;
 public:
 	static std::shared_ptr<VertexShader> Resolve(Graphics& gfx, const std::string& path);
 	static std::string GenerateUID(const std::string& path);

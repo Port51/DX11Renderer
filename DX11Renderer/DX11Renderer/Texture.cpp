@@ -1,7 +1,7 @@
 #include "Texture.h"
 #include "Surface.h"
 #include "GraphicsThrowMacros.h"
-#include "BindableCodex.h"
+#include "SharedCodex.h"
 
 namespace wrl = Microsoft::WRL;
 
@@ -122,11 +122,6 @@ void Texture::BindPS(Graphics& gfx, UINT slot)
 	GetContext(gfx)->PSSetShaderResources(slot, 1u, pTextureView.GetAddressOf());
 }
 
-std::string Texture::GetUID() const
-{
-	return GenerateUID(path);
-}
-
 Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> Texture::GetShaderResourceView()
 {
 	return pTextureView;
@@ -134,7 +129,7 @@ Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> Texture::GetShaderResourceView(
 
 std::shared_ptr<Bindable> Texture::Resolve(Graphics& gfx, const std::string& path)
 {
-	return Bind::Codex::Resolve<Texture>(gfx, path);
+	return Bind::Codex::Resolve<Texture>(gfx, GenerateUID(path), path);
 }
 
 std::string Texture::GenerateUID(const std::string& path)

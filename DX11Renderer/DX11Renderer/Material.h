@@ -20,13 +20,12 @@ public:
 	Material(Graphics& gfx, const std::string_view assetPath);
 	void Bind(Graphics& gfx, UINT slot) {} // todo: remove
 	void Bind(Graphics& gfx, std::string passName);
-	std::string GetUID() const override;
 	void SubmitDrawCalls(std::unique_ptr<FrameCommander>& frame, const MeshRenderer& renderer) const;
 public:
 	const VertexLayout& GetVertexLayout() const;
 	static std::shared_ptr<Bindable> Resolve(Graphics& gfx, const std::string_view assetPath);
+protected:
 	static std::string GenerateUID(const std::string_view assetPath);
-private:
 	void AddBindable(std::shared_ptr<Bindable> pBindable);
 public:
 	std::shared_ptr<VertexShader> pVertexShader;

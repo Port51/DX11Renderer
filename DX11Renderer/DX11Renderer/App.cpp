@@ -7,7 +7,7 @@
 #include "GDIPlusManager.h"
 #include "Imgui/imgui.h"
 #include "FBXImporter.h"
-#include "BindableCodex.h"
+#include "SharedCodex.h"
 #include "VertexShader.h"
 #include "Sampler.h"
 #include <d3d11.h>

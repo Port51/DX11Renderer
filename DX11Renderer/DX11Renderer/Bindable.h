@@ -1,4 +1,5 @@
 #pragma once
+#include "CodexElement.h"
 #include <string>
 #include "WindowsInclude.h"
 
@@ -8,7 +9,7 @@ struct ID3D11Device;
 class DxgiInfoManager;
 class MeshRenderer;
 
-class Bindable
+class Bindable : public CodexElement
 {
 public:
 	virtual void BindIA(Graphics& gfx, UINT slot) {}
@@ -19,7 +20,6 @@ public:
 	virtual void BindOM(Graphics& gfx) {}
 	virtual ~Bindable() = default;
 public:
-	virtual std::string GetUID() const;
 	virtual void InitializeParentReference(const MeshRenderer&)
 	{}
 protected:

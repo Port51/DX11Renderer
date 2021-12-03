@@ -14,8 +14,8 @@ namespace Bind
 		RasterizerState(Graphics& gfx, bool twoSided);
 		void BindRS(Graphics& gfx) override;
 		static std::shared_ptr<RasterizerState> Resolve(Graphics& gfx, bool twoSided);
+	protected:
 		static std::string GenerateUID(bool twoSided);
-		std::string GetUID() const override;
 	protected:
 		Microsoft::WRL::ComPtr<ID3D11RasterizerState> pRasterizer;
 		bool twoSided;

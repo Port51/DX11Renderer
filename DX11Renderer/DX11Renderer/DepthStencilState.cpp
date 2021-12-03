@@ -62,7 +62,7 @@ namespace Bind
 
 	std::shared_ptr<DepthStencilState> DepthStencilState::Resolve(Graphics& gfx, Mode mode)
 	{
-		return Codex::Resolve<DepthStencilState>(gfx, mode);
+		return Codex::Resolve<DepthStencilState>(gfx, GenerateUID(mode), mode);
 	}
 
 	std::string DepthStencilState::GenerateUID(Mode mode)
@@ -83,8 +83,4 @@ namespace Bind
 		return typeid(DepthStencilState).name() + "#"s + modeName();
 	}
 
-	std::string DepthStencilState::GetUID() const
-	{
-		return GenerateUID(mode);
-	}
 }

@@ -2,6 +2,7 @@
 #include <vector>
 #include <memory>
 #include <wrl.h>
+#include "DX11Include.h"
 
 class Graphics;
 class ComputeShader;
