@@ -530,9 +530,6 @@
     <ClInclude Include="ComputeShader.h">
       <Filter>Header Files\Bindable\Shaders</Filter>
     </ClInclude>
-    <ClInclude Include="RawBuffer.h">
-      <Filter>Header Files\Bindable\Buffers</Filter>
-    </ClInclude>
     <ClInclude Include="ComputeKernel.h">
       <Filter>Header Files\Bindable\Compute</Filter>
     </ClInclude>
@@ -541,6 +538,9 @@
     </ClInclude>
     <ClInclude Include="CodexElement.h">
       <Filter>Header Files\Codex</Filter>
+    </ClInclude>
+    <ClInclude Include="StructuredBuffer.h">
+      <Filter>Header Files\Bindable\Buffers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -226,7 +226,7 @@
     <ClInclude Include="DX11Include.h" />
     <ClInclude Include="DXMathInclude.h" />
     <ClInclude Include="ModelNode.h" />
-    <ClInclude Include="RawBuffer.h" />
+    <ClInclude Include="StructuredBuffer.h" />
     <ClInclude Include="StructuredBufferData.h" />
     <ClInclude Include="InstancedMeshRenderer.h" />
     <ClInclude Include="Binding.h" />

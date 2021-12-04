@@ -9,7 +9,7 @@ class ConstantBuffer : public Buffer
 {
 public:
 	ConstantBuffer(Graphics& gfx, D3D11_USAGE usage)
-		: Buffer(D3D11_BIND_CONSTANT_BUFFER, usage, GetCBufferSize(sizeof(C)))
+		: Buffer(usage, D3D11_BIND_CONSTANT_BUFFER, GetCBufferSize(sizeof(C)))
 	{
 		SETUP_LOGGING_NOINFO(gfx);
 
@@ -24,7 +24,7 @@ public:
 		GFX_THROW_NOINFO(gfx.GetDevice()->CreateBuffer(&bd, nullptr, &pBuffer));
 	}
 	ConstantBuffer(Graphics& gfx, D3D11_USAGE usage, const C& initialData)
-		: Buffer(D3D11_BIND_CONSTANT_BUFFER, usage, GetCBufferSize(sizeof(C)))
+		: Buffer(usage, D3D11_BIND_CONSTANT_BUFFER, GetCBufferSize(sizeof(C)))
 	{
 		SETUP_LOGGING_NOINFO(gfx);
 
