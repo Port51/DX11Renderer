@@ -45,8 +45,9 @@ public:
 
 		//testSRV = std::make_shared<StructuredBuffer<float>>(gfx, D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE, 64);
 		testUAV = std::make_shared<StructuredBuffer<float>>(gfx, D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS, 64);
-		testKernel->SetSRV(0u, pGbufferNormalRough->GetShaderResourceView());
+		//testKernel->SetSRV(0u, pGbufferNormalRough->GetShaderResourceView());
 		testKernel->SetUAV(0u, testUAV);
+		//testKernel->SetUAV(1u, pGbufferNormalRough->GetShaderResourceView());
 	}
 
 	~FrameCommander()

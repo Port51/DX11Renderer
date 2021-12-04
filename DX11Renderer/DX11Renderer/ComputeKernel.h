@@ -24,11 +24,8 @@ public:
 	void AppendUAV(std::shared_ptr<Buffer> pUAV);
 	void Dispatch(Graphics& gfx, UINT threadGroupCountX, UINT threadGroupCountY, UINT threadGroupCountZ);
 private:
-	std::vector<std::shared_ptr<Buffer>> pConstantBuffers;
 	std::vector<ID3D11Buffer*> pD3DConstantBuffers;
-	std::vector<Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>> pSRVs;
 	std::vector<ID3D11ShaderResourceView*> pD3D_SRVs;
-	std::vector<std::shared_ptr<Buffer>> pUAVs;
 	std::vector<ID3D11UnorderedAccessView*> pD3D_UAVs;
 	std::shared_ptr<ComputeShader> pComputeShader;
 };

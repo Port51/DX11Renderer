@@ -48,7 +48,7 @@ Texture::Texture(Graphics& gfx, const std::string& path)
 	srvDesc.Format = textureDesc.Format;
 	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 	srvDesc.Texture2D.MostDetailedMip = 0;
-	srvDesc.Texture2D.MipLevels = -1;
+	srvDesc.Texture2D.MipLevels = 1;
 	GFX_THROW_INFO(gfx.GetDevice()->CreateShaderResourceView(
 		pTexture.Get(), &srvDesc, &pShaderResourceView
 	));

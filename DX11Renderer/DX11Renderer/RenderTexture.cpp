@@ -27,7 +27,7 @@ void RenderTexture::Init(ID3D11Device* device, int textureWidth, int textureHeig
 	rtDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 	rtDesc.SampleDesc.Count = 1;
 	rtDesc.Usage = D3D11_USAGE_DEFAULT;
-	rtDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+	rtDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS;
 	rtDesc.CPUAccessFlags = 0;
 	rtDesc.MiscFlags = 0;
 
