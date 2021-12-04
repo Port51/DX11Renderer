@@ -15,7 +15,7 @@ public:
 	RenderTexture(Graphics& gfx);
 	//~RenderTexture();
 
-	virtual bool Init(ID3D11Device* pDevice, int textureWidth, int textureHeight);
+	virtual void Init(ID3D11Device* pDevice, int textureWidth, int textureHeight);
 	void Shutdown();
 
 	void BindCS(Graphics& gfx, UINT slot) override;
@@ -23,7 +23,5 @@ public:
 	void BindPS(Graphics& gfx, UINT slot) override;
 
 public:
-	Microsoft::WRL::ComPtr<ID3D11Texture2D> pRenderTargetTexture;
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pRenderTargetView;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pRenderTextureView;
 };

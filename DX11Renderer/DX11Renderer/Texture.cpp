@@ -34,7 +34,6 @@ Texture::Texture(Graphics& gfx, const std::string& path)
 	textureDesc.CPUAccessFlags = 0;
 	textureDesc.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
 
-	wrl::ComPtr<ID3D11Texture2D> pTexture;
 	GFX_THROW_INFO(gfx.GetDevice()->CreateTexture2D(
 		&textureDesc, nullptr, &pTexture
 	));
@@ -51,10 +50,10 @@ Texture::Texture(Graphics& gfx, const std::string& path)
 	srvDesc.Texture2D.MostDetailedMip = 0;
 	srvDesc.Texture2D.MipLevels = -1;
 	GFX_THROW_INFO(gfx.GetDevice()->CreateShaderResourceView(
-		pTexture.Get(), &srvDesc, &pTextureView
+		pTexture.Get(), &srvDesc, &pShaderResourceView
 	));
 
-	gfx.GetContext()->GenerateMips(pTextureView.Get());
+	gfx.GetContext()->GenerateMips(pShaderResourceView.Get());
 }
 
 Texture::Texture(Graphics& gfx, const std::string& path, D3D11_TEXTURE2D_DESC textureDesc)
@@ -81,7 +80,7 @@ Texture::Texture(Graphics& gfx, const std::string& path, D3D11_TEXTURE2D_DESC te
 	srvDesc.Texture2D.MostDetailedMip = 0;
 	srvDesc.Texture2D.MipLevels = 1;
 	GFX_THROW_INFO(gfx.GetDevice()->CreateShaderResourceView(
-		pTexture.Get(), &srvDesc, &pTextureView
+		pTexture.Get(), &srvDesc, &pShaderResourceView
 	));
 }
 
@@ -103,28 +102,28 @@ Texture::Texture(Graphics& gfx, const std::string& path, D3D11_TEXTURE2D_DESC te
 	));
 
 	GFX_THROW_INFO(gfx.GetDevice()->CreateShaderResourceView(
-		pTexture.Get(), &srvDesc, &pTextureView
+		pTexture.Get(), &srvDesc, &pShaderResourceView
 	));
 }
 
 void Texture::BindCS(Graphics& gfx, UINT slot)
 {
-	gfx.GetContext()->CSSetShaderResources(slot, 1u, pTextureView.GetAddressOf());
+	gfx.GetContext()->CSSetShaderResources(slot, 1u, pShaderResourceView.GetAddressOf());
 }
 
 void Texture::BindVS(Graphics& gfx, UINT slot)
 {
-	gfx.GetContext()->VSSetShaderResources(slot, 1u, pTextureView.GetAddressOf());
+	gfx.GetContext()->VSSetShaderResources(slot, 1u, pShaderResourceView.GetAddressOf());
 }
 
 void Texture::BindPS(Graphics& gfx, UINT slot)
 {
-	gfx.GetContext()->PSSetShaderResources(slot, 1u, pTextureView.GetAddressOf());
+	gfx.GetContext()->PSSetShaderResources(slot, 1u, pShaderResourceView.GetAddressOf());
 }
 
 Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> Texture::GetShaderResourceView()
 {
-	return pTextureView;
+	return pShaderResourceView;
 }
 
 std::shared_ptr<Bindable> Texture::Resolve(Graphics& gfx, const std::string& path)

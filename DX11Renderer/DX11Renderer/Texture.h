@@ -29,5 +29,6 @@ protected:
 protected:
 	std::string path;
 	UINT slot;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pTextureView;
+	Microsoft::WRL::ComPtr<ID3D11Texture2D> pTexture;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pShaderResourceView;
 };

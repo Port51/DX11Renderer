@@ -30,13 +30,13 @@ void ComputeKernel::AppendConstantBuffer(std::shared_ptr<Buffer> pConstantBuffer
 	pConstantBuffers.emplace_back(pConstantBuffer);
 }
 
-void ComputeKernel::SetSRV(UINT slot, std::shared_ptr<Buffer> pShaderResourceView)
+void ComputeKernel::SetSRV(UINT slot, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pShaderResourceView)
 {
-	if (slot < pConstantBuffers.size())
+	if (slot < pSRVs.size())
 	{
 		pSRVs[slot] = pShaderResourceView;
 	}
-	else if (slot == pConstantBuffers.size())
+	else if (slot == pSRVs.size())
 	{
 		AppendSRV(pShaderResourceView);
 	}
@@ -46,18 +46,18 @@ void ComputeKernel::SetSRV(UINT slot, std::shared_ptr<Buffer> pShaderResourceVie
 	}
 }
 
-void ComputeKernel::AppendSRV(std::shared_ptr<Buffer> pShaderResourceView)
+void ComputeKernel::AppendSRV(Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pShaderResourceView)
 {
 	pSRVs.emplace_back(pShaderResourceView);
 }
 
 void ComputeKernel::SetUAV(UINT slot, std::shared_ptr<Buffer> pUAV)
 {
-	if (slot < pConstantBuffers.size())
+	if (slot < pUAVs.size())
 	{
 		pUAVs[slot] = pUAV;
 	}
-	else if (slot == pConstantBuffers.size())
+	else if (slot == pUAVs.size())
 	{
 		AppendUAV(pUAV);
 	}
@@ -76,6 +76,7 @@ void ComputeKernel::Dispatch(Graphics& gfx, UINT threadGroupCountX, UINT threadG
 {
 	gfx.GetContext()->CSSetShader(pComputeShader->GetComputeShader().Get(), nullptr, 0);
 
+	if (pConstantBuffers.size() > 0)
 	{
 		// todo: remove this temporary code!
 		pD3DConstantBuffers.resize(pConstantBuffers.size());
@@ -86,20 +87,23 @@ void ComputeKernel::Dispatch(Graphics& gfx, UINT threadGroupCountX, UINT threadG
 		gfx.GetContext()->CSSetConstantBuffers(0, pD3DConstantBuffers.size(), pD3DConstantBuffers.data());
 	}
 
+	if (pSRVs.size() > 0)
 	{
 		// todo: remove this temporary code!
 		pD3D_SRVs.resize(pSRVs.size());
-		for (int i = 0, ct = pSRVs.size(); i < ct; ++i)
+		for (int i = 0, ct = pD3D_SRVs.size(); i < ct; ++i)
 		{
-			pD3D_SRVs[i] = pSRVs[i]->GetD3DSRV().Get();
+			pD3D_SRVs[i] = pSRVs[i].Get();
 		}
 		gfx.GetContext()->CSSetShaderResources(0, pD3D_SRVs.size(), pD3D_SRVs.data());
+		//gfx.GetContext()->CSSetShaderResources(0, pD3D_SRVs.size(), pSRVs[0].GetAddressOf());
 	}
 
+	if (pUAVs.size() > 0)
 	{
 		// todo: remove this temporary code!
 		pD3D_UAVs.resize(pUAVs.size());
-		for (int i = 0, ct = pUAVs.size(); i < ct; ++i)
+		for (int i = 0, ct = pD3D_UAVs.size(); i < ct; ++i)
 		{
 			pD3D_UAVs[i] = pUAVs[i]->GetD3DUAV().Get();
 		}

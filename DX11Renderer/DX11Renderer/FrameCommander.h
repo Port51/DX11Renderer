@@ -43,8 +43,10 @@ public:
 
 		testKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, std::string("Assets\\Built\\Shaders\\ComputeTest.cso"), std::string("CSMain")));
 
-		testSB = std::make_shared<StructuredBuffer<float>>(gfx, D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS, 64);
-		testKernel->SetUAV(0u, testSB);
+		//testSRV = std::make_shared<StructuredBuffer<float>>(gfx, D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE, 64);
+		testUAV = std::make_shared<StructuredBuffer<float>>(gfx, D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS, 64);
+		testKernel->SetSRV(0u, pGbufferNormalRough->GetShaderResourceView());
+		testKernel->SetUAV(0u, testUAV);
 	}
 
 	~FrameCommander()
@@ -64,11 +66,6 @@ public:
 	void Execute(Graphics& gfx)
 	{
 		// todo: replace w/ rendergraph
-
-		// Compute test pass
-		{
-			testKernel->Dispatch(gfx, 64, 1, 1);
-		}
 
 		// Early Z pass
 		// todo: put position into separate vert buffer and only bind that here
@@ -99,6 +96,11 @@ public:
 			pRenderPasses[GBufferRenderPassName]->Execute(gfx);
 		}
 
+		// Compute test pass
+		{
+			testKernel->Dispatch(gfx, 64, 1, 1);
+		}
+
 		// Final blit
 		{
 			Bind::DepthStencilState::Resolve(gfx, Bind::DepthStencilState::Mode::StencilOff)->BindOM(gfx);
@@ -125,7 +127,8 @@ private:
 	std::shared_ptr<RenderTarget> pGbufferSecond;
 	std::unordered_map<std::string, std::unique_ptr<RenderPass>> pRenderPasses;
 
-	std::shared_ptr<StructuredBuffer<float>> testSB;
+	std::shared_ptr<StructuredBuffer<float>> testSRV;
+	std::shared_ptr<StructuredBuffer<float>> testUAV;
 	std::unique_ptr<ComputeKernel> testKernel;
 private:
 	const std::string DepthPrepassName = std::string("DepthPrepass");

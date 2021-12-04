@@ -9,25 +9,21 @@ RenderTarget::RenderTarget(Graphics& gfx)
 {
 }
 
-bool RenderTarget::Init(ID3D11Device * pDevice, int textureWidth, int textureHeight)
+void RenderTarget::Init(ID3D11Device * pDevice, int textureWidth, int textureHeight)
 {
-	if (RenderTexture::Init(pDevice, textureWidth, textureHeight))
-	{
-		viewport.Width = (FLOAT)textureWidth;
-		viewport.Height = (FLOAT)textureHeight;
-		viewport.MinDepth = 0;
-		viewport.MaxDepth = 1;
-		viewport.TopLeftX = 0;
-		viewport.TopLeftY = 0;
+	RenderTexture::Init(pDevice, textureWidth, textureHeight);
 
-		return true;
-	}
-	return false;
+	viewport.Width = (FLOAT)textureWidth;
+	viewport.Height = (FLOAT)textureHeight;
+	viewport.MinDepth = 0;
+	viewport.MaxDepth = 1;
+	viewport.TopLeftX = 0;
+	viewport.TopLeftY = 0;
 }
 
 void RenderTarget::BindAsTexture(Graphics& gfx, UINT slot) const
 {
-	gfx.GetContext()->PSSetShaderResources(slot, 1, pTextureView.GetAddressOf());
+	gfx.GetContext()->PSSetShaderResources(slot, 1, pShaderResourceView.GetAddressOf());
 }
 
 void RenderTarget::BindAsTarget(Graphics& gfx) const
