@@ -103,5 +103,5 @@ void ComputeKernel::Dispatch(Graphics& gfx, UINT threadCountX, UINT threadCountY
 		gfx.GetContext()->CSSetUnorderedAccessViews(0, pD3D_UAVs.size(), pD3D_UAVs.data(), NULL);
 	}
 
-	gfx.GetContext()->Dispatch(threadCountX / 8, threadCountY / 8, threadCountZ);
+	gfx.GetContext()->Dispatch(threadCountX, threadCountY, threadCountZ);
 }

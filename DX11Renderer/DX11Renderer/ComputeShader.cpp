@@ -18,6 +18,13 @@ ComputeShader::ComputeShader(Graphics& gfx, const std::string& path, const std::
 		&pComputeShader
 	));
 
+	// Read info from shader
+	ID3D11ShaderReflection* pReflector = NULL;
+	D3DReflect(pBytecodeBlob->GetBufferPointer(), pBytecodeBlob->GetBufferSize(),
+		IID_ID3D11ShaderReflection, (void**)&pReflector);
+
+	pReflector->GetThreadGroupSize(&kernelSizeX, &kernelSizeY, &kernelSizeZ);
+
 	/*
 	UINT flags = D3DCOMPILE_ENABLE_STRICTNESS;
 #if defined( DEBUG ) || defined( _DEBUG )
@@ -51,9 +58,15 @@ ComputeShader::ComputeShader(Graphics& gfx, const std::string& path, const std::
 
 }
 
-void ComputeShader::Dispatch(Graphics & gfx, UINT threadGroupCountX, UINT threadGroupCountY, UINT threadGroupCountZ) const
+void ComputeShader::Dispatch(Graphics & gfx, UINT threadCountX, UINT threadCountY, UINT threadCountZ) const
 {
 	gfx.GetContext()->CSSetShader(pComputeShader.Get(), nullptr, 0);
+
+	// Determine thread counts
+	UINT threadGroupCountX = threadCountX / kernelSizeX;
+	UINT threadGroupCountY = threadCountY / kernelSizeY;
+	UINT threadGroupCountZ = threadCountZ / kernelSizeZ;
+
 	gfx.GetContext()->Dispatch(threadGroupCountX, threadGroupCountY, threadGroupCountZ);
 }
 

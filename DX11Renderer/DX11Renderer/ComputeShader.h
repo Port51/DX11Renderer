@@ -11,7 +11,7 @@ class ComputeShader : public Bindable
 public:
 	ComputeShader(Graphics& gfx, const std::string& path, const std::string& kernelName);
 public:
-	void Dispatch(Graphics& gfx, UINT threadGroupCountX, UINT threadGroupCountY, UINT threadGroupCountZ) const;
+	void Dispatch(Graphics& gfx, UINT threadCountX, UINT threadCountY, UINT threadCountZ) const;
 	Microsoft::WRL::ComPtr<ID3D11ComputeShader> GetComputeShader() const;
 	ID3DBlob* GetBytecode() const;
 public:
@@ -21,6 +21,9 @@ protected:
 protected:
 	std::string path;
 	std::string kernelName;
+	UINT kernelSizeX;
+	UINT kernelSizeY;
+	UINT kernelSizeZ;
 	Microsoft::WRL::ComPtr<ID3DBlob> pBytecodeBlob;
 	Microsoft::WRL::ComPtr<ID3D11ComputeShader> pComputeShader;
 };
