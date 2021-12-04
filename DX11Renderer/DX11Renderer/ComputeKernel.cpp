@@ -103,7 +103,8 @@ void ComputeKernel::Dispatch(Graphics& gfx, UINT threadGroupCountX, UINT threadG
 		{
 			pD3D_UAVs[i] = pUAVs[i]->GetD3DUAV().Get();
 		}
-		gfx.GetContext()->CSGetUnorderedAccessViews(0, pD3D_UAVs.size(), pD3D_UAVs.data());
+		// todo: last arg is for counters
+		gfx.GetContext()->CSSetUnorderedAccessViews(0, pD3D_UAVs.size(), pD3D_UAVs.data(), NULL);
 	}
 
 	gfx.GetContext()->Dispatch(threadGroupCountX, threadGroupCountY, threadGroupCountZ);
