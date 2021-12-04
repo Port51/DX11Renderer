@@ -13,6 +13,7 @@
 #include "DepthStencilTarget.h"
 #include "ComputeShader.h"
 #include "ComputeKernel.h"
+#include "StructuredBuffer.h"
 
 class FrameCommander
 {
@@ -42,7 +43,7 @@ public:
 
 		testKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, std::string("Assets\\Built\\Shaders\\ComputeTest.cso"), std::string("CSMain")));
 
-		//testCB = std::make_shared<ConstantBuffer>(gfx);
+		testSB = std::make_shared<StructuredBuffer<float>>(gfx, D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE, 64);
 	}
 
 	~FrameCommander()
@@ -65,7 +66,7 @@ public:
 
 		// Compute test pass
 		{
-
+			testKernel->Dispatch(gfx, 64, 1, 1);
 		}
 
 		// Early Z pass
@@ -123,7 +124,7 @@ private:
 	std::shared_ptr<RenderTarget> pGbufferSecond;
 	std::unordered_map<std::string, std::unique_ptr<RenderPass>> pRenderPasses;
 
-	std::shared_ptr<Buffer> testCB;
+	std::shared_ptr<StructuredBuffer<float>> testSB;
 	std::unique_ptr<ComputeKernel> testKernel;
 private:
 	const std::string DepthPrepassName = std::string("DepthPrepass");

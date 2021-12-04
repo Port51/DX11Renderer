@@ -8,8 +8,9 @@ template<typename C>
 class StructuredBuffer : public Buffer
 {
 public:
-	StructuredBuffer(Graphics& gfx, D3D11_USAGE usage, UINT bindFlags, size_t numElements)
-		: Buffer(usage, bindFlags, sizeof(C))
+	StructuredBuffer(Graphics& gfx, D3D11_USAGE usage, UINT bindFlags, size_t numElements, bool useCounter = false)
+		: Buffer(usage, bindFlags, sizeof(C)),
+		useCounter(useCounter)
 	{
 		SETUP_LOGGING_NOINFO(gfx);
 
@@ -25,14 +26,14 @@ public:
 
 		if (bindFlags & D3D11_BIND_SHADER_RESOURCE)
 		{
-			device->CreateShaderResourceView(buffer.Get(), nullptr, &pSRV);
+			gfx.GetDevice()->CreateShaderResourceView(pBuffer.Get(), nullptr, &pSRV);
 		}
 
 		if (bindFlags & D3D11_BIND_UNORDERED_ACCESS)
 		{
-			if (!counter)
+			if (!useCounter)
 			{
-				gfx.GetDevice()->CreateUnorderedAccessView(buffer.Get(), nullptr, &pUAV);
+				gfx.GetDevice()->CreateUnorderedAccessView(pBuffer.Get(), nullptr, &pUAV);
 			}
 			else
 			{
@@ -42,25 +43,25 @@ public:
 				uavDesc.Buffer.NumElements = numElements;
 				uavDesc.Buffer.Flags = D3D11_BUFFER_UAV_FLAG_COUNTER;
 				uavDesc.Format = DXGI_FORMAT_UNKNOWN;
-				gfx.GetDevice()->CreateUnorderedAccessView(buffer.Get(), &uavDesc, &pUAV);
-				has_counter = true;
+				gfx.GetDevice()->CreateUnorderedAccessView(pBuffer.Get(), &uavDesc, &pUAV);
 			}
 		}
 	}
 
 	void BindCS(Graphics& gfx, UINT slot) override
 	{
-		gfx.GetContext()->CSSetShaderResources(slot, 1u, pBuffer.GetAddressOf());
+		gfx.GetContext()->CSSetShaderResources(slot, 1u, pSRV.GetAddressOf());
 	}
 	void BindVS(Graphics& gfx, UINT slot) override
 	{
-		gfx.GetContext()->VSSetShaderResources(slot, 1u, pBuffer.GetAddressOf());
+		gfx.GetContext()->VSSetShaderResources(slot, 1u, pSRV.GetAddressOf());
 	}
 	void BindPS(Graphics& gfx, UINT slot) override
 	{
-		gfx.GetContext()->PSSetShaderResources(slot, 1u, pBuffer.GetAddressOf());
+		gfx.GetContext()->PSSetShaderResources(slot, 1u, pSRV.GetAddressOf());
 	}
 private:
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pSRV;
 	Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView> pUAV;
+	bool useCounter;
 };
