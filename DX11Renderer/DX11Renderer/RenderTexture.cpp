@@ -26,9 +26,10 @@ void RenderTexture::Init(ID3D11Device* device, int textureWidth, int textureHeig
 	rtDesc.ArraySize = 1;
 	rtDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 	rtDesc.SampleDesc.Count = 1;
-	rtDesc.Usage = D3D11_USAGE_DEFAULT;
+	rtDesc.SampleDesc.Quality = 0;
+	rtDesc.Usage = D3D11_USAGE_DEFAULT; //D3D11_USAGE_DYNAMIC
 	rtDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS;
-	rtDesc.CPUAccessFlags = 0;
+	rtDesc.CPUAccessFlags = 0; //D3D11_CPU_ACCESS_WRITE
 	rtDesc.MiscFlags = 0;
 
 	// Create the render target texture.
