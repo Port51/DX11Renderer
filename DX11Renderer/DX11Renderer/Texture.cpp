@@ -121,7 +121,12 @@ void Texture::BindPS(Graphics& gfx, UINT slot)
 	gfx.GetContext()->PSSetShaderResources(slot, 1u, pShaderResourceView.GetAddressOf());
 }
 
-Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> Texture::GetShaderResourceView()
+Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView> Texture::GetUAV() const
+{
+	return pUAV;
+}
+
+Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> Texture::GetShaderResourceView() const
 {
 	return pShaderResourceView;
 }

@@ -55,6 +55,25 @@ void RenderTexture::Init(ID3D11Device* device, int textureWidth, int textureHeig
 
 	// Create the shader resource view.
 	GFX_THROW_NOINFO(device->CreateShaderResourceView(pTexture.Get(), &srvDesc, &pShaderResourceView));
+
+	if (rtDesc.BindFlags & D3D11_BIND_UNORDERED_ACCESS)
+	{
+		bool useCounter = false;
+		if (!useCounter)
+		{
+			GFX_THROW_NOINFO(device->CreateUnorderedAccessView(pTexture.Get(), nullptr, &pUAV));
+		}
+		else
+		{
+			D3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc;
+			uavDesc.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
+			uavDesc.Buffer.FirstElement = 0;
+			//uavDesc.Buffer.NumElements = numElements;
+			uavDesc.Buffer.Flags = D3D11_BUFFER_UAV_FLAG_COUNTER;
+			uavDesc.Format = DXGI_FORMAT_UNKNOWN;
+			GFX_THROW_NOINFO(device->CreateUnorderedAccessView(pTexture.Get(), &uavDesc, &pUAV));
+		}
+	}
 }
 
 void RenderTexture::Shutdown()

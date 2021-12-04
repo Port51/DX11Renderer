@@ -21,7 +21,8 @@ public:
 	void BindCS(Graphics& gfx, UINT slot) override;
 	void BindVS(Graphics& gfx, UINT slot) override;
 	void BindPS(Graphics& gfx, UINT slot) override;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> GetShaderResourceView();
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> GetShaderResourceView() const;
+	Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView> GetUAV() const;
 public:
 	static std::shared_ptr<Bindable> Resolve(Graphics& gfx, const std::string& path);
 protected:
@@ -31,4 +32,5 @@ protected:
 	UINT slot;
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> pTexture;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pShaderResourceView;
+	Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView> pUAV;
 };

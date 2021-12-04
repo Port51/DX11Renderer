@@ -53,9 +53,19 @@ void ComputeKernel::AppendSRV(Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> p
 
 void ComputeKernel::SetUAV(UINT slot, std::shared_ptr<Buffer> pUAV)
 {
+	SetUAV(slot, pUAV->GetD3DUAV());
+}
+
+void ComputeKernel::AppendUAV(std::shared_ptr<Buffer> pUAV)
+{
+	AppendUAV(pUAV->GetD3DUAV());
+}
+
+void ComputeKernel::SetUAV(UINT slot, Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView> pUAV)
+{
 	if (slot < pD3D_UAVs.size())
 	{
-		pD3D_UAVs[slot] = pUAV->GetD3DUAV().Get();
+		pD3D_UAVs[slot] = pUAV.Get();
 	}
 	else if (slot == pD3D_UAVs.size())
 	{
@@ -67,12 +77,12 @@ void ComputeKernel::SetUAV(UINT slot, std::shared_ptr<Buffer> pUAV)
 	}
 }
 
-void ComputeKernel::AppendUAV(std::shared_ptr<Buffer> pUAV)
+void ComputeKernel::AppendUAV(Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView> pUAV)
 {
-	pD3D_UAVs.emplace_back(pUAV->GetD3DUAV().Get());
+	pD3D_UAVs.emplace_back(pUAV.Get());
 }
 
-void ComputeKernel::Dispatch(Graphics& gfx, UINT threadGroupCountX, UINT threadGroupCountY, UINT threadGroupCountZ)
+void ComputeKernel::Dispatch(Graphics& gfx, UINT threadCountX, UINT threadCountY, UINT threadCountZ)
 {
 	gfx.GetContext()->CSSetShader(pComputeShader->GetComputeShader().Get(), nullptr, 0);
 
@@ -93,5 +103,5 @@ void ComputeKernel::Dispatch(Graphics& gfx, UINT threadGroupCountX, UINT threadG
 		gfx.GetContext()->CSSetUnorderedAccessViews(0, pD3D_UAVs.size(), pD3D_UAVs.data(), NULL);
 	}
 
-	gfx.GetContext()->Dispatch(threadGroupCountX, threadGroupCountY, threadGroupCountZ);
+	gfx.GetContext()->Dispatch(threadCountX / 8, threadCountY / 8, threadCountZ);
 }

@@ -48,9 +48,9 @@ public:
 
 		//testSRV = std::make_shared<StructuredBuffer<float>>(gfx, D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE, 64);
 		testUAV = std::make_shared<StructuredBuffer<float>>(gfx, D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS, 64);
-		testKernel->SetSRV(0u, pGbufferNormalRough->GetShaderResourceView());
+		//testKernel->SetSRV(0u, pGbufferNormalRough->GetShaderResourceView());
 		testKernel->SetUAV(0u, testUAV);
-		//testKernel->SetUAV(1u, pGbufferNormalRough->GetShaderResourceView());
+		testKernel->SetUAV(1u, pGbufferNormalRough->GetUAV());
 	}
 
 	~FrameCommander()
@@ -103,7 +103,11 @@ public:
 		// Compute test pass
 		{
 			gfx.GetContext()->OMSetRenderTargets(0u, nullptr, nullptr); // required for binding rendertarget to compute shader
-			testKernel->Dispatch(gfx, 64, 1, 1);
+			testKernel->Dispatch(gfx, 1280 / 2, 720 / 2, 1);
+
+			// todo: find better way than this
+			// clearing UAV bindings doesn't seem to work
+			gfx.GetContext()->ClearState();
 		}
 
 		// Final blit
