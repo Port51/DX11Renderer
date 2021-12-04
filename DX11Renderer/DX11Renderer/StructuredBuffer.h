@@ -18,22 +18,23 @@ public:
 		ZeroMemory(&bd, sizeof(bd));
 		bd.Usage = usage;
 		bd.ByteWidth = sizeof(C) * numElements;
-		bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+		bd.BindFlags = bindFlags;
 		bd.CPUAccessFlags = (usage == D3D11_USAGE_DYNAMIC) ? D3D11_CPU_ACCESS_WRITE : 0;
-		bd.StructureByteStride = 0u;
+		bd.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+		bd.StructureByteStride = sizeof(C);
 
 		GFX_THROW_NOINFO(gfx.GetDevice()->CreateBuffer(&bd, nullptr, &pBuffer));
 
 		if (bindFlags & D3D11_BIND_SHADER_RESOURCE)
 		{
-			gfx.GetDevice()->CreateShaderResourceView(pBuffer.Get(), nullptr, &pSRV);
+			GFX_THROW_NOINFO(gfx.GetDevice()->CreateShaderResourceView(pBuffer.Get(), nullptr, &pSRV));
 		}
 
 		if (bindFlags & D3D11_BIND_UNORDERED_ACCESS)
 		{
 			if (!useCounter)
 			{
-				gfx.GetDevice()->CreateUnorderedAccessView(pBuffer.Get(), nullptr, &pUAV);
+				GFX_THROW_NOINFO(gfx.GetDevice()->CreateUnorderedAccessView(pBuffer.Get(), nullptr, &pUAV));
 			}
 			else
 			{
@@ -43,7 +44,7 @@ public:
 				uavDesc.Buffer.NumElements = numElements;
 				uavDesc.Buffer.Flags = D3D11_BUFFER_UAV_FLAG_COUNTER;
 				uavDesc.Format = DXGI_FORMAT_UNKNOWN;
-				gfx.GetDevice()->CreateUnorderedAccessView(pBuffer.Get(), &uavDesc, &pUAV);
+				GFX_THROW_NOINFO(gfx.GetDevice()->CreateUnorderedAccessView(pBuffer.Get(), &uavDesc, &pUAV));
 			}
 		}
 	}
@@ -61,7 +62,5 @@ public:
 		gfx.GetContext()->PSSetShaderResources(slot, 1u, pSRV.GetAddressOf());
 	}
 private:
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pSRV;
-	Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView> pUAV;
 	bool useCounter;
 };

@@ -22,8 +22,18 @@ public:
 	{
 		return pBuffer;
 	}
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> GetD3DSRV()
+	{
+		return pSRV;
+	}
+	Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView> GetD3DUAV()
+	{
+		return pUAV;
+	}
 protected:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> pBuffer;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pSRV;
+	Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView> pUAV;
 	UINT bindFlags;
 	D3D11_USAGE usage;
 	UINT byteWidth;
