@@ -9,6 +9,7 @@ class ConstantBuffer : public Buffer
 {
 public:
 	ConstantBuffer(Graphics& gfx, D3D11_USAGE usage)
+		: Buffer(D3D11_BIND_CONSTANT_BUFFER, usage, GetCBufferSize(sizeof(C)))
 	{
 		SETUP_LOGGING_NOINFO(gfx);
 
@@ -20,12 +21,10 @@ public:
 		bd.CPUAccessFlags = (usage == D3D11_USAGE_DYNAMIC) ? D3D11_CPU_ACCESS_WRITE : 0;
 		bd.StructureByteStride = 0u;
 
-		D3D11_SUBRESOURCE_DATA sd;
-		ZeroMemory(&sd, sizeof(sd));
-		//sd.pSysMem = (void*)&initialData;
-		GFX_THROW_NOINFO(gfx.GetDevice()->CreateBuffer(&bd, &sd, &pBuffer));
+		GFX_THROW_NOINFO(gfx.GetDevice()->CreateBuffer(&bd, nullptr, &pBuffer));
 	}
 	ConstantBuffer(Graphics& gfx, D3D11_USAGE usage, const C& initialData)
+		: Buffer(D3D11_BIND_CONSTANT_BUFFER, usage, GetCBufferSize(sizeof(C)))
 	{
 		SETUP_LOGGING_NOINFO(gfx);
 

@@ -12,6 +12,9 @@ class Graphics;
 class Buffer : public Bindable
 {
 public:
+	Buffer(UINT bindFlags, D3D11_USAGE usage, UINT byteWidth)
+		: bindFlags(bindFlags), usage(usage), byteWidth(byteWidth)
+	{}
 	/*Buffer(Graphics& gfx, D3D11_BUFFER_DESC bufferDesc, const BaseBufferData& data)
 		: bindFlags(bufferDesc.BindFlags), usage(bufferDesc.Usage), byteWidth(bufferDesc.ByteWidth)
 	{
