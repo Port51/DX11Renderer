@@ -41,11 +41,50 @@ public:
 		pGbufferRenderViews[0] = pGbufferNormalRough->pRenderTargetView.Get();
 		pGbufferRenderViews[1] = pGbufferSecond->pRenderTargetView.Get();
 
+		// DEBUG
+		float *test = new float[4 * 80 * 60 * 4]; // 80 * 60, 4 channels, 1 big texture contains 4 80 * 60 subimage
+		for (int i = 0; i < 4 * 80 * 60 * 4; i++) test[i] = 0.7f;
+
+		HRESULT hr = S_OK;
+		D3D11_TEXTURE2D_DESC RTtextureDesc;
+		ZeroMemory(&RTtextureDesc, sizeof(D3D11_TEXTURE2D_DESC));
+		RTtextureDesc.Width = 160;
+		RTtextureDesc.Height = 120;
+		RTtextureDesc.MipLevels = 1;
+		RTtextureDesc.ArraySize = 1;
+		RTtextureDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+
+		RTtextureDesc.SampleDesc.Count = 1;
+		RTtextureDesc.SampleDesc.Quality = 0;
+		RTtextureDesc.Usage = D3D11_USAGE_DYNAMIC;
+		RTtextureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+		RTtextureDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+		RTtextureDesc.MiscFlags = 0;
+
+		D3D11_SUBRESOURCE_DATA InitData;
+		InitData.pSysMem = test;
+		InitData.SysMemPitch = sizeof(float) * 4 * 160;
+
+		Microsoft::WRL::ComPtr<ID3D11Texture2D> m_pInputTex2Ds;
+		gfx.GetDevice()->CreateTexture2D(&RTtextureDesc, &InitData, &m_pInputTex2Ds);
+		//V_RETURN(pd3dDevice->CreateTexture2D(&RTtextureDesc, NULL, &m_pInputTex2Ds));
+
+		D3D11_SHADER_RESOURCE_VIEW_DESC SRViewDesc;
+		ZeroMemory(&SRViewDesc, sizeof(SRViewDesc));
+		SRViewDesc.Format = RTtextureDesc.Format;
+		SRViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+		SRViewDesc.Texture2D.MostDetailedMip = 0;
+		SRViewDesc.Texture2D.MipLevels = 1;
+		gfx.GetDevice()->CreateShaderResourceView(m_pInputTex2Ds.Get(), &SRViewDesc, &m_pInputTexSRV);
+
+		delete[] test;
+
 		testKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, std::string("Assets\\Built\\Shaders\\ComputeTest.cso"), std::string("CSMain")));
 
 		//testSRV = std::make_shared<StructuredBuffer<float>>(gfx, D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE, 64);
 		testUAV = std::make_shared<StructuredBuffer<float>>(gfx, D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS, 64);
 		//testKernel->SetSRV(0u, pGbufferNormalRough->GetShaderResourceView());
+		testKernel->SetSRV(0u, m_pInputTexSRV);
 		testKernel->SetUAV(0u, testUAV);
 		//testKernel->SetUAV(1u, pGbufferNormalRough->GetShaderResourceView());
 	}
@@ -135,4 +174,7 @@ private:
 	const std::string DepthPrepassName = std::string("DepthPrepass");
 	const std::string GBufferRenderPassName = std::string("GBuffer");
 	const std::string FinalBlitRenderPassName = std::string("FinalBlit");
+
+	// debug
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pInputTexSRV;
 };
