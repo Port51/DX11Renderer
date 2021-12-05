@@ -44,7 +44,7 @@ public:
 		pRenderPasses.emplace(DepthPrepassName, std::make_unique<RenderPass>());
 		pRenderPasses.emplace(GBufferRenderPassName, std::make_unique<RenderPass>());
 		pRenderPasses.emplace(GeometryRenderPassName, std::make_unique<RenderPass>());
-		pRenderPasses.emplace(FinalBlitRenderPassName, std::make_unique<FullscreenPass>(gfx, pGbufferNormalRough, "Assets\\Built\\Shaders\\BlitPS.cso"));
+		pRenderPasses.emplace(FinalBlitRenderPassName, std::make_unique<FullscreenPass>(gfx, pCameraColor, "Assets\\Built\\Shaders\\BlitPS.cso"));
 
 		// Setup Gbuffer
 		pGbufferRenderViews.resize(GbufferSize);
