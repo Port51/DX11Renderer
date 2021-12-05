@@ -10,7 +10,7 @@ class InputLayout : public Bindable
 {
 public:
 	InputLayout(Graphics& gfx, VertexLayout layout, std::string vertexShaderName, ID3DBlob* pVertexShaderBytecode);
-	void BindIA(Graphics& gfx, UINT slot) override;
+	void BindIA(Graphics& gfx, const RenderPass& renderPass, UINT slot) override;
 public:
 	static std::shared_ptr<InputLayout> Resolve(Graphics& gfx, const VertexLayout& layout, std::string vertexShaderName, ID3DBlob* pVertexShaderBytecode);
 	static std::string GenerateUID(const VertexLayout& layout, std::string vertexShaderName, ID3DBlob* pVertexShaderBytecode = nullptr);

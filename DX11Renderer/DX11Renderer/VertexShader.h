@@ -10,7 +10,7 @@ class VertexShader : public Bindable
 {
 public:
 	VertexShader(Graphics& gfx, const std::string& path);
-	void BindVS(Graphics& gfx, UINT slot) override;
+	void BindVS(Graphics& gfx, const RenderPass& renderPass, UINT slot) override;
 	ID3DBlob* GetBytecode() const;
 public:
 	static std::shared_ptr<VertexShader> Resolve(Graphics& gfx, const std::string& path);

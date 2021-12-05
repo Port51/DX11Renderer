@@ -4,6 +4,7 @@
 
 class Graphics;
 class Bindable;
+class RenderPass;
 
 class Binding
 {
@@ -11,7 +12,7 @@ public:
 	Binding(std::shared_ptr<Bindable> _pBindable);
 	~Binding() = default;
 public:
-	void Bind(Graphics& gfx) const;
+	void Bind(Graphics& gfx, const RenderPass& renderPass) const;
 	std::shared_ptr<Bindable> GetBindable() const;
 	Binding& SetupIABinding(UINT slot = 0u);
 	Binding& SetupCSBinding(UINT slot);

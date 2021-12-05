@@ -51,13 +51,15 @@ public:
 		pGbufferRenderViews[0] = pGbufferNormalRough->pRenderTargetView.Get();
 		pGbufferRenderViews[1] = pGbufferSecond->pRenderTargetView.Get();
 
-		testKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, std::string("Assets\\Built\\Shaders\\ComputeTest.cso"), std::string("CSMain")));
+		pTestKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, std::string("Assets\\Built\\Shaders\\ComputeTest.cso"), std::string("CSMain")));
+
+		pTiledLightingKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, std::string("Assets\\Built\\Shaders\\TiledLightingPass.cso"), std::string("CSMain")));
 
 		//testSRV = std::make_shared<StructuredBuffer<float>>(gfx, D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE, 64);
-		testUAV = std::make_shared<StructuredBuffer<float>>(gfx, D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS, 64);
+		pTestUAV = std::make_shared<StructuredBuffer<float>>(gfx, D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS, 64);
 		//testKernel->SetSRV(0u, pGbufferNormalRough->GetShaderResourceView());
-		testKernel->SetUAV(0u, testUAV);
-		testKernel->SetUAV(1u, pGbufferNormalRough->GetUAV());
+		pTestKernel->SetUAV(0u, pTestUAV);
+		pTestKernel->SetUAV(1u, pGbufferNormalRough->GetUAV());
 	}
 
 	~FrameCommander()
@@ -77,7 +79,10 @@ public:
 		// Early Z pass
 		// todo: put position into separate vert buffer and only bind that here
 		{
-			Bind::DepthStencilState::Resolve(gfx, Bind::DepthStencilState::Mode::StencilOff)->BindOM(gfx);
+			const std::unique_ptr<RenderPass>& pass = pRenderPasses[DepthPrepassName];
+
+			pass->BindGlobals(gfx);
+			Bind::DepthStencilState::Resolve(gfx, Bind::DepthStencilState::Mode::StencilOff)->BindOM(gfx, *pass);
 			//pSmallDepthStencil->Clear(gfx);
 			gfx.pDepthStencil->Clear(gfx);
 
@@ -85,15 +90,18 @@ public:
 			gfx.GetContext()->OMSetRenderTargets(1, pGbufferRenderViews.data(), gfx.pDepthStencil->GetView().Get());
 			gfx.SetViewport(gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
-			pRenderPasses[DepthPrepassName]->Execute(gfx);
+			pass->Execute(gfx);
 		}
 
 		// GBuffer pass
 		{
+			const std::unique_ptr<RenderPass>& pass = pRenderPasses[GBufferRenderPassName];
+
 			//pCameraColor->SetRenderTarget(gfx.GetContext().Get(), gfx.pDepthStencilView.Get());
 			//gfx.SetRenderTarget(pCameraColor->pRenderTargetView);
 
-			Bind::DepthStencilState::Resolve(gfx, Bind::DepthStencilState::Mode::Gbuffer)->BindOM(gfx);
+			pass->BindGlobals(gfx);
+			Bind::DepthStencilState::Resolve(gfx, Bind::DepthStencilState::Mode::Gbuffer)->BindOM(gfx, *pass);
 			pGbufferNormalRough->ClearRenderTarget(gfx.GetContext().Get(), 1.f, 0.f, 0.f, 1.f);
 			pGbufferSecond->ClearRenderTarget(gfx.GetContext().Get(), 1.f, 0.f, 0.f, 1.f);
 
@@ -101,28 +109,40 @@ public:
 			gfx.GetContext()->OMSetRenderTargets(2, &pGbufferRenderViews[0], gfx.pDepthStencil->GetView().Get());
 			gfx.SetViewport(gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
-			pRenderPasses[GBufferRenderPassName]->Execute(gfx);
+			pass->Execute(gfx);
 		}
 
 		// Tiled lighting pass
 		{
+			gfx.GetContext()->OMSetRenderTargets(0u, nullptr, nullptr); // required for binding rendertarget to compute shader
+			pTiledLightingKernel->Dispatch(gfx, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1);
 
+			// todo: find better way than this
+			// clearing UAV bindings doesn't seem to work
+			gfx.GetContext()->ClearState();
 		}
 
 		// Geometry pass
 		{
-			Bind::DepthStencilState::Resolve(gfx, Bind::DepthStencilState::Mode::Gbuffer)->BindOM(gfx);
+			const std::unique_ptr<RenderPass>& pass = pRenderPasses[GeometryRenderPassName];
+
+			// Bind global textures here
+			pass->BindGlobals(gfx);
+			gfx.GetContext()->PSSetShaderResources(0u, 1u, pSpecularLighting->GetShaderResourceView().GetAddressOf());
+			gfx.GetContext()->PSSetShaderResources(1u, 1u, pDiffuseLighting->GetShaderResourceView().GetAddressOf());
+
+			Bind::DepthStencilState::Resolve(gfx, Bind::DepthStencilState::Mode::Gbuffer)->BindOM(gfx, *pass);
 
 			pCameraColor->BindAsTarget(gfx, gfx.pDepthStencil->GetView());
 			gfx.SetViewport(gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
-			pRenderPasses[GeometryRenderPassName]->Execute(gfx);
+			pass->Execute(gfx);
 		}
 
 		// Compute test pass
 		{
 			gfx.GetContext()->OMSetRenderTargets(0u, nullptr, nullptr); // required for binding rendertarget to compute shader
-			testKernel->Dispatch(gfx, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1);
+			pTestKernel->Dispatch(gfx, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1);
 
 			// todo: find better way than this
 			// clearing UAV bindings doesn't seem to work
@@ -131,12 +151,15 @@ public:
 
 		// Final blit
 		{
-			Bind::DepthStencilState::Resolve(gfx, Bind::DepthStencilState::Mode::StencilOff)->BindOM(gfx);
+			const std::unique_ptr<RenderPass>& pass = pRenderPasses[FinalBlitRenderPassName];
+
+			pass->BindGlobals(gfx);
+			Bind::DepthStencilState::Resolve(gfx, Bind::DepthStencilState::Mode::StencilOff)->BindOM(gfx, *pass);
 
 			gfx.SetViewport(gfx.GetScreenWidth(), gfx.GetScreenHeight());
 			gfx.GetContext()->OMSetRenderTargets(1u, gfx.pBackBufferView.GetAddressOf(), gfx.pDepthStencil->GetView().Get());
 
-			pRenderPasses[FinalBlitRenderPassName]->Execute(gfx);
+			pass->Execute(gfx);
 		}
 	}
 
@@ -160,9 +183,10 @@ private:
 
 	std::shared_ptr<RenderTarget> pCameraColor;
 
-	std::shared_ptr<StructuredBuffer<float>> testSRV;
-	std::shared_ptr<StructuredBuffer<float>> testUAV;
-	std::unique_ptr<ComputeKernel> testKernel;
+	std::shared_ptr<StructuredBuffer<float>> pTestSRV;
+	std::shared_ptr<StructuredBuffer<float>> pTestUAV;
+	std::unique_ptr<ComputeKernel> pTestKernel;
+	std::unique_ptr<ComputeKernel> pTiledLightingKernel;
 private:
 	const std::string DepthPrepassName = std::string("DepthPrepass");
 	const std::string GBufferRenderPassName = std::string("GBuffer");

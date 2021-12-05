@@ -35,12 +35,12 @@ void MeshRenderer::SubmitDrawCalls(std::unique_ptr<FrameCommander>& frame, dx::F
 	pMaterial->SubmitDrawCalls(frame, *this);
 }
 
-void MeshRenderer::Bind(Graphics& gfx) const
+void MeshRenderer::Bind(Graphics& gfx, const RenderPass& renderPass) const
 {
-	pTopology->BindIA(gfx, 0u);
-	pIndexBuffer->BindIA(gfx, 0u);
+	pTopology->BindIA(gfx, renderPass, 0u);
+	pIndexBuffer->BindIA(gfx, renderPass, 0u);
 	pVertexBufferWrapper->BindIA(gfx, 0u);
-	pTransformCbuf->BindVS(gfx, 0u);
+	pTransformCbuf->BindVS(gfx, renderPass, 0u);
 }
 
 UINT MeshRenderer::GetIndexCount() const

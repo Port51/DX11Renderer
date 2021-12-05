@@ -96,17 +96,17 @@ void RenderTexture::Shutdown()
 	return;
 }
 
-void RenderTexture::BindCS(Graphics& gfx, UINT slot)
+void RenderTexture::BindCS(Graphics& gfx, const RenderPass& renderPass, UINT slot)
 {
 	gfx.GetContext()->CSSetShaderResources(slot, 1u, pShaderResourceView.GetAddressOf());
 }
 
-void RenderTexture::BindVS(Graphics& gfx, UINT slot)
+void RenderTexture::BindVS(Graphics& gfx, const RenderPass& renderPass, UINT slot)
 {
 	gfx.GetContext()->VSSetShaderResources(slot, 1u, pShaderResourceView.GetAddressOf());
 }
 
-void RenderTexture::BindPS(Graphics& gfx, UINT slot)
+void RenderTexture::BindPS(Graphics& gfx, const RenderPass& renderPass, UINT slot)
 {
 	gfx.GetContext()->PSSetShaderResources(slot, 1u, pShaderResourceView.GetAddressOf());
 }

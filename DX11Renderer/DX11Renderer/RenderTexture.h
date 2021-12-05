@@ -18,9 +18,9 @@ public:
 	virtual void Init(ID3D11Device* pDevice, int textureWidth, int textureHeight);
 	void Shutdown();
 
-	void BindCS(Graphics& gfx, UINT slot) override;
-	void BindVS(Graphics& gfx, UINT slot) override;
-	void BindPS(Graphics& gfx, UINT slot) override;
+	void BindCS(Graphics& gfx, const RenderPass& renderPass, UINT slot) override;
+	void BindVS(Graphics& gfx, const RenderPass& renderPass, UINT slot) override;
+	void BindPS(Graphics& gfx, const RenderPass& renderPass, UINT slot) override;
 
 public:
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pRenderTargetView;

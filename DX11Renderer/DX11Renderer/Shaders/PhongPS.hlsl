@@ -25,8 +25,13 @@ cbuffer ObjectCBuf : register(b1)
     matrix modelViewProj;
 };*/
 
-Texture2D tex : register(t0);
-Texture2D nmap : register(t1);
+// Per-frame
+Texture2D SpecularLightingRT : register(t0);
+Texture2D DiffuseLightingRT : register(t1);
+
+// Per-draw
+Texture2D tex : register(t2);
+Texture2D nmap : register(t3);
 SamplerState splr : register(s0);
 
 #include "Lighting/BRDF.hlsli"

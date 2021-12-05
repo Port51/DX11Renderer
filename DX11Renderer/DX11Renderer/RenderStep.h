@@ -8,6 +8,7 @@
 
 class MeshRenderer;
 class FrameCommander;
+class RenderPass;
 
 class RenderStep
 {
@@ -26,11 +27,11 @@ public:
 		return bindings[bindings.size() - 1];
 	}
 	void SubmitDrawCalls(std::unique_ptr<FrameCommander>& frame, const MeshRenderer& renderer) const;
-	void Bind(Graphics& gfx) const
+	void Bind(Graphics& gfx, const RenderPass& renderPass) const
 	{
 		for (const auto& b : bindings)
 		{
-			b.Bind(gfx);
+			b.Bind(gfx, renderPass);
 		}
 	}
 	void InitializeParentReferences(const MeshRenderer& parent);

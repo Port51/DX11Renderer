@@ -18,7 +18,7 @@ namespace Bind
 		};
 		DepthStencilState(Graphics& gfx, Mode mode);
 		DepthStencilState(Graphics& gfx, D3D11_DEPTH_STENCIL_DESC desc);
-		void BindOM(Graphics& gfx) override;
+		void BindOM(Graphics& gfx, const RenderPass& renderPass) override;
 		static std::shared_ptr<DepthStencilState> Resolve(Graphics& gfx, Mode mode);
 	protected:
 		static std::string GenerateUID(Mode mode);

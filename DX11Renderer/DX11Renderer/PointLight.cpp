@@ -53,5 +53,6 @@ void PointLight::Bind(Graphics& gfx, dx::FXMMATRIX viewMatrix) const
 	dataCopy.invRangeSqr = 1.f / std::max(range * range, 0.0001f);
 
 	globalLightCbuf.Update(gfx, PointLightCBuf{ dataCopy });
-	globalLightCbuf.BindPS(gfx, 0u);
+	//globalLightCbuf.BindPS(gfx, 0u);
+	gfx.GetContext()->PSSetConstantBuffers(0u, 1u, globalLightCbuf.GetD3DBuffer().GetAddressOf());
 }

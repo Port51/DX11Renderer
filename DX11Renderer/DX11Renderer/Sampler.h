@@ -14,9 +14,9 @@ public:
 	Sampler(Graphics& gfx, D3D11_TEXTURE_ADDRESS_MODE wrapU, D3D11_TEXTURE_ADDRESS_MODE wrapV, D3D11_TEXTURE_ADDRESS_MODE wrapW);
 	Sampler(Graphics& gfx, D3D11_SAMPLER_DESC samplerDesc);
 public:
-	void BindCS(Graphics& gfx, UINT slot) override;
-	void BindVS(Graphics& gfx, UINT slot) override;
-	void BindPS(Graphics& gfx, UINT slot) override;
+	void BindCS(Graphics& gfx, const RenderPass& renderPass, UINT slot) override;
+	void BindVS(Graphics& gfx, const RenderPass& renderPass, UINT slot) override;
+	void BindPS(Graphics& gfx, const RenderPass& renderPass, UINT slot) override;
 public:
 	static std::shared_ptr<Bindable> Resolve(Graphics& gfx);
 	static std::shared_ptr<Bindable> Resolve(Graphics& gfx, D3D11_TEXTURE_ADDRESS_MODE wrapU);

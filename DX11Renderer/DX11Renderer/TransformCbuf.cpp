@@ -15,7 +15,7 @@ TransformCbuf::TransformCbuf(Graphics& gfx, const MeshRenderer& parent)
 ///
 /// Update cbuffer based on transform, then bind
 ///
-void TransformCbuf::BindVS(Graphics& gfx, UINT slot)
+void TransformCbuf::BindVS(Graphics& gfx, const RenderPass& renderPass, UINT slot)
 {
 	UpdateBindImpl(gfx, GetTransforms(gfx));
 }

@@ -1,43 +1,44 @@
 #include "Binding.h"
 #include "Bindable.h"
 #include <exception>
+#include "RenderPass.h"
 
 Binding::Binding(std::shared_ptr<Bindable> _pBindable)
 	: pBindable(_pBindable)
 {
 }
 
-void Binding::Bind(Graphics& gfx) const
+void Binding::Bind(Graphics& gfx, const RenderPass& renderPass) const
 {
 	int bindings = 0;
 	if (bindToInputAssemblerStageSlot != -1)
 	{
-		pBindable->BindIA(gfx, bindToInputAssemblerStageSlot);
+		pBindable->BindIA(gfx, renderPass, bindToInputAssemblerStageSlot);
 		bindings++;
 	}
 	if (bindToComputeStageSlot != -1)
 	{
-		pBindable->BindCS(gfx, bindToComputeStageSlot);
+		pBindable->BindCS(gfx, renderPass, bindToComputeStageSlot);
 		bindings++;
 	}
 	if (bindToVertexStageSlot != -1)
 	{
-		pBindable->BindVS(gfx, bindToVertexStageSlot);
+		pBindable->BindVS(gfx, renderPass, bindToVertexStageSlot);
 		bindings++;
 	}
 	if (bindToPixelStageSlot != -1)
 	{
-		pBindable->BindPS(gfx, bindToPixelStageSlot);
+		pBindable->BindPS(gfx, renderPass, bindToPixelStageSlot);
 		bindings++;
 	}
 	if (bindToRasterizerStageSlot)
 	{
-		pBindable->BindRS(gfx);
+		pBindable->BindRS(gfx, renderPass);
 		bindings++;
 	}
 	if (bindToOutputMergerStageSlot)
 	{
-		pBindable->BindOM(gfx);
+		pBindable->BindOM(gfx, renderPass);
 		bindings++;
 	}
 	if (bindings == 0)

@@ -42,15 +42,15 @@ public:
 		GFX_THROW_NOINFO(gfx.GetDevice()->CreateBuffer(&bd, &sd, &pBuffer));
 	}
 public:
-	void BindCS(Graphics& gfx, UINT slot) override
+	void BindCS(Graphics& gfx, const RenderPass& renderPass, UINT slot) override
 	{
 		gfx.GetContext()->CSSetConstantBuffers(slot, 1u, pBuffer.GetAddressOf());
 	}
-	void BindVS(Graphics& gfx, UINT slot) override
+	void BindVS(Graphics& gfx, const RenderPass& renderPass, UINT slot) override
 	{
 		gfx.GetContext()->VSSetConstantBuffers(slot, 1u, pBuffer.GetAddressOf());
 	}
-	void BindPS(Graphics& gfx, UINT slot) override
+	void BindPS(Graphics& gfx, const RenderPass& renderPass, UINT slot) override
 	{
 		gfx.GetContext()->PSSetConstantBuffers(slot, 1u, pBuffer.GetAddressOf());
 	}

@@ -49,15 +49,15 @@ public:
 		}
 	}
 
-	void BindCS(Graphics& gfx, UINT slot) override
+	void BindCS(Graphics& gfx, const RenderPass& renderPass, UINT slot) override
 	{
 		gfx.GetContext()->CSSetShaderResources(slot, 1u, pSRV.GetAddressOf());
 	}
-	void BindVS(Graphics& gfx, UINT slot) override
+	void BindVS(Graphics& gfx, const RenderPass& renderPass, UINT slot) override
 	{
 		gfx.GetContext()->VSSetShaderResources(slot, 1u, pSRV.GetAddressOf());
 	}
-	void BindPS(Graphics& gfx, UINT slot) override
+	void BindPS(Graphics& gfx, const RenderPass& renderPass, UINT slot) override
 	{
 		gfx.GetContext()->PSSetShaderResources(slot, 1u, pSRV.GetAddressOf());
 	}

@@ -45,7 +45,7 @@ void FullscreenPass::Execute(Graphics& gfx) const
 {
 	for (auto& binding : bindings)
 	{
-		binding.Bind(gfx);
+		binding.Bind(gfx, *this);
 	}
 	pVertexBufferWrapper->BindIA(gfx, 0u);
 	gfx.DrawIndexed(3u);

@@ -18,7 +18,7 @@ InputLayout::InputLayout(Graphics& gfx, VertexLayout _layout, std::string vertex
 	));
 }
 
-void InputLayout::BindIA(Graphics& gfx, UINT slot)
+void InputLayout::BindIA(Graphics& gfx, const RenderPass& renderPass, UINT slot)
 {
 	gfx.GetContext()->IASetInputLayout(pInputLayout.Get());
 }

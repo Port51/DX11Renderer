@@ -8,7 +8,7 @@ namespace Bind
 	public:
 		NullPixelShader(Graphics& gfx);
 	public:
-		void BindPS(Graphics& gfx, UINT slot) override;
+		void BindPS(Graphics& gfx, const RenderPass& renderPass, UINT slot) override;
 		static std::shared_ptr<NullPixelShader> Resolve(Graphics& gfx);
 		static std::string GenerateUID();
 	};

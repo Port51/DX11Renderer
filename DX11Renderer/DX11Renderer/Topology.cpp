@@ -6,7 +6,7 @@ Topology::Topology(Graphics& gfx, D3D11_PRIMITIVE_TOPOLOGY type)
 	: type(type)
 {}
 
-void Topology::BindIA(Graphics& gfx, UINT slot)
+void Topology::BindIA(Graphics& gfx, const RenderPass& renderPass, UINT slot)
 {
 	gfx.GetContext()->IASetPrimitiveTopology(type);
 }

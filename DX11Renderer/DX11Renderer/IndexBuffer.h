@@ -14,7 +14,7 @@ class IndexBuffer : public Bindable
 public:
 	IndexBuffer(Graphics& gfx, const std::vector<unsigned short>& indices);
 public:
-	void BindIA(Graphics& gfx, UINT slot) override;
+	void BindIA(Graphics& gfx, const RenderPass& renderPass, UINT slot) override;
 	UINT GetIndexCount() const;
 public:
 	static std::shared_ptr<IndexBuffer> Resolve(Graphics& gfx, std::string id, const std::vector<unsigned short>& indices);
