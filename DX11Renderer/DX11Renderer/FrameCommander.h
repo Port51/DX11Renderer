@@ -29,8 +29,11 @@ public:
 		pGbufferSecond = std::make_shared<RenderTarget>(gfx);
 		pGbufferSecond->Init(gfx.GetDevice().Get(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
-		pGbufferNormalRough2 = std::make_shared<RenderTarget>(gfx);
-		pGbufferNormalRough2->Init(gfx.GetDevice().Get(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
+		pSpecularLighting = std::make_shared<RenderTarget>(gfx);
+		pSpecularLighting->Init(gfx.GetDevice().Get(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
+
+		pDiffuseLighting = std::make_shared<RenderTarget>(gfx);
+		pDiffuseLighting->Init(gfx.GetDevice().Get(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
 		pSmallDepthStencil = std::make_shared<DepthStencilTarget>(gfx, gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
@@ -55,11 +58,7 @@ public:
 
 	~FrameCommander()
 	{
-		for (int i = 0; i < GbufferSize; ++i)
-		{
-			// Causes an error when exiting built exe
-			//delete pGbufferRenderViews[i];
-		}
+		
 	}
 
 	void AcceptRenderJob(RenderJob job, std::string targetPass)
@@ -75,10 +74,11 @@ public:
 		// todo: put position into separate vert buffer and only bind that here
 		{
 			Bind::DepthStencilState::Resolve(gfx, Bind::DepthStencilState::Mode::StencilOff)->BindOM(gfx);
-			pSmallDepthStencil->Clear(gfx);
+			//pSmallDepthStencil->Clear(gfx);
+			gfx.pDepthStencil->Clear(gfx);
 
 			// MRT bind
-			gfx.GetContext()->OMSetRenderTargets(1, pGbufferRenderViews.data(), pSmallDepthStencil->GetView().Get());
+			gfx.GetContext()->OMSetRenderTargets(1, pGbufferRenderViews.data(), gfx.pDepthStencil->GetView().Get());
 			gfx.SetViewport(gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
 			pRenderPasses[DepthPrepassName]->Execute(gfx);
@@ -94,10 +94,15 @@ public:
 			pGbufferSecond->ClearRenderTarget(gfx.GetContext().Get(), 1.f, 0.f, 0.f, 1.f);
 
 			// MRT bind
-			gfx.GetContext()->OMSetRenderTargets(2, &pGbufferRenderViews[0], pSmallDepthStencil->GetView().Get());
+			gfx.GetContext()->OMSetRenderTargets(2, &pGbufferRenderViews[0], gfx.pDepthStencil->GetView().Get());
 			gfx.SetViewport(gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
 			pRenderPasses[GBufferRenderPassName]->Execute(gfx);
+		}
+
+		// Tiled lighting pass
+		{
+
 		}
 
 		// Compute test pass
@@ -133,9 +138,11 @@ private:
 	std::vector<ID3D11RenderTargetView*> pGbufferRenderViews;
 	std::shared_ptr<DepthStencilTarget> pSmallDepthStencil;
 	std::shared_ptr<RenderTarget> pGbufferNormalRough;
-	std::shared_ptr<RenderTarget> pGbufferNormalRough2;
 	std::shared_ptr<RenderTarget> pGbufferSecond;
 	std::unordered_map<std::string, std::unique_ptr<RenderPass>> pRenderPasses;
+
+	std::shared_ptr<RenderTarget> pSpecularLighting;
+	std::shared_ptr<RenderTarget> pDiffuseLighting;
 
 	std::shared_ptr<StructuredBuffer<float>> testSRV;
 	std::shared_ptr<StructuredBuffer<float>> testUAV;
