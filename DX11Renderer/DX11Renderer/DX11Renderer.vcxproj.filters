@@ -622,5 +622,8 @@
     <FxCompile Include="Shaders\ComputeTest.hlsl">
       <Filter>Shaders\TiledLighting</Filter>
     </FxCompile>
+    <FxCompile Include="Shaders\OpaqueGbuffer.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

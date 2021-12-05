@@ -8,7 +8,20 @@ Properties
 }
 Pass
 {
+	Name, DepthPrepass
+	VS, Assets\\Built\\Shaders\\PhongVS.cso
+}
+Pass
+{
 	Name, GBuffer
+	VS, Assets\\Built\\Shaders\\PhongVS.cso
+	PS, Assets\\Built\\Shaders\\OpaqueGbuffer.cso
+	Texture, tex, 0
+	Texture, nmap, 1
+}
+Pass
+{
+	Name, Geometry
 	VS, Assets\\Built\\Shaders\\PhongVS.cso
 	PS, Assets\\Built\\Shaders\\PhongPS.cso
 	Texture, tex, 0

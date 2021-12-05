@@ -6,5 +6,11 @@ Pass
 {
 	Name, GBuffer
 	VS, Assets\\Built\\Shaders\\SolidVS.cso
-	PS, Assets\\Built\\Shaders\\SolidPS.cso
+	PS, Assets\\Built\\Shaders\\OpaqueGbuffer.cso
+}
+Pass
+{
+	Name, Geometry
+	VS, Assets\\Built\\Shaders\\PhongVS.cso
+	PS, Assets\\Built\\Shaders\\PhongPS.cso
 }

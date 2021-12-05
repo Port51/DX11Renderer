@@ -34,12 +34,16 @@ public:
 
 		pDiffuseLighting = std::make_shared<RenderTarget>(gfx);
 		pDiffuseLighting->Init(gfx.GetDevice().Get(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
+		
+		pCameraColor = std::make_shared<RenderTarget>(gfx);
+		pCameraColor->Init(gfx.GetDevice().Get(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
 		pSmallDepthStencil = std::make_shared<DepthStencilTarget>(gfx, gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
 		// Setup passes
 		pRenderPasses.emplace(DepthPrepassName, std::make_unique<RenderPass>());
 		pRenderPasses.emplace(GBufferRenderPassName, std::make_unique<RenderPass>());
+		pRenderPasses.emplace(GeometryRenderPassName, std::make_unique<RenderPass>());
 		pRenderPasses.emplace(FinalBlitRenderPassName, std::make_unique<FullscreenPass>(gfx, pGbufferNormalRough, "Assets\\Built\\Shaders\\BlitPS.cso"));
 
 		// Setup Gbuffer
@@ -105,6 +109,16 @@ public:
 
 		}
 
+		// Geometry pass
+		{
+			Bind::DepthStencilState::Resolve(gfx, Bind::DepthStencilState::Mode::Gbuffer)->BindOM(gfx);
+
+			pCameraColor->BindAsTarget(gfx, gfx.pDepthStencil->GetView());
+			gfx.SetViewport(gfx.GetScreenWidth(), gfx.GetScreenHeight());
+
+			pRenderPasses[GeometryRenderPassName]->Execute(gfx);
+		}
+
 		// Compute test pass
 		{
 			gfx.GetContext()->OMSetRenderTargets(0u, nullptr, nullptr); // required for binding rendertarget to compute shader
@@ -144,11 +158,14 @@ private:
 	std::shared_ptr<RenderTarget> pSpecularLighting;
 	std::shared_ptr<RenderTarget> pDiffuseLighting;
 
+	std::shared_ptr<RenderTarget> pCameraColor;
+
 	std::shared_ptr<StructuredBuffer<float>> testSRV;
 	std::shared_ptr<StructuredBuffer<float>> testUAV;
 	std::unique_ptr<ComputeKernel> testKernel;
 private:
 	const std::string DepthPrepassName = std::string("DepthPrepass");
 	const std::string GBufferRenderPassName = std::string("GBuffer");
+	const std::string GeometryRenderPassName = std::string("Geometry");
 	const std::string FinalBlitRenderPassName = std::string("FinalBlit");
 };
