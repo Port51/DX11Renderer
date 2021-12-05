@@ -2,6 +2,7 @@
 #include "Surface.h"
 #include "GraphicsThrowMacros.h"
 #include "SharedCodex.h"
+#include "RenderPass.h"
 
 namespace wrl = Microsoft::WRL;
 
@@ -113,12 +114,12 @@ void Texture::BindCS(Graphics& gfx, const RenderPass& renderPass, UINT slot)
 
 void Texture::BindVS(Graphics& gfx, const RenderPass& renderPass, UINT slot)
 {
-	gfx.GetContext()->VSSetShaderResources(slot, 1u, pShaderResourceView.GetAddressOf());
+	gfx.GetContext()->VSSetShaderResources(renderPass.GetVSTextureSlotOffset() + slot, 1u, pShaderResourceView.GetAddressOf());
 }
 
 void Texture::BindPS(Graphics& gfx, const RenderPass& renderPass, UINT slot)
 {
-	gfx.GetContext()->PSSetShaderResources(slot, 1u, pShaderResourceView.GetAddressOf());
+	gfx.GetContext()->PSSetShaderResources(renderPass.GetPSTextureSlotOffset() + slot, 1u, pShaderResourceView.GetAddressOf());
 }
 
 Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView> Texture::GetUAV() const

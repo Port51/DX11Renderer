@@ -44,6 +44,9 @@ public:
 		pRenderPasses.emplace(DepthPrepassName, std::make_unique<RenderPass>());
 		pRenderPasses.emplace(GBufferRenderPassName, std::make_unique<RenderPass>());
 		pRenderPasses.emplace(GeometryRenderPassName, std::make_unique<RenderPass>());
+		pRenderPasses[GeometryRenderPassName]->AppendGlobalPSTextureBind(pSpecularLighting->GetShaderResourceView().Get());
+		pRenderPasses[GeometryRenderPassName]->AppendGlobalPSTextureBind(pDiffuseLighting->GetShaderResourceView().Get());
+
 		pRenderPasses.emplace(FinalBlitRenderPassName, std::make_unique<FullscreenPass>(gfx, pCameraColor, "Assets\\Built\\Shaders\\BlitPS.cso"));
 
 		// Setup Gbuffer
@@ -128,8 +131,6 @@ public:
 
 			// Bind global textures here
 			pass->BindGlobals(gfx);
-			gfx.GetContext()->PSSetShaderResources(0u, 1u, pSpecularLighting->GetShaderResourceView().GetAddressOf());
-			gfx.GetContext()->PSSetShaderResources(1u, 1u, pDiffuseLighting->GetShaderResourceView().GetAddressOf());
 
 			Bind::DepthStencilState::Resolve(gfx, Bind::DepthStencilState::Mode::Gbuffer)->BindOM(gfx, *pass);
 

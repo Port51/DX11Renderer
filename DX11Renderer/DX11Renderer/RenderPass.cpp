@@ -39,3 +39,13 @@ void RenderPass::AppendGlobalPSTextureBind(ID3D11ShaderResourceView * pSRV)
 {
 	pGlobalPSTextureBinds.emplace_back(pSRV);
 }
+
+UINT RenderPass::GetVSTextureSlotOffset() const
+{
+	return pGlobalVSTextureBinds.size();
+}
+
+UINT RenderPass::GetPSTextureSlotOffset() const
+{
+	return pGlobalPSTextureBinds.size();
+}

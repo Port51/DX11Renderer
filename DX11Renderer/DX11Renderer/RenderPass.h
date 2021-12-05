@@ -21,6 +21,8 @@ public:
 public:
 	void AppendGlobalVSTextureBind(ID3D11ShaderResourceView* pSRV);
 	void AppendGlobalPSTextureBind(ID3D11ShaderResourceView* pSRV);
+	UINT GetVSTextureSlotOffset() const;
+	UINT GetPSTextureSlotOffset() const;
 private:
 	std::vector<RenderJob> jobs; // will be replaced by render graph
 

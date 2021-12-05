@@ -54,7 +54,6 @@ PS_OUTPUT main(v2f i) : SV_Target
     float3 bitangentVS = cross(i.tangentVS, i.normalVS);
     float3x3 tbnMatrix = float3x3(i.tangentVS.xyz, bitangentVS.xyz, i.normalVS.xyz);
     
-    i.uv0.y = 1 - i.uv0.y;
     float4 diffuseTex = tex.Sample(splr, i.uv0);
     
     float3 n;

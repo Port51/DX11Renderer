@@ -44,5 +44,6 @@ float SCurve(float x)
 
 float4 main(v2f i) : SV_Target
 {
-    return 1.f;
+    float4 diffuseTex = tex.Sample(splr, i.uv0);
+    return diffuseTex;
 }
