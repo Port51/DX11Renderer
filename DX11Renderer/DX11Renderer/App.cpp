@@ -14,11 +14,11 @@
 
 GDIPlusManager gdipm;
 
-App::App()
+App::App(int screenWidth, int screenHeight)
 	:
-	wnd(ResolutionX, ResolutionY, "DX11 Renderer"),
+	wnd(screenWidth, screenHeight, "DX11 Renderer"),
 	light(wnd.Gfx(), dx::XMFLOAT3(4.2f, 4.2f, -5.3f), dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 9.0f),
-	cam(40.0f, (float)ResolutionX / (float)ResolutionY)
+	cam(40.0f, (float)screenWidth / (float)screenHeight)
 {
 	fc = std::make_unique<FrameCommander>(wnd.Gfx());
 

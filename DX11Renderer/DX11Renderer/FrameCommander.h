@@ -24,15 +24,15 @@ public:
 	{
 		// Setup render targets
 		pGbufferNormalRough = std::make_shared<RenderTarget>(gfx);
-		pGbufferNormalRough->Init(gfx.GetDevice().Get(), 1280 / 2, 720 / 2);
+		pGbufferNormalRough->Init(gfx.GetDevice().Get(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
 		pGbufferSecond = std::make_shared<RenderTarget>(gfx);
-		pGbufferSecond->Init(gfx.GetDevice().Get(), 1280 / 2, 720 / 2);
+		pGbufferSecond->Init(gfx.GetDevice().Get(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
 		pGbufferNormalRough2 = std::make_shared<RenderTarget>(gfx);
-		pGbufferNormalRough2->Init(gfx.GetDevice().Get(), 1280 / 2, 720 / 2);
+		pGbufferNormalRough2->Init(gfx.GetDevice().Get(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
-		pSmallDepthStencil = std::make_shared<DepthStencilTarget>(gfx, 1280 / 2, 720 / 2);
+		pSmallDepthStencil = std::make_shared<DepthStencilTarget>(gfx, gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
 		// Setup passes
 		pRenderPasses.emplace(DepthPrepassName, std::make_unique<RenderPass>());
@@ -79,7 +79,7 @@ public:
 
 			// MRT bind
 			gfx.GetContext()->OMSetRenderTargets(1, pGbufferRenderViews.data(), pSmallDepthStencil->GetView().Get());
-			gfx.SetViewport(1280 / 2, 720 / 2);
+			gfx.SetViewport(gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
 			pRenderPasses[DepthPrepassName]->Execute(gfx);
 		}
@@ -95,7 +95,7 @@ public:
 
 			// MRT bind
 			gfx.GetContext()->OMSetRenderTargets(2, &pGbufferRenderViews[0], pSmallDepthStencil->GetView().Get());
-			gfx.SetViewport(1280 / 2, 720 / 2);
+			gfx.SetViewport(gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
 			pRenderPasses[GBufferRenderPassName]->Execute(gfx);
 		}
@@ -103,7 +103,7 @@ public:
 		// Compute test pass
 		{
 			gfx.GetContext()->OMSetRenderTargets(0u, nullptr, nullptr); // required for binding rendertarget to compute shader
-			testKernel->Dispatch(gfx, 1280 / 2, 720 / 2, 1);
+			testKernel->Dispatch(gfx, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1);
 
 			// todo: find better way than this
 			// clearing UAV bindings doesn't seem to work
@@ -114,7 +114,7 @@ public:
 		{
 			Bind::DepthStencilState::Resolve(gfx, Bind::DepthStencilState::Mode::StencilOff)->BindOM(gfx);
 
-			gfx.SetViewport(1280, 720);
+			gfx.SetViewport(gfx.GetScreenWidth(), gfx.GetScreenHeight());
 			gfx.GetContext()->OMSetRenderTargets(1u, gfx.pBackBufferView.GetAddressOf(), gfx.pDepthStencil->GetView().Get());
 
 			pRenderPasses[FinalBlitRenderPassName]->Execute(gfx);

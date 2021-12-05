@@ -130,6 +130,9 @@
     <Filter Include="Header Files\Codex">
       <UniqueIdentifier>{0a2caff0-c6e9-46de-bb16-d55e6675eb3a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders\TiledLighting">
+      <UniqueIdentifier>{f7e6cbcc-d824-4f68-b2f3-b5ee5742fbeb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -617,7 +620,7 @@
       <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="Shaders\ComputeTest.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Shaders\TiledLighting</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

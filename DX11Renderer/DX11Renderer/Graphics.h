@@ -67,6 +67,8 @@ public:
 	void DrawIndexed(UINT count);
 	void SetRenderTarget(Microsoft::WRL::ComPtr<ID3D11RenderTargetView> renderTargetView);
 	void SetViewport(int width, int height);
+	int GetScreenWidth() const;
+	int GetScreenHeight() const;
 public:
 	Microsoft::WRL::ComPtr<ID3D11Device> GetDevice() const
 	{
@@ -102,6 +104,8 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> pContext;
 private:
 	bool imguiEnabled = true;
+	int screenWidth;
+	int screenHeight;
 
 	// Matrices
 	dx::XMMATRIX projectionMatrix;

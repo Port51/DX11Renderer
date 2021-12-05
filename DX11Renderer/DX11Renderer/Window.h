@@ -9,9 +9,6 @@
 #include <memory>
 #include "WindowsThrowMacros.h"
 
-const int ResolutionX = 1280;
-const int ResolutionY = 720;
-
 class Window
 {
 public:

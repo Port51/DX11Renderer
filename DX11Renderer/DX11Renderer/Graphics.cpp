@@ -16,6 +16,7 @@ namespace wrl = Microsoft::WRL;
 #pragma comment(lib,"D3DCompiler.lib") // for loading and compiling shaders
 
 Graphics::Graphics(HWND hWnd, int windowWidth, int windowHeight)
+	: screenWidth(windowWidth), screenHeight(windowHeight)
 {
 	DXGI_SWAP_CHAIN_DESC swapChainDesc = {};
 	swapChainDesc.BufferDesc.Width = 0; // use window size
@@ -193,6 +194,16 @@ void Graphics::SetViewport(int width, int height)
 	vp.TopLeftX = 0;
 	vp.TopLeftY = 0;
 	pContext->RSSetViewports(1u, &vp);
+}
+
+int Graphics::GetScreenWidth() const
+{
+	return screenWidth;
+}
+
+int Graphics::GetScreenHeight() const
+{
+	return screenHeight;
 }
 
 // Graphics exception stuff

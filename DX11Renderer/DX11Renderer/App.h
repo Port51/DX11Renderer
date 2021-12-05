@@ -12,7 +12,7 @@ class MeshRenderer;
 class App
 {
 public:
-	App();
+	App(int screenWidth, int screenHeight);
 	~App();
 	// master frame / message loop
 	int Go();
