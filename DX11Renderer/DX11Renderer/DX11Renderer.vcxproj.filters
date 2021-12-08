@@ -133,6 +133,9 @@
     <Filter Include="Shaders\TiledLighting">
       <UniqueIdentifier>{f7e6cbcc-d824-4f68-b2f3-b5ee5742fbeb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders\Common">
+      <UniqueIdentifier>{02fecf65-cc4c-4752-ba8f-fb548b2821e4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -545,6 +548,15 @@
     <ClInclude Include="StructuredBuffer.h">
       <Filter>Header Files\Bindable\Buffers</Filter>
     </ClInclude>
+    <ClInclude Include="CommonCbuffers.h">
+      <Filter>Header Files\Bindable\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="Common.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LightData.h">
+      <Filter>Header Files\Lights</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DX11Renderer.rc">
@@ -593,6 +605,9 @@
     <None Include="Assets\Models\DefaultSphere.asset">
       <Filter>Assets\Models</Filter>
     </None>
+    <None Include="Shaders\CbufCommon.hlsli">
+      <Filter>Shaders\Common</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\TextureVS.hlsl">
@@ -625,7 +640,10 @@
     <FxCompile Include="Shaders\OpaqueGbuffer.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="Shaders\TiledLightingPass.hlsl">
+    <FxCompile Include="ClusteredLightingCompute.hlsl">
+      <Filter>Shaders\TiledLighting</Filter>
+    </FxCompile>
+    <FxCompile Include="Shaders\TiledLightingCompute.hlsl">
       <Filter>Shaders\TiledLighting</Filter>
     </FxCompile>
   </ItemGroup>

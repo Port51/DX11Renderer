@@ -1,4 +1,5 @@
 
+#include "CbufCommon.hlsli"
 #include "PhongCommon.hlsli"
 
 cbuffer LightCBuf : register(b0)
@@ -44,6 +45,17 @@ float SCurve(float x)
 
 float4 main(v2f i) : SV_Target
 {
+    float2 screenPos = i.screenPos.xy / i.screenPos.w;
+    screenPos = i.pos.xy / i.pos.w;
+    float4 specularLight = SpecularLightingRT.Sample(splr, screenPos);
+    float4 diffuseLight = DiffuseLightingRT.Sample(splr, screenPos);
+    
+    float3 combinedLight = specularLight.rgb + diffuseLight.rgb;
+    
     float4 diffuseTex = tex.Sample(splr, i.uv0);
+    diffuseTex.rgb *= combinedLight;
+    
+    //return float4(0, 0, 1, 1);
+    return _Time.x;
     return diffuseTex;
 }

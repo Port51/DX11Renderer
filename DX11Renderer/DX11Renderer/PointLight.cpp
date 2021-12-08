@@ -4,6 +4,7 @@
 #include <d3d11.h>
 #include "ModelNode.h"
 #include "MeshRenderer.h"
+#include "LightData.h"
 
 PointLight::PointLight(Graphics& gfx, dx::XMFLOAT3 positionWS, dx::XMFLOAT3 color, float intensity, float range)
 	: globalLightCbuf(gfx, D3D11_USAGE_DYNAMIC),
@@ -55,4 +56,13 @@ void PointLight::Bind(Graphics& gfx, dx::FXMMATRIX viewMatrix) const
 	globalLightCbuf.Update(gfx, PointLightCBuf{ dataCopy });
 	//globalLightCbuf.BindPS(gfx, 0u);
 	gfx.GetContext()->PSSetConstantBuffers(0u, 1u, globalLightCbuf.GetD3DBuffer().GetAddressOf());
+}
+
+LightData PointLight::GetLightData(dx::FXMMATRIX viewMatrix) const
+{
+	LightData light;
+
+	const auto posWS_Vector = dx::XMLoadFloat3(&positionWS);
+	light.positionVS = dx::XMVector3Transform(posWS_Vector, viewMatrix);
+	return light;
 }

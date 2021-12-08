@@ -1,5 +1,6 @@
 #pragma once
 #include "Buffer.h"
+#include "RenderPass.h"
 #include <d3d11.h>
 
 class Graphics;
@@ -44,15 +45,15 @@ public:
 public:
 	void BindCS(Graphics& gfx, const RenderPass& renderPass, UINT slot) override
 	{
-		gfx.GetContext()->CSSetConstantBuffers(slot, 1u, pBuffer.GetAddressOf());
+		gfx.GetContext()->CSSetConstantBuffers(renderPass.GetEndSlots().CS_CB + slot, 1u, pBuffer.GetAddressOf());
 	}
 	void BindVS(Graphics& gfx, const RenderPass& renderPass, UINT slot) override
 	{
-		gfx.GetContext()->VSSetConstantBuffers(slot, 1u, pBuffer.GetAddressOf());
+		gfx.GetContext()->VSSetConstantBuffers(renderPass.GetEndSlots().VS_CB + slot, 1u, pBuffer.GetAddressOf());
 	}
 	void BindPS(Graphics& gfx, const RenderPass& renderPass, UINT slot) override
 	{
-		gfx.GetContext()->PSSetConstantBuffers(slot, 1u, pBuffer.GetAddressOf());
+		gfx.GetContext()->PSSetConstantBuffers(renderPass.GetEndSlots().PS_CB + slot, 1u, pBuffer.GetAddressOf());
 	}
 	void Update(Graphics& gfx, const C& data)
 	{

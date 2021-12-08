@@ -9,6 +9,7 @@ struct v2f
     float3 normalWS : TEXCOORD1;
     float3 tangentVS : TEXCOORD2;
     float2 uv0 : TEXCOORD3;
+    float4 screenPos : TEXCOORD4;
 };
 
 #endif

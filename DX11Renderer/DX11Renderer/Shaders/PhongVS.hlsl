@@ -1,7 +1,8 @@
 
+#include "CbufCommon.hlsli"
 #include "PhongCommon.hlsli"
 
-cbuffer CBuf : register(b0)
+cbuffer CBuf : register(b2)
 {
 	matrix model;
 	matrix modelView;
@@ -16,6 +17,14 @@ struct attrib
     float2 uv0 : Texcoord0;
     float3 instancePosition : INSTANCEPOS;
 };
+
+float4 ComputeNonStereoScreenPos(float4 pos)
+{
+    float4 o = pos * 0.5f;
+    o.xy = float2(o.x, o.y * _ProjectionParams.x) + o.w;
+    o.zw = pos.zw;
+    return o;
+}
 
 v2f main(attrib i)
 {

@@ -1,19 +1,35 @@
 #include "RenderPass.h"
 
+RenderPass::RenderPass(const RenderPass & parentPass)
+{
+	// This is to avoid overwriting slots written by parent pass
+	startSlots = parentPass.GetEndSlots();
+	endSlots = startSlots;
+}
+
 void RenderPass::EnqueueJob(RenderJob job)
 {
 	jobs.push_back(job);
 }
 
-void RenderPass::BindGlobals(Graphics & gfx) const
+void RenderPass::BindSharedResources(Graphics & gfx) const
 {
-	if (pGlobalVSTextureBinds.size() > 0)
+	if (pVS_CB_Binds.size() > 0)
 	{
-		gfx.GetContext()->VSSetShaderResources(0u, pGlobalVSTextureBinds.size(), pGlobalVSTextureBinds.data());
+		gfx.GetContext()->VSSetConstantBuffers(startSlots.VS_CB, pVS_CB_Binds.size(), pVS_CB_Binds.data());
 	}
-	if (pGlobalPSTextureBinds.size() > 0)
+	if (pVS_SRV_Binds.size() > 0)
 	{
-		gfx.GetContext()->PSSetShaderResources(0u, pGlobalPSTextureBinds.size(), pGlobalPSTextureBinds.data());
+		gfx.GetContext()->VSSetShaderResources(startSlots.VS_SRV, pVS_SRV_Binds.size(), pVS_SRV_Binds.data());
+	}
+
+	if (pPS_CB_Binds.size() > 0)
+	{
+		gfx.GetContext()->PSSetConstantBuffers(startSlots.PS_SRV, pPS_CB_Binds.size(), pPS_CB_Binds.data());
+	}
+	if (pPS_SRV_Binds.size() > 0)
+	{
+		gfx.GetContext()->PSSetShaderResources(startSlots.PS_SRV, pPS_SRV_Binds.size(), pPS_SRV_Binds.data());
 	}
 }
 
@@ -30,22 +46,40 @@ void RenderPass::Reset()
 	jobs.clear();
 }
 
-void RenderPass::AppendGlobalVSTextureBind(ID3D11ShaderResourceView * pSRV)
+RenderPass & RenderPass::VSAppendCB(ID3D11Buffer * pCB)
 {
-	pGlobalVSTextureBinds.emplace_back(pSRV);
+	pVS_CB_Binds.emplace_back(pCB);
+	endSlots.VS_CB++;
+	return *this;
 }
 
-void RenderPass::AppendGlobalPSTextureBind(ID3D11ShaderResourceView * pSRV)
+RenderPass & RenderPass::VSAppendSRV(ID3D11ShaderResourceView * pSRV)
 {
-	pGlobalPSTextureBinds.emplace_back(pSRV);
+	pVS_SRV_Binds.emplace_back(pSRV);
+	endSlots.VS_SRV++;
+	return *this;
 }
 
-UINT RenderPass::GetVSTextureSlotOffset() const
+RenderPass & RenderPass::PSAppendCB(ID3D11Buffer * pCB)
 {
-	return pGlobalVSTextureBinds.size();
+	pPS_CB_Binds.emplace_back(pCB);
+	endSlots.PS_CB++;
+	return *this;
 }
 
-UINT RenderPass::GetPSTextureSlotOffset() const
+RenderPass & RenderPass::PSAppendSRV(ID3D11ShaderResourceView * pSRV)
 {
-	return pGlobalPSTextureBinds.size();
+	pPS_SRV_Binds.emplace_back(pSRV);
+	endSlots.PS_SRV++;
+	return *this;
+}
+
+const BindSlots & RenderPass::GetStartSlots() const
+{
+	return startSlots;
+}
+
+const BindSlots & RenderPass::GetEndSlots() const
+{
+	return endSlots;
 }

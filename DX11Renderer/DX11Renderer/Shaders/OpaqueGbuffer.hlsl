@@ -109,6 +109,7 @@ PS_OUTPUT main(v2f i) : SV_Target
     
     //return diffuseTex;
     //return materialColor.rgbb;
+    brdf.diffuseLight = 0;
     o.NormalRough = float4((brdf.diffuseLight * diffuseTex.rgb + brdf.specularLight) * materialColor * lightColor * (lightIntensity * light.attenuation), 1);
     o.Second = i.normalVS.y;
     return o;

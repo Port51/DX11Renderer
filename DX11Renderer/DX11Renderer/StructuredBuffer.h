@@ -51,15 +51,15 @@ public:
 
 	void BindCS(Graphics& gfx, const RenderPass& renderPass, UINT slot) override
 	{
-		gfx.GetContext()->CSSetShaderResources(slot, 1u, pSRV.GetAddressOf());
+		gfx.GetContext()->CSSetShaderResources(renderPass.GetEndSlots().CS_SRV + slot, 1u, pSRV.GetAddressOf());
 	}
 	void BindVS(Graphics& gfx, const RenderPass& renderPass, UINT slot) override
 	{
-		gfx.GetContext()->VSSetShaderResources(slot, 1u, pSRV.GetAddressOf());
+		gfx.GetContext()->VSSetShaderResources(renderPass.GetEndSlots().VS_SRV + slot, 1u, pSRV.GetAddressOf());
 	}
 	void BindPS(Graphics& gfx, const RenderPass& renderPass, UINT slot) override
 	{
-		gfx.GetContext()->PSSetShaderResources(slot, 1u, pSRV.GetAddressOf());
+		gfx.GetContext()->PSSetShaderResources(renderPass.GetEndSlots().PS_SRV + slot, 1u, pSRV.GetAddressOf());
 	}
 private:
 	bool useCounter;
