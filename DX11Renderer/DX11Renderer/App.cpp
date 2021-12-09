@@ -17,10 +17,14 @@ GDIPlusManager gdipm;
 App::App(int screenWidth, int screenHeight)
 	:
 	wnd(screenWidth, screenHeight, "DX11 Renderer"),
-	light(wnd.Gfx(), dx::XMFLOAT3(4.2f, 4.2f, -5.3f), dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 9.0f),
 	cam(40.0f, (float)screenWidth / (float)screenHeight)
 {
 	fc = std::make_unique<FrameCommander>(wnd.Gfx());
+
+	for (int i = 0; i < 3; ++i)
+	{
+		pLights.emplace_back(std::make_unique<PointLight>(wnd.Gfx(), dx::XMFLOAT3(4.2f + i, 4.2f, -5.3f), dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 9.0f));
+	}
 
 	std::string fn;
 	dx::XMMATRIX modelTransform;
@@ -129,15 +133,17 @@ void App::DoFrame()
 	wnd.Gfx().SetViewMatrix(cam.GetViewMatrix());
 	wnd.Gfx().SetProjectionMatrix(cam.GetProjectionMatrix());
 
-	light.Bind(wnd.Gfx(), cam.GetViewMatrix());
 	/*for (auto& b : drawables)
 	{
 		b->SubmitDrawCalls(fc);
 	}*/
 	pModel0->SubmitDrawCalls(fc);
 	pModel1->SubmitDrawCalls(fc);
-	light.SubmitDrawCalls(fc);
-	fc->Execute(wnd.Gfx());
+	for (const auto& l : pLights)
+	{
+		l->SubmitDrawCalls(fc);
+	}
+	fc->Execute(wnd.Gfx(), cam, pLights);
 
 	// imgui window to control simulation speed
 	if (ImGui::Begin("Simulation Speed")) // checks if window open
@@ -150,7 +156,10 @@ void App::DoFrame()
 
 	// imgui windows
 	cam.DrawImguiControlWindow();
-	light.DrawImguiControlWindow();
+	for (auto& l : pLights)
+	{
+		l->DrawImguiControlWindow();
+	}
 	wnd.Gfx().GetLog().DrawImguiControlWindow();
 
 	wnd.Gfx().EndFrame();

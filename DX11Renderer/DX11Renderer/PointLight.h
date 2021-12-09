@@ -13,7 +13,7 @@ public:
 public:
 	void DrawImguiControlWindow();
 	void SubmitDrawCalls(std::unique_ptr<FrameCommander>& frame) const;
-	void Bind(Graphics& gfx, dx::FXMMATRIX viewMatrix) const;
+	//void Bind(Graphics& gfx, dx::FXMMATRIX viewMatrix) const;
 	LightData GetLightData(dx::FXMMATRIX viewMatrix) const;
 private:
 	struct PointLightCBuf

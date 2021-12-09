@@ -1,6 +1,11 @@
 #pragma once
 #include <DirectXMath.h>
 
+struct alignas(16) LightInputCB
+{
+	UINT visibleLightCount;
+};
+
 struct alignas(16) PerFrameCB
 {
 	DirectX::XMVECTOR time; // (t/20, t, t*2, t*3)

@@ -42,7 +42,7 @@ void PointLight::SubmitDrawCalls(std::unique_ptr<FrameCommander>& frame) const
 	pModel->SubmitDrawCalls(frame);
 }
 
-void PointLight::Bind(Graphics& gfx, dx::FXMMATRIX viewMatrix) const
+/*void PointLight::Bind(Graphics& gfx, dx::FXMMATRIX viewMatrix) const
 {
 	auto dataCopy = cbData;
 	const auto posWS_Vector = dx::XMLoadFloat3(&positionWS);
@@ -56,7 +56,7 @@ void PointLight::Bind(Graphics& gfx, dx::FXMMATRIX viewMatrix) const
 	globalLightCbuf.Update(gfx, PointLightCBuf{ dataCopy });
 	//globalLightCbuf.BindPS(gfx, 0u);
 	gfx.GetContext()->PSSetConstantBuffers(0u, 1u, globalLightCbuf.GetD3DBuffer().GetAddressOf());
-}
+}*/
 
 LightData PointLight::GetLightData(dx::FXMMATRIX viewMatrix) const
 {

@@ -24,11 +24,12 @@ private:
 	Timer timer;
 	bool showDemoWindow = true;
 	Camera cam;
-	PointLight light;
 	std::unique_ptr<ModelInstance> pModel0;
 	std::unique_ptr<ModelInstance> pModel1;
 	float simulationSpeed = 1.f;
 	std::unique_ptr<FrameCommander> fc;
-	std::vector<std::unique_ptr<MeshRenderer>> drawables;
+
+	std::vector<std::unique_ptr<MeshRenderer>> pDrawables;
+	std::vector<std::shared_ptr<PointLight>> pLights;
 	static constexpr size_t nDrawables = 1;
 };

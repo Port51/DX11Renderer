@@ -5,34 +5,34 @@
 
 class Graphics;
 
-template<typename C>
+template<typename T>
 class ConstantBuffer : public Buffer
 {
 public:
 	ConstantBuffer(Graphics& gfx, D3D11_USAGE usage)
-		: Buffer(usage, D3D11_BIND_CONSTANT_BUFFER, GetCBufferSize(sizeof(C)))
+		: Buffer(usage, D3D11_BIND_CONSTANT_BUFFER, GetCBufferSize(sizeof(T)))
 	{
 		SETUP_LOGGING_NOINFO(gfx);
 
 		D3D11_BUFFER_DESC bd;
 		ZeroMemory(&bd, sizeof(bd));
 		bd.Usage = usage;
-		bd.ByteWidth = GetCBufferSize(sizeof(C));
+		bd.ByteWidth = GetCBufferSize(sizeof(T));
 		bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 		bd.CPUAccessFlags = (usage == D3D11_USAGE_DYNAMIC) ? D3D11_CPU_ACCESS_WRITE : 0;
 		bd.StructureByteStride = 0u;
 
 		GFX_THROW_NOINFO(gfx.GetDevice()->CreateBuffer(&bd, nullptr, &pBuffer));
 	}
-	ConstantBuffer(Graphics& gfx, D3D11_USAGE usage, const C& initialData)
-		: Buffer(usage, D3D11_BIND_CONSTANT_BUFFER, GetCBufferSize(sizeof(C)))
+	ConstantBuffer(Graphics& gfx, D3D11_USAGE usage, const T& initialData)
+		: Buffer(usage, D3D11_BIND_CONSTANT_BUFFER, GetCBufferSize(sizeof(T)))
 	{
 		SETUP_LOGGING_NOINFO(gfx);
 
 		D3D11_BUFFER_DESC bd;
 		ZeroMemory(&bd, sizeof(bd));
 		bd.Usage = usage;
-		bd.ByteWidth = GetCBufferSize(sizeof(C));
+		bd.ByteWidth = GetCBufferSize(sizeof(T));
 		bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 		bd.CPUAccessFlags = (usage == D3D11_USAGE_DYNAMIC) ? D3D11_CPU_ACCESS_WRITE : 0;
 		bd.StructureByteStride = 0u;
@@ -55,9 +55,9 @@ public:
 	{
 		gfx.GetContext()->PSSetConstantBuffers(renderPass.GetEndSlots().PS_CB + slot, 1u, pBuffer.GetAddressOf());
 	}
-	void Update(Graphics& gfx, const C& data)
+	void Update(Graphics& gfx, const T& data)
 	{
-		Update(gfx, &data, sizeof(C));
+		Update(gfx, &data, sizeof(T));
 	}
 	void Update(Graphics& gfx, const void* data, size_t dataSize)
 	{
