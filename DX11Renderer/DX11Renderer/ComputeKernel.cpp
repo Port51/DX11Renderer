@@ -2,6 +2,7 @@
 #include "ComputeShader.h"
 #include "Graphics.h"
 #include "Buffer.h"
+#include "RenderPass.h"
 
 ComputeKernel::ComputeKernel(std::shared_ptr<ComputeShader> pComputeShader)
 	: pComputeShader(pComputeShader)
@@ -82,25 +83,25 @@ void ComputeKernel::AppendUAV(Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView> 
 	pD3D_UAVs.emplace_back(pUAV.Get());
 }
 
-void ComputeKernel::Dispatch(Graphics& gfx, UINT threadCountX, UINT threadCountY, UINT threadCountZ)
+void ComputeKernel::Dispatch(Graphics& gfx, const RenderPass& renderPass, UINT threadCountX, UINT threadCountY, UINT threadCountZ)
 {
 	gfx.GetContext()->CSSetShader(pComputeShader->GetComputeShader().Get(), nullptr, 0);
 
 	if (pD3DConstantBuffers.size() > 0)
 	{
-		gfx.GetContext()->CSSetConstantBuffers(0, pD3DConstantBuffers.size(), pD3DConstantBuffers.data());
+		gfx.GetContext()->CSSetConstantBuffers(renderPass.GetEndSlots().CS_CB, pD3DConstantBuffers.size(), pD3DConstantBuffers.data());
 	}
 
 	if (pD3D_SRVs.size() > 0)
 	{
-		gfx.GetContext()->CSSetShaderResources(0, pD3D_SRVs.size(), pD3D_SRVs.data());
+		gfx.GetContext()->CSSetShaderResources(renderPass.GetEndSlots().CS_SRV, pD3D_SRVs.size(), pD3D_SRVs.data());
 		//gfx.GetContext()->CSSetShaderResources(0, pD3D_SRVs.size(), pSRVs[0].GetAddressOf());
 	}
 
 	if (pD3D_UAVs.size() > 0)
 	{
 		// todo: last arg is for counters
-		gfx.GetContext()->CSSetUnorderedAccessViews(0, pD3D_UAVs.size(), pD3D_UAVs.data(), NULL);
+		gfx.GetContext()->CSSetUnorderedAccessViews(renderPass.GetEndSlots().CS_UAV, pD3D_UAVs.size(), pD3D_UAVs.data(), NULL);
 	}
 
 	gfx.GetContext()->Dispatch(threadCountX, threadCountY, threadCountZ);

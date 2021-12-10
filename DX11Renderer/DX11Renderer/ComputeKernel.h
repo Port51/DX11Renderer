@@ -7,6 +7,7 @@
 class Graphics;
 class ComputeShader;
 class Buffer;
+class RenderPass;
 
 ///
 /// Wrapper class that handles binding of resources and dispatching of compute shaders
@@ -24,7 +25,7 @@ public:
 	void AppendUAV(Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView> pUAV);
 	void SetUAV(UINT slot, std::shared_ptr<Buffer> pUAV);
 	void AppendUAV(std::shared_ptr<Buffer> pUAV);
-	void Dispatch(Graphics& gfx, UINT threadCountX, UINT threadCountY, UINT threadCountZ);
+	void Dispatch(Graphics& gfx, const RenderPass& renderPass, UINT threadCountX, UINT threadCountY, UINT threadCountZ);
 private:
 	std::vector<ID3D11Buffer*> pD3DConstantBuffers;
 	std::vector<ID3D11ShaderResourceView*> pD3D_SRVs;

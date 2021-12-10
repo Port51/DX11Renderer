@@ -62,6 +62,7 @@ public:
 
 		pRenderPasses.emplace(DepthPrepassName, std::make_unique<RenderPass>(*setupPass));
 		pRenderPasses.emplace(GBufferRenderPassName, std::make_unique<RenderPass>(*setupPass));
+		pRenderPasses.emplace(TiledLightingPassName, std::make_unique<RenderPass>(*setupPass));
 		pRenderPasses.emplace(GeometryRenderPassName, std::make_unique<RenderPass>(*setupPass));
 		pRenderPasses[GeometryRenderPassName]->
 			PSAppendSRV(pSpecularLighting->GetSRV().Get())
@@ -102,6 +103,11 @@ public:
 	void Execute(Graphics& gfx, const Camera& cam, const std::unique_ptr<LightManager>& pLightManager)
 	{
 		// todo: replace w/ rendergraph
+		//gfx.GetContext()->ClearState();
+		//gfx.GetContext()->CSSetShaderResources(0u, 1u, pLightManager->GetD3DSRV().GetAddressOf());
+		//pTiledLightingKernel->Dispatch(gfx, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1);
+
+		//return;
 
 		PerFrameCB perFrameCB;
 		ZeroMemory(&perFrameCB, sizeof(perFrameCB));
@@ -161,12 +167,22 @@ public:
 
 		// Tiled lighting pass
 		{
+			const std::unique_ptr<RenderPass>& pass = pRenderPasses[TiledLightingPassName];
+
+			pass->BindSharedResources(gfx);
 			gfx.GetContext()->OMSetRenderTargets(0u, nullptr, nullptr); // required for binding rendertarget to compute shader
-			pTiledLightingKernel->Dispatch(gfx, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1);
+			
+			// debug:
+			//gfx.GetContext()->ClearState();
+			//gfx.GetContext()->CSSetShaderResources(0u, 1u, pLightManager->GetD3DSRV().GetAddressOf());
+
+			pTiledLightingKernel->Dispatch(gfx, *pass, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1);
 
 			// todo: find better way than this
 			// clearing UAV bindings doesn't seem to work
 			//gfx.GetContext()->ClearState();
+
+			pass->Execute(gfx);
 		}
 
 		// Geometry pass
@@ -239,6 +255,7 @@ private:
 	const std::string PerCameraPassName = std::string("PerCameraPass");
 	const std::string DepthPrepassName = std::string("DepthPrepass");
 	const std::string GBufferRenderPassName = std::string("GBuffer");
+	const std::string TiledLightingPassName = std::string("TiledLighting");
 	const std::string GeometryRenderPassName = std::string("Geometry");
 	const std::string FinalBlitRenderPassName = std::string("FinalBlit");
 };

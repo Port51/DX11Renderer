@@ -14,6 +14,19 @@ void RenderPass::EnqueueJob(RenderJob job)
 
 void RenderPass::BindSharedResources(Graphics & gfx) const
 {
+	if (pCS_CB_Binds.size() > 0)
+	{
+		gfx.GetContext()->CSSetConstantBuffers(startSlots.CS_CB, pCS_CB_Binds.size(), pCS_CB_Binds.data());
+	}
+	if (pCS_SRV_Binds.size() > 0)
+	{
+		gfx.GetContext()->CSSetShaderResources(startSlots.CS_SRV, pCS_SRV_Binds.size(), pCS_SRV_Binds.data());
+	}
+	if (pCS_UAV_Binds.size() > 0)
+	{
+		gfx.GetContext()->CSSetUnorderedAccessViews(startSlots.CS_UAV, pCS_UAV_Binds.size(), pCS_UAV_Binds.data(), nullptr);
+	}
+
 	if (pVS_CB_Binds.size() > 0)
 	{
 		gfx.GetContext()->VSSetConstantBuffers(startSlots.VS_CB, pVS_CB_Binds.size(), pVS_CB_Binds.data());
