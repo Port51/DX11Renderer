@@ -3,11 +3,13 @@
 #include <d3d11.h>
 #include <memory>
 #include "SceneGraphNode.h"
+#include "ModelNode.h"
+#include "MeshRenderer.h"
 
 class Graphics;
 class Material;
-class ModelNode;
 class MeshRenderer;
+class ModelNode;
 class ModelAsset;
 class MeshAsset;
 class FrameCommander;

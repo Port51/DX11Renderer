@@ -557,6 +557,9 @@
     <ClInclude Include="LightData.h">
       <Filter>Header Files\Lights</Filter>
     </ClInclude>
+    <ClInclude Include="LightManager.h">
+      <Filter>Header Files\RenderPipeline</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DX11Renderer.rc">
@@ -607,6 +610,9 @@
     </None>
     <None Include="Shaders\CbufCommon.hlsli">
       <Filter>Shaders\Common</Filter>
+    </None>
+    <None Include="Shaders\Lighting\LightStructs.hlsli">
+      <Filter>Shaders\Lighting</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

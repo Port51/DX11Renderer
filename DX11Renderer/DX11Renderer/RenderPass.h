@@ -22,6 +22,9 @@ public:
 	virtual void Execute(Graphics& gfx) const;
 	void Reset();
 public:
+	RenderPass& CSAppendCB(ID3D11Buffer* pCB);
+	RenderPass& CSAppendSRV(ID3D11ShaderResourceView* pSRV);
+	RenderPass& CSAppendUAV(ID3D11UnorderedAccessView* pUAV);
 	RenderPass& VSAppendCB(ID3D11Buffer* pCB);
 	RenderPass& VSAppendSRV(ID3D11ShaderResourceView* pSRV);
 	RenderPass& PSAppendCB(ID3D11Buffer* pCB);
@@ -35,6 +38,9 @@ private:
 	BindSlots endSlots;
 
 	// Binds shared by everything in this render pass
+	std::vector<ID3D11Buffer*> pCS_CB_Binds;
+	std::vector<ID3D11ShaderResourceView*> pCS_SRV_Binds;
+	std::vector<ID3D11UnorderedAccessView*> pCS_UAV_Binds;
 	std::vector<ID3D11Buffer*> pVS_CB_Binds;
 	std::vector<ID3D11ShaderResourceView*> pVS_SRV_Binds;
 	std::vector<ID3D11Buffer*> pPS_CB_Binds;

@@ -46,6 +46,27 @@ void RenderPass::Reset()
 	jobs.clear();
 }
 
+RenderPass & RenderPass::CSAppendCB(ID3D11Buffer * pCB)
+{
+	pCS_CB_Binds.emplace_back(pCB);
+	endSlots.CS_CB++;
+	return *this;
+}
+
+RenderPass & RenderPass::CSAppendSRV(ID3D11ShaderResourceView * pSRV)
+{
+	pCS_SRV_Binds.emplace_back(pSRV);
+	endSlots.CS_SRV++;
+	return *this;
+}
+
+RenderPass & RenderPass::CSAppendUAV(ID3D11UnorderedAccessView * pUAV)
+{
+	pCS_UAV_Binds.emplace_back(pUAV);
+	endSlots.CS_UAV++;
+	return *this;
+}
+
 RenderPass & RenderPass::VSAppendCB(ID3D11Buffer * pCB)
 {
 	pVS_CB_Binds.emplace_back(pCB);

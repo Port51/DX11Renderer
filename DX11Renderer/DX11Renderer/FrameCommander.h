@@ -18,18 +18,15 @@
 #include "LightData.h"
 #include "PointLight.h"
 #include "Camera.h"
+#include "LightManager.h"
 
 class FrameCommander
 {
 private:
 	const static int GbufferSize = 2;
-	const static int MaxLightCount = 256;
 public:
-	FrameCommander(Graphics& gfx)
+	FrameCommander(Graphics& gfx, const std::unique_ptr<LightManager>& pLightManager)
 	{
-		// Setup lighting data
-		pLightData = std::make_unique<StructuredBuffer<LightData>>(gfx, D3D11_USAGE_DYNAMIC, D3D11_BIND_SHADER_RESOURCE, MaxLightCount);
-
 		// Setup render targets
 		pGbufferNormalRough = std::make_shared<RenderTarget>(gfx);
 		pGbufferNormalRough->Init(gfx.GetDevice().Get(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
@@ -55,7 +52,10 @@ public:
 		pRenderPasses.emplace(PerCameraPassName, std::make_unique<RenderPass>());
 		const std::unique_ptr<RenderPass>& setupPass = pRenderPasses[PerCameraPassName];
 		setupPass->
-			VSAppendCB(pPerFrameCB->GetD3DBuffer().Get())
+			CSAppendSRV(pLightManager->GetD3DSRV().Get())
+			.CSAppendSRV(pGbufferNormalRough->GetSRV().Get())
+			.CSAppendSRV(pGbufferSecond->GetSRV().Get())
+			.VSAppendCB(pPerFrameCB->GetD3DBuffer().Get())
 			.VSAppendCB(pPerCameraCB->GetD3DBuffer().Get())
 			.PSAppendCB(pPerFrameCB->GetD3DBuffer().Get())
 			.PSAppendCB(pPerCameraCB->GetD3DBuffer().Get());
@@ -99,7 +99,7 @@ public:
 		pRenderPasses[targetPass]->EnqueueJob(job);
 	}
 
-	void Execute(Graphics& gfx, const Camera& cam, const std::vector<std::shared_ptr<PointLight>>& pLights)
+	void Execute(Graphics& gfx, const Camera& cam, const std::unique_ptr<LightManager>& pLightManager)
 	{
 		// todo: replace w/ rendergraph
 
@@ -113,26 +113,13 @@ public:
 		perCameraCB.screenParams = { (float)gfx.GetScreenWidth(), (float)gfx.GetScreenHeight(), 1.0f + 1.0f / gfx.GetScreenWidth(), 1.0f + 1.0f / gfx.GetScreenHeight() };
 		pPerCameraCB->Update(gfx, perCameraCB);
 
-		// Light culling and buffer update
-		{
-			// todo: make member var
-			std::vector<LightData> data;
-			data.resize(MaxLightCount);
-
-			UINT visibleLightCt = 0u;
-			for (int i = 0; i < pLights.size(); ++i)
-			{
-				// todo: cull light via frustum
-				data[visibleLightCt++] = pLights[i]->GetLightData(cam.GetViewMatrix());
-			}
-
-			pLightData->Update(gfx, data.data(), visibleLightCt);
-		}
-
 		// Per-frame and per-camera binds
 		{
 			const std::unique_ptr<RenderPass>& pass = pRenderPasses[PerCameraPassName];
+
+			pLightManager->CullLights(gfx, cam); // changes the SRV, which will be bound below
 			pass->BindSharedResources(gfx);
+
 			pass->Execute(gfx);
 		}
 
@@ -248,9 +235,6 @@ private:
 	std::unique_ptr<ComputeKernel> pTiledLightingKernel;
 	std::unique_ptr<ConstantBuffer<PerFrameCB>> pPerFrameCB;
 	std::unique_ptr<ConstantBuffer<PerCameraCB>> pPerCameraCB;
-public:
-	// todo: revamp this!
-	std::unique_ptr<StructuredBuffer<LightData>> pLightData;
 private:
 	const std::string PerCameraPassName = std::string("PerCameraPass");
 	const std::string DepthPrepassName = std::string("DepthPrepass");

@@ -3,7 +3,6 @@
 #include "Surface.h"
 #include "MeshRenderer.h"
 #include "ModelInstance.h"
-#include "ModelNode.h"
 #include "GDIPlusManager.h"
 #include "Imgui/imgui.h"
 #include "FBXImporter.h"
@@ -17,14 +16,10 @@ GDIPlusManager gdipm;
 App::App(int screenWidth, int screenHeight)
 	:
 	wnd(screenWidth, screenHeight, "DX11 Renderer"),
-	cam(40.0f, (float)screenWidth / (float)screenHeight)
+	cam(40.0f, (float)screenWidth / (float)screenHeight),
+	pLightManager(std::make_unique<LightManager>(wnd.Gfx()))
 {
-	fc = std::make_unique<FrameCommander>(wnd.Gfx());
-
-	for (int i = 0; i < 3; ++i)
-	{
-		pLights.emplace_back(std::make_unique<PointLight>(wnd.Gfx(), dx::XMFLOAT3(4.2f + i, 4.2f, -5.3f), dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 9.0f));
-	}
+	fc = std::make_unique<FrameCommander>(wnd.Gfx(), pLightManager);
 
 	std::string fn;
 	dx::XMMATRIX modelTransform;
@@ -139,11 +134,8 @@ void App::DoFrame()
 	}*/
 	pModel0->SubmitDrawCalls(fc);
 	pModel1->SubmitDrawCalls(fc);
-	for (const auto& l : pLights)
-	{
-		l->SubmitDrawCalls(fc);
-	}
-	fc->Execute(wnd.Gfx(), cam, pLights);
+	pLightManager->SubmitDrawCalls(fc);
+	fc->Execute(wnd.Gfx(), cam, pLightManager);
 
 	// imgui window to control simulation speed
 	if (ImGui::Begin("Simulation Speed")) // checks if window open
@@ -156,10 +148,7 @@ void App::DoFrame()
 
 	// imgui windows
 	cam.DrawImguiControlWindow();
-	for (auto& l : pLights)
-	{
-		l->DrawImguiControlWindow();
-	}
+	pLightManager->DrawImguiControlWindows();
 	wnd.Gfx().GetLog().DrawImguiControlWindow();
 
 	wnd.Gfx().EndFrame();

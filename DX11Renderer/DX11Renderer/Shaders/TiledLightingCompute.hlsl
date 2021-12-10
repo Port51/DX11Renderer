@@ -1,5 +1,8 @@
-Texture2D<float4> NormalRoughRT : register(t0);
-Texture2D<float4> GBuffer1RT : register(t1);
+#include "./Lighting/LightStructs.hlsli"
+
+StructuredBuffer<StructuredLight> lights : register(t0);
+Texture2D<float4> NormalRoughRT : register(t1);
+Texture2D<float4> GBuffer1RT : register(t2);
 RWTexture2D<float4> SpecularLightingOut : register(u0);
 RWTexture2D<float4> DiffuseLightingOut : register(u1);
 

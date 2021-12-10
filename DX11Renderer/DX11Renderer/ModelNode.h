@@ -6,7 +6,6 @@
 #include "DXMathInclude.h"
 #include "SceneGraphNode.h"
 
-class ModelNode;
 class MeshRenderer;
 class ModelAsset;
 class MeshAsset;

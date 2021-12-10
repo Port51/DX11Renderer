@@ -6,6 +6,7 @@
 #include "PointLight.h"
 #include "ModelInstance.h"
 #include "FrameCommander.h"
+#include "LightManager.h"
 
 class MeshRenderer;
 
@@ -27,9 +28,8 @@ private:
 	std::unique_ptr<ModelInstance> pModel0;
 	std::unique_ptr<ModelInstance> pModel1;
 	float simulationSpeed = 1.f;
+	std::unique_ptr<LightManager> pLightManager;
 	std::unique_ptr<FrameCommander> fc;
-
 	std::vector<std::unique_ptr<MeshRenderer>> pDrawables;
-	std::vector<std::shared_ptr<PointLight>> pLights;
 	static constexpr size_t nDrawables = 1;
 };
