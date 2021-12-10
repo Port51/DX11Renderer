@@ -230,6 +230,7 @@
     <ClInclude Include="LightData.h" />
     <ClInclude Include="LightManager.h" />
     <ClInclude Include="ModelNode.h" />
+    <ClInclude Include="RenderConstants.h" />
     <ClInclude Include="StructuredBuffer.h" />
     <ClInclude Include="StructuredBufferData.h" />
     <ClInclude Include="InstancedMeshRenderer.h" />
@@ -248,7 +249,7 @@
     <ClInclude Include="dxerr.h" />
     <ClInclude Include="DxgiInfoManager.h" />
     <ClInclude Include="FBXImporter.h" />
-    <ClInclude Include="FrameCommander.h" />
+    <ClInclude Include="Renderer.h" />
     <ClInclude Include="FullscreenPass.h" />
     <ClInclude Include="GDIPlusManager.h" />
     <ClInclude Include="Graphics.h" />

@@ -22,13 +22,13 @@ public:
 	virtual void Execute(Graphics& gfx) const;
 	void Reset();
 public:
-	RenderPass& CSAppendCB(ID3D11Buffer* pCB);
-	RenderPass& CSAppendSRV(ID3D11ShaderResourceView* pSRV);
-	RenderPass& CSAppendUAV(ID3D11UnorderedAccessView* pUAV);
-	RenderPass& VSAppendCB(ID3D11Buffer* pCB);
-	RenderPass& VSAppendSRV(ID3D11ShaderResourceView* pSRV);
-	RenderPass& PSAppendCB(ID3D11Buffer* pCB);
-	RenderPass& PSAppendSRV(ID3D11ShaderResourceView* pSRV);
+	RenderPass& CSSetCB(UINT slot, ID3D11Buffer* pCB);
+	RenderPass& CSSetSRV(UINT slot, ID3D11ShaderResourceView* pSRV);
+	RenderPass& CSSetUAV(UINT slot, ID3D11UnorderedAccessView* pUAV);
+	RenderPass& VSSetCB(UINT slot, ID3D11Buffer* pCB);
+	RenderPass& VSSetSRV(UINT slot, ID3D11ShaderResourceView* pSRV);
+	RenderPass& PSSetCB(UINT slot, ID3D11Buffer* pCB);
+	RenderPass& PSSetSRV(UINT slot, ID3D11ShaderResourceView* pSRV);
 	const BindSlots& GetStartSlots() const;
 	const BindSlots& GetEndSlots() const;
 private:

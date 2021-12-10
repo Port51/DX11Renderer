@@ -440,9 +440,6 @@
     <ClInclude Include="DepthStencil.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FrameCommander.h">
-      <Filter>Header Files\RenderJobs</Filter>
-    </ClInclude>
     <ClInclude Include="Technique.h">
       <Filter>Header Files\RenderJobs</Filter>
     </ClInclude>
@@ -558,6 +555,12 @@
       <Filter>Header Files\Lights</Filter>
     </ClInclude>
     <ClInclude Include="LightManager.h">
+      <Filter>Header Files\RenderPipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer.h">
+      <Filter>Header Files\RenderJobs</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderConstants.h">
       <Filter>Header Files\RenderPipeline</Filter>
     </ClInclude>
   </ItemGroup>

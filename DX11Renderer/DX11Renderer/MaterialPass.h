@@ -3,7 +3,7 @@
 
 class Technique;
 class MeshRenderer;
-class FrameCommander;
+class Renderer;
 
 ///
 /// Collection of bindables needed to execute a material pass in a technique
@@ -14,7 +14,7 @@ public:
 	MaterialPass();
 public:
 	void AddTechnique(std::unique_ptr<Technique> _pTechnique);
-	void SubmitDrawCalls(std::unique_ptr<FrameCommander>& frame, const MeshRenderer& renderer) const;
+	void SubmitDrawCalls(std::unique_ptr<Renderer>& frame, const MeshRenderer& renderer) const;
 private:
 	std::unique_ptr<Technique> pTechnique;
 };

@@ -12,7 +12,7 @@ class MeshRenderer;
 class ModelNode;
 class ModelAsset;
 class MeshAsset;
-class FrameCommander;
+class Renderer;
 
 namespace DirectX
 {
@@ -24,7 +24,7 @@ class ModelInstance
 {
 public:
 	ModelInstance(Graphics& gfx, std::unique_ptr<ModelAsset> const& pModelAsset, dx::XMMATRIX transform);
-	void SubmitDrawCalls(std::unique_ptr<FrameCommander>& frame) const;
+	void SubmitDrawCalls(std::unique_ptr<Renderer>& frame) const;
 	void SetPositionWS(dx::XMFLOAT3 positionWS);
 private:
 	std::unique_ptr<MeshRenderer> ParseMesh(Graphics& gfx, std::unique_ptr<MeshAsset> const& pMeshAsset);

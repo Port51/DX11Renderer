@@ -7,7 +7,7 @@
 #include "Graphics.h"
 
 class MeshRenderer;
-class FrameCommander;
+class Renderer;
 class RenderPass;
 
 class RenderStep
@@ -26,7 +26,7 @@ public:
 		bindings.push_back(std::move(pBinding));
 		return bindings[bindings.size() - 1];
 	}
-	void SubmitDrawCalls(std::unique_ptr<FrameCommander>& frame, const MeshRenderer& renderer) const;
+	void SubmitDrawCalls(std::unique_ptr<Renderer>& frame, const MeshRenderer& renderer) const;
 	void Bind(Graphics& gfx, const RenderPass& renderPass) const
 	{
 		for (const auto& b : bindings)

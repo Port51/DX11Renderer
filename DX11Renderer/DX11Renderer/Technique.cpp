@@ -1,8 +1,8 @@
 #include "Technique.h"
 #include "MeshRenderer.h"
-#include "FrameCommander.h"
+#include "Renderer.h"
 
-void Technique::SubmitDrawCalls(std::unique_ptr<FrameCommander>& frame, const MeshRenderer& renderer) const
+void Technique::SubmitDrawCalls(std::unique_ptr<Renderer>& frame, const MeshRenderer& renderer) const
 {
 	if (active)
 	{

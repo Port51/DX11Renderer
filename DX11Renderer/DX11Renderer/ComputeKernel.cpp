@@ -12,44 +12,25 @@ ComputeKernel::ComputeKernel(std::shared_ptr<ComputeShader> pComputeShader)
 
 void ComputeKernel::SetConstantBuffer(UINT slot, std::shared_ptr<Buffer> pConstantBuffer)
 {
-	if (slot < pD3DConstantBuffers.size())
-	{
-		pD3DConstantBuffers[slot] = pConstantBuffer->GetD3DBuffer().Get();
-	}
-	else if (slot == pD3DConstantBuffers.size())
-	{
-		AppendConstantBuffer(pConstantBuffer);
-	}
-	else
-	{
-		throw std::runtime_error("Constant buffers set out of order");
-	}
+	SetConstantBuffer(slot, pConstantBuffer->GetD3DBuffer());
 }
 
-void ComputeKernel::AppendConstantBuffer(std::shared_ptr<Buffer> pConstantBuffer)
+void ComputeKernel::SetConstantBuffer(UINT slot, Microsoft::WRL::ComPtr<ID3D11Buffer> pConstantBuffer)
 {
-	pD3DConstantBuffers.emplace_back(pConstantBuffer->GetD3DBuffer().Get());
+	if (slot >= pD3DConstantBuffers.size())
+	{
+		pD3DConstantBuffers.resize(slot + 1u);
+	}
+	pD3DConstantBuffers[slot] = pConstantBuffer.Get();
 }
 
 void ComputeKernel::SetSRV(UINT slot, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pShaderResourceView)
 {
-	if (slot < pD3D_SRVs.size())
+	if (slot >= pD3D_SRVs.size())
 	{
-		pD3D_SRVs[slot] = pShaderResourceView.Get();
+		pD3D_SRVs.resize(slot + 1u);
 	}
-	else if (slot == pD3D_SRVs.size())
-	{
-		AppendSRV(pShaderResourceView);
-	}
-	else
-	{
-		throw std::runtime_error("SRV set out of order");
-	}
-}
-
-void ComputeKernel::AppendSRV(Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pShaderResourceView)
-{
-	pD3D_SRVs.emplace_back(pShaderResourceView.Get());
+	pD3D_SRVs[slot] = pShaderResourceView.Get();
 }
 
 void ComputeKernel::SetUAV(UINT slot, std::shared_ptr<Buffer> pUAV)
@@ -57,30 +38,13 @@ void ComputeKernel::SetUAV(UINT slot, std::shared_ptr<Buffer> pUAV)
 	SetUAV(slot, pUAV->GetD3DUAV());
 }
 
-void ComputeKernel::AppendUAV(std::shared_ptr<Buffer> pUAV)
-{
-	AppendUAV(pUAV->GetD3DUAV());
-}
-
 void ComputeKernel::SetUAV(UINT slot, Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView> pUAV)
 {
-	if (slot < pD3D_UAVs.size())
+	if (slot >= pD3D_UAVs.size())
 	{
-		pD3D_UAVs[slot] = pUAV.Get();
+		pD3D_UAVs.resize(slot + 1u);
 	}
-	else if (slot == pD3D_UAVs.size())
-	{
-		AppendUAV(pUAV);
-	}
-	else
-	{
-		throw std::runtime_error("UAV set out of order");
-	}
-}
-
-void ComputeKernel::AppendUAV(Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView> pUAV)
-{
-	pD3D_UAVs.emplace_back(pUAV.Get());
+	pD3D_UAVs[slot] = pUAV.Get();
 }
 
 void ComputeKernel::Dispatch(Graphics& gfx, const RenderPass& renderPass, UINT threadCountX, UINT threadCountY, UINT threadCountZ)

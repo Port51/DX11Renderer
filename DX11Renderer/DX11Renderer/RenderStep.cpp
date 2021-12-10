@@ -1,8 +1,8 @@
 #include "RenderStep.h"
 #include "MeshRenderer.h"
-#include "FrameCommander.h"
+#include "Renderer.h"
 
-void RenderStep::SubmitDrawCalls(std::unique_ptr<FrameCommander>& frame, const MeshRenderer& meshRenderer) const
+void RenderStep::SubmitDrawCalls(std::unique_ptr<Renderer>& frame, const MeshRenderer& meshRenderer) const
 {
 	frame->AcceptRenderJob(RenderJob(this, &meshRenderer), targetPass);
 }

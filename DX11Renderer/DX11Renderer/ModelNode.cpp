@@ -8,7 +8,7 @@ ModelNode::ModelNode(int id, const dx::XMMATRIX & _transform, std::unique_ptr<Me
 	dx::XMStoreFloat4x4(&appliedTransform, dx::XMMatrixIdentity());
 }
 
-void ModelNode::SubmitDrawCalls(std::unique_ptr<FrameCommander>& frame, dx::FXMMATRIX accumulatedTransform) const
+void ModelNode::SubmitDrawCalls(std::unique_ptr<Renderer>& frame, dx::FXMMATRIX accumulatedTransform) const
 {
 	// todo: use this?
 	const auto built =

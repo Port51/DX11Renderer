@@ -35,7 +35,7 @@ void PointLight::DrawImguiControlWindow()
 	ImGui::End();
 }
 
-void PointLight::SubmitDrawCalls(std::unique_ptr<FrameCommander>& frame) const
+void PointLight::SubmitDrawCalls(std::unique_ptr<Renderer>& frame) const
 {
 	pModel->SetPositionWS(positionWS);
 	pModel->SubmitDrawCalls(frame);

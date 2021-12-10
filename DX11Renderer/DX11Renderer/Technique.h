@@ -4,7 +4,7 @@
 #include <memory>
 
 class MeshRenderer;
-class FrameCommander;
+class Renderer;
 
 class Technique
 {
@@ -14,7 +14,7 @@ public:
 		:
 		name(name)
 	{}
-	void SubmitDrawCalls(std::unique_ptr<FrameCommander>& frame, const MeshRenderer& renderer) const;
+	void SubmitDrawCalls(std::unique_ptr<Renderer>& frame, const MeshRenderer& renderer) const;
 	void AddStep(std::unique_ptr<RenderStep> step)
 	{
 		pSteps.push_back(std::move(step));

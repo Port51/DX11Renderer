@@ -36,7 +36,7 @@ ModelInstance::ModelInstance(Graphics& gfx, std::unique_ptr<ModelAsset> const& p
 	pSceneGraph = CreateModelInstanceNode(gfx, pModelAsset->pSceneGraph);
 }*/
 
-void ModelInstance::SubmitDrawCalls(std::unique_ptr<FrameCommander>& frame) const
+void ModelInstance::SubmitDrawCalls(std::unique_ptr<Renderer>& frame) const
 {
 	pSceneGraph->SubmitDrawCalls(frame, transform);
 }

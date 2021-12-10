@@ -9,14 +9,14 @@
 class MeshRenderer;
 class ModelAsset;
 class MeshAsset;
-class FrameCommander;
+class Renderer;
 
 class ModelNode
 {
 	friend class ModelInstance;
 public:
 	ModelNode(int id, const dx::XMMATRIX& _transform, std::unique_ptr<MeshRenderer> pMeshPtr, std::vector<std::unique_ptr<ModelNode>> pChildNodes);
-	void SubmitDrawCalls(std::unique_ptr<FrameCommander>& frame, dx::FXMMATRIX accumulatedTransform) const;
+	void SubmitDrawCalls(std::unique_ptr<Renderer>& frame, dx::FXMMATRIX accumulatedTransform) const;
 	void SetAppliedTransform(dx::FXMMATRIX transform);
 	const dx::XMFLOAT4X4& GetAppliedTransform() const;
 private:

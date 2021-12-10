@@ -59,52 +59,73 @@ void RenderPass::Reset()
 	jobs.clear();
 }
 
-RenderPass & RenderPass::CSAppendCB(ID3D11Buffer * pCB)
+RenderPass & RenderPass::CSSetCB(UINT slot, ID3D11Buffer * pCB)
 {
-	pCS_CB_Binds.emplace_back(pCB);
-	endSlots.CS_CB++;
+	if (pCS_CB_Binds.size() <= slot)
+	{
+		pCS_CB_Binds.resize(slot + 1u);
+	}
+	pCS_CB_Binds[slot] = pCB;
 	return *this;
 }
 
-RenderPass & RenderPass::CSAppendSRV(ID3D11ShaderResourceView * pSRV)
+RenderPass & RenderPass::CSSetSRV(UINT slot, ID3D11ShaderResourceView * pSRV)
 {
-	pCS_SRV_Binds.emplace_back(pSRV);
-	endSlots.CS_SRV++;
+	if (pCS_SRV_Binds.size() <= slot)
+	{
+		pCS_SRV_Binds.resize(slot + 1u);
+	}
+	pCS_SRV_Binds[slot] = pSRV;
 	return *this;
 }
 
-RenderPass & RenderPass::CSAppendUAV(ID3D11UnorderedAccessView * pUAV)
+RenderPass & RenderPass::CSSetUAV(UINT slot, ID3D11UnorderedAccessView * pUAV)
 {
-	pCS_UAV_Binds.emplace_back(pUAV);
-	endSlots.CS_UAV++;
+	if (pCS_UAV_Binds.size() <= slot)
+	{
+		pCS_UAV_Binds.resize(slot + 1u);
+	}
+	pCS_UAV_Binds[slot] = pUAV;
 	return *this;
 }
 
-RenderPass & RenderPass::VSAppendCB(ID3D11Buffer * pCB)
+RenderPass & RenderPass::VSSetCB(UINT slot, ID3D11Buffer * pCB)
 {
-	pVS_CB_Binds.emplace_back(pCB);
-	endSlots.VS_CB++;
+	if (pVS_CB_Binds.size() <= slot)
+	{
+		pVS_CB_Binds.resize(slot + 1u);
+	}
+	pVS_CB_Binds[slot] = pCB;
 	return *this;
 }
 
-RenderPass & RenderPass::VSAppendSRV(ID3D11ShaderResourceView * pSRV)
+RenderPass & RenderPass::VSSetSRV(UINT slot, ID3D11ShaderResourceView * pSRV)
 {
-	pVS_SRV_Binds.emplace_back(pSRV);
-	endSlots.VS_SRV++;
+	if (pVS_SRV_Binds.size() <= slot)
+	{
+		pVS_SRV_Binds.resize(slot + 1u);
+	}
+	pVS_SRV_Binds[slot] = pSRV;
 	return *this;
 }
 
-RenderPass & RenderPass::PSAppendCB(ID3D11Buffer * pCB)
+RenderPass & RenderPass::PSSetCB(UINT slot, ID3D11Buffer * pCB)
 {
-	pPS_CB_Binds.emplace_back(pCB);
-	endSlots.PS_CB++;
+	if (pPS_CB_Binds.size() <= slot)
+	{
+		pPS_CB_Binds.resize(slot + 1u);
+	}
+	pPS_CB_Binds[slot] = pCB;
 	return *this;
 }
 
-RenderPass & RenderPass::PSAppendSRV(ID3D11ShaderResourceView * pSRV)
+RenderPass & RenderPass::PSSetSRV(UINT slot, ID3D11ShaderResourceView * pSRV)
 {
-	pPS_SRV_Binds.emplace_back(pSRV);
-	endSlots.PS_SRV++;
+	if (pPS_SRV_Binds.size() <= slot)
+	{
+		pPS_SRV_Binds.resize(slot + 1u);
+	}
+	pPS_SRV_Binds[slot] = pSRV;
 	return *this;
 }
 

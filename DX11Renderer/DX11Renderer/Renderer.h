@@ -19,13 +19,14 @@
 #include "PointLight.h"
 #include "Camera.h"
 #include "LightManager.h"
+#include "RenderConstants.h"
 
-class FrameCommander
+class Renderer
 {
 private:
 	const static int GbufferSize = 2;
 public:
-	FrameCommander(Graphics& gfx, const std::unique_ptr<LightManager>& pLightManager)
+	Renderer(Graphics& gfx, const std::unique_ptr<LightManager>& pLightManager)
 	{
 		// Setup render targets
 		pGbufferNormalRough = std::make_shared<RenderTarget>(gfx);
@@ -52,21 +53,23 @@ public:
 		pRenderPasses.emplace(PerCameraPassName, std::make_unique<RenderPass>());
 		const std::unique_ptr<RenderPass>& setupPass = pRenderPasses[PerCameraPassName];
 		setupPass->
-			CSAppendSRV(pLightManager->GetD3DSRV().Get())
-			.CSAppendSRV(pGbufferNormalRough->GetSRV().Get())
-			.CSAppendSRV(pGbufferSecond->GetSRV().Get())
-			.VSAppendCB(pPerFrameCB->GetD3DBuffer().Get())
-			.VSAppendCB(pPerCameraCB->GetD3DBuffer().Get())
-			.PSAppendCB(pPerFrameCB->GetD3DBuffer().Get())
-			.PSAppendCB(pPerCameraCB->GetD3DBuffer().Get());
+			CSSetCB(RenderSlots::CS_PerFrameCB, pPerFrameCB->GetD3DBuffer().Get())
+			.CSSetCB(RenderSlots::CS_PerCameraCB, pPerCameraCB->GetD3DBuffer().Get())
+			.CSSetSRV(RenderSlots::CS_LightDataSRV, pLightManager->GetD3DSRV().Get())
+			.CSSetSRV(RenderSlots::CS_GbufferNormalRoughSRV, pGbufferNormalRough->GetSRV().Get())
+			.CSSetSRV(2u, pGbufferSecond->GetSRV().Get())
+			.VSSetCB(RenderSlots::VS_PerFrameCB, pPerFrameCB->GetD3DBuffer().Get())
+			.VSSetCB(RenderSlots::VS_PerCameraCB, pPerCameraCB->GetD3DBuffer().Get())
+			.PSSetCB(RenderSlots::PS_PerFrameCB, pPerFrameCB->GetD3DBuffer().Get())
+			.PSSetCB(RenderSlots::PS_PerCameraCB, pPerCameraCB->GetD3DBuffer().Get());
 
 		pRenderPasses.emplace(DepthPrepassName, std::make_unique<RenderPass>(*setupPass));
 		pRenderPasses.emplace(GBufferRenderPassName, std::make_unique<RenderPass>(*setupPass));
 		pRenderPasses.emplace(TiledLightingPassName, std::make_unique<RenderPass>(*setupPass));
 		pRenderPasses.emplace(GeometryRenderPassName, std::make_unique<RenderPass>(*setupPass));
 		pRenderPasses[GeometryRenderPassName]->
-			PSAppendSRV(pSpecularLighting->GetSRV().Get())
-			.PSAppendSRV(pDiffuseLighting->GetSRV().Get());
+			PSSetSRV(0u, pSpecularLighting->GetSRV().Get())
+			.PSSetSRV(1u, pDiffuseLighting->GetSRV().Get());
 
 		pRenderPasses.emplace(FinalBlitRenderPassName, std::make_unique<FullscreenPass>(gfx, pCameraColor, "Assets\\Built\\Shaders\\BlitPS.cso"));
 
@@ -90,7 +93,7 @@ public:
 		//pTestKernel->SetUAV(1u, pGbufferNormalRough->GetUAV());
 	}
 
-	~FrameCommander()
+	~Renderer()
 	{
 		
 	}
@@ -103,11 +106,13 @@ public:
 	void Execute(Graphics& gfx, const Camera& cam, const std::unique_ptr<LightManager>& pLightManager)
 	{
 		// todo: replace w/ rendergraph
-		//gfx.GetContext()->ClearState();
-		//gfx.GetContext()->CSSetShaderResources(0u, 1u, pLightManager->GetD3DSRV().GetAddressOf());
-		//pTiledLightingKernel->Dispatch(gfx, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1);
+		/*gfx.GetContext()->ClearState();
+		pLightManager->CullLights(gfx, cam);
 
-		//return;
+		gfx.GetContext()->CSSetShaderResources(0u, 1u, pLightManager->GetD3DSRV().GetAddressOf());
+		pTiledLightingKernel->Dispatch(gfx, *pRenderPasses[TiledLightingPassName], gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1);
+
+		return;*/
 
 		PerFrameCB perFrameCB;
 		ZeroMemory(&perFrameCB, sizeof(perFrameCB));

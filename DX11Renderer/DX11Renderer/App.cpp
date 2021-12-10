@@ -19,7 +19,7 @@ App::App(int screenWidth, int screenHeight)
 	cam(40.0f, (float)screenWidth / (float)screenHeight),
 	pLightManager(std::make_unique<LightManager>(wnd.Gfx()))
 {
-	fc = std::make_unique<FrameCommander>(wnd.Gfx(), pLightManager);
+	fc = std::make_unique<Renderer>(wnd.Gfx(), pLightManager);
 
 	std::string fn;
 	dx::XMMATRIX modelTransform;

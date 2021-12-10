@@ -61,13 +61,13 @@ public:
 	{
 		gfx.GetContext()->PSSetShaderResources(renderPass.GetEndSlots().PS_SRV + slot, 1u, pSRV.GetAddressOf());
 	}
-	void Update(Graphics& gfx, const void* data, size_t dataSize)
+	void Update(Graphics& gfx, const void* data, size_t dataBytes)
 	{
 		SETUP_LOGGING_NOINFO(gfx);
 
 		if (usage == D3D11_USAGE_DYNAMIC) // Can be continuously modified by CPU
 		{
-			D3D11_MAPPED_SUBRESOURCE subresource;
+			D3D11_MAPPED_SUBRESOURCE subresource = {};
 			// Map() locks resource and gives ptr to resource
 			GFX_THROW_NOINFO(gfx.GetContext()->Map(
 				pBuffer.Get(), 0u,
@@ -75,7 +75,7 @@ public:
 				&subresource // msr gets assigned to resource ptr
 			));
 			// Handle write
-			memcpy(subresource.pData, data, dataSize);
+			memcpy(subresource.pData, data, dataBytes);
 			// Unlock via Unmap()
 			gfx.GetContext()->Unmap(pBuffer.Get(), 0u);
 		}
@@ -89,6 +89,10 @@ public:
 		{
 			throw std::runtime_error("Cannot update immutable structured buffer!");
 		}
+	}
+	void Update(Graphics& gfx, const std::vector<T> data, size_t dataElements)
+	{
+		Update(gfx, data.data(), sizeof(T) * dataElements);
 	}
 private:
 	bool useCounter;

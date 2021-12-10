@@ -41,4 +41,9 @@ cbuffer PerCameraCB : register(b1)
     float4 unity_OrthoParams;
 };
 
+cbuffer LightInputCB : register(b2)
+{
+    uint _VisibleLightCount;
+};
+
 #endif
