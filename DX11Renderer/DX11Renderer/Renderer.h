@@ -81,8 +81,8 @@ public:
 		//pTestKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, std::string("Assets\\Built\\Shaders\\ComputeTest.cso"), std::string("CSMain")));
 
 		pTiledLightingKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, std::string("Assets\\Built\\Shaders\\TiledLightingCompute.cso"), std::string("CSMain")));
-		pTiledLightingKernel->SetSRV(0u, pGbufferNormalRough->GetSRV());
-		pTiledLightingKernel->SetSRV(1u, pGbufferSecond->GetSRV());
+		//pTiledLightingKernel->SetSRV(0u, pGbufferNormalRough->GetSRV());
+		//pTiledLightingKernel->SetSRV(1u, pGbufferSecond->GetSRV());
 		pTiledLightingKernel->SetUAV(0u, pSpecularLighting->GetUAV());
 		pTiledLightingKernel->SetUAV(1u, pDiffuseLighting->GetUAV());
 

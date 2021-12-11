@@ -15,15 +15,23 @@ groupshared uint tileLightCount;
 groupshared uint tileLightIndices[MAX_TILE_LIGHTS];
 
 [numthreads(16, 16, 1)]
-void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 tId : SV_DispatchThreadID)
+void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThreadId : SV_GroupThreadID, uint3 tId : SV_DispatchThreadID)
 {
     //
     // Cull lights
     //
     
+    if (gIndex == 0)
+    {
+        tileLightCount = 0;
+    }
+    GroupMemoryBarrierWithGroupSync();
+    
     // todo: use gId to setup frustums
     
-    for (uint i = gIndex * TILED_GROUP_SIZE; i < gIndex * TILED_GROUP_SIZE + TILED_GROUP_SIZE, i < _VisibleLightCount; ++i)
+    //for (uint i = gIndex * TILED_GROUP_SIZE; i < gIndex * TILED_GROUP_SIZE + TILED_GROUP_SIZE; ++i)
+    for (uint i = gIndex; i < _VisibleLightCount; i += TILED_GROUP_SIZE * TILED_GROUP_SIZE)
+    //for (uint i = 0; i < 3; ++i)
     {
         StructuredLight light = lights[i];
         
@@ -33,7 +41,7 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 tId : SV_
         if (isVisible)
         {
             uint idx;
-            InterlockedAdd(tileLightCount, 1, idx);
+            InterlockedAdd(tileLightCount, 1u, idx);
             tileLightIndices[idx] = i;
         }
     }
@@ -48,7 +56,8 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 tId : SV_
     for (uint i = 0; i < tileLightCount; ++i)
     {
         StructuredLight light = lights[tileLightIndices[i]];
-        vv += lights[i].positionVS.x;
+        //StructuredLight light = lights[0];
+        vv += light.positionVS.x;
     }
     
     float4 normalRough = NormalRoughRT[tId.xy];
@@ -58,6 +67,6 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 tId : SV_
     
     // todo: iterate through light list of tile and execute BRDF
     
-    SpecularLightingOut[tId.xy] = normalRough.y * 0.01 + gbuff1.y * 0.01 + debug[0] * 0.01;
+    SpecularLightingOut[tId.xy] = normalRough.y * 0.01 + gbuff1.y * 0.01 + debug[0] * 0.01 + vv * 0.01;
     DiffuseLightingOut[tId.xy] = 0.1f * 0;
 }
