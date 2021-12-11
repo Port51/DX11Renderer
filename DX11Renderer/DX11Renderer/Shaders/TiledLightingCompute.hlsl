@@ -23,7 +23,7 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 tId : SV_
     
     // todo: use gId to setup frustums
     
-    /*for (uint i = gIndex * TILED_GROUP_SIZE; i < gIndex * TILED_GROUP_SIZE + TILED_GROUP_SIZE, i < _VisibleLightCount; ++i)
+    for (uint i = gIndex * TILED_GROUP_SIZE; i < gIndex * TILED_GROUP_SIZE + TILED_GROUP_SIZE, i < _VisibleLightCount; ++i)
     {
         StructuredLight light = lights[i];
         
@@ -49,7 +49,7 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 tId : SV_
     {
         StructuredLight light = lights[tileLightIndices[i]];
         vv += lights[i].positionVS.x;
-    }*/
+    }
     
     float4 normalRough = NormalRoughRT[tId.xy];
     float4 gbuff1 = GBuffer1RT[tId.xy];
