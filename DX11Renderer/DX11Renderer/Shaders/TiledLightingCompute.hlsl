@@ -1,8 +1,8 @@
 #include "./CbufCommon.hlsli"
 #include "./Lighting/LightStructs.hlsli"
 
-#define MAX_TILE_LIGHTS 256
-#define TILED_GROUP_SIZE 16
+#define MAX_TILE_LIGHTS 64
+#define TILED_GROUP_SIZE 4
 
 StructuredBuffer<StructuredLight> lights : register(t0);
 Texture2D<float4> NormalRoughRT : register(t1);
@@ -31,9 +31,7 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     
     // todo: use gId to setup frustums
     
-    //for (uint i = gIndex * TILED_GROUP_SIZE; i < gIndex * TILED_GROUP_SIZE + TILED_GROUP_SIZE; ++i)
     for (uint i = gIndex; i < _VisibleLightCount; i += TILED_GROUP_SIZE * TILED_GROUP_SIZE)
-    //for (uint i = 0; i < 3; ++i)
     {
         StructuredLight light = lights[i];
         
@@ -67,7 +65,7 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     float3 normalVS = normalRough.xyz * 2.0 - 1.0;
     
     float vv = 0;
-    for (uint i = 0; i < tileLightCount; ++i)
+    for (uint i = 0; i < 1; ++i) // tileLightCount
     {
         StructuredLight light = lights[tileLightIndices[i]];
         //StructuredLight light = lights[0];
@@ -96,6 +94,6 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     
     SpecularLightingOut[tId.xy] = normalRough.y * 0.01 + debug[0] * 0.01 + vv * 0.01;
     DiffuseLightingOut[tId.xy] = 0.1f * 0;
-    DebugOut[tId.xy] = depth;
+    DebugOut[tId.xy] = tileLightCount == _VisibleLightCount; // depth;
 
 }

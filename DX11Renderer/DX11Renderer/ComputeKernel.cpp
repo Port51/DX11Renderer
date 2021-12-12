@@ -13,5 +13,5 @@ ComputeKernel::ComputeKernel(std::shared_ptr<ComputeShader> pComputeShader)
 void ComputeKernel::Dispatch(Graphics& gfx, const RenderPass& renderPass, UINT threadCountX, UINT threadCountY, UINT threadCountZ)
 {
 	gfx.GetContext()->CSSetShader(pComputeShader->GetComputeShader().Get(), nullptr, 0);
-	gfx.GetContext()->Dispatch(threadCountX, threadCountY, threadCountZ);
+	pComputeShader->Dispatch(gfx, threadCountX, threadCountY, threadCountZ);
 }
