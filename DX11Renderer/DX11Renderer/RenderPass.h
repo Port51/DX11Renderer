@@ -23,13 +23,13 @@ public:
 	virtual void Execute(Graphics& gfx) const;
 	void Reset();
 public:
-	RenderPass& CSSetCB(UINT slot, ID3D11Buffer* pCB);
-	RenderPass& CSSetSRV(UINT slot, ID3D11ShaderResourceView* pSRV);
-	RenderPass& CSSetUAV(UINT slot, ID3D11UnorderedAccessView* pUAV);
-	RenderPass& VSSetCB(UINT slot, ID3D11Buffer* pCB);
-	RenderPass& VSSetSRV(UINT slot, ID3D11ShaderResourceView* pSRV);
-	RenderPass& PSSetCB(UINT slot, ID3D11Buffer* pCB);
-	RenderPass& PSSetSRV(UINT slot, ID3D11ShaderResourceView* pSRV);
+	RenderPass& CSSetCB(UINT slot, ID3D11Buffer* pResource);
+	RenderPass& CSSetSRV(UINT slot, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pResource);
+	RenderPass& CSSetUAV(UINT slot, ID3D11UnorderedAccessView* pResource);
+	RenderPass& VSSetCB(UINT slot, ID3D11Buffer* pResource);
+	RenderPass& VSSetSRV(UINT slot, ID3D11ShaderResourceView* pResource);
+	RenderPass& PSSetCB(UINT slot, ID3D11Buffer* pResource);
+	RenderPass& PSSetSRV(UINT slot, ID3D11ShaderResourceView* pResource);
 	const BindSlots& GetStartSlots() const;
 	const BindSlots& GetEndSlots() const;
 private:
@@ -39,8 +39,9 @@ private:
 	BindSlots endSlots;
 
 	// Binds shared by everything in this render pass
+	std::vector<std::pair<UINT, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>>> pCS_SRV_Binds;
 	std::vector<ID3D11Buffer*> pCS_CB_Binds;
-	std::vector<ID3D11ShaderResourceView*> pCS_SRV_Binds;
+	//std::vector<ID3D11ShaderResourceView*> pCS_SRV_Binds;
 	std::vector<ID3D11UnorderedAccessView*> pCS_UAV_Binds;
 	std::vector<ID3D11Buffer*> pVS_CB_Binds;
 	std::vector<ID3D11ShaderResourceView*> pVS_SRV_Binds;

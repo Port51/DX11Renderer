@@ -60,7 +60,6 @@ public:
 			.CSSetCB(RenderSlots::CS_PerCameraCB, pPerCameraCB->GetD3DBuffer().Get())
 			.CSSetSRV(RenderSlots::CS_LightDataSRV, pLightManager->GetD3DSRV().Get())
 			.CSSetSRV(RenderSlots::CS_GbufferNormalRoughSRV, pGbufferNormalRough->GetSRV().Get())
-			.CSSetSRV(2u, pGbufferSecond->GetSRV().Get())
 			.VSSetCB(RenderSlots::VS_PerFrameCB, pPerFrameCB->GetD3DBuffer().Get())
 			.VSSetCB(RenderSlots::VS_PerCameraCB, pPerCameraCB->GetD3DBuffer().Get())
 			.PSSetCB(RenderSlots::PS_PerFrameCB, pPerFrameCB->GetD3DBuffer().Get())
@@ -68,7 +67,6 @@ public:
 
 		pRenderPasses.emplace(DepthPrepassName, std::make_unique<RenderPass>(*setupPass));
 		pRenderPasses.emplace(GBufferRenderPassName, std::make_unique<RenderPass>(*setupPass));
-		pRenderPasses.emplace(TiledLightingPassName, std::make_unique<RenderPass>(*setupPass));
 		pRenderPasses.emplace(GeometryRenderPassName, std::make_unique<RenderPass>(*setupPass));
 		pRenderPasses[GeometryRenderPassName]->
 			PSSetSRV(0u, pSpecularLighting->GetSRV().Get())
@@ -84,19 +82,14 @@ public:
 
 		//pTestKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, std::string("Assets\\Built\\Shaders\\ComputeTest.cso"), std::string("CSMain")));
 
-		pTiledLightingKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, std::string("Assets\\Built\\Shaders\\TiledLightingCompute.cso"), std::string("CSMain")));
-		//pTiledLightingKernel->SetSRV(0u, pGbufferNormalRough->GetSRV());
-		//pTiledLightingKernel->SetSRV(1u, pGbufferSecond->GetSRV());
-		pTiledLightingKernel->
-			SetUAV(0u, pSpecularLighting->GetUAV())
-			.SetUAV(1u, pDiffuseLighting->GetUAV())
-			.SetUAV(2u, pDebugTiledLightingCS->GetUAV());
+		pRenderPasses.emplace(TiledLightingPassName, std::make_unique<RenderPass>(*setupPass));
+		pRenderPasses[TiledLightingPassName]->
+			CSSetSRV(RenderSlots::CS_FreeSRV, gfx.pDepthStencil->GetSRV())
+			.CSSetUAV(0u, pSpecularLighting->GetUAV().Get())
+			.CSSetUAV(1u, pDiffuseLighting->GetUAV().Get())
+			.CSSetUAV(2u, pDebugTiledLightingCS->GetUAV().Get());
 
-		//testSRV = std::make_shared<StructuredBuffer<float>>(gfx, D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE, 64);
-		//pTestUAV = std::make_shared<StructuredBuffer<float>>(gfx, D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS, 64);
-		//testKernel->SetSRV(0u, pGbufferNormalRough->GetShaderResourceView());
-		//pTestKernel->SetUAV(0u, pTestUAV);
-		//pTestKernel->SetUAV(1u, pGbufferNormalRough->GetUAV());
+		pTiledLightingKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, std::string("Assets\\Built\\Shaders\\TiledLightingCompute.cso"), std::string("CSMain")));
 	}
 
 	~Renderer()
@@ -136,6 +129,27 @@ public:
 
 			pLightManager->CullLights(gfx, cam); // changes the SRV, which will be bound below
 			pass->BindSharedResources(gfx);
+
+			pass->Execute(gfx);
+		}
+
+		// Tiled lighting pass
+		{
+			const std::unique_ptr<RenderPass>& pass = pRenderPasses[TiledLightingPassName];
+
+			gfx.GetContext()->OMSetRenderTargets(0u, nullptr, nullptr); // required for binding rendertarget to compute shader
+			pass->BindSharedResources(gfx);
+			
+			//gfx.GetContext()->CSSetShaderResources(2u, 1u, gfx.pDepthStencil->GetSRV().GetAddressOf());
+
+			// debug:
+			//gfx.GetContext()->ClearState();
+
+			pTiledLightingKernel->Dispatch(gfx, *pass, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1);
+
+			// todo: find better way than this
+			// clearing UAV bindings doesn't seem to work
+			//gfx.GetContext()->ClearState();
 
 			pass->Execute(gfx);
 		}
@@ -180,12 +194,11 @@ public:
 		{
 			const std::unique_ptr<RenderPass>& pass = pRenderPasses[TiledLightingPassName];
 
-			pass->BindSharedResources(gfx);
 			gfx.GetContext()->OMSetRenderTargets(0u, nullptr, nullptr); // required for binding rendertarget to compute shader
+			pass->BindSharedResources(gfx);
 			
 			// debug:
 			//gfx.GetContext()->ClearState();
-			//gfx.GetContext()->CSSetShaderResources(0u, 1u, pLightManager->GetD3DSRV().GetAddressOf());
 
 			pTiledLightingKernel->Dispatch(gfx, *pass, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1);
 
