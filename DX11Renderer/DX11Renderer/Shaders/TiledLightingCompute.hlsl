@@ -107,37 +107,31 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     //float4 gbuff1 = GBuffer1RT[tId.xy];
     float3 normalVS = normalRough.xyz * 2.0 - 1.0;
     
-    float vv = 0;
+    float3 diffuseLight = 0;
+    float3 specularLight = 0;
     for (uint i = 0; i < 1; ++i) // tileLightCount
     {
         StructuredLight light = lights[tileLightIndices[i]];
         //StructuredLight light = lights[0];
-        /*
-	    // fragment to light vector data
-	    const float distToL = length(vToL);
-	    const float3 dirToL = vToL / distToL;
-	    // attenuation
-        const float att = SCurve(1.0f / (attConst + attLin * distToL + attQuad * (distToL * distToL)));
-	    // diffuse intensity
-	    const float3 diffuse = diffuseColor * diffuseIntensity * att * max(0.0f, dot(dirToL, i.normalVS));
-	    // reflected light vector
-        const float3 w = i.normalVS * dot(vToL, i.normalVS);
-	    const float3 r = w * 2.0f - vToL;
-	    // calculate specular intensity based on angle between viewing vector and reflection vector, narrow with power function
-	    const float3 specular = att * (diffuseColor * diffuseIntensity) * specularIntensity * pow(max(0.0f, dot(normalize(-r), normalize(i.positionVS))), specularPower);
-	    // final color
-	    //return float4(saturate((diffuse + ambient + specular) * materialColor), 1.0f);
-        */
-        vv += light.positionVS_Range.x;
+        
+	    // Simple lambert
+        float3 displ = light.positionVS_Range.xyz - positionVS.xyz;
+        float3 dir = normalize(displ);
+        float NdotL = dot(normalVS, dir);
+        
+        diffuseLight += saturate(NdotL);
     }
     //ColorOut[tId.xy] = 1.f;
     //ColorOut[tId.xy] = NormalRoughRT[tId.xy].y;
     
     // todo: iterate through light list of tile and execute BRDF
     
-    SpecularLightingOut[tId.xy] = normalRough.y * 0.01 + debug[0] * 0.01 + vv * 0.01;
-    DiffuseLightingOut[tId.xy] = 0.1f * 0;
-    DebugOut[tId.xy] = rawDepth;
+    SpecularLightingOut[tId.xy] = float4(specularLight, 1);
+    DiffuseLightingOut[tId.xy] = float4(diffuseLight, 1);
+    DebugOut[tId.xy] = float4(diffuseLight, 1);
+    //DebugOut[tId.xy] = positionVS.x > 0;
+    //DebugOut[tId.xy] = normalVS.x;
+    //DebugOut[tId.xy] = rawDepth;
     //DebugOut[tId.xy] = viewDirVS.y;
 
 }
