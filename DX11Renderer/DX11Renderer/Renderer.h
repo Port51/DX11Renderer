@@ -133,27 +133,6 @@ public:
 			pass->Execute(gfx);
 		}
 
-		// Tiled lighting pass
-		{
-			const std::unique_ptr<RenderPass>& pass = pRenderPasses[TiledLightingPassName];
-
-			gfx.GetContext()->OMSetRenderTargets(0u, nullptr, nullptr); // required for binding rendertarget to compute shader
-			pass->BindSharedResources(gfx);
-			
-			//gfx.GetContext()->CSSetShaderResources(2u, 1u, gfx.pDepthStencil->GetSRV().GetAddressOf());
-
-			// debug:
-			//gfx.GetContext()->ClearState();
-
-			pTiledLightingKernel->Dispatch(gfx, *pass, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1);
-
-			// todo: find better way than this
-			// clearing UAV bindings doesn't seem to work
-			//gfx.GetContext()->ClearState();
-
-			pass->Execute(gfx);
-		}
-
 		// Early Z pass
 		// todo: put position into separate vert buffer and only bind that here
 		{
