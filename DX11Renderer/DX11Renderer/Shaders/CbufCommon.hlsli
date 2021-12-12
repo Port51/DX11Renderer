@@ -18,8 +18,8 @@ cbuffer PerCameraCB : register(b1)
     
     // x = width
     // y = height
-    // z = 1 + 1.0/width
-    // w = 1 + 1.0/height
+    // z = 1.0/width
+    // w = 1.0/height
     float4 _ScreenParams;
 
     // Values used to linearize the Z buffer (http://www.humus.name/temp/Linearize%20depth.txt)
@@ -38,7 +38,9 @@ cbuffer PerCameraCB : register(b1)
     // y = orthographic camera's height
     // z = unused
     // w = 1.0 if camera is ortho, 0.0 if perspective
-    float4 unity_OrthoParams;
+    float4 _OrthoParams;
+    
+    float4 _FrustumCornerDataVS;
 };
 
 cbuffer LightInputCB : register(b2)

@@ -28,3 +28,15 @@ public:
 
 	static const UINT PS_FreeSRV = 0u; // 1st available general-purpose slot
 };
+
+class RenderConstants
+{
+public:
+	// These are defined in the cpp file
+	static const float PI;
+	static const float PI_2;
+	static const float INV_PI;
+	static const float INV_PI_2;
+	static const float DEG_TO_RAD;
+	static const float RAD_TO_DEG;
+};

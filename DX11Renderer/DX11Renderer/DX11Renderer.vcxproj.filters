@@ -306,6 +306,9 @@
     <ClCompile Include="ComputeKernel.cpp">
       <Filter>Source Files\Bindable\Compute</Filter>
     </ClCompile>
+    <ClCompile Include="RenderConstants.cpp">
+      <Filter>Source Files\RenderPipeline</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WindowsInclude.h">

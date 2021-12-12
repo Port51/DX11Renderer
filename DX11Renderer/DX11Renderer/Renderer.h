@@ -120,7 +120,10 @@ public:
 
 		PerCameraCB perCameraCB;
 		ZeroMemory(&perCameraCB, sizeof(perCameraCB));
-		perCameraCB.screenParams = { (float)gfx.GetScreenWidth(), (float)gfx.GetScreenHeight(), 1.0f + 1.0f / gfx.GetScreenWidth(), 1.0f + 1.0f / gfx.GetScreenHeight() };
+		perCameraCB.screenParams = dx::XMVectorSet( (float)gfx.GetScreenWidth(), (float)gfx.GetScreenHeight(), 1.0f / gfx.GetScreenWidth(), 1.0f / gfx.GetScreenHeight() );
+		perCameraCB.zBufferParams = dx::XMVectorSet( 1.f - cam.farClipPlane / cam.nearClipPlane, cam.farClipPlane / cam.nearClipPlane, 1.f / cam.farClipPlane - 1.f / cam.nearClipPlane, 1.f / cam.nearClipPlane);
+		perCameraCB.orthoParams = dx::XMVectorSet(0.f, 0.f, 0.f, 0.f);
+		perCameraCB.frustumCornerDataVS = cam.GetFrustumCornersVS();
 		pPerCameraCB->Update(gfx, perCameraCB);
 
 		// Per-frame and per-camera binds

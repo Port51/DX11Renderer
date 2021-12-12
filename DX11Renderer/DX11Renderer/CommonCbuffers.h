@@ -42,4 +42,6 @@ struct alignas(16) PerCameraCB
 	// z = unused
 	// w = 1.0 if camera is ortho, 0.0 if perspective
 	DirectX::XMVECTOR orthoParams;
+
+	DirectX::XMVECTOR frustumCornerDataVS;
 };

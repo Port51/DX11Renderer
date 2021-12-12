@@ -4,16 +4,21 @@
 class Camera
 {
 public:
-	Camera(float fov, float aspect);
+	Camera(float fov, float aspect, float nearClipPlane, float farClipPlane);
 public:
 	dx::XMMATRIX GetViewMatrix() const;
 	dx::XMMATRIX GetProjectionMatrix() const;
+	dx::XMVECTOR GetFrustumCornersVS() const;
 	void SetFOV(float fov);
 	void SetAspect(float aspect);
 	void DrawImguiControlWindow();
 	void Reset();
 private:
 	void UpdateProjectionMatrix();
+public:
+	// todo: make private
+	float nearClipPlane;
+	float farClipPlane;
 private:
 	float r = 13.3f; // dist from origin
 	float theta = -0.471225f; // rotate around origin

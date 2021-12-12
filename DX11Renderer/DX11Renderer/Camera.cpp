@@ -1,8 +1,9 @@
 #include "Camera.h"
 #include "imgui/imgui.h"
+#include "RenderConstants.h"
 
-Camera::Camera(float fov, float aspect)
-	: fov(fov), aspect(aspect)
+Camera::Camera(float fov, float aspect, float nearClipPlane, float farClipPlane)
+	: fov(fov), aspect(aspect), nearClipPlane(nearClipPlane), farClipPlane(farClipPlane)
 {
 	UpdateProjectionMatrix();
 }
@@ -39,9 +40,25 @@ void Camera::SetAspect(float _aspect)
 	UpdateProjectionMatrix();
 }
 
+/// Returns frustum corners in VS
+/// XY = distance 1, ZW = far
+/// Use in shader with NDC to get view dir or reconstruct positionVS
+/// This assumes a "normal" camera frustum, so don't try this with a planar reflection camera!
+DirectX::XMVECTOR Camera::GetFrustumCornersVS() const
+{
+	// FOV = entire frustum angle
+	float vFov = fov;
+	float hFov = std::atan(std::tan(RenderConstants::DEG_TO_RAD * vFov) * aspect);
+	float halfAngleX = std::tan(RenderConstants::DEG_TO_RAD * (hFov * 0.5f));
+	float halfAngleY = std::tan(RenderConstants::DEG_TO_RAD * (vFov * 0.5f));
+
+	// Flip Y
+	return dx::XMVectorSet(halfAngleX, -halfAngleY, halfAngleX * farClipPlane, -halfAngleY * farClipPlane);
+}
+
 void Camera::UpdateProjectionMatrix()
 {
-	projectionMatrix = dx::XMMatrixPerspectiveFovLH(dx::XMConvertToRadians(fov), aspect, 0.5f, 100.0f);
+	projectionMatrix = dx::XMMatrixPerspectiveFovLH(dx::XMConvertToRadians(fov), aspect, nearClipPlane, farClipPlane);
 }
 
 void Camera::DrawImguiControlWindow()

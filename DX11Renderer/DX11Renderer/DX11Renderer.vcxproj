@@ -186,6 +186,7 @@
     <ClCompile Include="InputLayout.cpp" />
     <ClCompile Include="InstancedMeshRenderer.cpp" />
     <ClCompile Include="ModelNode.cpp" />
+    <ClCompile Include="RenderConstants.cpp" />
     <ClCompile Include="RenderJob.cpp" />
     <ClCompile Include="Keyboard.cpp" />
     <ClCompile Include="Log.cpp" />

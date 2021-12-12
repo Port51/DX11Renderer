@@ -16,6 +16,43 @@ RWTexture2D<float4> DebugOut : register(u2);
 groupshared uint tileLightCount;
 groupshared uint tileLightIndices[MAX_TILE_LIGHTS];
 
+/*float ConvertZToLinearDepth(float depth)
+{
+    float near = camera_near;
+    float far = camera_far;
+    
+    return (near * far) / (far - depth * (far - near));
+
+}
+
+float3 GetPositionVS(float2 texcoord, float depth)
+{
+    float4 clipSpaceLocation;
+    clipSpaceLocation.xy = texcoord * 2.0f - 1.0f;
+    clipSpaceLocation.y *= -1;
+    clipSpaceLocation.z = depth;
+    clipSpaceLocation.w = 1.0f;
+    float4 homogenousLocation = mul(clipSpaceLocation, inverse_projection);
+    return homogenousLocation.xyz / homogenousLocation.w;
+}*/
+
+// Z buffer to linear depth.
+// Does NOT correctly handle oblique view frustums.
+// Does NOT work with orthographic projection.
+// zBufferParam = { (f-n)/n, 1, (f-n)/n*f, 1/f }
+float LinearEyeDepth(float depth, float4 zBufferParam)
+{
+    return 1.0 / (zBufferParam.z * depth + zBufferParam.w);
+}
+
+float RawDepthToLinearDepth(float rawDepth)
+{
+    // See: https://forum.unity.com/threads/getting-scene-depth-z-buffer-of-the-orthographic-camera.601825/#post-4966334
+    float persp = LinearEyeDepth(rawDepth, _ZBufferParams);
+    float ortho = (_ZBufferParams.z - _ZBufferParams.y) * (1 - rawDepth) + _ZBufferParams.y;
+    return lerp(persp, ortho, _OrthoParams.w);
+}
+
 [numthreads(16, 16, 1)]
 void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThreadId : SV_GroupThreadID, uint3 tId : SV_DispatchThreadID)
 {
@@ -51,17 +88,23 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     //
     // Apply lighting
     //
+    float2 screenUV = tId.xy * _ScreenParams.zw;
+    float2 positionNDC = screenUV * 2.0 - 1.0;
+    float rawDepth = DepthRT.Load(int3(tId.xy, 0));
+    float linearDepth = RawDepthToLinearDepth(rawDepth);
     
-    float2 uv = tId.xy / _ScreenParams.xy;
+    float3 frustumPlaneVS = float3(positionNDC * _FrustumCornerDataVS.xy, 1);
+    float3 positionVS = frustumPlaneVS * linearDepth;
+    float3 viewDirVS = normalize(positionVS);
     
-    //float depth = depthTx.Load(int3(dispatchThreadId.xy, 0));
+    
+    
     //float view_depth = ConvertZToLinearDepth(depth);
     
     //float3 positionVS = GetPositionVS(uv, depth);
     //float3 viewDirVS = normalize(positionVS);
     float4 normalRough = NormalRoughRT[tId.xy];
     //float4 gbuff1 = GBuffer1RT[tId.xy];
-    float depth = DepthRT.Load(int3(tId.xy, 0));
     float3 normalVS = normalRough.xyz * 2.0 - 1.0;
     
     float vv = 0;
@@ -94,6 +137,7 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     
     SpecularLightingOut[tId.xy] = normalRough.y * 0.01 + debug[0] * 0.01 + vv * 0.01;
     DiffuseLightingOut[tId.xy] = 0.1f * 0;
-    DebugOut[tId.xy] = tileLightCount == _VisibleLightCount; // depth;
+    DebugOut[tId.xy] = rawDepth;
+    //DebugOut[tId.xy] = viewDirVS.y;
 
 }
