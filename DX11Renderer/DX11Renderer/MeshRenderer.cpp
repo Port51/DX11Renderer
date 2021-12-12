@@ -4,6 +4,7 @@
 #include <exception>
 #include <assert.h>
 #include "DepthStencilState.h"
+#include "RenderConstants.h"
 
 MeshRenderer::MeshRenderer(Graphics& gfx, std::string name, std::shared_ptr<Material> pMaterial, std::shared_ptr<IndexBuffer> pIndexBuffer, std::shared_ptr<Topology> pTopologyBuffer)
 	: pIndexBuffer(std::move(pIndexBuffer)),
@@ -40,7 +41,7 @@ void MeshRenderer::Bind(Graphics& gfx) const
 	pTopology->BindIA(gfx, 0u);
 	pIndexBuffer->BindIA(gfx, 0u);
 	pVertexBufferWrapper->BindIA(gfx, 0u);
-	pTransformCbuf->BindVS(gfx, 0u);
+	pTransformCbuf->BindVS(gfx, RenderSlots::VS_TransformCB);
 }
 
 UINT MeshRenderer::GetIndexCount() const
