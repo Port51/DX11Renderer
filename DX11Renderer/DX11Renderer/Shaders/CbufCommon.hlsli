@@ -41,6 +41,8 @@ cbuffer PerCameraCB : register(b1)
     float4 _OrthoParams;
     
     float4 _FrustumCornerDataVS;
+    
+    float4x4 _ViewProj;
 };
 
 cbuffer LightInputCB : register(b2)

@@ -18,7 +18,8 @@ public:
 
 		for (int i = 0; i < 3; ++i)
 		{
-			pLights.emplace_back(std::make_unique<PointLight>(gfx, dx::XMFLOAT3(4.2f + i, 4.2f, -5.3f), dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 9.0f));
+			pLights.emplace_back(std::make_unique<PointLight>(gfx, dx::XMFLOAT3(i, 4.2f, 0.f), dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 9.0f));
+			//pLights.emplace_back(std::make_unique<PointLight>(gfx, dx::XMFLOAT3(4.2f + i, 4.2f, -5.3f), dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 9.0f));
 		}
 
 		pLightInputCB = std::make_unique<ConstantBuffer<LightInputCB>>(gfx, D3D11_USAGE_DYNAMIC);

@@ -115,11 +115,14 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
         //StructuredLight light = lights[0];
         
 	    // Simple lambert
-        float3 displ = light.positionVS_Range.xyz - positionVS.xyz;
+        float3 displ = mul(_ViewProj, float4(light.positionVS_Range.xyz, 1.0f)).xyz - positionVS.xyz;
+        
         float3 dir = normalize(displ);
         float NdotL = dot(normalVS, dir);
         
-        diffuseLight += saturate(NdotL);
+        diffuseLight = 1.0 / length(displ);
+        
+        //diffuseLight += saturate(NdotL);
     }
     //ColorOut[tId.xy] = 1.f;
     //ColorOut[tId.xy] = NormalRoughRT[tId.xy].y;
@@ -130,7 +133,7 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     DiffuseLightingOut[tId.xy] = float4(diffuseLight, 1);
     DebugOut[tId.xy] = float4(diffuseLight, 1);
     //DebugOut[tId.xy] = positionVS.x > 0;
-    //DebugOut[tId.xy] = normalVS.x;
+    DebugOut[tId.xy] = rawDepth < 1;
     //DebugOut[tId.xy] = rawDepth;
     //DebugOut[tId.xy] = viewDirVS.y;
 

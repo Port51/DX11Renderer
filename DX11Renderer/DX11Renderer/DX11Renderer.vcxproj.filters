@@ -288,9 +288,6 @@
     <ClCompile Include="Graphics.cpp">
       <Filter>Source Files\RenderPipeline</Filter>
     </ClCompile>
-    <ClCompile Include="InstancedMeshRenderer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="VertexBufferWrapper.cpp">
       <Filter>Source Files\Bindable</Filter>
     </ClCompile>
@@ -308,6 +305,9 @@
     </ClCompile>
     <ClCompile Include="RenderConstants.cpp">
       <Filter>Source Files\RenderPipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="InstancedMeshRenderer.cpp">
+      <Filter>Source Files\Drawable</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

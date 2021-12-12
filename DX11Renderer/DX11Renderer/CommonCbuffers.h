@@ -44,4 +44,6 @@ struct alignas(16) PerCameraCB
 	DirectX::XMVECTOR orthoParams;
 
 	DirectX::XMVECTOR frustumCornerDataVS;
+
+	DirectX::XMMATRIX viewProj;
 };

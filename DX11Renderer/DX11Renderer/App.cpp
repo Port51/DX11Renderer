@@ -132,8 +132,8 @@ void App::DoFrame()
 	{
 		b->SubmitDrawCalls(fc);
 	}*/
-	pModel0->SubmitDrawCalls(fc);
-	pModel1->SubmitDrawCalls(fc);
+	//pModel0->SubmitDrawCalls(fc);
+	//pModel1->SubmitDrawCalls(fc);
 	pLightManager->SubmitDrawCalls(fc);
 	fc->Execute(wnd.Gfx(), cam, pLightManager);
 
