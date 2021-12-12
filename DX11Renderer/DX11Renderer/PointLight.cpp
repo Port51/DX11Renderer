@@ -61,9 +61,8 @@ LightData PointLight::GetLightData(dx::FXMMATRIX viewMatrix) const
 {
 	LightData light;
 
-	const auto posWS_Vector = dx::XMLoadFloat3(&positionWS);
-	light.positionVS = dx::XMVector3Transform(posWS_Vector, viewMatrix);
-	light.range = range;
+	const auto posWS_Vector = dx::XMLoadFloat4(&dx::XMFLOAT4(positionWS.x, positionWS.y, positionWS.z, 1.0f));
+	light.positionVS_Range = dx::XMVectorSetW(dx::XMVector4Transform(posWS_Vector, viewMatrix), range); // pack range into W
 	light.color = color;
 	light.intensity = intensity;
 	return light;

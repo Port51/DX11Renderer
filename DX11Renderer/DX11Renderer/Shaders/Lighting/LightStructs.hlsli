@@ -3,8 +3,7 @@
 
 struct StructuredLight
 {
-    float4 positionVS;
-    float range;
+    float4 positionVS_Range;
     float3 color;
     float intensity;
 };
