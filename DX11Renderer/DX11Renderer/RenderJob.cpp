@@ -10,9 +10,9 @@ RenderJob::RenderJob(const RenderStep* pStep, const MeshRenderer* pRenderer)
 	pStep{ pStep }
 {}
 
-void RenderJob::Execute(Graphics& gfx, const RenderPass& renderPass) const
+void RenderJob::Execute(Graphics& gfx) const
 {
-	pRenderer->Bind(gfx, renderPass);
-	pStep->Bind(gfx, renderPass);
+	pRenderer->Bind(gfx);
+	pStep->Bind(gfx);
 	pRenderer->IssueDrawCall(gfx); // calls DrawIndexed() or DrawIndexedInstanced()
 }

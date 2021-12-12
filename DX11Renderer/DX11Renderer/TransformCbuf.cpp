@@ -15,10 +15,10 @@ TransformCbuf::TransformCbuf(Graphics& gfx, const MeshRenderer& parent)
 ///
 /// Update cbuffer based on transform, then bind
 ///
-void TransformCbuf::BindVS(Graphics& gfx, const RenderPass& renderPass, UINT slot)
+void TransformCbuf::BindVS(Graphics& gfx, UINT slot)
 {
 	UpdateBindImpl(gfx, GetTransforms(gfx));
-	gfx.GetContext()->VSSetConstantBuffers(renderPass.GetEndSlots().VS_CB + slot, 1u, pVcbuf->GetD3DBuffer().GetAddressOf());
+	gfx.GetContext()->VSSetConstantBuffers(slot, 1u, pVcbuf->GetD3DBuffer().GetAddressOf());
 }
 
 void TransformCbuf::InitializeParentReference(const MeshRenderer& parent)

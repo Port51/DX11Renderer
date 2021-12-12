@@ -27,11 +27,11 @@ public:
 		return bindings[bindings.size() - 1];
 	}
 	void SubmitDrawCalls(std::unique_ptr<Renderer>& frame, const MeshRenderer& renderer) const;
-	void Bind(Graphics& gfx, const RenderPass& renderPass) const
+	void Bind(Graphics& gfx) const
 	{
 		for (const auto& b : bindings)
 		{
-			b.Bind(gfx, renderPass);
+			b.Bind(gfx);
 		}
 	}
 	void InitializeParentReferences(const MeshRenderer& parent);

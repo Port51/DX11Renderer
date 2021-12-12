@@ -14,7 +14,7 @@ PixelShader::PixelShader(Graphics& gfx, const std::string& path)
 	GFX_THROW_INFO(gfx.GetDevice()->CreatePixelShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pPixelShader));
 }
 
-void PixelShader::BindPS(Graphics& gfx, const RenderPass& renderPass, UINT slot)
+void PixelShader::BindPS(Graphics& gfx, UINT slot)
 {
 	gfx.GetContext()->PSSetShader(pPixelShader.Get(), nullptr, 0u);
 }

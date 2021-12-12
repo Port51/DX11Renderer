@@ -1,10 +1,7 @@
 #include "RenderPass.h"
 
-RenderPass::RenderPass(const RenderPass & parentPass)
+RenderPass::RenderPass()
 {
-	// This is to avoid overwriting slots written by parent pass
-	startSlots = parentPass.GetEndSlots();
-	endSlots = startSlots;
 }
 
 void RenderPass::EnqueueJob(RenderJob job)
@@ -15,35 +12,35 @@ void RenderPass::EnqueueJob(RenderJob job)
 void RenderPass::BindSharedResources(Graphics & gfx) const
 {
 	// todo: can optimize by passing one array for each of these
-	if (pCS_CB_Binds.size() > 0)
+	for (size_t i = 0; i < pCS_CB_Binds.size(); ++i)
 	{
-		gfx.GetContext()->CSSetConstantBuffers(startSlots.CS_CB, pCS_CB_Binds.size(), pCS_CB_Binds.data());
+		gfx.GetContext()->CSSetConstantBuffers(pCS_CB_Binds[i].first, 1u, pCS_CB_Binds[i].second.GetAddressOf());
 	}
 	for (size_t i = 0; i < pCS_SRV_Binds.size(); ++i)
 	{
 		gfx.GetContext()->CSSetShaderResources(pCS_SRV_Binds[i].first, 1u, pCS_SRV_Binds[i].second.GetAddressOf());
 	}
-	if (pCS_UAV_Binds.size() > 0)
+	for (size_t i = 0; i < pCS_UAV_Binds.size(); ++i)
 	{
-		gfx.GetContext()->CSSetUnorderedAccessViews(startSlots.CS_UAV, pCS_UAV_Binds.size(), pCS_UAV_Binds.data(), nullptr);
+		gfx.GetContext()->CSSetUnorderedAccessViews(pCS_UAV_Binds[i].first, 1u, pCS_UAV_Binds[i].second.GetAddressOf(), nullptr);
 	}
 
-	if (pVS_CB_Binds.size() > 0)
+	for (size_t i = 0; i < pVS_CB_Binds.size(); ++i)
 	{
-		gfx.GetContext()->VSSetConstantBuffers(startSlots.VS_CB, pVS_CB_Binds.size(), pVS_CB_Binds.data());
+		gfx.GetContext()->VSSetConstantBuffers(pVS_CB_Binds[i].first, 1u, pVS_CB_Binds[i].second.GetAddressOf());
 	}
-	if (pVS_SRV_Binds.size() > 0)
+	for (size_t i = 0; i < pVS_SRV_Binds.size(); ++i)
 	{
-		gfx.GetContext()->VSSetShaderResources(startSlots.VS_SRV, pVS_SRV_Binds.size(), pVS_SRV_Binds.data());
+		gfx.GetContext()->VSSetShaderResources(pVS_SRV_Binds[i].first, 1u, pVS_SRV_Binds[i].second.GetAddressOf());
 	}
 
-	if (pPS_CB_Binds.size() > 0)
+	for (size_t i = 0; i < pPS_CB_Binds.size(); ++i)
 	{
-		gfx.GetContext()->PSSetConstantBuffers(startSlots.PS_SRV, pPS_CB_Binds.size(), pPS_CB_Binds.data());
+		gfx.GetContext()->PSSetConstantBuffers(pPS_CB_Binds[i].first, 1u, pPS_CB_Binds[i].second.GetAddressOf());
 	}
-	if (pPS_SRV_Binds.size() > 0)
+	for (size_t i = 0; i < pPS_SRV_Binds.size(); ++i)
 	{
-		gfx.GetContext()->PSSetShaderResources(startSlots.PS_SRV, pPS_SRV_Binds.size(), pPS_SRV_Binds.data());
+		gfx.GetContext()->PSSetShaderResources(pPS_SRV_Binds[i].first, 1u, pPS_SRV_Binds[i].second.GetAddressOf());
 	}
 }
 
@@ -51,7 +48,7 @@ void RenderPass::Execute(Graphics & gfx) const
 {
 	for (const auto& j : jobs)
 	{
-		j.Execute(gfx, *this);
+		j.Execute(gfx);
 	}
 }
 
@@ -60,15 +57,9 @@ void RenderPass::Reset()
 	jobs.clear();
 }
 
-RenderPass & RenderPass::CSSetCB(UINT slot, ID3D11Buffer * pCB)
+RenderPass & RenderPass::CSSetCB(UINT slot, Microsoft::WRL::ComPtr<ID3D11Buffer> pResource)
 {
-	slot -= startSlots.CS_CB;
-	if (pCS_CB_Binds.size() <= slot)
-	{
-		pCS_CB_Binds.resize(slot + 1u);
-	}
-	pCS_CB_Binds[slot] = pCB;
-	endSlots.CS_CB = pCS_CB_Binds.size();
+	pCS_CB_Binds.emplace_back(std::pair<UINT, Microsoft::WRL::ComPtr<ID3D11Buffer>>(slot, pResource));
 	return *this;
 }
 
@@ -78,72 +69,32 @@ RenderPass & RenderPass::CSSetSRV(UINT slot, Microsoft::WRL::ComPtr<ID3D11Shader
 	return *this;
 }
 
-RenderPass & RenderPass::CSSetUAV(UINT slot, ID3D11UnorderedAccessView * pUAV)
+RenderPass & RenderPass::CSSetUAV(UINT slot, Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView> pResource)
 {
-	slot -= startSlots.CS_UAV;
-	if (pCS_UAV_Binds.size() <= slot)
-	{
-		pCS_UAV_Binds.resize(slot + 1u);
-	}
-	pCS_UAV_Binds[slot] = pUAV;
-	endSlots.CS_UAV = pCS_UAV_Binds.size();
+	pCS_UAV_Binds.emplace_back(std::pair<UINT, Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView>>(slot, pResource));
 	return *this;
 }
 
-RenderPass & RenderPass::VSSetCB(UINT slot, ID3D11Buffer * pCB)
+RenderPass & RenderPass::VSSetCB(UINT slot, Microsoft::WRL::ComPtr<ID3D11Buffer> pResource)
 {
-	slot -= startSlots.VS_CB;
-	if (pVS_CB_Binds.size() <= slot)
-	{
-		pVS_CB_Binds.resize(slot + 1u);
-	}
-	pVS_CB_Binds[slot] = pCB;
-	endSlots.VS_CB = pVS_CB_Binds.size();
+	pVS_CB_Binds.emplace_back(std::pair<UINT, Microsoft::WRL::ComPtr<ID3D11Buffer>>(slot, pResource));
 	return *this;
 }
 
-RenderPass & RenderPass::VSSetSRV(UINT slot, ID3D11ShaderResourceView * pSRV)
+RenderPass & RenderPass::VSSetSRV(UINT slot, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pResource)
 {
-	slot -= startSlots.VS_SRV;
-	if (pVS_SRV_Binds.size() <= slot)
-	{
-		pVS_SRV_Binds.resize(slot + 1u);
-	}
-	pVS_SRV_Binds[slot] = pSRV;
-	endSlots.VS_SRV = pCS_SRV_Binds.size();
+	pVS_SRV_Binds.emplace_back(std::pair<UINT, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>>(slot, pResource));
 	return *this;
 }
 
-RenderPass & RenderPass::PSSetCB(UINT slot, ID3D11Buffer * pCB)
+RenderPass & RenderPass::PSSetCB(UINT slot, Microsoft::WRL::ComPtr<ID3D11Buffer> pResource)
 {
-	slot -= startSlots.PS_CB;
-	if (pPS_CB_Binds.size() <= slot)
-	{
-		pPS_CB_Binds.resize(slot + 1u);
-	}
-	pPS_CB_Binds[slot] = pCB;
-	endSlots.PS_CB = pPS_CB_Binds.size();
+	pPS_CB_Binds.emplace_back(std::pair<UINT, Microsoft::WRL::ComPtr<ID3D11Buffer>>(slot, pResource));
 	return *this;
 }
 
-RenderPass & RenderPass::PSSetSRV(UINT slot, ID3D11ShaderResourceView * pSRV)
+RenderPass & RenderPass::PSSetSRV(UINT slot, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pResource)
 {
-	slot -= startSlots.PS_SRV;
-	if (pPS_SRV_Binds.size() <= slot)
-	{
-		pPS_SRV_Binds.resize(slot + 1u);
-	}
-	pPS_SRV_Binds[slot] = pSRV;
-	endSlots.PS_SRV = pPS_SRV_Binds.size();
+	pPS_SRV_Binds.emplace_back(std::pair<UINT, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>>(slot, pResource));
 	return *this;
-}
-
-const BindSlots & RenderPass::GetStartSlots() const
-{
-	return startSlots;
-}
-
-const BindSlots & RenderPass::GetEndSlots() const
-{
-	return endSlots;
 }

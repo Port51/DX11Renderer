@@ -2,7 +2,7 @@
 
 #include <wrl.h>
 
-struct BindSlots
+/*struct BindSlots
 {
 	UINT CS_CB;
 	UINT CS_UAV;
@@ -13,4 +13,4 @@ struct BindSlots
 	UINT PS_CB;
 	UINT PS_UAV;
 	UINT PS_SRV;
-};
+};*/

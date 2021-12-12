@@ -160,7 +160,7 @@ public:
 			const std::unique_ptr<RenderPass>& pass = pRenderPasses[DepthPrepassName];
 
 			pass->BindSharedResources(gfx);
-			Bind::DepthStencilState::Resolve(gfx, Bind::DepthStencilState::Mode::StencilOff)->BindOM(gfx, *pass);
+			Bind::DepthStencilState::Resolve(gfx, Bind::DepthStencilState::Mode::StencilOff)->BindOM(gfx);
 			//pSmallDepthStencil->Clear(gfx);
 			gfx.pDepthStencil->Clear(gfx);
 
@@ -179,7 +179,7 @@ public:
 			//gfx.SetRenderTarget(pCameraColor->pRenderTargetView);
 
 			pass->BindSharedResources(gfx);
-			Bind::DepthStencilState::Resolve(gfx, Bind::DepthStencilState::Mode::Gbuffer)->BindOM(gfx, *pass);
+			Bind::DepthStencilState::Resolve(gfx, Bind::DepthStencilState::Mode::Gbuffer)->BindOM(gfx);
 			pGbufferNormalRough->ClearRenderTarget(gfx.GetContext().Get(), 1.f, 0.f, 0.f, 1.f);
 			pGbufferSecond->ClearRenderTarget(gfx.GetContext().Get(), 1.f, 0.f, 0.f, 1.f);
 
@@ -216,7 +216,7 @@ public:
 			// Bind global textures here
 			pass->BindSharedResources(gfx);
 
-			Bind::DepthStencilState::Resolve(gfx, Bind::DepthStencilState::Mode::Gbuffer)->BindOM(gfx, *pass);
+			Bind::DepthStencilState::Resolve(gfx, Bind::DepthStencilState::Mode::Gbuffer)->BindOM(gfx);
 
 			pCameraColor->ClearRenderTarget(gfx.GetContext().Get(), 0.f, 0.f, 0.f, 0.f);
 			pCameraColor->BindAsTarget(gfx, gfx.pDepthStencil->GetView());
@@ -244,7 +244,7 @@ public:
 			gfx.GetContext()->ClearState();
 
 			pass->BindSharedResources(gfx);
-			Bind::DepthStencilState::Resolve(gfx, Bind::DepthStencilState::Mode::StencilOff)->BindOM(gfx, *pass);
+			Bind::DepthStencilState::Resolve(gfx, Bind::DepthStencilState::Mode::StencilOff)->BindOM(gfx);
 
 			// Debug view overrides: (do this here so it can be changed dynamically later)
 			//fsPass->SetInputTarget(pCameraColor);

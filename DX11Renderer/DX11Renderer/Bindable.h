@@ -13,12 +13,12 @@ class RenderPass;
 class Bindable : public CodexElement
 {
 public:
-	virtual void BindIA(Graphics& gfx, const RenderPass& renderPass, UINT slot) {}
-	virtual void BindCS(Graphics& gfx, const RenderPass& renderPass, UINT slot) {}
-	virtual void BindVS(Graphics& gfx, const RenderPass& renderPass, UINT slot) {}
-	virtual void BindPS(Graphics& gfx, const RenderPass& renderPass, UINT slot) {}
-	virtual void BindRS(Graphics& gfx, const RenderPass& renderPass) {}
-	virtual void BindOM(Graphics& gfx, const RenderPass& renderPass) {}
+	virtual void BindIA(Graphics& gfx, UINT slot) {}
+	virtual void BindCS(Graphics& gfx, UINT slot) {}
+	virtual void BindVS(Graphics& gfx, UINT slot) {}
+	virtual void BindPS(Graphics& gfx, UINT slot) {}
+	virtual void BindRS(Graphics& gfx) {}
+	virtual void BindOM(Graphics& gfx) {}
 	virtual ~Bindable() = default;
 public:
 	virtual void InitializeParentReference(const MeshRenderer&)

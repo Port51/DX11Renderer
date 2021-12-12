@@ -56,7 +56,7 @@ namespace Bind
 		gfx.GetDevice()->CreateDepthStencilState(&desc, &pStencil);
 	}
 
-	void DepthStencilState::BindOM(Graphics& gfx, const RenderPass& renderPass)
+	void DepthStencilState::BindOM(Graphics& gfx)
 	{
 		gfx.GetContext()->OMSetDepthStencilState(pStencil.Get(), 0x01);
 	}

@@ -16,6 +16,7 @@
 #include "Buffer.h"
 #include "ConstantBuffer.h"
 #include "NullPixelShader.h"
+#include "RenderConstants.h"
 
 #include <fstream>
 #include <sstream>
@@ -117,7 +118,7 @@ Material::Material(Graphics& gfx, const std::string_view _materialAssetPath)
 				// Init cbuffer
 				// todo: add to codex using std::string(_materialAssetPath)?
 				pPassStep->AddBinding(std::move(std::make_shared<ConstantBuffer<PSMaterialConstant>>(gfx, D3D11_USAGE_IMMUTABLE, pmc)))
-					.SetupPSBinding(1u);
+					.SetupPSBinding(RenderSlots::PS_FreeCB + 0u);
 			}
 		}
 		else if (state == MaterialParseState::Properties)
@@ -169,7 +170,7 @@ Material::Material(Graphics& gfx, const std::string_view _materialAssetPath)
 				if (iter != pTexturesByPropName.end())
 				{
 					pPassStep->AddBinding(iter->second)
-						.SetupPSBinding(slotIdx);
+						.SetupPSBinding(RenderSlots::PS_FreeSRV + slotIdx);
 				}
 				else
 				{

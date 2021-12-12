@@ -8,37 +8,37 @@ Binding::Binding(std::shared_ptr<Bindable> _pBindable)
 {
 }
 
-void Binding::Bind(Graphics& gfx, const RenderPass& renderPass) const
+void Binding::Bind(Graphics& gfx) const
 {
 	int bindings = 0;
 	if (bindToInputAssemblerStageSlot != -1)
 	{
-		pBindable->BindIA(gfx, renderPass, bindToInputAssemblerStageSlot);
+		pBindable->BindIA(gfx, bindToInputAssemblerStageSlot);
 		bindings++;
 	}
 	if (bindToComputeStageSlot != -1)
 	{
-		pBindable->BindCS(gfx, renderPass, bindToComputeStageSlot);
+		pBindable->BindCS(gfx, bindToComputeStageSlot);
 		bindings++;
 	}
 	if (bindToVertexStageSlot != -1)
 	{
-		pBindable->BindVS(gfx, renderPass, bindToVertexStageSlot);
+		pBindable->BindVS(gfx, bindToVertexStageSlot);
 		bindings++;
 	}
 	if (bindToPixelStageSlot != -1)
 	{
-		pBindable->BindPS(gfx, renderPass, bindToPixelStageSlot);
+		pBindable->BindPS(gfx, bindToPixelStageSlot);
 		bindings++;
 	}
 	if (bindToRasterizerStageSlot)
 	{
-		pBindable->BindRS(gfx, renderPass);
+		pBindable->BindRS(gfx);
 		bindings++;
 	}
 	if (bindToOutputMergerStageSlot)
 	{
-		pBindable->BindOM(gfx, renderPass);
+		pBindable->BindOM(gfx);
 		bindings++;
 	}
 	if (bindings == 0)

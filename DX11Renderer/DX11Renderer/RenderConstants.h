@@ -13,11 +13,17 @@ public:
 	static const UINT CS_GbufferNormalRoughSRV = 1u;
 	static const UINT CS_FreeSRV = 2u; // 1st available general-purpose slot
 
+	static const UINT CS_FreeUAV = 0u; // 1st available general-purpose slot
+
 	static const UINT VS_PerFrameCB = 0u;
 	static const UINT VS_PerCameraCB = 1u;
 	static const UINT VS_FreeCB = 2u; // 1st available general-purpose slot
 
+	static const UINT VS_FreeSRV = 0u; // 1st available general-purpose slot
+
 	static const UINT PS_PerFrameCB = 0u;
 	static const UINT PS_PerCameraCB = 1u;
 	static const UINT PS_FreeCB = 2u; // 1st available general-purpose slot
+
+	static const UINT PS_FreeSRV = 0u; // 1st available general-purpose slot
 };

@@ -20,7 +20,7 @@ IndexBuffer::IndexBuffer(Graphics& gfx, const std::vector<unsigned short>& indic
 	GFX_THROW_INFO(gfx.GetDevice()->CreateBuffer(&ibd, &isd, &pIndexBuffer));
 }
 
-void IndexBuffer::BindIA(Graphics& gfx, const RenderPass& renderPass, UINT slot)
+void IndexBuffer::BindIA(Graphics& gfx, UINT slot)
 {
 	gfx.GetContext()->IASetIndexBuffer(pIndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0u);
 }

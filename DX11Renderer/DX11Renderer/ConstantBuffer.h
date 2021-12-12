@@ -43,17 +43,17 @@ public:
 		GFX_THROW_NOINFO(gfx.GetDevice()->CreateBuffer(&bd, &sd, &pBuffer));
 	}
 public:
-	void BindCS(Graphics& gfx, const RenderPass& renderPass, UINT slot) override
+	void BindCS(Graphics& gfx, UINT slot) override
 	{
-		gfx.GetContext()->CSSetConstantBuffers(renderPass.GetEndSlots().CS_CB + slot, 1u, pBuffer.GetAddressOf());
+		gfx.GetContext()->CSSetConstantBuffers(slot, 1u, pBuffer.GetAddressOf());
 	}
-	void BindVS(Graphics& gfx, const RenderPass& renderPass, UINT slot) override
+	void BindVS(Graphics& gfx, UINT slot) override
 	{
-		gfx.GetContext()->VSSetConstantBuffers(renderPass.GetEndSlots().VS_CB + slot, 1u, pBuffer.GetAddressOf());
+		gfx.GetContext()->VSSetConstantBuffers(slot, 1u, pBuffer.GetAddressOf());
 	}
-	void BindPS(Graphics& gfx, const RenderPass& renderPass, UINT slot) override
+	void BindPS(Graphics& gfx, UINT slot) override
 	{
-		gfx.GetContext()->PSSetConstantBuffers(renderPass.GetEndSlots().PS_CB + slot, 1u, pBuffer.GetAddressOf());
+		gfx.GetContext()->PSSetConstantBuffers(slot, 1u, pBuffer.GetAddressOf());
 	}
 	void Update(Graphics& gfx, const T& data)
 	{

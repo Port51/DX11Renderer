@@ -38,17 +38,17 @@ Sampler::Sampler(Graphics& gfx, D3D11_SAMPLER_DESC samplerDesc)
 	GFX_THROW_INFO(gfx.GetDevice()->CreateSamplerState(&samplerDesc, &pSampler));
 }
 
-void Sampler::BindCS(Graphics & gfx, const RenderPass& renderPass, UINT slot)
+void Sampler::BindCS(Graphics & gfx, UINT slot)
 {
 	gfx.GetContext()->CSSetSamplers(slot, 1u, pSampler.GetAddressOf());
 }
 
-void Sampler::BindVS(Graphics & gfx, const RenderPass& renderPass, UINT slot)
+void Sampler::BindVS(Graphics & gfx, UINT slot)
 {
 	gfx.GetContext()->VSSetSamplers(slot, 1u, pSampler.GetAddressOf());
 }
 
-void Sampler::BindPS(Graphics & gfx, const RenderPass& renderPass, UINT slot)
+void Sampler::BindPS(Graphics & gfx, UINT slot)
 {
 	gfx.GetContext()->PSSetSamplers(slot, 1u, pSampler.GetAddressOf());
 }

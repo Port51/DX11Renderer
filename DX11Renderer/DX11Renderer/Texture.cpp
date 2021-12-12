@@ -107,19 +107,19 @@ Texture::Texture(Graphics& gfx, const std::string& path, D3D11_TEXTURE2D_DESC te
 	));
 }
 
-void Texture::BindCS(Graphics& gfx, const RenderPass& renderPass, UINT slot)
+void Texture::BindCS(Graphics& gfx, UINT slot)
 {
-	gfx.GetContext()->CSSetShaderResources(renderPass.GetEndSlots().CS_SRV + slot, 1u, pShaderResourceView.GetAddressOf());
+	gfx.GetContext()->CSSetShaderResources(slot, 1u, pShaderResourceView.GetAddressOf());
 }
 
-void Texture::BindVS(Graphics& gfx, const RenderPass& renderPass, UINT slot)
+void Texture::BindVS(Graphics& gfx, UINT slot)
 {
-	gfx.GetContext()->VSSetShaderResources(renderPass.GetEndSlots().VS_SRV + slot, 1u, pShaderResourceView.GetAddressOf());
+	gfx.GetContext()->VSSetShaderResources(slot, 1u, pShaderResourceView.GetAddressOf());
 }
 
-void Texture::BindPS(Graphics& gfx, const RenderPass& renderPass, UINT slot)
+void Texture::BindPS(Graphics& gfx, UINT slot)
 {
-	gfx.GetContext()->PSSetShaderResources(renderPass.GetEndSlots().PS_SRV + slot, 1u, pShaderResourceView.GetAddressOf());
+	gfx.GetContext()->PSSetShaderResources(slot, 1u, pShaderResourceView.GetAddressOf());
 }
 
 Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView> Texture::GetUAV() const

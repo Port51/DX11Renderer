@@ -9,7 +9,7 @@ class RenderJob
 {
 public:
 	RenderJob(const RenderStep* pStep, const MeshRenderer* pRenderer);
-	void Execute(Graphics& gfx, const RenderPass& renderPass) const;
+	void Execute(Graphics& gfx) const;
 private:
 	const class MeshRenderer* pRenderer;
 	const class RenderStep* pStep;

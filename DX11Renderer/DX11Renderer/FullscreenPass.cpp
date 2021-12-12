@@ -43,7 +43,7 @@ void FullscreenPass::Execute(Graphics& gfx) const
 {
 	for (auto& binding : bindings)
 	{
-		binding.Bind(gfx, *this);
+		binding.Bind(gfx);
 	}
 	pVertexBufferWrapper->BindIA(gfx, 0u);
 	gfx.GetContext()->PSSetShaderResources(0u, 1u, pInputTexture->GetSRV().GetAddressOf());

@@ -51,9 +51,9 @@ public:
 	{
 		return pLightData->GetD3DSRV();
 	}
-	void Bind(Graphics& gfx, const RenderPass& renderPass, UINT slot)
+	void Bind(Graphics& gfx, UINT slot)
 	{
-		pLightData->BindCS(gfx, renderPass, slot);
+		pLightData->BindCS(gfx, slot);
 	}
 	void DrawImguiControlWindows()
 	{
