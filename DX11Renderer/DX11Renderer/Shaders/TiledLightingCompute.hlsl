@@ -10,6 +10,7 @@ Texture2D<float4> GBuffer1RT : register(t2);
 StructuredBuffer<float> debug : register(t7);
 RWTexture2D<float4> SpecularLightingOut : register(u0);
 RWTexture2D<float4> DiffuseLightingOut : register(u1);
+RWTexture2D<float4> DebugOut : register(u2);
 
 groupshared uint tileLightCount;
 groupshared uint tileLightIndices[MAX_TILE_LIGHTS];
@@ -93,4 +94,6 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     
     SpecularLightingOut[tId.xy] = normalRough.y * 0.01 + gbuff1.y * 0.01 + debug[0] * 0.01 + vv * 0.01;
     DiffuseLightingOut[tId.xy] = 0.1f * 0;
+    DebugOut[tId.xy] = uv.x;
+
 }

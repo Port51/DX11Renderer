@@ -16,6 +16,7 @@ public:
 
 	}
 	RenderPass(const RenderPass& parentPass);
+	virtual ~RenderPass() = default;
 public:
 	void EnqueueJob(RenderJob job);
 	virtual void BindSharedResources(Graphics& gfx) const;

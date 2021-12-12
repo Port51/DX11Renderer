@@ -10,41 +10,44 @@ ComputeKernel::ComputeKernel(std::shared_ptr<ComputeShader> pComputeShader)
 
 }
 
-void ComputeKernel::SetConstantBuffer(UINT slot, std::shared_ptr<Buffer> pConstantBuffer)
+ComputeKernel& ComputeKernel::SetConstantBuffer(UINT slot, std::shared_ptr<Buffer> pConstantBuffer)
 {
-	SetConstantBuffer(slot, pConstantBuffer->GetD3DBuffer());
+	return SetConstantBuffer(slot, pConstantBuffer->GetD3DBuffer());
 }
 
-void ComputeKernel::SetConstantBuffer(UINT slot, Microsoft::WRL::ComPtr<ID3D11Buffer> pConstantBuffer)
+ComputeKernel& ComputeKernel::SetConstantBuffer(UINT slot, Microsoft::WRL::ComPtr<ID3D11Buffer> pConstantBuffer)
 {
 	if (slot >= pD3DConstantBuffers.size())
 	{
 		pD3DConstantBuffers.resize(slot + 1u);
 	}
 	pD3DConstantBuffers[slot] = pConstantBuffer.Get();
+	return *this;
 }
 
-void ComputeKernel::SetSRV(UINT slot, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pShaderResourceView)
+ComputeKernel& ComputeKernel::SetSRV(UINT slot, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pShaderResourceView)
 {
 	if (slot >= pD3D_SRVs.size())
 	{
 		pD3D_SRVs.resize(slot + 1u);
 	}
 	pD3D_SRVs[slot] = pShaderResourceView.Get();
+	return *this;
 }
 
-void ComputeKernel::SetUAV(UINT slot, std::shared_ptr<Buffer> pUAV)
+ComputeKernel& ComputeKernel::SetUAV(UINT slot, std::shared_ptr<Buffer> pUAV)
 {
-	SetUAV(slot, pUAV->GetD3DUAV());
+	return SetUAV(slot, pUAV->GetD3DUAV());
 }
 
-void ComputeKernel::SetUAV(UINT slot, Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView> pUAV)
+ComputeKernel& ComputeKernel::SetUAV(UINT slot, Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView> pUAV)
 {
 	if (slot >= pD3D_UAVs.size())
 	{
 		pD3D_UAVs.resize(slot + 1u);
 	}
 	pD3D_UAVs[slot] = pUAV.Get();
+	return *this;
 }
 
 void ComputeKernel::Dispatch(Graphics& gfx, const RenderPass& renderPass, UINT threadCountX, UINT threadCountY, UINT threadCountZ)

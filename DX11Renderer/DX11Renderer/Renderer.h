@@ -44,6 +44,9 @@ public:
 		pCameraColor = std::make_shared<RenderTarget>(gfx);
 		pCameraColor->Init(gfx.GetDevice().Get(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
+		pDebugTiledLightingCS = std::make_shared<RenderTarget>(gfx);
+		pDebugTiledLightingCS->Init(gfx.GetDevice().Get(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
+
 		pSmallDepthStencil = std::make_shared<DepthStencilTarget>(gfx, gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
 		pPerFrameCB = std::make_unique<ConstantBuffer<PerFrameCB>>(gfx, D3D11_USAGE_DYNAMIC);
@@ -71,7 +74,8 @@ public:
 			PSSetSRV(0u, pSpecularLighting->GetSRV().Get())
 			.PSSetSRV(1u, pDiffuseLighting->GetSRV().Get());
 
-		pRenderPasses.emplace(FinalBlitRenderPassName, std::make_unique<FullscreenPass>(gfx, pCameraColor, "Assets\\Built\\Shaders\\BlitPS.cso"));
+		pRenderPasses.emplace(FinalBlitRenderPassName,
+			std::make_unique<FullscreenPass>(gfx, "Assets\\Built\\Shaders\\BlitPS.cso"));
 
 		// Setup Gbuffer
 		pGbufferRenderViews.resize(GbufferSize);
@@ -83,8 +87,10 @@ public:
 		pTiledLightingKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, std::string("Assets\\Built\\Shaders\\TiledLightingCompute.cso"), std::string("CSMain")));
 		//pTiledLightingKernel->SetSRV(0u, pGbufferNormalRough->GetSRV());
 		//pTiledLightingKernel->SetSRV(1u, pGbufferSecond->GetSRV());
-		pTiledLightingKernel->SetUAV(0u, pSpecularLighting->GetUAV());
-		pTiledLightingKernel->SetUAV(1u, pDiffuseLighting->GetUAV());
+		pTiledLightingKernel->
+			SetUAV(0u, pSpecularLighting->GetUAV())
+			.SetUAV(1u, pDiffuseLighting->GetUAV())
+			.SetUAV(2u, pDebugTiledLightingCS->GetUAV());
 
 		//testSRV = std::make_shared<StructuredBuffer<float>>(gfx, D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE, 64);
 		//pTestUAV = std::make_shared<StructuredBuffer<float>>(gfx, D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS, 64);
@@ -219,9 +225,17 @@ public:
 		// Final blit
 		{
 			const std::unique_ptr<RenderPass>& pass = pRenderPasses[FinalBlitRenderPassName];
+			const auto fsPass = static_cast<FullscreenPass*>(pass.get());
+
+			// todo: remove this - for now it's needed to clear SRVs
+			gfx.GetContext()->ClearState();
 
 			pass->BindSharedResources(gfx);
 			Bind::DepthStencilState::Resolve(gfx, Bind::DepthStencilState::Mode::StencilOff)->BindOM(gfx, *pass);
+
+			// Debug view overrides: (do this here so it can be changed dynamically later)
+			//fsPass->SetInputTarget(pCameraColor);
+			fsPass->SetInputTarget(pDebugTiledLightingCS);
 
 			gfx.SetViewport(gfx.GetScreenWidth(), gfx.GetScreenHeight());
 			gfx.GetContext()->OMSetRenderTargets(1u, gfx.pBackBufferView.GetAddressOf(), gfx.pDepthStencil->GetView().Get());
@@ -247,6 +261,9 @@ private:
 
 	std::shared_ptr<RenderTarget> pSpecularLighting;
 	std::shared_ptr<RenderTarget> pDiffuseLighting;
+
+	// Debug views
+	std::shared_ptr<RenderTarget> pDebugTiledLightingCS;
 
 	std::shared_ptr<RenderTarget> pCameraColor;
 

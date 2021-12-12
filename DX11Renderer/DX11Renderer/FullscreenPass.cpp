@@ -8,7 +8,7 @@
 #include "RawBufferData.h"
 #include "DepthStencilState.h"
 
-FullscreenPass::FullscreenPass(Graphics& gfx, std::shared_ptr<Texture> pInputTexture, const char* pixelShader)
+FullscreenPass::FullscreenPass(Graphics& gfx, const char* pixelShader)
 	: RenderPass()
 {
 	std::string vertexShaderName("Assets\\Built\\Shaders\\FullscreenVS.cso");
@@ -34,8 +34,6 @@ FullscreenPass::FullscreenPass(Graphics& gfx, std::shared_ptr<Texture> pInputTex
 
 	AddBinding(Sampler::Resolve(gfx, D3D11_TEXTURE_ADDRESS_MODE::D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_MODE::D3D11_TEXTURE_ADDRESS_CLAMP))
 		.SetupPSBinding(0u);
-	AddBinding(pInputTexture)
-		.SetupPSBinding(0u);
 
 	AddBinding(PixelShader::Resolve(gfx, pixelShader))
 		.SetupPSBinding(0u);
@@ -48,7 +46,13 @@ void FullscreenPass::Execute(Graphics& gfx) const
 		binding.Bind(gfx, *this);
 	}
 	pVertexBufferWrapper->BindIA(gfx, 0u);
+	gfx.GetContext()->PSSetShaderResources(0u, 1u, pInputTexture->GetSRV().GetAddressOf());
 	gfx.DrawIndexed(3u);
+}
+
+void FullscreenPass::SetInputTarget(std::shared_ptr<Texture> pInput)
+{
+	pInputTexture = pInput;
 }
 
 Binding& FullscreenPass::AddBinding(std::shared_ptr<Bindable> pBindable)
