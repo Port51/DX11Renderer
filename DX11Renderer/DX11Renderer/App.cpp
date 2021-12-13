@@ -25,7 +25,7 @@ App::App(int screenWidth, int screenHeight)
 	dx::XMMATRIX modelTransform;
 
 	// temporary...
-	int select = 0;
+	int select = 5;
 	switch (select)
 	{
 	case 0:
@@ -50,6 +50,10 @@ App::App(int screenWidth, int screenHeight)
 	case 4:
 		fn = std::string("Models\\TransformTestOneLevel.fbx");
 		modelTransform = dx::XMMatrixIdentity();
+		break;
+	case 5:
+		fn = std::string("Assets\\Models\\DefaultQuad.asset");
+		modelTransform = dx::XMMatrixIdentity() * dx::XMMatrixScaling(10.f, 10.f, 10.f);
 		break;
 	}
 	
@@ -132,7 +136,7 @@ void App::DoFrame()
 	{
 		b->SubmitDrawCalls(fc);
 	}*/
-	//pModel0->SubmitDrawCalls(fc);
+	pModel0->SubmitDrawCalls(fc);
 	//pModel1->SubmitDrawCalls(fc);
 	pLightManager->SubmitDrawCalls(fc);
 	fc->Execute(wnd.Gfx(), cam, pLightManager);

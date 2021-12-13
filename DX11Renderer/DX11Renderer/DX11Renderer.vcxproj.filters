@@ -620,6 +620,9 @@
     <None Include="Shaders\Lighting\LightStructs.hlsli">
       <Filter>Shaders\Lighting</Filter>
     </None>
+    <None Include="Assets\Models\DefaultQuad.asset">
+      <Filter>Assets\Models</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\SolidPS.hlsl">
