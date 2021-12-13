@@ -622,12 +622,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Shaders\TextureVS.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="Shaders\TexturePS.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
     <FxCompile Include="Shaders\SolidPS.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
@@ -657,6 +651,12 @@
     </FxCompile>
     <FxCompile Include="Shaders\TiledLightingCompute.hlsl">
       <Filter>Shaders\TiledLighting</Filter>
+    </FxCompile>
+    <FxCompile Include="Shaders\SolidColorPS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Shaders\SolidColorGbuffer.hlsl">
+      <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>
