@@ -57,7 +57,7 @@ PS_OUTPUT main(v2f i) : SV_Target
     float4 diffuseTex = tex.Sample(splr, i.uv0);
     
     float3 n;
-    if (normalMapEnabled)
+    if (normalMapEnabled && false)
     {
         const float3 normalSample = nmap.Sample(splr, i.uv0).xyz;
         n.x = normalSample.x * 2.0f - 1.0f;
@@ -110,7 +110,7 @@ PS_OUTPUT main(v2f i) : SV_Target
     //return diffuseTex;
     //return materialColor.rgbb;
     brdf.diffuseLight = 0;
-    o.NormalRough = float4(normalVS, roughness);
+    o.NormalRough = float4(i.normalVS * 0.5 + 0.5, roughness);
     o.Second = i.normalVS.y;
     return o;
 }

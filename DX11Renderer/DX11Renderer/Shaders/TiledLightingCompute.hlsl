@@ -105,7 +105,7 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     //float3 viewDirVS = normalize(positionVS);
     float4 normalRough = NormalRoughRT[tId.xy];
     //float4 gbuff1 = GBuffer1RT[tId.xy];
-    float3 normalVS = normalRough.xyz * 2.0 - 1.0;
+    float3 normalVS = normalize(normalRough.xyz * 2.0 - 1.0);
     
     float3 diffuseLight = 0;
     float3 specularLight = 0;
@@ -121,16 +121,19 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
         float3 dir = normalize(displ);
         float NdotL = dot(normalVS, dir);
         
-        diffuseLight = 1.0 / length(displ);
+        //diffuseLight = 1.0 / length(displ);
+        //diffuseLight = length(displ) < 5;
         //diffuseLight = (light.positionVS_Range.z < positionVS.z) * (rawDepth < 1);
         //diffuseLight = (displ.x > 0) * (rawDepth < 1);
         
-        //diffuseLight += saturate(NdotL);
+        diffuseLight = saturate(NdotL) / (1.0 + dot(displ, displ));
+        //diffuseLight = abs(normalVS.z);
+        //diffuseLight = length(displ) * 0.1;
     }
     
     // Calibration
-    diffuseLight = positionVS.x < 5;
-    diffuseLight = diffuseLight * 0.5 + 0.5;
+    //diffuseLight = positionVS.x < 5;
+    //diffuseLight = diffuseLight * 0.5 + 0.5;
     diffuseLight *= (rawDepth < 1);
     //diffuseLight = positionNDC.y;
     
