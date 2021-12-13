@@ -46,11 +46,12 @@ void Camera::SetAspect(float _aspect)
 /// This assumes a "normal" camera frustum, so don't try this with a planar reflection camera!
 DirectX::XMVECTOR Camera::GetFrustumCornersVS() const
 {
+	// Reference: http://davidlively.com/programming/graphics/frustum-calculation-and-culling-hopefully-demystified/
+
 	// FOV = entire frustum angle
-	float vFov = fov;
-	float hFov = std::atan(std::tan(RenderConstants::DEG_TO_RAD * vFov) * aspect);
-	float halfAngleX = std::tan(RenderConstants::DEG_TO_RAD * (hFov * 0.5f));
-	float halfAngleY = std::tan(RenderConstants::DEG_TO_RAD * (vFov * 0.5f));
+	float vFov = dx::XMConvertToRadians(fov);
+	float halfAngleY = std::tan(vFov * 0.5f);
+	float halfAngleX = halfAngleY * aspect;
 
 	// Flip Y
 	return dx::XMVectorSet(halfAngleX, -halfAngleY, halfAngleX * farClipPlane, -halfAngleY * farClipPlane);

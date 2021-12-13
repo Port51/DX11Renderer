@@ -122,11 +122,18 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
         float NdotL = dot(normalVS, dir);
         
         diffuseLight = 1.0 / length(displ);
-        diffuseLight = (light.positionVS_Range.z < positionVS.z) * (rawDepth < 1);
-        diffuseLight = (displ.x > 0) * (rawDepth < 1);
+        //diffuseLight = (light.positionVS_Range.z < positionVS.z) * (rawDepth < 1);
+        //diffuseLight = (displ.x > 0) * (rawDepth < 1);
         
         //diffuseLight += saturate(NdotL);
     }
+    
+    // Calibration
+    diffuseLight = positionVS.x < 5;
+    diffuseLight = diffuseLight * 0.5 + 0.5;
+    diffuseLight *= (rawDepth < 1);
+    //diffuseLight = positionNDC.y;
+    
     //ColorOut[tId.xy] = 1.f;
     //ColorOut[tId.xy] = NormalRoughRT[tId.xy].y;
     

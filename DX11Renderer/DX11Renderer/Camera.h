@@ -20,7 +20,7 @@ public:
 	float nearClipPlane;
 	float farClipPlane;
 private:
-	float r = 13.3f; // dist from origin
+	float r = 10.0f;// 13.3f; // dist from origin
 	float theta = -0.471225f; // rotate around origin
 	float phi = 0.209f; // rotate around origin
 	float pitch = 0.061f;
