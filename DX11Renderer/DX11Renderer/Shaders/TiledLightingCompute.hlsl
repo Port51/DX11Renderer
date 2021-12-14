@@ -67,6 +67,7 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     GroupMemoryBarrierWithGroupSync();
     
     // todo: use gId to setup frustums
+    // todo: early out if only sky
     
     for (uint i = gIndex; i < _VisibleLightCount; i += TILED_GROUP_SIZE * TILED_GROUP_SIZE)
     {
@@ -109,7 +110,7 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     
     float3 diffuseLight = 0;
     float3 specularLight = 0;
-    for (uint i = 0; i < 1; ++i) // tileLightCount
+    for (uint i = 0; i < tileLightCount; ++i)
     {
         StructuredLight light = lights[tileLightIndices[i]];
         //StructuredLight light = lights[0];
@@ -126,7 +127,7 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
         //diffuseLight = (light.positionVS_Range.z < positionVS.z) * (rawDepth < 1);
         //diffuseLight = (displ.x > 0) * (rawDepth < 1);
         
-        diffuseLight = saturate(NdotL) / (1.0 + dot(displ, displ));
+        diffuseLight += light.color.rgb * (light.intensity * saturate(NdotL) / (1.0 + dot(displ, displ)));
         //diffuseLight = abs(normalVS.z);
         //diffuseLight = length(displ) * 0.1;
     }
@@ -134,8 +135,10 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     // Calibration
     //diffuseLight = positionVS.x < 5;
     //diffuseLight = diffuseLight * 0.5 + 0.5;
-    diffuseLight *= (rawDepth < 1);
     //diffuseLight = positionNDC.y;
+    
+    diffuseLight *= (rawDepth < 1);
+    specularLight *= (rawDepth < 1);
     
     //ColorOut[tId.xy] = 1.f;
     //ColorOut[tId.xy] = NormalRoughRT[tId.xy].y;

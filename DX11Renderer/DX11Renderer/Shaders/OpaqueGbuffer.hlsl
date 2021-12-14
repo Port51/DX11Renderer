@@ -57,16 +57,13 @@ PS_OUTPUT main(v2f i) : SV_Target
     float4 diffuseTex = tex.Sample(splr, i.uv0);
     
     float3 n;
-    if (normalMapEnabled && false)
+    if (normalMapEnabled)
     {
         const float3 normalSample = nmap.Sample(splr, i.uv0).xyz;
         n.x = normalSample.x * 2.0f - 1.0f;
         n.y = -normalSample.y * 2.0f + 1.0f; // Convert from OpenGL to DX style
         n.z = -normalSample.z;
-        //n = float3(0, 0, 1);
         n = mul(n, tbnMatrix); // no need to transpose
-        //return i.tangentVS.y;
-        //return n.x;
         i.normalVS = normalize(-n); // fix sampling interpolation
     }
     

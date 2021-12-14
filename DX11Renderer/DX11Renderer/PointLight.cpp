@@ -5,8 +5,9 @@
 #include "MeshRenderer.h"
 #include "LightData.h"
 
-PointLight::PointLight(Graphics& gfx, dx::XMFLOAT3 positionWS, dx::XMFLOAT3 color, float intensity, float range)
+PointLight::PointLight(Graphics& gfx, UINT index, dx::XMFLOAT3 positionWS, dx::XMFLOAT3 color, float intensity, float range)
 	: globalLightCbuf(gfx, D3D11_USAGE_DYNAMIC),
+	index(index),
 	positionWS(positionWS),
 	color(color),
 	range(range),
@@ -19,7 +20,8 @@ PointLight::PointLight(Graphics& gfx, dx::XMFLOAT3 positionWS, dx::XMFLOAT3 colo
 
 void PointLight::DrawImguiControlWindow()
 {
-	if (ImGui::Begin("Light"))
+	const auto identifier = std::string("Light") + std::to_string(index);
+	if (ImGui::Begin(identifier.c_str()))
 	{
 		ImGui::Text("Position");
 		ImGui::SliderFloat("X", &positionWS.x, -60.0f, 60.0f, "%.1f");
