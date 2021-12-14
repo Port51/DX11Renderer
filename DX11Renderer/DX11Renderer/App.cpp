@@ -53,7 +53,7 @@ App::App(int screenWidth, int screenHeight)
 		break;
 	case 5:
 		fn = std::string("Assets\\Models\\DefaultQuad.asset");
-		modelTransform = dx::XMMatrixIdentity() * dx::XMMatrixScaling(10.f, 10.f, 10.f);
+		modelTransform = dx::XMMatrixIdentity() * dx::XMMatrixScaling(51.f, 51.f, 51.f);
 		break;
 	}
 	

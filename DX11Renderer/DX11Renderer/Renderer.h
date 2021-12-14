@@ -125,6 +125,7 @@ public:
 		perCameraCB.orthoParams = dx::XMVectorSet(0.f, 0.f, 0.f, 0.f);
 		perCameraCB.frustumCornerDataVS = cam.GetFrustumCornersVS();
 		perCameraCB.viewProj = cam.GetViewMatrix();
+		perCameraCB.projection = cam.GetProjectionMatrix();
 		pPerCameraCB->Update(gfx, perCameraCB);
 
 		// Per-frame and per-camera binds

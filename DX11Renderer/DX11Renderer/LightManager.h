@@ -18,7 +18,7 @@ public:
 
 		for (int i = 0; i < 3; ++i)
 		{
-			pLights.emplace_back(std::make_unique<PointLight>(gfx, i, dx::XMFLOAT3(i * 5, 1.0f, 0.f), dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 9.0f));
+			pLights.emplace_back(std::make_unique<PointLight>(gfx, i, dx::XMFLOAT3((i - 1) * 7.5, 1.0f, 0.f), dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 3.0f));
 			//pLights.emplace_back(std::make_unique<PointLight>(gfx, dx::XMFLOAT3(4.2f + i, 4.2f, -5.3f), dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 9.0f));
 		}
 

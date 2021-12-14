@@ -2,7 +2,10 @@
 #include "./Lighting/LightStructs.hlsli"
 
 #define MAX_TILE_LIGHTS 64
-#define TILED_GROUP_SIZE 4
+#define TILED_GROUP_SIZE 16
+
+#define DEBUG_GRID
+#define DEBUG_LIGHT_RANGES
 
 StructuredBuffer<StructuredLight> lights : register(t0);
 Texture2D<float4> NormalRoughRT : register(t1);
@@ -53,7 +56,7 @@ float RawDepthToLinearDepth(float rawDepth)
     return lerp(persp, ortho, _OrthoParams.w);
 }
 
-[numthreads(16, 16, 1)]
+[numthreads(TILED_GROUP_SIZE, TILED_GROUP_SIZE, 1)]
 void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThreadId : SV_GroupThreadID, uint3 tId : SV_DispatchThreadID)
 {
     //
@@ -64,19 +67,73 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     {
         tileLightCount = 0;
     }
+    
+    // todo: replace w/ Hi-Z buffer
+    
     GroupMemoryBarrierWithGroupSync();
     
     // todo: use gId to setup frustums
     // todo: early out if only sky
     
+    float debugValue = 0;
+    
+    float min_tile_z = 0.01;
+    float max_tile_z = 100.0;
+    
+    // tileScale is scaled so that 1.0 is width of one tile
+    // this should be in range [-tileCount, tileCount]
+    float2 tileScale = _ScreenParams.xy * rcp(float(2 * TILED_GROUP_SIZE));
+    // tileBias selects the current tile, and ranges from [-tileScale, tileScale]
+    float2 tileBias = tileScale - float2(gId.xy);
+
+    // Derive frustum planes
+    // #0 faces to the right, and the rest continue in CCW fashion
+    float3 frustumPlanes[6];
+    
+    // Calculate NDC for all sides
+    float4 planeNDC = ((float4) (gId.xyxy * TILED_GROUP_SIZE + float4(TILED_GROUP_SIZE, 0, 0, TILED_GROUP_SIZE)) * _ScreenParams.zwzw) * 2.0 - 1.0;
+    // Use cross product to turn tile view directions into plane directions
+    // The cross product is done by flipping X or Y with Z
+    frustumPlanes[0] = normalize(float3(1, 0, -planeNDC.x * _FrustumCornerDataVS.x));
+    frustumPlanes[1] = normalize(float3(0, 1, -planeNDC.y * _FrustumCornerDataVS.y));
+    frustumPlanes[2] = normalize(float3(-1, 0, planeNDC.z * _FrustumCornerDataVS.x));
+    frustumPlanes[3] = normalize(float3(0, -1, planeNDC.w * _FrustumCornerDataVS.y));
+    
+     // Near/far
+    frustumPlanes[4] = float4(0.0f, 0.0f, 1.0f, -min_tile_z);
+    frustumPlanes[5] = float4(0.0f, 0.0f, -1.0f, max_tile_z);
+    
+    float3 testDirGroup = float3(planeNDC.zy * _FrustumCornerDataVS.xy, 1);
+    float3 testDirThread = float3((tId.xy * _ScreenParams.zw * 2.0 - 1.0) * _FrustumCornerDataVS.xy, 1);
+    float3 dp = testDirThread - testDirGroup;
+    
+    //debugValue = frustumPlanes[0].x * 10 - 9;
+    //debugValue = frustumPlanes[0].z;
+    //debugValue = abs(frustumPlanes[1].z) < 0.001;
+    //debugValue = dot(lights[1].positionVS_Range.xyz, -frustumPlanes[2]);
+    //debugValue = (frustumPlanes[0].z + frustumPlanes[2].z) * 10;
+    //debugValue = planeNDC.x > planeNDC.z;
+    
     for (uint i = gIndex; i < _VisibleLightCount; i += TILED_GROUP_SIZE * TILED_GROUP_SIZE)
     {
         StructuredLight light = lights[i];
         
-        bool isVisible = true;
-
+        bool inFrustum = true;
+        
+        if (true) // todo: test light type
+        {
+            [unroll]
+            for (uint i = 0; i < 4; ++i)
+            {
+                float d = dot(frustumPlanes[i], light.positionVS_Range.xyz);
+                inFrustum = inFrustum && (d < light.positionVS_Range.w);
+            }
+            inFrustum = inFrustum && (light.positionVS_Range.z > min_tile_z);
+            inFrustum = inFrustum && (light.positionVS_Range.z < max_tile_z);
+        }
+        
         [branch]
-        if (isVisible)
+        if (inFrustum)
         {
             uint idx;
             InterlockedAdd(tileLightCount, 1u, idx);
@@ -98,12 +155,6 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     float3 positionVS = frustumPlaneVS * linearDepth;
     float3 viewDirVS = normalize(positionVS);
     
-    
-    
-    //float view_depth = ConvertZToLinearDepth(depth);
-    
-    //float3 positionVS = GetPositionVS(uv, depth);
-    //float3 viewDirVS = normalize(positionVS);
     float4 normalRough = NormalRoughRT[tId.xy];
     //float4 gbuff1 = GBuffer1RT[tId.xy];
     float3 normalVS = normalize(normalRough.xyz * 2.0 - 1.0);
@@ -113,41 +164,41 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     for (uint i = 0; i < tileLightCount; ++i)
     {
         StructuredLight light = lights[tileLightIndices[i]];
-        //StructuredLight light = lights[0];
         
 	    // Simple lambert
-        //float3 displ = mul(_ViewProj, float4(light.positionVS_Range.xyz, 1.0f)).xyz - positionVS.xyz;
         float3 displ = light.positionVS_Range.xyz - positionVS.xyz;
         
         float3 dir = normalize(displ);
         float NdotL = dot(normalVS, dir);
         
-        //diffuseLight = 1.0 / length(displ);
-        //diffuseLight = length(displ) < 5;
-        //diffuseLight = (light.positionVS_Range.z < positionVS.z) * (rawDepth < 1);
-        //diffuseLight = (displ.x > 0) * (rawDepth < 1);
-        
-        diffuseLight += light.color.rgb * (light.intensity * saturate(NdotL) / (1.0 + dot(displ, displ)));
-        //diffuseLight = abs(normalVS.z);
-        //diffuseLight = length(displ) * 0.1;
+        // todo: special pt light attenuation
+        //diffuseLight += light.color.rgb * (light.intensity * saturate(NdotL) / (1.0 + dot(displ, displ)));
+        diffuseLight += light.color.rgb * (1.0 - length(displ) / light.positionVS_Range.w);
     }
-    
-    // Calibration
-    //diffuseLight = positionVS.x < 5;
-    //diffuseLight = diffuseLight * 0.5 + 0.5;
-    //diffuseLight = positionNDC.y;
     
     diffuseLight *= (rawDepth < 1);
     specularLight *= (rawDepth < 1);
     
-    //ColorOut[tId.xy] = 1.f;
-    //ColorOut[tId.xy] = NormalRoughRT[tId.xy].y;
-    
     // todo: iterate through light list of tile and execute BRDF
+    float3 debugColor = debugValue;// * (rawDepth < 1);
+    
+#if defined(DEBUG_LIGHT_RANGES)
+    debugColor = float3(diffuseLight.r, tileLightCount * 0.33, 0) * (rawDepth < 1);
+#endif
+    
+#if defined(DEBUG_GRID)
+    if (groupThreadId.x == 0 || groupThreadId.y == 0)
+    {
+        debugColor = float3(0, 1, 0);
+    }
+#endif
     
     SpecularLightingOut[tId.xy] = float4(specularLight, 1);
     DiffuseLightingOut[tId.xy] = float4(diffuseLight, 1);
-    DebugOut[tId.xy] = float4(diffuseLight, 1);
+    //DebugOut[tId.xy] = float4(lerp(float3(1, 1, 1), float3(1, 0, 0), tileLightCount * 0.333) * (rawDepth < 1), 1);
+    DebugOut[tId.xy] = float4(debugColor, 1);
+    //DebugOut[tId.xy] = float4(diffuseLight, 1);
+    //DebugOut[tId.xy] = sides[0].y;
     //DebugOut[tId.xy] = positionVS.x > 0;
     //DebugOut[tId.xy] = rawDepth < 1;
     //DebugOut[tId.xy] = rawDepth;
