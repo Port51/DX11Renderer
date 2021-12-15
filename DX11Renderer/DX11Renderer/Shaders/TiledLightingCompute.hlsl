@@ -18,6 +18,8 @@ RWTexture2D<float4> DebugOut : register(u2);
 
 groupshared uint tileLightCount;
 groupshared uint tileLightIndices[MAX_TILE_LIGHTS];
+groupshared uint minTileZ;
+groupshared uint maxTileZ;
 
 /*float ConvertZToLinearDepth(float depth)
 {
@@ -66,29 +68,31 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     if (gIndex == 0)
     {
         tileLightCount = 0;
+        minTileZ = asuint(10000.0);
+        maxTileZ = asuint(0.0);
     }
     
+    GroupMemoryBarrierWithGroupSync();
+    
     // todo: replace w/ Hi-Z buffer
+    float rawDepth = DepthRT.Load(int3(tId.xy, 0));
+    float linearDepth = RawDepthToLinearDepth(rawDepth);
+    uint intDepth = asuint(linearDepth);
+    InterlockedMin(minTileZ, intDepth);
+    InterlockedMax(maxTileZ, intDepth);
     
     GroupMemoryBarrierWithGroupSync();
+    
+    float2 tileDepthRange = float2(asfloat(minTileZ), asfloat(maxTileZ));
     
     // todo: use gId to setup frustums
     // todo: early out if only sky
     
     float debugValue = 0;
-    
-    float min_tile_z = 0.01;
-    float max_tile_z = 100.0;
-    
-    // tileScale is scaled so that 1.0 is width of one tile
-    // this should be in range [-tileCount, tileCount]
-    float2 tileScale = _ScreenParams.xy * rcp(float(2 * TILED_GROUP_SIZE));
-    // tileBias selects the current tile, and ranges from [-tileScale, tileScale]
-    float2 tileBias = tileScale - float2(gId.xy);
 
     // Derive frustum planes
     // #0 faces to the right, and the rest continue in CCW fashion
-    float3 frustumPlanes[6];
+    float3 frustumPlanes[4];
     
     // Calculate NDC for all sides
     float4 planeNDC = ((float4) (gId.xyxy * TILED_GROUP_SIZE + float4(TILED_GROUP_SIZE, 0, 0, TILED_GROUP_SIZE)) * _ScreenParams.zwzw) * 2.0 - 1.0;
@@ -98,10 +102,6 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     frustumPlanes[1] = normalize(float3(0, 1, -planeNDC.y * _FrustumCornerDataVS.y));
     frustumPlanes[2] = normalize(float3(-1, 0, planeNDC.z * _FrustumCornerDataVS.x));
     frustumPlanes[3] = normalize(float3(0, -1, planeNDC.w * _FrustumCornerDataVS.y));
-    
-     // Near/far
-    frustumPlanes[4] = float4(0.0f, 0.0f, 1.0f, -min_tile_z);
-    frustumPlanes[5] = float4(0.0f, 0.0f, -1.0f, max_tile_z);
     
     float3 testDirGroup = float3(planeNDC.zy * _FrustumCornerDataVS.xy, 1);
     float3 testDirThread = float3((tId.xy * _ScreenParams.zw * 2.0 - 1.0) * _FrustumCornerDataVS.xy, 1);
@@ -128,8 +128,8 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
                 float d = dot(frustumPlanes[i], light.positionVS_Range.xyz);
                 inFrustum = inFrustum && (d < light.positionVS_Range.w);
             }
-            inFrustum = inFrustum && (light.positionVS_Range.z > min_tile_z);
-            inFrustum = inFrustum && (light.positionVS_Range.z < max_tile_z);
+            inFrustum = inFrustum && (light.positionVS_Range.z >= tileDepthRange.x - light.positionVS_Range.w);
+            inFrustum = inFrustum && (light.positionVS_Range.z <= tileDepthRange.y + light.positionVS_Range.w);
         }
         
         [branch]
@@ -148,8 +148,6 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     //
     float2 screenUV = tId.xy * _ScreenParams.zw;
     float2 positionNDC = screenUV * 2.0 - 1.0;
-    float rawDepth = DepthRT.Load(int3(tId.xy, 0));
-    float linearDepth = RawDepthToLinearDepth(rawDepth);
     
     float3 frustumPlaneVS = float3(positionNDC * _FrustumCornerDataVS.xy, 1);
     float3 positionVS = frustumPlaneVS * linearDepth;
@@ -183,7 +181,7 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     float3 debugColor = debugValue;// * (rawDepth < 1);
     
 #if defined(DEBUG_LIGHT_RANGES)
-    debugColor = float3(diffuseLight.r, tileLightCount * 0.33, 0) * (rawDepth < 1);
+    debugColor = float3(diffuseLight.r * (rawDepth < 1), tileLightCount * 0.33, 0);
 #endif
     
 #if defined(DEBUG_GRID)
@@ -192,6 +190,8 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
         debugColor = float3(0, 1, 0);
     }
 #endif
+    //debugColor = saturate(asfloat(maxTileZ) - asfloat(minTileZ));
+    //debugColor = asfloat(minTileZ) / 20.0;
     
     SpecularLightingOut[tId.xy] = float4(specularLight, 1);
     DiffuseLightingOut[tId.xy] = float4(diffuseLight, 1);
