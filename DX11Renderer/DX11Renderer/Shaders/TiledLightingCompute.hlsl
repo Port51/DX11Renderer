@@ -1,8 +1,14 @@
 #include "./CbufCommon.hlsli"
 #include "./Lighting/LightStructs.hlsli"
 
+// References:
+// https://wickedengine.net/2018/01/10/optimizing-tile-based-light-culling/
+
 #define MAX_TILE_LIGHTS 64
 #define TILED_GROUP_SIZE 16
+
+//#define USE_FRUSTUM_INTERSECTION_TEST
+#define USE_AABB_INTERSECTION_TEST
 
 #define DEBUG_GRID
 #define DEBUG_LIGHT_RANGES
@@ -58,6 +64,13 @@ float RawDepthToLinearDepth(float rawDepth)
     return lerp(persp, ortho, _OrthoParams.w);
 }
 
+bool AABBSphereIntersection(float3 spherePos, float sphereRad, float3 aabbCenter, float3 aabbExtents)
+{
+    float3 displ = max(0, abs(aabbCenter - spherePos) - aabbExtents);
+    float sdfSqr = dot(displ, displ);
+    return sdfSqr <= sphereRad * sphereRad;
+}
+
 [numthreads(TILED_GROUP_SIZE, TILED_GROUP_SIZE, 1)]
 void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThreadId : SV_GroupThreadID, uint3 tId : SV_DispatchThreadID)
 {
@@ -89,30 +102,31 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     // todo: early out if only sky
     
     float debugValue = 0;
+    
+    // Calculate NDC for tile corners
+    float4 planeNDC = ((float4) (gId.xyxy * TILED_GROUP_SIZE + float4(TILED_GROUP_SIZE, 0, 0, TILED_GROUP_SIZE)) * _ScreenParams.zwzw) * 2.0 - 1.0;
 
+#if defined(USE_FRUSTUM_INTERSECTION_TEST)
     // Derive frustum planes
     // #0 faces to the right, and the rest continue in CCW fashion
     float3 frustumPlanes[4];
     
-    // Calculate NDC for all sides
-    float4 planeNDC = ((float4) (gId.xyxy * TILED_GROUP_SIZE + float4(TILED_GROUP_SIZE, 0, 0, TILED_GROUP_SIZE)) * _ScreenParams.zwzw) * 2.0 - 1.0;
+    
     // Use cross product to turn tile view directions into plane directions
     // The cross product is done by flipping X or Y with Z
     frustumPlanes[0] = normalize(float3(1, 0, -planeNDC.x * _FrustumCornerDataVS.x));
     frustumPlanes[1] = normalize(float3(0, 1, -planeNDC.y * _FrustumCornerDataVS.y));
     frustumPlanes[2] = normalize(float3(-1, 0, planeNDC.z * _FrustumCornerDataVS.x));
     frustumPlanes[3] = normalize(float3(0, -1, planeNDC.w * _FrustumCornerDataVS.y));
+#endif
     
-    float3 testDirGroup = float3(planeNDC.zy * _FrustumCornerDataVS.xy, 1);
-    float3 testDirThread = float3((tId.xy * _ScreenParams.zw * 2.0 - 1.0) * _FrustumCornerDataVS.xy, 1);
-    float3 dp = testDirThread - testDirGroup;
-    
-    //debugValue = frustumPlanes[0].x * 10 - 9;
-    //debugValue = frustumPlanes[0].z;
-    //debugValue = abs(frustumPlanes[1].z) < 0.001;
-    //debugValue = dot(lights[1].positionVS_Range.xyz, -frustumPlanes[2]);
-    //debugValue = (frustumPlanes[0].z + frustumPlanes[2].z) * 10;
-    //debugValue = planeNDC.x > planeNDC.z;
+#if defined(USE_AABB_INTERSECTION_TEST)
+    // Note: Use min depth for corners in order to construct AABB that encapsulates entire frustum
+    float3 minAABB = float3(planeNDC.zy * _FrustumCornerDataVS.xy * tileDepthRange.x, tileDepthRange.x);
+    float3 maxAABB = float3(planeNDC.xw * _FrustumCornerDataVS.xy * tileDepthRange.x, tileDepthRange.y);
+    float3 aabbCenter = (minAABB + maxAABB) * 0.5;
+    float3 aabbExtents = (maxAABB - minAABB) * 0.5;
+#endif
     
     for (uint i = gIndex; i < _VisibleLightCount; i += TILED_GROUP_SIZE * TILED_GROUP_SIZE)
     {
@@ -120,17 +134,21 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
         
         bool inFrustum = true;
         
-        if (true) // todo: test light type
+#if defined(USE_FRUSTUM_INTERSECTION_TEST)        
+        [unroll]
+        for (uint i = 0; i < 4; ++i)
         {
-            [unroll]
-            for (uint i = 0; i < 4; ++i)
-            {
-                float d = dot(frustumPlanes[i], light.positionVS_Range.xyz);
-                inFrustum = inFrustum && (d < light.positionVS_Range.w);
-            }
-            inFrustum = inFrustum && (light.positionVS_Range.z >= tileDepthRange.x - light.positionVS_Range.w);
-            inFrustum = inFrustum && (light.positionVS_Range.z <= tileDepthRange.y + light.positionVS_Range.w);
+            float d = dot(frustumPlanes[i], light.positionVS_Range.xyz);
+            inFrustum = inFrustum && (d < light.positionVS_Range.w);
         }
+        inFrustum = inFrustum && (light.positionVS_Range.z >= tileDepthRange.x - light.positionVS_Range.w);
+        inFrustum = inFrustum && (light.positionVS_Range.z <= tileDepthRange.y + light.positionVS_Range.w);
+#endif
+
+#if defined(USE_AABB_INTERSECTION_TEST)        
+        // Sphere-AABB test
+        inFrustum = inFrustum && AABBSphereIntersection(light.positionVS_Range.xyz, light.positionVS_Range.w, aabbCenter, aabbExtents);
+#endif
         
         [branch]
         if (inFrustum)
@@ -181,13 +199,13 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     float3 debugColor = debugValue;// * (rawDepth < 1);
     
 #if defined(DEBUG_LIGHT_RANGES)
-    debugColor = float3(diffuseLight.r * (rawDepth < 1), tileLightCount * 0.33, 0);
+    debugColor = float3(diffuseLight.r * (rawDepth < 1), tileLightCount * 0.2, 0);
 #endif
     
 #if defined(DEBUG_GRID)
     if (groupThreadId.x == 0 || groupThreadId.y == 0)
     {
-        debugColor = float3(0, 1, 0);
+        debugColor = float3(0.3, 0.1, 0.8);
     }
 #endif
     //debugColor = saturate(asfloat(maxTileZ) - asfloat(minTileZ));
