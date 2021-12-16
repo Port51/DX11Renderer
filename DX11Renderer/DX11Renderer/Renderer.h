@@ -104,6 +104,8 @@ public:
 
 	void Execute(Graphics& gfx, const Camera& cam, const std::unique_ptr<LightManager>& pLightManager)
 	{
+		gfx.GetContext()->ClearState();
+
 		// todo: replace w/ rendergraph
 		/*gfx.GetContext()->ClearState();
 		pLightManager->CullLights(gfx, cam);
@@ -177,8 +179,11 @@ public:
 		// Tiled lighting pass
 		{
 			const std::unique_ptr<RenderPass>& pass = pRenderPasses[TiledLightingPassName];
+			
+			std::vector<ID3D11RenderTargetView*> nullRTVs(2u, nullptr);
+			gfx.GetContext()->OMSetRenderTargets(2u, nullRTVs.data(), nullptr);
 
-			gfx.GetContext()->OMSetRenderTargets(0u, nullptr, nullptr); // required for binding rendertarget to compute shader
+			//gfx.GetContext()->OMSetRenderTargets(0u, nullptr, nullptr); // required for binding rendertarget to compute shader
 			pass->BindSharedResources(gfx);
 			
 			// debug:
@@ -191,6 +196,12 @@ public:
 			//gfx.GetContext()->ClearState();
 
 			pass->Execute(gfx);
+
+			// todo: unbind!
+			std::vector<ID3D11UnorderedAccessView*> nullUAVs(3u, nullptr);
+			gfx.GetContext()->CSSetUnorderedAccessViews(0u, 3u, nullUAVs.data(), nullptr);
+			ID3D11ShaderResourceView* nullv[1] = { nullptr };
+			gfx.GetContext()->CSSetShaderResources(RenderSlots::CS_FreeSRV, 1u, nullv);
 		}
 
 		// Geometry pass

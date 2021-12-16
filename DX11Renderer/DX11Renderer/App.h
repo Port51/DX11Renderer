@@ -29,7 +29,7 @@ private:
 	std::unique_ptr<ModelInstance> pModel1;
 	float simulationSpeed = 1.f;
 	std::unique_ptr<LightManager> pLightManager;
-	std::unique_ptr<Renderer> fc;
+	std::unique_ptr<Renderer> renderer;
 	std::vector<std::unique_ptr<MeshRenderer>> pDrawables;
 	static constexpr UINT nDrawables = 1;
 };

@@ -19,7 +19,7 @@ App::App(int screenWidth, int screenHeight)
 	cam(40.0f, (float)screenWidth / (float)screenHeight, 0.1f, 100.0f),
 	pLightManager(std::make_unique<LightManager>(wnd.Gfx()))
 {
-	fc = std::make_unique<Renderer>(wnd.Gfx(), pLightManager);
+	renderer = std::make_unique<Renderer>(wnd.Gfx(), pLightManager);
 
 	std::string fn;
 	dx::XMMATRIX modelTransform;
@@ -136,27 +136,30 @@ void App::DoFrame()
 	{
 		b->SubmitDrawCalls(fc);
 	}*/
-	pModel0->SubmitDrawCalls(fc);
+	pModel0->SubmitDrawCalls(renderer);
 	//pModel1->SubmitDrawCalls(fc);
-	pLightManager->SubmitDrawCalls(fc);
-	fc->Execute(wnd.Gfx(), cam, pLightManager);
+	pLightManager->SubmitDrawCalls(renderer);
+	renderer->Execute(wnd.Gfx(), cam, pLightManager);
 
-	// imgui window to control simulation speed
-	if (ImGui::Begin("Simulation Speed")) // checks if window open
+	if (true)
 	{
-		ImGui::SliderFloat("Speed Factor", &simulationSpeed, 0.0f, 4.0f);
-		ImGui::Text("%.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-		ImGui::Text("Status: %s", wnd.kbd.KeyIsPressed(VK_SPACE) ? "PAUSED" : "RUNNING (hold spacebar to pause)");
-	}
-	ImGui::End();
+		// imgui window to control simulation speed
+		if (ImGui::Begin("Simulation Speed")) // checks if window open
+		{
+			ImGui::SliderFloat("Speed Factor", &simulationSpeed, 0.0f, 4.0f);
+			ImGui::Text("%.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+			ImGui::Text("Status: %s", wnd.kbd.KeyIsPressed(VK_SPACE) ? "PAUSED" : "RUNNING (hold spacebar to pause)");
+		}
+		ImGui::End();
 
-	// imgui windows
-	cam.DrawImguiControlWindow();
-	pLightManager->DrawImguiControlWindows();
-	wnd.Gfx().GetLog().DrawImguiControlWindow();
+		// imgui windows
+		cam.DrawImguiControlWindow();
+		pLightManager->DrawImguiControlWindows();
+		wnd.Gfx().GetLog().DrawImguiControlWindow();
+	}
 
 	wnd.Gfx().EndFrame();
-	fc->Reset();
+	renderer->Reset();
 
 	/*while (!wnd.mouse.IsEmpty())
 	{
