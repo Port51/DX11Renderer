@@ -5,11 +5,12 @@
 #include "MeshRenderer.h"
 #include "LightData.h"
 
-PointLight::PointLight(Graphics& gfx, UINT index, dx::XMFLOAT3 positionWS, dx::XMFLOAT3 color, float intensity, float range)
+PointLight::PointLight(Graphics& gfx, UINT index, dx::XMFLOAT3 positionWS, dx::XMFLOAT3 color, float intensity, float sphereRad, float range)
 	: globalLightCbuf(gfx, D3D11_USAGE_DYNAMIC),
 	index(index),
 	positionWS(positionWS),
 	color(color),
+	sphereRad(sphereRad),
 	range(range),
 	intensity(intensity)
 {
@@ -31,6 +32,7 @@ void PointLight::DrawImguiControlWindow()
 		ImGui::Text("Intensity/Color");
 		// ImGuiSliderFlags_Logarithmic makes it power of 2?
 		ImGui::SliderFloat("Intensity", &intensity, 0.01f, 5.0f, "%.2f", ImGuiSliderFlags_Logarithmic);
+		ImGui::SliderFloat("SphereRad", &sphereRad, 0.05f, 50.0f, "%.2f", ImGuiSliderFlags_Logarithmic);
 		ImGui::SliderFloat("Range", &range, 0.05f, 50.0f, "%.2f", ImGuiSliderFlags_Logarithmic);
 		ImGui::ColorEdit3("Diffuse Color", &color.x);
 	}
@@ -64,8 +66,8 @@ LightData PointLight::GetLightData(dx::FXMMATRIX viewMatrix) const
 	LightData light;
 
 	const auto posWS_Vector = dx::XMLoadFloat4(&dx::XMFLOAT4(positionWS.x, positionWS.y, positionWS.z, 1.0f));
-	light.positionVS_Range = dx::XMVectorSetW(dx::XMVector4Transform(posWS_Vector, viewMatrix), range); // pack range into W
-	light.color = color;
-	light.intensity = intensity;
+	light.positionVS_range = dx::XMVectorSetW(dx::XMVector4Transform(posWS_Vector, viewMatrix), range); // pack range into W
+	light.color_intensity = dx::XMVectorSetW(dx::XMLoadFloat3(&color), intensity);
+	light.data0 = dx::XMVectorSet(1.f / sphereRad, 0, 0, 0);
 	return light;
 }

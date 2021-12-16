@@ -316,6 +316,7 @@
     <None Include="Assets\Models\Head.asset" />
     <None Include="Assets\Materials\HairMaterial.asset" />
     <None Include="Assets\Models\DefaultQuad.asset" />
+    <None Include="Shaders\Lighting\Lights.hlsli" />
     <None Include="Shaders\Lighting\LightStructs.hlsli" />
     <None Include="Shaders\CbufCommon.hlsli">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>

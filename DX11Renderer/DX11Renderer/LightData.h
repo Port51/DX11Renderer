@@ -3,7 +3,7 @@
 
 struct LightData
 {
-	DirectX::XMVECTOR positionVS_Range; // range = w component
-	dx::XMFLOAT3 color;
-	float intensity;
+	DirectX::XMVECTOR positionVS_range;
+	DirectX::XMVECTOR color_intensity;
+	DirectX::XMVECTOR data0;
 };

@@ -1,5 +1,7 @@
 #include "./CbufCommon.hlsli"
 #include "./Lighting/LightStructs.hlsli"
+#include "./Lighting/Lights.hlsli"
+#include "./Lighting/BRDF.hlsli"
 
 // References:
 // https://wickedengine.net/2018/01/10/optimizing-tile-based-light-culling/
@@ -87,7 +89,7 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     
     GroupMemoryBarrierWithGroupSync();
     
-    // todo: replace w/ Hi-Z buffer
+    // todo: replace w/ Hi-Z buffer, or do depth slices here
     float rawDepth = DepthRT.Load(int3(tId.xy, 0));
     float linearDepth = RawDepthToLinearDepth(rawDepth);
     uint intDepth = asuint(linearDepth);
@@ -96,7 +98,7 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     
     GroupMemoryBarrierWithGroupSync();
     
-    float2 tileDepthRange = float2(asfloat(minTileZ), asfloat(maxTileZ));
+    const float2 tileDepthRange = float2(asfloat(minTileZ), asfloat(maxTileZ));
     
     // todo: use gId to setup frustums
     // todo: early out if only sky
@@ -104,13 +106,12 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     float debugValue = 0;
     
     // Calculate NDC for tile corners
-    float4 planeNDC = ((float4) (gId.xyxy * TILED_GROUP_SIZE + float4(TILED_GROUP_SIZE, 0, 0, TILED_GROUP_SIZE)) * _ScreenParams.zwzw) * 2.0 - 1.0;
+    const float4 planeNDC = ((float4) (gId.xyxy * TILED_GROUP_SIZE + float4(TILED_GROUP_SIZE, 0, 0, TILED_GROUP_SIZE)) * _ScreenParams.zwzw) * 2.0 - 1.0;
 
 #if defined(USE_FRUSTUM_INTERSECTION_TEST)
     // Derive frustum planes
     // #0 faces to the right, and the rest continue in CCW fashion
     float3 frustumPlanes[4];
-    
     
     // Use cross product to turn tile view directions into plane directions
     // The cross product is done by flipping X or Y with Z
@@ -122,10 +123,10 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     
 #if defined(USE_AABB_INTERSECTION_TEST)
     // Note: Use min depth for corners in order to construct AABB that encapsulates entire frustum
-    float3 minAABB = float3(planeNDC.zy * _FrustumCornerDataVS.xy * tileDepthRange.x, tileDepthRange.x);
-    float3 maxAABB = float3(planeNDC.xw * _FrustumCornerDataVS.xy * tileDepthRange.x, tileDepthRange.y);
-    float3 aabbCenter = (minAABB + maxAABB) * 0.5;
-    float3 aabbExtents = (maxAABB - minAABB) * 0.5;
+    const float3 minAABB = float3(planeNDC.zy * _FrustumCornerDataVS.xy * tileDepthRange.x, tileDepthRange.x);
+    const float3 maxAABB = float3(planeNDC.xw * _FrustumCornerDataVS.xy * tileDepthRange.x, tileDepthRange.y);
+    const float3 aabbCenter = (minAABB + maxAABB) * 0.5;
+    const float3 aabbExtents = (maxAABB - minAABB) * 0.5;
 #endif
     
     for (uint i = gIndex; i < _VisibleLightCount; i += TILED_GROUP_SIZE * TILED_GROUP_SIZE)
@@ -147,7 +148,7 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
 
 #if defined(USE_AABB_INTERSECTION_TEST)        
         // Sphere-AABB test
-        inFrustum = inFrustum && AABBSphereIntersection(light.positionVS_Range.xyz, light.positionVS_Range.w, aabbCenter, aabbExtents);
+        inFrustum = inFrustum && AABBSphereIntersection(light.positionVS_range.xyz, light.positionVS_range.w, aabbCenter, aabbExtents);
 #endif
         
         [branch]
@@ -174,6 +175,18 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     float4 normalRough = NormalRoughRT[tId.xy];
     //float4 gbuff1 = GBuffer1RT[tId.xy];
     float3 normalVS = normalize(normalRough.xyz * 2.0 - 1.0);
+    float linearRoughness = normalRough.w;
+    float roughness = linearRoughness * linearRoughness;
+    
+    // f0 = fresnel reflectance at normal incidence
+    // f90 = fresnel reflectance at grazing angles (usually 1)
+    //float metalness = 1;
+    //float3 reflectance = lerp(0.04, 1.0, metalness);
+    float3 f0 = 1.0; //0.16 * reflectance * reflectance;
+    
+    // note: Filament uses f0 of 0.0-0.02 to indicate pre-baked specular, and turn off f90 in that case
+    // For now, just set it to 1.0
+    float f90 = 1.0;
     
     float3 diffuseLight = 0;
     float3 specularLight = 0;
@@ -182,14 +195,23 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
         StructuredLight light = lights[tileLightIndices[i]];
         
 	    // Simple lambert
-        float3 displ = light.positionVS_Range.xyz - positionVS.xyz;
+        float3 displ = light.positionVS_range.xyz - positionVS.xyz;
+        float lightDist = length(displ);
+        float3 lightDirVS = displ / max(lightDist, 0.0001);
         
         float3 dir = normalize(displ);
         float NdotL = dot(normalVS, dir);
         
-        // todo: special pt light attenuation
-        //diffuseLight += light.color.rgb * (light.intensity * saturate(NdotL) / (1.0 + dot(displ, displ)));
-        diffuseLight += light.color.rgb * (1.0 - length(displ) / light.positionVS_Range.w);
+        float lightRSqr = 1 * 1; // temporary...
+        float lightAtten = GetSphericalLightAttenuation(lightDist, light.data0.x, light.positionVS_range.w);
+        lightAtten *= light.color_intensity.w;
+        
+        float3 lightColorInput = light.color_intensity.rgb * lightAtten;
+        lightColorInput = lightAtten;
+        
+        BRDFLighting brdf = BRDF(f0, f90, roughness, linearRoughness, normalVS, viewDirVS, lightDirVS);
+        diffuseLight += brdf.diffuseLight * lightColorInput;
+        specularLight += brdf.specularLight * lightColorInput;
     }
     
     diffuseLight *= (rawDepth < 1);
@@ -214,8 +236,8 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     SpecularLightingOut[tId.xy] = float4(specularLight, 1);
     DiffuseLightingOut[tId.xy] = float4(diffuseLight, 1);
     //DebugOut[tId.xy] = float4(lerp(float3(1, 1, 1), float3(1, 0, 0), tileLightCount * 0.333) * (rawDepth < 1), 1);
-    DebugOut[tId.xy] = float4(debugColor, 1);
-    //DebugOut[tId.xy] = float4(diffuseLight, 1);
+    //DebugOut[tId.xy] = float4(debugColor, 1);
+    DebugOut[tId.xy] = float4(diffuseLight, 1);
     //DebugOut[tId.xy] = sides[0].y;
     //DebugOut[tId.xy] = positionVS.x > 0;
     //DebugOut[tId.xy] = rawDepth < 1;

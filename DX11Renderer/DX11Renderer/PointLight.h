@@ -9,7 +9,7 @@ struct LightData;
 class PointLight
 {
 public:
-	PointLight(Graphics& gfx, UINT index, dx::XMFLOAT3 positionWS, dx::XMFLOAT3 color, float intensity = 1.f, float range = 2.5f);
+	PointLight(Graphics& gfx, UINT index, dx::XMFLOAT3 positionWS, dx::XMFLOAT3 color, float intensity = 1.f, float sphereRad = 1.f, float range = 2.5f);
 public:
 	void DrawImguiControlWindow();
 	void SubmitDrawCalls(std::unique_ptr<Renderer>& frame) const;
@@ -30,6 +30,7 @@ private:
 	dx::XMFLOAT3 positionWS;
 	dx::XMFLOAT3 color;
 	float intensity;
+	float sphereRad;
 	float range;
 
 	std::unique_ptr<ModelInstance> pModel;
