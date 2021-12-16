@@ -59,7 +59,7 @@ public:
 	{
 		Update(gfx, &data, sizeof(T));
 	}
-	void Update(Graphics& gfx, const void* data, size_t dataSize)
+	void Update(Graphics& gfx, const void* data, UINT dataSize)
 	{
 		SETUP_LOGGING_NOINFO(gfx);
 

@@ -36,19 +36,19 @@ public:
 		code += desc.SemanticName + std::to_string(desc.SemanticIndex);
 		return *this;
 	}
-	size_t GetPerVertexStride() const
+	UINT GetPerVertexStride() const
 	{
 		return perVertexStride + perVertexPadding;
 	}
-	size_t GetPerInstanceStride() const
+	UINT GetPerInstanceStride() const
 	{
 		return perInstanceStride;
 	}
-	size_t GetPerVertexPadding() const
+	UINT GetPerVertexPadding() const
 	{
 		return perVertexPadding;
 	}
-	size_t GetElementCount() const
+	UINT GetElementCount() const
 	{
 		return elements.size();
 	}
@@ -63,8 +63,8 @@ public:
 
 private:
 	std::vector<D3D11_INPUT_ELEMENT_DESC> elements;
-	size_t perVertexStride = 0;
-	size_t perInstanceStride = 0;
-	size_t perVertexPadding = 0;
+	UINT perVertexStride = 0;
+	UINT perInstanceStride = 0;
+	UINT perVertexPadding = 0;
 	std::string code = "";
 };

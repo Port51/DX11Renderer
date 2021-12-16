@@ -73,7 +73,7 @@ void VertexBufferWrapper::SetupInstanceBuffer(Graphics& gfx, const BaseBufferDat
 	gfx.GetDevice()->CreateBuffer(&bd, &sd, &pBufferArray[1]);
 }
 
-size_t VertexBufferWrapper::GetVertexCount() const
+UINT VertexBufferWrapper::GetVertexCount() const
 {
 	return vertexCount;
 }

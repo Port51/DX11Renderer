@@ -62,7 +62,7 @@ std::unique_ptr<ModelNode> ModelInstance::CreateModelInstanceNode(Graphics& gfx,
 		auto pChildNode = CreateModelInstanceNode(gfx, child);
 		pChildNodes.emplace_back(std::move(pChildNode));
 	}
-	/*for (size_t i = 0; i < pSourceNode->pChildNodes.size(); ++i)
+	/*for (UINT i = 0; i < pSourceNode->pChildNodes.size(); ++i)
 	{
 		auto pChildNode = CreateModelInstanceNode(gfx, pSourceNode->pChildNodes[i]);
 		//pChildNodes.emplace_back(std::move(pChildNode));

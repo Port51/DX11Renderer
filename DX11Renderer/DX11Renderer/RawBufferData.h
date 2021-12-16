@@ -5,7 +5,7 @@
 class RawBufferData : public BaseBufferData
 {
 public:
-	RawBufferData(const size_t elementCount, const size_t stride, const size_t padding)
+	RawBufferData(const UINT elementCount, const UINT stride, const UINT padding)
 		: elementCount(elementCount), stride(stride), padding(padding)
 	{
 		elements.resize(stride * elementCount);
@@ -19,15 +19,15 @@ public:
 		sd.SysMemSlicePitch = 0;	// only for 3D textures
 		return sd;
 	}
-	size_t GetElementCount() const override
+	UINT GetElementCount() const override
 	{
 		return elementCount;
 	}
-	size_t GetSizeInBytes() const override
+	UINT GetSizeInBytes() const override
 	{
-		return elements.size();
+		return (UINT)elements.size();
 	}
-	size_t GetStride() const override
+	UINT GetStride() const override
 	{
 		return stride;
 	}
@@ -43,8 +43,8 @@ public:
 	}
 private:
 	std::vector<char> elements;
-	const size_t stride;
-	const size_t padding;
-	const size_t elementCount;
+	const UINT stride;
+	const UINT padding;
+	const UINT elementCount;
 	char* nextInput;
 };

@@ -7,7 +7,7 @@ template <class T>
 class StructuredBufferData : public BaseBufferData
 {
 public:
-	StructuredBufferData(const size_t elementCount)
+	StructuredBufferData(const UINT elementCount)
 		: elementCount(elementCount), stride(sizeof(T))
 	{
 		elements.resize(elementCount);
@@ -26,15 +26,15 @@ public:
 		sd.SysMemSlicePitch = 0;	// only for 3D textures
 		return sd;
 	}
-	size_t GetElementCount() const override
+	UINT GetElementCount() const override
 	{
 		return elementCount;
 	}
-	size_t GetSizeInBytes() const override
+	UINT GetSizeInBytes() const override
 	{
 		return elementCount * stride;
 	}
-	size_t GetStride() const override
+	UINT GetStride() const override
 	{
 		return stride;
 	}
@@ -45,7 +45,7 @@ public:
 	}
 private:
 	std::vector<T> elements;
-	const size_t stride;
-	const size_t elementCount;
-	size_t nextInputIdx;
+	const UINT stride;
+	const UINT elementCount;
+	UINT nextInputIdx;
 };

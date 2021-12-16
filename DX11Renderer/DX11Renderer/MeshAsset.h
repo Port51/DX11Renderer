@@ -29,7 +29,7 @@ public:
 
 	std::vector<std::vector<dx::XMFLOAT2>> texcoords;
 
-	size_t numFaces;
+	UINT numFaces;
 	std::vector<int> indices;
 
 	int materialIndex;

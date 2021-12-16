@@ -209,16 +209,6 @@ public:
 			pass->Execute(gfx);
 		}
 
-		// Compute test pass
-		/*{
-			gfx.GetContext()->OMSetRenderTargets(0u, nullptr, nullptr); // required for binding rendertarget to compute shader
-			pTestKernel->Dispatch(gfx, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1);
-
-			// todo: find better way than this
-			// clearing UAV bindings doesn't seem to work
-			gfx.GetContext()->ClearState();
-		}*/
-
 		// Final blit
 		{
 			const std::unique_ptr<RenderPass>& pass = pRenderPasses[FinalBlitRenderPassName];

@@ -8,7 +8,7 @@ template<typename T>
 class StructuredBuffer : public Buffer
 {
 public:
-	StructuredBuffer(Graphics& gfx, D3D11_USAGE usage, UINT bindFlags, size_t numElements, bool useCounter = false)
+	StructuredBuffer(Graphics& gfx, D3D11_USAGE usage, UINT bindFlags, UINT numElements, bool useCounter = false)
 		: Buffer(usage, bindFlags, sizeof(T)),
 		useCounter(useCounter)
 	{
@@ -61,7 +61,7 @@ public:
 	{
 		gfx.GetContext()->PSSetShaderResources(slot, 1u, pSRV.GetAddressOf());
 	}
-	void Update(Graphics& gfx, const void* data, size_t dataBytes)
+	void Update(Graphics& gfx, const void* data, UINT dataBytes)
 	{
 		SETUP_LOGGING_NOINFO(gfx);
 
@@ -90,7 +90,7 @@ public:
 			throw std::runtime_error("Cannot update immutable structured buffer!");
 		}
 	}
-	void Update(Graphics& gfx, const std::vector<T> data, size_t dataElements)
+	void Update(Graphics& gfx, const std::vector<T> data, UINT dataElements)
 	{
 		Update(gfx, data.data(), sizeof(T) * dataElements);
 	}

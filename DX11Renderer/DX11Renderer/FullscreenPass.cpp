@@ -78,7 +78,7 @@ void FullscreenPass::SetupFullscreenQuadBindings(Graphics& gfx, std::string vert
 	AddBinding(InputLayout::Resolve(gfx, vertexLayout, vertexShaderName, pvsbc))
 		.SetupIABinding();
 
-	RawBufferData vbuf((size_t)3, vertexLayout.GetPerVertexStride(), vertexLayout.GetPerVertexPadding());
+	RawBufferData vbuf(3u, vertexLayout.GetPerVertexStride(), vertexLayout.GetPerVertexPadding());
 	vbuf.EmplaceBack(dx::XMFLOAT2{ 0, 0 });
 	vbuf.EmplacePadding();
 	vbuf.EmplaceBack(dx::XMFLOAT2{ 0, 2 });

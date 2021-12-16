@@ -14,12 +14,12 @@ public:
 public:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> GetVertexBuffer() const;
 	void BindIA(Graphics& gfx, UINT slot);
-	size_t GetVertexCount() const;
+	UINT GetVertexCount() const;
 protected:
 	void SetupVertexBuffer(Graphics& gfx, const BaseBufferData& data);
 	void SetupInstanceBuffer(Graphics& gfx, const BaseBufferData& data);
 protected:
-	size_t vertexCount;
+	UINT vertexCount;
 	std::vector<UINT> strides;
 	std::vector<UINT> offsets;
 	std::vector<Microsoft::WRL::ComPtr<ID3D11Buffer>> pBufferArray;
