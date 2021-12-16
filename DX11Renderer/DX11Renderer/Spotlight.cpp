@@ -1,13 +1,14 @@
-#include "PointLight.h"
+#include "Spotlight.h"
 #include "imgui/imgui.h"
 #include "FBXImporter.h"
 #include <d3d11.h>
 #include "MeshRenderer.h"
 #include "LightData.h"
 
-PointLight::PointLight(Graphics& gfx, UINT index, dx::XMFLOAT3 positionWS, dx::XMFLOAT3 color, float intensity, float sphereRad, float range)
+Spotlight::Spotlight(Graphics& gfx, UINT index, dx::XMFLOAT3 positionWS, dx::XMFLOAT3 rotation, dx::XMFLOAT3 color, float intensity, float sphereRad, float range)
 	: index(index),
 	positionWS(positionWS),
+	rotation(rotation),
 	color(color),
 	sphereRad(sphereRad),
 	range(range),
@@ -18,7 +19,7 @@ PointLight::PointLight(Graphics& gfx, UINT index, dx::XMFLOAT3 positionWS, dx::X
 	pModel = std::make_unique<ModelInstance>(gfx, pModelAsset, dx::XMMatrixIdentity());
 }
 
-void PointLight::DrawImguiControlWindow()
+void Spotlight::DrawImguiControlWindow()
 {
 	const auto identifier = std::string("Light") + std::to_string(index);
 	if (ImGui::Begin(identifier.c_str()))
@@ -38,35 +39,19 @@ void PointLight::DrawImguiControlWindow()
 	ImGui::End();
 }
 
-void PointLight::SubmitDrawCalls(std::unique_ptr<Renderer>& frame) const
+void Spotlight::SubmitDrawCalls(std::unique_ptr<Renderer>& frame) const
 {
 	pModel->SetPositionWS(positionWS);
 	pModel->SubmitDrawCalls(frame);
 }
 
-/*void PointLight::Bind(Graphics& gfx, dx::FXMMATRIX viewMatrix) const
-{
-	auto dataCopy = cbData;
-	const auto posWS_Vector = dx::XMLoadFloat3(&positionWS);
-
-	// Transform WS to VS
-	dx::XMStoreFloat3(&dataCopy.positionVS, dx::XMVector3Transform(posWS_Vector, viewMatrix));
-	dataCopy.color = color;
-	dataCopy.intensity = intensity;
-	dataCopy.invRangeSqr = 1.f / std::max(range * range, 0.0001f);
-
-	globalLightCbuf.Update(gfx, PointLightCBuf{ dataCopy });
-	//globalLightCbuf.BindPS(gfx, 0u);
-	gfx.GetContext()->PSSetConstantBuffers(0u, 1u, globalLightCbuf.GetD3DBuffer().GetAddressOf());
-}*/
-
-LightData PointLight::GetLightData(dx::FXMMATRIX viewMatrix) const
+LightData Spotlight::GetLightData(dx::FXMMATRIX viewMatrix) const
 {
 	LightData light;
 
 	const auto posWS_Vector = dx::XMLoadFloat4(&dx::XMFLOAT4(positionWS.x, positionWS.y, positionWS.z, 1.0f));
 	light.positionVS_range = dx::XMVectorSetW(dx::XMVector4Transform(posWS_Vector, viewMatrix), range); // pack range into W
 	light.color_intensity = dx::XMVectorSetW(dx::XMLoadFloat3(&color), intensity);
-	light.data0 = dx::XMVectorSet(0, 1.f / sphereRad, 0, 0);
+	light.data0 = dx::XMVectorSet(1, 1.f / sphereRad, 0, 0);
 	return light;
 }

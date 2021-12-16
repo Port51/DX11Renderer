@@ -203,7 +203,7 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
         float NdotL = dot(normalVS, dir);
         
         float lightRSqr = 1 * 1; // temporary...
-        float lightAtten = GetSphericalLightAttenuation(lightDist, light.data0.x, light.positionVS_range.w);
+        float lightAtten = GetSphericalLightAttenuation(lightDist, light.data0.y, light.positionVS_range.w);
         lightAtten *= light.color_intensity.w;
         
         float3 lightColorInput = light.color_intensity.rgb * lightAtten;

@@ -206,6 +206,7 @@
     <ClCompile Include="Sampler.cpp" />
     <ClCompile Include="RenderStep.cpp" />
     <ClCompile Include="DepthStencilState.cpp" />
+    <ClCompile Include="Spotlight.cpp" />
     <ClCompile Include="Surface.cpp" />
     <ClCompile Include="Technique.cpp" />
     <ClCompile Include="Texture.cpp" />
@@ -228,10 +229,12 @@
     <ClInclude Include="ComputeShader.h" />
     <ClInclude Include="DX11Include.h" />
     <ClInclude Include="DXMathInclude.h" />
+    <ClInclude Include="Light.h" />
     <ClInclude Include="LightData.h" />
     <ClInclude Include="LightManager.h" />
     <ClInclude Include="ModelNode.h" />
     <ClInclude Include="RenderConstants.h" />
+    <ClInclude Include="Spotlight.h" />
     <ClInclude Include="StructuredBuffer.h" />
     <ClInclude Include="StructuredBufferData.h" />
     <ClInclude Include="InstancedMeshRenderer.h" />

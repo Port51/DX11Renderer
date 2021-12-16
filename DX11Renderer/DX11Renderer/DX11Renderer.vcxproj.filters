@@ -309,6 +309,9 @@
     <ClCompile Include="InstancedMeshRenderer.cpp">
       <Filter>Source Files\Drawable</Filter>
     </ClCompile>
+    <ClCompile Include="Spotlight.cpp">
+      <Filter>Source Files\Lights</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WindowsInclude.h">
@@ -565,6 +568,12 @@
     </ClInclude>
     <ClInclude Include="RenderConstants.h">
       <Filter>Header Files\RenderPipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="Spotlight.h">
+      <Filter>Header Files\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>Header Files\Lights</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -2,8 +2,9 @@
 #include "StructuredBuffer.h"
 #include "Renderer.h"
 #include "RenderConstants.h"
+#include "PointLight.h"
+#include "Spotlight.h"
 
-class PointLight;
 struct LightData;
 
 class LightManager
@@ -21,6 +22,7 @@ public:
 			pLights.emplace_back(std::make_unique<PointLight>(gfx, i, dx::XMFLOAT3((i - 1) * 7.5, 1.0f, 0.f), dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 3.0f));
 			//pLights.emplace_back(std::make_unique<PointLight>(gfx, dx::XMFLOAT3(4.2f + i, 4.2f, -5.3f), dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 9.0f));
 		}
+		pLights.emplace_back(std::make_unique<Spotlight>(gfx, 3, dx::XMFLOAT3(0.0, 1.0f, -5.f), dx::XMFLOAT3(0.0, 0.0f, 0.0f), dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 3.0f));
 
 		pLightInputCB = std::make_unique<ConstantBuffer<LightInputCB>>(gfx, D3D11_USAGE_DYNAMIC);
 	}
@@ -64,7 +66,7 @@ public:
 		}
 	}
 private:
-	std::vector<std::shared_ptr<PointLight>> pLights;
+	std::vector<std::shared_ptr<Light>> pLights;
 	std::vector<LightData> cachedLightData;
 	UINT visibleLightCt;
 public:
