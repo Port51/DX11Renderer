@@ -59,7 +59,7 @@ public:
 			CSSetCB(RenderSlots::CS_PerFrameCB, pPerFrameCB->GetD3DBuffer().Get())
 			.CSSetCB(RenderSlots::CS_PerCameraCB, pPerCameraCB->GetD3DBuffer().Get())
 			.CSSetSRV(RenderSlots::CS_LightDataSRV, pLightManager->GetD3DSRV().Get())
-			.CSSetSRV(RenderSlots::CS_GbufferNormalRoughSRV, pGbufferNormalRough->GetSRV().Get())
+			//.CSSetSRV(RenderSlots::CS_GbufferNormalRoughSRV, pGbufferNormalRough->GetSRV().Get())
 			.VSSetCB(RenderSlots::VS_PerFrameCB, pPerFrameCB->GetD3DBuffer().Get())
 			.VSSetCB(RenderSlots::VS_PerCameraCB, pPerCameraCB->GetD3DBuffer().Get())
 			.PSSetCB(RenderSlots::PS_PerFrameCB, pPerFrameCB->GetD3DBuffer().Get())
