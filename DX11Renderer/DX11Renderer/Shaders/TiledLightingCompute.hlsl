@@ -9,7 +9,7 @@
 #define MAX_TILE_LIGHTS 64
 #define TILED_GROUP_SIZE 16
 
-//#define USE_FRUSTUM_INTERSECTION_TEST
+#define USE_FRUSTUM_INTERSECTION_TEST
 #define USE_AABB_INTERSECTION_TEST
 
 #define DEBUG_GRID
@@ -137,13 +137,14 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
         
 #if defined(USE_FRUSTUM_INTERSECTION_TEST)        
         [unroll]
-        for (uint i = 0; i < 4; ++i)
+        for (uint j = 0; j < 4; ++j)
         {
-            float d = dot(frustumPlanes[i], light.positionVS_Range.xyz);
-            inFrustum = inFrustum && (d < light.positionVS_Range.w);
+            float d = dot(frustumPlanes[j], light.positionVS_range.xyz);
+            inFrustum = inFrustum && (d < light.positionVS_range.w);
         }
-        inFrustum = inFrustum && (light.positionVS_Range.z >= tileDepthRange.x - light.positionVS_Range.w);
-        inFrustum = inFrustum && (light.positionVS_Range.z <= tileDepthRange.y + light.positionVS_Range.w);
+        // Not needed due to AABB test:
+        //inFrustum = inFrustum && (light.positionVS_range.z >= tileDepthRange.x - light.positionVS_range.w);
+        //inFrustum = inFrustum && (light.positionVS_range.z <= tileDepthRange.y + light.positionVS_range.w);
 #endif
 
 #if defined(USE_AABB_INTERSECTION_TEST)        
@@ -236,8 +237,8 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     SpecularLightingOut[tId.xy] = float4(specularLight, 1);
     DiffuseLightingOut[tId.xy] = float4(diffuseLight, 1);
     //DebugOut[tId.xy] = float4(lerp(float3(1, 1, 1), float3(1, 0, 0), tileLightCount * 0.333) * (rawDepth < 1), 1);
-    //DebugOut[tId.xy] = float4(debugColor, 1);
-    DebugOut[tId.xy] = float4(diffuseLight, 1);
+    DebugOut[tId.xy] = float4(debugColor, 1);
+    //DebugOut[tId.xy] = float4(diffuseLight, 1);
     //DebugOut[tId.xy] = sides[0].y;
     //DebugOut[tId.xy] = positionVS.x > 0;
     //DebugOut[tId.xy] = rawDepth < 1;

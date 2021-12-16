@@ -1,10 +1,10 @@
-#include "Spotlight.h"
+#include "DirectionalLight.h"
 #include "imgui/imgui.h"
 #include <d3d11.h>
 #include "MeshRenderer.h"
 #include "LightData.h"
 
-Spotlight::Spotlight(Graphics& gfx, UINT index, dx::XMFLOAT3 positionWS, dx::XMFLOAT3 rotation, dx::XMFLOAT3 color, float intensity, float sphereRad, float range)
+DirectionalLight::DirectionalLight(Graphics& gfx, UINT index, dx::XMFLOAT3 positionWS, dx::XMFLOAT3 rotation, dx::XMFLOAT3 color, float intensity, float sphereRad, float range)
 	: Light(gfx, index, positionWS, color, intensity),
 	rotation(rotation),
 	sphereRad(sphereRad),
@@ -13,7 +13,7 @@ Spotlight::Spotlight(Graphics& gfx, UINT index, dx::XMFLOAT3 positionWS, dx::XMF
 
 }
 
-void Spotlight::DrawImguiControlWindow()
+void DirectionalLight::DrawImguiControlWindow()
 {
 	const auto identifier = std::string("Light") + std::to_string(index);
 	if (ImGui::Begin(identifier.c_str()))
@@ -33,7 +33,7 @@ void Spotlight::DrawImguiControlWindow()
 	ImGui::End();
 }
 
-LightData Spotlight::GetLightData(dx::FXMMATRIX viewMatrix) const
+LightData DirectionalLight::GetLightData(dx::FXMMATRIX viewMatrix) const
 {
 	LightData light;
 

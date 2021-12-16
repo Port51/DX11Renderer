@@ -46,7 +46,7 @@ public:
 
 		LightInputCB lightInputCB;
 		ZeroMemory(&lightInputCB, sizeof(lightInputCB));
-		lightInputCB.visibleLightCount = 3;
+		lightInputCB.visibleLightCount = visibleLightCt;
 		pLightInputCB->Update(gfx, lightInputCB);
 		gfx.GetContext()->CSSetConstantBuffers(RenderSlots::CS_LightInputCB, 1u, pLightInputCB->GetD3DBuffer().GetAddressOf());
 	}

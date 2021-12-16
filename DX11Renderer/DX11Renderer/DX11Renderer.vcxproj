@@ -169,6 +169,7 @@
     <ClCompile Include="CustomException.cpp" />
     <ClCompile Include="DepthStencil.cpp" />
     <ClCompile Include="DepthStencilTarget.cpp" />
+    <ClCompile Include="DirectionalLight.cpp" />
     <ClCompile Include="dxerr.cpp" />
     <ClCompile Include="DxgiInfoManager.cpp" />
     <ClCompile Include="FullscreenPass.cpp" />
@@ -185,6 +186,7 @@
     <ClCompile Include="IndexBuffer.cpp" />
     <ClCompile Include="InputLayout.cpp" />
     <ClCompile Include="InstancedMeshRenderer.cpp" />
+    <ClCompile Include="Light.cpp" />
     <ClCompile Include="ModelNode.cpp" />
     <ClCompile Include="RenderConstants.cpp" />
     <ClCompile Include="RenderJob.cpp" />
@@ -227,6 +229,7 @@
     <ClInclude Include="CommonCbuffers.h" />
     <ClInclude Include="ComputeKernel.h" />
     <ClInclude Include="ComputeShader.h" />
+    <ClInclude Include="DirectionalLight.h" />
     <ClInclude Include="DX11Include.h" />
     <ClInclude Include="DXMathInclude.h" />
     <ClInclude Include="Light.h" />

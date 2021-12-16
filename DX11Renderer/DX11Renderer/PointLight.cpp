@@ -1,21 +1,15 @@
 #include "PointLight.h"
 #include "imgui/imgui.h"
-#include "FBXImporter.h"
 #include <d3d11.h>
 #include "MeshRenderer.h"
 #include "LightData.h"
 
 PointLight::PointLight(Graphics& gfx, UINT index, dx::XMFLOAT3 positionWS, dx::XMFLOAT3 color, float intensity, float sphereRad, float range)
-	: index(index),
-	positionWS(positionWS),
-	color(color),
+	: Light(gfx, index, positionWS, color, intensity),
 	sphereRad(sphereRad),
-	range(range),
-	intensity(intensity)
+	range(range)
 {
 
-	auto pModelAsset = FBXImporter::LoadFBX(gfx.GetLog(), "Assets\\Models\\DefaultSphere.asset", FBXImporter::FBXNormalsMode::Import, false);
-	pModel = std::make_unique<ModelInstance>(gfx, pModelAsset, dx::XMMatrixIdentity());
 }
 
 void PointLight::DrawImguiControlWindow()
@@ -36,12 +30,6 @@ void PointLight::DrawImguiControlWindow()
 		ImGui::ColorEdit3("Diffuse Color", &color.x);
 	}
 	ImGui::End();
-}
-
-void PointLight::SubmitDrawCalls(std::unique_ptr<Renderer>& frame) const
-{
-	pModel->SetPositionWS(positionWS);
-	pModel->SubmitDrawCalls(frame);
 }
 
 /*void PointLight::Bind(Graphics& gfx, dx::FXMMATRIX viewMatrix) const
@@ -67,6 +55,7 @@ LightData PointLight::GetLightData(dx::FXMMATRIX viewMatrix) const
 	const auto posWS_Vector = dx::XMLoadFloat4(&dx::XMFLOAT4(positionWS.x, positionWS.y, positionWS.z, 1.0f));
 	light.positionVS_range = dx::XMVectorSetW(dx::XMVector4Transform(posWS_Vector, viewMatrix), range); // pack range into W
 	light.color_intensity = dx::XMVectorSetW(dx::XMLoadFloat3(&color), intensity);
+	light.direction = dx::XMVectorSet(0, 0, 0, 0);
 	light.data0 = dx::XMVectorSet(0, 1.f / sphereRad, 0, 0);
 	return light;
 }
