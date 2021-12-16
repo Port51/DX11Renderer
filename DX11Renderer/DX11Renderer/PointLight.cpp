@@ -59,3 +59,8 @@ LightData PointLight::GetLightData(dx::FXMMATRIX viewMatrix) const
 	light.data0 = dx::XMVectorSet(0, 1.f / sphereRad, 0, 0);
 	return light;
 }
+
+UINT PointLight::GetLightType() const
+{
+	return 0u;
+}

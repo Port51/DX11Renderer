@@ -9,6 +9,8 @@ public:
 	dx::XMMATRIX GetViewMatrix() const;
 	dx::XMMATRIX GetProjectionMatrix() const;
 	dx::XMVECTOR GetFrustumCornersVS() const;
+	float GetNearClipPlane() const;
+	float GetFarClipPlane() const;
 	void SetFOV(float fov);
 	void SetAspect(float aspect);
 	void DrawImguiControlWindow();

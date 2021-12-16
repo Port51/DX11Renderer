@@ -13,6 +13,7 @@ public:
 public:
 	void DrawImguiControlWindow() override;
 	LightData GetLightData(dx::FXMMATRIX viewMatrix) const override;
+	UINT GetLightType() const override;
 private:
 	float sphereRad;
 	float range;

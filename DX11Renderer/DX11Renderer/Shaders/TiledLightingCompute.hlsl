@@ -135,12 +135,32 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
         
         bool inFrustum = true;
         
-#if defined(USE_FRUSTUM_INTERSECTION_TEST)        
+        // Calculate sphere to test against
+        float4 sphereData;
+        if (light.data0.x == 0)
+        {
+            // Point light:
+            sphereData = light.positionVS_range;
+        }
+        else if (light.data0.x == 1)
+        {
+            // Spotlight:
+            // Project sphere halfway along cone
+            sphereData = float4(light.positionVS_range.xyz + light.direction.xyz * light.positionVS_range.w * 0.5, light.positionVS_range.w * 0.5);
+        }
+        else
+        {
+            // Directional light:
+            // For now, just make it so light will always be seen
+            sphereData = float4(aabbCenter.xyz, 1000.0);
+        }
+        
+#if defined(USE_FRUSTUM_INTERSECTION_TEST)     
         [unroll]
         for (uint j = 0; j < 4; ++j)
         {
-            float d = dot(frustumPlanes[j], light.positionVS_range.xyz);
-            inFrustum = inFrustum && (d < light.positionVS_range.w);
+            float d = dot(frustumPlanes[j], sphereData.xyz);
+            inFrustum = inFrustum && (d < sphereData.w);
         }
         // Not needed due to AABB test:
         //inFrustum = inFrustum && (light.positionVS_range.z >= tileDepthRange.x - light.positionVS_range.w);
@@ -149,7 +169,7 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
 
 #if defined(USE_AABB_INTERSECTION_TEST)        
         // Sphere-AABB test
-        inFrustum = inFrustum && AABBSphereIntersection(light.positionVS_range.xyz, light.positionVS_range.w, aabbCenter, aabbExtents);
+        inFrustum = inFrustum && AABBSphereIntersection(sphereData.xyz, sphereData.w, aabbCenter, aabbExtents);
 #endif
         
         [branch]
@@ -195,20 +215,40 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     {
         StructuredLight light = lights[tileLightIndices[i]];
         
-	    // Simple lambert
-        float3 displ = light.positionVS_range.xyz - positionVS.xyz;
-        float lightDist = length(displ);
-        float3 lightDirVS = displ / max(lightDist, 0.0001);
+        float lightAtten;
+        float3 lightDirVS;
         
-        float3 dir = normalize(displ);
-        float NdotL = dot(normalVS, dir);
+        [branch] // should be same for each thread group
+        if (light.data0.x == 2)
+        {
+            // Directional light
+            lightDirVS = light.direction.xyz;
+            lightAtten = saturate(dot(normalVS, lightDirVS));
+        }
+        else
+        {
+            float3 displ = light.positionVS_range.xyz - positionVS.xyz;
+            float lightDist = length(displ);
+            lightDirVS = displ / max(lightDist, 0.0001);
+            float NdotL = saturate(dot(normalVS, lightDirVS));
+            
+            float lightRSqr = 1 * 1; // temporary...
+            float lightAtten = GetSphericalLightAttenuation(lightDist, light.data0.y, light.positionVS_range.w);
         
-        float lightRSqr = 1 * 1; // temporary...
-        float lightAtten = GetSphericalLightAttenuation(lightDist, light.data0.y, light.positionVS_range.w);
+            [branch] // should be same for each thread group
+            if (light.data0.x == 1)
+            {
+                // Apply spotlight cone
+                float3 spotlightDir = normalize(light.direction.xyz);
+            
+                // todo: replace with [MAD] op, depending on light culling?
+                float spotCos = dot(spotlightDir, -lightDirVS);
+                lightAtten *= saturate((spotCos - light.data0.w) / (light.data0.z - light.data0.w));
+            }
+        }
+        
         lightAtten *= light.color_intensity.w;
-        
         float3 lightColorInput = light.color_intensity.rgb * lightAtten;
-        lightColorInput = lightAtten;
         
         BRDFLighting brdf = BRDF(f0, f90, roughness, linearRoughness, normalVS, viewDirVS, lightDirVS);
         diffuseLight += brdf.diffuseLight * lightColorInput;
@@ -233,6 +273,7 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
 #endif
     //debugColor = saturate(asfloat(maxTileZ) - asfloat(minTileZ));
     //debugColor = asfloat(minTileZ) / 20.0;
+    //debugColor = _VisibleLightCount * 0.2;
     
     SpecularLightingOut[tId.xy] = float4(specularLight, 1);
     DiffuseLightingOut[tId.xy] = float4(diffuseLight, 1);

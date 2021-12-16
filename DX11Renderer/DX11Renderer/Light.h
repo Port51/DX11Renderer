@@ -12,6 +12,7 @@ public:
 	virtual void DrawImguiControlWindow() = 0;
 	virtual LightData GetLightData(dx::FXMMATRIX viewMatrix) const = 0;
 	virtual void SubmitDrawCalls(std::unique_ptr<Renderer>& frame) const;
+	virtual UINT GetLightType() const = 0;
 protected:
 	UINT index;
 	dx::XMFLOAT3 positionWS;

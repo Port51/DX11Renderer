@@ -4,9 +4,10 @@
 #include "MeshRenderer.h"
 #include "LightData.h"
 
-DirectionalLight::DirectionalLight(Graphics& gfx, UINT index, dx::XMFLOAT3 positionWS, dx::XMFLOAT3 rotation, dx::XMFLOAT3 color, float intensity, float sphereRad, float range)
+DirectionalLight::DirectionalLight(Graphics& gfx, UINT index, dx::XMFLOAT3 positionWS, float pan, float tilt, dx::XMFLOAT3 color, float intensity, float sphereRad, float range)
 	: Light(gfx, index, positionWS, color, intensity),
-	rotation(rotation),
+	pan(pan),
+	tilt(tilt),
 	sphereRad(sphereRad),
 	range(range)
 {
@@ -22,6 +23,8 @@ void DirectionalLight::DrawImguiControlWindow()
 		ImGui::SliderFloat("X", &positionWS.x, -60.0f, 60.0f, "%.1f");
 		ImGui::SliderFloat("Y", &positionWS.y, -60.0f, 60.0f, "%.1f");
 		ImGui::SliderFloat("Z", &positionWS.z, -60.0f, 60.0f, "%.1f");
+		ImGui::SliderFloat("Pan", &pan, -360.0f, 360.0f, "%.1f");
+		ImGui::SliderFloat("Tilt", &tilt, -180.0f, 180.0f, "%.1f");
 
 		ImGui::Text("Intensity/Color");
 		// ImGuiSliderFlags_Logarithmic makes it power of 2?
@@ -36,13 +39,21 @@ void DirectionalLight::DrawImguiControlWindow()
 LightData DirectionalLight::GetLightData(dx::FXMMATRIX viewMatrix) const
 {
 	LightData light;
-
-	// todo: calculate directionVS
-
 	const auto posWS_Vector = dx::XMLoadFloat4(&dx::XMFLOAT4(positionWS.x, positionWS.y, positionWS.z, 1.0f));
+	const auto dirWS_Vector = dx::XMVector4Transform(dx::XMVectorSet(0, 0, 1, 0), dx::XMMatrixRotationRollPitchYaw(dx::XMConvertToRadians(tilt), dx::XMConvertToRadians(pan), 0.0f));
 	light.positionVS_range = dx::XMVectorSetW(dx::XMVector4Transform(posWS_Vector, viewMatrix), range); // pack range into W
 	light.color_intensity = dx::XMVectorSetW(dx::XMLoadFloat3(&color), intensity);
-	light.direction = dx::XMVectorSet(0, 0, 0, 0);
-	light.data0 = dx::XMVectorSet(1, 1.f / sphereRad, 0, 0);
+	light.direction = dx::XMVector4Transform(dirWS_Vector, viewMatrix);
+	light.data0 = dx::XMVectorSet(2, 1.f / sphereRad, 0, 0);
 	return light;
+}
+
+void DirectionalLight::SubmitDrawCalls(std::unique_ptr<Renderer>& frame) const
+{
+	// Basically just a way to not render directional lights as an object
+}
+
+UINT DirectionalLight::GetLightType() const
+{
+	return 2u;
 }

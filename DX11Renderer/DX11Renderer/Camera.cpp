@@ -57,6 +57,16 @@ DirectX::XMVECTOR Camera::GetFrustumCornersVS() const
 	return dx::XMVectorSet(halfAngleX, -halfAngleY, halfAngleX * farClipPlane, -halfAngleY * farClipPlane);
 }
 
+float Camera::GetNearClipPlane() const
+{
+	return nearClipPlane;
+}
+
+float Camera::GetFarClipPlane() const
+{
+	return farClipPlane;
+}
+
 void Camera::UpdateProjectionMatrix()
 {
 	projectionMatrix = dx::XMMatrixPerspectiveFovLH(dx::XMConvertToRadians(fov), aspect, nearClipPlane, farClipPlane);
