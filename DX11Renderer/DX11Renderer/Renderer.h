@@ -65,9 +65,9 @@ public:
 			.PSSetCB(RenderSlots::PS_PerFrameCB, pPerFrameCB->GetD3DBuffer().Get())
 			.PSSetCB(RenderSlots::PS_PerCameraCB, pPerCameraCB->GetD3DBuffer().Get());
 
-		pRenderPasses.emplace(DepthPrepassName, std::make_unique<RenderPass>(*setupPass));
-		pRenderPasses.emplace(GBufferRenderPassName, std::make_unique<RenderPass>(*setupPass));
-		pRenderPasses.emplace(GeometryRenderPassName, std::make_unique<RenderPass>(*setupPass));
+		pRenderPasses.emplace(DepthPrepassName, std::make_unique<RenderPass>());
+		pRenderPasses.emplace(GBufferRenderPassName, std::make_unique<RenderPass>());
+		pRenderPasses.emplace(GeometryRenderPassName, std::make_unique<RenderPass>());
 		pRenderPasses[GeometryRenderPassName]->
 			PSSetSRV(0u, pSpecularLighting->GetSRV().Get())
 			.PSSetSRV(1u, pDiffuseLighting->GetSRV().Get());
@@ -82,7 +82,7 @@ public:
 
 		//pTestKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, std::string("Assets\\Built\\Shaders\\ComputeTest.cso"), std::string("CSMain")));
 
-		pRenderPasses.emplace(TiledLightingPassName, std::make_unique<RenderPass>(*setupPass));
+		pRenderPasses.emplace(TiledLightingPassName, std::make_unique<RenderPass>());
 		pRenderPasses[TiledLightingPassName]->
 			CSSetSRV(RenderSlots::CS_FreeSRV, gfx.pDepthStencil->GetSRV())
 			.CSSetUAV(0u, pSpecularLighting->GetUAV().Get())
@@ -155,6 +155,7 @@ public:
 			gfx.SetViewport(gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
 			pass->Execute(gfx);
+			pass->UnbindSharedResources(gfx);
 		}
 
 		// GBuffer pass
@@ -174,20 +175,19 @@ public:
 			gfx.SetViewport(gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
 			pass->Execute(gfx);
+
+			// todo: unbind these in a cleaner way
+			std::vector<ID3D11RenderTargetView*> nullRTVs(2u, nullptr);
+			gfx.GetContext()->OMSetRenderTargets(2u, nullRTVs.data(), nullptr);
+
+			pass->UnbindSharedResources(gfx);
 		}
 
 		// Tiled lighting pass
 		{
 			const std::unique_ptr<RenderPass>& pass = pRenderPasses[TiledLightingPassName];
-			
-			std::vector<ID3D11RenderTargetView*> nullRTVs(2u, nullptr);
-			gfx.GetContext()->OMSetRenderTargets(2u, nullRTVs.data(), nullptr);
 
-			//gfx.GetContext()->OMSetRenderTargets(0u, nullptr, nullptr); // required for binding rendertarget to compute shader
 			pass->BindSharedResources(gfx);
-			
-			// debug:
-			//gfx.GetContext()->ClearState();
 
 			pTiledLightingKernel->Dispatch(gfx, *pass, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1);
 
@@ -196,12 +196,7 @@ public:
 			//gfx.GetContext()->ClearState();
 
 			pass->Execute(gfx);
-
-			// todo: unbind!
-			std::vector<ID3D11UnorderedAccessView*> nullUAVs(3u, nullptr);
-			gfx.GetContext()->CSSetUnorderedAccessViews(0u, 3u, nullUAVs.data(), nullptr);
-			ID3D11ShaderResourceView* nullv[1] = { nullptr };
-			gfx.GetContext()->CSSetShaderResources(RenderSlots::CS_FreeSRV, 1u, nullv);
+			pass->UnbindSharedResources(gfx);
 		}
 
 		// Geometry pass
@@ -218,6 +213,7 @@ public:
 			gfx.SetViewport(gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
 			pass->Execute(gfx);
+			pass->UnbindSharedResources(gfx);
 		}
 
 		// Final blit
@@ -239,6 +235,7 @@ public:
 			gfx.GetContext()->OMSetRenderTargets(1u, gfx.pBackBufferView.GetAddressOf(), gfx.pDepthStencil->GetView().Get());
 
 			pass->Execute(gfx);
+			pass->UnbindSharedResources(gfx);
 		}
 	}
 

@@ -16,6 +16,7 @@ public:
 public:
 	void EnqueueJob(RenderJob job);
 	virtual void BindSharedResources(Graphics& gfx) const;
+	virtual void UnbindSharedResources(Graphics& gfx) const;
 	virtual void Execute(Graphics& gfx) const;
 	void Reset();
 public:
@@ -37,4 +38,8 @@ private:
 	std::vector<std::pair<UINT, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>>> pVS_SRV_Binds;
 	std::vector<std::pair<UINT, Microsoft::WRL::ComPtr<ID3D11Buffer>>> pPS_CB_Binds;
 	std::vector<std::pair<UINT, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>>> pPS_SRV_Binds;
+
+	static std::vector<ID3D11Buffer*> pNullBuffers;
+	static std::vector<ID3D11ShaderResourceView*> pNullSRVs;
+	static std::vector<ID3D11UnorderedAccessView*> pNullUAVs;
 };

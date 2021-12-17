@@ -1,7 +1,19 @@
 #include "RenderPass.h"
 
+// Statics
+std::vector<ID3D11Buffer*> RenderPass::pNullBuffers;
+std::vector<ID3D11ShaderResourceView*> RenderPass::pNullSRVs;
+std::vector<ID3D11UnorderedAccessView*> RenderPass::pNullUAVs;
+
 RenderPass::RenderPass()
 {
+	if (pNullBuffers.size() == 0)
+	{
+		// Init static info
+		pNullBuffers.resize(10u, nullptr);
+		pNullSRVs.resize(10u, nullptr);
+		pNullUAVs.resize(10u, nullptr);
+	}
 }
 
 void RenderPass::EnqueueJob(RenderJob job)
@@ -41,6 +53,40 @@ void RenderPass::BindSharedResources(Graphics & gfx) const
 	for (size_t i = 0; i < pPS_SRV_Binds.size(); ++i)
 	{
 		gfx.GetContext()->PSSetShaderResources(pPS_SRV_Binds[i].first, 1u, pPS_SRV_Binds[i].second.GetAddressOf());
+	}
+}
+
+void RenderPass::UnbindSharedResources(Graphics & gfx) const
+{
+	if (pCS_CB_Binds.size() > 0)
+	{
+		gfx.GetContext()->CSSetConstantBuffers(pCS_CB_Binds[0].first, pCS_CB_Binds.size(), pNullBuffers.data());
+	}
+	if (pCS_SRV_Binds.size() > 0)
+	{
+		gfx.GetContext()->CSSetShaderResources(pCS_SRV_Binds[0].first, pCS_SRV_Binds.size(), pNullSRVs.data());
+	}
+	if (pCS_UAV_Binds.size() > 0)
+	{
+		gfx.GetContext()->CSSetUnorderedAccessViews(pCS_UAV_Binds[0].first, pCS_UAV_Binds.size(), pNullUAVs.data(), nullptr);
+	}
+
+	if (pVS_CB_Binds.size() > 0)
+	{
+		gfx.GetContext()->VSSetConstantBuffers(pVS_CB_Binds[0].first, pVS_CB_Binds.size(), pNullBuffers.data());
+	}
+	if (pVS_SRV_Binds.size() > 0)
+	{
+		gfx.GetContext()->VSSetShaderResources(pVS_SRV_Binds[0].first, pVS_SRV_Binds.size(), pNullSRVs.data());
+	}
+
+	if (pPS_CB_Binds.size() > 0)
+	{
+		gfx.GetContext()->PSSetConstantBuffers(pPS_CB_Binds[0].first, pPS_CB_Binds.size(), pNullBuffers.data());
+	}
+	if (pPS_SRV_Binds.size() > 0)
+	{
+		gfx.GetContext()->PSSetShaderResources(pPS_SRV_Binds[0].first, pPS_SRV_Binds.size(), pNullSRVs.data());
 	}
 }
 
