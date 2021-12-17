@@ -220,14 +220,14 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
         float3 lightDirVS;
         
         uint type = light.data0.x;
-        /*[branch] // should be same for each thread group
+        [branch] // should be same for each thread group
         if (type == 2u)
         {
             // Directional light
             lightDirVS = light.direction.xyz;
             lightAtten = saturate(dot(normalVS, lightDirVS));
         }
-        else*/
+        else
         {
             float3 displ = light.positionVS_range.xyz - positionVS.xyz;
             float lightDist = length(displ);
@@ -239,7 +239,7 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
             //lightAtten = displ.y > 0;
         
             //[branch] // should be same for each thread group
-            /*if (type == 1u)
+            if (type == 1u)
             {
                 // Apply spotlight cone
                 float3 spotlightDir = normalize(light.direction.xyz);
@@ -247,7 +247,7 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
                 // todo: replace with [MAD] op, depending on light culling?
                 float spotCos = dot(spotlightDir, -lightDirVS);
                 lightAtten *= saturate((spotCos - light.data0.w) / (light.data0.z - light.data0.w));
-            }*/
+            }
         }
         
         lightAtten *= light.color_intensity.w;
