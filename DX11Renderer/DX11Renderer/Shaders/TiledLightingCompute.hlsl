@@ -218,8 +218,9 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
         float lightAtten;
         float3 lightDirVS;
         
+        uint type = light.data0.x;
         [branch] // should be same for each thread group
-        if (light.data0.x == 2)
+        if (type == 2u)
         {
             // Directional light
             lightDirVS = light.direction.xyz;
@@ -233,10 +234,10 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
             float NdotL = saturate(dot(normalVS, lightDirVS));
             
             float lightRSqr = 1 * 1; // temporary...
-            float lightAtten = GetSphericalLightAttenuation(lightDist, light.data0.y, light.positionVS_range.w);
+            lightAtten = GetSphericalLightAttenuation(lightDist, light.data0.y, light.positionVS_range.w);
         
             [branch] // should be same for each thread group
-            if (light.data0.x == 1)
+            if (type == 1u)
             {
                 // Apply spotlight cone
                 float3 spotlightDir = normalize(light.direction.xyz);
@@ -248,7 +249,7 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
         }
         
         lightAtten *= light.color_intensity.w;
-        float3 lightColorInput = light.color_intensity.rgb * lightAtten;
+        float3 lightColorInput = light.color_intensity.rgb * saturate(lightAtten);
         
         BRDFLighting brdf = BRDF(f0, f90, roughness, linearRoughness, normalVS, viewDirVS, lightDirVS);
         diffuseLight += brdf.diffuseLight * lightColorInput;
