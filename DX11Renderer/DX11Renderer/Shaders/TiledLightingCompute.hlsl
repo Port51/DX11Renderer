@@ -137,7 +137,8 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
         
         // Calculate sphere to test against
         float4 sphereData;
-        if (light.data0.x == 0)
+        sphereData = light.positionVS_range;
+        /*if (light.data0.x == 0)
         {
             // Point light:
             sphereData = light.positionVS_range;
@@ -153,7 +154,7 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
             // Directional light:
             // For now, just make it so light will always be seen
             sphereData = float4(aabbCenter.xyz, 1000.0);
-        }
+        }*/
         
 #if defined(USE_FRUSTUM_INTERSECTION_TEST)     
         [unroll]
@@ -219,25 +220,26 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
         float3 lightDirVS;
         
         uint type = light.data0.x;
-        [branch] // should be same for each thread group
+        /*[branch] // should be same for each thread group
         if (type == 2u)
         {
             // Directional light
             lightDirVS = light.direction.xyz;
             lightAtten = saturate(dot(normalVS, lightDirVS));
         }
-        else
+        else*/
         {
             float3 displ = light.positionVS_range.xyz - positionVS.xyz;
             float lightDist = length(displ);
             lightDirVS = displ / max(lightDist, 0.0001);
-            float NdotL = saturate(dot(normalVS, lightDirVS));
             
             float lightRSqr = 1 * 1; // temporary...
             lightAtten = GetSphericalLightAttenuation(lightDist, light.data0.y, light.positionVS_range.w);
+            //lightAtten = lightDirVS.x > 0;
+            //lightAtten = displ.y > 0;
         
-            [branch] // should be same for each thread group
-            if (type == 1u)
+            //[branch] // should be same for each thread group
+            /*if (type == 1u)
             {
                 // Apply spotlight cone
                 float3 spotlightDir = normalize(light.direction.xyz);
@@ -245,14 +247,16 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
                 // todo: replace with [MAD] op, depending on light culling?
                 float spotCos = dot(spotlightDir, -lightDirVS);
                 lightAtten *= saturate((spotCos - light.data0.w) / (light.data0.z - light.data0.w));
-            }
+            }*/
         }
         
         lightAtten *= light.color_intensity.w;
-        float3 lightColorInput = light.color_intensity.rgb * saturate(lightAtten);
+        float3 lightColorInput = saturate(light.color_intensity.rgb * lightAtten);
         
         BRDFLighting brdf = BRDF(f0, f90, roughness, linearRoughness, normalVS, viewDirVS, lightDirVS);
         diffuseLight += brdf.diffuseLight * lightColorInput;
+        //diffuseLight += saturate(dot(normalVS, lightDirVS));
+        //diffuseLight += lightAtten;
         specularLight += brdf.specularLight * lightColorInput;
     }
     
@@ -263,7 +267,7 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     float3 debugColor = debugValue;// * (rawDepth < 1);
     
 #if defined(DEBUG_LIGHT_RANGES)
-    debugColor = float3(diffuseLight.r * (rawDepth < 1), tileLightCount * 0.2, 0);
+    debugColor = float3((diffuseLight.r) * (rawDepth < 1), tileLightCount * 0.1, 0);
 #endif
     
 #if defined(DEBUG_GRID)

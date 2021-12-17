@@ -84,7 +84,8 @@ public:
 
 		pRenderPasses.emplace(TiledLightingPassName, std::make_unique<RenderPass>());
 		pRenderPasses[TiledLightingPassName]->
-			CSSetSRV(RenderSlots::CS_FreeSRV, gfx.pDepthStencil->GetSRV())
+			CSSetSRV(RenderSlots::CS_GbufferNormalRoughSRV, pGbufferNormalRough->GetSRV().Get())
+			.CSSetSRV(RenderSlots::CS_FreeSRV, gfx.pDepthStencil->GetSRV())
 			.CSSetUAV(0u, pSpecularLighting->GetUAV().Get())
 			.CSSetUAV(1u, pDiffuseLighting->GetUAV().Get())
 			.CSSetUAV(2u, pDebugTiledLightingCS->GetUAV().Get());
