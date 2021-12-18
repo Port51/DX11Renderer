@@ -24,16 +24,7 @@ cbuffer ObjectCBuf : register(b1)
     matrix modelViewProj;
 };*/
 
-struct PS_OUTPUT
+float4 main(v2f i) : SV_Target
 {
-    float4 NormalRough : SV_Target0;
-    float4 Second : SV_Target1;
-};
-
-PS_OUTPUT main(v2f i) : SV_Target
-{
-    PS_OUTPUT o;
-    o.NormalRough = 0;
-    o.Second = 0;
-    return o;
+    return 0;
 }

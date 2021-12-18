@@ -29,11 +29,8 @@ public:
 	Renderer(Graphics& gfx, const std::unique_ptr<LightManager>& pLightManager)
 	{
 		// Setup render targets
-		pGbufferNormalRough = std::make_shared<RenderTarget>(gfx);
-		pGbufferNormalRough->Init(gfx.GetDevice().Get(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
-
-		pGbufferSecond = std::make_shared<RenderTarget>(gfx);
-		pGbufferSecond->Init(gfx.GetDevice().Get(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
+		pNormalRoughTarget = std::make_shared<RenderTarget>(gfx);
+		pNormalRoughTarget->Init(gfx.GetDevice().Get(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
 		pSpecularLighting = std::make_shared<RenderTarget>(gfx);
 		pSpecularLighting->Init(gfx.GetDevice().Get(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
@@ -75,16 +72,11 @@ public:
 		pRenderPasses.emplace(FinalBlitRenderPassName,
 			std::make_unique<FullscreenPass>(gfx, "Assets\\Built\\Shaders\\BlitPS.cso"));
 
-		// Setup Gbuffer
-		pGbufferRenderViews.resize(GbufferSize);
-		pGbufferRenderViews[0] = pGbufferNormalRough->pRenderTargetView.Get();
-		pGbufferRenderViews[1] = pGbufferSecond->pRenderTargetView.Get();
-
 		//pTestKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, std::string("Assets\\Built\\Shaders\\ComputeTest.cso"), std::string("CSMain")));
 
 		pRenderPasses.emplace(TiledLightingPassName, std::make_unique<RenderPass>());
 		pRenderPasses[TiledLightingPassName]->
-			CSSetSRV(RenderSlots::CS_GbufferNormalRoughSRV, pGbufferNormalRough->GetSRV().Get())
+			CSSetSRV(RenderSlots::CS_GbufferNormalRoughSRV, pNormalRoughTarget->GetSRV().Get())
 			.CSSetSRV(RenderSlots::CS_FreeSRV, gfx.pDepthStencil->GetSRV())
 			.CSSetUAV(0u, pSpecularLighting->GetUAV().Get())
 			.CSSetUAV(1u, pDiffuseLighting->GetUAV().Get())
@@ -152,7 +144,7 @@ public:
 			gfx.pDepthStencil->Clear(gfx);
 
 			// MRT bind
-			gfx.GetContext()->OMSetRenderTargets(1, pGbufferRenderViews.data(), gfx.pDepthStencil->GetView().Get());
+			gfx.GetContext()->OMSetRenderTargets(0, nullptr, gfx.pDepthStencil->GetView().Get());
 			gfx.SetViewport(gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
 			pass->Execute(gfx);
@@ -168,18 +160,17 @@ public:
 
 			pass->BindSharedResources(gfx);
 			Bind::DepthStencilState::Resolve(gfx, Bind::DepthStencilState::Mode::Gbuffer)->BindOM(gfx);
-			pGbufferNormalRough->ClearRenderTarget(gfx.GetContext().Get(), 1.f, 0.f, 0.f, 1.f);
-			pGbufferSecond->ClearRenderTarget(gfx.GetContext().Get(), 1.f, 0.f, 0.f, 1.f);
+			pNormalRoughTarget->ClearRenderTarget(gfx.GetContext().Get(), 1.f, 0.f, 0.f, 1.f);
 
 			// MRT bind
-			gfx.GetContext()->OMSetRenderTargets(2, &pGbufferRenderViews[0], gfx.pDepthStencil->GetView().Get());
+			gfx.GetContext()->OMSetRenderTargets(1, pNormalRoughTarget->GetView().GetAddressOf(), gfx.pDepthStencil->GetView().Get());
 			gfx.SetViewport(gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
 			pass->Execute(gfx);
 
 			// todo: unbind these in a cleaner way
-			std::vector<ID3D11RenderTargetView*> nullRTVs(2u, nullptr);
-			gfx.GetContext()->OMSetRenderTargets(2u, nullRTVs.data(), nullptr);
+			std::vector<ID3D11RenderTargetView*> nullRTVs(1u, nullptr);
+			gfx.GetContext()->OMSetRenderTargets(1u, nullRTVs.data(), nullptr);
 
 			pass->UnbindSharedResources(gfx);
 		}
@@ -238,6 +229,7 @@ public:
 			pass->Execute(gfx);
 			pass->UnbindSharedResources(gfx);
 		}
+
 	}
 
 	void Reset()
@@ -249,10 +241,8 @@ public:
 	}
 
 private:
-	std::vector<ID3D11RenderTargetView*> pGbufferRenderViews;
 	std::shared_ptr<DepthStencilTarget> pSmallDepthStencil;
-	std::shared_ptr<RenderTarget> pGbufferNormalRough;
-	std::shared_ptr<RenderTarget> pGbufferSecond;
+	std::shared_ptr<RenderTarget> pNormalRoughTarget;
 	std::unordered_map<std::string, std::unique_ptr<RenderPass>> pRenderPasses;
 
 	std::shared_ptr<RenderTarget> pSpecularLighting;

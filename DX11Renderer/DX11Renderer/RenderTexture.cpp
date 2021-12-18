@@ -96,6 +96,11 @@ void RenderTexture::Shutdown()
 	return;
 }
 
+Microsoft::WRL::ComPtr<ID3D11RenderTargetView> RenderTexture::GetView() const
+{
+	return pRenderTargetView;
+}
+
 void RenderTexture::BindCS(Graphics& gfx, UINT slot)
 {
 	gfx.GetContext()->CSSetShaderResources(slot, 1u, pShaderResourceView.GetAddressOf());

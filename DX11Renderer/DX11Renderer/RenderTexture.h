@@ -18,10 +18,12 @@ public:
 	virtual void Init(ID3D11Device* pDevice, int textureWidth, int textureHeight);
 	void Shutdown();
 
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> GetView() const;
+
 	void BindCS(Graphics& gfx, UINT slot) override;
 	void BindVS(Graphics& gfx, UINT slot) override;
 	void BindPS(Graphics& gfx, UINT slot) override;
 
-public:
+protected:
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pRenderTargetView;
 };

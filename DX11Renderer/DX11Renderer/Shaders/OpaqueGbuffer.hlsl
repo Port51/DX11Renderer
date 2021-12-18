@@ -34,15 +34,8 @@ float SCurve(float x)
     return (-2 * x + 3) * x * x; // OPS: [MAD] [MUL] [MUL]
 }
 
-struct PS_OUTPUT
+float4 main(v2f i) : SV_Target
 {
-    float4 NormalRough : SV_Target0;
-    float4 Second : SV_Target1;
-};
-
-PS_OUTPUT main(v2f i) : SV_Target
-{
-    PS_OUTPUT o;
     //return float4(lightColor, 1);
     //return abs(i.tangentVS.xyzz);
     //return frac(i.uv0.x * 10);
@@ -69,7 +62,6 @@ PS_OUTPUT main(v2f i) : SV_Target
     float3 ambient = pow(i.normalVS.y * -0.5 + 0.5, 2) * 0.15 * float3(0.75, 0.95, 1.0);
     
     i.normalVS = float3(0, 1, 0);
-    o.NormalRough = float4(i.normalVS * 0.5 + 0.5, roughness);
-    o.Second = i.normalVS.y;
-    return o;
+    
+    return float4(i.normalVS * 0.5 + 0.5, roughness);
 }
