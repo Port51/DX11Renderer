@@ -108,20 +108,23 @@ public:
 
 		return;*/
 
-		PerFrameCB perFrameCB;
-		ZeroMemory(&perFrameCB, sizeof(perFrameCB));
-		perFrameCB.time = { 0.5f, 0, 0, 0 };
-		pPerFrameCB->Update(gfx, perFrameCB);
+		// Early frame calculations
+		{
+			PerFrameCB perFrameCB;
+			ZeroMemory(&perFrameCB, sizeof(perFrameCB));
+			perFrameCB.time = { 0.5f, 0, 0, 0 };
+			pPerFrameCB->Update(gfx, perFrameCB);
 
-		PerCameraCB perCameraCB;
-		ZeroMemory(&perCameraCB, sizeof(perCameraCB));
-		perCameraCB.screenParams = dx::XMVectorSet( (float)gfx.GetScreenWidth(), (float)gfx.GetScreenHeight(), 1.0f / gfx.GetScreenWidth(), 1.0f / gfx.GetScreenHeight() );
-		perCameraCB.zBufferParams = dx::XMVectorSet( 1.f - cam.farClipPlane / cam.nearClipPlane, cam.farClipPlane / cam.nearClipPlane, 1.f / cam.farClipPlane - 1.f / cam.nearClipPlane, 1.f / cam.nearClipPlane);
-		perCameraCB.orthoParams = dx::XMVectorSet(0.f, 0.f, 0.f, 0.f);
-		perCameraCB.frustumCornerDataVS = cam.GetFrustumCornersVS();
-		perCameraCB.viewProj = cam.GetViewMatrix();
-		perCameraCB.projection = cam.GetProjectionMatrix();
-		pPerCameraCB->Update(gfx, perCameraCB);
+			PerCameraCB perCameraCB;
+			ZeroMemory(&perCameraCB, sizeof(perCameraCB));
+			perCameraCB.screenParams = dx::XMVectorSet((float)gfx.GetScreenWidth(), (float)gfx.GetScreenHeight(), 1.0f / gfx.GetScreenWidth(), 1.0f / gfx.GetScreenHeight());
+			perCameraCB.zBufferParams = dx::XMVectorSet(1.f - cam.farClipPlane / cam.nearClipPlane, cam.farClipPlane / cam.nearClipPlane, 1.f / cam.farClipPlane - 1.f / cam.nearClipPlane, 1.f / cam.nearClipPlane);
+			perCameraCB.orthoParams = dx::XMVectorSet(0.f, 0.f, 0.f, 0.f);
+			perCameraCB.frustumCornerDataVS = cam.GetFrustumCornersVS();
+			perCameraCB.viewProj = cam.GetViewMatrix();
+			perCameraCB.projection = cam.GetProjectionMatrix();
+			pPerCameraCB->Update(gfx, perCameraCB);
+		}
 
 		// Per-frame and per-camera binds
 		{
@@ -220,8 +223,8 @@ public:
 			Bind::DepthStencilState::Resolve(gfx, Bind::DepthStencilState::Mode::StencilOff)->BindOM(gfx);
 
 			// Debug view overrides: (do this here so it can be changed dynamically later)
-			//fsPass->SetInputTarget(pCameraColor);
-			fsPass->SetInputTarget(pDebugTiledLightingCS);
+			fsPass->SetInputTarget(pCameraColor);
+			//fsPass->SetInputTarget(pDebugTiledLightingCS);
 
 			gfx.SetViewport(gfx.GetScreenWidth(), gfx.GetScreenHeight());
 			gfx.GetContext()->OMSetRenderTargets(1u, gfx.pBackBufferView.GetAddressOf(), gfx.pDepthStencil->GetView().Get());

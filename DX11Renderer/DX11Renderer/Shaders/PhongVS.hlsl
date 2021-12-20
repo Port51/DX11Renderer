@@ -28,13 +28,14 @@ float4 ComputeNonStereoScreenPos(float4 pos)
 
 v2f main(attrib i)
 {
-    v2f vso;
+    v2f o;
     i.pos -= i.instancePosition * 0.5;
-    vso.positionVS = (float3) mul(modelView, float4(i.pos, 1.0f));
-    vso.normalWS = mul((float3x3) model, i.n);;
-    vso.normalVS = mul((float3x3) modelView, i.n);
-    vso.tangentVS = mul((float3x3) modelView, i.t);
-	vso.pos = mul(modelViewProj, float4(i.pos, 1.0f));
-    vso.uv0 = float2(i.uv0.x, 1.f - i.uv0.y);
-	return vso;
+    o.positionVS = (float3) mul(modelView, float4(i.pos, 1.0f));
+    o.normalWS = mul((float3x3) model, i.n);;
+    o.normalVS = mul((float3x3) modelView, i.n);
+    o.tangentVS = mul((float3x3) modelView, i.t);
+	o.pos = mul(modelViewProj, float4(i.pos, 1.0f));
+    o.uv0 = float2(i.uv0.x, 1.f - i.uv0.y);
+    o.screenPos = o.pos;
+	return o;
 }

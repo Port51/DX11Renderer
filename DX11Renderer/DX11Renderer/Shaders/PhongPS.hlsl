@@ -45,8 +45,8 @@ float SCurve(float x)
 
 float4 main(v2f i) : SV_Target
 {
-    float2 screenPos = i.screenPos.xy / i.screenPos.w;
-    screenPos = i.pos.xy / i.pos.w;
+    float2 screenPos = (i.screenPos.xy * float2(1, -1) / i.screenPos.w) * 0.5 + 0.5;
+    //screenPos = i.pos.xy / i.pos.w;
     float4 specularLight = SpecularLightingRT.Sample(splr, screenPos);
     float4 diffuseLight = DiffuseLightingRT.Sample(splr, screenPos);
     
@@ -56,6 +56,9 @@ float4 main(v2f i) : SV_Target
     diffuseTex.rgb *= combinedLight;
     
     //return float4(0, 0, 1, 1);
-    return _Time.x;
+    //return _Time.x;
+    //return screenPos.y;
+    //return combinedLight.rgbb;
+    return diffuseLight;
     return diffuseTex;
 }

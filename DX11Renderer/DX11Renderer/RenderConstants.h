@@ -26,7 +26,7 @@ public:
 	static const UINT PS_PerCameraCB = 1u;
 	static const UINT PS_FreeCB = 2u; // 1st available general-purpose slot
 
-	static const UINT PS_FreeSRV = 0u; // 1st available general-purpose slot
+	static const UINT PS_FreeSRV = 2u; // 1st available general-purpose slot
 };
 
 class RenderConstants
