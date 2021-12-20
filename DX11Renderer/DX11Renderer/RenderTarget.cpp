@@ -9,7 +9,7 @@ RenderTarget::RenderTarget(Graphics& gfx)
 {
 }
 
-void RenderTarget::Init(ID3D11Device * pDevice, int textureWidth, int textureHeight)
+void RenderTarget::Init(Microsoft::WRL::ComPtr<ID3D11Device> pDevice, UINT textureWidth, UINT textureHeight)
 {
 	RenderTexture::Init(pDevice, textureWidth, textureHeight);
 

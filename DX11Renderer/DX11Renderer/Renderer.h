@@ -30,19 +30,19 @@ public:
 	{
 		// Setup render targets
 		pNormalRoughTarget = std::make_shared<RenderTarget>(gfx);
-		pNormalRoughTarget->Init(gfx.GetDevice().Get(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
+		pNormalRoughTarget->Init(gfx.GetDevice(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
 		pSpecularLighting = std::make_shared<RenderTarget>(gfx);
-		pSpecularLighting->Init(gfx.GetDevice().Get(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
+		pSpecularLighting->Init(gfx.GetDevice(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
 		pDiffuseLighting = std::make_shared<RenderTarget>(gfx);
-		pDiffuseLighting->Init(gfx.GetDevice().Get(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
+		pDiffuseLighting->Init(gfx.GetDevice(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
 		
 		pCameraColor = std::make_shared<RenderTarget>(gfx);
-		pCameraColor->Init(gfx.GetDevice().Get(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
+		pCameraColor->Init(gfx.GetDevice(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
 		pDebugTiledLightingCS = std::make_shared<RenderTarget>(gfx);
-		pDebugTiledLightingCS->Init(gfx.GetDevice().Get(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
+		pDebugTiledLightingCS->Init(gfx.GetDevice(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
 		pSmallDepthStencil = std::make_shared<DepthStencilTarget>(gfx, gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
@@ -131,6 +131,7 @@ public:
 			const std::unique_ptr<RenderPass>& pass = pRenderPasses[PerCameraPassName];
 
 			pLightManager->CullLights(gfx, cam); // changes the SRV, which will be bound below
+			pLightManager->RenderShadows(gfx, cam);
 			pass->BindSharedResources(gfx);
 
 			pass->Execute(gfx);

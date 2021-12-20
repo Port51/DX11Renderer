@@ -4,6 +4,8 @@
 #include "Light.h"
 
 class Renderer;
+class Camera;
+class DepthStencilTarget;
 struct LightData;
 
 class DirectionalLight : public Light
@@ -15,9 +17,11 @@ public:
 	LightData GetLightData(dx::FXMMATRIX viewMatrix) const override;
 	void SubmitDrawCalls(std::unique_ptr<Renderer>& frame) const override;
 	UINT GetLightType() const override;
+	void RenderShadow(Graphics& gfx, const Camera& cam) override;
 private:
 	float pan;
 	float tilt;
 	float sphereRad;
 	float range;
+	std::unique_ptr<DepthStencilTarget> pShadowMap;
 };

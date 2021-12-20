@@ -16,3 +16,8 @@ void Light::SubmitDrawCalls(std::unique_ptr<Renderer>& frame) const
 	pModel->SetPositionWS(positionWS);
 	pModel->SubmitDrawCalls(frame);
 }
+
+bool Light::HasShadow() const
+{
+	return shadowSettings.hasShadow;
+}

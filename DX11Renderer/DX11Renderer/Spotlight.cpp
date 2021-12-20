@@ -3,6 +3,8 @@
 #include <d3d11.h>
 #include "MeshRenderer.h"
 #include "LightData.h"
+#include "Camera.h"
+#include "DepthStencilTarget.h"
 
 Spotlight::Spotlight(Graphics& gfx, UINT index, dx::XMFLOAT3 positionWS, float pan, float tilt, dx::XMFLOAT3 color, float intensity, float sphereRad, float range)
 	: Light(gfx, index, positionWS, color, intensity),
@@ -11,7 +13,9 @@ Spotlight::Spotlight(Graphics& gfx, UINT index, dx::XMFLOAT3 positionWS, float p
 	sphereRad(sphereRad),
 	range(range)
 {
-
+	// todo: set shadow via settings
+	shadowSettings.hasShadow = true;
+	pShadowMap = std::make_unique<DepthStencilTarget>(gfx, 1024, 1024);
 }
 
 void Spotlight::DrawImguiControlWindow()
@@ -53,4 +57,9 @@ LightData Spotlight::GetLightData(dx::FXMMATRIX viewMatrix) const
 UINT Spotlight::GetLightType() const
 {
 	return 1u;
+}
+
+void Spotlight::RenderShadow(Graphics & gfx, const Camera & cam)
+{
+
 }

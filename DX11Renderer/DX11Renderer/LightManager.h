@@ -5,6 +5,7 @@
 #include "PointLight.h"
 #include "Spotlight.h"
 #include "DirectionalLight.h"
+#include "RenderTarget.h"
 
 struct LightData;
 
@@ -84,6 +85,17 @@ public:
 		pLightInputCB->Update(gfx, lightInputCB);
 		gfx.GetContext()->CSSetConstantBuffers(RenderSlots::CS_LightInputCB, 1u, pLightInputCB->GetD3DBuffer().GetAddressOf());
 	}
+	void RenderShadows(Graphics& gfx, const Camera& cam)
+	{
+		// todo: cull shadows
+		for (int i = 0; i < pLights.size(); ++i)
+		{
+			if (pLights[i]->HasShadow())
+			{
+				pLights[i]->RenderShadow(gfx, cam);
+			}
+		}
+	}
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> GetD3DSRV() const
 	{
 		return pLightData->GetD3DSRV();
@@ -147,7 +159,7 @@ private:
 	std::vector<std::shared_ptr<Light>> pLights;
 	std::vector<LightData> cachedLightData;
 	UINT visibleLightCt;
-public:
+private:
 	std::unique_ptr<StructuredBuffer<LightData>> pLightData;
 	std::unique_ptr<ConstantBuffer<LightInputCB>> pLightInputCB;
 };

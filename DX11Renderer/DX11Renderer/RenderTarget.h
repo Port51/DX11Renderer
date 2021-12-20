@@ -8,7 +8,7 @@ class RenderTarget : public RenderTexture
 {
 public:
 	RenderTarget(Graphics& gfx);
-	void Init(ID3D11Device* pDevice, int textureWidth, int textureHeight) override;
+	void Init(Microsoft::WRL::ComPtr<ID3D11Device> pDevice, UINT textureWidth, UINT textureHeight) override;
 	void BindAsTexture(Graphics& gfx, UINT slot) const;
 	void BindAsTarget(Graphics& gfx) const;
 	void BindAsTarget(Graphics& gfx, Microsoft::WRL::ComPtr<ID3D11DepthStencilView> pDepthStencilView) const;

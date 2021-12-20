@@ -12,7 +12,7 @@ RenderTexture::RenderTexture(Graphics& gfx)
 //{
 //}
 
-void RenderTexture::Init(ID3D11Device* device, int textureWidth, int textureHeight)
+void RenderTexture::Init(Microsoft::WRL::ComPtr<ID3D11Device> device, UINT textureWidth, UINT textureHeight)
 {
 	SETUP_LOGGING_NOINFO(gfx);
 

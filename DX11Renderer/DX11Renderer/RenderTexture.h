@@ -15,7 +15,7 @@ public:
 	RenderTexture(Graphics& gfx);
 	//~RenderTexture();
 
-	virtual void Init(ID3D11Device* pDevice, int textureWidth, int textureHeight);
+	virtual void Init(Microsoft::WRL::ComPtr<ID3D11Device> pDevice, UINT textureWidth, UINT textureHeight);
 	void Shutdown();
 
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> GetView() const;

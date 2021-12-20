@@ -3,6 +3,8 @@
 #include <d3d11.h>
 #include "MeshRenderer.h"
 #include "LightData.h"
+#include "Camera.h"
+#include "DepthStencilTarget.h"
 
 DirectionalLight::DirectionalLight(Graphics& gfx, UINT index, dx::XMFLOAT3 positionWS, float pan, float tilt, dx::XMFLOAT3 color, float intensity, float sphereRad, float range)
 	: Light(gfx, index, positionWS, color, intensity),
@@ -57,3 +59,6 @@ UINT DirectionalLight::GetLightType() const
 {
 	return 2u;
 }
+
+void DirectionalLight::RenderShadow(Graphics & gfx, const Camera & cam)
+{}
