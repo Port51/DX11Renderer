@@ -5,6 +5,7 @@
 #include "LightData.h"
 #include "Camera.h"
 #include "DepthStencilTarget.h"
+#include "RenderPass.h"
 
 DirectionalLight::DirectionalLight(Graphics& gfx, UINT index, dx::XMFLOAT3 positionWS, float pan, float tilt, dx::XMFLOAT3 color, float intensity, float sphereRad, float range)
 	: Light(gfx, index, positionWS, color, intensity),
@@ -45,7 +46,7 @@ LightData DirectionalLight::GetLightData(dx::FXMMATRIX viewMatrix) const
 	const auto dirWS_Vector = dx::XMVector4Transform(dx::XMVectorSet(0, 0, 1, 0), dx::XMMatrixRotationRollPitchYaw(dx::XMConvertToRadians(tilt), dx::XMConvertToRadians(pan), 0.0f));
 	light.positionVS_range = dx::XMVectorSetW(dx::XMVector4Transform(posWS_Vector, viewMatrix), range); // pack range into W
 	light.color_intensity = dx::XMVectorSetW(dx::XMLoadFloat3(&color), intensity);
-	light.direction = dx::XMVector4Transform(dirWS_Vector, viewMatrix);
+	light.directionVS = dx::XMVector4Transform(dirWS_Vector, viewMatrix);
 	light.data0 = dx::XMVectorSet(2, 1.f / sphereRad, 0, 0);
 	return light;
 }
@@ -60,5 +61,5 @@ UINT DirectionalLight::GetLightType() const
 	return 2u;
 }
 
-void DirectionalLight::RenderShadow(Graphics & gfx, const Camera & cam)
+void DirectionalLight::RenderShadow(Graphics & gfx, const Camera & cam, const std::unique_ptr<RenderPass>& pass, const std::unique_ptr<ConstantBuffer<TransformationCB>>& pTransformationCB)
 {}

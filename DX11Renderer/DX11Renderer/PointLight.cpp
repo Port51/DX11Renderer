@@ -5,6 +5,7 @@
 #include "LightData.h"
 #include "Camera.h"
 #include "DepthStencilTarget.h"
+#include "RenderPass.h"
 
 PointLight::PointLight(Graphics& gfx, UINT index, dx::XMFLOAT3 positionWS, dx::XMFLOAT3 color, float intensity, float sphereRad, float range)
 	: Light(gfx, index, positionWS, color, intensity),
@@ -57,7 +58,7 @@ LightData PointLight::GetLightData(dx::FXMMATRIX viewMatrix) const
 	const auto posWS_Vector = dx::XMLoadFloat4(&dx::XMFLOAT4(positionWS.x, positionWS.y, positionWS.z, 1.0f));
 	light.positionVS_range = dx::XMVectorSetW(dx::XMVector4Transform(posWS_Vector, viewMatrix), range); // pack range into W
 	light.color_intensity = dx::XMVectorSetW(dx::XMLoadFloat3(&color), intensity);
-	light.direction = dx::XMVectorSet(0, 0, 0, 0);
+	light.directionVS = dx::XMVectorSet(0, 0, 0, 0);
 	light.data0 = dx::XMVectorSet(0, 1.f / sphereRad, 0, 0);
 	return light;
 }
@@ -67,5 +68,5 @@ UINT PointLight::GetLightType() const
 	return 0u;
 }
 
-void PointLight::RenderShadow(Graphics & gfx, const Camera & cam)
+void PointLight::RenderShadow(Graphics & gfx, const Camera & cam, const std::unique_ptr<RenderPass>& pass, const std::unique_ptr<ConstantBuffer<TransformationCB>>& pTransformationCB)
 {}

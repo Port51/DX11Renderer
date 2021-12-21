@@ -2,7 +2,7 @@
 #include "CbufCommon.hlsli"
 #include "PhongCommon.hlsli"
 
-cbuffer CBuf : register(b2)
+cbuffer CBuf : register(b3)
 {
 	matrix model;
 	matrix modelView;

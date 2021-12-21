@@ -47,27 +47,32 @@ public:
 		pSmallDepthStencil = std::make_shared<DepthStencilTarget>(gfx, gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
 		pPerFrameCB = std::make_unique<ConstantBuffer<PerFrameCB>>(gfx, D3D11_USAGE_DYNAMIC);
+		pTransformationCB = std::make_unique<ConstantBuffer<TransformationCB>>(gfx, D3D11_USAGE_DYNAMIC);
 		pPerCameraCB = std::make_unique<ConstantBuffer<PerCameraCB>>(gfx, D3D11_USAGE_DYNAMIC);
 
 		// Setup passes
 		pRenderPasses.emplace(PerCameraPassName, std::make_unique<RenderPass>());
 		const std::unique_ptr<RenderPass>& setupPass = pRenderPasses[PerCameraPassName];
 		setupPass->
-			CSSetCB(RenderSlots::CS_PerFrameCB, pPerFrameCB->GetD3DBuffer().Get())
-			.CSSetCB(RenderSlots::CS_PerCameraCB, pPerCameraCB->GetD3DBuffer().Get())
-			.CSSetSRV(RenderSlots::CS_LightDataSRV, pLightManager->GetD3DSRV().Get())
-			//.CSSetSRV(RenderSlots::CS_GbufferNormalRoughSRV, pGbufferNormalRough->GetSRV().Get())
-			.VSSetCB(RenderSlots::VS_PerFrameCB, pPerFrameCB->GetD3DBuffer().Get())
-			.VSSetCB(RenderSlots::VS_PerCameraCB, pPerCameraCB->GetD3DBuffer().Get())
-			.PSSetCB(RenderSlots::PS_PerFrameCB, pPerFrameCB->GetD3DBuffer().Get())
-			.PSSetCB(RenderSlots::PS_PerCameraCB, pPerCameraCB->GetD3DBuffer().Get());
+			CSSetCB(RenderSlots::CS_PerFrameCB, pPerFrameCB->GetD3DBuffer())
+			.CSSetCB(RenderSlots::CS_TransformationCB, pTransformationCB->GetD3DBuffer())
+			.CSSetCB(RenderSlots::CS_PerCameraCB, pPerCameraCB->GetD3DBuffer())
+			.CSSetSRV(RenderSlots::CS_LightDataSRV, pLightManager->GetD3DSRV())
+			//.CSSetSRV(RenderSlots::CS_GbufferNormalRoughSRV, pGbufferNormalRough->GetSRV())
+			.VSSetCB(RenderSlots::VS_PerFrameCB, pPerFrameCB->GetD3DBuffer())
+			.VSSetCB(RenderSlots::VS_TransformationCB, pTransformationCB->GetD3DBuffer())
+			.VSSetCB(RenderSlots::VS_PerCameraCB, pPerCameraCB->GetD3DBuffer())
+			.PSSetCB(RenderSlots::PS_PerFrameCB, pPerFrameCB->GetD3DBuffer())
+			.PSSetCB(RenderSlots::PS_TransformationCB, pTransformationCB->GetD3DBuffer())
+			.PSSetCB(RenderSlots::PS_PerCameraCB, pPerCameraCB->GetD3DBuffer());
 
 		pRenderPasses.emplace(DepthPrepassName, std::make_unique<RenderPass>());
+		pRenderPasses.emplace(ShadowPassName, std::make_unique<RenderPass>());
 		pRenderPasses.emplace(GBufferRenderPassName, std::make_unique<RenderPass>());
 		pRenderPasses.emplace(GeometryRenderPassName, std::make_unique<RenderPass>());
 		pRenderPasses[GeometryRenderPassName]->
-			PSSetSRV(0u, pSpecularLighting->GetSRV().Get())
-			.PSSetSRV(1u, pDiffuseLighting->GetSRV().Get());
+			PSSetSRV(0u, pSpecularLighting->GetSRV())
+			.PSSetSRV(1u, pDiffuseLighting->GetSRV());
 
 		pRenderPasses.emplace(FinalBlitRenderPassName,
 			std::make_unique<FullscreenPass>(gfx, "Assets\\Built\\Shaders\\BlitPS.cso"));
@@ -76,11 +81,11 @@ public:
 
 		pRenderPasses.emplace(TiledLightingPassName, std::make_unique<RenderPass>());
 		pRenderPasses[TiledLightingPassName]->
-			CSSetSRV(RenderSlots::CS_GbufferNormalRoughSRV, pNormalRoughTarget->GetSRV().Get())
+			CSSetSRV(RenderSlots::CS_GbufferNormalRoughSRV, pNormalRoughTarget->GetSRV())
 			.CSSetSRV(RenderSlots::CS_FreeSRV, gfx.pDepthStencil->GetSRV())
-			.CSSetUAV(0u, pSpecularLighting->GetUAV().Get())
-			.CSSetUAV(1u, pDiffuseLighting->GetUAV().Get())
-			.CSSetUAV(2u, pDebugTiledLightingCS->GetUAV().Get());
+			.CSSetUAV(0u, pSpecularLighting->GetUAV())
+			.CSSetUAV(1u, pDiffuseLighting->GetUAV())
+			.CSSetUAV(2u, pDebugTiledLightingCS->GetUAV());
 
 		pTiledLightingKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, std::string("Assets\\Built\\Shaders\\TiledLightingCompute.cso"), std::string("CSMain")));
 	}
@@ -108,6 +113,18 @@ public:
 
 		return;*/
 
+		// Shadow pass
+		{
+			const std::unique_ptr<RenderPass>& pass = pRenderPasses[ShadowPassName];
+
+			pass->BindSharedResources(gfx);
+
+			pLightManager->CullLights(gfx, cam); // changes the SRV, which will be bound in per-frame binds
+			pLightManager->RenderShadows(gfx, cam, pass, pTransformationCB);
+
+			pass->UnbindSharedResources(gfx);
+		}
+
 		// Early frame calculations
 		{
 			PerFrameCB perFrameCB;
@@ -115,23 +132,24 @@ public:
 			perFrameCB.time = { 0.5f, 0, 0, 0 };
 			pPerFrameCB->Update(gfx, perFrameCB);
 
+			TransformationCB transformationCB;
+			transformationCB.viewProj = cam.GetViewMatrix();
+			transformationCB.projection = cam.GetProjectionMatrix();
+			pTransformationCB->Update(gfx, transformationCB);
+
 			PerCameraCB perCameraCB;
 			ZeroMemory(&perCameraCB, sizeof(perCameraCB));
 			perCameraCB.screenParams = dx::XMVectorSet((float)gfx.GetScreenWidth(), (float)gfx.GetScreenHeight(), 1.0f / gfx.GetScreenWidth(), 1.0f / gfx.GetScreenHeight());
 			perCameraCB.zBufferParams = dx::XMVectorSet(1.f - cam.farClipPlane / cam.nearClipPlane, cam.farClipPlane / cam.nearClipPlane, 1.f / cam.farClipPlane - 1.f / cam.nearClipPlane, 1.f / cam.nearClipPlane);
 			perCameraCB.orthoParams = dx::XMVectorSet(0.f, 0.f, 0.f, 0.f);
 			perCameraCB.frustumCornerDataVS = cam.GetFrustumCornersVS();
-			perCameraCB.viewProj = cam.GetViewMatrix();
-			perCameraCB.projection = cam.GetProjectionMatrix();
 			pPerCameraCB->Update(gfx, perCameraCB);
 		}
 
 		// Per-frame and per-camera binds
 		{
 			const std::unique_ptr<RenderPass>& pass = pRenderPasses[PerCameraPassName];
-
-			pLightManager->CullLights(gfx, cam); // changes the SRV, which will be bound below
-			pLightManager->RenderShadows(gfx, cam);
+			
 			pass->BindSharedResources(gfx);
 
 			pass->Execute(gfx);
@@ -261,10 +279,12 @@ private:
 	//std::shared_ptr<StructuredBuffer<float>> pTestUAV;
 	//std::unique_ptr<ComputeKernel> pTestKernel;
 	std::unique_ptr<ComputeKernel> pTiledLightingKernel;
+	std::unique_ptr<ConstantBuffer<TransformationCB>> pTransformationCB;
 	std::unique_ptr<ConstantBuffer<PerFrameCB>> pPerFrameCB;
 	std::unique_ptr<ConstantBuffer<PerCameraCB>> pPerCameraCB;
 private:
 	const std::string PerCameraPassName = std::string("PerCameraPass");
+	const std::string ShadowPassName = std::string("ShadowPass");
 	const std::string DepthPrepassName = std::string("DepthPrepass");
 	const std::string GBufferRenderPassName = std::string("GBuffer");
 	const std::string TiledLightingPassName = std::string("TiledLighting");

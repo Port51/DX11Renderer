@@ -5,6 +5,7 @@
 
 class Renderer;
 class Camera;
+class RenderPass;
 class DepthStencilTarget;
 struct LightData;
 
@@ -16,7 +17,7 @@ public:
 	void DrawImguiControlWindow() override;
 	LightData GetLightData(dx::FXMMATRIX viewMatrix) const override;
 	UINT GetLightType() const override;
-	void RenderShadow(Graphics& gfx, const Camera& cam) override;
+	void RenderShadow(Graphics& gfx, const Camera& cam, const std::unique_ptr<RenderPass>& pass, const std::unique_ptr<ConstantBuffer<TransformationCB>>& pTransformationCB) override;
 private:
 	float sphereRad;
 	float range;

@@ -6,6 +6,7 @@
 #include "Spotlight.h"
 #include "DirectionalLight.h"
 #include "RenderTarget.h"
+#include "RenderPass.h"
 
 struct LightData;
 
@@ -61,7 +62,7 @@ public:
 				// Spotlight (move sphere to middle and half the size)
 				dx::XMFLOAT4 positionRange;
 				dx::XMStoreFloat4(&positionRange, data.positionVS_range);
-				auto lightSphere = dx::XMVectorAdd(data.positionVS_range, dx::XMVectorScale(data.direction, positionRange.w * 0.5f));
+				auto lightSphere = dx::XMVectorAdd(data.positionVS_range, dx::XMVectorScale(data.directionVS, positionRange.w * 0.5f));
 				lightSphere = dx::XMVectorSetW(lightSphere, positionRange.w * 0.5f);
 				inFrustum &= FrustumSphereIntersection(lightSphere, frustumCornersVS, cam.GetFarClipPlane());
 				break;
@@ -85,14 +86,14 @@ public:
 		pLightInputCB->Update(gfx, lightInputCB);
 		gfx.GetContext()->CSSetConstantBuffers(RenderSlots::CS_LightInputCB, 1u, pLightInputCB->GetD3DBuffer().GetAddressOf());
 	}
-	void RenderShadows(Graphics& gfx, const Camera& cam)
+	void RenderShadows(Graphics& gfx, const Camera& cam, const std::unique_ptr<RenderPass>& pass, const std::unique_ptr<ConstantBuffer<TransformationCB>>& pTransformationCB)
 	{
 		// todo: cull shadows
 		for (int i = 0; i < pLights.size(); ++i)
 		{
 			if (pLights[i]->HasShadow())
 			{
-				pLights[i]->RenderShadow(gfx, cam);
+				pLights[i]->RenderShadow(gfx, cam, pass, pTransformationCB);
 			}
 		}
 	}

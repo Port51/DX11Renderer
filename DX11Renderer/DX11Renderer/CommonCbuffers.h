@@ -11,6 +11,12 @@ struct alignas(16) PerFrameCB
 	DirectX::XMVECTOR time; // (t/20, t, t*2, t*3)
 };
 
+struct alignas(16) TransformationCB
+{
+	DirectX::XMMATRIX viewProj;
+	DirectX::XMMATRIX projection;
+};
+
 struct alignas(16) PerCameraCB
 {
 	// x = 1 or -1 (-1 if projection is flipped)
@@ -44,7 +50,4 @@ struct alignas(16) PerCameraCB
 	DirectX::XMVECTOR orthoParams;
 
 	DirectX::XMVECTOR frustumCornerDataVS;
-
-	DirectX::XMMATRIX viewProj;
-	DirectX::XMMATRIX projection;
 };

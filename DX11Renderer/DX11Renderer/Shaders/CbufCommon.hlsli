@@ -8,7 +8,13 @@ cbuffer PerFrameCB : register(b0)
     float4 _CosTime; // cos(t/8), cos(t/4), cos(t/2), cos(t)
 };
 
-cbuffer PerCameraCB : register(b1)
+cbuffer PerFrameCB : register(b1)
+{
+    float4x4 _ViewProj;
+    float4x4 _Projection;
+};
+
+cbuffer PerCameraCB : register(b2)
 {
     // x = 1 or -1 (-1 if projection is flipped)
     // y = near plane
@@ -41,12 +47,9 @@ cbuffer PerCameraCB : register(b1)
     float4 _OrthoParams;
     
     float4 _FrustumCornerDataVS;
-    
-    float4x4 _ViewProj;
-    float4x4 _Projection;
 };
 
-cbuffer LightInputCB : register(b2)
+cbuffer LightInputCB : register(b3)
 {
     uint _VisibleLightCount;
 };

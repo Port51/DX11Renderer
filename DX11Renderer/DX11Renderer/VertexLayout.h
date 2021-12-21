@@ -50,7 +50,7 @@ public:
 	}
 	UINT GetElementCount() const
 	{
-		return elements.size();
+		return (UINT)elements.size();
 	}
 	std::vector<D3D11_INPUT_ELEMENT_DESC> GetD3DLayout() const
 	{
