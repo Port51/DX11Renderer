@@ -16,7 +16,7 @@ RenderPass::RenderPass()
 	}
 }
 
-void RenderPass::EnqueueJob(RenderJob job)
+void RenderPass::EnqueueJob(DrawCall job)
 {
 	jobs.push_back(job);
 }

@@ -5,10 +5,10 @@ class RenderPass;
 class MeshRenderer;
 class Graphics;
 
-class RenderJob
+class DrawCall
 {
 public:
-	RenderJob(const RenderStep* pStep, const MeshRenderer* pRenderer);
+	DrawCall(const RenderStep* pStep, const MeshRenderer* pRenderer);
 	void Execute(Graphics& gfx) const;
 private:
 	const class MeshRenderer* pRenderer;

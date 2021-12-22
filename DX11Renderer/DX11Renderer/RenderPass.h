@@ -1,6 +1,6 @@
 #pragma once
 #include "Graphics.h"
-#include "RenderJob.h"
+#include "DrawCall.h"
 #include <vector>
 #include "CommonCbuffers.h"
 #include "Common.h"
@@ -14,7 +14,7 @@ public:
 	RenderPass();
 	virtual ~RenderPass() = default;
 public:
-	void EnqueueJob(RenderJob job);
+	void EnqueueJob(DrawCall job);
 	virtual void BindSharedResources(Graphics& gfx) const;
 	virtual void UnbindSharedResources(Graphics& gfx) const;
 	virtual void Execute(Graphics& gfx) const;
@@ -28,7 +28,7 @@ public:
 	RenderPass& PSSetCB(UINT slot, Microsoft::WRL::ComPtr<ID3D11Buffer> pResource);
 	RenderPass& PSSetSRV(UINT slot, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pResource);
 private:
-	std::vector<RenderJob> jobs; // will be replaced by render graph
+	std::vector<DrawCall> jobs; // will be replaced by render graph
 
 	// Binds shared by everything in this render pass
 	std::vector<std::pair<UINT, Microsoft::WRL::ComPtr<ID3D11Buffer>>> pCS_CB_Binds;

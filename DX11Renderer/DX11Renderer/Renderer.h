@@ -5,7 +5,7 @@
 #include "BindableInclude.h"
 #include "DepthStencilState.h"
 #include "Graphics.h"
-#include "RenderJob.h"
+#include "DrawCall.h"
 #include "RenderPass.h"
 #include "FullscreenPass.h"
 #include "NullPixelShader.h"
@@ -95,7 +95,7 @@ public:
 		
 	}
 
-	void AcceptRenderJob(RenderJob job, std::string targetPass)
+	void AcceptDrawCall(DrawCall job, std::string targetPass)
 	{
 		pRenderPasses[targetPass]->EnqueueJob(job);
 	}

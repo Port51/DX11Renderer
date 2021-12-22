@@ -189,7 +189,7 @@
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="ModelNode.cpp" />
     <ClCompile Include="RenderConstants.cpp" />
-    <ClCompile Include="RenderJob.cpp" />
+    <ClCompile Include="DrawCall.cpp" />
     <ClCompile Include="Keyboard.cpp" />
     <ClCompile Include="Log.cpp" />
     <ClCompile Include="Main.cpp" />
@@ -272,7 +272,7 @@
     <ClInclude Include="Imgui\imgui_impl_win32.h" />
     <ClInclude Include="IndexBuffer.h" />
     <ClInclude Include="InputLayout.h" />
-    <ClInclude Include="RenderJob.h" />
+    <ClInclude Include="DrawCall.h" />
     <ClInclude Include="Keyboard.h" />
     <ClInclude Include="Log.h" />
     <ClInclude Include="Material.h" />

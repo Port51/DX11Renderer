@@ -4,7 +4,7 @@
 
 void RenderStep::SubmitDrawCalls(std::unique_ptr<Renderer>& frame, const MeshRenderer& meshRenderer) const
 {
-	frame->AcceptRenderJob(RenderJob(this, &meshRenderer), targetPass);
+	frame->AcceptDrawCall(DrawCall(this, &meshRenderer), targetPass);
 }
 
 void RenderStep::InitializeParentReferences(const MeshRenderer& parent)

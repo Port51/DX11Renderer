@@ -267,9 +267,6 @@
     <ClCompile Include="RasterizerState.cpp">
       <Filter>Source Files\Bindable</Filter>
     </ClCompile>
-    <ClCompile Include="RenderJob.cpp">
-      <Filter>Source Files\RenderJobs</Filter>
-    </ClCompile>
     <ClCompile Include="RenderStep.cpp">
       <Filter>Source Files\RenderJobs</Filter>
     </ClCompile>
@@ -317,6 +314,9 @@
     </ClCompile>
     <ClCompile Include="Light.cpp">
       <Filter>Source Files\Lights</Filter>
+    </ClCompile>
+    <ClCompile Include="DrawCall.cpp">
+      <Filter>Source Files\RenderJobs</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -482,9 +482,6 @@
     <ClInclude Include="RenderPass.h">
       <Filter>Header Files\RenderJobs</Filter>
     </ClInclude>
-    <ClInclude Include="RenderJob.h">
-      <Filter>Header Files\RenderJobs</Filter>
-    </ClInclude>
     <ClInclude Include="RenderStep.h">
       <Filter>Header Files\RenderJobs</Filter>
     </ClInclude>
@@ -583,6 +580,9 @@
     </ClInclude>
     <ClInclude Include="DirectionalLight.h">
       <Filter>Header Files\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="DrawCall.h">
+      <Filter>Header Files\RenderJobs</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
