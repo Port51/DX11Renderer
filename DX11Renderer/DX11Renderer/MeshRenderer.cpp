@@ -34,9 +34,9 @@ void MeshRenderer::SetTransform(dx::XMMATRIX _transform)
 	dx::XMStoreFloat4x4(&transform, _transform);
 }
 
-void MeshRenderer::SubmitDrawCalls(Renderer& renderer, const DrawContext& drawContext) const
+void MeshRenderer::SubmitDrawCalls(const DrawContext& drawContext) const
 {
-	pMaterial->SubmitDrawCalls(renderer, *this, drawContext);
+	pMaterial->SubmitDrawCalls(*this, drawContext);
 }
 
 void MeshRenderer::Bind(Graphics& gfx, const DrawContext& drawContext) const

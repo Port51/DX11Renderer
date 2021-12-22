@@ -3,13 +3,13 @@
 #include "Renderer.h"
 #include "DrawContext.h"
 
-void Technique::SubmitDrawCalls(Renderer& renderer, const MeshRenderer& meshRenderer, const DrawContext& drawContext) const
+void Technique::SubmitDrawCalls(const MeshRenderer& meshRenderer, const DrawContext& drawContext) const
 {
 	if (active)
 	{
 		for (const auto& step : pSteps)
 		{
-			step->SubmitDrawCalls(renderer, meshRenderer, drawContext);
+			step->SubmitDrawCalls(meshRenderer, drawContext);
 		}
 	}
 }

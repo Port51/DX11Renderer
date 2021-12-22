@@ -137,10 +137,10 @@ public:
 
 		// Submit draw calls
 		{
-			DrawContext drawContext;
+			DrawContext drawContext(*this);
 			drawContext.viewMatrix = cam.GetViewMatrix();
 			drawContext.projMatrix = cam.GetProjectionMatrix();
-			pVisibleRendererList->SubmitDrawCalls(*this, drawContext);
+			pVisibleRendererList->SubmitDrawCalls(drawContext);
 		}
 
 		// Early frame calculations

@@ -16,7 +16,7 @@ void MaterialPass::AddTechnique(std::unique_ptr<Technique> _pTechnique)
 	pTechnique = std::move(_pTechnique);
 }
 
-void MaterialPass::SubmitDrawCalls(Renderer& renderer, const MeshRenderer& meshRenderer, const DrawContext& drawContext) const
+void MaterialPass::SubmitDrawCalls(const MeshRenderer& meshRenderer, const DrawContext& drawContext) const
 {
-	pTechnique->SubmitDrawCalls(renderer, meshRenderer, drawContext);
+	pTechnique->SubmitDrawCalls(meshRenderer, drawContext);
 }

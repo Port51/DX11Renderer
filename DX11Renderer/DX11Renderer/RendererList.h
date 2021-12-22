@@ -21,7 +21,7 @@ public:
 	RendererList(std::shared_ptr<RendererList> source);
 public:
 	void Filter(Frustum frustum, RendererSorting sorting);
-	void SubmitDrawCalls(Renderer& renderer, const DrawContext& drawContext) const;
+	void SubmitDrawCalls(const DrawContext& drawContext) const;
 	void AddModelInstance(const ModelInstance& modelInstance);
 	void AddMeshRenderer(const MeshRenderer& meshRenderer);
 private:

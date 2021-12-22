@@ -194,11 +194,11 @@ void Material::Bind(Graphics& gfx, std::string passName)
 	// Is this needed?
 }
 
-void Material::SubmitDrawCalls(Renderer& renderer, const MeshRenderer& meshRenderer, const DrawContext& drawContext) const
+void Material::SubmitDrawCalls(const MeshRenderer& meshRenderer, const DrawContext& drawContext) const
 {
 	for (const auto& pass : passes)
 	{
-		pass.second->SubmitDrawCalls(renderer, meshRenderer, drawContext);
+		pass.second->SubmitDrawCalls(meshRenderer, drawContext);
 	}
 }
 

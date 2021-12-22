@@ -16,7 +16,7 @@ public:
 	MaterialPass();
 public:
 	void AddTechnique(std::unique_ptr<Technique> _pTechnique);
-	void SubmitDrawCalls(Renderer& renderer, const MeshRenderer& meshRenderer, const DrawContext& drawContext) const;
+	void SubmitDrawCalls(const MeshRenderer& meshRenderer, const DrawContext& drawContext) const;
 private:
 	std::unique_ptr<Technique> pTechnique;
 };

@@ -17,7 +17,7 @@ class ModelNode
 	friend class ModelInstance;
 public:
 	ModelNode(int id, const dx::XMMATRIX& _transform, std::shared_ptr<MeshRenderer> pMeshPtr, std::vector<std::unique_ptr<ModelNode>> pChildNodes);
-	void SubmitDrawCalls(Renderer& renderer, const DrawContext& drawContext) const;
+	void SubmitDrawCalls(const DrawContext& drawContext) const;
 	void RebuildTransform(dx::XMMATRIX accumulatedTransform);
 private:
 	int id;
