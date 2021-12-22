@@ -25,7 +25,7 @@ class ModelInstance
 public:
 	ModelInstance(Graphics& gfx, std::unique_ptr<ModelAsset> const& pModelAsset, dx::XMMATRIX transform);
 public:
-	void SubmitDrawCalls(std::unique_ptr<Renderer>& frame) const;
+	void SubmitDrawCalls(Renderer& renderer) const;
 	void SetPositionWS(dx::XMFLOAT3 positionWS);
 	void UpdateSceneGraph();
 	std::vector<std::shared_ptr<MeshRenderer>> GetMeshRenderers() const;

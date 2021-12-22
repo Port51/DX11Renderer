@@ -32,6 +32,8 @@ void PointLight::DrawImguiControlWindow()
 		ImGui::SliderFloat("Range", &range, 0.05f, 50.0f, "%.2f", ImGuiSliderFlags_Logarithmic);
 		ImGui::ColorEdit3("Diffuse Color", &color.x);
 	}
+
+	pModel->SetPositionWS(positionWS);
 	ImGui::End();
 }
 

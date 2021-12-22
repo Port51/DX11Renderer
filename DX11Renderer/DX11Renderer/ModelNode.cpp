@@ -23,15 +23,15 @@ void ModelNode::RebuildTransform(dx::XMMATRIX accumulatedTransform)
 	}
 }
 
-void ModelNode::SubmitDrawCalls(std::unique_ptr<Renderer>& frame) const
+void ModelNode::SubmitDrawCalls(Renderer& renderer) const
 {
 	if (pMeshPtr)
 	{
-		pMeshPtr->SubmitDrawCalls(frame);
+		pMeshPtr->SubmitDrawCalls(renderer);
 	}
 
 	for (const auto& pc : pChildNodes)
 	{
-		pc->SubmitDrawCalls(frame);
+		pc->SubmitDrawCalls(renderer);
 	}
 }

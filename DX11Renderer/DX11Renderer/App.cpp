@@ -139,13 +139,6 @@ void App::DoFrame()
 	wnd.Gfx().SetViewMatrix(cam.GetViewMatrix());
 	wnd.Gfx().SetProjectionMatrix(cam.GetProjectionMatrix());
 
-	/*for (auto& b : drawables)
-	{
-		b->SubmitDrawCalls(fc);
-	}*/
-	pModel0->SubmitDrawCalls(renderer);
-	//pModel1->SubmitDrawCalls(fc);
-	pLightManager->SubmitDrawCalls(renderer);
 	renderer->Execute(wnd.Gfx(), cam, pLightManager);
 
 	if (true)

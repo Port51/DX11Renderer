@@ -2,6 +2,7 @@
 #include "Frustum.h"
 #include "MeshRenderer.h"
 #include "ModelInstance.h"
+#include "Renderer.h"
 
 RendererList::RendererList(std::shared_ptr<RendererList> source)
 	: pSource(source)
@@ -9,12 +10,12 @@ RendererList::RendererList(std::shared_ptr<RendererList> source)
 	pRenderers.reserve(pSource->pRenderers.size());
 }
 
-bool RendererList::sortFrontToBack(const std::pair<std::shared_ptr<MeshRenderer>, float>& a, const std::pair<std::shared_ptr<MeshRenderer>, float>& b)
+bool RendererList::SortFrontToBack(const std::pair<std::shared_ptr<MeshRenderer>, float>& a, const std::pair<std::shared_ptr<MeshRenderer>, float>& b)
 {
 	return (a.second < b.second);
 }
 
-bool RendererList::sortBackToFront(const std::pair<std::shared_ptr<MeshRenderer>, float>& a, const std::pair<std::shared_ptr<MeshRenderer>, float>& b)
+bool RendererList::SortBackToFront(const std::pair<std::shared_ptr<MeshRenderer>, float>& a, const std::pair<std::shared_ptr<MeshRenderer>, float>& b)
 {
 	return (a.second > b.second);
 }
@@ -33,16 +34,24 @@ void RendererList::Filter(Frustum frustum, RendererSorting sorting)
 	switch (sorting)
 	{
 	case RendererSorting::BackToFront:
-		std::sort(pRenderers.begin(), pRenderers.end(), sortBackToFront);
+		std::sort(pRenderers.begin(), pRenderers.end(), SortBackToFront);
 		break;
 	case RendererSorting::FrontToBack:
-		std::sort(pRenderers.begin(), pRenderers.end(), sortFrontToBack);
+		std::sort(pRenderers.begin(), pRenderers.end(), SortFrontToBack);
 		break;
 	default:
 		throw std::runtime_error("Unrecognized sorting method!");
 		break;
 	}
 	
+}
+
+void RendererList::SubmitDrawCalls(Renderer& renderer) const
+{
+	for (const auto pr : pRenderers)
+	{
+		pr.first->SubmitDrawCalls(renderer);
+	}
 }
 
 void RendererList::AddModelInstance(const ModelInstance & modelInstance)

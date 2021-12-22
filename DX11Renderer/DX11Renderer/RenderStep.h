@@ -26,7 +26,7 @@ public:
 		bindings.push_back(std::move(pBinding));
 		return bindings[bindings.size() - 1];
 	}
-	void SubmitDrawCalls(std::unique_ptr<Renderer>& frame, const MeshRenderer& renderer) const;
+	void SubmitDrawCalls(Renderer& renderer, const MeshRenderer& meshRenderer) const;
 	void Bind(Graphics& gfx) const
 	{
 		for (const auto& b : bindings)

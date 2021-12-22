@@ -29,6 +29,7 @@ public:
 	Renderer(Graphics& gfx, const std::unique_ptr<LightManager>& pLightManager, std::shared_ptr<RendererList> pRendererList)
 		: pRendererList(pRendererList)
 	{
+
 		pVisibleRendererList = std::make_unique<RendererList>(pRendererList);
 
 		// Setup render targets
@@ -131,6 +132,11 @@ public:
 		// Frustum culling
 		{
 			pVisibleRendererList->Filter(cam.GetFrustumWS(), RendererList::RendererSorting::BackToFront);
+		}
+
+		// Submit draw calls
+		{
+			pVisibleRendererList->SubmitDrawCalls(*this);
 		}
 
 		// Early frame calculations

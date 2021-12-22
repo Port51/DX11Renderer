@@ -23,7 +23,7 @@ public:
 public:
 	virtual void DrawImguiControlWindow() = 0;
 	virtual LightData GetLightData(dx::XMMATRIX viewMatrix) const = 0;
-	virtual void SubmitDrawCalls(std::unique_ptr<Renderer>& frame) const;
+	virtual void SubmitDrawCalls(Renderer& renderer) const;
 	virtual UINT GetLightType() const = 0;
 	virtual void RenderShadow(Graphics& gfx, const Camera& cam, const std::unique_ptr<RenderPass>& pass, const std::unique_ptr<ConstantBuffer<TransformationCB>>& pTransformationCB) = 0;
 	bool HasShadow() const;

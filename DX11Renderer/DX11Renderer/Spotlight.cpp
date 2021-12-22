@@ -42,6 +42,8 @@ void Spotlight::DrawImguiControlWindow()
 		ImGui::SliderFloat("OuterCos", &outerCos, 0.0f, 1.0f, "%.01f");
 		ImGui::ColorEdit3("Diffuse Color", &color.x);
 	}
+
+	pModel->SetPositionWS(positionWS);
 	ImGui::End();
 }
 

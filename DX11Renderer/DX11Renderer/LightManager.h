@@ -39,13 +39,13 @@ public:
 			pRendererList.AddModelInstance(l->GetModelInstance());
 		}
 	}
-	void SubmitDrawCalls(std::unique_ptr<Renderer>& fc) const
+	/*void SubmitDrawCalls(Renderer& renderer) const
 	{
 		for (const auto& l : pLights)
 		{
-			l->SubmitDrawCalls(fc);
+			l->SubmitDrawCalls(renderer);
 		}
-	}
+	}*/
 	void CullLights(Graphics& gfx, const Camera& cam)
 	{
 		dx::XMFLOAT4 frustumCornersVS;

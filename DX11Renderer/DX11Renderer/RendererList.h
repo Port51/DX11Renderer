@@ -2,6 +2,7 @@
 #include <vector>
 #include <memory>
 
+class Renderer;
 class Frustum;
 class MeshRenderer;
 class ModelInstance;
@@ -19,11 +20,12 @@ public:
 	RendererList(std::shared_ptr<RendererList> source);
 public:
 	void Filter(Frustum frustum, RendererSorting sorting);
+	void SubmitDrawCalls(Renderer& renderer) const;
 	void AddModelInstance(const ModelInstance& modelInstance);
 	void AddMeshRenderer(const MeshRenderer& meshRenderer);
 private:
-	static bool sortFrontToBack(const std::pair<std::shared_ptr<MeshRenderer>, float>& a, const std::pair<std::shared_ptr<MeshRenderer>, float>& b);
-	static bool sortBackToFront(const std::pair<std::shared_ptr<MeshRenderer>, float>& a, const std::pair<std::shared_ptr<MeshRenderer>, float>& b);
+	static bool SortFrontToBack(const std::pair<std::shared_ptr<MeshRenderer>, float>& a, const std::pair<std::shared_ptr<MeshRenderer>, float>& b);
+	static bool SortBackToFront(const std::pair<std::shared_ptr<MeshRenderer>, float>& a, const std::pair<std::shared_ptr<MeshRenderer>, float>& b);
 private:
 	// Float measures view distance
 	std::shared_ptr<RendererList> pSource;

@@ -34,9 +34,9 @@ void MeshRenderer::SetTransform(dx::XMMATRIX _transform)
 }
 
 // Called via Node
-void MeshRenderer::SubmitDrawCalls(std::unique_ptr<Renderer>& frame) const
+void MeshRenderer::SubmitDrawCalls(Renderer& renderer) const
 {
-	pMaterial->SubmitDrawCalls(frame, *this);
+	pMaterial->SubmitDrawCalls(renderer, *this);
 }
 
 void MeshRenderer::Bind(Graphics& gfx) const

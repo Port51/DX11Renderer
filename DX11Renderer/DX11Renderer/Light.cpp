@@ -11,10 +11,9 @@ Light::Light(Graphics & gfx, UINT index, dx::XMFLOAT3 positionWS, dx::XMFLOAT3 c
 	pModel = std::make_unique<ModelInstance>(gfx, pModelAsset, dx::XMMatrixIdentity());
 }
 
-void Light::SubmitDrawCalls(std::unique_ptr<Renderer>& frame) const
+void Light::SubmitDrawCalls(Renderer& renderer) const
 {
-	pModel->SetPositionWS(positionWS);
-	pModel->SubmitDrawCalls(frame);
+	pModel->SubmitDrawCalls(renderer);
 }
 
 bool Light::HasShadow() const

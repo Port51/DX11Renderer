@@ -2,13 +2,13 @@
 #include "MeshRenderer.h"
 #include "Renderer.h"
 
-void Technique::SubmitDrawCalls(std::unique_ptr<Renderer>& frame, const MeshRenderer& renderer) const
+void Technique::SubmitDrawCalls(Renderer& renderer, const MeshRenderer& meshRenderer) const
 {
 	if (active)
 	{
 		for (const auto& step : pSteps)
 		{
-			step->SubmitDrawCalls(frame, renderer);
+			step->SubmitDrawCalls(renderer, meshRenderer);
 		}
 	}
 }

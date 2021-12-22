@@ -20,7 +20,7 @@ public:
 	Material(Graphics& gfx, const std::string_view assetPath);
 	void Bind(Graphics& gfx, UINT slot) {} // todo: remove
 	void Bind(Graphics& gfx, std::string passName);
-	void SubmitDrawCalls(std::unique_ptr<Renderer>& frame, const MeshRenderer& renderer) const;
+	void SubmitDrawCalls(Renderer& renderer, const MeshRenderer& meshRenderer) const;
 public:
 	const VertexLayout& GetVertexLayout() const;
 	static std::shared_ptr<Bindable> Resolve(Graphics& gfx, const std::string_view assetPath);

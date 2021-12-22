@@ -36,6 +36,8 @@ void DirectionalLight::DrawImguiControlWindow()
 		ImGui::SliderFloat("Range", &range, 0.05f, 50.0f, "%.2f", ImGuiSliderFlags_Logarithmic);
 		ImGui::ColorEdit3("Diffuse Color", &color.x);
 	}
+
+	pModel->SetPositionWS(positionWS);
 	ImGui::End();
 }
 
@@ -51,7 +53,7 @@ LightData DirectionalLight::GetLightData(dx::XMMATRIX viewMatrix) const
 	return light;
 }
 
-void DirectionalLight::SubmitDrawCalls(std::unique_ptr<Renderer>& frame) const
+void DirectionalLight::SubmitDrawCalls(Renderer& renderer) const
 {
 	// Basically just a way to not render directional lights as an object
 }
