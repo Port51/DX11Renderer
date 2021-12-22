@@ -159,7 +159,7 @@ void Graphics::DrawIndexed(UINT count)
 	GFX_THROW_INFO_ONLY(pContext->DrawIndexed(count, 0u, 0u));
 }
 
-void Graphics::SetProjectionMatrix(dx::FXMMATRIX proj)
+void Graphics::SetProjectionMatrix(dx::XMMATRIX proj)
 {
 	projectionMatrix = proj;
 }
@@ -169,7 +169,7 @@ dx::XMMATRIX Graphics::GetProjectionMatrix() const
 	return projectionMatrix;
 }
 
-void Graphics::SetViewMatrix(dx::FXMMATRIX _viewMatrix)
+void Graphics::SetViewMatrix(dx::XMMATRIX _viewMatrix)
 {
 	viewMatrix = _viewMatrix;
 }

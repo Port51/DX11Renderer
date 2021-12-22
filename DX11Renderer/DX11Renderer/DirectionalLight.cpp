@@ -39,7 +39,7 @@ void DirectionalLight::DrawImguiControlWindow()
 	ImGui::End();
 }
 
-LightData DirectionalLight::GetLightData(dx::FXMMATRIX viewMatrix) const
+LightData DirectionalLight::GetLightData(dx::XMMATRIX viewMatrix) const
 {
 	LightData light;
 	const auto posWS_Vector = dx::XMLoadFloat4(&dx::XMFLOAT4(positionWS.x, positionWS.y, positionWS.z, 1.0f));

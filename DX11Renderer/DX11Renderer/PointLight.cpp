@@ -35,7 +35,7 @@ void PointLight::DrawImguiControlWindow()
 	ImGui::End();
 }
 
-/*void PointLight::Bind(Graphics& gfx, dx::FXMMATRIX viewMatrix) const
+/*void PointLight::Bind(Graphics& gfx, dx::XMMATRIX viewMatrix) const
 {
 	auto dataCopy = cbData;
 	const auto posWS_Vector = dx::XMLoadFloat3(&positionWS);
@@ -51,7 +51,7 @@ void PointLight::DrawImguiControlWindow()
 	gfx.GetContext()->PSSetConstantBuffers(0u, 1u, globalLightCbuf.GetD3DBuffer().GetAddressOf());
 }*/
 
-LightData PointLight::GetLightData(dx::FXMMATRIX viewMatrix) const
+LightData PointLight::GetLightData(dx::XMMATRIX viewMatrix) const
 {
 	LightData light;
 
