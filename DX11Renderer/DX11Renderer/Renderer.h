@@ -20,14 +20,16 @@
 #include "Camera.h"
 #include "LightManager.h"
 #include "RenderConstants.h"
+#include "RendererList.h"
 
 class Renderer
 {
-private:
-	const static int GbufferSize = 2;
 public:
-	Renderer(Graphics& gfx, const std::unique_ptr<LightManager>& pLightManager)
+	Renderer(Graphics& gfx, const std::unique_ptr<LightManager>& pLightManager, std::shared_ptr<RendererList> pRendererList)
+		: pRendererList(pRendererList)
 	{
+		pVisibleRendererList = std::make_unique<RendererList>(pRendererList);
+
 		// Setup render targets
 		pNormalRoughTarget = std::make_shared<RenderTarget>(gfx);
 		pNormalRoughTarget->Init(gfx.GetDevice(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
@@ -123,6 +125,11 @@ public:
 			pLightManager->RenderShadows(gfx, cam, pass, pTransformationCB);
 
 			pass->UnbindSharedResources(gfx);
+		}
+
+		// Frustum culling
+		{
+			//pVisibleRendererList->Filter(, RendererList::RendererSorting::BackToFront);
 		}
 
 		// Early frame calculations
@@ -282,6 +289,9 @@ private:
 	std::unique_ptr<ConstantBuffer<TransformationCB>> pTransformationCB;
 	std::unique_ptr<ConstantBuffer<PerFrameCB>> pPerFrameCB;
 	std::unique_ptr<ConstantBuffer<PerCameraCB>> pPerCameraCB;
+
+	std::shared_ptr<RendererList> pRendererList;
+	std::unique_ptr<RendererList> pVisibleRendererList; // filtered by camera frustum
 private:
 	const std::string PerCameraPassName = std::string("PerCameraPass");
 	const std::string ShadowPassName = std::string("ShadowPass");

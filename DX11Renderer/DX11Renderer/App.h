@@ -32,6 +32,6 @@ private:
 	std::unique_ptr<LightManager> pLightManager;
 	std::unique_ptr<Renderer> renderer;
 	std::vector<std::unique_ptr<MeshRenderer>> pDrawables;
-	std::unique_ptr<RendererList> pRendererList;
+	std::shared_ptr<RendererList> pRendererList;
 	static constexpr UINT nDrawables = 1;
 };

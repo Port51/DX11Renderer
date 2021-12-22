@@ -16,12 +16,13 @@ public:
 	};
 public:
 	RendererList() {}
-	RendererList(const RendererList& source);
+	RendererList(std::shared_ptr<RendererList> source);
 public:
 	void Filter(Frustum frustum, RendererSorting sorting);
 	void AddModelInstance(const ModelInstance& modelInstance);
 	void AddMeshRenderer(const MeshRenderer& meshRenderer);
 private:
 	// Float measures view distance
+	std::shared_ptr<RendererList> pSource;
 	std::vector<std::pair<std::shared_ptr<MeshRenderer>, float>> pRenderers;
 };
