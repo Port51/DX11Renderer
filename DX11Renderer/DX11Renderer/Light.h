@@ -27,6 +27,7 @@ public:
 	virtual UINT GetLightType() const = 0;
 	virtual void RenderShadow(Graphics& gfx, const Camera& cam, const std::unique_ptr<RenderPass>& pass, const std::unique_ptr<ConstantBuffer<TransformationCB>>& pTransformationCB) = 0;
 	bool HasShadow() const;
+	ModelInstance& GetModelInstance() const;
 protected:
 	UINT index;
 	dx::XMFLOAT3 positionWS;

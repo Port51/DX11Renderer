@@ -53,11 +53,16 @@ void ModelInstance::UpdateSceneGraph()
 	pSceneGraph->RebuildTransform(transform);
 }
 
+std::vector<std::shared_ptr<MeshRenderer>> ModelInstance::GetMeshRenderers() const
+{
+	return pMeshes;
+}
+
 static int nextNodeId = 0; // todo: move
 std::unique_ptr<ModelNode> ModelInstance::CreateModelInstanceNode(Graphics& gfx, std::unique_ptr<SceneGraphNode<MeshAsset>> const& pSourceNode)
 {
 	// Copy mesh if needed
-	auto pMeshInstance = std::unique_ptr<MeshRenderer>();
+	auto pMeshInstance = std::shared_ptr<MeshRenderer>();
 	if (pSourceNode->pMesh)
 	{
 		pMeshInstance = ParseMesh(gfx, pSourceNode->pMesh);
@@ -75,11 +80,11 @@ std::unique_ptr<ModelNode> ModelInstance::CreateModelInstanceNode(Graphics& gfx,
 		//pChildNodes.emplace_back(std::move(pChildNode));
 	}*/
 
-	auto pNode = std::make_unique<ModelNode>(nextNodeId++, pSourceNode->localTransform, std::move(pMeshInstance), std::move(pChildNodes));
+	auto pNode = std::make_unique<ModelNode>(nextNodeId++, pSourceNode->localTransform, pMeshInstance, std::move(pChildNodes));
 	return std::move(pNode);
 }
 
-std::unique_ptr<MeshRenderer> ModelInstance::ParseMesh(Graphics& gfx, std::unique_ptr<MeshAsset> const& pMeshAsset)
+std::shared_ptr<MeshRenderer> ModelInstance::ParseMesh(Graphics& gfx, std::unique_ptr<MeshAsset> const& pMeshAsset)
 {
 	const auto pMaterial = pMaterials[pMeshAsset->materialIndex];
 	RawBufferData vbuf(pMeshAsset->vertices.size(), pMaterial->GetVertexLayout().GetPerVertexStride(), pMaterial->GetVertexLayout().GetPerVertexPadding());
@@ -145,7 +150,7 @@ std::unique_ptr<MeshRenderer> ModelInstance::ParseMesh(Graphics& gfx, std::uniqu
 	// temporary
 	const bool IsInstance = false;
 	if (IsInstance)
-		return std::make_unique<InstancedMeshRenderer>(gfx, pMeshAsset->name, pMaterial, std::move(pVertexBuffer), std::move(pIndexBuffer), std::move(pTopology), instanceCount);
+		return std::make_shared<InstancedMeshRenderer>(gfx, pMeshAsset->name, pMaterial, std::move(pVertexBuffer), std::move(pIndexBuffer), std::move(pTopology), instanceCount);
 	else
-		return std::make_unique<MeshRenderer>(gfx, pMeshAsset->name, pMaterial, std::move(pVertexBuffer), std::move(pIndexBuffer), std::move(pTopology));
+		return std::make_shared<MeshRenderer>(gfx, pMeshAsset->name, pMaterial, std::move(pVertexBuffer), std::move(pIndexBuffer), std::move(pTopology));
 }

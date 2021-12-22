@@ -2,6 +2,7 @@
 #include <memory>
 #include "Surface.h"
 #include "MeshRenderer.h"
+#include "RendererList.h"
 #include "ModelInstance.h"
 #include "GDIPlusManager.h"
 #include "Imgui/imgui.h"
@@ -17,7 +18,8 @@ App::App(int screenWidth, int screenHeight)
 	:
 	wnd(screenWidth, screenHeight, "DX11 Renderer"),
 	cam(40.0f, (float)screenWidth / (float)screenHeight, 0.1f, 100.0f),
-	pLightManager(std::make_unique<LightManager>(wnd.Gfx()))
+	pLightManager(std::make_unique<LightManager>(wnd.Gfx())),
+	pRendererList(std::make_unique<RendererList>())
 {
 	renderer = std::make_unique<Renderer>(wnd.Gfx(), pLightManager);
 
@@ -69,6 +71,10 @@ App::App(int screenWidth, int screenHeight)
 
 	pModel0 = std::make_unique<ModelInstance>(wnd.Gfx(), pModelAsset, modelTransform);
 	pModel1 = std::make_unique<ModelInstance>(wnd.Gfx(), pModelAsset, modelTransform * dx::XMMatrixTranslation(4.5f, 0.f, 0.f));
+
+	pRendererList->AddModelInstance(*pModel0);
+	pRendererList->AddModelInstance(*pModel1);
+	pLightManager->AddLightModelsToList(*pRendererList);
 
 	return;
 	

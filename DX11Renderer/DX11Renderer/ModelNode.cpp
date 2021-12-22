@@ -1,8 +1,8 @@
 #include "ModelNode.h"
 #include "MeshRenderer.h"
 
-ModelNode::ModelNode(int id, const dx::XMMATRIX & _transform, std::unique_ptr<MeshRenderer> pMeshPtr, std::vector<std::unique_ptr<ModelNode>> pChildNodes)
-	: pMeshPtr(std::move(pMeshPtr)), pChildNodes(std::move(pChildNodes))
+ModelNode::ModelNode(int id, const dx::XMMATRIX & _transform, std::shared_ptr<MeshRenderer> pMeshPtr, std::vector<std::unique_ptr<ModelNode>> pChildNodes)
+	: pMeshPtr(pMeshPtr), pChildNodes(std::move(pChildNodes))
 {
 	dx::XMStoreFloat4x4(&localTransform, _transform);
 }

@@ -172,6 +172,7 @@
     <ClCompile Include="DirectionalLight.cpp" />
     <ClCompile Include="dxerr.cpp" />
     <ClCompile Include="DxgiInfoManager.cpp" />
+    <ClCompile Include="Frustum.cpp" />
     <ClCompile Include="FullscreenPass.cpp" />
     <ClCompile Include="GDIPlusManager.cpp" />
     <ClCompile Include="Graphics.cpp" />
@@ -202,6 +203,7 @@
     <ClCompile Include="PixelShader.cpp" />
     <ClCompile Include="PointLight.cpp" />
     <ClCompile Include="RasterizerState.cpp" />
+    <ClCompile Include="RendererList.cpp" />
     <ClCompile Include="RenderPass.cpp" />
     <ClCompile Include="RenderTarget.cpp" />
     <ClCompile Include="RenderTexture.cpp" />
@@ -232,11 +234,13 @@
     <ClInclude Include="DirectionalLight.h" />
     <ClInclude Include="DX11Include.h" />
     <ClInclude Include="DXMathInclude.h" />
+    <ClInclude Include="Frustum.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="LightData.h" />
     <ClInclude Include="LightManager.h" />
     <ClInclude Include="ModelNode.h" />
     <ClInclude Include="RenderConstants.h" />
+    <ClInclude Include="RendererList.h" />
     <ClInclude Include="Spotlight.h" />
     <ClInclude Include="StructuredBuffer.h" />
     <ClInclude Include="StructuredBufferData.h" />

@@ -21,3 +21,8 @@ bool Light::HasShadow() const
 {
 	return shadowSettings.hasShadow;
 }
+
+ModelInstance & Light::GetModelInstance() const
+{
+	return *pModel;
+}

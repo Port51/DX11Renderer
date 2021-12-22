@@ -7,6 +7,7 @@
 #include "DirectionalLight.h"
 #include "RenderTarget.h"
 #include "RenderPass.h"
+#include "RendererList.h"
 
 struct LightData;
 
@@ -31,6 +32,13 @@ public:
 		pLightInputCB = std::make_unique<ConstantBuffer<LightInputCB>>(gfx, D3D11_USAGE_DYNAMIC);
 	}
 public:
+	void AddLightModelsToList(RendererList& pRendererList)
+	{
+		for (const auto& l : pLights)
+		{
+			pRendererList.AddModelInstance(l->GetModelInstance());
+		}
+	}
 	void SubmitDrawCalls(std::unique_ptr<Renderer>& fc) const
 	{
 		for (const auto& l : pLights)
