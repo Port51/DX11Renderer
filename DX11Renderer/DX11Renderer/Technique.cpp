@@ -1,14 +1,15 @@
 #include "Technique.h"
 #include "MeshRenderer.h"
 #include "Renderer.h"
+#include "DrawContext.h"
 
-void Technique::SubmitDrawCalls(Renderer& renderer, const MeshRenderer& meshRenderer) const
+void Technique::SubmitDrawCalls(Renderer& renderer, const MeshRenderer& meshRenderer, const DrawContext& drawContext) const
 {
 	if (active)
 	{
 		for (const auto& step : pSteps)
 		{
-			step->SubmitDrawCalls(renderer, meshRenderer);
+			step->SubmitDrawCalls(renderer, meshRenderer, drawContext);
 		}
 	}
 }

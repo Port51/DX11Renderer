@@ -599,6 +599,9 @@
     <ClInclude Include="Frustum.h">
       <Filter>Header Files\Util</Filter>
     </ClInclude>
+    <ClInclude Include="DrawContext.h">
+      <Filter>Header Files\RenderJobs</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DX11Renderer.rc">

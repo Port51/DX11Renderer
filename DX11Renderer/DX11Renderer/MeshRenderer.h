@@ -11,6 +11,7 @@ class Topology;
 class Renderer;
 class InputLayout;
 class TransformCbuf;
+struct DrawContext;
 
 class MeshRenderer
 {
@@ -19,8 +20,8 @@ public:
 	MeshRenderer(Graphics& gfx, std::string name, std::shared_ptr<Material> pMaterial, std::shared_ptr<VertexBufferWrapper> pVertexBuffer, std::shared_ptr<IndexBuffer> pIndexBuffer, std::shared_ptr<Topology> pTopologyBuffer);
 	dx::XMMATRIX GetTransformXM() const;
 	void SetTransform(dx::XMMATRIX transform);
-	void SubmitDrawCalls(Renderer& renderer) const;
-	virtual void Bind(Graphics& gfx) const;
+	void SubmitDrawCalls(Renderer& renderer, const DrawContext& drawContext) const;
+	virtual void Bind(Graphics& gfx, const DrawContext& drawContext) const;
 	UINT GetIndexCount() const;
 	UINT GetVertexCount() const;
 	virtual void IssueDrawCall(Graphics& gfx) const;

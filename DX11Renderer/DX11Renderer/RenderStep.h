@@ -9,6 +9,7 @@
 class MeshRenderer;
 class Renderer;
 class RenderPass;
+struct DrawContext;
 
 class RenderStep
 {
@@ -26,7 +27,7 @@ public:
 		bindings.push_back(std::move(pBinding));
 		return bindings[bindings.size() - 1];
 	}
-	void SubmitDrawCalls(Renderer& renderer, const MeshRenderer& meshRenderer) const;
+	void SubmitDrawCalls(Renderer& renderer, const MeshRenderer& meshRenderer, const DrawContext& drawContext) const;
 	void Bind(Graphics& gfx) const
 	{
 		for (const auto& b : bindings)

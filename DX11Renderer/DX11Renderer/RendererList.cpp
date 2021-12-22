@@ -46,11 +46,11 @@ void RendererList::Filter(Frustum frustum, RendererSorting sorting)
 	
 }
 
-void RendererList::SubmitDrawCalls(Renderer& renderer) const
+void RendererList::SubmitDrawCalls(Renderer& renderer, const DrawContext& drawContext) const
 {
 	for (const auto pr : pRenderers)
 	{
-		pr.first->SubmitDrawCalls(renderer);
+		pr.first->SubmitDrawCalls(renderer, drawContext);
 	}
 }
 

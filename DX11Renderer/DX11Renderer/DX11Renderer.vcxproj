@@ -232,6 +232,7 @@
     <ClInclude Include="ComputeKernel.h" />
     <ClInclude Include="ComputeShader.h" />
     <ClInclude Include="DirectionalLight.h" />
+    <ClInclude Include="DrawContext.h" />
     <ClInclude Include="DX11Include.h" />
     <ClInclude Include="DXMathInclude.h" />
     <ClInclude Include="Frustum.h" />

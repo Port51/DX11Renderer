@@ -1,5 +1,6 @@
 #include "ModelNode.h"
 #include "MeshRenderer.h"
+#include "DrawContext.h"
 
 ModelNode::ModelNode(int id, const dx::XMMATRIX & _transform, std::shared_ptr<MeshRenderer> pMeshPtr, std::vector<std::unique_ptr<ModelNode>> pChildNodes)
 	: pMeshPtr(pMeshPtr), pChildNodes(std::move(pChildNodes))
@@ -23,15 +24,15 @@ void ModelNode::RebuildTransform(dx::XMMATRIX accumulatedTransform)
 	}
 }
 
-void ModelNode::SubmitDrawCalls(Renderer& renderer) const
+void ModelNode::SubmitDrawCalls(Renderer& renderer, const DrawContext& drawContext) const
 {
 	if (pMeshPtr)
 	{
-		pMeshPtr->SubmitDrawCalls(renderer);
+		pMeshPtr->SubmitDrawCalls(renderer, drawContext);
 	}
 
 	for (const auto& pc : pChildNodes)
 	{
-		pc->SubmitDrawCalls(renderer);
+		pc->SubmitDrawCalls(renderer, drawContext);
 	}
 }

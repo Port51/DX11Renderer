@@ -17,6 +17,7 @@
 #include "ConstantBuffer.h"
 #include "NullPixelShader.h"
 #include "RenderConstants.h"
+#include "DrawContext.h"
 
 #include <fstream>
 #include <sstream>
@@ -193,11 +194,11 @@ void Material::Bind(Graphics& gfx, std::string passName)
 	// Is this needed?
 }
 
-void Material::SubmitDrawCalls(Renderer& renderer, const MeshRenderer& meshRenderer) const
+void Material::SubmitDrawCalls(Renderer& renderer, const MeshRenderer& meshRenderer, const DrawContext& drawContext) const
 {
 	for (const auto& pass : passes)
 	{
-		pass.second->SubmitDrawCalls(renderer, meshRenderer);
+		pass.second->SubmitDrawCalls(renderer, meshRenderer, drawContext);
 	}
 }
 

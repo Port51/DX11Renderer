@@ -16,7 +16,6 @@ public:
 public:
 	void DrawImguiControlWindow() override;
 	LightData GetLightData(dx::XMMATRIX viewMatrix) const override;
-	void SubmitDrawCalls(Renderer& renderer) const override;
 	UINT GetLightType() const override;
 	void RenderShadow(Graphics& gfx, const Camera& cam, const std::unique_ptr<RenderPass>& pass, const std::unique_ptr<ConstantBuffer<TransformationCB>>& pTransformationCB) override;
 private:

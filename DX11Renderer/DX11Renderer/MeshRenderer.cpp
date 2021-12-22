@@ -5,6 +5,7 @@
 #include <assert.h>
 #include "DepthStencilState.h"
 #include "RenderConstants.h"
+#include "DrawContext.h"
 
 MeshRenderer::MeshRenderer(Graphics& gfx, std::string name, std::shared_ptr<Material> pMaterial, std::shared_ptr<IndexBuffer> pIndexBuffer, std::shared_ptr<Topology> pTopologyBuffer)
 	: pIndexBuffer(std::move(pIndexBuffer)),
@@ -33,13 +34,12 @@ void MeshRenderer::SetTransform(dx::XMMATRIX _transform)
 	dx::XMStoreFloat4x4(&transform, _transform);
 }
 
-// Called via Node
-void MeshRenderer::SubmitDrawCalls(Renderer& renderer) const
+void MeshRenderer::SubmitDrawCalls(Renderer& renderer, const DrawContext& drawContext) const
 {
-	pMaterial->SubmitDrawCalls(renderer, *this);
+	pMaterial->SubmitDrawCalls(renderer, *this, drawContext);
 }
 
-void MeshRenderer::Bind(Graphics& gfx) const
+void MeshRenderer::Bind(Graphics& gfx, const DrawContext& drawContext) const
 {
 	pTopology->BindIA(gfx, 0u);
 	pIndexBuffer->BindIA(gfx, 0u);

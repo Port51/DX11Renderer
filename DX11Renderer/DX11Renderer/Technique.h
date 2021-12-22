@@ -5,6 +5,7 @@
 
 class MeshRenderer;
 class Renderer;
+struct DrawContext;
 
 class Technique
 {
@@ -14,7 +15,7 @@ public:
 		:
 		name(name)
 	{}
-	void SubmitDrawCalls(Renderer& renderer, const MeshRenderer& meshRenderer) const;
+	void SubmitDrawCalls(Renderer& renderer, const MeshRenderer& meshRenderer, const DrawContext& drawContext) const;
 	void AddStep(std::unique_ptr<RenderStep> step)
 	{
 		pSteps.push_back(std::move(step));

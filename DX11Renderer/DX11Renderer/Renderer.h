@@ -22,6 +22,7 @@
 #include "RenderConstants.h"
 #include "RendererList.h"
 #include "Frustum.h"
+#include "DrawContext.h"
 
 class Renderer
 {
@@ -136,7 +137,10 @@ public:
 
 		// Submit draw calls
 		{
-			pVisibleRendererList->SubmitDrawCalls(*this);
+			DrawContext drawContext;
+			drawContext.viewMatrix = cam.GetViewMatrix();
+			drawContext.projMatrix = cam.GetProjectionMatrix();
+			pVisibleRendererList->SubmitDrawCalls(*this, drawContext);
 		}
 
 		// Early frame calculations

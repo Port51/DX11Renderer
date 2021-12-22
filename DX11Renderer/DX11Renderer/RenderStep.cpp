@@ -2,9 +2,9 @@
 #include "MeshRenderer.h"
 #include "Renderer.h"
 
-void RenderStep::SubmitDrawCalls(Renderer& renderer, const MeshRenderer& meshRenderer) const
+void RenderStep::SubmitDrawCalls(Renderer& renderer, const MeshRenderer& meshRenderer, const DrawContext& drawContext) const
 {
-	renderer.AcceptDrawCall(DrawCall(this, &meshRenderer), targetPass);
+	renderer.AcceptDrawCall(DrawCall(this, &meshRenderer, drawContext), targetPass);
 }
 
 void RenderStep::InitializeParentReferences(const MeshRenderer& parent)

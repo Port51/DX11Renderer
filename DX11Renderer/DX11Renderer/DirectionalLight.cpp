@@ -53,11 +53,6 @@ LightData DirectionalLight::GetLightData(dx::XMMATRIX viewMatrix) const
 	return light;
 }
 
-void DirectionalLight::SubmitDrawCalls(Renderer& renderer) const
-{
-	// Basically just a way to not render directional lights as an object
-}
-
 UINT DirectionalLight::GetLightType() const
 {
 	return 2u;

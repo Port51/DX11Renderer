@@ -9,6 +9,7 @@
 #include "StructuredBufferData.h"
 #include "DXMathInclude.h"
 #include "ModelNode.h"
+#include "DrawContext.h"
 
 ModelInstance::ModelInstance(Graphics& gfx, std::unique_ptr<ModelAsset> const& pModelAsset, dx::XMMATRIX transform)
 	: transform(transform) // todo: set position
@@ -37,9 +38,9 @@ ModelInstance::ModelInstance(Graphics& gfx, std::unique_ptr<ModelAsset> const& p
 	pSceneGraph = CreateModelInstanceNode(gfx, pModelAsset->pSceneGraph);
 }*/
 
-void ModelInstance::SubmitDrawCalls(Renderer& renderer) const
+void ModelInstance::SubmitDrawCalls(Renderer& renderer, const DrawContext& drawContext) const
 {
-	pSceneGraph->SubmitDrawCalls(renderer);
+	pSceneGraph->SubmitDrawCalls(renderer, drawContext);
 }
 
 void ModelInstance::SetPositionWS(dx::XMFLOAT3 positionWS)
