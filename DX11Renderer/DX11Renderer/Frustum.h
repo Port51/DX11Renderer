@@ -1,6 +1,7 @@
 #pragma once
 
-class Frustum
+struct Frustum
 {
-
+public:
+	// todo: add planes
 };

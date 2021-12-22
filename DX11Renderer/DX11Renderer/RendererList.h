@@ -22,6 +22,9 @@ public:
 	void AddModelInstance(const ModelInstance& modelInstance);
 	void AddMeshRenderer(const MeshRenderer& meshRenderer);
 private:
+	static bool sortFrontToBack(const std::pair<std::shared_ptr<MeshRenderer>, float>& a, const std::pair<std::shared_ptr<MeshRenderer>, float>& b);
+	static bool sortBackToFront(const std::pair<std::shared_ptr<MeshRenderer>, float>& a, const std::pair<std::shared_ptr<MeshRenderer>, float>& b);
+private:
 	// Float measures view distance
 	std::shared_ptr<RendererList> pSource;
 	std::vector<std::pair<std::shared_ptr<MeshRenderer>, float>> pRenderers;

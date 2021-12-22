@@ -66,6 +66,7 @@ std::unique_ptr<ModelNode> ModelInstance::CreateModelInstanceNode(Graphics& gfx,
 	if (pSourceNode->pMesh)
 	{
 		pMeshInstance = ParseMesh(gfx, pSourceNode->pMesh);
+		pMeshes.emplace_back(pMeshInstance);
 	}
 
 	auto pChildNodes = std::vector<std::unique_ptr<ModelNode>>();

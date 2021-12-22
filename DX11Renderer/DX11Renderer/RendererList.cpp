@@ -9,6 +9,16 @@ RendererList::RendererList(std::shared_ptr<RendererList> source)
 	pRenderers.reserve(pSource->pRenderers.size());
 }
 
+bool RendererList::sortFrontToBack(const std::pair<std::shared_ptr<MeshRenderer>, float>& a, const std::pair<std::shared_ptr<MeshRenderer>, float>& b)
+{
+	return (a.second < b.second);
+}
+
+bool RendererList::sortBackToFront(const std::pair<std::shared_ptr<MeshRenderer>, float>& a, const std::pair<std::shared_ptr<MeshRenderer>, float>& b)
+{
+	return (a.second > b.second);
+}
+
 void RendererList::Filter(Frustum frustum, RendererSorting sorting)
 {
 	// Filter based on source
@@ -20,7 +30,19 @@ void RendererList::Filter(Frustum frustum, RendererSorting sorting)
 		pRenderers.emplace_back(std::make_pair(p.first, 0.f));
 	}
 
-	// todo: sort
+	switch (sorting)
+	{
+	case RendererSorting::BackToFront:
+		std::sort(pRenderers.begin(), pRenderers.end(), sortBackToFront);
+		break;
+	case RendererSorting::FrontToBack:
+		std::sort(pRenderers.begin(), pRenderers.end(), sortFrontToBack);
+		break;
+	default:
+		throw std::runtime_error("Unrecognized sorting method!");
+		break;
+	}
+	
 }
 
 void RendererList::AddModelInstance(const ModelInstance & modelInstance)

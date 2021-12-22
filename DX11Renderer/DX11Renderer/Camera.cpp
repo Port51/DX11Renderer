@@ -1,6 +1,7 @@
 #include "Camera.h"
 #include "imgui/imgui.h"
 #include "RenderConstants.h"
+#include "Frustum.h"
 
 Camera::Camera(float fov, float aspect, float nearClipPlane, float farClipPlane)
 	: fov(fov), aspect(aspect), nearClipPlane(nearClipPlane), farClipPlane(farClipPlane)
@@ -55,6 +56,12 @@ DirectX::XMVECTOR Camera::GetFrustumCornersVS() const
 
 	// Flip Y
 	return dx::XMVectorSet(halfAngleX, -halfAngleY, halfAngleX * farClipPlane, -halfAngleY * farClipPlane);
+}
+
+Frustum Camera::GetFrustumWS() const
+{
+	Frustum frustum;
+	return frustum;
 }
 
 float Camera::GetNearClipPlane() const

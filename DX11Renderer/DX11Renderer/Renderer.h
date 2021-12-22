@@ -21,6 +21,7 @@
 #include "LightManager.h"
 #include "RenderConstants.h"
 #include "RendererList.h"
+#include "Frustum.h"
 
 class Renderer
 {
@@ -107,7 +108,7 @@ public:
 		gfx.GetContext()->ClearState();
 
 		// todo: replace w/ rendergraph
-		/*gfx.GetContext()->ClearState();
+		/*
 		pLightManager->CullLights(gfx, cam);
 
 		gfx.GetContext()->CSSetShaderResources(0u, 1u, pLightManager->GetD3DSRV().GetAddressOf());
@@ -129,7 +130,7 @@ public:
 
 		// Frustum culling
 		{
-			//pVisibleRendererList->Filter(, RendererList::RendererSorting::BackToFront);
+			pVisibleRendererList->Filter(cam.GetFrustumWS(), RendererList::RendererSorting::BackToFront);
 		}
 
 		// Early frame calculations
@@ -169,7 +170,6 @@ public:
 
 			pass->BindSharedResources(gfx);
 			Bind::DepthStencilState::Resolve(gfx, Bind::DepthStencilState::Mode::StencilOff)->BindOM(gfx);
-			//pSmallDepthStencil->Clear(gfx);
 			gfx.pDepthStencil->Clear(gfx);
 
 			// MRT bind
@@ -211,10 +211,6 @@ public:
 			pass->BindSharedResources(gfx);
 
 			pTiledLightingKernel->Dispatch(gfx, *pass, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1);
-
-			// todo: find better way than this
-			// clearing UAV bindings doesn't seem to work
-			//gfx.GetContext()->ClearState();
 
 			pass->Execute(gfx);
 			pass->UnbindSharedResources(gfx);
@@ -282,9 +278,6 @@ private:
 
 	std::shared_ptr<RenderTarget> pCameraColor;
 
-	//std::shared_ptr<StructuredBuffer<float>> pTestSRV;
-	//std::shared_ptr<StructuredBuffer<float>> pTestUAV;
-	//std::unique_ptr<ComputeKernel> pTestKernel;
 	std::unique_ptr<ComputeKernel> pTiledLightingKernel;
 	std::unique_ptr<ConstantBuffer<TransformationCB>> pTransformationCB;
 	std::unique_ptr<ConstantBuffer<PerFrameCB>> pPerFrameCB;

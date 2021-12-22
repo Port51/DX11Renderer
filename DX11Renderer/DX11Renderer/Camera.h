@@ -1,6 +1,8 @@
 #pragma once
 #include "Graphics.h"
 
+class Frustum;
+
 class Camera
 {
 public:
@@ -9,6 +11,7 @@ public:
 	dx::XMMATRIX GetViewMatrix() const;
 	dx::XMMATRIX GetProjectionMatrix() const;
 	dx::XMVECTOR GetFrustumCornersVS() const;
+	Frustum GetFrustumWS() const;
 	float GetNearClipPlane() const;
 	float GetFarClipPlane() const;
 	void SetFOV(float fov);

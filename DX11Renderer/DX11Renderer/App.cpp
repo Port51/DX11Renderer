@@ -21,7 +21,6 @@ App::App(int screenWidth, int screenHeight)
 	pLightManager(std::make_unique<LightManager>(wnd.Gfx())),
 	pRendererList(std::make_shared<RendererList>())
 {
-	renderer = std::make_unique<Renderer>(wnd.Gfx(), pLightManager, pRendererList);
 
 	std::string fn;
 	dx::XMMATRIX modelTransform;
@@ -75,6 +74,8 @@ App::App(int screenWidth, int screenHeight)
 	pRendererList->AddModelInstance(*pModel0);
 	pRendererList->AddModelInstance(*pModel1);
 	pLightManager->AddLightModelsToList(*pRendererList);
+
+	renderer = std::make_unique<Renderer>(wnd.Gfx(), pLightManager, pRendererList);
 
 	return;
 	
