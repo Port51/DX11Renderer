@@ -21,6 +21,7 @@ ModelInstance::ModelInstance(Graphics& gfx, std::unique_ptr<ModelAsset> const& p
 	}
 
 	pSceneGraph = CreateModelInstanceNode(gfx, pModelAsset->pSceneGraph);
+	UpdateSceneGraph();
 }
 
 /*ModelInstance::ModelInstance(Graphics& gfx, std::unique_ptr<ModelAsset> const& pModelAsset, std::vector<std::string> materialPaths, dx::XMMATRIX transform)
@@ -38,12 +39,18 @@ ModelInstance::ModelInstance(Graphics& gfx, std::unique_ptr<ModelAsset> const& p
 
 void ModelInstance::SubmitDrawCalls(std::unique_ptr<Renderer>& frame) const
 {
-	pSceneGraph->SubmitDrawCalls(frame, transform);
+	pSceneGraph->SubmitDrawCalls(frame);
 }
 
 void ModelInstance::SetPositionWS(dx::XMFLOAT3 positionWS)
 {
 	transform = dx::XMMatrixTranslation(positionWS.x, positionWS.y, positionWS.z);
+	UpdateSceneGraph();
+}
+
+void ModelInstance::UpdateSceneGraph()
+{
+	pSceneGraph->RebuildTransform(transform);
 }
 
 static int nextNodeId = 0; // todo: move

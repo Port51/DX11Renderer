@@ -4,35 +4,29 @@
 ModelNode::ModelNode(int id, const dx::XMMATRIX & _transform, std::unique_ptr<MeshRenderer> pMeshPtr, std::vector<std::unique_ptr<ModelNode>> pChildNodes)
 	: pMeshPtr(std::move(pMeshPtr)), pChildNodes(std::move(pChildNodes))
 {
-	dx::XMStoreFloat4x4(&transform, _transform);
-	dx::XMStoreFloat4x4(&appliedTransform, dx::XMMatrixIdentity());
+	dx::XMStoreFloat4x4(&localTransform, _transform);
 }
 
-void ModelNode::SubmitDrawCalls(std::unique_ptr<Renderer>& frame, dx::FXMMATRIX accumulatedTransform) const
+void ModelNode::RebuildTransform(dx::FXMMATRIX accumulatedTransform)
 {
-	// todo: use this?
-	const auto built =
-		dx::XMLoadFloat4x4(&appliedTransform) *
-		dx::XMLoadFloat4x4(&transform) *
-		accumulatedTransform;
+	const auto worldMatrix = dx::XMLoadFloat4x4(&localTransform) * accumulatedTransform;
+	dx::XMStoreFloat4x4(&accumulatedWorldTransform, worldMatrix);
 
+	for (const auto& pc : pChildNodes)
+	{
+		pc->RebuildTransform(worldMatrix);
+	}
+}
+
+void ModelNode::SubmitDrawCalls(std::unique_ptr<Renderer>& frame) const
+{
 	if (pMeshPtr)
 	{
-		pMeshPtr->SubmitDrawCalls(frame, built);
+		pMeshPtr->SubmitDrawCalls(frame, dx::XMLoadFloat4x4(&accumulatedWorldTransform));
 	}
 
 	for (const auto& pc : pChildNodes)
 	{
-		pc->SubmitDrawCalls(frame, built);
+		pc->SubmitDrawCalls(frame);
 	}
-}
-
-void ModelNode::SetAppliedTransform(dx::FXMMATRIX _transform)
-{
-	dx::XMStoreFloat4x4(&appliedTransform, _transform);
-}
-
-const dx::XMFLOAT4X4& ModelNode::GetAppliedTransform() const
-{
-	return appliedTransform;
 }
