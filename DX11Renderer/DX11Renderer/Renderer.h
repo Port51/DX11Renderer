@@ -131,7 +131,7 @@ public:
 
 			pass->BindSharedResources(gfx);
 
-			ShadowPassContext context(gfx, cam, *this);// (gfx, cam, nullptr, pass, pTransformationCB, nullptr);
+			ShadowPassContext context(gfx, cam, *this, pass, pTransformationCB, nullptr);
 
 			pLightManager->CullLights(gfx, cam); // changes the SRV, which will be bound in per-frame binds
 			pLightManager->RenderShadows(context);

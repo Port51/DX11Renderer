@@ -27,7 +27,7 @@ class LightManager
 private:
 	const static int MaxLightCount = 256;
 public:
-	LightManager(Graphics& gfx);
+	LightManager(Graphics& gfx, std::shared_ptr<RendererList> pRendererList);
 public:
 	void AddLightModelsToList(RendererList& pRendererList);
 	void CullLights(Graphics& gfx, const Camera& cam);
@@ -45,4 +45,5 @@ private:
 private:
 	std::unique_ptr<StructuredBuffer<LightData>> pLightData;
 	std::unique_ptr<ConstantBuffer<LightInputCB>> pLightInputCB;
+	std::shared_ptr<RendererList> pShadowRendererList;
 };

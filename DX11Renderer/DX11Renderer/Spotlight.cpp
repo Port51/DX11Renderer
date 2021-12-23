@@ -76,7 +76,7 @@ void Spotlight::RenderShadow(ShadowPassContext context)
 	TransformationCB transformationCB;
 	transformationCB.viewMatrix = context.cam.GetViewMatrix();
 	transformationCB.projMatrix = context.cam.GetProjectionMatrix();
-	//pTransformationCB->Update(context.gfx, transformationCB);
+	context.pTransformationCB->Update(context.gfx, transformationCB);
 
 	/*
 	// Apply look-at and local orientation

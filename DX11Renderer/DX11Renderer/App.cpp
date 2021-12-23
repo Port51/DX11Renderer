@@ -18,9 +18,9 @@ App::App(int screenWidth, int screenHeight)
 	:
 	wnd(screenWidth, screenHeight, "DX11 Renderer"),
 	cam(40.0f, (float)screenWidth / (float)screenHeight, 0.1f, 100.0f),
-	pLightManager(std::make_unique<LightManager>(wnd.Gfx())),
 	pRendererList(std::make_shared<RendererList>())
 {
+	pLightManager = std::make_unique<LightManager>(wnd.Gfx(), pRendererList);
 
 	std::string fn;
 	dx::XMMATRIX modelTransform;

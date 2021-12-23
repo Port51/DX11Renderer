@@ -10,7 +10,7 @@
 #include "RenderPass.h"
 #include "RendererList.h"
 
-LightManager::LightManager(Graphics & gfx)
+LightManager::LightManager(Graphics & gfx, std::shared_ptr<RendererList> pRendererList)
 {
 	pLightData = std::make_unique<StructuredBuffer<LightData>>(gfx, D3D11_USAGE_DYNAMIC, D3D11_BIND_SHADER_RESOURCE, MaxLightCount);
 	cachedLightData.resize(MaxLightCount);
@@ -23,6 +23,8 @@ LightManager::LightManager(Graphics & gfx)
 	pLights.emplace_back(std::make_unique<DirectionalLight>(gfx, 4, dx::XMFLOAT3(-2.0, 1.0f, -5.f), 0.0f, 0.0f, dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 50.0f, 5.0f));
 
 	pLightInputCB = std::make_unique<ConstantBuffer<LightInputCB>>(gfx, D3D11_USAGE_DYNAMIC);
+
+	pShadowRendererList = std::make_shared<RendererList>(pRendererList);
 }
 
 void LightManager::AddLightModelsToList(RendererList & pRendererList)
@@ -84,6 +86,8 @@ void LightManager::CullLights(Graphics & gfx, const Camera & cam)
 
 void LightManager::RenderShadows(ShadowPassContext context)
 {
+	context.pRendererList = pShadowRendererList;
+
 	// todo: cull shadows
 	for (int i = 0; i < pLights.size(); ++i)
 	{
