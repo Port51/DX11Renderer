@@ -13,7 +13,6 @@ class TransformCbuf : public Bindable
 public:
 	TransformCbuf(Graphics& gfx, const MeshRenderer& parent);
 	void BindVS(Graphics& gfx, UINT slot) override;
-	void BindVS2(Graphics& gfx, UINT slot, Transforms transforms, dx::XMMATRIX model, const MeshRenderer& parent);
 	void InitializeParentReference(const MeshRenderer& parent) override;
 	void UpdateBindImpl(Graphics& gfx, const Transforms& transforms);
 private:

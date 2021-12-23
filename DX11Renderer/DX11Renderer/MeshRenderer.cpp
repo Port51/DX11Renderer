@@ -51,11 +51,9 @@ void MeshRenderer::Bind(Graphics& gfx, const DrawContext& drawContext) const
 	const auto modelViewMatrix = modelMatrix * drawContext.viewMatrix;
 	const auto modelViewProjectMatrix = modelViewMatrix * drawContext.projMatrix;
 	Transforms transforms{ modelMatrix, modelViewMatrix, modelViewProjectMatrix };
-	//pTransformCbuf->UpdateBindImpl(gfx, transforms);
+	pTransformCbuf->UpdateBindImpl(gfx, transforms);
 
-	//pTransformCbuf->BindVS(gfx, RenderSlots::VS_TransformCB);
-	pTransformCbuf->InitializeParentReference(*this);
-	pTransformCbuf->BindVS2(gfx, RenderSlots::VS_TransformCB, transforms, GetTransformXM(), *this);
+	pTransformCbuf->BindVS(gfx, RenderSlots::VS_TransformCB);
 }
 
 UINT MeshRenderer::GetIndexCount() const

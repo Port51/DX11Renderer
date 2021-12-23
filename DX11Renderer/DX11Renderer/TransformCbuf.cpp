@@ -25,22 +25,6 @@ void TransformCbuf::BindVS(Graphics& gfx, UINT slot)
 	gfx.GetContext()->VSSetConstantBuffers(slot, 1u, pVcbuf->GetD3DBuffer().GetAddressOf());
 }
 
-///
-/// Update cbuffer based on transform, then bind
-///
-void TransformCbuf::BindVS2(Graphics& gfx, UINT slot, Transforms transforms, dx::XMMATRIX model, const MeshRenderer& parent)
-{
-	// debug:
-	const auto modelMatrix = pParent->GetTransformXM();
-	const auto modelViewMatrix = modelMatrix * gfx.GetViewMatrix();
-	const auto modelViewProjectMatrix = modelViewMatrix * gfx.GetProjectionMatrix();
-	Transforms transforms2{ modelMatrix, modelViewMatrix, modelViewProjectMatrix };
-	//UpdateBindImpl(gfx, transforms);
-	UpdateBindImpl(gfx, transforms2);
-
-	gfx.GetContext()->VSSetConstantBuffers(slot, 1u, pVcbuf->GetD3DBuffer().GetAddressOf());
-}
-
 void TransformCbuf::InitializeParentReference(const MeshRenderer& parent)
 {
 	auto newParent = &parent;
