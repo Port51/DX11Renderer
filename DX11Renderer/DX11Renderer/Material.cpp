@@ -115,6 +115,7 @@ Material::Material(Graphics& gfx, const std::string_view _materialAssetPath)
 				// Read pass name
 				pPassStep = std::make_unique<RenderStep>(p.values[0]);
 				materialPassName = std::move(p.values[0]);
+				pMaterialPass->SetRenderPass(materialPassName);
 
 				// Init cbuffer
 				// todo: add to codex using std::string(_materialAssetPath)?

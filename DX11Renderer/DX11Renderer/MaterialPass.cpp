@@ -11,6 +11,16 @@ MaterialPass::MaterialPass()
 	
 }
 
+void MaterialPass::SetRenderPass(std::string _renderPass)
+{
+	renderPass = _renderPass;
+}
+
+const std::string MaterialPass::GetRenderPass() const
+{
+	return renderPass;
+}
+
 void MaterialPass::AddTechnique(std::unique_ptr<Technique> _pTechnique)
 {
 	pTechnique = std::move(_pTechnique);
