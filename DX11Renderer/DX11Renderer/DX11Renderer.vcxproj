@@ -188,6 +188,7 @@
     <ClCompile Include="InputLayout.cpp" />
     <ClCompile Include="InstancedMeshRenderer.cpp" />
     <ClCompile Include="Light.cpp" />
+    <ClCompile Include="LightManager.cpp" />
     <ClCompile Include="ModelNode.cpp" />
     <ClCompile Include="RenderConstants.cpp" />
     <ClCompile Include="DrawCall.cpp" />
