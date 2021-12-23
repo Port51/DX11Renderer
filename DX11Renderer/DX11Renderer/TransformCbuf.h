@@ -11,10 +11,9 @@ struct Transforms;
 class TransformCbuf : public Bindable
 {
 public:
-	TransformCbuf(Graphics& gfx, const MeshRenderer& parent);
+	TransformCbuf(Graphics& gfx);
 	void BindVS(Graphics& gfx, UINT slot) override;
-	void InitializeParentReference(const MeshRenderer& parent) override;
-	void UpdateBindImpl(Graphics& gfx, const Transforms& transforms);
+	void UpdateTransforms(Graphics& gfx, const Transforms& transforms);
 private:
 	// Static so can be re-used each drawcall
 	static std::unique_ptr<ConstantBuffer<Transforms>> pVcbuf;

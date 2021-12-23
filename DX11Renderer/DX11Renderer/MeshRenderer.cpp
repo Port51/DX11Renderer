@@ -17,7 +17,7 @@ MeshRenderer::MeshRenderer(Graphics& gfx, std::string name, std::shared_ptr<Mate
 	assert("Material cannot be null" && pMaterial);
 	gfx.GetLog().Info("Create MeshRenderer " + name);
 
-	pTransformCbuf = std::make_shared<TransformCbuf>(gfx, *this);
+	pTransformCbuf = std::make_shared<TransformCbuf>(gfx);
 }
 
 MeshRenderer::MeshRenderer(Graphics& gfx, std::string name, std::shared_ptr<Material> pMaterial, std::shared_ptr<VertexBufferWrapper> pVertexBuffer, std::shared_ptr<IndexBuffer> pIndexBuffer, std::shared_ptr<Topology> pTopologyBuffer)
@@ -51,7 +51,7 @@ void MeshRenderer::Bind(Graphics& gfx, const DrawContext& drawContext) const
 	const auto modelViewMatrix = modelMatrix * drawContext.viewMatrix;
 	const auto modelViewProjectMatrix = modelViewMatrix * drawContext.projMatrix;
 	Transforms transforms{ modelMatrix, modelViewMatrix, modelViewProjectMatrix };
-	pTransformCbuf->UpdateBindImpl(gfx, transforms);
+	pTransformCbuf->UpdateTransforms(gfx, transforms);
 
 	pTransformCbuf->BindVS(gfx, RenderSlots::VS_TransformCB);
 }
