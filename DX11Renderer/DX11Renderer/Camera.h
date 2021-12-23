@@ -1,7 +1,7 @@
 #pragma once
 #include "Graphics.h"
 
-class Frustum;
+struct Frustum;
 
 class Camera
 {

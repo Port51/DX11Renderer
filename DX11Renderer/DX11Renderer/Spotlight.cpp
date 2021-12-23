@@ -76,6 +76,30 @@ void Spotlight::RenderShadow(Graphics & gfx, const Camera & cam, const std::uniq
 	transformationCB.viewMatrix = cam.GetViewMatrix();
 	transformationCB.projMatrix = cam.GetProjectionMatrix();
 	pTransformationCB->Update(gfx, transformationCB);
+
+	/*
+	// Apply look-at and local orientation
+	// +Y = up
+	const auto lightPos = dx::XMLoadFloat3(&positionWS);
+	const auto viewMatrix = dx::XMMatrixLookAtLH(lightPos, dx::XMVectorAdd(lightPos, GetDirectionWS()), dx::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f))
+		* dx::XMMatrixRotationRollPitchYaw(tilt, -pan, 0.f);
+
+	Frustum frustum;
+
+	// Setup transformation buffer
+	TransformationCB transformationCB;
+	transformationCB.viewMatrix = context.cam.GetViewMatrix();
+	transformationCB.projMatrix = context.cam.GetProjectionMatrix();
+	context.pTransformationCB->Update(context.gfx, transformationCB);
+
+	DrawContext drawContext(context.renderer);
+	drawContext.viewMatrix = viewMatrix;
+	drawContext.projMatrix = context.cam.GetProjectionMatrix();
+	drawContext.SetRenderPasses(context.renderer.ShadowPassName);
+
+	// This means all shadow draw calls need to be setup on the same thread
+	context.pRendererList->Filter(frustum, RendererList::RendererSorting::FrontToBack);
+	context.pRendererList->SubmitDrawCalls(drawContext);*/
 }
 
 dx::XMVECTOR Spotlight::GetDirectionWS() const

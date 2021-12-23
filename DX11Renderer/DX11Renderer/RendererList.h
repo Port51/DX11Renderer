@@ -3,9 +3,10 @@
 #include <memory>
 
 class Renderer;
-class Frustum;
 class MeshRenderer;
 class ModelInstance;
+
+struct Frustum;
 struct DrawContext;
 
 class RendererList

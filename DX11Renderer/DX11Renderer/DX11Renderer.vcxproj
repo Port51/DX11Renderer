@@ -242,6 +242,7 @@
     <ClInclude Include="ModelNode.h" />
     <ClInclude Include="RenderConstants.h" />
     <ClInclude Include="RendererList.h" />
+    <ClInclude Include="ShadowPassContext.h" />
     <ClInclude Include="Spotlight.h" />
     <ClInclude Include="StructuredBuffer.h" />
     <ClInclude Include="StructuredBufferData.h" />

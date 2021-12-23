@@ -139,6 +139,9 @@
     <Filter Include="Source Files\Util">
       <UniqueIdentifier>{a795e74b-c6da-4f32-ba97-ecb5aadcee81}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Shadows">
+      <UniqueIdentifier>{ea28b3cd-0076-416c-b1c0-77feaa708b69}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -604,6 +607,9 @@
     </ClInclude>
     <ClInclude Include="Transforms.h">
       <Filter>Header Files\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="ShadowPassContext.h">
+      <Filter>Header Files\Shadows</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
