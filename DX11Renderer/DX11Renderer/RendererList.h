@@ -23,7 +23,7 @@ public:
 	void Filter(Frustum frustum, RendererSorting sorting);
 	void SubmitDrawCalls(const DrawContext& drawContext) const;
 	void AddModelInstance(const ModelInstance& modelInstance);
-	void AddMeshRenderer(const MeshRenderer& meshRenderer);
+	void AddMeshRenderer(const std::shared_ptr<MeshRenderer> pMeshRenderer);
 private:
 	static bool SortFrontToBack(const std::pair<std::shared_ptr<MeshRenderer>, float>& a, const std::pair<std::shared_ptr<MeshRenderer>, float>& b);
 	static bool SortBackToFront(const std::pair<std::shared_ptr<MeshRenderer>, float>& a, const std::pair<std::shared_ptr<MeshRenderer>, float>& b);

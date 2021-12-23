@@ -59,11 +59,11 @@ void RendererList::AddModelInstance(const ModelInstance & modelInstance)
 	const auto pModelRenderers = modelInstance.GetMeshRenderers();
 	for (const auto pr : pModelRenderers)
 	{
-		AddMeshRenderer(*pr);
+		AddMeshRenderer(pr);
 	}
 }
 
-void RendererList::AddMeshRenderer(const MeshRenderer & meshRenderer)
+void RendererList::AddMeshRenderer(const std::shared_ptr<MeshRenderer> pMeshRenderer)
 {
-	pRenderers.emplace_back(std::make_pair(std::make_unique<MeshRenderer>(meshRenderer), 0.f));
+	pRenderers.emplace_back(std::make_pair(pMeshRenderer, 0.f));
 }
