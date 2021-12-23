@@ -159,26 +159,6 @@ void Graphics::DrawIndexed(UINT count)
 	GFX_THROW_INFO_ONLY(pContext->DrawIndexed(count, 0u, 0u));
 }
 
-void Graphics::SetProjectionMatrix(dx::XMMATRIX proj)
-{
-	projectionMatrix = proj;
-}
-
-dx::XMMATRIX Graphics::GetProjectionMatrix() const
-{
-	return projectionMatrix;
-}
-
-void Graphics::SetViewMatrix(dx::XMMATRIX _viewMatrix)
-{
-	viewMatrix = _viewMatrix;
-}
-
-dx::XMMATRIX Graphics::GetViewMatrix() const
-{
-	return viewMatrix;
-}
-
 void Graphics::SetRenderTarget(Microsoft::WRL::ComPtr<ID3D11RenderTargetView> renderTargetView)
 {
 	pContext->OMSetRenderTargets(1u, renderTargetView.GetAddressOf(), pDepthStencil->GetView().Get());

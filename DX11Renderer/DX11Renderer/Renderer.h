@@ -109,10 +109,6 @@ public:
 	{
 		gfx.GetContext()->ClearState();
 
-		// debug:
-		gfx.SetViewMatrix(cam.GetViewMatrix());
-		gfx.SetProjectionMatrix(cam.GetProjectionMatrix());
-
 		// todo: replace w/ rendergraph
 		/*
 		pLightManager->CullLights(gfx, cam);

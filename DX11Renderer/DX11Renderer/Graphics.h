@@ -87,10 +87,6 @@ public:
 	void DisableImgui();
 	bool IsImguiEnabled() const;
 public:
-	void SetProjectionMatrix(dx::XMMATRIX proj);
-	dx::XMMATRIX GetProjectionMatrix() const;
-	void SetViewMatrix(dx::XMMATRIX cam);
-	dx::XMMATRIX GetViewMatrix() const;
 #ifndef NDEBUG
 	DxgiInfoManager infoManager;
 #endif
