@@ -6,23 +6,16 @@
 
 class Graphics;
 class MeshRenderer;
+struct Transforms;
 
 class TransformCbuf : public Bindable
 {
-protected:
-	struct Transforms
-	{
-		dx::XMMATRIX model;
-		dx::XMMATRIX modelView;
-		dx::XMMATRIX modelViewProj;
-	};
 public:
 	TransformCbuf(Graphics& gfx, const MeshRenderer& parent);
 	void BindVS(Graphics& gfx, UINT slot) override;
+	void BindVS2(Graphics& gfx, UINT slot, Transforms transforms, dx::XMMATRIX model, const MeshRenderer& parent);
 	void InitializeParentReference(const MeshRenderer& parent) override;
-protected:
-	virtual void UpdateBindImpl(Graphics& gfx, const Transforms& transforms);
-	Transforms GetTransforms(Graphics& gfx);
+	void UpdateBindImpl(Graphics& gfx, const Transforms& transforms);
 private:
 	// Static so can be re-used each drawcall
 	static std::unique_ptr<ConstantBuffer<Transforms>> pVcbuf;

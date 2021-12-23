@@ -602,6 +602,9 @@
     <ClInclude Include="DrawContext.h">
       <Filter>Header Files\RenderJobs</Filter>
     </ClInclude>
+    <ClInclude Include="Transforms.h">
+      <Filter>Header Files\Util</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DX11Renderer.rc">

@@ -109,6 +109,10 @@ public:
 	{
 		gfx.GetContext()->ClearState();
 
+		// debug:
+		gfx.SetViewMatrix(cam.GetViewMatrix());
+		gfx.SetProjectionMatrix(cam.GetProjectionMatrix());
+
 		// todo: replace w/ rendergraph
 		/*
 		pLightManager->CullLights(gfx, cam);
@@ -151,8 +155,8 @@ public:
 			pPerFrameCB->Update(gfx, perFrameCB);
 
 			TransformationCB transformationCB;
-			transformationCB.viewProj = cam.GetViewMatrix();
-			transformationCB.projection = cam.GetProjectionMatrix();
+			transformationCB.viewMatrix = cam.GetViewMatrix();
+			transformationCB.projMatrix = cam.GetProjectionMatrix();
 			pTransformationCB->Update(gfx, transformationCB);
 
 			PerCameraCB perCameraCB;

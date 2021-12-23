@@ -136,8 +136,6 @@ void App::DoFrame()
 	auto dt = timer.Mark() * simulationSpeed;
 
 	wnd.Gfx().BeginFrame();
-	wnd.Gfx().SetViewMatrix(cam.GetViewMatrix());
-	wnd.Gfx().SetProjectionMatrix(cam.GetProjectionMatrix());
 
 	renderer->Execute(wnd.Gfx(), cam, pLightManager);
 

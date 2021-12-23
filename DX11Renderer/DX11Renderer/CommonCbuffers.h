@@ -13,8 +13,8 @@ struct alignas(16) PerFrameCB
 
 struct alignas(16) TransformationCB
 {
-	DirectX::XMMATRIX viewProj;
-	DirectX::XMMATRIX projection;
+	DirectX::XMMATRIX viewMatrix;
+	DirectX::XMMATRIX projMatrix;
 };
 
 struct alignas(16) PerCameraCB

@@ -11,7 +11,9 @@ class Topology;
 class Renderer;
 class InputLayout;
 class TransformCbuf;
+
 struct DrawContext;
+struct Transforms;
 
 class MeshRenderer
 {

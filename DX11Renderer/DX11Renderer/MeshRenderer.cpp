@@ -6,6 +6,7 @@
 #include "DepthStencilState.h"
 #include "RenderConstants.h"
 #include "DrawContext.h"
+#include "Transforms.h"
 
 MeshRenderer::MeshRenderer(Graphics& gfx, std::string name, std::shared_ptr<Material> pMaterial, std::shared_ptr<IndexBuffer> pIndexBuffer, std::shared_ptr<Topology> pTopologyBuffer)
 	: pIndexBuffer(std::move(pIndexBuffer)),
@@ -14,6 +15,7 @@ MeshRenderer::MeshRenderer(Graphics& gfx, std::string name, std::shared_ptr<Mate
 	pMaterial(pMaterial)
 {
 	assert("Material cannot be null" && pMaterial);
+	gfx.GetLog().Info("Create MeshRenderer " + name);
 
 	pTransformCbuf = std::make_shared<TransformCbuf>(gfx, *this);
 }
@@ -44,7 +46,16 @@ void MeshRenderer::Bind(Graphics& gfx, const DrawContext& drawContext) const
 	pTopology->BindIA(gfx, 0u);
 	pIndexBuffer->BindIA(gfx, 0u);
 	pVertexBufferWrapper->BindIA(gfx, 0u);
-	pTransformCbuf->BindVS(gfx, RenderSlots::VS_TransformCB);
+	
+	const auto modelMatrix = GetTransformXM();
+	const auto modelViewMatrix = modelMatrix * drawContext.viewMatrix;
+	const auto modelViewProjectMatrix = modelViewMatrix * drawContext.projMatrix;
+	Transforms transforms{ modelMatrix, modelViewMatrix, modelViewProjectMatrix };
+	//pTransformCbuf->UpdateBindImpl(gfx, transforms);
+
+	//pTransformCbuf->BindVS(gfx, RenderSlots::VS_TransformCB);
+	pTransformCbuf->InitializeParentReference(*this);
+	pTransformCbuf->BindVS2(gfx, RenderSlots::VS_TransformCB, transforms, GetTransformXM(), *this);
 }
 
 UINT MeshRenderer::GetIndexCount() const

@@ -73,8 +73,8 @@ void Spotlight::RenderShadow(Graphics & gfx, const Camera & cam, const std::uniq
 
 	// Setup transformation buffer
 	TransformationCB transformationCB;
-	transformationCB.viewProj = cam.GetViewMatrix();
-	transformationCB.projection = cam.GetProjectionMatrix();
+	transformationCB.viewMatrix = cam.GetViewMatrix();
+	transformationCB.projMatrix = cam.GetProjectionMatrix();
 	pTransformationCB->Update(gfx, transformationCB);
 }
 

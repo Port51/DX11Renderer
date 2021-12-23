@@ -307,6 +307,7 @@
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Topology.h" />
     <ClInclude Include="TransformCbuf.h" />
+    <ClInclude Include="Transforms.h" />
     <ClInclude Include="VertexBufferWrapper.h" />
     <ClInclude Include="RawBufferData.h" />
     <ClInclude Include="VertexLayout.h" />

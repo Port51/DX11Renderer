@@ -2,6 +2,7 @@
 #include "MeshRenderer.h"
 #include "Graphics.h"
 #include "ConstantBuffer.h"
+#include "Transforms.h"
 
 TransformCbuf::TransformCbuf(Graphics& gfx, const MeshRenderer& parent)
 	: pParent(&parent)
@@ -12,39 +13,44 @@ TransformCbuf::TransformCbuf(Graphics& gfx, const MeshRenderer& parent)
 	}
 }
 
+void TransformCbuf::BindVS(Graphics& gfx, UINT slot)
+{
+	// debug:
+	const auto modelMatrix = pParent->GetTransformXM();
+	const auto modelViewMatrix = modelMatrix * gfx.GetViewMatrix();
+	const auto modelViewProjectMatrix = modelViewMatrix * gfx.GetProjectionMatrix();
+	Transforms transforms{ modelMatrix, modelViewMatrix, modelViewProjectMatrix };
+	UpdateBindImpl(gfx, transforms);
+
+	gfx.GetContext()->VSSetConstantBuffers(slot, 1u, pVcbuf->GetD3DBuffer().GetAddressOf());
+}
+
 ///
 /// Update cbuffer based on transform, then bind
 ///
-void TransformCbuf::BindVS(Graphics& gfx, UINT slot)
+void TransformCbuf::BindVS2(Graphics& gfx, UINT slot, Transforms transforms, dx::XMMATRIX model, const MeshRenderer& parent)
 {
-	UpdateBindImpl(gfx, GetTransforms(gfx));
+	// debug:
+	const auto modelMatrix = pParent->GetTransformXM();
+	const auto modelViewMatrix = modelMatrix * gfx.GetViewMatrix();
+	const auto modelViewProjectMatrix = modelViewMatrix * gfx.GetProjectionMatrix();
+	Transforms transforms2{ modelMatrix, modelViewMatrix, modelViewProjectMatrix };
+	//UpdateBindImpl(gfx, transforms);
+	UpdateBindImpl(gfx, transforms2);
+
 	gfx.GetContext()->VSSetConstantBuffers(slot, 1u, pVcbuf->GetD3DBuffer().GetAddressOf());
 }
 
 void TransformCbuf::InitializeParentReference(const MeshRenderer& parent)
 {
+	auto newParent = &parent;
 	pParent = &parent;
 }
 
 void TransformCbuf::UpdateBindImpl(Graphics& gfx, const Transforms& transforms)
 {
-	assert(pParent != nullptr);
 	pVcbuf->Update(gfx, transforms);
 }
 
-TransformCbuf::Transforms TransformCbuf::GetTransforms(Graphics& gfx)
-{
-	assert(pParent != nullptr);
-	const auto modelMatrix = pParent->GetTransformXM();
-	const auto modelViewMatrix = modelMatrix * gfx.GetViewMatrix();
-	const auto modelViewProjectMatrix = modelViewMatrix * gfx.GetProjectionMatrix();
-	return Transforms
-	{
-		modelMatrix,
-		modelViewMatrix,
-		modelViewProjectMatrix
-	};
-}
-
 // Because static
-std::unique_ptr<ConstantBuffer<TransformCbuf::Transforms>> TransformCbuf::pVcbuf;
+std::unique_ptr<ConstantBuffer<Transforms>> TransformCbuf::pVcbuf;

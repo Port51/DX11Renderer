@@ -3,6 +3,7 @@
 
 Log::Log()
 {
+	Info("Create log");
 }
 
 void Log::Info(const char* message)
