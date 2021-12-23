@@ -78,7 +78,7 @@ public:
 	{
 		return pContext;
 	}
-	Log GetLog()
+	Log& GetLog()
 	{
 		return log;
 	}
