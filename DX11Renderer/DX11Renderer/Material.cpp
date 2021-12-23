@@ -197,9 +197,14 @@ void Material::Bind(Graphics& gfx, std::string passName)
 
 void Material::SubmitDrawCalls(const MeshRenderer& meshRenderer, const DrawContext& drawContext) const
 {
+	// todo: store passes in unordered_map instead
 	for (const auto& pass : passes)
 	{
-		pass.second->SubmitDrawCalls(meshRenderer, drawContext);
+		// Check if pass belongs to set of render passes in this draw context
+		if (drawContext.renderPassesSet.find(pass.second->GetRenderPass()) != drawContext.renderPassesSet.end())
+		{
+			pass.second->SubmitDrawCalls(meshRenderer, drawContext);
+		}
 	}
 }
 

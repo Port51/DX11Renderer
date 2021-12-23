@@ -136,16 +136,16 @@ public:
 			pass->UnbindSharedResources(gfx);
 		}
 
-		// Frustum culling
-		{
-			pVisibleRendererList->Filter(cam.GetFrustumWS(), RendererList::RendererSorting::BackToFront);
-		}
-
 		// Submit draw calls
 		{
+			// todo: store pass set ahead of time
 			DrawContext drawContext(*this);
 			drawContext.viewMatrix = cam.GetViewMatrix();
 			drawContext.projMatrix = cam.GetProjectionMatrix();
+			drawContext.SetRenderPasses(std::move(std::vector<std::string> { DepthPrepassName, GBufferRenderPassName, GeometryRenderPassName }));
+
+			// todo: filter by render passes too
+			pVisibleRendererList->Filter(cam.GetFrustumWS(), RendererList::RendererSorting::BackToFront);
 			pVisibleRendererList->SubmitDrawCalls(drawContext);
 		}
 
