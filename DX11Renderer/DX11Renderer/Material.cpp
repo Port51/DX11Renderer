@@ -98,7 +98,7 @@ Material::Material(Graphics& gfx, const std::string_view _materialAssetPath)
 
 				pTechnique->AddStep(std::move(pPassStep));
 				pMaterialPass->AddTechnique(std::move(pTechnique));
-				passes.emplace(materialPassName, std::move(pMaterialPass));
+				pPasses.emplace(materialPassName, std::move(pMaterialPass));
 
 				// Error check
 				if (pVertexShader == nullptr)
@@ -197,13 +197,12 @@ void Material::Bind(Graphics& gfx, std::string passName)
 
 void Material::SubmitDrawCalls(const MeshRenderer& meshRenderer, const DrawContext& drawContext) const
 {
-	// todo: store passes in unordered_map instead
-	for (const auto& pass : passes)
+	// Only submit draw calls for passes contained in draw context
+	for (const auto& passName : drawContext.renderPasses)
 	{
-		// Check if pass belongs to set of render passes in this draw context
-		if (drawContext.renderPassesSet.find(pass.second->GetRenderPass()) != drawContext.renderPassesSet.end())
+		if (pPasses.find(passName) != pPasses.end())
 		{
-			pass.second->SubmitDrawCalls(meshRenderer, drawContext);
+			pPasses.at(passName)->SubmitDrawCalls(meshRenderer, drawContext);
 		}
 	}
 }

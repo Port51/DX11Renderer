@@ -1,6 +1,6 @@
 #pragma once
 #include "DXMathInclude.h"
-#include <set>
+#include <vector>
 
 class Renderer;
 
@@ -10,16 +10,13 @@ public:
 	DrawContext(Renderer& renderer)
 		: renderer(renderer)
 	{}
-	void SetRenderPasses(std::vector<std::string> renderPasses)
+	void SetRenderPasses(std::vector<std::string> _renderPasses)
 	{
-		for (const auto& p : renderPasses)
-		{
-			renderPassesSet.insert(p);
-		}
+		renderPasses = std::move(_renderPasses);
 	}
 public:
 	Renderer& renderer;
 	dx::XMMATRIX viewMatrix;
 	dx::XMMATRIX projMatrix;
-	std::set<std::string> renderPassesSet;
+	std::vector<std::string> renderPasses;
 };
