@@ -71,5 +71,5 @@ UINT PointLight::GetLightType() const
 	return 0u;
 }
 
-void PointLight::RenderShadow(ShadowPassContext context, Graphics & gfx, const Camera & cam, const std::unique_ptr<RenderPass>& pass, const std::unique_ptr<ConstantBuffer<TransformationCB>>& pTransformationCB)
+void PointLight::RenderShadow(ShadowPassContext context)
 {}

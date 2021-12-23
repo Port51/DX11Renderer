@@ -64,7 +64,7 @@ UINT Spotlight::GetLightType() const
 	return 1u;
 }
 
-void Spotlight::RenderShadow(ShadowPassContext context, Graphics & gfx, const Camera & cam, const std::unique_ptr<RenderPass>& pass, const std::unique_ptr<ConstantBuffer<TransformationCB>>& pTransformationCB)
+void Spotlight::RenderShadow(ShadowPassContext context)
 {
 	// Apply look-at and local orientation
 	// +Y = up
@@ -74,9 +74,9 @@ void Spotlight::RenderShadow(ShadowPassContext context, Graphics & gfx, const Ca
 
 	// Setup transformation buffer
 	TransformationCB transformationCB;
-	transformationCB.viewMatrix = cam.GetViewMatrix();
-	transformationCB.projMatrix = cam.GetProjectionMatrix();
-	pTransformationCB->Update(gfx, transformationCB);
+	transformationCB.viewMatrix = context.cam.GetViewMatrix();
+	transformationCB.projMatrix = context.cam.GetProjectionMatrix();
+	//pTransformationCB->Update(context.gfx, transformationCB);
 
 	/*
 	// Apply look-at and local orientation

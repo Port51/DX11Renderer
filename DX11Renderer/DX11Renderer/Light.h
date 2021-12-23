@@ -26,7 +26,7 @@ public:
 	virtual void DrawImguiControlWindow() = 0;
 	virtual LightData GetLightData(dx::XMMATRIX viewMatrix) const = 0;
 	virtual UINT GetLightType() const = 0;
-	virtual void RenderShadow(ShadowPassContext context, Graphics& gfx, const Camera& cam, const std::unique_ptr<RenderPass>& pass, const std::unique_ptr<ConstantBuffer<TransformationCB>>& pTransformationCB) = 0;
+	virtual void RenderShadow(ShadowPassContext context) = 0;
 	bool HasShadow() const;
 	ModelInstance& GetModelInstance() const;
 protected:

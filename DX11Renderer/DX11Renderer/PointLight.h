@@ -19,7 +19,7 @@ public:
 	void DrawImguiControlWindow() override;
 	LightData GetLightData(dx::XMMATRIX viewMatrix) const override;
 	UINT GetLightType() const override;
-	void RenderShadow(ShadowPassContext context, Graphics& gfx, const Camera& cam, const std::unique_ptr<RenderPass>& pass, const std::unique_ptr<ConstantBuffer<TransformationCB>>& pTransformationCB) override;
+	void RenderShadow(ShadowPassContext context) override;
 private:
 	float sphereRad;
 	float range;

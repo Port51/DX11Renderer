@@ -59,5 +59,5 @@ UINT DirectionalLight::GetLightType() const
 	return 2u;
 }
 
-void DirectionalLight::RenderShadow(ShadowPassContext context, Graphics & gfx, const Camera & cam, const std::unique_ptr<RenderPass>& pass, const std::unique_ptr<ConstantBuffer<TransformationCB>>& pTransformationCB)
+void DirectionalLight::RenderShadow(ShadowPassContext context)
 {}

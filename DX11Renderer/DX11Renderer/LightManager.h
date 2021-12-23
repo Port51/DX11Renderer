@@ -3,12 +3,14 @@
 #include <vector>
 #include <memory>
 #include <wrl.h>
+#include "ShadowPassContext.h"
 
 class Graphics;
 class Camera;
 class RendererList;
 class Light;
 class RenderPass;
+class ShadowPassContext;
 
 struct LightInputCB;
 struct TransformationCB;
@@ -29,7 +31,7 @@ public:
 public:
 	void AddLightModelsToList(RendererList& pRendererList);
 	void CullLights(Graphics& gfx, const Camera& cam);
-	void RenderShadows(Graphics& gfx, const Camera& cam, const std::unique_ptr<RenderPass>& pass, const std::unique_ptr<ConstantBuffer<TransformationCB>>& pTransformationCB);
+	void RenderShadows(ShadowPassContext context);
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> GetD3DSRV() const;
 	void Bind(Graphics& gfx, UINT slot);
 	void DrawImguiControlWindows();

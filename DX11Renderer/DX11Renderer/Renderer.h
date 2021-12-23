@@ -23,6 +23,7 @@
 #include "RendererList.h"
 #include "Frustum.h"
 #include "DrawContext.h"
+#include "ShadowPassContext.h"
 
 class Renderer
 {
@@ -130,8 +131,10 @@ public:
 
 			pass->BindSharedResources(gfx);
 
+			ShadowPassContext context(gfx, cam, *this);// (gfx, cam, nullptr, pass, pTransformationCB, nullptr);
+
 			pLightManager->CullLights(gfx, cam); // changes the SRV, which will be bound in per-frame binds
-			pLightManager->RenderShadows(gfx, cam, pass, pTransformationCB);
+			pLightManager->RenderShadows(context);
 
 			pass->UnbindSharedResources(gfx);
 		}
