@@ -11,9 +11,10 @@
 class RenderPass
 {
 public:
-	RenderPass();
+	RenderPass(std::string name);
 	virtual ~RenderPass() = default;
 public:
+	const std::string GetName() const;
 	void EnqueueJob(DrawCall job);
 	virtual void BindSharedResources(Graphics& gfx) const;
 	virtual void UnbindSharedResources(Graphics& gfx) const;
@@ -28,6 +29,7 @@ public:
 	RenderPass& PSSetCB(UINT slot, Microsoft::WRL::ComPtr<ID3D11Buffer> pResource);
 	RenderPass& PSSetSRV(UINT slot, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pResource);
 private:
+	const std::string name;
 	std::vector<DrawCall> jobs; // will be replaced by render graph
 
 	// Binds shared by everything in this render pass

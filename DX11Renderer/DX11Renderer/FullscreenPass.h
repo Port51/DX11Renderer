@@ -13,7 +13,7 @@ class VertexShader;
 class FullscreenPass : public RenderPass
 {
 public:
-	FullscreenPass(Graphics& gfx, const char* pixelShader);
+	FullscreenPass(Graphics& gfx, std::string name, const char* pixelShader);
 public:
 	void Execute(Graphics& gfx) const override;
 	void SetInputTarget(std::shared_ptr<Texture> pInput);

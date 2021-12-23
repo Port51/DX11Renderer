@@ -5,7 +5,8 @@ std::vector<ID3D11Buffer*> RenderPass::pNullBuffers;
 std::vector<ID3D11ShaderResourceView*> RenderPass::pNullSRVs;
 std::vector<ID3D11UnorderedAccessView*> RenderPass::pNullUAVs;
 
-RenderPass::RenderPass()
+RenderPass::RenderPass(std::string name)
+	: name(name)
 {
 	if (pNullBuffers.size() == 0)
 	{
@@ -14,6 +15,11 @@ RenderPass::RenderPass()
 		pNullSRVs.resize(10u, nullptr);
 		pNullUAVs.resize(10u, nullptr);
 	}
+}
+
+const std::string RenderPass::GetName() const
+{
+	return name;
 }
 
 void RenderPass::EnqueueJob(DrawCall job)

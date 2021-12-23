@@ -8,8 +8,8 @@
 #include "RawBufferData.h"
 #include "DepthStencilState.h"
 
-FullscreenPass::FullscreenPass(Graphics& gfx, const char* pixelShader)
-	: RenderPass()
+FullscreenPass::FullscreenPass(Graphics& gfx, std::string name, const char* pixelShader)
+	: RenderPass(name)
 {
 	std::string vertexShaderName("Assets\\Built\\Shaders\\FullscreenVS.cso");
 	auto vs = VertexShader::Resolve(gfx, vertexShaderName.c_str());

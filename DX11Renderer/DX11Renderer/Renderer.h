@@ -56,14 +56,11 @@ public:
 		pPerCameraCB = std::make_unique<ConstantBuffer<PerCameraCB>>(gfx, D3D11_USAGE_DYNAMIC);
 
 		// Setup passes
-		pRenderPasses.emplace(PerCameraPassName, std::make_unique<RenderPass>());
-		const std::unique_ptr<RenderPass>& setupPass = pRenderPasses[PerCameraPassName];
-		setupPass->
+		CreateRenderPass(PerCameraPassName)->
 			CSSetCB(RenderSlots::CS_PerFrameCB, pPerFrameCB->GetD3DBuffer())
 			.CSSetCB(RenderSlots::CS_TransformationCB, pTransformationCB->GetD3DBuffer())
 			.CSSetCB(RenderSlots::CS_PerCameraCB, pPerCameraCB->GetD3DBuffer())
 			.CSSetSRV(RenderSlots::CS_LightDataSRV, pLightManager->GetD3DSRV())
-			//.CSSetSRV(RenderSlots::CS_GbufferNormalRoughSRV, pGbufferNormalRough->GetSRV())
 			.VSSetCB(RenderSlots::VS_PerFrameCB, pPerFrameCB->GetD3DBuffer())
 			.VSSetCB(RenderSlots::VS_TransformationCB, pTransformationCB->GetD3DBuffer())
 			.VSSetCB(RenderSlots::VS_PerCameraCB, pPerCameraCB->GetD3DBuffer())
@@ -71,21 +68,18 @@ public:
 			.PSSetCB(RenderSlots::PS_TransformationCB, pTransformationCB->GetD3DBuffer())
 			.PSSetCB(RenderSlots::PS_PerCameraCB, pPerCameraCB->GetD3DBuffer());
 
-		pRenderPasses.emplace(DepthPrepassName, std::make_unique<RenderPass>());
-		pRenderPasses.emplace(ShadowPassName, std::make_unique<RenderPass>());
-		pRenderPasses.emplace(GBufferRenderPassName, std::make_unique<RenderPass>());
-		pRenderPasses.emplace(GeometryRenderPassName, std::make_unique<RenderPass>());
-		pRenderPasses[GeometryRenderPassName]->
+		CreateRenderPass(DepthPrepassName);
+		CreateRenderPass(ShadowPassName);
+		CreateRenderPass(GBufferRenderPassName);
+		CreateRenderPass(GeometryRenderPassName);
+		CreateRenderPass(GeometryRenderPassName)->
 			PSSetSRV(0u, pSpecularLighting->GetSRV())
 			.PSSetSRV(1u, pDiffuseLighting->GetSRV());
 
-		pRenderPasses.emplace(FinalBlitRenderPassName,
-			std::make_unique<FullscreenPass>(gfx, "Assets\\Built\\Shaders\\BlitPS.cso"));
+		CreateRenderPass(FinalBlitRenderPassName,
+			std::move(std::make_unique<FullscreenPass>(gfx, FinalBlitRenderPassName, "Assets\\Built\\Shaders\\BlitPS.cso")));
 
-		//pTestKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, std::string("Assets\\Built\\Shaders\\ComputeTest.cso"), std::string("CSMain")));
-
-		pRenderPasses.emplace(TiledLightingPassName, std::make_unique<RenderPass>());
-		pRenderPasses[TiledLightingPassName]->
+		CreateRenderPass(TiledLightingPassName)->
 			CSSetSRV(RenderSlots::CS_GbufferNormalRoughSRV, pNormalRoughTarget->GetSRV())
 			.CSSetSRV(RenderSlots::CS_FreeSRV, gfx.pDepthStencil->GetSRV())
 			.CSSetUAV(0u, pSpecularLighting->GetUAV())
@@ -98,6 +92,18 @@ public:
 	~Renderer()
 	{
 		
+	}
+
+	const std::unique_ptr<RenderPass>& CreateRenderPass(const std::string name)
+	{
+		pRenderPasses.emplace(name, std::make_unique<RenderPass>(name));
+		return pRenderPasses[name];
+	}
+
+	const std::unique_ptr<RenderPass>& CreateRenderPass(const std::string name, std::unique_ptr<RenderPass> pRenderPass)
+	{
+		pRenderPasses.emplace(name, std::move(pRenderPass));
+		return pRenderPasses[name];
 	}
 
 	void AcceptDrawCall(DrawCall job, std::string targetPass)
