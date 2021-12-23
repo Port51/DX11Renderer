@@ -6,6 +6,7 @@
 #include "Camera.h"
 #include "DepthStencilTarget.h"
 #include "RenderPass.h"
+#include "ShadowPassContext.h"
 
 DirectionalLight::DirectionalLight(Graphics& gfx, UINT index, dx::XMFLOAT3 positionWS, float pan, float tilt, dx::XMFLOAT3 color, float intensity, float sphereRad, float range)
 	: Light(gfx, index, positionWS, color, intensity),
@@ -58,5 +59,5 @@ UINT DirectionalLight::GetLightType() const
 	return 2u;
 }
 
-void DirectionalLight::RenderShadow(Graphics & gfx, const Camera & cam, const std::unique_ptr<RenderPass>& pass, const std::unique_ptr<ConstantBuffer<TransformationCB>>& pTransformationCB)
+void DirectionalLight::RenderShadow(ShadowPassContext context, Graphics & gfx, const Camera & cam, const std::unique_ptr<RenderPass>& pass, const std::unique_ptr<ConstantBuffer<TransformationCB>>& pTransformationCB)
 {}

@@ -6,6 +6,7 @@
 #include "Camera.h"
 #include "DepthStencilTarget.h"
 #include "RenderPass.h"
+#include "ShadowPassContext.h"
 
 Spotlight::Spotlight(Graphics& gfx, UINT index, dx::XMFLOAT3 positionWS, float pan, float tilt, dx::XMFLOAT3 color, float intensity, float sphereRad, float range)
 	: Light(gfx, index, positionWS, color, intensity),
@@ -63,7 +64,7 @@ UINT Spotlight::GetLightType() const
 	return 1u;
 }
 
-void Spotlight::RenderShadow(Graphics & gfx, const Camera & cam, const std::unique_ptr<RenderPass>& pass, const std::unique_ptr<ConstantBuffer<TransformationCB>>& pTransformationCB)
+void Spotlight::RenderShadow(ShadowPassContext context, Graphics & gfx, const Camera & cam, const std::unique_ptr<RenderPass>& pass, const std::unique_ptr<ConstantBuffer<TransformationCB>>& pTransformationCB)
 {
 	// Apply look-at and local orientation
 	// +Y = up

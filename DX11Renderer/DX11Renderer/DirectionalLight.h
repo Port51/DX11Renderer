@@ -7,6 +7,8 @@ class Renderer;
 class Camera;
 class RenderPass;
 class DepthStencilTarget;
+class ShadowPassContext;
+
 struct LightData;
 
 class DirectionalLight : public Light
@@ -17,7 +19,7 @@ public:
 	void DrawImguiControlWindow() override;
 	LightData GetLightData(dx::XMMATRIX viewMatrix) const override;
 	UINT GetLightType() const override;
-	void RenderShadow(Graphics& gfx, const Camera& cam, const std::unique_ptr<RenderPass>& pass, const std::unique_ptr<ConstantBuffer<TransformationCB>>& pTransformationCB) override;
+	void RenderShadow(ShadowPassContext context, Graphics& gfx, const Camera& cam, const std::unique_ptr<RenderPass>& pass, const std::unique_ptr<ConstantBuffer<TransformationCB>>& pTransformationCB) override;
 private:
 	float pan;
 	float tilt;

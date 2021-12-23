@@ -6,6 +6,7 @@
 #include "Camera.h"
 #include "DepthStencilTarget.h"
 #include "RenderPass.h"
+#include "ShadowPassContext.h"
 
 PointLight::PointLight(Graphics& gfx, UINT index, dx::XMFLOAT3 positionWS, dx::XMFLOAT3 color, float intensity, float sphereRad, float range)
 	: Light(gfx, index, positionWS, color, intensity),
@@ -70,5 +71,5 @@ UINT PointLight::GetLightType() const
 	return 0u;
 }
 
-void PointLight::RenderShadow(Graphics & gfx, const Camera & cam, const std::unique_ptr<RenderPass>& pass, const std::unique_ptr<ConstantBuffer<TransformationCB>>& pTransformationCB)
+void PointLight::RenderShadow(ShadowPassContext context, Graphics & gfx, const Camera & cam, const std::unique_ptr<RenderPass>& pass, const std::unique_ptr<ConstantBuffer<TransformationCB>>& pTransformationCB)
 {}

@@ -9,6 +9,7 @@
 #include "RenderTarget.h"
 #include "RenderPass.h"
 #include "RendererList.h"
+#include "ShadowPassContext.h"
 
 LightManager::LightManager(Graphics & gfx)
 {
@@ -84,12 +85,14 @@ void LightManager::CullLights(Graphics & gfx, const Camera & cam)
 
 void LightManager::RenderShadows(Graphics & gfx, const Camera & cam, const std::unique_ptr<RenderPass>& pass, const std::unique_ptr<ConstantBuffer<TransformationCB>>& pTransformationCB)
 {
+	ShadowPassContext context;// (gfx, cam, nullptr, pass, pTransformationCB, nullptr);
+
 	// todo: cull shadows
 	for (int i = 0; i < pLights.size(); ++i)
 	{
 		if (pLights[i]->HasShadow())
 		{
-			pLights[i]->RenderShadow(gfx, cam, pass, pTransformationCB);
+			pLights[i]->RenderShadow(context, gfx, cam, pass, pTransformationCB);
 		}
 	}
 }
