@@ -1,10 +1,10 @@
 #pragma once
 #include "Bindable.h"
+#include "Common.h"
 #include "GraphicsThrowMacros.h"
 #include <string>
 #include "WindowsInclude.h"
-#include <wrl.h>
-#include <d3d11.h>
+#include "DX11Include.h"
 #include "BaseBufferData.h"
 
 class Graphics;

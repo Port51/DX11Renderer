@@ -1,7 +1,7 @@
 #pragma once
 #include "Bindable.h"
+#include "Common.h"
 #include <array>
-#include <wrl.h>
 
 class Graphics;
 class ID3D11RasterizerState;

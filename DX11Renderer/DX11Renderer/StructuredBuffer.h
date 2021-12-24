@@ -1,6 +1,6 @@
 #pragma once
 #include "Buffer.h"
-#include <d3d11.h>
+#include "DX11Include.h"
 
 class Graphics;
 

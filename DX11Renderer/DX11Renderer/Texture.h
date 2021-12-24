@@ -1,9 +1,9 @@
 #pragma once
 #include "Bindable.h"
+#include "Common.h"
 #include "WindowsInclude.h"
 #include <string>
-#include <d3d11.h>
-#include <wrl.h>
+#include "DX11Include.h"
 
 class Graphics;
 struct ID3D11ShaderResourceView;

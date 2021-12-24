@@ -1,5 +1,5 @@
 #pragma once
-#include <wrl.h>
+#include "Common.h"
 #include <memory>
 #include "DXMathInclude.h"
 

@@ -1,8 +1,8 @@
 #pragma once
 #include "Bindable.h"
+#include "Common.h"
 #include "SharedCodex.h"
-#include <d3d11.h>
-#include <wrl.h>
+#include "DX11Include.h"
 
 namespace Bind
 {

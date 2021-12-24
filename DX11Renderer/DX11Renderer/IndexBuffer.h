@@ -1,10 +1,10 @@
 #pragma once
 #include "Bindable.h"
+#include "Common.h"
 #include <string>
 #include <vector>
 #include "WindowsInclude.h" // must be before D3D11
-#include <wrl.h>
-#include <d3d11.h>
+#include "DX11Include.h"
 
 class Graphics;
 struct ID3D11Buffer;

@@ -1,7 +1,8 @@
 #include "PixelShader.h"
 #include "GraphicsThrowMacros.h"
 #include "SharedCodex.h"
-#include <d3d11.h>
+#include "DX11Include.h"
+#include <d3dcompiler.h>
 
 PixelShader::PixelShader(Graphics& gfx, const std::string& path)
 	: path(path)

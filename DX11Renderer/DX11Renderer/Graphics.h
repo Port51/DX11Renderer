@@ -1,17 +1,16 @@
 #pragma once
 #include "WindowsInclude.h"
 #include "CustomException.h"
-#include <d3d11.h>
-#include <wrl.h>
+#include "DX11Include.h"
+#include "DXMathInclude.h"
+#include "Common.h"
 #include <vector>
 #include "DxgiInfoManager.h"
-#include <d3dcompiler.h>
-#include "DXMathInclude.h"
 #include <memory>
-#include <random>
 #include "Log.h"
 
 class DepthStencilTarget;
+class Log;
 
 class Graphics
 {
@@ -70,18 +69,9 @@ public:
 	int GetScreenWidth() const;
 	int GetScreenHeight() const;
 public:
-	Microsoft::WRL::ComPtr<ID3D11Device> GetDevice() const
-	{
-		return pDevice;
-	}
-	Microsoft::WRL::ComPtr<ID3D11DeviceContext> GetContext() const
-	{
-		return pContext;
-	}
-	Log& GetLog()
-	{
-		return log;
-	}
+	Microsoft::WRL::ComPtr<ID3D11Device> GetDevice() const;
+	Microsoft::WRL::ComPtr<ID3D11DeviceContext> GetContext() const;
+	Log& GetLog();
 public:
 	void EnableImgui();
 	void DisableImgui();

@@ -7,6 +7,7 @@
 #include "DepthStencilTarget.h"
 #include "Imgui/imgui_impl_dx11.h"
 #include "Imgui/imgui_impl_win32.h"
+#include <random>
 
 // Only do this in .cpp files
 namespace wrl = Microsoft::WRL;
@@ -184,6 +185,21 @@ int Graphics::GetScreenWidth() const
 int Graphics::GetScreenHeight() const
 {
 	return screenHeight;
+}
+
+Microsoft::WRL::ComPtr<ID3D11Device> Graphics::GetDevice() const
+{
+	return pDevice;
+}
+
+Microsoft::WRL::ComPtr<ID3D11DeviceContext> Graphics::GetContext() const
+{
+	return pContext;
+}
+
+Log & Graphics::GetLog()
+{
+	return log;
 }
 
 // Graphics exception stuff

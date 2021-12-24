@@ -10,7 +10,7 @@
 #include "SharedCodex.h"
 #include "VertexShader.h"
 #include "Sampler.h"
-#include <d3d11.h>
+#include "DX11Include.h"
 
 GDIPlusManager gdipm;
 

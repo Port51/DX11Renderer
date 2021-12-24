@@ -1,7 +1,7 @@
 #pragma once
 #include "WindowsInclude.h"
+#include "Common.h"
 #include <vector>
-#include <wrl.h>
 #include <dxgidebug.h>
 
 class DxgiInfoManager

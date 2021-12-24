@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include <d3d11.h>
+#include "DX11Include.h"
 #include <memory>
 #include "SceneGraphNode.h"
 #include "ModelNode.h"

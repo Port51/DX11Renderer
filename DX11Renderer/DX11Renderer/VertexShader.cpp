@@ -4,6 +4,7 @@
 #include <typeinfo>
 #include <string>
 #include "ChiliUtil.h"
+#include <d3dcompiler.h>
 
 using namespace std::string_literals;
 

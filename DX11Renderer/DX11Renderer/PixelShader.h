@@ -1,7 +1,7 @@
 #pragma once
 #include "Bindable.h"
+#include "Common.h"
 #include <string>
-#include <wrl.h>
 
 class Graphics;
 struct ID3D11PixelShader;

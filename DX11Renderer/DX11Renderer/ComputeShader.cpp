@@ -1,6 +1,7 @@
 #include "ComputeShader.h"
 #include "GraphicsThrowMacros.h"
 #include "SharedCodex.h"
+#include <d3dcompiler.h>
 
 using namespace std::string_literals;
 

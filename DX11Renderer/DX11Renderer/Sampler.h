@@ -1,7 +1,7 @@
 #pragma once
 #include "Bindable.h"
-#include <wrl.h>
-#include <d3d11.h>
+#include "Common.h"
+#include "DX11Include.h"
 
 class Graphics;
 

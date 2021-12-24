@@ -1,7 +1,7 @@
 #pragma once
 #include "Texture.h"
-#include <d3d11.h>
-#include <wrl.h>
+#include "DX11Include.h"
+#include "Common.h"
 
 struct ID3D11Device;
 struct ID3D11DeviceContext;

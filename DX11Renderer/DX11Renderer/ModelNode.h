@@ -2,7 +2,7 @@
 #include "ModelInstance.h"
 #include <string>
 #include <memory>
-#include <d3d11.h>
+#include "DX11Include.h"
 #include "DXMathInclude.h"
 #include "SceneGraphNode.h"
 

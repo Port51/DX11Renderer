@@ -3,7 +3,6 @@
 #include "DXMathInclude.h"
 #include <vector>
 #include <memory>
-#include <wrl.h>
 #include "ShadowPassContext.h"
 
 class Graphics;

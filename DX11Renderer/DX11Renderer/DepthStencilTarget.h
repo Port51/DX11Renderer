@@ -1,6 +1,6 @@
 #pragma once
-#include <d3d11.h>
-#include <wrl.h>
+#include "DX11Include.h"
+#include "Common.h"
 
 class Graphics;
 
