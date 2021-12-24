@@ -191,7 +191,6 @@ public:
 			Bind::DepthStencilState::Resolve(gfx, Bind::DepthStencilState::Mode::StencilOff)->BindOM(gfx);
 			gfx.pDepthStencil->Clear(gfx);
 
-			// MRT bind
 			gfx.GetContext()->OMSetRenderTargets(0, nullptr, gfx.pDepthStencil->GetView().Get());
 			gfx.SetViewport(gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
@@ -304,7 +303,7 @@ private:
 
 	std::shared_ptr<RendererList> pRendererList;
 	std::unique_ptr<RendererList> pVisibleRendererList; // filtered by camera frustum
-private:
+public:
 	const std::string PerCameraPassName = std::string("PerCameraPass");
 	const std::string ShadowPassName = std::string("ShadowPass");
 	const std::string DepthPrepassName = std::string("DepthPrepass");

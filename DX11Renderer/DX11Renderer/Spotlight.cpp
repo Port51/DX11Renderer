@@ -10,6 +10,10 @@
 #include "ShadowPassContext.h"
 #include "ConstantBuffer.h"
 #include "Graphics.h"
+#include "Frustum.h"
+#include "DrawContext.h"
+#include "Renderer.h"
+#include "RendererList.h"
 
 Spotlight::Spotlight(Graphics& gfx, UINT index, dx::XMFLOAT3 positionWS, float pan, float tilt, dx::XMFLOAT3 color, float intensity, float sphereRad, float range)
 	: Light(gfx, index, positionWS, color, intensity),
@@ -75,35 +79,36 @@ void Spotlight::RenderShadow(ShadowPassContext context)
 	const auto viewMatrix = dx::XMMatrixLookAtLH(lightPos, dx::XMVectorAdd(lightPos, GetDirectionWS()), dx::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f))
 		* dx::XMMatrixRotationRollPitchYaw(tilt, -pan, 0.f);
 
-	// Setup transformation buffer
-	TransformationCB transformationCB;
-	transformationCB.viewMatrix = context.cam.GetViewMatrix();
-	transformationCB.projMatrix = context.cam.GetProjectionMatrix();
-	context.pTransformationCB->Update(context.gfx, transformationCB);
-
-	/*
-	// Apply look-at and local orientation
-	// +Y = up
-	const auto lightPos = dx::XMLoadFloat3(&positionWS);
-	const auto viewMatrix = dx::XMMatrixLookAtLH(lightPos, dx::XMVectorAdd(lightPos, GetDirectionWS()), dx::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f))
-		* dx::XMMatrixRotationRollPitchYaw(tilt, -pan, 0.f);
+	float fovTheta = 2.0f * std::acos(outerCos); // todo: store actual angle
+	const float nearPlane = 0.1f;
+	const auto projMatrix = dx::XMMatrixPerspectiveFovLH(fovTheta, 1.0f, nearPlane, range);
 
 	Frustum frustum;
 
 	// Setup transformation buffer
 	TransformationCB transformationCB;
-	transformationCB.viewMatrix = context.cam.GetViewMatrix();
-	transformationCB.projMatrix = context.cam.GetProjectionMatrix();
+	transformationCB.viewMatrix = viewMatrix;
+	transformationCB.projMatrix = projMatrix;
 	context.pTransformationCB->Update(context.gfx, transformationCB);
 
 	DrawContext drawContext(context.renderer);
 	drawContext.viewMatrix = viewMatrix;
-	drawContext.projMatrix = context.cam.GetProjectionMatrix();
+	drawContext.projMatrix = projMatrix;
 	drawContext.SetRenderPasses(context.renderer.ShadowPassName);
 
 	// This means all shadow draw calls need to be setup on the same thread
 	context.pRendererList->Filter(frustum, RendererList::RendererSorting::FrontToBack);
-	context.pRendererList->SubmitDrawCalls(drawContext);*/
+	context.pRendererList->SubmitDrawCalls(drawContext);
+
+	// todo: defer the rendering
+	{
+		pShadowMap->Clear(context.gfx);
+		context.gfx.GetContext()->OMSetRenderTargets(0, nullptr, pShadowMap->GetView().Get());
+		context.gfx.SetViewport(1024, 1024);
+
+		context.pRenderPass->Execute(context.gfx);
+	}
+	
 }
 
 dx::XMVECTOR Spotlight::GetDirectionWS() const
