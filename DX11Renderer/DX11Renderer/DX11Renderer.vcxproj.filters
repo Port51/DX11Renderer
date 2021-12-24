@@ -142,6 +142,9 @@
     <Filter Include="Header Files\Shadows">
       <UniqueIdentifier>{ea28b3cd-0076-416c-b1c0-77feaa708b69}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Common">
+      <UniqueIdentifier>{e08b99cd-3b4b-483a-aa5a-ac1942f55549}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -335,9 +338,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="WindowsInclude.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Window.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -545,12 +545,6 @@
     <ClInclude Include="ModelNode.h">
       <Filter>Header Files\Drawable</Filter>
     </ClInclude>
-    <ClInclude Include="DX11Include.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DXMathInclude.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="DepthStencilState.h">
       <Filter>Header Files\Bindable</Filter>
     </ClInclude>
@@ -571,9 +565,6 @@
     </ClInclude>
     <ClInclude Include="CommonCbuffers.h">
       <Filter>Header Files\Bindable\Buffers</Filter>
-    </ClInclude>
-    <ClInclude Include="Common.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="LightData.h">
       <Filter>Header Files\Lights</Filter>
@@ -613,6 +604,18 @@
     </ClInclude>
     <ClInclude Include="ShadowPassContext.h">
       <Filter>Header Files\Shadows</Filter>
+    </ClInclude>
+    <ClInclude Include="Common.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="DX11Include.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="WindowsInclude.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="DXMathInclude.h">
+      <Filter>Header Files\Common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

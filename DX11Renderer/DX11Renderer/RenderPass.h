@@ -1,9 +1,9 @@
 #pragma once
+#include "Common.h"
 #include "Graphics.h"
 #include "DrawCall.h"
 #include <vector>
 #include "CommonCbuffers.h"
-#include "Common.h"
 
 ///
 /// Wrapper containing jobs
