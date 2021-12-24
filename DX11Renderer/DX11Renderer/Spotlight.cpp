@@ -2,11 +2,14 @@
 #include "imgui/imgui.h"
 #include <d3d11.h>
 #include "MeshRenderer.h"
+#include "ModelInstance.h"
 #include "LightData.h"
 #include "Camera.h"
 #include "DepthStencilTarget.h"
 #include "RenderPass.h"
 #include "ShadowPassContext.h"
+#include "ConstantBuffer.h"
+#include "Graphics.h"
 
 Spotlight::Spotlight(Graphics& gfx, UINT index, dx::XMFLOAT3 positionWS, float pan, float tilt, dx::XMFLOAT3 color, float intensity, float sphereRad, float range)
 	: Light(gfx, index, positionWS, color, intensity),
@@ -55,7 +58,7 @@ LightData Spotlight::GetLightData(dx::XMMATRIX viewMatrix) const
 	light.positionVS_range = dx::XMVectorSetW(dx::XMVector4Transform(posWS_Vector, viewMatrix), range); // pack range into W
 	light.color_intensity = dx::XMVectorSetW(dx::XMLoadFloat3(&color), intensity);
 	light.directionVS = dx::XMVector4Transform(GetDirectionWS(), viewMatrix);
-	light.data0 = dx::XMVectorSet(1, 1.f / sphereRad, std::max(outerCos + 0.01f, innerCos), outerCos);
+	light.data0 = dx::XMVectorSet(1, 1.f / sphereRad, dx::XMMax(outerCos + 0.01f, innerCos), outerCos);
 	return light;
 }
 

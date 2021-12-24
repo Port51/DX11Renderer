@@ -1,13 +1,19 @@
 #pragma once
-#include "Graphics.h"
-#include "ModelInstance.h"
-#include "ConstantBuffer.h"
+#include <wrl.h>
+#include <memory>
+#include "DXMathInclude.h"
 
+class Graphics;
 class Camera;
 class RenderPass;
 class ShadowPassContext;
+class ModelInstance;
+
+template<typename Type>
+class ConstantBuffer;
 
 struct LightData;
+struct ShadowPassCB;
 
 class Light
 {

@@ -1,6 +1,4 @@
 #pragma once
-#include "Graphics.h"
-#include "ModelInstance.h"
 #include "Light.h"
 
 class Renderer;

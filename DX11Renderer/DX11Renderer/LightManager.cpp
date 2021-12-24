@@ -9,6 +9,7 @@
 #include "RenderTarget.h"
 #include "RenderPass.h"
 #include "RendererList.h"
+#include "ModelInstance.h"
 
 LightManager::LightManager(Graphics & gfx, std::shared_ptr<RendererList> pRendererList)
 {

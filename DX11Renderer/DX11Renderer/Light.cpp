@@ -1,5 +1,8 @@
 #include "Light.h"
 #include "FBXImporter.h"
+#include "ModelInstance.h"
+#include "ConstantBuffer.h"
+#include "Graphics.h"
 
 Light::Light(Graphics & gfx, UINT index, dx::XMFLOAT3 positionWS, dx::XMFLOAT3 color, float intensity)
 	: index(index),

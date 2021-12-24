@@ -2,11 +2,14 @@
 #include "imgui/imgui.h"
 #include <d3d11.h>
 #include "MeshRenderer.h"
+#include "ModelInstance.h"
 #include "LightData.h"
 #include "Camera.h"
 #include "DepthStencilTarget.h"
 #include "RenderPass.h"
 #include "ShadowPassContext.h"
+#include "ConstantBuffer.h"
+#include "Graphics.h"
 
 PointLight::PointLight(Graphics& gfx, UINT index, dx::XMFLOAT3 positionWS, dx::XMFLOAT3 color, float intensity, float sphereRad, float range)
 	: Light(gfx, index, positionWS, color, intensity),
