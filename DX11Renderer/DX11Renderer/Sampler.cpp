@@ -29,6 +29,12 @@ Sampler::Sampler(Graphics& gfx, D3D11_TEXTURE_ADDRESS_MODE wrapU, D3D11_TEXTURE_
 	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
 	samplerDesc.MaxAnisotropy = D3D11_REQ_MAXANISOTROPY;
 
+	// todo: add color option in constructor
+	samplerDesc.BorderColor[0] = 1.0f;
+	samplerDesc.BorderColor[1] = 1.0f;
+	samplerDesc.BorderColor[2] = 1.0f;
+	samplerDesc.BorderColor[3] = 1.0f;
+
 	GFX_THROW_INFO(gfx.GetDevice()->CreateSamplerState(&samplerDesc, &pSampler));
 }
 

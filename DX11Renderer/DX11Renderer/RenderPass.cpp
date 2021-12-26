@@ -1,4 +1,6 @@
 #include "RenderPass.h"
+#include "Binding.h"
+#include "Bindable.h"
 
 // Statics
 std::vector<ID3D11Buffer*> RenderPass::pNullBuffers;
@@ -98,6 +100,10 @@ void RenderPass::UnbindSharedResources(Graphics & gfx) const
 
 void RenderPass::Execute(Graphics & gfx) const
 {
+	for (auto& binding : bindings)
+	{
+		binding.Bind(gfx);
+	}
 	for (const auto& j : jobs)
 	{
 		j.Execute(gfx);
@@ -149,4 +155,16 @@ RenderPass & RenderPass::PSSetSRV(UINT slot, Microsoft::WRL::ComPtr<ID3D11Shader
 {
 	pPS_SRV_Binds.emplace_back(std::pair<UINT, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>>(slot, pResource));
 	return *this;
+}
+
+Binding& RenderPass::AddBinding(std::shared_ptr<Bindable> pBindable)
+{
+	bindings.push_back(Binding(std::move(pBindable)));
+	return bindings[bindings.size() - 1];
+}
+
+Binding& RenderPass::AddBinding(Binding pBinding)
+{
+	bindings.push_back(std::move(pBinding));
+	return bindings[bindings.size() - 1];
 }

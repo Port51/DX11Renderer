@@ -24,6 +24,9 @@
 #include "Frustum.h"
 #include "DrawContext.h"
 #include "ShadowPassContext.h"
+#include "Sampler.h"
+#include "Binding.h"
+#include "Bindable.h"
 
 class Renderer
 {
@@ -86,7 +89,9 @@ public:
 			.CSSetSRV(RenderSlots::CS_FreeSRV, gfx.pDepthStencil->GetSRV())
 			.CSSetUAV(0u, pSpecularLighting->GetUAV())
 			.CSSetUAV(1u, pDiffuseLighting->GetUAV())
-			.CSSetUAV(2u, pDebugTiledLightingCS->GetUAV());
+			.CSSetUAV(2u, pDebugTiledLightingCS->GetUAV())
+			.AddBinding(Sampler::Resolve(gfx, D3D11_TEXTURE_ADDRESS_MODE::D3D11_TEXTURE_ADDRESS_BORDER, D3D11_TEXTURE_ADDRESS_MODE::D3D11_TEXTURE_ADDRESS_BORDER))
+				.SetupCSBinding(0u);
 
 		pTiledLightingKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, std::string("Assets\\Built\\Shaders\\TiledLightingCompute.cso"), std::string("CSMain")));
 	}
@@ -235,10 +240,10 @@ public:
 
 			pass->BindSharedResources(gfx);
 			pLightManager->BindShadowMaps(gfx, RenderSlots::CS_FreeSRV + 1u);
+			pass->Execute(gfx); // setup binds
 
 			pTiledLightingKernel->Dispatch(gfx, *pass, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1);
-
-			pass->Execute(gfx);
+			
 			pass->UnbindSharedResources(gfx);
 		}
 

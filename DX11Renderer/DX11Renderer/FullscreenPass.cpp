@@ -41,10 +41,8 @@ FullscreenPass::FullscreenPass(Graphics& gfx, std::string name, const char* pixe
 
 void FullscreenPass::Execute(Graphics& gfx) const
 {
-	for (auto& binding : bindings)
-	{
-		binding.Bind(gfx);
-	}
+	RenderPass::Execute(gfx);
+
 	pVertexBufferWrapper->BindIA(gfx, 0u);
 	gfx.GetContext()->PSSetShaderResources(0u, 1u, pInputTexture->GetSRV().GetAddressOf());
 	gfx.DrawIndexed(3u);
@@ -53,18 +51,6 @@ void FullscreenPass::Execute(Graphics& gfx) const
 void FullscreenPass::SetInputTarget(std::shared_ptr<Texture> pInput)
 {
 	pInputTexture = pInput;
-}
-
-Binding& FullscreenPass::AddBinding(std::shared_ptr<Bindable> pBindable)
-{
-	bindings.push_back(Binding(std::move(pBindable)));
-	return bindings[bindings.size() - 1];
-}
-
-Binding& FullscreenPass::AddBinding(Binding pBinding)
-{
-	bindings.push_back(std::move(pBinding));
-	return bindings[bindings.size() - 1];
 }
 
 void FullscreenPass::SetupFullscreenQuadBindings(Graphics& gfx, std::string vertexShaderName, std::shared_ptr<VertexShader> vertexShader)

@@ -293,7 +293,10 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     float shadowDepth = ShadowMaps[0].SampleLevel(ShadowMapSampler, shadowUV.xy, 0);
     const float ShadowBias = 0.001;
     float isInShadow = (shadowDepth + ShadowBias < shadowNDC.z);
-    debugColor = (1 - isInShadow * (shadowNDC.z > 0.0) * (shadowNDC.z < 1.0));
+    isInShadow *= (shadowNDC.z > 0.0) * (shadowNDC.z < 1.0);
+    debugColor = (1 - isInShadow);
+    //debugColor = shadowDepth;
+    //debugColor = (shadowUV.x < 0 || shadowUV.x > 1);
     
     float3 shadowPosWS = mul(shadowData[0].shadowMatrix, float4(positionVS, 1)).xyz;
     //debugColor = shadowPosWS.y;
