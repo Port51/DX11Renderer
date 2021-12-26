@@ -16,12 +16,22 @@ LightManager::LightManager(Graphics & gfx, std::shared_ptr<RendererList> pRender
 	pLightData = std::make_unique<StructuredBuffer<LightData>>(gfx, D3D11_USAGE_DYNAMIC, D3D11_BIND_SHADER_RESOURCE, MaxLightCount);
 	cachedLightData.resize(MaxLightCount);
 
-	for (int i = 0; i < 3; ++i)
+	/*for (int i = 0; i < 3; ++i)
 	{
 		pLights.emplace_back(std::make_unique<PointLight>(gfx, i, dx::XMFLOAT3((i - 1) * 7.5, 1.0f, 0.f), dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 3.0f));
-	}
-	pLights.emplace_back(std::make_unique<Spotlight>(gfx, 3, dx::XMFLOAT3(0.0, 1.0f, -5.f), 0.0f, 0.0f, dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 50.0f, 5.0f));
-	pLights.emplace_back(std::make_unique<DirectionalLight>(gfx, 4, dx::XMFLOAT3(-2.0, 1.0f, -5.f), 0.0f, 0.0f, dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 50.0f, 5.0f));
+	}*/
+
+	pLights.emplace_back(std::make_unique<PointLight>(gfx, 0, dx::XMFLOAT3(2.5f, 1.0f, 7.5f), dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 3.0f));
+	pLights.emplace_back(std::make_unique<PointLight>(gfx, 1, dx::XMFLOAT3(0.0f, 1.0f, 7.5f), dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 3.0f));
+	/*pLights.emplace_back(std::make_unique<PointLight>(gfx, 2, dx::XMFLOAT3(-7.5f, 1.0f, 7.5f), dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 3.0f));
+	pLights.emplace_back(std::make_unique<PointLight>(gfx, 3, dx::XMFLOAT3(-7.5f, 1.0f, 0.0f), dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 3.0f));
+	pLights.emplace_back(std::make_unique<PointLight>(gfx, 4, dx::XMFLOAT3(-7.5f, 1.0f, -7.5f), dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 3.0f));
+	pLights.emplace_back(std::make_unique<PointLight>(gfx, 5, dx::XMFLOAT3(0.0f, 1.0f, -7.5f), dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 3.0f));
+	pLights.emplace_back(std::make_unique<PointLight>(gfx, 6, dx::XMFLOAT3(7.5f, 1.0f, -7.5f), dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 3.0f));
+	pLights.emplace_back(std::make_unique<PointLight>(gfx, 7, dx::XMFLOAT3(7.5f, 1.0f, 0.0f), dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 3.0f));
+	*/
+	pLights.emplace_back(std::make_unique<Spotlight>(gfx, 8, dx::XMFLOAT3(0.0, 1.0f, 0.f), 0.0f, 0.0f, dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 50.0f, 50.0f));
+	//pLights.emplace_back(std::make_unique<DirectionalLight>(gfx, 4, dx::XMFLOAT3(-2.0, 1.0f, -5.f), 0.0f, 0.0f, dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 50.0f, 5.0f));
 
 	pLightInputCB = std::make_unique<ConstantBuffer<LightInputCB>>(gfx, D3D11_USAGE_DYNAMIC);
 

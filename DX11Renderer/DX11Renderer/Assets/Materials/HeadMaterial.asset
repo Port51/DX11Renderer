@@ -8,12 +8,12 @@ Properties
 }
 Pass
 {
-	Name, DepthPrepass
+	Name, ShadowPass
 	VS, Assets\\Built\\Shaders\\PhongVS.cso
 }
 Pass
 {
-	Name, ShadowPass
+	Name, DepthPrepass
 	VS, Assets\\Built\\Shaders\\PhongVS.cso
 }
 Pass

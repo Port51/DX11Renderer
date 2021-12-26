@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <memory>
+#include <wrl.h>
 
 class Renderer;
 class MeshRenderer;
@@ -21,6 +22,7 @@ public:
 	RendererList() {}
 	RendererList(std::shared_ptr<RendererList> source);
 public:
+	UINT GetRendererCount() const;
 	void Filter(Frustum frustum, RendererSorting sorting);
 	void SubmitDrawCalls(const DrawContext& drawContext) const;
 	void AddModelInstance(const ModelInstance& modelInstance);

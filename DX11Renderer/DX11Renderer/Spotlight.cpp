@@ -77,7 +77,7 @@ void Spotlight::RenderShadow(ShadowPassContext context)
 	// +Y = up
 	const auto lightPos = dx::XMLoadFloat3(&positionWS);
 	const auto viewMatrix = dx::XMMatrixLookAtLH(lightPos, dx::XMVectorAdd(lightPos, GetDirectionWS()), dx::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f))
-		* dx::XMMatrixRotationRollPitchYaw(tilt, -pan, 0.f);
+		* dx::XMMatrixRotationRollPitchYaw(dx::XMConvertToRadians(tilt), dx::XMConvertToRadians(-pan), 0.f);
 
 	float fovTheta = 2.0f * std::acos(outerCos); // todo: store actual angle
 	const float nearPlane = 0.1f;
@@ -99,6 +99,7 @@ void Spotlight::RenderShadow(ShadowPassContext context)
 	// This means all shadow draw calls need to be setup on the same thread
 	context.pRendererList->Filter(frustum, RendererList::RendererSorting::FrontToBack);
 	context.pRendererList->SubmitDrawCalls(drawContext);
+	auto ct = context.pRendererList->GetRendererCount();
 
 	// todo: defer the rendering
 	{
@@ -107,6 +108,7 @@ void Spotlight::RenderShadow(ShadowPassContext context)
 		context.gfx.SetViewport(1024, 1024);
 
 		context.pRenderPass->Execute(context.gfx);
+		context.pRenderPass->Reset(); // required to handle multiple shadows at once
 	}
 	
 }

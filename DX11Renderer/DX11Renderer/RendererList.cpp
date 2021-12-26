@@ -20,6 +20,11 @@ bool RendererList::SortBackToFront(const std::pair<std::shared_ptr<MeshRenderer>
 	return (a.second > b.second);
 }
 
+UINT RendererList::GetRendererCount() const
+{
+	return (UINT)pRenderers.size();
+}
+
 void RendererList::Filter(Frustum frustum, RendererSorting sorting)
 {
 	// Filter based on source

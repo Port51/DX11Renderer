@@ -139,6 +139,8 @@ public:
 			pass->UnbindSharedResources(gfx);
 		}
 
+		//return;
+
 		// Submit draw calls
 		{
 			// todo: store pass set ahead of time
