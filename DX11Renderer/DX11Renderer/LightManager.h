@@ -5,6 +5,7 @@
 #include <memory>
 #include <wrl.h>
 #include "ShadowPassContext.h"
+#include "LightShadowData.h"
 
 class Graphics;
 class Camera;
@@ -14,7 +15,7 @@ class RenderPass;
 class ShadowPassContext;
 
 struct LightInputCB;
-struct TransformationCB;
+struct GlobalTransformCB;
 struct LightData;
 struct LightShadowData;
 struct ID3D11ShaderResourceView;
@@ -28,6 +29,7 @@ class LightManager
 {
 private:
 	const static int MaxLightCount = 256;
+	const static int MaxShadowCount = 4;
 public:
 	LightManager(Graphics& gfx, std::shared_ptr<RendererList> pRendererList);
 public:
@@ -35,8 +37,8 @@ public:
 	void CullLights(Graphics& gfx, const Camera& cam);
 	void BindShadowMaps(Graphics& gfx, UINT startSlot) const;
 	void RenderShadows(ShadowPassContext context);
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> GetD3DSRV() const;
-	void Bind(Graphics& gfx, UINT slot);
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> GetLightDataSRV() const;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> GetShadowDataSRV() const;
 	void DrawImguiControlWindows();
 private:
 	bool FrustumSphereIntersection(dx::XMVECTOR lightSphere, dx::XMFLOAT4 frustumCorners, float farClipPlane);
@@ -48,7 +50,8 @@ private:
 private:
 	std::unique_ptr<StructuredBuffer<LightData>> pLightData;
 	std::unique_ptr<ConstantBuffer<LightInputCB>> pLightInputCB;
-	std::unique_ptr<StructuredBuffer<LightShadowData>> pLightShadowData;
+	std::unique_ptr<StructuredBuffer<LightShadowData>> pLightShadowSB;
 	std::shared_ptr<RendererList> pShadowRendererList;
+	std::vector<LightShadowData> cachedShadowData;
 	std::vector<Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>> pShadowMapSRVs;
 };

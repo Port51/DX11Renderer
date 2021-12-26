@@ -10,6 +10,7 @@
 #include "ShadowPassContext.h"
 #include "ConstantBuffer.h"
 #include "Graphics.h"
+#include "LightShadowData.h"
 
 DirectionalLight::DirectionalLight(Graphics& gfx, UINT index, dx::XMFLOAT3 positionWS, float pan, float tilt, dx::XMFLOAT3 color, float intensity, float sphereRad, float range)
 	: Light(gfx, index, positionWS, color, intensity),
@@ -65,7 +66,7 @@ UINT DirectionalLight::GetLightType() const
 void DirectionalLight::RenderShadow(ShadowPassContext context)
 {}
 
-void DirectionalLight::AppendShadowSRVs(UINT shadowStartSlot, std::vector<Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>>& srvs) const
+void DirectionalLight::AppendShadowData(UINT shadowStartSlot, std::vector<LightShadowData>& shadowData, std::vector<Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>>& srvs) const
 {}
 
 UINT DirectionalLight::GetShadowSRVCount() const

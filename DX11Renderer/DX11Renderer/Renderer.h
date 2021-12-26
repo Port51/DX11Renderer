@@ -53,7 +53,7 @@ public:
 		pSmallDepthStencil = std::make_shared<DepthStencilTarget>(gfx, gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
 		pPerFrameCB = std::make_unique<ConstantBuffer<PerFrameCB>>(gfx, D3D11_USAGE_DYNAMIC);
-		pTransformationCB = std::make_unique<ConstantBuffer<TransformationCB>>(gfx, D3D11_USAGE_DYNAMIC);
+		pTransformationCB = std::make_unique<ConstantBuffer<GlobalTransformCB>>(gfx, D3D11_USAGE_DYNAMIC);
 		pPerCameraCB = std::make_unique<ConstantBuffer<PerCameraCB>>(gfx, D3D11_USAGE_DYNAMIC);
 
 		// Setup passes
@@ -61,7 +61,8 @@ public:
 			CSSetCB(RenderSlots::CS_PerFrameCB, pPerFrameCB->GetD3DBuffer())
 			.CSSetCB(RenderSlots::CS_TransformationCB, pTransformationCB->GetD3DBuffer())
 			.CSSetCB(RenderSlots::CS_PerCameraCB, pPerCameraCB->GetD3DBuffer())
-			.CSSetSRV(RenderSlots::CS_LightDataSRV, pLightManager->GetD3DSRV())
+			.CSSetSRV(RenderSlots::CS_LightDataSRV, pLightManager->GetLightDataSRV())
+			.CSSetSRV(RenderSlots::CS_LightShadowDataSRV, pLightManager->GetShadowDataSRV())
 			.VSSetCB(RenderSlots::VS_PerFrameCB, pPerFrameCB->GetD3DBuffer())
 			.VSSetCB(RenderSlots::VS_TransformationCB, pTransformationCB->GetD3DBuffer())
 			.VSSetCB(RenderSlots::VS_PerCameraCB, pPerCameraCB->GetD3DBuffer())
@@ -161,9 +162,13 @@ public:
 			perFrameCB.time = { 0.5f, 0, 0, 0 };
 			pPerFrameCB->Update(gfx, perFrameCB);
 
-			TransformationCB transformationCB;
+			GlobalTransformCB transformationCB;
 			transformationCB.viewMatrix = cam.GetViewMatrix();
 			transformationCB.projMatrix = cam.GetProjectionMatrix();
+			transformationCB.viewProjMatrix = transformationCB.projMatrix * transformationCB.viewMatrix;
+			transformationCB.invViewMatrix = dx::XMMatrixInverse(nullptr, transformationCB.viewMatrix);
+			transformationCB.invProjMatrix = dx::XMMatrixInverse(nullptr, transformationCB.projMatrix);
+			transformationCB.invViewProjMatrix = dx::XMMatrixInverse(nullptr, transformationCB.viewProjMatrix);
 			pTransformationCB->Update(gfx, transformationCB);
 
 			PerCameraCB perCameraCB;
@@ -300,7 +305,7 @@ private:
 	std::shared_ptr<RenderTarget> pCameraColor;
 
 	std::unique_ptr<ComputeKernel> pTiledLightingKernel;
-	std::unique_ptr<ConstantBuffer<TransformationCB>> pTransformationCB;
+	std::unique_ptr<ConstantBuffer<GlobalTransformCB>> pTransformationCB;
 	std::unique_ptr<ConstantBuffer<PerFrameCB>> pPerFrameCB;
 	std::unique_ptr<ConstantBuffer<PerCameraCB>> pPerCameraCB;
 

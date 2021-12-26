@@ -1,5 +1,6 @@
 #pragma once
 #include "Light.h"
+#include "LightShadowData.h"
 
 class Renderer;
 class Camera;
@@ -8,6 +9,7 @@ class DepthStencilTarget;
 class ShadowPassContext;
 
 struct LightData;
+struct LightShadowData;
 struct ID3D11ShaderResourceView;
 
 class Spotlight : public Light
@@ -19,7 +21,7 @@ public:
 	LightData GetLightData(dx::XMMATRIX viewMatrix) const override;
 	UINT GetLightType() const override;
 	void RenderShadow(ShadowPassContext context) override;
-	void AppendShadowSRVs(UINT shadowStartSlot, std::vector<Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>>& srvs) const override;
+	void AppendShadowData(UINT shadowStartSlot, std::vector<LightShadowData>& shadowData, std::vector<Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>>& srvs) const override;
 	UINT GetShadowSRVCount() const override;
 private:
 	dx::XMVECTOR GetDirectionWS() const;
@@ -30,5 +32,6 @@ private:
 	float range;
 	float innerCos = 0.9f;
 	float outerCos = 0.8f;
+	LightShadowData lightShadowData;
 	std::unique_ptr<DepthStencilTarget> pShadowMap;
 };

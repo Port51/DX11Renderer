@@ -18,10 +18,12 @@
 
 // Inputs
 StructuredBuffer<StructuredLight> lights : register(t0);
-StructuredBuffer<StructuredShadow> shadows : register(t1);
+StructuredBuffer<StructuredShadow> shadowData : register(t1);
 Texture2D<float4> NormalRoughRT : register(t2);
 Texture2D<float> DepthRT : register(t3);
 Texture2D<float> ShadowMaps[MAX_SHADOWS] : register(t4);
+
+SamplerState ShadowMapSampler : register(s0);
 
 // Outputs
 RWTexture2D<float4> SpecularLightingOut : register(u0);
@@ -285,7 +287,21 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     //debugColor = _VisibleLightCount * 0.2;
     
     // Debug shadowmap output
-    debugColor = ShadowMaps[0].Load(int3(tId.xy, 0));
+    float4 shadowNDC = mul(shadowData[0].shadowMatrix, float4(positionVS, 1));
+    shadowNDC.xyz /= shadowNDC.w;
+    float2 shadowUV = shadowNDC.xy * float2(0.5, -0.5) + 0.5;
+    float shadowDepth = ShadowMaps[0].SampleLevel(ShadowMapSampler, shadowUV.xy, 0);
+    const float ShadowBias = 0.001;
+    float isInShadow = (shadowDepth + ShadowBias < shadowNDC.z);
+    debugColor = (1 - isInShadow * (shadowNDC.z > 0.0) * (shadowNDC.z < 1.0));
+    
+    float3 shadowPosWS = mul(shadowData[0].shadowMatrix, float4(positionVS, 1)).xyz;
+    //debugColor = shadowPosWS.y;
+    
+    //float3 referencePosWS = mul(_InvViewMatrix, float4(positionVS, 1)).xyz;
+    //debugColor = referencePosWS.x;
+    //debugColor = abs(referencePosWS.x - shadowPosWS.x);
+    //debugColor = length(referencePosWS - shadowPosWS) * 100.0;
     
     SpecularLightingOut[tId.xy] = float4(specularLight, 1);
     DiffuseLightingOut[tId.xy] = float4(diffuseLight, 1);

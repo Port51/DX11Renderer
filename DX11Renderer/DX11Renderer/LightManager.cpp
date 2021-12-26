@@ -10,6 +10,7 @@
 #include "RenderPass.h"
 #include "RendererList.h"
 #include "ModelInstance.h"
+#include "LightShadowData.h"
 
 LightManager::LightManager(Graphics & gfx, std::shared_ptr<RendererList> pRendererList)
 {
@@ -35,15 +36,17 @@ LightManager::LightManager(Graphics & gfx, std::shared_ptr<RendererList> pRender
 
 	pLightInputCB = std::make_unique<ConstantBuffer<LightInputCB>>(gfx, D3D11_USAGE_DYNAMIC);
 
-	int shadowLightCt = 0;
+	/*int shadowLightCt = 0;
 	for (const auto& l : pLights)
 	{
 		if (l->HasShadow())
 		{
 			shadowLightCt++;
 		}
-	}
-	pShadowMapSRVs.resize(shadowLightCt);
+	}*/
+	pLightShadowSB = std::make_unique<StructuredBuffer<LightShadowData>>(gfx, D3D11_USAGE_DYNAMIC, D3D11_BIND_SHADER_RESOURCE, MaxShadowCount);
+	pShadowMapSRVs.resize(MaxShadowCount);
+	cachedShadowData.resize(MaxShadowCount);
 
 	pShadowRendererList = std::make_shared<RendererList>(pRendererList);
 }
@@ -122,21 +125,22 @@ void LightManager::RenderShadows(ShadowPassContext context)
 		if (pLights[i]->HasShadow())
 		{
 			pLights[i]->RenderShadow(context); //, gfx, cam, pass, pTransformationCB
-			pLights[i]->AppendShadowSRVs(shadowMapIdx, pShadowMapSRVs);
+			pLights[i]->AppendShadowData(shadowMapIdx, cachedShadowData, pShadowMapSRVs);
 			shadowMapIdx += pLights[i]->GetShadowSRVCount();
 		}
 	}
+
+	pLightShadowSB->Update(context.gfx, cachedShadowData, cachedShadowData.size());
 }
 
-Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> LightManager::GetD3DSRV() const
+Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> LightManager::GetLightDataSRV() const
 {
 	return pLightData->GetD3DSRV();
 }
 
-void LightManager::Bind(Graphics & gfx, UINT slot)
+Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> LightManager::GetShadowDataSRV() const
 {
-	pLightData->BindCS(gfx, slot);
-	pLightShadowData->BindCS(gfx, slot + 1u);
+	return pLightShadowSB->GetD3DSRV();
 }
 
 void LightManager::DrawImguiControlWindows()

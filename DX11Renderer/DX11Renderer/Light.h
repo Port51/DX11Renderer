@@ -14,6 +14,7 @@ template<typename Type>
 class ConstantBuffer;
 
 struct LightData;
+struct LightShadowData;
 struct ShadowPassCB;
 struct ID3D11ShaderResourceView;
 
@@ -36,7 +37,7 @@ public:
 	virtual UINT GetLightType() const = 0;
 	virtual void RenderShadow(ShadowPassContext context) = 0;
 	bool HasShadow() const;
-	virtual void AppendShadowSRVs(UINT shadowStartSlot, std::vector<Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>>& srvs) const = 0;
+	virtual void AppendShadowData(UINT shadowStartSlot, std::vector<LightShadowData>& shadowData, std::vector<Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>>& srvs) const = 0;
 	virtual UINT GetShadowSRVCount() const = 0;
 	ModelInstance& GetModelInstance() const;
 protected:

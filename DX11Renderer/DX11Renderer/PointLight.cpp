@@ -10,6 +10,7 @@
 #include "ShadowPassContext.h"
 #include "ConstantBuffer.h"
 #include "Graphics.h"
+#include "LightShadowData.h"
 
 PointLight::PointLight(Graphics& gfx, UINT index, dx::XMFLOAT3 positionWS, dx::XMFLOAT3 color, float intensity, float sphereRad, float range)
 	: Light(gfx, index, positionWS, color, intensity),
@@ -77,7 +78,7 @@ UINT PointLight::GetLightType() const
 void PointLight::RenderShadow(ShadowPassContext context)
 {}
 
-void PointLight::AppendShadowSRVs(UINT shadowStartSlot, std::vector<Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>>& srvs) const
+void PointLight::AppendShadowData(UINT shadowStartSlot, std::vector<LightShadowData>& shadowData, std::vector<Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>>& srvs) const
 {}
 
 UINT PointLight::GetShadowSRVCount() const

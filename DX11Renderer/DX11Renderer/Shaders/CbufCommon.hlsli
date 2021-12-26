@@ -8,10 +8,14 @@ cbuffer PerFrameCB : register(b0)
     float4 _CosTime; // cos(t/8), cos(t/4), cos(t/2), cos(t)
 };
 
-cbuffer PerFrameCB : register(b1)
+cbuffer GlobalTransformCB : register(b1)
 {
-    float4x4 _ViewProj;
-    float4x4 _Projection;
+    matrix _ViewMatrix;
+    matrix _ProjMatrix;
+    matrix _ViewProjMatrix;
+    matrix _InvViewMatrix;
+    matrix _InvProjMatrix;
+    matrix _InvViewProjMatrix;
 };
 
 cbuffer PerCameraCB : register(b2)

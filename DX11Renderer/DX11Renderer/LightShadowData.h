@@ -3,9 +3,9 @@
 
 struct LightShadowData
 {
-	// todo: change
-	dx::XMVECTOR positionVS_range;
-	dx::XMVECTOR color_intensity;
-	dx::XMVECTOR directionVS;
-	dx::XMVECTOR data0;
+	dx::XMMATRIX shadowMatrix;
+	dx::XMMATRIX lightViewMatrix;
+	dx::XMMATRIX lightViewProjMatrix;
+	//float shadowMapSize;
+	//dx::XMFLOAT3 padding;
 };

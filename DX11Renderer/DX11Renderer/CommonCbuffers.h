@@ -11,10 +11,14 @@ struct alignas(16) PerFrameCB
 	DirectX::XMVECTOR time; // (t/20, t, t*2, t*3)
 };
 
-struct alignas(16) TransformationCB
+struct alignas(16) GlobalTransformCB
 {
 	DirectX::XMMATRIX viewMatrix;
 	DirectX::XMMATRIX projMatrix;
+	DirectX::XMMATRIX viewProjMatrix;
+	DirectX::XMMATRIX invViewMatrix;
+	DirectX::XMMATRIX invProjMatrix;
+	DirectX::XMMATRIX invViewProjMatrix;
 };
 
 struct alignas(16) PerCameraCB

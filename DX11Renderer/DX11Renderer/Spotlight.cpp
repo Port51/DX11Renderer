@@ -86,7 +86,7 @@ void Spotlight::RenderShadow(ShadowPassContext context)
 	Frustum frustum;
 
 	// Setup transformation buffer
-	TransformationCB transformationCB;
+	GlobalTransformCB transformationCB;
 	transformationCB.viewMatrix = viewMatrix;
 	transformationCB.projMatrix = projMatrix;
 	context.pTransformationCB->Update(context.gfx, transformationCB);
@@ -110,11 +110,23 @@ void Spotlight::RenderShadow(ShadowPassContext context)
 		context.pRenderPass->Execute(context.gfx);
 		context.pRenderPass->Reset(); // required to handle multiple shadows at once
 	}
+
+	// todo: move elsewhere
+	{
+		lightShadowData.lightViewMatrix = viewMatrix;
+		lightShadowData.lightViewProjMatrix = viewMatrix * projMatrix;
+		//lightShadowData.shadowMapSize = 1024;
+		//lightShadowData.shadowMatrix = dx::XMMatrixInverse(nullptr, context.cam.GetViewMatrix()) * lightShadowData.lightViewProjMatrix;
+		//lightShadowData.shadowMatrix = dx::XMMatrixInverse(nullptr, context.cam.GetViewMatrix());
+		//lightShadowData.shadowMatrix = context.invViewMatrix;
+		lightShadowData.shadowMatrix = context.invViewMatrix * lightShadowData.lightViewProjMatrix;
+	}
 	
 }
 
-void Spotlight::AppendShadowSRVs(UINT shadowStartSlot, std::vector<Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>>& srvs) const
+void Spotlight::AppendShadowData(UINT shadowStartSlot, std::vector<LightShadowData>& shadowData, std::vector<Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>>& srvs) const
 {
+	shadowData[shadowStartSlot] = lightShadowData;
 	srvs[shadowStartSlot] = pShadowMap->GetSRV();
 }
 
