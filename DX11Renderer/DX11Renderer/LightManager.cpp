@@ -35,6 +35,16 @@ LightManager::LightManager(Graphics & gfx, std::shared_ptr<RendererList> pRender
 
 	pLightInputCB = std::make_unique<ConstantBuffer<LightInputCB>>(gfx, D3D11_USAGE_DYNAMIC);
 
+	int shadowLightCt = 0;
+	for (const auto& l : pLights)
+	{
+		if (l->HasShadow())
+		{
+			shadowLightCt++;
+		}
+	}
+	pShadowMapSRVs.resize(shadowLightCt);
+
 	pShadowRendererList = std::make_shared<RendererList>(pRendererList);
 }
 
@@ -95,16 +105,25 @@ void LightManager::CullLights(Graphics & gfx, const Camera & cam)
 	gfx.GetContext()->CSSetConstantBuffers(RenderSlots::CS_LightInputCB, 1u, pLightInputCB->GetD3DBuffer().GetAddressOf());
 }
 
+void LightManager::BindShadowMaps(Graphics& gfx, UINT startSlot) const
+{
+	// todo: size should change based on shadow culling
+	gfx.GetContext()->CSSetShaderResources(startSlot, pShadowMapSRVs.size(), pShadowMapSRVs.data()->GetAddressOf());
+}
+
 void LightManager::RenderShadows(ShadowPassContext context)
 {
 	context.pRendererList = pShadowRendererList;
 
 	// todo: cull shadows
+	int shadowMapIdx = 0;
 	for (int i = 0; i < pLights.size(); ++i)
 	{
 		if (pLights[i]->HasShadow())
 		{
 			pLights[i]->RenderShadow(context); //, gfx, cam, pass, pTransformationCB
+			pLights[i]->AppendShadowSRVs(shadowMapIdx, pShadowMapSRVs);
+			shadowMapIdx += pLights[i]->GetShadowSRVCount();
 		}
 	}
 }

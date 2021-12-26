@@ -64,3 +64,11 @@ UINT DirectionalLight::GetLightType() const
 
 void DirectionalLight::RenderShadow(ShadowPassContext context)
 {}
+
+void DirectionalLight::AppendShadowSRVs(UINT shadowStartSlot, std::vector<Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>>& srvs) const
+{}
+
+UINT DirectionalLight::GetShadowSRVCount() const
+{
+	return HasShadow() ? 1u : 0u;
+}

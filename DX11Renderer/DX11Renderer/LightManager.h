@@ -3,6 +3,7 @@
 #include "DXMathInclude.h"
 #include <vector>
 #include <memory>
+#include <wrl.h>
 #include "ShadowPassContext.h"
 
 class Graphics;
@@ -31,6 +32,7 @@ public:
 public:
 	void AddLightModelsToList(RendererList& pRendererList);
 	void CullLights(Graphics& gfx, const Camera& cam);
+	void BindShadowMaps(Graphics& gfx, UINT startSlot) const;
 	void RenderShadows(ShadowPassContext context);
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> GetD3DSRV() const;
 	void Bind(Graphics& gfx, UINT slot);
@@ -46,4 +48,5 @@ private:
 	std::unique_ptr<StructuredBuffer<LightData>> pLightData;
 	std::unique_ptr<ConstantBuffer<LightInputCB>> pLightInputCB;
 	std::shared_ptr<RendererList> pShadowRendererList;
+	std::vector<Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>> pShadowMapSRVs;
 };

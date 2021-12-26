@@ -76,3 +76,11 @@ UINT PointLight::GetLightType() const
 
 void PointLight::RenderShadow(ShadowPassContext context)
 {}
+
+void PointLight::AppendShadowSRVs(UINT shadowStartSlot, std::vector<Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>>& srvs) const
+{}
+
+UINT PointLight::GetShadowSRVCount() const
+{
+	return HasShadow() ? 6u : 0u;
+}

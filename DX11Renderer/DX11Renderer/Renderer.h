@@ -229,6 +229,7 @@ public:
 			const std::unique_ptr<RenderPass>& pass = pRenderPasses[TiledLightingPassName];
 
 			pass->BindSharedResources(gfx);
+			pLightManager->BindShadowMaps(gfx, RenderSlots::CS_FreeSRV + 1u);
 
 			pTiledLightingKernel->Dispatch(gfx, *pass, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1);
 
@@ -265,8 +266,8 @@ public:
 			Bind::DepthStencilState::Resolve(gfx, Bind::DepthStencilState::Mode::StencilOff)->BindOM(gfx);
 
 			// Debug view overrides: (do this here so it can be changed dynamically later)
-			fsPass->SetInputTarget(pCameraColor);
-			//fsPass->SetInputTarget(pDebugTiledLightingCS);
+			//fsPass->SetInputTarget(pCameraColor);
+			fsPass->SetInputTarget(pDebugTiledLightingCS);
 
 			gfx.SetViewport(gfx.GetScreenWidth(), gfx.GetScreenHeight());
 			gfx.GetContext()->OMSetRenderTargets(1u, gfx.pBackBufferView.GetAddressOf(), gfx.pDepthStencil->GetView().Get());

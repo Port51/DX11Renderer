@@ -113,6 +113,16 @@ void Spotlight::RenderShadow(ShadowPassContext context)
 	
 }
 
+void Spotlight::AppendShadowSRVs(UINT shadowStartSlot, std::vector<Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>>& srvs) const
+{
+	srvs[shadowStartSlot] = pShadowMap->GetSRV();
+}
+
+UINT Spotlight::GetShadowSRVCount() const
+{
+	return HasShadow() ? 1u : 0u;
+}
+
 dx::XMVECTOR Spotlight::GetDirectionWS() const
 {
 	return dx::XMVector4Transform(dx::XMVectorSet(0, 0, 1, 0), dx::XMMatrixRotationRollPitchYaw(dx::XMConvertToRadians(tilt), dx::XMConvertToRadians(pan), 0.0f));

@@ -1,6 +1,7 @@
 #pragma once
 #include "Common.h"
 #include <memory>
+#include <vector>
 #include "DXMathInclude.h"
 
 class Graphics;
@@ -14,6 +15,7 @@ class ConstantBuffer;
 
 struct LightData;
 struct ShadowPassCB;
+struct ID3D11ShaderResourceView;
 
 class Light
 {
@@ -34,6 +36,8 @@ public:
 	virtual UINT GetLightType() const = 0;
 	virtual void RenderShadow(ShadowPassContext context) = 0;
 	bool HasShadow() const;
+	virtual void AppendShadowSRVs(UINT shadowStartSlot, std::vector<Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>>& srvs) const = 0;
+	virtual UINT GetShadowSRVCount() const = 0;
 	ModelInstance& GetModelInstance() const;
 protected:
 	UINT index;

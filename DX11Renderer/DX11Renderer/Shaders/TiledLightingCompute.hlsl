@@ -6,8 +6,9 @@
 // References:
 // https://wickedengine.net/2018/01/10/optimizing-tile-based-light-culling/
 
-#define MAX_TILE_LIGHTS 64
-#define TILED_GROUP_SIZE 16
+#define MAX_TILE_LIGHTS     64
+#define TILED_GROUP_SIZE    16
+#define MAX_SHADOWS         4
 
 #define USE_FRUSTUM_INTERSECTION_TEST
 #define USE_AABB_INTERSECTION_TEST
@@ -15,11 +16,13 @@
 #define DEBUG_GRID
 #define DEBUG_LIGHT_RANGES
 
+// Inputs
 StructuredBuffer<StructuredLight> lights : register(t0);
 Texture2D<float4> NormalRoughRT : register(t1);
-//Texture2D<float4> GBuffer1RT : register(t2);
 Texture2D<float> DepthRT : register(t2);
-StructuredBuffer<float> debug : register(t7);
+Texture2D<float> ShadowMaps[MAX_SHADOWS] : register(t3);
+
+// Outputs
 RWTexture2D<float4> SpecularLightingOut : register(u0);
 RWTexture2D<float4> DiffuseLightingOut : register(u1);
 RWTexture2D<float4> DebugOut : register(u2);
@@ -279,6 +282,9 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     //debugColor = saturate(asfloat(maxTileZ) - asfloat(minTileZ));
     //debugColor = asfloat(minTileZ) / 20.0;
     //debugColor = _VisibleLightCount * 0.2;
+    
+    // Debug shadowmap output
+    debugColor = ShadowMaps[0].Load(int3(tId.xy, 0));
     
     SpecularLightingOut[tId.xy] = float4(specularLight, 1);
     DiffuseLightingOut[tId.xy] = float4(diffuseLight, 1);
