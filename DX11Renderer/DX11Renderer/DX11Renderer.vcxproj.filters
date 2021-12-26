@@ -617,6 +617,9 @@
     <ClInclude Include="DXMathInclude.h">
       <Filter>Header Files\Common</Filter>
     </ClInclude>
+    <ClInclude Include="LightShadowData.h">
+      <Filter>Header Files\Lights</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DX11Renderer.rc">

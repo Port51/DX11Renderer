@@ -18,9 +18,10 @@
 
 // Inputs
 StructuredBuffer<StructuredLight> lights : register(t0);
-Texture2D<float4> NormalRoughRT : register(t1);
-Texture2D<float> DepthRT : register(t2);
-Texture2D<float> ShadowMaps[MAX_SHADOWS] : register(t3);
+StructuredBuffer<StructuredShadow> shadows : register(t1);
+Texture2D<float4> NormalRoughRT : register(t2);
+Texture2D<float> DepthRT : register(t3);
+Texture2D<float> ShadowMaps[MAX_SHADOWS] : register(t4);
 
 // Outputs
 RWTexture2D<float4> SpecularLightingOut : register(u0);

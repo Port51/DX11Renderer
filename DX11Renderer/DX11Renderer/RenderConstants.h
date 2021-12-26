@@ -11,8 +11,9 @@ public:
 	static const UINT CS_FreeCB = 4u; // 1st available general-purpose slot
 
 	static const UINT CS_LightDataSRV = 0u;
-	static const UINT CS_GbufferNormalRoughSRV = 1u;
-	static const UINT CS_FreeSRV = 2u; // 1st available general-purpose slot
+	static const UINT CS_LightShadowDataSRV = 1u;
+	static const UINT CS_GbufferNormalRoughSRV = 2u;
+	static const UINT CS_FreeSRV = 3u; // 1st available general-purpose slot
 
 	static const UINT CS_FreeUAV = 0u; // 1st available general-purpose slot
 

@@ -16,6 +16,7 @@ class ShadowPassContext;
 struct LightInputCB;
 struct TransformationCB;
 struct LightData;
+struct LightShadowData;
 struct ID3D11ShaderResourceView;
 
 template<typename Type>
@@ -47,6 +48,7 @@ private:
 private:
 	std::unique_ptr<StructuredBuffer<LightData>> pLightData;
 	std::unique_ptr<ConstantBuffer<LightInputCB>> pLightInputCB;
+	std::unique_ptr<StructuredBuffer<LightShadowData>> pLightShadowData;
 	std::shared_ptr<RendererList> pShadowRendererList;
 	std::vector<Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>> pShadowMapSRVs;
 };

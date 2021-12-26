@@ -240,6 +240,7 @@
     <ClInclude Include="Light.h" />
     <ClInclude Include="LightData.h" />
     <ClInclude Include="LightManager.h" />
+    <ClInclude Include="LightShadowData.h" />
     <ClInclude Include="ModelNode.h" />
     <ClInclude Include="RenderConstants.h" />
     <ClInclude Include="RendererList.h" />

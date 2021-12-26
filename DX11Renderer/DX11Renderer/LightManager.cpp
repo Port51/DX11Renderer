@@ -136,6 +136,7 @@ Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> LightManager::GetD3DSRV() const
 void LightManager::Bind(Graphics & gfx, UINT slot)
 {
 	pLightData->BindCS(gfx, slot);
+	pLightShadowData->BindCS(gfx, slot + 1u);
 }
 
 void LightManager::DrawImguiControlWindows()
