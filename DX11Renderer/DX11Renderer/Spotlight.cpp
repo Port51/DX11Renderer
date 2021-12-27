@@ -47,8 +47,8 @@ void Spotlight::DrawImguiControlWindow()
 		ImGui::SliderFloat("Intensity", &intensity, 0.01f, 5.0f, "%.2f", ImGuiSliderFlags_Logarithmic);
 		ImGui::SliderFloat("SphereRad", &sphereRad, 0.05f, 50.0f, "%.2f", ImGuiSliderFlags_Logarithmic);
 		ImGui::SliderFloat("Range", &range, 0.05f, 50.0f, "%.2f", ImGuiSliderFlags_Logarithmic);
-		ImGui::SliderFloat("InnerAng", &innerAngle, 0.0f, 1.0f, "%.1f");
-		ImGui::SliderFloat("OuterAng", &outerAngle, 0.0f, 1.0f, "%.1f");
+		ImGui::SliderFloat("InnerAng", &innerAngle, 0.0f, 90.0f, "%.1f");
+		ImGui::SliderFloat("OuterAng", &outerAngle, 0.0f, 90.0f, "%.1f");
 		ImGui::ColorEdit3("Diffuse Color", &color.x);
 	}
 
