@@ -311,8 +311,10 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     float sum = 0;
  
     #if (PCF_TAPS > 0)
+        [unroll]
         for (int y = -PCF_TAPS; y <= PCF_TAPS; y += 1)
         {
+            [unroll]
             for (int x = -PCF_TAPS; x <= PCF_TAPS; x += 1)
             {
                 sum += ShadowMaps[0].SampleCmpLevelZero(ShadowMapSampler, shadowUV.xy, shadowNDC.z - ShadowBias, int2(x, y));
