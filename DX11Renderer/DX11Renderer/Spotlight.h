@@ -30,8 +30,8 @@ private:
 	float tilt;
 	float sphereRad;
 	float range;
-	float innerCos = 0.9f;
-	float outerCos = 0.8f;
+	float innerAngle = 80.f;
+	float outerAngle = 60.f;
 	LightShadowData lightShadowData;
 	std::unique_ptr<DepthStencilTarget> pShadowMap;
 };

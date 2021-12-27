@@ -47,8 +47,8 @@ void Spotlight::DrawImguiControlWindow()
 		ImGui::SliderFloat("Intensity", &intensity, 0.01f, 5.0f, "%.2f", ImGuiSliderFlags_Logarithmic);
 		ImGui::SliderFloat("SphereRad", &sphereRad, 0.05f, 50.0f, "%.2f", ImGuiSliderFlags_Logarithmic);
 		ImGui::SliderFloat("Range", &range, 0.05f, 50.0f, "%.2f", ImGuiSliderFlags_Logarithmic);
-		ImGui::SliderFloat("InnerCos", &innerCos, 0.0f, 1.0f, "%.01f");
-		ImGui::SliderFloat("OuterCos", &outerCos, 0.0f, 1.0f, "%.01f");
+		ImGui::SliderFloat("InnerAng", &innerAngle, 0.0f, 1.0f, "%.1f");
+		ImGui::SliderFloat("OuterAng", &outerAngle, 0.0f, 1.0f, "%.1f");
 		ImGui::ColorEdit3("Diffuse Color", &color.x);
 	}
 
@@ -63,7 +63,7 @@ LightData Spotlight::GetLightData(dx::XMMATRIX viewMatrix) const
 	light.positionVS_range = dx::XMVectorSetW(dx::XMVector4Transform(posWS_Vector, viewMatrix), range); // pack range into W
 	light.color_intensity = dx::XMVectorSetW(dx::XMLoadFloat3(&color), intensity);
 	light.directionVS = dx::XMVector4Transform(GetDirectionWS(), viewMatrix);
-	light.data0 = dx::XMVectorSet(1, 1.f / sphereRad, dx::XMMax(outerCos + 0.01f, innerCos), outerCos);
+	light.data0 = dx::XMVectorSet(1, 1.f / sphereRad, dx::XMMax(std::cos(dx::XMConvertToRadians(outerAngle)) + 0.01f, std::cos(dx::XMConvertToRadians(innerAngle))), std::cos(dx::XMConvertToRadians(outerAngle)));
 	return light;
 }
 
@@ -80,7 +80,7 @@ void Spotlight::RenderShadow(ShadowPassContext context)
 	const auto viewMatrix = dx::XMMatrixLookAtLH(lightPos, dx::XMVectorAdd(lightPos, GetDirectionWS()), dx::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f))
 		* dx::XMMatrixRotationRollPitchYaw(dx::XMConvertToRadians(tilt), dx::XMConvertToRadians(-pan), 0.f);
 
-	float fovTheta = 2.0f * std::acos(outerCos); // todo: store actual angle
+	float fovTheta = dx::XMConvertToRadians(2.0f * outerAngle);
 	const float nearPlane = 0.1f;
 	const auto projMatrix = dx::XMMatrixPerspectiveFovLH(fovTheta, 1.0f, nearPlane, range);
 
