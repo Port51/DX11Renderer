@@ -14,6 +14,7 @@
 #include "DrawContext.h"
 #include "Renderer.h"
 #include "RendererList.h"
+#include "Config.h"
 
 Spotlight::Spotlight(Graphics& gfx, UINT index, dx::XMFLOAT3 positionWS, float pan, float tilt, dx::XMFLOAT3 color, float intensity, float sphereRad, float range)
 	: Light(gfx, index, positionWS, color, intensity),
@@ -24,7 +25,7 @@ Spotlight::Spotlight(Graphics& gfx, UINT index, dx::XMFLOAT3 positionWS, float p
 {
 	// todo: set shadow via settings
 	shadowSettings.hasShadow = true;
-	pShadowMap = std::make_unique<DepthStencilTarget>(gfx, 1024, 1024);
+	pShadowMap = std::make_unique<DepthStencilTarget>(gfx, Config::ShadowResolution, Config::ShadowResolution);
 
 	pShadowPassCB = std::make_unique<ConstantBuffer<ShadowPassCB>>(gfx, D3D11_USAGE_DYNAMIC);
 }
@@ -105,7 +106,7 @@ void Spotlight::RenderShadow(ShadowPassContext context)
 	{
 		pShadowMap->Clear(context.gfx);
 		context.gfx.GetContext()->OMSetRenderTargets(0, nullptr, pShadowMap->GetView().Get());
-		context.gfx.SetViewport(1024, 1024);
+		context.gfx.SetViewport(Config::ShadowResolution, Config::ShadowResolution);
 
 		context.pRenderPass->Execute(context.gfx);
 		context.pRenderPass->Reset(); // required to handle multiple shadows at once
@@ -115,7 +116,7 @@ void Spotlight::RenderShadow(ShadowPassContext context)
 	{
 		lightShadowData.lightViewMatrix = viewMatrix;
 		lightShadowData.lightViewProjMatrix = viewMatrix * projMatrix;
-		//lightShadowData.shadowMapSize = 1024;
+		//lightShadowData.shadowMapSize = Config::ShadowResolution;
 		//lightShadowData.shadowMatrix = dx::XMMatrixInverse(nullptr, context.cam.GetViewMatrix()) * lightShadowData.lightViewProjMatrix;
 		//lightShadowData.shadowMatrix = dx::XMMatrixInverse(nullptr, context.cam.GetViewMatrix());
 		//lightShadowData.shadowMatrix = context.invViewMatrix;

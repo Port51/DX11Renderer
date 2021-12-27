@@ -11,4 +11,5 @@ public:
 	};
 public:
 	static inline ShadowType ShadowType = ShadowType::HardwarePCF;
+	static inline int ShadowResolution = 256;
 };
