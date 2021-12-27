@@ -27,6 +27,7 @@
 #include "Sampler.h"
 #include "Binding.h"
 #include "Bindable.h"
+#include "Config.h"
 
 class Renderer
 {
@@ -84,13 +85,34 @@ public:
 		CreateRenderPass(FinalBlitRenderPassName,
 			std::move(std::make_unique<FullscreenPass>(gfx, FinalBlitRenderPassName, "Assets\\Built\\Shaders\\BlitPS.cso")));
 
+		// todo: move to static class?
+		D3D11_SAMPLER_DESC shadowSamplerDesc = {};
+		if (Config::ShadowType == Config::ShadowType::HardwarePCF)
+		{
+			shadowSamplerDesc.Filter = D3D11_FILTER_COMPARISON_MIN_MAG_LINEAR_MIP_POINT;
+			shadowSamplerDesc.ComparisonFunc = D3D11_COMPARISON_LESS;
+		}
+		else
+		{
+			shadowSamplerDesc.Filter = D3D11_FILTER_ANISOTROPIC;
+		}
+		shadowSamplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
+		shadowSamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
+		shadowSamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
+		shadowSamplerDesc.MipLODBias = 0.f;
+		shadowSamplerDesc.MinLOD = 0.f;
+		shadowSamplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+		shadowSamplerDesc.MaxAnisotropy = D3D11_REQ_MAXANISOTROPY;
+
+		pShadowSampler = std::make_shared<Sampler>(gfx, shadowSamplerDesc);
+
 		CreateRenderPass(TiledLightingPassName)->
 			CSSetSRV(RenderSlots::CS_GbufferNormalRoughSRV, pNormalRoughTarget->GetSRV())
 			.CSSetSRV(RenderSlots::CS_FreeSRV, gfx.pDepthStencil->GetSRV())
 			.CSSetUAV(0u, pSpecularLighting->GetUAV())
 			.CSSetUAV(1u, pDiffuseLighting->GetUAV())
 			.CSSetUAV(2u, pDebugTiledLightingCS->GetUAV())
-			.AddBinding(Sampler::Resolve(gfx, D3D11_TEXTURE_ADDRESS_MODE::D3D11_TEXTURE_ADDRESS_BORDER, D3D11_TEXTURE_ADDRESS_MODE::D3D11_TEXTURE_ADDRESS_BORDER))
+			.AddBinding(pShadowSampler)
 				.SetupCSBinding(0u);
 
 		pTiledLightingKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, std::string("Assets\\Built\\Shaders\\TiledLightingCompute.cso"), std::string("CSMain")));
@@ -316,6 +338,8 @@ private:
 
 	std::shared_ptr<RendererList> pRendererList;
 	std::unique_ptr<RendererList> pVisibleRendererList; // filtered by camera frustum
+
+	std::shared_ptr<Sampler> pShadowSampler;
 public:
 	const std::string PerCameraPassName = std::string("PerCameraPass");
 	const std::string ShadowPassName = std::string("ShadowPass");

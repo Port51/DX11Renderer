@@ -6,6 +6,10 @@
 // References:
 // https://wickedengine.net/2018/01/10/optimizing-tile-based-light-culling/
 
+//#define USE_HARD_SHADOWS
+#define USE_HARDWARE_PCF
+#define PCF_TAPS            2   // number of times to sample in each direction. Set 0 for 1-tap PCF.
+
 #define MAX_TILE_LIGHTS     64
 #define TILED_GROUP_SIZE    16
 #define MAX_SHADOWS         4
@@ -23,7 +27,12 @@ Texture2D<float4> NormalRoughRT : register(t2);
 Texture2D<float> DepthRT : register(t3);
 Texture2D<float> ShadowMaps[MAX_SHADOWS] : register(t4);
 
-SamplerState ShadowMapSampler : register(s0);
+// Ref: https://stackoverflow.com/questions/17123735/how-to-enable-hardware-percentage-closer-filtering
+#if defined(USE_HARD_SHADOWS)
+    SamplerState ShadowMapSampler : register(s0);
+#elif defined(USE_HARDWARE_PCF)
+    SamplerComparisonState ShadowMapSampler : register(s0);
+#endif
 
 // Outputs
 RWTexture2D<float4> SpecularLightingOut : register(u0);
@@ -290,9 +299,32 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     float4 shadowNDC = mul(shadowData[0].shadowMatrix, float4(positionVS, 1));
     shadowNDC.xyz /= shadowNDC.w;
     float2 shadowUV = shadowNDC.xy * float2(0.5, -0.5) + 0.5;
-    float shadowDepth = ShadowMaps[0].SampleLevel(ShadowMapSampler, shadowUV.xy, 0);
+
+    float isInShadow;
     const float ShadowBias = 0.001;
-    float isInShadow = (shadowDepth + ShadowBias < shadowNDC.z);
+#if defined(USE_HARD_SHADOWS)
+    float shadowDepth = ShadowMaps[0].SampleLevel(ShadowMapSampler, shadowUV.xy, 0);
+    isInShadow = (shadowDepth + ShadowBias < shadowNDC.z);
+#elif defined(USE_HARDWARE_PCF)
+    // Ref: https://takinginitiative.wordpress.com/2011/05/25/directx10-tutorial-10-shadow-mapping-part-2/
+    
+    float sum = 0;
+ 
+    #if (PCF_TAPS > 0)
+        for (int y = -PCF_TAPS; y <= PCF_TAPS; y += 1)
+        {
+            for (int x = -PCF_TAPS; x <= PCF_TAPS; x += 1)
+            {
+                sum += ShadowMaps[0].SampleCmpLevelZero(ShadowMapSampler, shadowUV.xy, shadowNDC.z - ShadowBias, int2(x, y));
+            }
+        }
+        isInShadow = sum / ((PCF_TAPS + 1) * (PCF_TAPS + 1));
+    #else
+        // 1-top PCF
+        isInShadow = ShadowMaps[0].SampleCmpLevelZero(ShadowMapSampler, shadowUV.xy, shadowNDC.z - ShadowBias);
+    #endif
+#endif
+    
     isInShadow *= (shadowNDC.z > 0.0) * (shadowNDC.z < 1.0);
     debugColor = (1 - isInShadow);
     //debugColor = shadowDepth;

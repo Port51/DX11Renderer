@@ -620,6 +620,9 @@
     <ClInclude Include="LightShadowData.h">
       <Filter>Header Files\Lights</Filter>
     </ClInclude>
+    <ClInclude Include="Config.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DX11Renderer.rc">

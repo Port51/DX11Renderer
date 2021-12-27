@@ -232,6 +232,7 @@
     <ClInclude Include="CommonCbuffers.h" />
     <ClInclude Include="ComputeKernel.h" />
     <ClInclude Include="ComputeShader.h" />
+    <ClInclude Include="Config.h" />
     <ClInclude Include="DirectionalLight.h" />
     <ClInclude Include="DrawContext.h" />
     <ClInclude Include="DX11Include.h" />
