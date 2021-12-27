@@ -3,13 +3,12 @@
 #include "Timer.h"
 #include "ImguiManager.h"
 #include "Camera.h"
-#include "PointLight.h"
-#include "ModelInstance.h"
-#include "Renderer.h"
-#include "LightManager.h"
 
 class MeshRenderer;
 class RendererList;
+class ModelInstance;
+class LightManager;
+class Renderer;
 
 class App
 {

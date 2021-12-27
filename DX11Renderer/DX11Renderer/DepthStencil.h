@@ -1,7 +1,6 @@
 #pragma once
 #include "Graphics.h"
 
-
 class DepthStencil
 {
 	friend class RenderTarget;

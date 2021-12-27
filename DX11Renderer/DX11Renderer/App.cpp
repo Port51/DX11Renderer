@@ -11,6 +11,8 @@
 #include "VertexShader.h"
 #include "Sampler.h"
 #include "DX11Include.h"
+#include "LightManager.h"
+#include "Renderer.h"
 
 GDIPlusManager gdipm;
 

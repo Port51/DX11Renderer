@@ -13,11 +13,3 @@ void Technique::SubmitDrawCalls(const MeshRenderer& meshRenderer, const DrawCont
 		}
 	}
 }
-
-void Technique::InitializeParentReferences(const MeshRenderer & parent)
-{
-	for (auto& s : pSteps)
-	{
-		s->InitializeParentReferences(parent);
-	}
-}

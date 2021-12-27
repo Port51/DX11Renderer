@@ -6,11 +6,3 @@ void RenderStep::SubmitDrawCalls(const MeshRenderer& meshRenderer, const DrawCon
 {
 	drawContext.renderer.AcceptDrawCall(DrawCall(this, &meshRenderer, drawContext), targetPass);
 }
-
-void RenderStep::InitializeParentReferences(const MeshRenderer& parent)
-{
-	for (const auto& b : bindings)
-	{
-		b.GetBindable()->InitializeParentReference(parent);
-	}
-}

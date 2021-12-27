@@ -3,7 +3,7 @@
 #include "Common.h"
 #include <string>
 #include <vector>
-#include "WindowsInclude.h" // must be before D3D11
+#include <wrl.h>
 #include "DX11Include.h"
 
 class Graphics;

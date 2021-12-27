@@ -2,12 +2,15 @@
 #include "Bindable.h"
 #include "Common.h"
 #include "GraphicsThrowMacros.h"
-#include <string>
-#include "WindowsInclude.h"
+#include <wrl.h>
 #include "DX11Include.h"
 #include "BaseBufferData.h"
 
 class Graphics;
+
+struct ID3D11Buffer;
+struct ID3D11ShaderResourceView;
+struct ID3D11UnorderedAccessView;
 
 class Buffer : public Bindable
 {

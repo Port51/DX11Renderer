@@ -1,6 +1,6 @@
 #pragma once
 #include "Bindable.h"
-#include "WindowsInclude.h"
+#include <wrl.h>
 #include "ConstantBuffer.h"
 #include "DXMathInclude.h"
 
@@ -17,5 +17,4 @@ public:
 private:
 	// Static so can be re-used each drawcall
 	static std::unique_ptr<ConstantBuffer<Transforms>> pVcbuf;
-	const MeshRenderer* pParent = nullptr;
 };

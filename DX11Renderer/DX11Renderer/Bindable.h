@@ -1,7 +1,7 @@
 #pragma once
 #include "CodexElement.h"
 #include <string>
-#include "WindowsInclude.h"
+#include <wrl.h>
 
 class Graphics;
 struct ID3D11DeviceContext;
@@ -20,7 +20,4 @@ public:
 	virtual void BindRS(Graphics& gfx) {}
 	virtual void BindOM(Graphics& gfx) {}
 	virtual ~Bindable() = default;
-public:
-	virtual void InitializeParentReference(const MeshRenderer&)
-	{}
 };

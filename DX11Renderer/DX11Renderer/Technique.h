@@ -28,7 +28,6 @@ public:
 	{
 		active = active_in;
 	}
-	void InitializeParentReferences(const MeshRenderer& parent);
 	const std::string& GetName() const
 	{
 		return name;
