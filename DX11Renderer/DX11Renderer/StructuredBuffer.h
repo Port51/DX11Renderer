@@ -90,7 +90,7 @@ public:
 			throw std::runtime_error("Cannot update immutable structured buffer!");
 		}
 	}
-	void Update(Graphics& gfx, const std::vector<T> data, UINT dataElements)
+	void Update(Graphics& gfx, const std::vector<T>& data, UINT dataElements)
 	{
 		Update(gfx, data.data(), sizeof(T) * dataElements);
 	}

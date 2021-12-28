@@ -42,7 +42,8 @@ void DxgiInfoManager::Set()
 
 std::vector<std::string> DxgiInfoManager::GetMessages() const
 {
-	std::vector<std::string> messages;
+	static std::vector<std::string> messages;
+	messages.clear();
 	const auto end = pDxgiInfoQueue->GetNumStoredMessages(DXGI_DEBUG_ALL);
 	for (auto i = next; i < end; i++)
 	{

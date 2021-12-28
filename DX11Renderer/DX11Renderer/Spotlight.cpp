@@ -87,12 +87,12 @@ void Spotlight::RenderShadow(ShadowPassContext context)
 	Frustum frustum;
 
 	// Setup transformation buffer
-	GlobalTransformCB transformationCB;
+	static GlobalTransformCB transformationCB;
 	transformationCB.viewMatrix = viewMatrix;
 	transformationCB.projMatrix = projMatrix;
 	context.pTransformationCB->Update(context.gfx, transformationCB);
 
-	DrawContext drawContext(context.renderer);
+	static DrawContext drawContext(context.renderer);
 	drawContext.viewMatrix = viewMatrix;
 	drawContext.projMatrix = projMatrix;
 	drawContext.SetRenderPasses(context.renderer.ShadowPassName);

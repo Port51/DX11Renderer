@@ -1,6 +1,15 @@
 //#include "WindowsInclude.h"
 #include "App.h"
 
+static uint32_t allocCount = 0;
+static long allocSum = 0;
+void* operator new(size_t size)
+{
+	allocCount++;
+	allocSum += (long)size;
+	return malloc(size);
+}
+
 int CALLBACK WinMain(
 	HINSTANCE hInstance,
 	HINSTANCE hPrevInstance, // always NULL

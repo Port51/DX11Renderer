@@ -2,6 +2,7 @@
 #include "WindowsInclude.h"
 #include "Common.h"
 #include <vector>
+#include <string>
 #include <dxgidebug.h>
 
 class DxgiInfoManager
