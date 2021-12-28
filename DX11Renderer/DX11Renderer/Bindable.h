@@ -1,14 +1,14 @@
 #pragma once
 #include "CodexElement.h"
-#include <string>
 #include <wrl.h>
 
 class Graphics;
-struct ID3D11DeviceContext;
-struct ID3D11Device;
 class DxgiInfoManager;
 class MeshRenderer;
 class RenderPass;
+
+struct ID3D11DeviceContext;
+struct ID3D11Device;
 
 class Bindable : public CodexElement
 {

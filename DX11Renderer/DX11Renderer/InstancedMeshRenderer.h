@@ -2,6 +2,7 @@
 #include "MeshRenderer.h"
 #include <wrl.h>
 #include <vector>
+#include <string>
 
 class Graphics;
 class Material;

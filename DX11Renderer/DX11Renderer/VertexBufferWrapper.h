@@ -1,9 +1,13 @@
 #pragma once
 #include "Bindable.h"
 #include "GraphicsThrowMacros.h"
+#include <vector>
+#include <memory>
+#include <wrl.h>
 
 class Graphics;
 class BaseBufferData;
+
 struct ID3D11Buffer;
 
 class VertexBufferWrapper

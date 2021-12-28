@@ -2,6 +2,8 @@
 #include "Bindable.h"
 #include "Common.h"
 #include <string>
+#include <memory>
+#include <wrl.h>
 #include "DX11Include.h"
 
 class Graphics;

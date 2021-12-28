@@ -1,5 +1,10 @@
 #pragma once
 #include "Bindable.h"
+#include <wrl.h>
+#include <memory>
+#include <string>
+
+class Graphics;
 
 namespace Bind
 {

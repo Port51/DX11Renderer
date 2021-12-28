@@ -1,6 +1,5 @@
 #pragma once
 #include "Common.h"
-#include <vector>
 #include <memory>
 #include "DX11Include.h"
 

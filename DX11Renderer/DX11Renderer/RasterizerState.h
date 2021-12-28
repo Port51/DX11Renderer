@@ -2,6 +2,7 @@
 #include "Bindable.h"
 #include "Common.h"
 #include <array>
+#include <memory>
 
 class Graphics;
 class ID3D11RasterizerState;

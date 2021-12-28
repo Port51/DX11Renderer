@@ -1,9 +1,12 @@
 #pragma once
 #include "Bindable.h"
 #include "VertexLayout.h"
+#include "DX11Include.h"
+#include <wrl.h>
+#include <string>
+#include <memory>
 
 class Graphics;
-class VertexLayout;
 struct ID3D11InputLayout;
 
 class InputLayout : public Bindable

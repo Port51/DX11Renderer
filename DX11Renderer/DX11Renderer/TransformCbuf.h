@@ -1,11 +1,16 @@
 #pragma once
 #include "Bindable.h"
 #include <wrl.h>
+#include <memory>
 #include "ConstantBuffer.h"
 #include "DXMathInclude.h"
 
 class Graphics;
 class MeshRenderer;
+
+template<typename Type>
+class ConstantBuffer;
+
 struct Transforms;
 
 class TransformCbuf : public Bindable
