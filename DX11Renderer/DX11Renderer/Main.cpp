@@ -1,4 +1,3 @@
-//#include "WindowsInclude.h"
 #include "App.h"
 
 static uint32_t allocCount = 0;

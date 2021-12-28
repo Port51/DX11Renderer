@@ -27,7 +27,7 @@ using namespace std::string_literals;
 enum MaterialParseState { None, Properties, Pass };
 
 // todo: pass actual VertexLayout class?
-Material::Material(Graphics& gfx, const std::string_view _materialAssetPath)
+Material::Material(Graphics& gfx, std::string_view _materialAssetPath)
 	: materialAssetPath(std::string(_materialAssetPath))
 {
 	// NOTE: This is very WIP and should be replaced by something entirely different later
@@ -190,7 +190,7 @@ Material::Material(Graphics& gfx, const std::string_view _materialAssetPath)
 
 }
 
-void Material::Bind(Graphics& gfx, std::string passName)
+void Material::Bind(Graphics& gfx, std::string_view passName)
 {
 	// Is this needed?
 }

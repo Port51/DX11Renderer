@@ -19,9 +19,9 @@ struct DrawContext;
 class Material : public Bindable
 {
 public:
-	Material(Graphics& gfx, const std::string_view assetPath);
+	Material(Graphics& gfx, std::string_view assetPath);
 	void Bind(Graphics& gfx, UINT slot) {} // todo: remove
-	void Bind(Graphics& gfx, std::string passName);
+	void Bind(Graphics& gfx, std::string_view passName);
 	void SubmitDrawCalls(const MeshRenderer& meshRenderer, const DrawContext& drawContext) const;
 public:
 	const VertexLayout& GetVertexLayout() const;
