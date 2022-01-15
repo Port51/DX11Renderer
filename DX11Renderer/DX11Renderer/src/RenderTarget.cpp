@@ -2,8 +2,6 @@
 #include "RenderTarget.h"
 #include "DepthStencil.h"
 
-namespace wrl = Microsoft::WRL;
-
 RenderTarget::RenderTarget(Graphics& gfx)
 	: RenderTexture::RenderTexture(gfx)
 {

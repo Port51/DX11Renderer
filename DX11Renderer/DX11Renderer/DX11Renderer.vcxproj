@@ -179,7 +179,6 @@
     <ClCompile Include="src\DepthStencilTarget.cpp" />
     <ClCompile Include="src\DirectionalLight.cpp" />
     <ClCompile Include="src\dxerr.cpp" />
-    <ClCompile Include="src\DxgiInfoManager.cpp" />
     <ClCompile Include="src\Frustum.cpp" />
     <ClCompile Include="src\FullscreenPass.cpp" />
     <ClCompile Include="src\GDIPlusManager.cpp" />
@@ -310,13 +309,11 @@
     <ClInclude Include="src\DepthStencil.h" />
     <ClInclude Include="src\DepthStencilTarget.h" />
     <ClInclude Include="src\dxerr.h" />
-    <ClInclude Include="src\DxgiInfoManager.h" />
     <ClInclude Include="src\FBXImporter.h" />
     <ClInclude Include="src\Renderer.h" />
     <ClInclude Include="src\FullscreenPass.h" />
     <ClInclude Include="src\GDIPlusManager.h" />
     <ClInclude Include="src\Graphics.h" />
-    <ClInclude Include="src\GraphicsThrowMacros.h" />
     <ClInclude Include="src\ImguiManager.h" />
     <ClInclude Include="src\IndexBuffer.h" />
     <ClInclude Include="src\InputLayout.h" />

@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Sampler.h"
 #include "SharedCodex.h"
+#include "Graphics.h"
 
 Sampler::Sampler(Graphics& gfx)
 	: Sampler(gfx, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP)
@@ -17,8 +18,6 @@ Sampler::Sampler(Graphics& gfx, D3D11_TEXTURE_ADDRESS_MODE wrapU, D3D11_TEXTURE_
 Sampler::Sampler(Graphics& gfx, D3D11_TEXTURE_ADDRESS_MODE wrapU, D3D11_TEXTURE_ADDRESS_MODE wrapV, D3D11_TEXTURE_ADDRESS_MODE wrapW)
 	: wrapU(wrapU), wrapV(wrapV), wrapW(wrapW)
 {
-	SETUP_LOGGING(gfx);
-
 	D3D11_SAMPLER_DESC samplerDesc = {};
 	samplerDesc.Filter = D3D11_FILTER_ANISOTROPIC;
 	samplerDesc.AddressU = wrapU;
@@ -35,13 +34,12 @@ Sampler::Sampler(Graphics& gfx, D3D11_TEXTURE_ADDRESS_MODE wrapU, D3D11_TEXTURE_
 	samplerDesc.BorderColor[2] = 1.0f;
 	samplerDesc.BorderColor[3] = 1.0f;
 
-	GFX_THROW_INFO(gfx.GetDevice()->CreateSamplerState(&samplerDesc, &pSampler));
+	THROW_IF_FAILED(gfx.GetDevice()->CreateSamplerState(&samplerDesc, &pSampler));
 }
 
 Sampler::Sampler(Graphics& gfx, D3D11_SAMPLER_DESC samplerDesc)
 {
-	SETUP_LOGGING(gfx);
-	GFX_THROW_INFO(gfx.GetDevice()->CreateSamplerState(&samplerDesc, &pSampler));
+	THROW_IF_FAILED(gfx.GetDevice()->CreateSamplerState(&samplerDesc, &pSampler));
 }
 
 void Sampler::BindCS(Graphics & gfx, UINT slot)

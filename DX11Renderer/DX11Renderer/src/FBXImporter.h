@@ -11,7 +11,6 @@
 #include "ModelAsset.h"
 #include "MeshAsset.h"
 #include "SceneGraphNode.h"
-#include "GraphicsThrowMacros.h"
 #include "TextParser.h"
 #include "Graphics.h"
 

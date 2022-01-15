@@ -1,12 +1,8 @@
 #include "pch.h"
 #include "DepthStencil.h"
 
-namespace wrl = Microsoft::WRL;
-
 DepthStencil::DepthStencil(Graphics& gfx, UINT width, UINT height)
 {
-	SETUP_LOGGING(gfx);
-
 	// create depth stensil texture
 	wrl::ComPtr<ID3D11Texture2D> pDepthStencil;
 	D3D11_TEXTURE2D_DESC descDepth = {};
@@ -19,10 +15,10 @@ DepthStencil::DepthStencil(Graphics& gfx, UINT width, UINT height)
 	descDepth.SampleDesc.Quality = 0u;
 	descDepth.Usage = D3D11_USAGE_DEFAULT;
 	descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-	GFX_THROW_INFO(gfx.GetDevice()->CreateTexture2D(&descDepth, nullptr, &pDepthStencil));
+	THROW_IF_FAILED(gfx.GetDevice()->CreateTexture2D(&descDepth, nullptr, &pDepthStencil));
 
 	// create target view of depth stensil texture
-	GFX_THROW_INFO(gfx.GetDevice()->CreateDepthStencilView(
+	THROW_IF_FAILED(gfx.GetDevice()->CreateDepthStencilView(
 		pDepthStencil.Get(), nullptr, &pDepthStencilView
 	));
 }

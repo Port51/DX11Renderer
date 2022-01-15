@@ -5,17 +5,16 @@
 #include <string>
 #include "ChiliUtil.h"
 #include <d3dcompiler.h>
+#include "Graphics.h"
 
 using namespace std::string_literals;
 
 VertexShader::VertexShader(Graphics& gfx, const std::string& path)
 	: path(path)
 {
-	SETUP_LOGGING(gfx);
-
 	std::wstring wide{ path.begin(), path.end()}; // convert to wide for file read <-- won't work for special characters
-	GFX_THROW_INFO(D3DReadFileToBlob(wide.c_str(), &pBytecodeBlob));
-	GFX_THROW_INFO(gfx.GetDevice()->CreateVertexShader(
+	THROW_IF_FAILED(D3DReadFileToBlob(wide.c_str(), &pBytecodeBlob));
+	THROW_IF_FAILED(gfx.GetDevice()->CreateVertexShader(
 		pBytecodeBlob->GetBufferPointer(),
 		pBytecodeBlob->GetBufferSize(),
 		nullptr,

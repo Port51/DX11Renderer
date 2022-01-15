@@ -2,6 +2,7 @@
 #include "VertexBufferWrapper.h"
 #include "BaseBufferData.h"
 #include "SharedCodex.h"
+#include "Graphics.h"
 
 VertexBufferWrapper::VertexBufferWrapper(Graphics& gfx, const BaseBufferData& vertexBuffer)
 {

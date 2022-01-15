@@ -2,17 +2,17 @@
 #include "ComputeShader.h"
 #include "SharedCodex.h"
 #include <d3dcompiler.h>
+#include <d3d11shader.h>
+#include "Graphics.h"
 
 using namespace std::string_literals;
 
 ComputeShader::ComputeShader(Graphics& gfx, const std::string& path, const std::string& kernelName)
 	: path(path), kernelName(kernelName)
 {
-	SETUP_LOGGING(gfx);
-
 	std::wstring wide{ path.begin(), path.end() }; // convert to wide for file read <-- won't work for special characters
-	GFX_THROW_INFO(D3DReadFileToBlob(wide.c_str(), &pBytecodeBlob));
-	GFX_THROW_INFO(gfx.GetDevice()->CreateComputeShader(
+	THROW_IF_FAILED(D3DReadFileToBlob(wide.c_str(), &pBytecodeBlob));
+	THROW_IF_FAILED(gfx.GetDevice()->CreateComputeShader(
 		pBytecodeBlob->GetBufferPointer(),
 		pBytecodeBlob->GetBufferSize(),
 		nullptr,

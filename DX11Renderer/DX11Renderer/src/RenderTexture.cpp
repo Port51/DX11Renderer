@@ -14,8 +14,6 @@ RenderTexture::RenderTexture(Graphics& gfx)
 
 void RenderTexture::Init(ComPtr<ID3D11Device> device, UINT textureWidth, UINT textureHeight)
 {
-	SETUP_LOGGING_NOINFO(gfx);
-
 	// Setup the render target texture description.
 	D3D11_TEXTURE2D_DESC rtDesc;
 	ZeroMemory(&rtDesc, sizeof(rtDesc));
@@ -33,7 +31,7 @@ void RenderTexture::Init(ComPtr<ID3D11Device> device, UINT textureWidth, UINT te
 	rtDesc.MiscFlags = 0;
 
 	// Create the render target texture.
-	GFX_THROW_NOINFO(device->CreateTexture2D(&rtDesc, NULL, &pTexture));
+	THROW_IF_FAILED(device->CreateTexture2D(&rtDesc, NULL, &pTexture));
 
 	// Setup the description of the render target view.
 	D3D11_RENDER_TARGET_VIEW_DESC rtViewDesc;
@@ -43,7 +41,7 @@ void RenderTexture::Init(ComPtr<ID3D11Device> device, UINT textureWidth, UINT te
 	rtViewDesc.Texture2D.MipSlice = 0;
 
 	// Create the render target view.
-	GFX_THROW_NOINFO(device->CreateRenderTargetView(pTexture.Get(), &rtViewDesc, &pRenderTargetView));
+	THROW_IF_FAILED(device->CreateRenderTargetView(pTexture.Get(), &rtViewDesc, &pRenderTargetView));
 
 	// Setup the description of the shader resource view.
 	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
@@ -54,14 +52,14 @@ void RenderTexture::Init(ComPtr<ID3D11Device> device, UINT textureWidth, UINT te
 	srvDesc.Texture2D.MipLevels = 1;
 
 	// Create the shader resource view.
-	GFX_THROW_NOINFO(device->CreateShaderResourceView(pTexture.Get(), &srvDesc, &pShaderResourceView));
+	THROW_IF_FAILED(device->CreateShaderResourceView(pTexture.Get(), &srvDesc, &pShaderResourceView));
 
 	if (rtDesc.BindFlags & D3D11_BIND_UNORDERED_ACCESS)
 	{
 		bool useCounter = false;
 		if (!useCounter)
 		{
-			GFX_THROW_NOINFO(device->CreateUnorderedAccessView(pTexture.Get(), nullptr, &pUAV));
+			THROW_IF_FAILED(device->CreateUnorderedAccessView(pTexture.Get(), nullptr, &pUAV));
 		}
 		else
 		{
@@ -71,7 +69,7 @@ void RenderTexture::Init(ComPtr<ID3D11Device> device, UINT textureWidth, UINT te
 			//uavDesc.Buffer.NumElements = numElements;
 			uavDesc.Buffer.Flags = D3D11_BUFFER_UAV_FLAG_COUNTER;
 			uavDesc.Format = DXGI_FORMAT_UNKNOWN;
-			GFX_THROW_NOINFO(device->CreateUnorderedAccessView(pTexture.Get(), &uavDesc, &pUAV));
+			THROW_IF_FAILED(device->CreateUnorderedAccessView(pTexture.Get(), &uavDesc, &pUAV));
 		}
 	}
 }

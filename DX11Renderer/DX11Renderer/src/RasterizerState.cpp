@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "RasterizerState.h"
 #include "SharedCodex.h"
+#include "Graphics.h"
 
 namespace Bind
 {
@@ -8,12 +9,10 @@ namespace Bind
 		:
 		twoSided(twoSided)
 	{
-		SETUP_LOGGING(gfx);
-
 		D3D11_RASTERIZER_DESC rasterDesc = CD3D11_RASTERIZER_DESC(CD3D11_DEFAULT{});
 		rasterDesc.CullMode = twoSided ? D3D11_CULL_NONE : D3D11_CULL_BACK;
 
-		GFX_THROW_INFO(gfx.GetDevice()->CreateRasterizerState(&rasterDesc, &pRasterizer));
+		THROW_IF_FAILED(gfx.GetDevice()->CreateRasterizerState(&rasterDesc, &pRasterizer));
 	}
 
 	void RasterizerState::BindRS(Graphics& gfx)

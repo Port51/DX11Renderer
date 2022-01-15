@@ -5,7 +5,6 @@
 #include "DX11Include.h"
 #include "DXMathInclude.h"
 #include <vector>
-#include "DxgiInfoManager.h"
 
 class DepthStencilTarget;
 class Log;
@@ -75,9 +74,6 @@ public:
 	void DisableImgui();
 	bool IsImguiEnabled() const;
 public:
-#ifndef NDEBUG
-	DxgiInfoManager infoManager;
-#endif
 	ComPtr<ID3D11RenderTargetView> pBackBufferView; // RT view of backbuffer
 	std::shared_ptr<DepthStencilTarget> pDepthStencil;
 private:

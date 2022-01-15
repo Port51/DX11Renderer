@@ -1,12 +1,11 @@
 #include "pch.h"
 #include "IndexBuffer.h"
 #include "SharedCodex.h"
+#include "Graphics.h"
 
 IndexBuffer::IndexBuffer(Graphics& gfx, const std::vector<unsigned short>& indices)
 	: count((UINT)indices.size())
 {
-	SETUP_LOGGING(gfx);
-
 	D3D11_BUFFER_DESC ibd = {};
 	ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	ibd.Usage = D3D11_USAGE_DEFAULT;
@@ -17,7 +16,6 @@ IndexBuffer::IndexBuffer(Graphics& gfx, const std::vector<unsigned short>& indic
 	D3D11_SUBRESOURCE_DATA isd = {};
 	isd.pSysMem = indices.data();
 	THROW_IF_FAILED(gfx.GetDevice()->CreateBuffer(&ibd, &isd, &pIndexBuffer));
-	//GFX_THROW_INFO(gfx.GetDevice()->CreateBuffer(&ibd, &isd, &pIndexBuffer));
 }
 
 void IndexBuffer::BindIA(Graphics& gfx, UINT slot)

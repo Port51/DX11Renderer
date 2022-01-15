@@ -1,10 +1,9 @@
 #include "pch.h"
 #include "DepthStencilTarget.h"
+#include "Graphics.h"
 
 DepthStencilTarget::DepthStencilTarget(Graphics& gfx, int width, int height)
 {
-	SETUP_LOGGING_NOINFO(gfx);
-
 	// Notes on formats:
 	// To create SRV, must use a typeless format for texture
 	// Use DXGI_FORMAT_R32_TYPELESS for 32 bit depth
@@ -21,7 +20,7 @@ DepthStencilTarget::DepthStencilTarget(Graphics& gfx, int width, int height)
 	descDepth.SampleDesc.Quality = 0u;
 	descDepth.Usage = D3D11_USAGE_DEFAULT;
 	descDepth.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_DEPTH_STENCIL;
-	GFX_THROW_NOINFO(gfx.GetDevice()->CreateTexture2D(&descDepth, nullptr, &pDepthStencil));
+	THROW_IF_FAILED(gfx.GetDevice()->CreateTexture2D(&descDepth, nullptr, &pDepthStencil));
 	assert(pDepthStencil != NULL && "Depth stencil is null!");
 
 	// Create DS View
@@ -29,7 +28,7 @@ DepthStencilTarget::DepthStencilTarget(Graphics& gfx, int width, int height)
 	descDSV.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 	descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 	descDSV.Texture2D.MipSlice = 0u;
-	GFX_THROW_NOINFO(gfx.GetDevice()->CreateDepthStencilView(pDepthStencil.Get(), &descDSV, &pDepthStencilView));
+	THROW_IF_FAILED(gfx.GetDevice()->CreateDepthStencilView(pDepthStencil.Get(), &descDSV, &pDepthStencilView));
 	assert(pDepthStencilView != NULL && "Depth stencil view is null!");
 
 	// Create SRV
@@ -39,7 +38,7 @@ DepthStencilTarget::DepthStencilTarget(Graphics& gfx, int width, int height)
 	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 	srvDesc.Texture2D.MostDetailedMip = 0;
 	srvDesc.Texture2D.MipLevels = 1;
-	GFX_THROW_NOINFO(gfx.GetDevice()->CreateShaderResourceView(pDepthStencil.Get(), &srvDesc, &pShaderResourceView));
+	THROW_IF_FAILED(gfx.GetDevice()->CreateShaderResourceView(pDepthStencil.Get(), &srvDesc, &pShaderResourceView));
 	assert(pShaderResourceView != NULL && "Depth SRV is null!");
 }
 

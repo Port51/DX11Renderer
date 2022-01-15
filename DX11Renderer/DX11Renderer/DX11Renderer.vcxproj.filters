@@ -195,9 +195,6 @@
     <ClCompile Include="src\dxerr.cpp">
       <Filter>Source\ChiliErrors</Filter>
     </ClCompile>
-    <ClCompile Include="src\DxgiInfoManager.cpp">
-      <Filter>Source\ChiliErrors</Filter>
-    </ClCompile>
     <ClCompile Include="src\Sampler.cpp">
       <Filter>Source\Bindable</Filter>
     </ClCompile>
@@ -422,9 +419,6 @@
     <ClInclude Include="src\dxerr.h">
       <Filter>Headers\ChiliErrors</Filter>
     </ClInclude>
-    <ClInclude Include="src\DxgiInfoManager.h">
-      <Filter>Headers\ChiliErrors</Filter>
-    </ClInclude>
     <ClInclude Include="src\Sampler.h">
       <Filter>Headers\Bindable</Filter>
     </ClInclude>
@@ -631,9 +625,6 @@
     </ClInclude>
     <ClInclude Include="src\Log.h">
       <Filter>Headers\Common</Filter>
-    </ClInclude>
-    <ClInclude Include="src\GraphicsThrowMacros.h">
-      <Filter>Precompiled</Filter>
     </ClInclude>
     <ClInclude Include="src\WindowsThrowMacros.h">
       <Filter>Precompiled</Filter>

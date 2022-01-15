@@ -3,7 +3,6 @@
 #include <wrl.h>
 
 class Graphics;
-class DxgiInfoManager;
 class MeshRenderer;
 class RenderPass;
 

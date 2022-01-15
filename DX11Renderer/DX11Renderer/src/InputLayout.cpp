@@ -7,10 +7,8 @@ InputLayout::InputLayout(Graphics& gfx, VertexLayout _layout, std::string vertex
 	: layout(std::move(_layout)),
 	vertexShaderName(vertexShaderName)
 {
-	SETUP_LOGGING(gfx);
-
 	const auto d3dLayout = layout.GetD3DLayout();
-	GFX_THROW_INFO(gfx.GetDevice()->CreateInputLayout(
+	THROW_IF_FAILED(gfx.GetDevice()->CreateInputLayout(
 		d3dLayout.data(), (UINT)d3dLayout.size(),
 		pVertexShaderBytecode->GetBufferPointer(),
 		pVertexShaderBytecode->GetBufferSize(),

@@ -4,18 +4,14 @@
 #include "SharedCodex.h"
 #include "RenderPass.h"
 
-namespace wrl = Microsoft::WRL;
-
 Texture::Texture(Graphics & gfx)
 {
-	SETUP_LOGGING(gfx);
+	
 }
 
 Texture::Texture(Graphics& gfx, const std::string& path)
 	: path(path)
 {
-	SETUP_LOGGING(gfx);
-
 	// load surface
 	const auto s = Surface::FromFile(path);
 
@@ -35,7 +31,7 @@ Texture::Texture(Graphics& gfx, const std::string& path)
 	textureDesc.CPUAccessFlags = 0;
 	textureDesc.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
 
-	GFX_THROW_INFO(gfx.GetDevice()->CreateTexture2D(
+	THROW_IF_FAILED(gfx.GetDevice()->CreateTexture2D(
 		&textureDesc, nullptr, &pTexture
 	));
 
@@ -50,7 +46,7 @@ Texture::Texture(Graphics& gfx, const std::string& path)
 	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 	srvDesc.Texture2D.MostDetailedMip = 0;
 	srvDesc.Texture2D.MipLevels = 1;
-	GFX_THROW_INFO(gfx.GetDevice()->CreateShaderResourceView(
+	THROW_IF_FAILED(gfx.GetDevice()->CreateShaderResourceView(
 		pTexture.Get(), &srvDesc, &pShaderResourceView
 	));
 
@@ -60,8 +56,6 @@ Texture::Texture(Graphics& gfx, const std::string& path)
 Texture::Texture(Graphics& gfx, const std::string& path, D3D11_TEXTURE2D_DESC textureDesc)
 	: path(path)
 {
-	SETUP_LOGGING(gfx);
-
 	// load surface
 	const auto s = Surface::FromFile(path);
 
@@ -70,7 +64,7 @@ Texture::Texture(Graphics& gfx, const std::string& path, D3D11_TEXTURE2D_DESC te
 	sd.SysMemPitch = s.GetWidth() * sizeof(Surface::Color); // distance in bytes between rows - keep in mind padding!
 	wrl::ComPtr<ID3D11Texture2D> pTexture;
 
-	GFX_THROW_INFO(gfx.GetDevice()->CreateTexture2D(
+	THROW_IF_FAILED(gfx.GetDevice()->CreateTexture2D(
 		&textureDesc, &sd, &pTexture
 	));
 
@@ -80,7 +74,7 @@ Texture::Texture(Graphics& gfx, const std::string& path, D3D11_TEXTURE2D_DESC te
 	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 	srvDesc.Texture2D.MostDetailedMip = 0;
 	srvDesc.Texture2D.MipLevels = 1;
-	GFX_THROW_INFO(gfx.GetDevice()->CreateShaderResourceView(
+	THROW_IF_FAILED(gfx.GetDevice()->CreateShaderResourceView(
 		pTexture.Get(), &srvDesc, &pShaderResourceView
 	));
 }
@@ -88,8 +82,6 @@ Texture::Texture(Graphics& gfx, const std::string& path, D3D11_TEXTURE2D_DESC te
 Texture::Texture(Graphics& gfx, const std::string& path, D3D11_TEXTURE2D_DESC textureDesc, D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc)
 	: path(path)
 {
-	SETUP_LOGGING(gfx);
-
 	// load surface
 	const auto s = Surface::FromFile(path);
 
@@ -98,11 +90,11 @@ Texture::Texture(Graphics& gfx, const std::string& path, D3D11_TEXTURE2D_DESC te
 	sd.SysMemPitch = s.GetWidth() * sizeof(Surface::Color); // distance in bytes between rows - keep in mind padding!
 	wrl::ComPtr<ID3D11Texture2D> pTexture;
 
-	GFX_THROW_INFO(gfx.GetDevice()->CreateTexture2D(
+	THROW_IF_FAILED(gfx.GetDevice()->CreateTexture2D(
 		&textureDesc, &sd, &pTexture
 	));
 
-	GFX_THROW_INFO(gfx.GetDevice()->CreateShaderResourceView(
+	THROW_IF_FAILED(gfx.GetDevice()->CreateShaderResourceView(
 		pTexture.Get(), &srvDesc, &pShaderResourceView
 	));
 }

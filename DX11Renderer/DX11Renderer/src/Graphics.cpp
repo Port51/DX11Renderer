@@ -6,13 +6,6 @@
 #include "DepthStencilTarget.h"
 #include <random>
 
-// Only do this in .cpp files
-namespace wrl = Microsoft::WRL;
-
-// Sets up linker settings
-#pragma comment(lib,"d3d11.lib")
-#pragma comment(lib,"D3DCompiler.lib") // for loading and compiling shaders
-
 Graphics::Graphics(HWND hWnd, int windowWidth, int windowHeight)
 	: screenWidth(windowWidth)
 	, screenHeight(windowHeight)
@@ -44,7 +37,7 @@ Graphics::Graphics(HWND hWnd, int windowWidth, int windowHeight)
 
 	// Create device and front/back buffers, and swap chain and rendering context
 	// pass nullptr for defaults
-	GFX_THROW_INFO(D3D11CreateDeviceAndSwapChain(
+	THROW_IF_FAILED(D3D11CreateDeviceAndSwapChain(
 		nullptr,
 		D3D_DRIVER_TYPE_HARDWARE,
 		nullptr,
@@ -73,8 +66,8 @@ Graphics::Graphics(HWND hWnd, int windowWidth, int windowHeight)
 	// Gain access to texture subresource in swap chain (back buffer)
 	wrl::ComPtr<ID3D11Resource> pBackBuffer;
 	// Reinterpret here = creating pointer to a pointer
-	GFX_THROW_INFO(pSwapChain->GetBuffer(0, __uuidof(ID3D11Resource), &pBackBuffer));
-	GFX_THROW_INFO(pDevice->CreateRenderTargetView(
+	THROW_IF_FAILED(pSwapChain->GetBuffer(0, __uuidof(ID3D11Resource), &pBackBuffer));
+	THROW_IF_FAILED(pDevice->CreateRenderTargetView(
 		pBackBuffer.Get(),
 		nullptr,
 		&pBackBufferView
@@ -109,20 +102,17 @@ void Graphics::EndFrame()
 		ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 	}
 
-	HRESULT hr;
-#ifndef NDEBUG
-	infoManager.Set();
-#endif
-
 	// Sync interval has to do with target framerate
 	// If refresh = 60Hz but you are targeting 30FPS, use sync interval of 2u
+	HRESULT hr;
 	if (FAILED(hr = pSwapChain->Present(1u, 0u)))
 	{
 		// Special handling for this as we need more info
 		if (hr == DXGI_ERROR_DEVICE_REMOVED)
 		{
 			// Could be driver failure, overclocking, etc.
-			throw GFX_DEVICE_REMOVED_EXCEPT(pDevice->GetDeviceRemovedReason());
+			// Get HRESULT this way
+			THROW_ALWAYS(pDevice->GetDeviceRemovedReason());
 		}
 		else
 		{
@@ -156,7 +146,7 @@ bool Graphics::IsImguiEnabled() const
 
 void Graphics::DrawIndexed(UINT count)
 {
-	GFX_THROW_INFO_ONLY(pContext->DrawIndexed(count, 0u, 0u));
+	pContext->DrawIndexed(count, 0u, 0u);
 }
 
 void Graphics::SetRenderTarget(ComPtr<ID3D11RenderTargetView> renderTargetView)

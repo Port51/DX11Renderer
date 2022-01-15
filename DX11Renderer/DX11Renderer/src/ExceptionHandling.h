@@ -34,5 +34,13 @@ private:
 	const HRESULT m_hr;
 };
 
-#define THROW_IF_FAILED(hrcall) if( FAILED( hr = (hrcall) ) ) throw HrException(__LINE__, __FILE__, hr)
-#define THROW_ALWAYS(hrcall) throw HrException(__LINE__, __FILE__, hr)
+inline void ThrowIfFailed(int line, const char* file, HRESULT hr)
+{
+	if (FAILED(hr))
+	{
+		throw HrException(line, file, hr);
+	}
+}
+
+#define THROW_IF_FAILED(hr) ThrowIfFailed(__LINE__, __FILE__, hr)
+#define THROW_ALWAYS(hr) throw HrException(__LINE__, __FILE__, hr)
