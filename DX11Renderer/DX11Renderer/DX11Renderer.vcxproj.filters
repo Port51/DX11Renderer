@@ -1,74 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Source Files\ChiliErrors">
-      <UniqueIdentifier>{3ec6a6d1-f233-47e4-9d39-87a635a4eee5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\ChiliErrors">
-      <UniqueIdentifier>{104759e1-4481-4927-8d97-e9a73893f82e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Shaders">
       <UniqueIdentifier>{5494fe3c-109d-4523-ac7c-5486c2016c97}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Bindable">
-      <UniqueIdentifier>{693381c1-9a81-4dbd-90e6-c64beab44b9c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Drawable">
-      <UniqueIdentifier>{d2554c7e-94bc-4df3-a883-c163c42eb8c2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Bindable">
-      <UniqueIdentifier>{76e25d2c-55c7-4433-8041-b39764f3aaab}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Drawable">
-      <UniqueIdentifier>{4e165349-dfc5-4e90-81fa-dca11b89d8d0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Macros">
-      <UniqueIdentifier>{2695a929-5975-45ed-9f7a-6f2561f07acd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Chili">
-      <UniqueIdentifier>{0ed1cb02-d74b-4beb-ae43-a69b6b4bac2a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Chili">
-      <UniqueIdentifier>{995e54a0-ad31-487c-a175-10cff89eaa2a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Imgui">
-      <UniqueIdentifier>{63a44a69-fee4-4577-bd39-7f483c24ac7d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Imgui\Headers">
-      <UniqueIdentifier>{83614022-dea1-4ccd-8ee8-6d01d2f323ab}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Imgui\Source">
-      <UniqueIdentifier>{befc9f39-bb2d-4683-b3ca-7269e999390f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Lights">
-      <UniqueIdentifier>{d7601bca-e00b-4862-9869-caf6b1f2bb41}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Lights">
-      <UniqueIdentifier>{517d7428-2772-48f9-87e5-a15bd13622ce}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Bindable\Buffers">
-      <UniqueIdentifier>{cce31131-58bd-4500-ab71-f046911385bb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\FBXImporter">
-      <UniqueIdentifier>{c77c837e-d2e8-4dab-a2f2-f2310fda3244}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\VertexData">
-      <UniqueIdentifier>{47cdc64d-d4a1-4d88-9540-9dbd4d084d36}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\SceneGraphs">
-      <UniqueIdentifier>{2bbedfeb-842d-41ec-975e-26cf3c1bc159}</UniqueIdentifier>
     </Filter>
     <Filter Include="Shaders\Lighting">
       <UniqueIdentifier>{8b626847-c6f5-4083-89ac-81878a1bf0cc}</UniqueIdentifier>
@@ -79,56 +17,8 @@
     <Filter Include="Assets\Materials">
       <UniqueIdentifier>{60d3db6c-6340-4eee-b82f-f30610c7fe41}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\RenderJobs">
-      <UniqueIdentifier>{bca483fe-0738-45ec-8d54-fe4ff1adacd9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\RenderJobs">
-      <UniqueIdentifier>{3475f071-91f2-4ab0-b967-6e633f8ea2a5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Bindable\Shaders">
-      <UniqueIdentifier>{a34e611c-f20c-40ec-98ed-6d7680b4b871}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Bindable\Shaders">
-      <UniqueIdentifier>{cda551ed-3740-4c56-9816-6c61d1172fe9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Bindable\Materials">
-      <UniqueIdentifier>{ed422d5d-2c41-4834-bab6-62b540f50882}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Bindable\Materials">
-      <UniqueIdentifier>{f4f805a8-9683-4243-8f5c-d1728f617de9}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Assets\Models">
       <UniqueIdentifier>{38cbeb08-97d5-4af1-96ed-727e42e8a125}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Util">
-      <UniqueIdentifier>{61312ed5-1bd1-4456-b9e5-271c16d6a2b3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\RenderPipeline">
-      <UniqueIdentifier>{72d987d9-603a-41a5-a01c-dd5b8784fa4e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\RenderPipeline">
-      <UniqueIdentifier>{8ac01db9-e142-4300-b89b-d08cd105274a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\RenderJobs\Passes">
-      <UniqueIdentifier>{1ba6139c-dd0b-41a8-8c1c-ba4c7de4ce73}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\RenderJobs\Passes">
-      <UniqueIdentifier>{b6674e5f-e356-4011-8a70-fc294419f13d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\FBXImporter\Meshes">
-      <UniqueIdentifier>{d89bbeda-33c0-4f48-9e9b-df739a460b7d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Bindable\Buffers\Data">
-      <UniqueIdentifier>{2e56d0d8-798b-41fb-b2ca-97f6a10a736c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Bindable\Compute">
-      <UniqueIdentifier>{ceb31e4f-d1e2-43e2-b8e5-9b0c19ee68c0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Bindable\Compute">
-      <UniqueIdentifier>{4e85884d-fe7d-431c-9301-3ac8da07113d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Codex">
-      <UniqueIdentifier>{0a2caff0-c6e9-46de-bb16-d55e6675eb3a}</UniqueIdentifier>
     </Filter>
     <Filter Include="Shaders\TiledLighting">
       <UniqueIdentifier>{f7e6cbcc-d824-4f68-b2f3-b5ee5742fbeb}</UniqueIdentifier>
@@ -136,495 +26,608 @@
     <Filter Include="Shaders\Common">
       <UniqueIdentifier>{02fecf65-cc4c-4752-ba8f-fb548b2821e4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Util">
-      <UniqueIdentifier>{a795e74b-c6da-4f32-ba97-ecb5aadcee81}</UniqueIdentifier>
+    <Filter Include="Headers">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
-    <Filter Include="Header Files\Shadows">
+    <Filter Include="Headers\ChiliErrors">
+      <UniqueIdentifier>{104759e1-4481-4927-8d97-e9a73893f82e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headers\Bindable">
+      <UniqueIdentifier>{693381c1-9a81-4dbd-90e6-c64beab44b9c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headers\Bindable\Buffers">
+      <UniqueIdentifier>{cce31131-58bd-4500-ab71-f046911385bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headers\Bindable\Buffers\Data">
+      <UniqueIdentifier>{2e56d0d8-798b-41fb-b2ca-97f6a10a736c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headers\Bindable\Shaders">
+      <UniqueIdentifier>{a34e611c-f20c-40ec-98ed-6d7680b4b871}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headers\Bindable\Materials">
+      <UniqueIdentifier>{ed422d5d-2c41-4834-bab6-62b540f50882}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headers\Bindable\Compute">
+      <UniqueIdentifier>{ceb31e4f-d1e2-43e2-b8e5-9b0c19ee68c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headers\Drawable">
+      <UniqueIdentifier>{d2554c7e-94bc-4df3-a883-c163c42eb8c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headers\Macros">
+      <UniqueIdentifier>{2695a929-5975-45ed-9f7a-6f2561f07acd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headers\Chili">
+      <UniqueIdentifier>{0ed1cb02-d74b-4beb-ae43-a69b6b4bac2a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headers\Lights">
+      <UniqueIdentifier>{d7601bca-e00b-4862-9869-caf6b1f2bb41}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headers\FBXImporter">
+      <UniqueIdentifier>{c77c837e-d2e8-4dab-a2f2-f2310fda3244}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headers\FBXImporter\Meshes">
+      <UniqueIdentifier>{d89bbeda-33c0-4f48-9e9b-df739a460b7d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headers\VertexData">
+      <UniqueIdentifier>{47cdc64d-d4a1-4d88-9540-9dbd4d084d36}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headers\SceneGraphs">
+      <UniqueIdentifier>{2bbedfeb-842d-41ec-975e-26cf3c1bc159}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headers\RenderJobs">
+      <UniqueIdentifier>{bca483fe-0738-45ec-8d54-fe4ff1adacd9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headers\RenderJobs\Passes">
+      <UniqueIdentifier>{1ba6139c-dd0b-41a8-8c1c-ba4c7de4ce73}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headers\Util">
+      <UniqueIdentifier>{61312ed5-1bd1-4456-b9e5-271c16d6a2b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headers\RenderPipeline">
+      <UniqueIdentifier>{72d987d9-603a-41a5-a01c-dd5b8784fa4e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headers\Codex">
+      <UniqueIdentifier>{0a2caff0-c6e9-46de-bb16-d55e6675eb3a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headers\Shadows">
       <UniqueIdentifier>{ea28b3cd-0076-416c-b1c0-77feaa708b69}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Common">
+    <Filter Include="Headers\Common">
       <UniqueIdentifier>{e08b99cd-3b4b-483a-aa5a-ac1942f55549}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Source\ChiliErrors">
+      <UniqueIdentifier>{3ec6a6d1-f233-47e4-9d39-87a635a4eee5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Bindable">
+      <UniqueIdentifier>{76e25d2c-55c7-4433-8041-b39764f3aaab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Bindable\Shaders">
+      <UniqueIdentifier>{cda551ed-3740-4c56-9816-6c61d1172fe9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Bindable\Materials">
+      <UniqueIdentifier>{f4f805a8-9683-4243-8f5c-d1728f617de9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Bindable\Compute">
+      <UniqueIdentifier>{4e85884d-fe7d-431c-9301-3ac8da07113d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Drawable">
+      <UniqueIdentifier>{4e165349-dfc5-4e90-81fa-dca11b89d8d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Chili">
+      <UniqueIdentifier>{995e54a0-ad31-487c-a175-10cff89eaa2a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Lights">
+      <UniqueIdentifier>{517d7428-2772-48f9-87e5-a15bd13622ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\RenderJobs">
+      <UniqueIdentifier>{3475f071-91f2-4ab0-b967-6e633f8ea2a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\RenderJobs\Passes">
+      <UniqueIdentifier>{b6674e5f-e356-4011-8a70-fc294419f13d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\RenderPipeline">
+      <UniqueIdentifier>{8ac01db9-e142-4300-b89b-d08cd105274a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Util">
+      <UniqueIdentifier>{a795e74b-c6da-4f32-ba97-ecb5aadcee81}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Vendor">
+      <UniqueIdentifier>{70fec4ed-a6bc-4573-affe-722a6033227f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Vendor\Imgui">
+      <UniqueIdentifier>{63a44a69-fee4-4577-bd39-7f483c24ac7d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Vendor\Imgui\Headers">
+      <UniqueIdentifier>{83614022-dea1-4ccd-8ee8-6d01d2f323ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Vendor\Imgui\Source">
+      <UniqueIdentifier>{befc9f39-bb2d-4683-b3ca-7269e999390f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="src\Bindable.cpp">
-      <Filter>Source Files\Bindable</Filter>
+      <Filter>Source\Bindable</Filter>
     </ClCompile>
     <ClCompile Include="src\Binding.cpp">
-      <Filter>Source Files\Bindable</Filter>
+      <Filter>Source\Bindable</Filter>
     </ClCompile>
     <ClCompile Include="src\Camera.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="src\ChiliUtil.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="src\ComputeKernel.cpp">
-      <Filter>Source Files\Bindable\Compute</Filter>
+      <Filter>Source\Bindable\Compute</Filter>
     </ClCompile>
     <ClCompile Include="src\ComputeShader.cpp">
-      <Filter>Source Files\Bindable\Shaders</Filter>
+      <Filter>Source\Bindable\Shaders</Filter>
     </ClCompile>
     <ClCompile Include="src\CustomException.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="src\DepthStencil.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="src\DepthStencilState.cpp">
-      <Filter>Source Files\Bindable</Filter>
+      <Filter>Source\Bindable</Filter>
     </ClCompile>
     <ClCompile Include="src\DepthStencilTarget.cpp">
-      <Filter>Source Files\RenderPipeline</Filter>
+      <Filter>Source\RenderPipeline</Filter>
     </ClCompile>
     <ClCompile Include="src\DirectionalLight.cpp">
-      <Filter>Source Files\Lights</Filter>
+      <Filter>Source\Lights</Filter>
     </ClCompile>
     <ClCompile Include="src\DrawCall.cpp">
-      <Filter>Source Files\RenderJobs</Filter>
+      <Filter>Source\RenderJobs</Filter>
     </ClCompile>
     <ClCompile Include="src\dxerr.cpp">
-      <Filter>Source Files\ChiliErrors</Filter>
+      <Filter>Source\ChiliErrors</Filter>
     </ClCompile>
     <ClCompile Include="src\DxgiInfoManager.cpp">
-      <Filter>Source Files\ChiliErrors</Filter>
+      <Filter>Source\ChiliErrors</Filter>
     </ClCompile>
     <ClCompile Include="src\Sampler.cpp">
-      <Filter>Source Files\Bindable</Filter>
+      <Filter>Source\Bindable</Filter>
     </ClCompile>
     <ClCompile Include="src\Spotlight.cpp">
-      <Filter>Source Files\Lights</Filter>
+      <Filter>Source\Lights</Filter>
     </ClCompile>
     <ClCompile Include="src\Surface.cpp">
-      <Filter>Source Files\Chili</Filter>
+      <Filter>Source\Chili</Filter>
     </ClCompile>
     <ClCompile Include="src\Technique.cpp">
-      <Filter>Source Files\RenderJobs</Filter>
+      <Filter>Source\RenderJobs</Filter>
     </ClCompile>
     <ClCompile Include="src\Texture.cpp">
-      <Filter>Source Files\Bindable</Filter>
+      <Filter>Source\Bindable</Filter>
     </ClCompile>
     <ClCompile Include="src\Timer.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="src\Topology.cpp">
-      <Filter>Source Files\Bindable</Filter>
+      <Filter>Source\Bindable</Filter>
     </ClCompile>
     <ClCompile Include="src\TransformCbuf.cpp">
-      <Filter>Source Files\Bindable</Filter>
+      <Filter>Source\Bindable</Filter>
     </ClCompile>
     <ClCompile Include="src\Vertex.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="src\VertexBufferWrapper.cpp">
-      <Filter>Source Files\Bindable</Filter>
+      <Filter>Source\Bindable</Filter>
     </ClCompile>
     <ClCompile Include="src\VertexShader.cpp">
-      <Filter>Source Files\Bindable\Shaders</Filter>
+      <Filter>Source\Bindable\Shaders</Filter>
     </ClCompile>
     <ClCompile Include="src\Window.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="src\ImguiManager.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="src\IndexBuffer.cpp">
-      <Filter>Source Files\Bindable</Filter>
+      <Filter>Source\Bindable</Filter>
     </ClCompile>
     <ClCompile Include="src\InputLayout.cpp">
-      <Filter>Source Files\Bindable</Filter>
+      <Filter>Source\Bindable</Filter>
     </ClCompile>
     <ClCompile Include="src\InstancedMeshRenderer.cpp">
-      <Filter>Source Files\Drawable</Filter>
+      <Filter>Source\Drawable</Filter>
     </ClCompile>
     <ClCompile Include="src\Keyboard.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="src\Light.cpp">
-      <Filter>Source Files\Lights</Filter>
+      <Filter>Source\Lights</Filter>
     </ClCompile>
     <ClCompile Include="src\LightManager.cpp">
-      <Filter>Source Files\RenderPipeline</Filter>
+      <Filter>Source\RenderPipeline</Filter>
     </ClCompile>
     <ClCompile Include="src\Log.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="src\Main.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="src\Material.cpp">
-      <Filter>Source Files\Bindable\Materials</Filter>
+      <Filter>Source\Bindable\Materials</Filter>
     </ClCompile>
     <ClCompile Include="src\MaterialPass.cpp">
-      <Filter>Source Files\Bindable\Materials</Filter>
+      <Filter>Source\Bindable\Materials</Filter>
     </ClCompile>
     <ClCompile Include="src\MeshRenderer.cpp">
-      <Filter>Source Files\Drawable</Filter>
+      <Filter>Source\Drawable</Filter>
     </ClCompile>
     <ClCompile Include="src\ModelInstance.cpp">
-      <Filter>Source Files\Drawable</Filter>
+      <Filter>Source\Drawable</Filter>
     </ClCompile>
     <ClCompile Include="src\ModelNode.cpp">
-      <Filter>Source Files\Drawable</Filter>
+      <Filter>Source\Drawable</Filter>
     </ClCompile>
     <ClCompile Include="src\Mouse.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="src\NullPixelShader.cpp">
-      <Filter>Source Files\Bindable\Shaders</Filter>
+      <Filter>Source\Bindable\Shaders</Filter>
     </ClCompile>
     <ClCompile Include="src\PixelShader.cpp">
-      <Filter>Source Files\Bindable\Shaders</Filter>
+      <Filter>Source\Bindable\Shaders</Filter>
     </ClCompile>
     <ClCompile Include="src\PointLight.cpp">
-      <Filter>Source Files\Lights</Filter>
+      <Filter>Source\Lights</Filter>
     </ClCompile>
     <ClCompile Include="src\RasterizerState.cpp">
-      <Filter>Source Files\Bindable</Filter>
+      <Filter>Source\Bindable</Filter>
     </ClCompile>
     <ClCompile Include="src\RenderConstants.cpp">
-      <Filter>Source Files\RenderPipeline</Filter>
+      <Filter>Source\RenderPipeline</Filter>
     </ClCompile>
     <ClCompile Include="src\RendererList.cpp">
-      <Filter>Source Files\Drawable</Filter>
+      <Filter>Source\Drawable</Filter>
     </ClCompile>
     <ClCompile Include="src\RenderPass.cpp">
-      <Filter>Source Files\RenderJobs</Filter>
+      <Filter>Source\RenderJobs</Filter>
     </ClCompile>
     <ClCompile Include="src\RenderStep.cpp">
-      <Filter>Source Files\RenderJobs</Filter>
+      <Filter>Source\RenderJobs</Filter>
     </ClCompile>
     <ClCompile Include="src\RenderTarget.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="src\RenderTexture.cpp">
-      <Filter>Source Files\RenderPipeline</Filter>
+      <Filter>Source\RenderPipeline</Filter>
     </ClCompile>
     <ClCompile Include="src\GDIPlusManager.cpp">
-      <Filter>Source Files\Chili</Filter>
+      <Filter>Source\Chili</Filter>
     </ClCompile>
     <ClCompile Include="src\Graphics.cpp">
-      <Filter>Source Files\RenderPipeline</Filter>
+      <Filter>Source\RenderPipeline</Filter>
     </ClCompile>
     <ClCompile Include="src\FullscreenPass.cpp">
-      <Filter>Source Files\RenderJobs\Passes</Filter>
+      <Filter>Source\RenderJobs\Passes</Filter>
     </ClCompile>
     <ClCompile Include="src\Frustum.cpp">
-      <Filter>Source Files\Util</Filter>
+      <Filter>Source\Util</Filter>
     </ClCompile>
     <ClCompile Include="src\vendor\imgui\imgui.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Vendor\Imgui\Source</Filter>
     </ClCompile>
     <ClCompile Include="src\vendor\imgui\imgui_demo.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Vendor\Imgui\Source</Filter>
     </ClCompile>
     <ClCompile Include="src\vendor\imgui\imgui_draw.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Vendor\Imgui\Source</Filter>
     </ClCompile>
     <ClCompile Include="src\vendor\imgui\imgui_impl_dx11.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Vendor\Imgui\Source</Filter>
     </ClCompile>
     <ClCompile Include="src\vendor\imgui\imgui_impl_win32.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Vendor\Imgui\Source</Filter>
     </ClCompile>
     <ClCompile Include="src\vendor\imgui\imgui_tables.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Vendor\Imgui\Source</Filter>
     </ClCompile>
     <ClCompile Include="src\vendor\imgui\imgui_widgets.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Vendor\Imgui\Source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="src\App.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="src\BaseBufferData.h">
-      <Filter>Header Files\Bindable\Buffers\Data</Filter>
+      <Filter>Headers\Bindable\Buffers\Data</Filter>
     </ClInclude>
     <ClInclude Include="src\BaseMesh.h">
-      <Filter>Header Files\FBXImporter\Meshes</Filter>
+      <Filter>Headers\FBXImporter\Meshes</Filter>
     </ClInclude>
     <ClInclude Include="src\Bindable.h">
-      <Filter>Header Files\Bindable</Filter>
+      <Filter>Headers\Bindable</Filter>
     </ClInclude>
     <ClInclude Include="src\BindableInclude.h">
-      <Filter>Header Files\Bindable</Filter>
+      <Filter>Headers\Bindable</Filter>
     </ClInclude>
     <ClInclude Include="src\Binding.h">
-      <Filter>Header Files\Bindable</Filter>
+      <Filter>Headers\Bindable</Filter>
     </ClInclude>
     <ClInclude Include="src\Buffer.h">
-      <Filter>Header Files\Bindable\Buffers</Filter>
+      <Filter>Headers\Bindable\Buffers</Filter>
     </ClInclude>
     <ClInclude Include="src\Camera.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="src\ChiliUtil.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="src\CodexElement.h">
-      <Filter>Header Files\Codex</Filter>
+      <Filter>Headers\Codex</Filter>
     </ClInclude>
     <ClInclude Include="src\Colors.h">
-      <Filter>Header Files\VertexData</Filter>
+      <Filter>Headers\VertexData</Filter>
     </ClInclude>
     <ClInclude Include="src\Common.h">
-      <Filter>Header Files\Common</Filter>
+      <Filter>Headers\Common</Filter>
     </ClInclude>
     <ClInclude Include="src\CommonCbuffers.h">
-      <Filter>Header Files\Bindable\Buffers</Filter>
+      <Filter>Headers\Bindable\Buffers</Filter>
     </ClInclude>
     <ClInclude Include="src\ComputeKernel.h">
-      <Filter>Header Files\Bindable\Compute</Filter>
+      <Filter>Headers\Bindable\Compute</Filter>
     </ClInclude>
     <ClInclude Include="src\ComputeShader.h">
-      <Filter>Header Files\Bindable\Shaders</Filter>
+      <Filter>Headers\Bindable\Shaders</Filter>
     </ClInclude>
     <ClInclude Include="src\Config.h">
-      <Filter>Header Files\Common</Filter>
+      <Filter>Headers\Common</Filter>
     </ClInclude>
     <ClInclude Include="src\ConstantBuffer.h">
-      <Filter>Header Files\Bindable\Buffers</Filter>
+      <Filter>Headers\Bindable\Buffers</Filter>
     </ClInclude>
     <ClInclude Include="src\CustomException.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="src\DebugHelper.h">
-      <Filter>Header Files\FBXImporter</Filter>
+      <Filter>Headers\FBXImporter</Filter>
     </ClInclude>
     <ClInclude Include="src\DepthStencil.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="src\DepthStencilState.h">
-      <Filter>Header Files\Bindable</Filter>
+      <Filter>Headers\Bindable</Filter>
     </ClInclude>
     <ClInclude Include="src\DepthStencilTarget.h">
-      <Filter>Header Files\RenderPipeline</Filter>
+      <Filter>Headers\RenderPipeline</Filter>
     </ClInclude>
     <ClInclude Include="src\DirectionalLight.h">
-      <Filter>Header Files\Lights</Filter>
+      <Filter>Headers\Lights</Filter>
     </ClInclude>
     <ClInclude Include="src\DrawCall.h">
-      <Filter>Header Files\RenderJobs</Filter>
+      <Filter>Headers\RenderJobs</Filter>
     </ClInclude>
     <ClInclude Include="src\DrawContext.h">
-      <Filter>Header Files\RenderJobs</Filter>
+      <Filter>Headers\RenderJobs</Filter>
     </ClInclude>
     <ClInclude Include="src\DX11Include.h">
-      <Filter>Header Files\Common</Filter>
+      <Filter>Headers\Common</Filter>
     </ClInclude>
     <ClInclude Include="src\dxerr.h">
-      <Filter>Header Files\ChiliErrors</Filter>
+      <Filter>Headers\ChiliErrors</Filter>
     </ClInclude>
     <ClInclude Include="src\DxgiInfoManager.h">
-      <Filter>Header Files\ChiliErrors</Filter>
+      <Filter>Headers\ChiliErrors</Filter>
     </ClInclude>
     <ClInclude Include="src\DXMathInclude.h">
-      <Filter>Header Files\Common</Filter>
+      <Filter>Headers\Common</Filter>
     </ClInclude>
     <ClInclude Include="src\WindowsThrowMacros.h">
-      <Filter>Header Files\Macros</Filter>
+      <Filter>Headers\Macros</Filter>
     </ClInclude>
     <ClInclude Include="src\Sampler.h">
-      <Filter>Header Files\Bindable</Filter>
+      <Filter>Headers\Bindable</Filter>
     </ClInclude>
     <ClInclude Include="src\SceneGraphNode.h">
-      <Filter>Header Files\SceneGraphs</Filter>
+      <Filter>Headers\SceneGraphs</Filter>
     </ClInclude>
     <ClInclude Include="src\ShadowPassContext.h">
-      <Filter>Header Files\Shadows</Filter>
+      <Filter>Headers\Shadows</Filter>
     </ClInclude>
     <ClInclude Include="src\SharedCodex.h">
-      <Filter>Header Files\Codex</Filter>
+      <Filter>Headers\Codex</Filter>
     </ClInclude>
     <ClInclude Include="src\Spotlight.h">
-      <Filter>Header Files\Lights</Filter>
+      <Filter>Headers\Lights</Filter>
     </ClInclude>
     <ClInclude Include="src\StructuredBuffer.h">
-      <Filter>Header Files\Bindable\Buffers</Filter>
+      <Filter>Headers\Bindable\Buffers</Filter>
     </ClInclude>
     <ClInclude Include="src\StructuredBufferData.h">
-      <Filter>Header Files\Bindable\Buffers\Data</Filter>
+      <Filter>Headers\Bindable\Buffers\Data</Filter>
     </ClInclude>
     <ClInclude Include="src\Surface.h">
-      <Filter>Header Files\Chili</Filter>
+      <Filter>Headers\Chili</Filter>
     </ClInclude>
     <ClInclude Include="src\Technique.h">
-      <Filter>Header Files\RenderJobs</Filter>
+      <Filter>Headers\RenderJobs</Filter>
     </ClInclude>
     <ClInclude Include="src\TextParser.h">
-      <Filter>Header Files\Util</Filter>
+      <Filter>Headers\Util</Filter>
     </ClInclude>
     <ClInclude Include="src\Texture.h">
-      <Filter>Header Files\Bindable</Filter>
+      <Filter>Headers\Bindable</Filter>
     </ClInclude>
     <ClInclude Include="src\Timer.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="src\Topology.h">
-      <Filter>Header Files\Bindable</Filter>
+      <Filter>Headers\Bindable</Filter>
     </ClInclude>
     <ClInclude Include="src\TransformCbuf.h">
-      <Filter>Header Files\Bindable</Filter>
+      <Filter>Headers\Bindable</Filter>
     </ClInclude>
     <ClInclude Include="src\Transforms.h">
-      <Filter>Header Files\Util</Filter>
+      <Filter>Headers\Util</Filter>
     </ClInclude>
     <ClInclude Include="src\VertexBufferWrapper.h">
-      <Filter>Header Files\Bindable</Filter>
+      <Filter>Headers\Bindable</Filter>
     </ClInclude>
     <ClInclude Include="src\VertexLayout.h">
-      <Filter>Header Files\VertexData</Filter>
+      <Filter>Headers\VertexData</Filter>
     </ClInclude>
     <ClInclude Include="src\VertexShader.h">
-      <Filter>Header Files\Bindable\Shaders</Filter>
+      <Filter>Headers\Bindable\Shaders</Filter>
     </ClInclude>
     <ClInclude Include="src\Window.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="src\WindowsInclude.h">
-      <Filter>Header Files\Common</Filter>
+      <Filter>Headers\Common</Filter>
     </ClInclude>
     <ClInclude Include="src\RenderTexture.h">
-      <Filter>Header Files\RenderPipeline</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ImguiManager.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headers\RenderPipeline</Filter>
     </ClInclude>
     <ClInclude Include="src\IndexBuffer.h">
-      <Filter>Header Files\Bindable</Filter>
+      <Filter>Headers\Bindable</Filter>
     </ClInclude>
     <ClInclude Include="src\InputLayout.h">
-      <Filter>Header Files\Bindable</Filter>
+      <Filter>Headers\Bindable</Filter>
     </ClInclude>
     <ClInclude Include="src\InstancedMeshRenderer.h">
-      <Filter>Header Files\Drawable</Filter>
+      <Filter>Headers\Drawable</Filter>
     </ClInclude>
     <ClInclude Include="src\Keyboard.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="src\Light.h">
-      <Filter>Header Files\Lights</Filter>
+      <Filter>Headers\Lights</Filter>
     </ClInclude>
     <ClInclude Include="src\LightData.h">
-      <Filter>Header Files\Lights</Filter>
+      <Filter>Headers\Lights</Filter>
     </ClInclude>
     <ClInclude Include="src\LightManager.h">
-      <Filter>Header Files\RenderPipeline</Filter>
+      <Filter>Headers\RenderPipeline</Filter>
     </ClInclude>
     <ClInclude Include="src\LightShadowData.h">
-      <Filter>Header Files\Lights</Filter>
+      <Filter>Headers\Lights</Filter>
     </ClInclude>
     <ClInclude Include="src\Log.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="src\Material.h">
-      <Filter>Header Files\Bindable\Materials</Filter>
+      <Filter>Headers\Bindable\Materials</Filter>
     </ClInclude>
     <ClInclude Include="src\MaterialPass.h">
-      <Filter>Header Files\Bindable\Materials</Filter>
+      <Filter>Headers\Bindable\Materials</Filter>
     </ClInclude>
     <ClInclude Include="src\MeshAsset.h">
-      <Filter>Header Files\FBXImporter\Meshes</Filter>
+      <Filter>Headers\FBXImporter\Meshes</Filter>
     </ClInclude>
     <ClInclude Include="src\MeshRenderer.h">
-      <Filter>Header Files\Drawable</Filter>
+      <Filter>Headers\Drawable</Filter>
     </ClInclude>
     <ClInclude Include="src\ModelAsset.h">
-      <Filter>Header Files\FBXImporter</Filter>
+      <Filter>Headers\FBXImporter</Filter>
     </ClInclude>
     <ClInclude Include="src\ModelInstance.h">
-      <Filter>Header Files\Drawable</Filter>
+      <Filter>Headers\Drawable</Filter>
     </ClInclude>
     <ClInclude Include="src\ModelNode.h">
-      <Filter>Header Files\Drawable</Filter>
+      <Filter>Headers\Drawable</Filter>
     </ClInclude>
     <ClInclude Include="src\Mouse.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="src\NullPixelShader.h">
-      <Filter>Header Files\Bindable\Shaders</Filter>
+      <Filter>Headers\Bindable\Shaders</Filter>
     </ClInclude>
     <ClInclude Include="src\PixelShader.h">
-      <Filter>Header Files\Bindable\Shaders</Filter>
+      <Filter>Headers\Bindable\Shaders</Filter>
     </ClInclude>
     <ClInclude Include="src\PointLight.h">
-      <Filter>Header Files\Lights</Filter>
+      <Filter>Headers\Lights</Filter>
     </ClInclude>
     <ClInclude Include="src\RasterizerState.h">
-      <Filter>Header Files\Bindable</Filter>
+      <Filter>Headers\Bindable</Filter>
     </ClInclude>
     <ClInclude Include="src\RawBufferData.h">
-      <Filter>Header Files\Bindable\Buffers\Data</Filter>
+      <Filter>Headers\Bindable\Buffers\Data</Filter>
     </ClInclude>
     <ClInclude Include="src\RenderConstants.h">
-      <Filter>Header Files\RenderPipeline</Filter>
+      <Filter>Headers\RenderPipeline</Filter>
     </ClInclude>
     <ClInclude Include="src\Renderer.h">
-      <Filter>Header Files\RenderJobs</Filter>
+      <Filter>Headers\RenderJobs</Filter>
     </ClInclude>
     <ClInclude Include="src\RendererList.h">
-      <Filter>Header Files\Drawable</Filter>
+      <Filter>Headers\Drawable</Filter>
     </ClInclude>
     <ClInclude Include="src\RenderPass.h">
-      <Filter>Header Files\RenderJobs</Filter>
+      <Filter>Headers\RenderJobs</Filter>
     </ClInclude>
     <ClInclude Include="src\RenderStep.h">
-      <Filter>Header Files\RenderJobs</Filter>
+      <Filter>Headers\RenderJobs</Filter>
     </ClInclude>
     <ClInclude Include="src\RenderTarget.h">
-      <Filter>Header Files\RenderPipeline</Filter>
+      <Filter>Headers\RenderPipeline</Filter>
     </ClInclude>
     <ClInclude Include="src\GraphicsThrowMacros.h">
-      <Filter>Header Files\Macros</Filter>
+      <Filter>Headers\Macros</Filter>
     </ClInclude>
     <ClInclude Include="src\GDIPlusManager.h">
-      <Filter>Header Files\Chili</Filter>
+      <Filter>Headers\Chili</Filter>
     </ClInclude>
     <ClInclude Include="src\Graphics.h">
-      <Filter>Header Files\RenderPipeline</Filter>
+      <Filter>Headers\RenderPipeline</Filter>
     </ClInclude>
     <ClInclude Include="src\FullscreenPass.h">
-      <Filter>Header Files\RenderJobs\Passes</Filter>
+      <Filter>Headers\RenderJobs\Passes</Filter>
     </ClInclude>
     <ClInclude Include="src\Frustum.h">
-      <Filter>Header Files\Util</Filter>
+      <Filter>Headers\Util</Filter>
     </ClInclude>
     <ClInclude Include="src\ImguiInclude.h">
-      <Filter>Header Files\Common</Filter>
+      <Filter>Headers\Common</Filter>
     </ClInclude>
     <ClInclude Include="src\FBXImporter.h">
-      <Filter>Header Files\FBXImporter</Filter>
-    </ClInclude>
-    <ClInclude Include="src\vendor\imgui\imconfig.h">
-      <Filter>Header Files</Filter>
+      <Filter>Headers\FBXImporter</Filter>
     </ClInclude>
     <ClInclude Include="src\vendor\imgui\imgui.h">
-      <Filter>Header Files</Filter>
+      <Filter>Vendor\Imgui\Headers</Filter>
     </ClInclude>
     <ClInclude Include="src\vendor\imgui\imgui_impl_dx11.h">
-      <Filter>Header Files</Filter>
+      <Filter>Vendor\Imgui\Headers</Filter>
     </ClInclude>
     <ClInclude Include="src\vendor\imgui\imgui_impl_win32.h">
-      <Filter>Header Files</Filter>
+      <Filter>Vendor\Imgui\Headers</Filter>
     </ClInclude>
     <ClInclude Include="src\vendor\imgui\imgui_internal.h">
-      <Filter>Header Files</Filter>
+      <Filter>Vendor\Imgui\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ImguiManager.h">
+      <Filter>Vendor\Imgui\Headers</Filter>
     </ClInclude>
     <ClInclude Include="src\vendor\imgui\imstb_rectpack.h">
-      <Filter>Header Files</Filter>
+      <Filter>Vendor\Imgui\Headers</Filter>
     </ClInclude>
     <ClInclude Include="src\vendor\imgui\imstb_textedit.h">
-      <Filter>Header Files</Filter>
+      <Filter>Vendor\Imgui\Headers</Filter>
     </ClInclude>
     <ClInclude Include="src\vendor\imgui\imstb_truetype.h">
-      <Filter>Header Files</Filter>
+      <Filter>Vendor\Imgui\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vendor\imgui\imconfig.h">
+      <Filter>Vendor\Imgui\Headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -678,13 +681,13 @@
       <Filter>Shaders\Lighting</Filter>
     </None>
     <None Include="src\DXGetErrorDescription.inl">
-      <Filter>Source Files\ChiliErrors</Filter>
+      <Filter>Source\ChiliErrors</Filter>
     </None>
     <None Include="src\DXGetErrorString.inl">
-      <Filter>Source Files\ChiliErrors</Filter>
+      <Filter>Source\ChiliErrors</Filter>
     </None>
     <None Include="src\DXTrace.inl">
-      <Filter>Source Files\ChiliErrors</Filter>
+      <Filter>Source\ChiliErrors</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
