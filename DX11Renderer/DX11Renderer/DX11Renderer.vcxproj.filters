@@ -30,9 +30,6 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
-    <Filter Include="Headers\ChiliErrors">
-      <UniqueIdentifier>{104759e1-4481-4927-8d97-e9a73893f82e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Headers\Bindable">
       <UniqueIdentifier>{693381c1-9a81-4dbd-90e6-c64beab44b9c}</UniqueIdentifier>
     </Filter>
@@ -96,9 +93,6 @@
     <Filter Include="Source">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Source\ChiliErrors">
-      <UniqueIdentifier>{3ec6a6d1-f233-47e4-9d39-87a635a4eee5}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source\Bindable">
       <UniqueIdentifier>{76e25d2c-55c7-4433-8041-b39764f3aaab}</UniqueIdentifier>
@@ -165,9 +159,6 @@
     <ClCompile Include="src\Camera.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="src\ChiliUtil.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="src\ComputeKernel.cpp">
       <Filter>Source\Bindable\Compute</Filter>
     </ClCompile>
@@ -191,9 +182,6 @@
     </ClCompile>
     <ClCompile Include="src\DrawCall.cpp">
       <Filter>Source\RenderJobs</Filter>
-    </ClCompile>
-    <ClCompile Include="src\dxerr.cpp">
-      <Filter>Source\ChiliErrors</Filter>
     </ClCompile>
     <ClCompile Include="src\Sampler.cpp">
       <Filter>Source\Bindable</Filter>
@@ -371,9 +359,6 @@
     <ClInclude Include="src\Camera.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="src\ChiliUtil.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
     <ClInclude Include="src\CodexElement.h">
       <Filter>Headers\Codex</Filter>
     </ClInclude>
@@ -415,9 +400,6 @@
     </ClInclude>
     <ClInclude Include="src\DrawContext.h">
       <Filter>Headers\RenderJobs</Filter>
-    </ClInclude>
-    <ClInclude Include="src\dxerr.h">
-      <Filter>Headers\ChiliErrors</Filter>
     </ClInclude>
     <ClInclude Include="src\Sampler.h">
       <Filter>Headers\Bindable</Filter>
@@ -682,15 +664,6 @@
     </None>
     <None Include="Shaders\Lighting\Lights.hlsli">
       <Filter>Shaders\Lighting</Filter>
-    </None>
-    <None Include="src\DXGetErrorDescription.inl">
-      <Filter>Source\ChiliErrors</Filter>
-    </None>
-    <None Include="src\DXGetErrorString.inl">
-      <Filter>Source\ChiliErrors</Filter>
-    </None>
-    <None Include="src\DXTrace.inl">
-      <Filter>Source\ChiliErrors</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

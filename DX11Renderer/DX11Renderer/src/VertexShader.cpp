@@ -3,7 +3,6 @@
 #include "SharedCodex.h"
 #include <typeinfo>
 #include <string>
-#include "ChiliUtil.h"
 #include <d3dcompiler.h>
 #include "Graphics.h"
 

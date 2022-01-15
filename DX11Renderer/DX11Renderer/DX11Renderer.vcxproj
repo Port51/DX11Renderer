@@ -171,14 +171,12 @@
     <ClCompile Include="src\Bindable.cpp" />
     <ClCompile Include="src\Binding.cpp" />
     <ClCompile Include="src\Camera.cpp" />
-    <ClCompile Include="src\ChiliUtil.cpp" />
     <ClCompile Include="src\ComputeKernel.cpp" />
     <ClCompile Include="src\ComputeShader.cpp" />
     <ClCompile Include="src\CustomException.cpp" />
     <ClCompile Include="src\DepthStencil.cpp" />
     <ClCompile Include="src\DepthStencilTarget.cpp" />
     <ClCompile Include="src\DirectionalLight.cpp" />
-    <ClCompile Include="src\dxerr.cpp" />
     <ClCompile Include="src\Frustum.cpp" />
     <ClCompile Include="src\FullscreenPass.cpp" />
     <ClCompile Include="src\GDIPlusManager.cpp" />
@@ -302,13 +300,11 @@
     <ClInclude Include="src\SharedCodex.h" />
     <ClInclude Include="src\BindableInclude.h" />
     <ClInclude Include="src\Camera.h" />
-    <ClInclude Include="src\ChiliUtil.h" />
     <ClInclude Include="src\Buffer.h" />
     <ClInclude Include="src\CustomException.h" />
     <ClInclude Include="src\DebugHelper.h" />
     <ClInclude Include="src\DepthStencil.h" />
     <ClInclude Include="src\DepthStencilTarget.h" />
-    <ClInclude Include="src\dxerr.h" />
     <ClInclude Include="src\FBXImporter.h" />
     <ClInclude Include="src\Renderer.h" />
     <ClInclude Include="src\FullscreenPass.h" />
@@ -386,9 +382,6 @@
     </None>
     <None Include="Shaders\PhongCommon.hlsli" />
     <None Include="Shaders\Lighting\Diffuse.hlsli" />
-    <None Include="src\DXGetErrorDescription.inl" />
-    <None Include="src\DXGetErrorString.inl" />
-    <None Include="src\DXTrace.inl" />
     <None Include="Assets\Models\DefaultSphere.asset" />
   </ItemGroup>
   <ItemGroup>
