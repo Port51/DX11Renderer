@@ -9,7 +9,6 @@
 #include <algorithm>
 #include <cassert>
 #include <chrono>
-#include <memory>
 
 #include "Log.h"
 #include "GraphicsThrowMacros.h"

@@ -78,7 +78,6 @@ App::App(int screenWidth, int screenHeight)
 	renderer = std::make_unique<Renderer>(wnd.Gfx(), pLightManager, pRendererList);
 
 	return;
-	
 	/*class Factory
 	{
 	public:
