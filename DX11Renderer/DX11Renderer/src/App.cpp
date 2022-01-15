@@ -145,7 +145,6 @@ void App::DoFrame()
 		{
 			ImGui::SliderFloat("Speed Factor", &simulationSpeed, 0.0f, 4.0f);
 			ImGui::Text("%.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-			ImGui::Text("Status: %s", wnd.kbd.KeyIsPressed(VK_SPACE) ? "PAUSED" : "RUNNING (hold spacebar to pause)");
 		}
 		ImGui::End();
 

@@ -3,7 +3,6 @@
 #include "CommonHeader.h"
 #include "WindowsInclude.h"
 #include "CustomException.h"
-#include "Keyboard.h"
 #include "Mouse.h"
 #include "Graphics.h"
 #include <optional>
@@ -70,8 +69,6 @@ private:
 	LRESULT HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	const BOOL IsPointInWindow(const POINTS pt) const;
 public:
-	Keyboard kbd;
-	Mouse mouse;
 	std::unique_ptr<Graphics> pGfx;
 private:
 	int width;
