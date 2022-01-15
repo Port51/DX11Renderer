@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "RenderStep.h"
 #include "MeshRenderer.h"
 #include "Renderer.h"

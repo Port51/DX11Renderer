@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "RenderConstants.h"
 
 const float RenderConstants::PI = 3.141592654f;

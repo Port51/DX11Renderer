@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "DxgiInfoManager.h"
 #include "Window.h"
 #include "Graphics.h"

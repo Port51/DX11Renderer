@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "RenderTexture.h"
 #include <assert.h>
 #include "Graphics.h"

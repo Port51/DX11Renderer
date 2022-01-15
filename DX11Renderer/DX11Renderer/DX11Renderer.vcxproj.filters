@@ -148,6 +148,9 @@
     <Filter Include="Vendor\Imgui\Source">
       <UniqueIdentifier>{befc9f39-bb2d-4683-b3ca-7269e999390f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Precompiled">
+      <UniqueIdentifier>{cd21a933-8e37-4072-9ea8-c90a9ff4c55b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp">
@@ -338,6 +341,9 @@
     </ClCompile>
     <ClCompile Include="src\vendor\imgui\imgui_widgets.cpp">
       <Filter>Vendor\Imgui\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\pch.cpp">
+      <Filter>Precompiled</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -628,6 +634,9 @@
     </ClInclude>
     <ClInclude Include="src\vendor\imgui\imconfig.h">
       <Filter>Vendor\Imgui\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\pch.h">
+      <Filter>Precompiled</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "LightManager.h"
 
 #include "StructuredBuffer.h"

@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "Binding.h"
 #include "Bindable.h"
 #include <exception>

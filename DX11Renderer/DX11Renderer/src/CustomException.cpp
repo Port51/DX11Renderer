@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "CustomException.h"
 #include <sstream>
 

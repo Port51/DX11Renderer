@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "NullPixelShader.h"
 #include "GraphicsThrowMacros.h"
 #include "SharedCodex.h"

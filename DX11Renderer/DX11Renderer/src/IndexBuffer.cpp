@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "IndexBuffer.h"
 #include "GraphicsThrowMacros.h"
 #include "SharedCodex.h"

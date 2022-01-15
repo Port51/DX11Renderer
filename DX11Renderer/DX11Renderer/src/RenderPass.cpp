@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "RenderPass.h"
 #include "Binding.h"
 #include "Bindable.h"

@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "ModelNode.h"
 #include "MeshRenderer.h"
 #include "DrawContext.h"

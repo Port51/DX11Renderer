@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "Texture.h"
 #include "Surface.h"
 #include "GraphicsThrowMacros.h"

@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "PointLight.h"
 #include "ImguiInclude.h"
 #include "DX11Include.h"

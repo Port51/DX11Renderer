@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "Graphics.h"
 #include "dxerr.h"
 #include <sstream>

@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "ComputeKernel.h"
 #include "ComputeShader.h"
 #include "Graphics.h"

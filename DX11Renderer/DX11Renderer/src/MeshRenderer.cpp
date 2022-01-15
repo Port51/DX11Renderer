@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "MeshRenderer.h"
 #include "BindableInclude.h"
 #include "GraphicsThrowMacros.h"

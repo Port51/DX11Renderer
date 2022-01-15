@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "Light.h"
 #include "FBXImporter.h"
 #include "ModelInstance.h"

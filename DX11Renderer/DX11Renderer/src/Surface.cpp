@@ -19,6 +19,7 @@
 *	along with The Chili DirectX Framework.  If not, see <http://www.gnu.org/licenses/>.  *
 ******************************************************************************************/
 #define FULL_WINTARD
+#include "pch.h"
 #include "Surface.h"
 #include <algorithm>
 namespace Gdiplus

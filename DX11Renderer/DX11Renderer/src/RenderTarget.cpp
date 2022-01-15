@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "RenderTarget.h"
 #include "GraphicsThrowMacros.h"
 #include "DepthStencil.h"

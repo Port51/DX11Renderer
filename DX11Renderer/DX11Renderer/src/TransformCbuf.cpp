@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "TransformCbuf.h"
 #include "MeshRenderer.h"
 #include "Graphics.h"

@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "ModelInstance.h"
 #include "BindableInclude.h"
 #include "GraphicsThrowMacros.h"
