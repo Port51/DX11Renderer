@@ -638,6 +638,9 @@
     <ClInclude Include="src\WindowsThrowMacros.h">
       <Filter>Precompiled</Filter>
     </ClInclude>
+    <ClInclude Include="src\ExceptionHandling.h">
+      <Filter>Precompiled</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DX11Renderer.rc">

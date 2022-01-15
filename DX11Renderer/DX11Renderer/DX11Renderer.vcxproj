@@ -281,6 +281,7 @@
     <ClInclude Include="src\DrawContext.h" />
     <ClInclude Include="src\DX11Include.h" />
     <ClInclude Include="src\DXMathInclude.h" />
+    <ClInclude Include="src\ExceptionHandling.h" />
     <ClInclude Include="src\Frustum.h" />
     <ClInclude Include="src\ImguiInclude.h" />
     <ClInclude Include="src\Light.h" />

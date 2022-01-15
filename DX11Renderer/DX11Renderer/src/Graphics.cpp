@@ -127,7 +127,7 @@ void Graphics::EndFrame()
 		else
 		{
 			// Standard exception
-			throw GFX_EXCEPT(hr);
+			THROW_ALWAYS(hr);
 		}
 	}
 }

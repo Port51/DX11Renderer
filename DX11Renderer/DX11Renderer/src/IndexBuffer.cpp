@@ -16,7 +16,8 @@ IndexBuffer::IndexBuffer(Graphics& gfx, const std::vector<unsigned short>& indic
 	ibd.StructureByteStride = sizeof(unsigned short);
 	D3D11_SUBRESOURCE_DATA isd = {};
 	isd.pSysMem = indices.data();
-	GFX_THROW_INFO(gfx.GetDevice()->CreateBuffer(&ibd, &isd, &pIndexBuffer));
+	THROW_IF_FAILED(gfx.GetDevice()->CreateBuffer(&ibd, &isd, &pIndexBuffer));
+	//GFX_THROW_INFO(gfx.GetDevice()->CreateBuffer(&ibd, &isd, &pIndexBuffer));
 }
 
 void IndexBuffer::BindIA(Graphics& gfx, UINT slot)

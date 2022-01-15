@@ -13,3 +13,6 @@
 #include "Log.h"
 #include "GraphicsThrowMacros.h"
 #include "WindowsThrowMacros.h"
+#include "ExceptionHandling.h"
+
+#define SAFE_RELEASE(p) if (p) (p)->Release()
