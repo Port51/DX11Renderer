@@ -6,9 +6,6 @@
 #endif
 
 #include <sdkddkver.h>
-// The following #defines disable a bunch of unused windows stuff. If you 
-// get weird errors when trying to do some windows stuff, try removing some
-// (or all) of these defines (it will increase build time though).
 #ifndef FULL_WINTARD
 	#define WIN32_LEAN_AND_MEAN
 	#define NOGDICAPMASKS
@@ -52,4 +49,18 @@
 #define NOMINMAX
 #endif
 
+#if defined(min)
+#undef min
+#endif
+
+#if defined(max)
+#undef max
+#endif
+
 #include <Windows.h>
+
+// In order to define a function called CreateWindow, the Windows macro needs to
+// be undefined.
+//#if defined(CreateWindow)
+//#undef CreateWindow
+//#endif

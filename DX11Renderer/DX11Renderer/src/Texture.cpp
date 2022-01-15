@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "Texture.h"
 #include "Surface.h"
-#include "GraphicsThrowMacros.h"
 #include "SharedCodex.h"
 #include "RenderPass.h"
 
@@ -123,12 +122,12 @@ void Texture::BindPS(Graphics& gfx, UINT slot)
 	gfx.GetContext()->PSSetShaderResources(slot, 1u, pShaderResourceView.GetAddressOf());
 }
 
-Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView> Texture::GetUAV() const
+ComPtr<ID3D11UnorderedAccessView> Texture::GetUAV() const
 {
 	return pUAV;
 }
 
-Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> Texture::GetSRV() const
+ComPtr<ID3D11ShaderResourceView> Texture::GetSRV() const
 {
 	return pShaderResourceView;
 }

@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "ComputeShader.h"
-#include "GraphicsThrowMacros.h"
 #include "SharedCodex.h"
 #include <d3dcompiler.h>
 
@@ -72,7 +71,7 @@ void ComputeShader::Dispatch(Graphics & gfx, UINT threadCountX, UINT threadCount
 	gfx.GetContext()->Dispatch(threadGroupCountX, threadGroupCountY, threadGroupCountZ);
 }
 
-Microsoft::WRL::ComPtr<ID3D11ComputeShader> ComputeShader::GetComputeShader() const
+ComPtr<ID3D11ComputeShader> ComputeShader::GetComputeShader() const
 {
 	return pComputeShader;
 }

@@ -1,8 +1,7 @@
 #pragma once
 #include "Bindable.h"
-#include "Common.h"
+#include "CommonHeader.h"
 #include <array>
-#include <memory>
 
 class Graphics;
 class ID3D11RasterizerState;
@@ -18,7 +17,7 @@ namespace Bind
 	protected:
 		static std::string GenerateUID(bool twoSided);
 	protected:
-		Microsoft::WRL::ComPtr<ID3D11RasterizerState> pRasterizer;
+		ComPtr<ID3D11RasterizerState> pRasterizer;
 		bool twoSided;
 	};
 }

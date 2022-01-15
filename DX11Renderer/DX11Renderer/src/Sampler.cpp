@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "Sampler.h"
-#include "GraphicsThrowMacros.h"
 #include "SharedCodex.h"
 
 Sampler::Sampler(Graphics& gfx)

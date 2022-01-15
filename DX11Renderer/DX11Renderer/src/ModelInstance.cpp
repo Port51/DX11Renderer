@@ -1,14 +1,12 @@
 #include "pch.h"
 #include "ModelInstance.h"
 #include "BindableInclude.h"
-#include "GraphicsThrowMacros.h"
 #include "ModelAsset.h"
 #include <exception>
 #include <assert.h>
 #include "InstancedMeshRenderer.h"
 #include "RawBufferData.h"
 #include "StructuredBufferData.h"
-#include "DXMathInclude.h"
 #include "ModelNode.h"
 #include "DrawContext.h"
 

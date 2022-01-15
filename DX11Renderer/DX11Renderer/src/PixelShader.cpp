@@ -1,8 +1,6 @@
 #include "pch.h"
 #include "PixelShader.h"
-#include "GraphicsThrowMacros.h"
 #include "SharedCodex.h"
-#include "DX11Include.h"
 #include <d3dcompiler.h>
 
 PixelShader::PixelShader(Graphics& gfx, const std::string& path)
@@ -10,7 +8,7 @@ PixelShader::PixelShader(Graphics& gfx, const std::string& path)
 {
 	SETUP_LOGGING(gfx);
 
-	Microsoft::WRL::ComPtr<ID3DBlob> pBlob;
+	ComPtr<ID3DBlob> pBlob;
 	std::wstring wide{ path.begin(), path.end() }; // convert to wide for file read <-- won't work for special characters
 	GFX_THROW_INFO(D3DReadFileToBlob(wide.c_str(), &pBlob));
 	GFX_THROW_INFO(gfx.GetDevice()->CreatePixelShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pPixelShader));

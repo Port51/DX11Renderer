@@ -1,6 +1,6 @@
 #pragma once
+#include "CommonHeader.h"
 #include <type_traits>
-#include <memory>
 #include <unordered_map>
 #include "CodexElement.h"
 

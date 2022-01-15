@@ -21,7 +21,6 @@
 #define FULL_WINTARD
 #include "pch.h"
 #include "Surface.h"
-#include <algorithm>
 namespace Gdiplus
 {
 	using std::min;

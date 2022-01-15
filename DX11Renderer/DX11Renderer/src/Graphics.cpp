@@ -3,10 +3,7 @@
 #include "dxerr.h"
 #include <sstream>
 #include <d3dcompiler.h>
-#include "DXMathInclude.h"
-#include "GraphicsThrowMacros.h"
 #include "DepthStencilTarget.h"
-#include "ImguiInclude.h"
 #include <random>
 
 // Only do this in .cpp files
@@ -17,7 +14,9 @@ namespace wrl = Microsoft::WRL;
 #pragma comment(lib,"D3DCompiler.lib") // for loading and compiling shaders
 
 Graphics::Graphics(HWND hWnd, int windowWidth, int windowHeight)
-	: screenWidth(windowWidth), screenHeight(windowHeight)
+	: screenWidth(windowWidth)
+	, screenHeight(windowHeight)
+	, log(std::make_unique<Log>())
 {
 	DXGI_SWAP_CHAIN_DESC swapChainDesc = {};
 	swapChainDesc.BufferDesc.Width = 0; // use window size
@@ -160,7 +159,7 @@ void Graphics::DrawIndexed(UINT count)
 	GFX_THROW_INFO_ONLY(pContext->DrawIndexed(count, 0u, 0u));
 }
 
-void Graphics::SetRenderTarget(Microsoft::WRL::ComPtr<ID3D11RenderTargetView> renderTargetView)
+void Graphics::SetRenderTarget(ComPtr<ID3D11RenderTargetView> renderTargetView)
 {
 	pContext->OMSetRenderTargets(1u, renderTargetView.GetAddressOf(), pDepthStencil->GetView().Get());
 }
@@ -187,17 +186,17 @@ int Graphics::GetScreenHeight() const
 	return screenHeight;
 }
 
-Microsoft::WRL::ComPtr<ID3D11Device> Graphics::GetDevice() const
+ComPtr<ID3D11Device> Graphics::GetDevice() const
 {
 	return pDevice;
 }
 
-Microsoft::WRL::ComPtr<ID3D11DeviceContext> Graphics::GetContext() const
+ComPtr<ID3D11DeviceContext> Graphics::GetContext() const
 {
 	return pContext;
 }
 
-Log & Graphics::GetLog()
+std::unique_ptr<Log>& Graphics::GetLog()
 {
 	return log;
 }

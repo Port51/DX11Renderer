@@ -20,7 +20,7 @@ VertexBufferWrapper::VertexBufferWrapper(Graphics& gfx, const BaseBufferData& ve
 	SetupInstanceBuffer(gfx, instanceBuffer);
 }
 
-Microsoft::WRL::ComPtr<ID3D11Buffer> VertexBufferWrapper::GetVertexBuffer() const
+ComPtr<ID3D11Buffer> VertexBufferWrapper::GetVertexBuffer() const
 {
 	return pBufferArray[0];
 }

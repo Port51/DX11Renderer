@@ -2,7 +2,6 @@
 #include "RenderTexture.h"
 #include <assert.h>
 #include "Graphics.h"
-#include "GraphicsThrowMacros.h"
 
 RenderTexture::RenderTexture(Graphics& gfx)
 	: Texture::Texture(gfx)
@@ -13,7 +12,7 @@ RenderTexture::RenderTexture(Graphics& gfx)
 //{
 //}
 
-void RenderTexture::Init(Microsoft::WRL::ComPtr<ID3D11Device> device, UINT textureWidth, UINT textureHeight)
+void RenderTexture::Init(ComPtr<ID3D11Device> device, UINT textureWidth, UINT textureHeight)
 {
 	SETUP_LOGGING_NOINFO(gfx);
 
@@ -97,7 +96,7 @@ void RenderTexture::Shutdown()
 	return;
 }
 
-Microsoft::WRL::ComPtr<ID3D11RenderTargetView> RenderTexture::GetView() const
+ComPtr<ID3D11RenderTargetView> RenderTexture::GetView() const
 {
 	return pRenderTargetView;
 }

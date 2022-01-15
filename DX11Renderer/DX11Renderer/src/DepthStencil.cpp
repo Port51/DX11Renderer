@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "DepthStencil.h"
-#include "GraphicsThrowMacros.h"
 
 namespace wrl = Microsoft::WRL;
 

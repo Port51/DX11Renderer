@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "RenderTarget.h"
-#include "GraphicsThrowMacros.h"
 #include "DepthStencil.h"
 
 namespace wrl = Microsoft::WRL;
@@ -10,7 +9,7 @@ RenderTarget::RenderTarget(Graphics& gfx)
 {
 }
 
-void RenderTarget::Init(Microsoft::WRL::ComPtr<ID3D11Device> pDevice, UINT textureWidth, UINT textureHeight)
+void RenderTarget::Init(ComPtr<ID3D11Device> pDevice, UINT textureWidth, UINT textureHeight)
 {
 	RenderTexture::Init(pDevice, textureWidth, textureHeight);
 
@@ -33,13 +32,13 @@ void RenderTarget::BindAsTarget(Graphics& gfx) const
 	gfx.GetContext()->RSSetViewports(1u, &viewport);
 }
 
-void RenderTarget::BindAsTarget(Graphics& gfx, Microsoft::WRL::ComPtr<ID3D11DepthStencilView> pDepthStencilView) const
+void RenderTarget::BindAsTarget(Graphics& gfx, ComPtr<ID3D11DepthStencilView> pDepthStencilView) const
 {
 	gfx.GetContext()->OMSetRenderTargets(1, pRenderTargetView.GetAddressOf(), pDepthStencilView.Get());
 	gfx.GetContext()->RSSetViewports(1u, &viewport);
 }
 
-void RenderTarget::SetRenderTarget(ID3D11DeviceContext* deviceContext, Microsoft::WRL::ComPtr<ID3D11DepthStencilView> pDepthStencilView)
+void RenderTarget::SetRenderTarget(ID3D11DeviceContext* deviceContext, ComPtr<ID3D11DepthStencilView> pDepthStencilView)
 {
 	// Bind the render target view and depth stencil buffer to the output render pipeline.
 	deviceContext->OMSetRenderTargets(1u, pRenderTargetView.GetAddressOf(), pDepthStencilView.Get());

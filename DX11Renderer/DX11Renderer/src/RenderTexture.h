@@ -1,7 +1,7 @@
 #pragma once
 #include "Texture.h"
 #include "DX11Include.h"
-#include "Common.h"
+#include "CommonHeader.h"
 
 struct ID3D11Device;
 struct ID3D11DeviceContext;
@@ -15,15 +15,15 @@ public:
 	RenderTexture(Graphics& gfx);
 	//~RenderTexture();
 
-	virtual void Init(Microsoft::WRL::ComPtr<ID3D11Device> pDevice, UINT textureWidth, UINT textureHeight);
+	virtual void Init(ComPtr<ID3D11Device> pDevice, UINT textureWidth, UINT textureHeight);
 	void Shutdown();
 
-	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> GetView() const;
+	ComPtr<ID3D11RenderTargetView> GetView() const;
 
 	void BindCS(Graphics& gfx, UINT slot) override;
 	void BindVS(Graphics& gfx, UINT slot) override;
 	void BindPS(Graphics& gfx, UINT slot) override;
 
 protected:
-	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pRenderTargetView;
+	ComPtr<ID3D11RenderTargetView> pRenderTargetView;
 };

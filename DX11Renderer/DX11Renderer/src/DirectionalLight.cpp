@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "DirectionalLight.h"
-#include "ImguiInclude.h"
 #include "DX11Include.h"
 #include "MeshRenderer.h"
 #include "ModelInstance.h"
@@ -67,7 +66,7 @@ UINT DirectionalLight::GetLightType() const
 void DirectionalLight::RenderShadow(ShadowPassContext context)
 {}
 
-void DirectionalLight::AppendShadowData(UINT shadowStartSlot, std::vector<LightShadowData>& shadowData, std::vector<Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>>& srvs) const
+void DirectionalLight::AppendShadowData(UINT shadowStartSlot, std::vector<LightShadowData>& shadowData, std::vector<ComPtr<ID3D11ShaderResourceView>>& srvs) const
 {}
 
 UINT DirectionalLight::GetShadowSRVCount() const

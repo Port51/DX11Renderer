@@ -1,6 +1,6 @@
 #pragma once
 #include "Bindable.h"
-#include "Common.h"
+#include "CommonHeader.h"
 #include "SharedCodex.h"
 #include "DX11Include.h"
 
@@ -26,6 +26,6 @@ namespace Bind
 		static std::string GenerateUID(Mode mode);
 	private:
 		Mode mode;
-		Microsoft::WRL::ComPtr<ID3D11DepthStencilState> pStencil;
+		ComPtr<ID3D11DepthStencilState> pStencil;
 	};
 }

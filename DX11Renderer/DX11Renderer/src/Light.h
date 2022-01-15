@@ -1,6 +1,5 @@
 #pragma once
-#include "Common.h"
-#include <memory>
+#include "CommonHeader.h"
 #include <vector>
 #include "DXMathInclude.h"
 
@@ -37,7 +36,7 @@ public:
 	virtual UINT GetLightType() const = 0;
 	virtual void RenderShadow(ShadowPassContext context) = 0;
 	bool HasShadow() const;
-	virtual void AppendShadowData(UINT shadowStartSlot, std::vector<LightShadowData>& shadowData, std::vector<Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>>& srvs) const = 0;
+	virtual void AppendShadowData(UINT shadowStartSlot, std::vector<LightShadowData>& shadowData, std::vector<ComPtr<ID3D11ShaderResourceView>>& srvs) const = 0;
 	virtual UINT GetShadowSRVCount() const = 0;
 	ModelInstance& GetModelInstance() const;
 protected:

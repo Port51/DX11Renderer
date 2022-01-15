@@ -1,8 +1,8 @@
 #pragma once
+#include "CommonHeader.h"
 #include <assert.h>
 #include <stdio.h>
 #include <vector>
-#include <memory>
 #include <type_traits>
 #include "DXMathInclude.h"
 #include "DebugHelper.h"

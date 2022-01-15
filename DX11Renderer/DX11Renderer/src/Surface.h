@@ -20,10 +20,10 @@
 ******************************************************************************************/
 #pragma once
 #include "WindowsInclude.h"
+#include "CommonHeader.h"
 #include "CustomException.h"
 #include <string>
 #include <assert.h>
-#include <memory>
 
 
 class Surface

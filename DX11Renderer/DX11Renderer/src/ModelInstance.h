@@ -1,7 +1,7 @@
 #pragma once
+#include "CommonHeader.h"
 #include <string>
 #include "DX11Include.h"
-#include <memory>
 #include "SceneGraphNode.h"
 #include "ModelNode.h"
 #include "MeshRenderer.h"

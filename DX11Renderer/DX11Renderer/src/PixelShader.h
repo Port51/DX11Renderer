@@ -1,9 +1,7 @@
 #pragma once
 #include "Bindable.h"
-#include "Common.h"
+#include "CommonHeader.h"
 #include <string>
-#include <memory>
-#include <wrl.h>
 
 class Graphics;
 struct ID3D11PixelShader;
@@ -18,5 +16,5 @@ public:
 	static std::string GenerateUID(const std::string& path);
 protected:
 	std::string path;
-	Microsoft::WRL::ComPtr<ID3D11PixelShader> pPixelShader;
+	ComPtr<ID3D11PixelShader> pPixelShader;
 };

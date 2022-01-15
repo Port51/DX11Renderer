@@ -1,13 +1,11 @@
 #pragma once
+#include "CommonHeader.h"
 #include "WindowsInclude.h"
 #include "CustomException.h"
 #include "DX11Include.h"
 #include "DXMathInclude.h"
-#include "Common.h"
 #include <vector>
 #include "DxgiInfoManager.h"
-#include <memory>
-#include "Log.h"
 
 class DepthStencilTarget;
 class Log;
@@ -64,14 +62,14 @@ public:
 	void EndFrame();
 	void ClearBuffer(float red, float green, float blue);
 	void DrawIndexed(UINT count);
-	void SetRenderTarget(Microsoft::WRL::ComPtr<ID3D11RenderTargetView> renderTargetView);
+	void SetRenderTarget(ComPtr<ID3D11RenderTargetView> renderTargetView);
 	void SetViewport(int width, int height);
 	int GetScreenWidth() const;
 	int GetScreenHeight() const;
 public:
-	Microsoft::WRL::ComPtr<ID3D11Device> GetDevice() const;
-	Microsoft::WRL::ComPtr<ID3D11DeviceContext> GetContext() const;
-	Log& GetLog();
+	ComPtr<ID3D11Device> GetDevice() const;
+	ComPtr<ID3D11DeviceContext> GetContext() const;
+	std::unique_ptr<Log>& GetLog();
 public:
 	void EnableImgui();
 	void DisableImgui();
@@ -80,14 +78,14 @@ public:
 #ifndef NDEBUG
 	DxgiInfoManager infoManager;
 #endif
-	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pBackBufferView; // RT view of backbuffer
+	ComPtr<ID3D11RenderTargetView> pBackBufferView; // RT view of backbuffer
 	std::shared_ptr<DepthStencilTarget> pDepthStencil;
 private:
-	Log log;
+	std::unique_ptr<Log> log;
 	// Allocating stuff
-	Microsoft::WRL::ComPtr<ID3D11Device> pDevice;
+	ComPtr<ID3D11Device> pDevice;
 	// Used for configuring pipeline and executing render commands
-	Microsoft::WRL::ComPtr<ID3D11DeviceContext> pContext;
+	ComPtr<ID3D11DeviceContext> pContext;
 private:
 	bool imguiEnabled = true;
 	int screenWidth;
@@ -99,6 +97,6 @@ private:
 
 private:
 
-	Microsoft::WRL::ComPtr<IDXGISwapChain> pSwapChain;
+	ComPtr<IDXGISwapChain> pSwapChain;
 
 };

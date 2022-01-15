@@ -1,7 +1,7 @@
 #pragma once
+#include "CommonHeader.h"
 #include "RenderStep.h"
 #include <vector>
-#include <memory>
 
 class MeshRenderer;
 class Renderer;

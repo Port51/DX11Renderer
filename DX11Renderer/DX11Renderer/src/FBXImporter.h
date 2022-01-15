@@ -13,7 +13,7 @@
 #include "SceneGraphNode.h"
 #include "GraphicsThrowMacros.h"
 #include "TextParser.h"
-#include "Log.h"
+#include "Graphics.h"
 
 // Blender export settings:
 // - Use "FBX Units Scale"
@@ -38,7 +38,7 @@ public:
 		FlatShaded,
 	};
 
-	static std::unique_ptr<ModelAsset> LoadFBX(Log log, const char* filename, FBXNormalsMode normalsMode, bool triangulate = true)
+	static std::unique_ptr<ModelAsset> LoadFBX(Graphics& gfx, const char* filename, FBXNormalsMode normalsMode, bool triangulate = true)
 	{
 		// todo: load model asset instead, which contains an FBX path
 
@@ -56,7 +56,7 @@ public:
 			}
 			else if (p.key == "Map")
 			{
-				log.Info(p.values[0]);
+				gfx.GetLog()->Info(p.values[0]);
 				materialSources.materialPaths.emplace_back(p.values[1]);
 				materialSources.materialIndicesByName[p.values[0]] = materialSources.materialPaths.size() - 1;
 			}
@@ -93,7 +93,7 @@ public:
 				if (pFbxRootNode)
 				{
 					std::vector<std::string> materials;
-					auto pSceneGraph = UnpackFbxSceneGraph(log, pFbxRootNode, normalsMode, materialSources);
+					auto pSceneGraph = UnpackFbxSceneGraph(gfx, pFbxRootNode, normalsMode, materialSources);
 					auto pModelAsset = std::make_unique<ModelAsset>(std::move(pSceneGraph), std::move(materialSources.materialPaths));
 
 					return std::move(pModelAsset);
@@ -119,7 +119,7 @@ public:
 
 	// Recursively unpack scene graph and return root node
 	//static std::unique_ptr<SceneGraphNode<MeshAsset>> UnpackFbxSceneGraph(std::unique_ptr<FbxNode> pFbxNode)
-	static std::unique_ptr<SceneGraphNode<MeshAsset>> UnpackFbxSceneGraph(Log& log, FbxNode* pFbxNode, FBXNormalsMode normalsMode, const FBXImporterMaterialSources& materialSources)
+	static std::unique_ptr<SceneGraphNode<MeshAsset>> UnpackFbxSceneGraph(Graphics& gfx, FbxNode* pFbxNode, FBXNormalsMode normalsMode, const FBXImporterMaterialSources& materialSources)
 	{
 		const auto name = pFbxNode->GetName();
 
@@ -148,7 +148,7 @@ public:
 				//auto pFbxMesh = std::make_unique<FbxMesh>((FbxMesh*)pFbxNode->GetNodeAttribute());
 				//pMeshAsset = LoadFbxMesh(std::move(pFbxMesh));
 				FbxMesh* pFbxMesh = (FbxMesh*)pFbxNode->GetNodeAttribute();
-				pMeshAsset = LoadFbxMesh(log, std::string(pFbxNode->GetName()), pFbxMesh, pFbxNode, normalsMode, materialSources);
+				pMeshAsset = LoadFbxMesh(gfx, std::string(pFbxNode->GetName()), pFbxMesh, pFbxNode, normalsMode, materialSources);
 			}
 		}
 
@@ -163,7 +163,7 @@ public:
 			if (pFbxChildNode->GetNodeAttribute())
 			{
 				//pChildNodes.emplace_back(UnpackFbxSceneGraph(std::move(pFbxChildNode)));
-				pChildNodes.emplace_back(UnpackFbxSceneGraph(log, pFbxChildNode, normalsMode, materialSources));
+				pChildNodes.emplace_back(UnpackFbxSceneGraph(gfx, pFbxChildNode, normalsMode, materialSources));
 			}
 		}
 
@@ -172,7 +172,7 @@ public:
 		return std::move(pResult);
 	}
 
-	static std::unique_ptr<MeshAsset> LoadFbxMesh(Log& log, std::string name, FbxMesh* pFbxMesh, FbxNode* pFbxNode, FBXNormalsMode normalsMode, const FBXImporterMaterialSources& materialSources)
+	static std::unique_ptr<MeshAsset> LoadFbxMesh(Graphics& gfx, std::string name, FbxMesh* pFbxMesh, FbxNode* pFbxNode, FBXNormalsMode normalsMode, const FBXImporterMaterialSources& materialSources)
 	{
 		auto pMesh = std::make_unique<MeshAsset>();
 		pMesh->name = name;
@@ -190,14 +190,14 @@ public:
 			else
 			{
 				// Use default as backup
-				log.Error(std::string("Could not find material '") + materialName + std::string("' in mesh '") + pFbxMesh->GetName() + std::string(", resorting to default."));
+				gfx.GetLog()->Error(std::string("Could not find material '") + materialName + std::string("' in mesh '") + pFbxMesh->GetName() + std::string(", resorting to default."));
 				pMesh->materialIndex = 0;
 			}
 		}
 		else
 		{
 			// Use default
-			log.Error(std::string("Mesh '") + pFbxMesh->GetName() + std::string("' has no materials assigned, resorting to default material."));
+			gfx.GetLog()->Error(std::string("Mesh '") + pFbxMesh->GetName() + std::string("' has no materials assigned, resorting to default material."));
 			pMesh->materialIndex = 0;
 		}
 
@@ -206,7 +206,7 @@ public:
 		// To convert to XMFLOAT3, use this:
 		// *reinterpret_cast<dx::XMFLOAT3*>(&pMesh->mNormals[i])
 
-		pMesh->vertices = std::move(GetFbxVertices(log, pFbxMesh));
+		pMesh->vertices = std::move(GetFbxVertices(gfx, pFbxMesh));
 
 		int* pIndices = pFbxMesh->GetPolygonVertices();
 
@@ -219,11 +219,11 @@ public:
 		switch (normalsMode)
 		{
 		case FBXNormalsMode::Import:
-			pMesh->normals = std::move(GetFbxNormals(log, pFbxMesh));
-			pMesh->tangents = std::move(GetFbxTangents(log, pFbxMesh));
+			pMesh->normals = std::move(GetFbxNormals(gfx, pFbxMesh));
+			pMesh->tangents = std::move(GetFbxTangents(gfx, pFbxMesh));
 			break;
 		case FBXNormalsMode::FlatShaded:
-			pMesh->normals = std::move(GetFlatNormals(log, pMesh->vertices, pFbxMesh));
+			pMesh->normals = std::move(GetFlatNormals(gfx, pMesh->vertices, pFbxMesh));
 			// todo: tangents
 			break;
 		}
@@ -239,13 +239,13 @@ public:
 			assert("Tangent count must match vertex count!" && pMesh->tangents.size() == pMesh->vertices.size());
 		}
 
-		pMesh->texcoords = std::move(LoadUVInformation(log, pFbxMesh));
+		pMesh->texcoords = std::move(LoadUVInformation(gfx, pFbxMesh));
 
 		return std::move(pMesh);
 	}
 
 	// From AutoDesk SDK examples
-	static std::vector<std::vector<dx::XMFLOAT2>> LoadUVInformation(Log& log, FbxMesh* pFbxMesh)
+	static std::vector<std::vector<dx::XMFLOAT2>> LoadUVInformation(Graphics& gfx, FbxMesh* pFbxMesh)
 	{
 		std::vector<std::vector<dx::XMFLOAT2>> result;
 
@@ -325,7 +325,7 @@ public:
 		return std::move(result);
 	}
 
-	static std::vector<int> GetFbxIndices(Log& log, FbxMesh* pFbxMesh)
+	static std::vector<int> GetFbxIndices(Graphics& gfx, FbxMesh* pFbxMesh)
 	{
 		std::vector<int> indices;
 		for (int p = 0; p < pFbxMesh->GetPolygonCount(); ++p)
@@ -338,7 +338,7 @@ public:
 		return std::move(indices);
 	}
 
-	static std::vector<dx::XMFLOAT3> GetFbxVertices(Log& log, FbxMesh* pFbxMesh)
+	static std::vector<dx::XMFLOAT3> GetFbxVertices(Graphics& gfx, FbxMesh* pFbxMesh)
 	{
 		std::vector<dx::XMFLOAT3> vertices;
 		FbxVector4* pFbxVertices = pFbxMesh->GetControlPoints();
@@ -386,7 +386,7 @@ public:
 	}
 
 	//get mesh normals info
-	static std::vector<dx::XMFLOAT3> GetFbxNormals(Log& log, FbxMesh* pFbxMesh)
+	static std::vector<dx::XMFLOAT3> GetFbxNormals(Graphics& gfx, FbxMesh* pFbxMesh)
 	{
 		FbxGeometryElementNormal* normalElement = pFbxMesh->GetElementNormal();
 		std::vector<dx::XMFLOAT3> normals(pFbxMesh->GetControlPointsCount(), dx::XMFLOAT3(0, 0, 0));
@@ -466,7 +466,7 @@ public:
 	}
 
 	//get mesh normals info
-	static std::vector<dx::XMFLOAT3> GetFbxTangents(Log& log, FbxMesh* pFbxMesh)
+	static std::vector<dx::XMFLOAT3> GetFbxTangents(Graphics& gfx, FbxMesh* pFbxMesh)
 	{
 		FbxGeometryElementTangent* tangentElement = pFbxMesh->GetElementTangent();
 		std::vector<dx::XMFLOAT3> tangents(pFbxMesh->GetControlPointsCount(), dx::XMFLOAT3(0, 0, 0));
@@ -560,7 +560,7 @@ public:
 	}
 
 	// asserts face-independent vertices w/ normals cleared to zero
-	static std::vector<dx::XMFLOAT3> GetFlatNormals(Log& log, const std::vector<dx::XMFLOAT3>& vertices, const FbxMesh* pMesh)
+	static std::vector<dx::XMFLOAT3> GetFlatNormals(Graphics& gfx, const std::vector<dx::XMFLOAT3>& vertices, const FbxMesh* pMesh)
 	{
 		using namespace DirectX;
 

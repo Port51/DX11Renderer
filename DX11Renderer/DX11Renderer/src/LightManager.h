@@ -1,9 +1,7 @@
 #pragma once
-#include "Common.h"
+#include "CommonHeader.h"
 #include "DXMathInclude.h"
 #include <vector>
-#include <memory>
-#include <wrl.h>
 #include "ShadowPassContext.h"
 #include "LightShadowData.h"
 
@@ -37,8 +35,8 @@ public:
 	void CullLights(Graphics& gfx, const Camera& cam);
 	void BindShadowMaps(Graphics& gfx, UINT startSlot) const;
 	void RenderShadows(ShadowPassContext context);
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> GetLightDataSRV() const;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> GetShadowDataSRV() const;
+	ComPtr<ID3D11ShaderResourceView> GetLightDataSRV() const;
+	ComPtr<ID3D11ShaderResourceView> GetShadowDataSRV() const;
 	void DrawImguiControlWindows();
 private:
 	bool FrustumSphereIntersection(dx::XMVECTOR lightSphere, dx::XMFLOAT4 frustumCorners, float farClipPlane);
@@ -53,5 +51,5 @@ private:
 	std::unique_ptr<StructuredBuffer<LightShadowData>> pLightShadowSB;
 	std::shared_ptr<RendererList> pShadowRendererList;
 	std::vector<LightShadowData> cachedShadowData;
-	std::vector<Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>> pShadowMapSRVs;
+	std::vector<ComPtr<ID3D11ShaderResourceView>> pShadowMapSRVs;
 };

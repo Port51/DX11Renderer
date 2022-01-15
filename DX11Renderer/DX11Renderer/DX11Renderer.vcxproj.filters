@@ -54,9 +54,6 @@
     <Filter Include="Headers\Drawable">
       <UniqueIdentifier>{d2554c7e-94bc-4df3-a883-c163c42eb8c2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Headers\Macros">
-      <UniqueIdentifier>{2695a929-5975-45ed-9f7a-6f2561f07acd}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Headers\Chili">
       <UniqueIdentifier>{0ed1cb02-d74b-4beb-ae43-a69b6b4bac2a}</UniqueIdentifier>
     </Filter>
@@ -150,6 +147,9 @@
     </Filter>
     <Filter Include="Precompiled">
       <UniqueIdentifier>{cd21a933-8e37-4072-9ea8-c90a9ff4c55b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Common">
+      <UniqueIdentifier>{66849626-dd94-4dbe-ab2d-4fd9187e3b4f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -255,9 +255,6 @@
     <ClCompile Include="src\LightManager.cpp">
       <Filter>Source\RenderPipeline</Filter>
     </ClCompile>
-    <ClCompile Include="src\Log.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="src\Main.cpp">
       <Filter>Source</Filter>
     </ClCompile>
@@ -345,6 +342,9 @@
     <ClCompile Include="src\pch.cpp">
       <Filter>Precompiled</Filter>
     </ClCompile>
+    <ClCompile Include="src\Log.cpp">
+      <Filter>Source\Common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -383,9 +383,6 @@
     <ClInclude Include="src\Colors.h">
       <Filter>Headers\VertexData</Filter>
     </ClInclude>
-    <ClInclude Include="src\Common.h">
-      <Filter>Headers\Common</Filter>
-    </ClInclude>
     <ClInclude Include="src\CommonCbuffers.h">
       <Filter>Headers\Bindable\Buffers</Filter>
     </ClInclude>
@@ -394,9 +391,6 @@
     </ClInclude>
     <ClInclude Include="src\ComputeShader.h">
       <Filter>Headers\Bindable\Shaders</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Config.h">
-      <Filter>Headers\Common</Filter>
     </ClInclude>
     <ClInclude Include="src\ConstantBuffer.h">
       <Filter>Headers\Bindable\Buffers</Filter>
@@ -425,20 +419,11 @@
     <ClInclude Include="src\DrawContext.h">
       <Filter>Headers\RenderJobs</Filter>
     </ClInclude>
-    <ClInclude Include="src\DX11Include.h">
-      <Filter>Headers\Common</Filter>
-    </ClInclude>
     <ClInclude Include="src\dxerr.h">
       <Filter>Headers\ChiliErrors</Filter>
     </ClInclude>
     <ClInclude Include="src\DxgiInfoManager.h">
       <Filter>Headers\ChiliErrors</Filter>
-    </ClInclude>
-    <ClInclude Include="src\DXMathInclude.h">
-      <Filter>Headers\Common</Filter>
-    </ClInclude>
-    <ClInclude Include="src\WindowsThrowMacros.h">
-      <Filter>Headers\Macros</Filter>
     </ClInclude>
     <ClInclude Include="src\Sampler.h">
       <Filter>Headers\Bindable</Filter>
@@ -497,9 +482,6 @@
     <ClInclude Include="src\Window.h">
       <Filter>Headers</Filter>
     </ClInclude>
-    <ClInclude Include="src\WindowsInclude.h">
-      <Filter>Headers\Common</Filter>
-    </ClInclude>
     <ClInclude Include="src\RenderTexture.h">
       <Filter>Headers\RenderPipeline</Filter>
     </ClInclude>
@@ -526,9 +508,6 @@
     </ClInclude>
     <ClInclude Include="src\LightShadowData.h">
       <Filter>Headers\Lights</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Log.h">
-      <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="src\Material.h">
       <Filter>Headers\Bindable\Materials</Filter>
@@ -587,9 +566,6 @@
     <ClInclude Include="src\RenderTarget.h">
       <Filter>Headers\RenderPipeline</Filter>
     </ClInclude>
-    <ClInclude Include="src\GraphicsThrowMacros.h">
-      <Filter>Headers\Macros</Filter>
-    </ClInclude>
     <ClInclude Include="src\GDIPlusManager.h">
       <Filter>Headers\Chili</Filter>
     </ClInclude>
@@ -601,9 +577,6 @@
     </ClInclude>
     <ClInclude Include="src\Frustum.h">
       <Filter>Headers\Util</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ImguiInclude.h">
-      <Filter>Headers\Common</Filter>
     </ClInclude>
     <ClInclude Include="src\FBXImporter.h">
       <Filter>Headers\FBXImporter</Filter>
@@ -636,6 +609,33 @@
       <Filter>Vendor\Imgui\Headers</Filter>
     </ClInclude>
     <ClInclude Include="src\pch.h">
+      <Filter>Precompiled</Filter>
+    </ClInclude>
+    <ClInclude Include="src\WindowsInclude.h">
+      <Filter>Precompiled</Filter>
+    </ClInclude>
+    <ClInclude Include="src\DX11Include.h">
+      <Filter>Precompiled</Filter>
+    </ClInclude>
+    <ClInclude Include="src\DXMathInclude.h">
+      <Filter>Precompiled</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ImguiInclude.h">
+      <Filter>Precompiled</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Config.h">
+      <Filter>Headers\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CommonHeader.h">
+      <Filter>Headers\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Log.h">
+      <Filter>Headers\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GraphicsThrowMacros.h">
+      <Filter>Precompiled</Filter>
+    </ClInclude>
+    <ClInclude Include="src\WindowsThrowMacros.h">
       <Filter>Precompiled</Filter>
     </ClInclude>
   </ItemGroup>

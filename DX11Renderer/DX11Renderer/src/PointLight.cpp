@@ -1,7 +1,5 @@
 #include "pch.h"
 #include "PointLight.h"
-#include "ImguiInclude.h"
-#include "DX11Include.h"
 #include "MeshRenderer.h"
 #include "ModelInstance.h"
 #include "LightData.h"
@@ -79,7 +77,7 @@ UINT PointLight::GetLightType() const
 void PointLight::RenderShadow(ShadowPassContext context)
 {}
 
-void PointLight::AppendShadowData(UINT shadowStartSlot, std::vector<LightShadowData>& shadowData, std::vector<Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>>& srvs) const
+void PointLight::AppendShadowData(UINT shadowStartSlot, std::vector<LightShadowData>& shadowData, std::vector<ComPtr<ID3D11ShaderResourceView>>& srvs) const
 {}
 
 UINT PointLight::GetShadowSRVCount() const

@@ -1,17 +1,14 @@
 #include "pch.h"
 #include "App.h"
-#include <memory>
 #include "Surface.h"
 #include "MeshRenderer.h"
 #include "RendererList.h"
 #include "ModelInstance.h"
 #include "GDIPlusManager.h"
-#include "ImguiInclude.h"
 #include "FBXImporter.h"
 #include "SharedCodex.h"
 #include "VertexShader.h"
 #include "Sampler.h"
-#include "DX11Include.h"
 #include "LightManager.h"
 #include "Renderer.h"
 
@@ -61,14 +58,14 @@ App::App(int screenWidth, int screenHeight)
 		break;
 	}
 	
-	auto pModelAsset = FBXImporter::LoadFBX(wnd.Gfx().GetLog(), fn.c_str(), FBXImporter::FBXNormalsMode::Import, false);
+	auto pModelAsset = FBXImporter::LoadFBX(wnd.Gfx(), fn.c_str(), FBXImporter::FBXNormalsMode::Import, false);
 	if (pModelAsset)
 	{
-		wnd.Gfx().GetLog().Info("Model loaded");
+		wnd.Gfx().GetLog()->Info("Model loaded");
 	}
 	else
 	{
-		wnd.Gfx().GetLog().Error("Failed to load model");
+		wnd.Gfx().GetLog()->Error("Failed to load model");
 	}
 
 	pModel0 = std::make_unique<ModelInstance>(wnd.Gfx(), pModelAsset, modelTransform);
@@ -156,7 +153,7 @@ void App::DoFrame()
 		// imgui windows
 		cam.DrawImguiControlWindow();
 		pLightManager->DrawImguiControlWindows();
-		wnd.Gfx().GetLog().DrawImguiControlWindow();
+		wnd.Gfx().GetLog()->DrawImguiControlWindow();
 	}
 
 	wnd.Gfx().EndFrame();

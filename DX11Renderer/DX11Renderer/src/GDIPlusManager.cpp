@@ -22,7 +22,6 @@
 #include "pch.h"
 #include "WindowsInclude.h"
 #include "GDIPlusManager.h"
-#include <algorithm>
 namespace Gdiplus
 {
 	using std::min;

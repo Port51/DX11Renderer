@@ -21,7 +21,7 @@ public:
 	LightData GetLightData(dx::XMMATRIX viewMatrix) const override;
 	UINT GetLightType() const override;
 	void RenderShadow(ShadowPassContext context) override;
-	void AppendShadowData(UINT shadowStartSlot, std::vector<LightShadowData>& shadowData, std::vector<Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>>& srvs) const override;
+	void AppendShadowData(UINT shadowStartSlot, std::vector<LightShadowData>& shadowData, std::vector<ComPtr<ID3D11ShaderResourceView>>& srvs) const override;
 	UINT GetShadowSRVCount() const override;
 private:
 	dx::XMVECTOR GetDirectionWS() const;

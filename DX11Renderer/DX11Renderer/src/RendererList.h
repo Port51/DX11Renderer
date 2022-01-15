@@ -1,7 +1,6 @@
 #pragma once
+#include "CommonHeader.h"
 #include <vector>
-#include <memory>
-#include <wrl.h>
 
 class Renderer;
 class MeshRenderer;

@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "DepthStencilTarget.h"
-#include "GraphicsThrowMacros.h"
 
 DepthStencilTarget::DepthStencilTarget(Graphics& gfx, int width, int height)
 {
@@ -49,12 +48,12 @@ void DepthStencilTarget::Clear(Graphics& gfx)
 	gfx.GetContext()->ClearDepthStencilView(pDepthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.f, 0u);
 }
 
-Microsoft::WRL::ComPtr<ID3D11DepthStencilView> DepthStencilTarget::GetView() const
+ComPtr<ID3D11DepthStencilView> DepthStencilTarget::GetView() const
 {
 	return pDepthStencilView;
 }
 
-Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> DepthStencilTarget::GetSRV() const
+ComPtr<ID3D11ShaderResourceView> DepthStencilTarget::GetSRV() const
 {
 	return pShaderResourceView;
 }

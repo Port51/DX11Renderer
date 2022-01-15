@@ -1,13 +1,12 @@
 #pragma once
 
+#include "CommonHeader.h"
 #include "WindowsInclude.h"
 #include "CustomException.h"
 #include "Keyboard.h"
 #include "Mouse.h"
 #include "Graphics.h"
 #include <optional>
-#include <memory>
-#include "WindowsThrowMacros.h"
 
 class Window
 {

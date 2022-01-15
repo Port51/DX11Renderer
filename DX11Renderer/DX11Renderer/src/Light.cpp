@@ -11,7 +11,7 @@ Light::Light(Graphics & gfx, UINT index, dx::XMFLOAT3 positionWS, dx::XMFLOAT3 c
 	color(color),
 	intensity(intensity)
 {
-	auto pModelAsset = FBXImporter::LoadFBX(gfx.GetLog(), "Assets\\Models\\DefaultSphere.asset", FBXImporter::FBXNormalsMode::Import, false);
+	auto pModelAsset = FBXImporter::LoadFBX(gfx, "Assets\\Models\\DefaultSphere.asset", FBXImporter::FBXNormalsMode::Import, false);
 	pModel = std::make_unique<ModelInstance>(gfx, pModelAsset, dx::XMMatrixIdentity());
 }
 

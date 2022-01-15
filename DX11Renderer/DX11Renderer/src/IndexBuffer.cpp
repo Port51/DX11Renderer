@@ -1,8 +1,6 @@
 #include "pch.h"
 #include "IndexBuffer.h"
-#include "GraphicsThrowMacros.h"
 #include "SharedCodex.h"
-#include "DX11Include.h"
 
 IndexBuffer::IndexBuffer(Graphics& gfx, const std::vector<unsigned short>& indices)
 	: count((UINT)indices.size())

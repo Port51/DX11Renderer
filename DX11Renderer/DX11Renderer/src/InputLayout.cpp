@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "InputLayout.h"
-#include "GraphicsThrowMacros.h"
 #include "SharedCodex.h"
 #include "VertexLayout.h"
 

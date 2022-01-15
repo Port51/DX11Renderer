@@ -3,7 +3,6 @@
 #include <type_traits>
 #include "Graphics.h"
 #include "Colors.h"
-#include "GraphicsThrowMacros.h"
 
 ///
 /// Descriptor class for layout required by a vertex shader

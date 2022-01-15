@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "VertexShader.h"
-#include "GraphicsThrowMacros.h"
 #include "SharedCodex.h"
 #include <typeinfo>
 #include <string>

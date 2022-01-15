@@ -1,6 +1,6 @@
 #pragma once
 #include "WindowsInclude.h"
-#include "Common.h"
+#include "CommonHeader.h"
 #include <vector>
 #include <string>
 #include <dxgidebug.h>
@@ -16,5 +16,5 @@ public:
 	std::vector<std::string> GetMessages() const;
 private:
 	unsigned long long next = 0u;
-	Microsoft::WRL::ComPtr<IDXGIInfoQueue> pDxgiInfoQueue;
+	ComPtr<IDXGIInfoQueue> pDxgiInfoQueue;
 };

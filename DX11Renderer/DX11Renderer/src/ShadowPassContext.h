@@ -1,5 +1,5 @@
 #pragma once
-#include <memory>
+#include "CommonHeader.h"
 #include "DX11Include.h"
 #include "Camera.h"
 

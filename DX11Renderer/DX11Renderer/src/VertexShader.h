@@ -1,9 +1,7 @@
 #pragma once
 #include "Bindable.h"
-#include "Common.h"
+#include "CommonHeader.h"
 #include <string>
-#include <memory>
-#include <wrl.h>
 #include "DX11Include.h"
 
 class Graphics;
@@ -19,6 +17,6 @@ public:
 	static std::string GenerateUID(const std::string& path);
 protected:
 	std::string path;
-	Microsoft::WRL::ComPtr<ID3DBlob> pBytecodeBlob;
-	Microsoft::WRL::ComPtr<ID3D11VertexShader> pVertexShader;
+	ComPtr<ID3DBlob> pBytecodeBlob;
+	ComPtr<ID3D11VertexShader> pVertexShader;
 };

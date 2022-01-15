@@ -1,7 +1,5 @@
 #include "pch.h"
 #include "Spotlight.h"
-#include "ImguiInclude.h"
-#include "DX11Include.h"
 #include "MeshRenderer.h"
 #include "ModelInstance.h"
 #include "LightData.h"
@@ -126,7 +124,7 @@ void Spotlight::RenderShadow(ShadowPassContext context)
 	
 }
 
-void Spotlight::AppendShadowData(UINT shadowStartSlot, std::vector<LightShadowData>& shadowData, std::vector<Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>>& srvs) const
+void Spotlight::AppendShadowData(UINT shadowStartSlot, std::vector<LightShadowData>& shadowData, std::vector<ComPtr<ID3D11ShaderResourceView>>& srvs) const
 {
 	shadowData[shadowStartSlot] = lightShadowData;
 	srvs[shadowStartSlot] = pShadowMap->GetSRV();

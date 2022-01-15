@@ -1,6 +1,6 @@
 #pragma once
+#include "CommonHeader.h"
 #include <vector>
-#include <memory>
 #include <string>
 #include "Bindable.h"
 #include "Binding.h"

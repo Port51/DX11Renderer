@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "RasterizerState.h"
-#include "GraphicsThrowMacros.h"
 #include "SharedCodex.h"
 
 namespace Bind

@@ -1,7 +1,6 @@
 #pragma once
 #include "Bindable.h"
-#include <wrl.h>
-#include <memory>
+#include "CommonHeader.h"
 #include <string>
 
 class Graphics;

@@ -1,10 +1,9 @@
 #pragma once
 #include "Bindable.h"
+#include "CommonHeader.h"
 #include "VertexLayout.h"
 #include "DX11Include.h"
-#include <wrl.h>
 #include <string>
-#include <memory>
 
 class Graphics;
 struct ID3D11InputLayout;
@@ -20,5 +19,5 @@ public:
 protected:
 	std::string vertexShaderName;
 	VertexLayout layout;
-	Microsoft::WRL::ComPtr<ID3D11InputLayout> pInputLayout;
+	ComPtr<ID3D11InputLayout> pInputLayout;
 };

@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "Log.h"
-#include "ImguiInclude.h"
 
 Log::Log()
 {

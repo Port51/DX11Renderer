@@ -1,6 +1,6 @@
 #pragma once
 #include "Bindable.h"
-#include "Common.h"
+#include "CommonHeader.h"
 #include <wrl.h>
 #include <string>
 #include "DX11Include.h"
@@ -21,8 +21,8 @@ public:
 	void BindCS(Graphics& gfx, UINT slot) override;
 	void BindVS(Graphics& gfx, UINT slot) override;
 	void BindPS(Graphics& gfx, UINT slot) override;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> GetSRV() const;
-	Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView> GetUAV() const;
+	ComPtr<ID3D11ShaderResourceView> GetSRV() const;
+	ComPtr<ID3D11UnorderedAccessView> GetUAV() const;
 public:
 	static std::shared_ptr<Bindable> Resolve(Graphics& gfx, const std::string& path);
 protected:
@@ -30,7 +30,7 @@ protected:
 protected:
 	std::string path;
 	UINT slot;
-	Microsoft::WRL::ComPtr<ID3D11Texture2D> pTexture;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pShaderResourceView;
-	Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView> pUAV;
+	ComPtr<ID3D11Texture2D> pTexture;
+	ComPtr<ID3D11ShaderResourceView> pShaderResourceView;
+	ComPtr<ID3D11UnorderedAccessView> pUAV;
 };

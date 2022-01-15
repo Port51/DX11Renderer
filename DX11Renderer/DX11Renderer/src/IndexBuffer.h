@@ -1,6 +1,6 @@
 #pragma once
 #include "Bindable.h"
-#include "Common.h"
+#include "CommonHeader.h"
 #include <string>
 #include <vector>
 #include <wrl.h>
@@ -22,5 +22,5 @@ private:
 	static std::string GenerateUID(const std::string& tag);
 protected:
 	UINT count;
-	Microsoft::WRL::ComPtr<ID3D11Buffer> pIndexBuffer;
+	ComPtr<ID3D11Buffer> pIndexBuffer;
 };

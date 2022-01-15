@@ -116,45 +116,45 @@ void RenderPass::Reset()
 	jobs.clear();
 }
 
-RenderPass & RenderPass::CSSetCB(UINT slot, Microsoft::WRL::ComPtr<ID3D11Buffer> pResource)
+RenderPass & RenderPass::CSSetCB(UINT slot, ComPtr<ID3D11Buffer> pResource)
 {
-	pCS_CB_Binds.emplace_back(std::pair<UINT, Microsoft::WRL::ComPtr<ID3D11Buffer>>(slot, pResource));
+	pCS_CB_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11Buffer>>(slot, pResource));
 	return *this;
 }
 
-RenderPass & RenderPass::CSSetSRV(UINT slot, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pResource)
+RenderPass & RenderPass::CSSetSRV(UINT slot, ComPtr<ID3D11ShaderResourceView> pResource)
 {
-	pCS_SRV_Binds.emplace_back(std::pair<UINT, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>>(slot, pResource));
+	pCS_SRV_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11ShaderResourceView>>(slot, pResource));
 	return *this;
 }
 
-RenderPass & RenderPass::CSSetUAV(UINT slot, Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView> pResource)
+RenderPass & RenderPass::CSSetUAV(UINT slot, ComPtr<ID3D11UnorderedAccessView> pResource)
 {
-	pCS_UAV_Binds.emplace_back(std::pair<UINT, Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView>>(slot, pResource));
+	pCS_UAV_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11UnorderedAccessView>>(slot, pResource));
 	return *this;
 }
 
-RenderPass & RenderPass::VSSetCB(UINT slot, Microsoft::WRL::ComPtr<ID3D11Buffer> pResource)
+RenderPass & RenderPass::VSSetCB(UINT slot, ComPtr<ID3D11Buffer> pResource)
 {
-	pVS_CB_Binds.emplace_back(std::pair<UINT, Microsoft::WRL::ComPtr<ID3D11Buffer>>(slot, pResource));
+	pVS_CB_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11Buffer>>(slot, pResource));
 	return *this;
 }
 
-RenderPass & RenderPass::VSSetSRV(UINT slot, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pResource)
+RenderPass & RenderPass::VSSetSRV(UINT slot, ComPtr<ID3D11ShaderResourceView> pResource)
 {
-	pVS_SRV_Binds.emplace_back(std::pair<UINT, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>>(slot, pResource));
+	pVS_SRV_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11ShaderResourceView>>(slot, pResource));
 	return *this;
 }
 
-RenderPass & RenderPass::PSSetCB(UINT slot, Microsoft::WRL::ComPtr<ID3D11Buffer> pResource)
+RenderPass & RenderPass::PSSetCB(UINT slot, ComPtr<ID3D11Buffer> pResource)
 {
-	pPS_CB_Binds.emplace_back(std::pair<UINT, Microsoft::WRL::ComPtr<ID3D11Buffer>>(slot, pResource));
+	pPS_CB_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11Buffer>>(slot, pResource));
 	return *this;
 }
 
-RenderPass & RenderPass::PSSetSRV(UINT slot, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pResource)
+RenderPass & RenderPass::PSSetSRV(UINT slot, ComPtr<ID3D11ShaderResourceView> pResource)
 {
-	pPS_SRV_Binds.emplace_back(std::pair<UINT, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>>(slot, pResource));
+	pPS_SRV_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11ShaderResourceView>>(slot, pResource));
 	return *this;
 }
 

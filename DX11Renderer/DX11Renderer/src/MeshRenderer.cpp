@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "MeshRenderer.h"
 #include "BindableInclude.h"
-#include "GraphicsThrowMacros.h"
 #include <exception>
 #include <assert.h>
 #include "DepthStencilState.h"
@@ -16,7 +15,7 @@ MeshRenderer::MeshRenderer(Graphics& gfx, std::string name, std::shared_ptr<Mate
 	pMaterial(pMaterial)
 {
 	assert("Material cannot be null" && pMaterial);
-	gfx.GetLog().Info("Create MeshRenderer " + name);
+	gfx.GetLog()->Info("Create MeshRenderer " + name);
 
 	pTransformCbuf = std::make_shared<TransformCbuf>(gfx);
 }

@@ -1,5 +1,5 @@
 #pragma once
-#include "Common.h"
+#include "CommonHeader.h"
 #include "Graphics.h"
 #include "DrawCall.h"
 #include <vector>
@@ -24,13 +24,13 @@ public:
 	virtual void Execute(Graphics& gfx) const;
 	void Reset();
 public:
-	RenderPass& CSSetCB(UINT slot, Microsoft::WRL::ComPtr<ID3D11Buffer> pResource);
-	RenderPass& CSSetSRV(UINT slot, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pResource);
-	RenderPass& CSSetUAV(UINT slot, Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView> pResource);
-	RenderPass& VSSetCB(UINT slot, Microsoft::WRL::ComPtr<ID3D11Buffer> pResource);
-	RenderPass& VSSetSRV(UINT slot, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pResource);
-	RenderPass& PSSetCB(UINT slot, Microsoft::WRL::ComPtr<ID3D11Buffer> pResource);
-	RenderPass& PSSetSRV(UINT slot, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> pResource);
+	RenderPass& CSSetCB(UINT slot, ComPtr<ID3D11Buffer> pResource);
+	RenderPass& CSSetSRV(UINT slot, ComPtr<ID3D11ShaderResourceView> pResource);
+	RenderPass& CSSetUAV(UINT slot, ComPtr<ID3D11UnorderedAccessView> pResource);
+	RenderPass& VSSetCB(UINT slot, ComPtr<ID3D11Buffer> pResource);
+	RenderPass& VSSetSRV(UINT slot, ComPtr<ID3D11ShaderResourceView> pResource);
+	RenderPass& PSSetCB(UINT slot, ComPtr<ID3D11Buffer> pResource);
+	RenderPass& PSSetSRV(UINT slot, ComPtr<ID3D11ShaderResourceView> pResource);
 	Binding& AddBinding(std::shared_ptr<Bindable> pBindable);
 	Binding& AddBinding(Binding pBinding);
 protected:
@@ -40,13 +40,13 @@ private:
 	std::vector<DrawCall> jobs; // will be replaced by render graph
 
 	// Binds shared by everything in this render pass
-	std::vector<std::pair<UINT, Microsoft::WRL::ComPtr<ID3D11Buffer>>> pCS_CB_Binds;
-	std::vector<std::pair<UINT, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>>> pCS_SRV_Binds;
-	std::vector<std::pair<UINT, Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView>>> pCS_UAV_Binds;
-	std::vector<std::pair<UINT, Microsoft::WRL::ComPtr<ID3D11Buffer>>> pVS_CB_Binds;
-	std::vector<std::pair<UINT, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>>> pVS_SRV_Binds;
-	std::vector<std::pair<UINT, Microsoft::WRL::ComPtr<ID3D11Buffer>>> pPS_CB_Binds;
-	std::vector<std::pair<UINT, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>>> pPS_SRV_Binds;
+	std::vector<std::pair<UINT, ComPtr<ID3D11Buffer>>> pCS_CB_Binds;
+	std::vector<std::pair<UINT, ComPtr<ID3D11ShaderResourceView>>> pCS_SRV_Binds;
+	std::vector<std::pair<UINT, ComPtr<ID3D11UnorderedAccessView>>> pCS_UAV_Binds;
+	std::vector<std::pair<UINT, ComPtr<ID3D11Buffer>>> pVS_CB_Binds;
+	std::vector<std::pair<UINT, ComPtr<ID3D11ShaderResourceView>>> pVS_SRV_Binds;
+	std::vector<std::pair<UINT, ComPtr<ID3D11Buffer>>> pPS_CB_Binds;
+	std::vector<std::pair<UINT, ComPtr<ID3D11ShaderResourceView>>> pPS_SRV_Binds;
 
 	static std::vector<ID3D11Buffer*> pNullBuffers;
 	static std::vector<ID3D11ShaderResourceView*> pNullSRVs;

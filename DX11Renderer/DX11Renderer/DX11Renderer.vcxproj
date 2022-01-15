@@ -272,7 +272,7 @@
     <ClInclude Include="src\BaseBufferData.h" />
     <ClInclude Include="src\BaseMesh.h" />
     <ClInclude Include="src\CodexElement.h" />
-    <ClInclude Include="src\Common.h" />
+    <ClInclude Include="src\CommonHeader.h" />
     <ClInclude Include="src\CommonCbuffers.h" />
     <ClInclude Include="src\ComputeKernel.h" />
     <ClInclude Include="src\ComputeShader.h" />

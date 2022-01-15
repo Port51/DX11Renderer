@@ -10,5 +10,5 @@ public:
 	void BindAsDepthStencil(Graphics& gfx) const;
 	void Clear(Graphics& gfx) const;
 private:
-	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> pDepthStencilView;
+	ComPtr<ID3D11DepthStencilView> pDepthStencilView;
 };

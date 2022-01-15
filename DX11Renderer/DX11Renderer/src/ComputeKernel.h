@@ -1,6 +1,5 @@
 #pragma once
-#include "Common.h"
-#include <memory>
+#include "CommonHeader.h"
 #include "DX11Include.h"
 
 class Graphics;

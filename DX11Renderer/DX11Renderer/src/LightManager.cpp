@@ -134,12 +134,12 @@ void LightManager::RenderShadows(ShadowPassContext context)
 	pLightShadowSB->Update(context.gfx, cachedShadowData, cachedShadowData.size());
 }
 
-Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> LightManager::GetLightDataSRV() const
+ComPtr<ID3D11ShaderResourceView> LightManager::GetLightDataSRV() const
 {
 	return pLightData->GetD3DSRV();
 }
 
-Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> LightManager::GetShadowDataSRV() const
+ComPtr<ID3D11ShaderResourceView> LightManager::GetShadowDataSRV() const
 {
 	return pLightShadowSB->GetD3DSRV();
 }

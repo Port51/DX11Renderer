@@ -1,8 +1,8 @@
 #pragma once
 #include "Material.h"
+#include "CommonHeader.h"
 #include "DX11Include.h"
 #include <string>
-#include <memory>
 
 class Graphics;
 class VertexBufferWrapper;

@@ -1,5 +1,4 @@
 #include "pch.h"
-#include "ImguiInclude.h"
 #include "ImguiManager.h"
 
 ImguiManager::ImguiManager()
