@@ -3,37 +3,11 @@
 #include "CommonHeader.h"
 #include "WindowsInclude.h"
 #include "CustomException.h"
-#include "Mouse.h"
 #include "Graphics.h"
 #include <optional>
 
 class Window
 {
-public:
-	class Exception : public CustomException
-	{
-		using CustomException::CustomException;
-	public:
-		static std::string TranslateErrorCode(HRESULT hr);
-	};
-	class HresultException : public Exception
-	{
-	public:
-		HresultException(int line, const char* file, HRESULT hr);
-		const char* what() const override;
-		const char* GetType() const override;
-		HRESULT GetErrorCode() const;
-		std::string GetErrorDescription() const;
-	private:
-		HRESULT hr;
-	};
-	class NoGfxException : public Exception
-	{
-	public:
-		using Exception::Exception;
-		const char* GetType() const override;
-	};
-
 private:
 	// singleton manages registration/cleanup of window class
 	class WindowClass

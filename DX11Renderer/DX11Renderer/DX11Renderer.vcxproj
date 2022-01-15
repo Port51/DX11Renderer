@@ -191,14 +191,12 @@
     <ClCompile Include="src\pch.cpp" />
     <ClCompile Include="src\RenderConstants.cpp" />
     <ClCompile Include="src\DrawCall.cpp" />
-    <ClCompile Include="src\Keyboard.cpp" />
     <ClCompile Include="src\Log.cpp" />
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\Material.cpp" />
     <ClCompile Include="src\MaterialPass.cpp" />
     <ClCompile Include="src\MeshRenderer.cpp" />
     <ClCompile Include="src\ModelInstance.cpp" />
-    <ClCompile Include="src\Mouse.cpp" />
     <ClCompile Include="src\NullPixelShader.cpp" />
     <ClCompile Include="src\PixelShader.cpp" />
     <ClCompile Include="src\PointLight.cpp" />
@@ -314,7 +312,6 @@
     <ClInclude Include="src\IndexBuffer.h" />
     <ClInclude Include="src\InputLayout.h" />
     <ClInclude Include="src\DrawCall.h" />
-    <ClInclude Include="src\Keyboard.h" />
     <ClInclude Include="src\Log.h" />
     <ClInclude Include="src\Material.h" />
     <ClInclude Include="src\MaterialPass.h" />
@@ -322,7 +319,6 @@
     <ClInclude Include="src\MeshAsset.h" />
     <ClInclude Include="src\ModelAsset.h" />
     <ClInclude Include="src\ModelInstance.h" />
-    <ClInclude Include="src\Mouse.h" />
     <ClInclude Include="src\NullPixelShader.h" />
     <ClInclude Include="src\RasterizerState.h" />
     <ClInclude Include="src\RenderTexture.h" />
@@ -358,7 +354,6 @@
     <ClInclude Include="src\VertexShader.h" />
     <ClInclude Include="src\Window.h" />
     <ClInclude Include="src\WindowsInclude.h" />
-    <ClInclude Include="src\WindowsThrowMacros.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DX11Renderer.rc" />

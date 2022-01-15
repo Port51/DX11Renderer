@@ -3,68 +3,6 @@
 #include <sstream>
 #include "./../resource.h"
 
-// Window Exception Stuff
-std::string Window::Exception::TranslateErrorCode(HRESULT hr)
-{
-	char* pMsgBuf = nullptr;
-	// FORMAT_MESSAGE_ALLOCATE_BUFFER --> Windows will allocate memory for err string and make our pointer point to it
-	DWORD nMsgLen = FormatMessage(
-		FORMAT_MESSAGE_ALLOCATE_BUFFER |
-		FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-		nullptr, hr, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-		reinterpret_cast<LPSTR>(&pMsgBuf), 0, nullptr
-	);
-	// 0 string length returned indicates a failure
-	if (nMsgLen == 0)
-	{
-		return "Unidentified error code";
-	}
-	// copy error string from windows-allocated buffer to std::string
-	std::string errorString = pMsgBuf;
-	// free windows buffer
-	LocalFree(pMsgBuf);
-	return errorString;
-}
-
-Window::HresultException::HresultException(int line, const char * file, HRESULT hr)
-	:
-	Exception(line, file),
-	hr(hr)
-{}
-
-const char* Window::HresultException::what() const
-{
-	std::ostringstream oss;
-	oss << GetType() << std::endl
-		<< "[Error Code] 0x" << std::hex << std::uppercase << GetErrorCode()
-		<< std::dec << " (" << (unsigned long)GetErrorCode() << ")" << std::endl
-		<< "[Description] " << GetErrorDescription() << std::endl
-		<< GetOriginString();
-	whatBuffer = oss.str();
-	return whatBuffer.c_str();
-}
-
-const char* Window::HresultException::GetType() const
-{
-	return "Chili Window Exception";
-}
-
-HRESULT Window::HresultException::GetErrorCode() const
-{
-	return hr;
-}
-
-std::string Window::HresultException::GetErrorDescription() const
-{
-	return Exception::TranslateErrorCode(hr);
-}
-
-
-const char* Window::NoGfxException::GetType() const
-{
-	return "Chili Window Exception [No Graphics]";
-}
-
 // Window Class Stuff
 Window::WindowClass Window::WindowClass::wndClass;
 
@@ -121,12 +59,8 @@ Window::Window(int width, int height, const char* name)
 	// Get larger size so interior region is requested size
 	if (!AdjustWindowRect(&wr, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, FALSE))
 	{
-		throw CWND_LAST_EXCEPT();
+		throw std::runtime_error("Failed to adjust window rect");
 	}
-
-	//throw CWND_EXCEPT( ERROR_ARENA_TRASHED );
-	//throw std::runtime_error("Error description");
-	//throw 5;
 
 	// Create window & get hWnd
 	hWnd = CreateWindow(
@@ -137,7 +71,7 @@ Window::Window(int width, int height, const char* name)
 	);
 	if (hWnd == nullptr)
 	{
-		throw CWND_LAST_EXCEPT();
+		throw std::runtime_error("Failed to create window");
 	}
 
 	// Show window
@@ -179,16 +113,12 @@ void Window::SetTitle(const std::string & title)
 {
 	if (SetWindowText(hWnd, title.c_str()) == 0)
 	{
-		throw CWND_LAST_EXCEPT();
+		throw std::runtime_error("Failed to set window title");
 	}
 }
 
 Graphics& Window::Gfx()
 {
-	if (!pGfx)
-	{
-		throw CWND_NOGFX_EXCEPT();
-	}
 	return *pGfx;
 }
 

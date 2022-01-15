@@ -231,9 +231,6 @@
     <ClCompile Include="src\InstancedMeshRenderer.cpp">
       <Filter>Source\Drawable</Filter>
     </ClCompile>
-    <ClCompile Include="src\Keyboard.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="src\Light.cpp">
       <Filter>Source\Lights</Filter>
     </ClCompile>
@@ -257,9 +254,6 @@
     </ClCompile>
     <ClCompile Include="src\ModelNode.cpp">
       <Filter>Source\Drawable</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Mouse.cpp">
-      <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="src\NullPixelShader.cpp">
       <Filter>Source\Bindable\Shaders</Filter>
@@ -470,9 +464,6 @@
     <ClInclude Include="src\InstancedMeshRenderer.h">
       <Filter>Headers\Drawable</Filter>
     </ClInclude>
-    <ClInclude Include="src\Keyboard.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
     <ClInclude Include="src\Light.h">
       <Filter>Headers\Lights</Filter>
     </ClInclude>
@@ -505,9 +496,6 @@
     </ClInclude>
     <ClInclude Include="src\ModelNode.h">
       <Filter>Headers\Drawable</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Mouse.h">
-      <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="src\NullPixelShader.h">
       <Filter>Headers\Bindable\Shaders</Filter>
@@ -607,9 +595,6 @@
     </ClInclude>
     <ClInclude Include="src\Log.h">
       <Filter>Headers\Common</Filter>
-    </ClInclude>
-    <ClInclude Include="src\WindowsThrowMacros.h">
-      <Filter>Precompiled</Filter>
     </ClInclude>
     <ClInclude Include="src\ExceptionHandling.h">
       <Filter>Precompiled</Filter>

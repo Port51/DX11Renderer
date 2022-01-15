@@ -19,7 +19,9 @@
 #include <wrl.h>
 
 #include "Log.h"
-#include "WindowsThrowMacros.h"
+
+// Exceptions
+#include <stdexcept> // for std::runtime_error
 #include "ExceptionHandling.h"
 
 #define SAFE_RELEASE(p) if (p) (p)->Release()
