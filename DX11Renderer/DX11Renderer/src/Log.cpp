@@ -1,5 +1,5 @@
 #include "Log.h"
-#include "imgui/imgui.h"
+#include "ImguiInclude.h"
 
 Log::Log()
 {

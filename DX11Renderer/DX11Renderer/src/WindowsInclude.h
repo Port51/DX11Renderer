@@ -1,7 +1,10 @@
 #pragma once
 
 // target Windows 7 or later
+#ifndef _WIN32_WINNT
 #define _WIN32_WINNT 0x0601
+#endif
+
 #include <sdkddkver.h>
 // The following #defines disable a bunch of unused windows stuff. If you 
 // get weird errors when trying to do some windows stuff, try removing some
@@ -42,7 +45,11 @@
 	#define NOTAPE
 #endif
 
+#ifndef STRICT
 #define STRICT
+#endif
+#ifndef NOMINMAX
 #define NOMINMAX
+#endif
 
 #include <Windows.h>

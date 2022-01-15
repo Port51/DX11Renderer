@@ -1,7 +1,7 @@
 #include "Window.h"
 #include <sstream>
-#include "resource.h"
-#include "Imgui/imgui_impl_win32.h"
+#include "ImguiInclude.h"
+#include "./../resource.h"
 
 // Window Exception Stuff
 std::string Window::Exception::TranslateErrorCode(HRESULT hr)
@@ -242,6 +242,7 @@ LRESULT WINAPI Window::HandleMsgAdapter(HWND hWnd, UINT msg, WPARAM wParam, LPAR
 // Handle Windows messages
 LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
+	// Imgui
 	if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam))
 	{
 		return true;

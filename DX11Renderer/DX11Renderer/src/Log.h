@@ -1,7 +1,6 @@
 #pragma once
 #include <string>
 #include <vector>
-#include "imgui/imgui.h"
 
 class Log
 {

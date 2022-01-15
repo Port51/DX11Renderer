@@ -5,7 +5,7 @@
 #include "RendererList.h"
 #include "ModelInstance.h"
 #include "GDIPlusManager.h"
-#include "Imgui/imgui.h"
+#include "ImguiInclude.h"
 #include "FBXImporter.h"
 #include "SharedCodex.h"
 #include "VertexShader.h"

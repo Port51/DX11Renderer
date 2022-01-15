@@ -147,481 +147,484 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Main.cpp">
+    <ClCompile Include="src\App.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Window.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CustomException.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Keyboard.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Mouse.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="App.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Timer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="dxerr.cpp">
-      <Filter>Source Files\ChiliErrors</Filter>
-    </ClCompile>
-    <ClCompile Include="DxgiInfoManager.cpp">
-      <Filter>Source Files\ChiliErrors</Filter>
-    </ClCompile>
-    <ClCompile Include="IndexBuffer.cpp">
+    <ClCompile Include="src\Bindable.cpp">
       <Filter>Source Files\Bindable</Filter>
     </ClCompile>
-    <ClCompile Include="InputLayout.cpp">
+    <ClCompile Include="src\Binding.cpp">
       <Filter>Source Files\Bindable</Filter>
     </ClCompile>
-    <ClCompile Include="Topology.cpp">
-      <Filter>Source Files\Bindable</Filter>
-    </ClCompile>
-    <ClCompile Include="TransformCbuf.cpp">
-      <Filter>Source Files\Bindable</Filter>
-    </ClCompile>
-    <ClCompile Include="ChiliUtil.cpp">
+    <ClCompile Include="src\Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Surface.cpp">
-      <Filter>Source Files\Chili</Filter>
-    </ClCompile>
-    <ClCompile Include="GDIPlusManager.cpp">
-      <Filter>Source Files\Chili</Filter>
-    </ClCompile>
-    <ClCompile Include="Texture.cpp">
-      <Filter>Source Files\Bindable</Filter>
-    </ClCompile>
-    <ClCompile Include="Sampler.cpp">
-      <Filter>Source Files\Bindable</Filter>
-    </ClCompile>
-    <ClCompile Include="Imgui\imgui.cpp">
-      <Filter>Imgui\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Imgui\imgui_demo.cpp">
-      <Filter>Imgui\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Imgui\imgui_draw.cpp">
-      <Filter>Imgui\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Imgui\imgui_tables.cpp">
-      <Filter>Imgui\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Imgui\imgui_widgets.cpp">
-      <Filter>Imgui\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Imgui\imgui_impl_dx11.cpp">
-      <Filter>Imgui\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="Imgui\imgui_impl_win32.cpp">
-      <Filter>Imgui\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="ImguiManager.cpp">
+    <ClCompile Include="src\ChiliUtil.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Camera.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="PointLight.cpp">
-      <Filter>Source Files\Lights</Filter>
-    </ClCompile>
-    <ClCompile Include="Vertex.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ModelInstance.cpp">
-      <Filter>Source Files\Drawable</Filter>
-    </ClCompile>
-    <ClCompile Include="Log.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MeshRenderer.cpp">
-      <Filter>Source Files\Drawable</Filter>
-    </ClCompile>
-    <ClCompile Include="RenderTarget.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DepthStencil.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Technique.cpp">
-      <Filter>Source Files\RenderJobs</Filter>
-    </ClCompile>
-    <ClCompile Include="NullPixelShader.cpp">
-      <Filter>Source Files\Bindable\Shaders</Filter>
-    </ClCompile>
-    <ClCompile Include="VertexShader.cpp">
-      <Filter>Source Files\Bindable\Shaders</Filter>
-    </ClCompile>
-    <ClCompile Include="PixelShader.cpp">
-      <Filter>Source Files\Bindable\Shaders</Filter>
-    </ClCompile>
-    <ClCompile Include="Material.cpp">
-      <Filter>Source Files\Bindable\Materials</Filter>
-    </ClCompile>
-    <ClCompile Include="MaterialPass.cpp">
-      <Filter>Source Files\Bindable\Materials</Filter>
-    </ClCompile>
-    <ClCompile Include="Bindable.cpp">
-      <Filter>Source Files\Bindable</Filter>
-    </ClCompile>
-    <ClCompile Include="Binding.cpp">
-      <Filter>Source Files\Bindable</Filter>
-    </ClCompile>
-    <ClCompile Include="RasterizerState.cpp">
-      <Filter>Source Files\Bindable</Filter>
-    </ClCompile>
-    <ClCompile Include="RenderStep.cpp">
-      <Filter>Source Files\RenderJobs</Filter>
-    </ClCompile>
-    <ClCompile Include="RenderTexture.cpp">
-      <Filter>Source Files\RenderPipeline</Filter>
-    </ClCompile>
-    <ClCompile Include="FullscreenPass.cpp">
-      <Filter>Source Files\RenderJobs\Passes</Filter>
-    </ClCompile>
-    <ClCompile Include="RenderPass.cpp">
-      <Filter>Source Files\RenderJobs</Filter>
-    </ClCompile>
-    <ClCompile Include="DepthStencilTarget.cpp">
-      <Filter>Source Files\RenderPipeline</Filter>
-    </ClCompile>
-    <ClCompile Include="Graphics.cpp">
-      <Filter>Source Files\RenderPipeline</Filter>
-    </ClCompile>
-    <ClCompile Include="VertexBufferWrapper.cpp">
-      <Filter>Source Files\Bindable</Filter>
-    </ClCompile>
-    <ClCompile Include="ModelNode.cpp">
-      <Filter>Source Files\Drawable</Filter>
-    </ClCompile>
-    <ClCompile Include="DepthStencilState.cpp">
-      <Filter>Source Files\Bindable</Filter>
-    </ClCompile>
-    <ClCompile Include="ComputeShader.cpp">
-      <Filter>Source Files\Bindable\Shaders</Filter>
-    </ClCompile>
-    <ClCompile Include="ComputeKernel.cpp">
+    <ClCompile Include="src\ComputeKernel.cpp">
       <Filter>Source Files\Bindable\Compute</Filter>
     </ClCompile>
-    <ClCompile Include="RenderConstants.cpp">
+    <ClCompile Include="src\ComputeShader.cpp">
+      <Filter>Source Files\Bindable\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CustomException.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\DepthStencil.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\DepthStencilState.cpp">
+      <Filter>Source Files\Bindable</Filter>
+    </ClCompile>
+    <ClCompile Include="src\DepthStencilTarget.cpp">
       <Filter>Source Files\RenderPipeline</Filter>
     </ClCompile>
-    <ClCompile Include="InstancedMeshRenderer.cpp">
-      <Filter>Source Files\Drawable</Filter>
-    </ClCompile>
-    <ClCompile Include="Spotlight.cpp">
+    <ClCompile Include="src\DirectionalLight.cpp">
       <Filter>Source Files\Lights</Filter>
     </ClCompile>
-    <ClCompile Include="DirectionalLight.cpp">
-      <Filter>Source Files\Lights</Filter>
-    </ClCompile>
-    <ClCompile Include="Light.cpp">
-      <Filter>Source Files\Lights</Filter>
-    </ClCompile>
-    <ClCompile Include="DrawCall.cpp">
+    <ClCompile Include="src\DrawCall.cpp">
       <Filter>Source Files\RenderJobs</Filter>
     </ClCompile>
-    <ClCompile Include="RendererList.cpp">
+    <ClCompile Include="src\dxerr.cpp">
+      <Filter>Source Files\ChiliErrors</Filter>
+    </ClCompile>
+    <ClCompile Include="src\DxgiInfoManager.cpp">
+      <Filter>Source Files\ChiliErrors</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Sampler.cpp">
+      <Filter>Source Files\Bindable</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Spotlight.cpp">
+      <Filter>Source Files\Lights</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Surface.cpp">
+      <Filter>Source Files\Chili</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Technique.cpp">
+      <Filter>Source Files\RenderJobs</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Texture.cpp">
+      <Filter>Source Files\Bindable</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Timer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Topology.cpp">
+      <Filter>Source Files\Bindable</Filter>
+    </ClCompile>
+    <ClCompile Include="src\TransformCbuf.cpp">
+      <Filter>Source Files\Bindable</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Vertex.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\VertexBufferWrapper.cpp">
+      <Filter>Source Files\Bindable</Filter>
+    </ClCompile>
+    <ClCompile Include="src\VertexShader.cpp">
+      <Filter>Source Files\Bindable\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Window.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ImguiManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\IndexBuffer.cpp">
+      <Filter>Source Files\Bindable</Filter>
+    </ClCompile>
+    <ClCompile Include="src\InputLayout.cpp">
+      <Filter>Source Files\Bindable</Filter>
+    </ClCompile>
+    <ClCompile Include="src\InstancedMeshRenderer.cpp">
       <Filter>Source Files\Drawable</Filter>
     </ClCompile>
-    <ClCompile Include="Frustum.cpp">
+    <ClCompile Include="src\Keyboard.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Light.cpp">
+      <Filter>Source Files\Lights</Filter>
+    </ClCompile>
+    <ClCompile Include="src\LightManager.cpp">
+      <Filter>Source Files\RenderPipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Log.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Material.cpp">
+      <Filter>Source Files\Bindable\Materials</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MaterialPass.cpp">
+      <Filter>Source Files\Bindable\Materials</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MeshRenderer.cpp">
+      <Filter>Source Files\Drawable</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ModelInstance.cpp">
+      <Filter>Source Files\Drawable</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ModelNode.cpp">
+      <Filter>Source Files\Drawable</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Mouse.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\NullPixelShader.cpp">
+      <Filter>Source Files\Bindable\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PixelShader.cpp">
+      <Filter>Source Files\Bindable\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PointLight.cpp">
+      <Filter>Source Files\Lights</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RasterizerState.cpp">
+      <Filter>Source Files\Bindable</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RenderConstants.cpp">
+      <Filter>Source Files\RenderPipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RendererList.cpp">
+      <Filter>Source Files\Drawable</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RenderPass.cpp">
+      <Filter>Source Files\RenderJobs</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RenderStep.cpp">
+      <Filter>Source Files\RenderJobs</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RenderTarget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RenderTexture.cpp">
+      <Filter>Source Files\RenderPipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GDIPlusManager.cpp">
+      <Filter>Source Files\Chili</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics.cpp">
+      <Filter>Source Files\RenderPipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="src\FullscreenPass.cpp">
+      <Filter>Source Files\RenderJobs\Passes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Frustum.cpp">
       <Filter>Source Files\Util</Filter>
     </ClCompile>
-    <ClCompile Include="LightManager.cpp">
-      <Filter>Source Files\RenderPipeline</Filter>
+    <ClCompile Include="src\vendor\imgui\imgui.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\vendor\imgui\imgui_demo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\vendor\imgui\imgui_draw.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\vendor\imgui\imgui_impl_dx11.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\vendor\imgui\imgui_impl_win32.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\vendor\imgui\imgui_tables.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\vendor\imgui\imgui_widgets.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Window.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CustomException.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Keyboard.h">
+    <ClInclude Include="src\App.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Mouse.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="src\BaseBufferData.h">
+      <Filter>Header Files\Bindable\Buffers\Data</Filter>
     </ClInclude>
-    <ClInclude Include="App.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Timer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="dxerr.h">
-      <Filter>Header Files\ChiliErrors</Filter>
-    </ClInclude>
-    <ClInclude Include="DxgiInfoManager.h">
-      <Filter>Header Files\ChiliErrors</Filter>
-    </ClInclude>
-    <ClInclude Include="GraphicsThrowMacros.h">
-      <Filter>Header Files\Macros</Filter>
-    </ClInclude>
-    <ClInclude Include="WindowsThrowMacros.h">
-      <Filter>Header Files\Macros</Filter>
-    </ClInclude>
-    <ClInclude Include="Bindable.h">
-      <Filter>Header Files\Bindable</Filter>
-    </ClInclude>
-    <ClInclude Include="BindableInclude.h">
-      <Filter>Header Files\Bindable</Filter>
-    </ClInclude>
-    <ClInclude Include="IndexBuffer.h">
-      <Filter>Header Files\Bindable</Filter>
-    </ClInclude>
-    <ClInclude Include="InputLayout.h">
-      <Filter>Header Files\Bindable</Filter>
-    </ClInclude>
-    <ClInclude Include="Topology.h">
-      <Filter>Header Files\Bindable</Filter>
-    </ClInclude>
-    <ClInclude Include="TransformCbuf.h">
-      <Filter>Header Files\Bindable</Filter>
-    </ClInclude>
-    <ClInclude Include="ChiliUtil.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Surface.h">
-      <Filter>Header Files\Chili</Filter>
-    </ClInclude>
-    <ClInclude Include="GDIPlusManager.h">
-      <Filter>Header Files\Chili</Filter>
-    </ClInclude>
-    <ClInclude Include="Texture.h">
-      <Filter>Header Files\Bindable</Filter>
-    </ClInclude>
-    <ClInclude Include="Sampler.h">
-      <Filter>Header Files\Bindable</Filter>
-    </ClInclude>
-    <ClInclude Include="Imgui\imconfig.h">
-      <Filter>Imgui\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Imgui\imgui.h">
-      <Filter>Imgui\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Imgui\imgui_internal.h">
-      <Filter>Imgui\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Imgui\imstb_rectpack.h">
-      <Filter>Imgui\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Imgui\imstb_textedit.h">
-      <Filter>Imgui\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Imgui\imstb_truetype.h">
-      <Filter>Imgui\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Imgui\imgui_impl_win32.h">
-      <Filter>Imgui\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="Imgui\imgui_impl_dx11.h">
-      <Filter>Imgui\Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="ImguiManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Camera.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PointLight.h">
-      <Filter>Header Files\Lights</Filter>
-    </ClInclude>
-    <ClInclude Include="FBXImporter.h">
-      <Filter>Header Files\FBXImporter</Filter>
-    </ClInclude>
-    <ClInclude Include="ModelAsset.h">
-      <Filter>Header Files\FBXImporter</Filter>
-    </ClInclude>
-    <ClInclude Include="DebugHelper.h">
-      <Filter>Header Files\FBXImporter</Filter>
-    </ClInclude>
-    <ClInclude Include="ModelInstance.h">
-      <Filter>Header Files\Drawable</Filter>
-    </ClInclude>
-    <ClInclude Include="VertexLayout.h">
-      <Filter>Header Files\VertexData</Filter>
-    </ClInclude>
-    <ClInclude Include="Colors.h">
-      <Filter>Header Files\VertexData</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneGraphNode.h">
-      <Filter>Header Files\SceneGraphs</Filter>
-    </ClInclude>
-    <ClInclude Include="Log.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MeshRenderer.h">
-      <Filter>Header Files\Drawable</Filter>
-    </ClInclude>
-    <ClInclude Include="DepthStencil.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Technique.h">
-      <Filter>Header Files\RenderJobs</Filter>
-    </ClInclude>
-    <ClInclude Include="NullPixelShader.h">
-      <Filter>Header Files\Bindable\Shaders</Filter>
-    </ClInclude>
-    <ClInclude Include="VertexShader.h">
-      <Filter>Header Files\Bindable\Shaders</Filter>
-    </ClInclude>
-    <ClInclude Include="PixelShader.h">
-      <Filter>Header Files\Bindable\Shaders</Filter>
-    </ClInclude>
-    <ClInclude Include="Material.h">
-      <Filter>Header Files\Bindable\Materials</Filter>
-    </ClInclude>
-    <ClInclude Include="MaterialPass.h">
-      <Filter>Header Files\Bindable\Materials</Filter>
-    </ClInclude>
-    <ClInclude Include="Binding.h">
-      <Filter>Header Files\Bindable</Filter>
-    </ClInclude>
-    <ClInclude Include="TextParser.h">
-      <Filter>Header Files\Util</Filter>
-    </ClInclude>
-    <ClInclude Include="RasterizerState.h">
-      <Filter>Header Files\Bindable</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderPass.h">
-      <Filter>Header Files\RenderJobs</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderStep.h">
-      <Filter>Header Files\RenderJobs</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderTexture.h">
-      <Filter>Header Files\RenderPipeline</Filter>
-    </ClInclude>
-    <ClInclude Include="FullscreenPass.h">
-      <Filter>Header Files\RenderJobs\Passes</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderTarget.h">
-      <Filter>Header Files\RenderPipeline</Filter>
-    </ClInclude>
-    <ClInclude Include="DepthStencilTarget.h">
-      <Filter>Header Files\RenderPipeline</Filter>
-    </ClInclude>
-    <ClInclude Include="Graphics.h">
-      <Filter>Header Files\RenderPipeline</Filter>
-    </ClInclude>
-    <ClInclude Include="BaseMesh.h">
+    <ClInclude Include="src\BaseMesh.h">
       <Filter>Header Files\FBXImporter\Meshes</Filter>
     </ClInclude>
-    <ClInclude Include="MeshAsset.h">
-      <Filter>Header Files\FBXImporter\Meshes</Filter>
-    </ClInclude>
-    <ClInclude Include="InstancedMeshRenderer.h">
-      <Filter>Header Files\Drawable</Filter>
-    </ClInclude>
-    <ClInclude Include="Buffer.h">
-      <Filter>Header Files\Bindable\Buffers</Filter>
-    </ClInclude>
-    <ClInclude Include="ConstantBuffer.h">
-      <Filter>Header Files\Bindable\Buffers</Filter>
-    </ClInclude>
-    <ClInclude Include="VertexBufferWrapper.h">
+    <ClInclude Include="src\Bindable.h">
       <Filter>Header Files\Bindable</Filter>
     </ClInclude>
-    <ClInclude Include="StructuredBufferData.h">
-      <Filter>Header Files\Bindable\Buffers\Data</Filter>
-    </ClInclude>
-    <ClInclude Include="BaseBufferData.h">
-      <Filter>Header Files\Bindable\Buffers\Data</Filter>
-    </ClInclude>
-    <ClInclude Include="RawBufferData.h">
-      <Filter>Header Files\Bindable\Buffers\Data</Filter>
-    </ClInclude>
-    <ClInclude Include="ModelNode.h">
-      <Filter>Header Files\Drawable</Filter>
-    </ClInclude>
-    <ClInclude Include="DepthStencilState.h">
+    <ClInclude Include="src\BindableInclude.h">
       <Filter>Header Files\Bindable</Filter>
     </ClInclude>
-    <ClInclude Include="ComputeShader.h">
-      <Filter>Header Files\Bindable\Shaders</Filter>
+    <ClInclude Include="src\Binding.h">
+      <Filter>Header Files\Bindable</Filter>
     </ClInclude>
-    <ClInclude Include="ComputeKernel.h">
+    <ClInclude Include="src\Buffer.h">
+      <Filter>Header Files\Bindable\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ChiliUtil.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CodexElement.h">
+      <Filter>Header Files\Codex</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Colors.h">
+      <Filter>Header Files\VertexData</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Common.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CommonCbuffers.h">
+      <Filter>Header Files\Bindable\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ComputeKernel.h">
       <Filter>Header Files\Bindable\Compute</Filter>
     </ClInclude>
-    <ClInclude Include="SharedCodex.h">
-      <Filter>Header Files\Codex</Filter>
+    <ClInclude Include="src\ComputeShader.h">
+      <Filter>Header Files\Bindable\Shaders</Filter>
     </ClInclude>
-    <ClInclude Include="CodexElement.h">
-      <Filter>Header Files\Codex</Filter>
+    <ClInclude Include="src\Config.h">
+      <Filter>Header Files\Common</Filter>
     </ClInclude>
-    <ClInclude Include="StructuredBuffer.h">
+    <ClInclude Include="src\ConstantBuffer.h">
       <Filter>Header Files\Bindable\Buffers</Filter>
     </ClInclude>
-    <ClInclude Include="CommonCbuffers.h">
-      <Filter>Header Files\Bindable\Buffers</Filter>
+    <ClInclude Include="src\CustomException.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="LightData.h">
-      <Filter>Header Files\Lights</Filter>
+    <ClInclude Include="src\DebugHelper.h">
+      <Filter>Header Files\FBXImporter</Filter>
     </ClInclude>
-    <ClInclude Include="LightManager.h">
+    <ClInclude Include="src\DepthStencil.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\DepthStencilState.h">
+      <Filter>Header Files\Bindable</Filter>
+    </ClInclude>
+    <ClInclude Include="src\DepthStencilTarget.h">
       <Filter>Header Files\RenderPipeline</Filter>
     </ClInclude>
-    <ClInclude Include="Renderer.h">
-      <Filter>Header Files\RenderJobs</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderConstants.h">
-      <Filter>Header Files\RenderPipeline</Filter>
-    </ClInclude>
-    <ClInclude Include="Spotlight.h">
+    <ClInclude Include="src\DirectionalLight.h">
       <Filter>Header Files\Lights</Filter>
     </ClInclude>
-    <ClInclude Include="Light.h">
-      <Filter>Header Files\Lights</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectionalLight.h">
-      <Filter>Header Files\Lights</Filter>
-    </ClInclude>
-    <ClInclude Include="DrawCall.h">
+    <ClInclude Include="src\DrawCall.h">
       <Filter>Header Files\RenderJobs</Filter>
     </ClInclude>
-    <ClInclude Include="RendererList.h">
-      <Filter>Header Files\Drawable</Filter>
-    </ClInclude>
-    <ClInclude Include="Frustum.h">
-      <Filter>Header Files\Util</Filter>
-    </ClInclude>
-    <ClInclude Include="DrawContext.h">
+    <ClInclude Include="src\DrawContext.h">
       <Filter>Header Files\RenderJobs</Filter>
     </ClInclude>
-    <ClInclude Include="Transforms.h">
-      <Filter>Header Files\Util</Filter>
+    <ClInclude Include="src\DX11Include.h">
+      <Filter>Header Files\Common</Filter>
     </ClInclude>
-    <ClInclude Include="ShadowPassContext.h">
+    <ClInclude Include="src\dxerr.h">
+      <Filter>Header Files\ChiliErrors</Filter>
+    </ClInclude>
+    <ClInclude Include="src\DxgiInfoManager.h">
+      <Filter>Header Files\ChiliErrors</Filter>
+    </ClInclude>
+    <ClInclude Include="src\DXMathInclude.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="src\WindowsThrowMacros.h">
+      <Filter>Header Files\Macros</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Sampler.h">
+      <Filter>Header Files\Bindable</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SceneGraphNode.h">
+      <Filter>Header Files\SceneGraphs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ShadowPassContext.h">
       <Filter>Header Files\Shadows</Filter>
     </ClInclude>
-    <ClInclude Include="Common.h">
-      <Filter>Header Files\Common</Filter>
+    <ClInclude Include="src\SharedCodex.h">
+      <Filter>Header Files\Codex</Filter>
     </ClInclude>
-    <ClInclude Include="DX11Include.h">
-      <Filter>Header Files\Common</Filter>
-    </ClInclude>
-    <ClInclude Include="WindowsInclude.h">
-      <Filter>Header Files\Common</Filter>
-    </ClInclude>
-    <ClInclude Include="DXMathInclude.h">
-      <Filter>Header Files\Common</Filter>
-    </ClInclude>
-    <ClInclude Include="LightShadowData.h">
+    <ClInclude Include="src\Spotlight.h">
       <Filter>Header Files\Lights</Filter>
     </ClInclude>
-    <ClInclude Include="Config.h">
+    <ClInclude Include="src\StructuredBuffer.h">
+      <Filter>Header Files\Bindable\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\StructuredBufferData.h">
+      <Filter>Header Files\Bindable\Buffers\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Surface.h">
+      <Filter>Header Files\Chili</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Technique.h">
+      <Filter>Header Files\RenderJobs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\TextParser.h">
+      <Filter>Header Files\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Texture.h">
+      <Filter>Header Files\Bindable</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Timer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Topology.h">
+      <Filter>Header Files\Bindable</Filter>
+    </ClInclude>
+    <ClInclude Include="src\TransformCbuf.h">
+      <Filter>Header Files\Bindable</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Transforms.h">
+      <Filter>Header Files\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\VertexBufferWrapper.h">
+      <Filter>Header Files\Bindable</Filter>
+    </ClInclude>
+    <ClInclude Include="src\VertexLayout.h">
+      <Filter>Header Files\VertexData</Filter>
+    </ClInclude>
+    <ClInclude Include="src\VertexShader.h">
+      <Filter>Header Files\Bindable\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Window.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\WindowsInclude.h">
       <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="src\RenderTexture.h">
+      <Filter>Header Files\RenderPipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ImguiManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\IndexBuffer.h">
+      <Filter>Header Files\Bindable</Filter>
+    </ClInclude>
+    <ClInclude Include="src\InputLayout.h">
+      <Filter>Header Files\Bindable</Filter>
+    </ClInclude>
+    <ClInclude Include="src\InstancedMeshRenderer.h">
+      <Filter>Header Files\Drawable</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Keyboard.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Light.h">
+      <Filter>Header Files\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="src\LightData.h">
+      <Filter>Header Files\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="src\LightManager.h">
+      <Filter>Header Files\RenderPipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="src\LightShadowData.h">
+      <Filter>Header Files\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Log.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Material.h">
+      <Filter>Header Files\Bindable\Materials</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MaterialPass.h">
+      <Filter>Header Files\Bindable\Materials</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MeshAsset.h">
+      <Filter>Header Files\FBXImporter\Meshes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MeshRenderer.h">
+      <Filter>Header Files\Drawable</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ModelAsset.h">
+      <Filter>Header Files\FBXImporter</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ModelInstance.h">
+      <Filter>Header Files\Drawable</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ModelNode.h">
+      <Filter>Header Files\Drawable</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Mouse.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\NullPixelShader.h">
+      <Filter>Header Files\Bindable\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="src\PixelShader.h">
+      <Filter>Header Files\Bindable\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="src\PointLight.h">
+      <Filter>Header Files\Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="src\RasterizerState.h">
+      <Filter>Header Files\Bindable</Filter>
+    </ClInclude>
+    <ClInclude Include="src\RawBufferData.h">
+      <Filter>Header Files\Bindable\Buffers\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="src\RenderConstants.h">
+      <Filter>Header Files\RenderPipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Renderer.h">
+      <Filter>Header Files\RenderJobs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\RendererList.h">
+      <Filter>Header Files\Drawable</Filter>
+    </ClInclude>
+    <ClInclude Include="src\RenderPass.h">
+      <Filter>Header Files\RenderJobs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\RenderStep.h">
+      <Filter>Header Files\RenderJobs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\RenderTarget.h">
+      <Filter>Header Files\RenderPipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GraphicsThrowMacros.h">
+      <Filter>Header Files\Macros</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GDIPlusManager.h">
+      <Filter>Header Files\Chili</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics.h">
+      <Filter>Header Files\RenderPipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="src\FullscreenPass.h">
+      <Filter>Header Files\RenderJobs\Passes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Frustum.h">
+      <Filter>Header Files\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ImguiInclude.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="src\FBXImporter.h">
+      <Filter>Header Files\FBXImporter</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vendor\imgui\imconfig.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vendor\imgui\imgui.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vendor\imgui\imgui_impl_dx11.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vendor\imgui\imgui_impl_win32.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vendor\imgui\imgui_internal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vendor\imgui\imstb_rectpack.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vendor\imgui\imstb_textedit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vendor\imgui\imstb_truetype.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -635,15 +638,6 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <None Include="DXTrace.inl">
-      <Filter>Source Files\ChiliErrors</Filter>
-    </None>
-    <None Include="DXGetErrorDescription.inl">
-      <Filter>Source Files\ChiliErrors</Filter>
-    </None>
-    <None Include="DXGetErrorString.inl">
-      <Filter>Source Files\ChiliErrors</Filter>
-    </None>
     <None Include="Shaders\Lighting\Schlick.hlsli">
       <Filter>Shaders\Lighting</Filter>
     </None>
@@ -682,6 +676,15 @@
     </None>
     <None Include="Shaders\Lighting\Lights.hlsli">
       <Filter>Shaders\Lighting</Filter>
+    </None>
+    <None Include="src\DXGetErrorDescription.inl">
+      <Filter>Source Files\ChiliErrors</Filter>
+    </None>
+    <None Include="src\DXGetErrorString.inl">
+      <Filter>Source Files\ChiliErrors</Filter>
+    </None>
+    <None Include="src\DXTrace.inl">
+      <Filter>Source Files\ChiliErrors</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

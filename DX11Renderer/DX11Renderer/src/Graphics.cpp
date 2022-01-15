@@ -5,8 +5,7 @@
 #include "DXMathInclude.h"
 #include "GraphicsThrowMacros.h"
 #include "DepthStencilTarget.h"
-#include "Imgui/imgui_impl_dx11.h"
-#include "Imgui/imgui_impl_win32.h"
+#include "ImguiInclude.h"
 #include <random>
 
 // Only do this in .cpp files

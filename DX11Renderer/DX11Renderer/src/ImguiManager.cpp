@@ -1,4 +1,4 @@
-#include "imgui/imgui.h" // needs to be at top or will not build
+#include "ImguiInclude.h"
 #include "ImguiManager.h"
 
 ImguiManager::ImguiManager()

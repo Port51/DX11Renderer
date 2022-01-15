@@ -1,5 +1,5 @@
-#include "DirectionalLight.h"
-#include "imgui/imgui.h"
+#include "PointLight.h"
+#include "ImguiInclude.h"
 #include "DX11Include.h"
 #include "MeshRenderer.h"
 #include "ModelInstance.h"
@@ -12,17 +12,15 @@
 #include "Graphics.h"
 #include "LightShadowData.h"
 
-DirectionalLight::DirectionalLight(Graphics& gfx, UINT index, dx::XMFLOAT3 positionWS, float pan, float tilt, dx::XMFLOAT3 color, float intensity, float sphereRad, float range)
+PointLight::PointLight(Graphics& gfx, UINT index, dx::XMFLOAT3 positionWS, dx::XMFLOAT3 color, float intensity, float sphereRad, float range)
 	: Light(gfx, index, positionWS, color, intensity),
-	pan(pan),
-	tilt(tilt),
 	sphereRad(sphereRad),
 	range(range)
 {
 
 }
 
-void DirectionalLight::DrawImguiControlWindow()
+void PointLight::DrawImguiControlWindow()
 {
 	const auto identifier = std::string("Light") + std::to_string(index);
 	if (ImGui::Begin(identifier.c_str()))
@@ -31,8 +29,6 @@ void DirectionalLight::DrawImguiControlWindow()
 		ImGui::SliderFloat("X", &positionWS.x, -60.0f, 60.0f, "%.1f");
 		ImGui::SliderFloat("Y", &positionWS.y, -60.0f, 60.0f, "%.1f");
 		ImGui::SliderFloat("Z", &positionWS.z, -60.0f, 60.0f, "%.1f");
-		ImGui::SliderFloat("Pan", &pan, -360.0f, 360.0f, "%.1f");
-		ImGui::SliderFloat("Tilt", &tilt, -180.0f, 180.0f, "%.1f");
 
 		ImGui::Text("Intensity/Color");
 		// ImGuiSliderFlags_Logarithmic makes it power of 2?
@@ -46,30 +42,46 @@ void DirectionalLight::DrawImguiControlWindow()
 	ImGui::End();
 }
 
-LightData DirectionalLight::GetLightData(dx::XMMATRIX viewMatrix) const
+/*void PointLight::Bind(Graphics& gfx, dx::XMMATRIX viewMatrix) const
+{
+	auto dataCopy = cbData;
+	const auto posWS_Vector = dx::XMLoadFloat3(&positionWS);
+
+	// Transform WS to VS
+	dx::XMStoreFloat3(&dataCopy.positionVS, dx::XMVector3Transform(posWS_Vector, viewMatrix));
+	dataCopy.color = color;
+	dataCopy.intensity = intensity;
+	dataCopy.invRangeSqr = 1.f / std::max(range * range, 0.0001f);
+
+	globalLightCbuf.Update(gfx, PointLightCBuf{ dataCopy });
+	//globalLightCbuf.BindPS(gfx, 0u);
+	gfx.GetContext()->PSSetConstantBuffers(0u, 1u, globalLightCbuf.GetD3DBuffer().GetAddressOf());
+}*/
+
+LightData PointLight::GetLightData(dx::XMMATRIX viewMatrix) const
 {
 	LightData light;
+
 	const auto posWS_Vector = dx::XMLoadFloat4(&dx::XMFLOAT4(positionWS.x, positionWS.y, positionWS.z, 1.0f));
-	const auto dirWS_Vector = dx::XMVector4Transform(dx::XMVectorSet(0, 0, 1, 0), dx::XMMatrixRotationRollPitchYaw(dx::XMConvertToRadians(tilt), dx::XMConvertToRadians(pan), 0.0f));
 	light.positionVS_range = dx::XMVectorSetW(dx::XMVector4Transform(posWS_Vector, viewMatrix), range); // pack range into W
 	light.color_intensity = dx::XMVectorSetW(dx::XMLoadFloat3(&color), intensity);
-	light.directionVS = dx::XMVector4Transform(dirWS_Vector, viewMatrix);
-	light.data0 = dx::XMVectorSet(2, 1.f / sphereRad, 0, 0);
+	light.directionVS = dx::XMVectorSet(0, 0, 0, 0);
+	light.data0 = dx::XMVectorSet(0, 1.f / sphereRad, 0, 0);
 	return light;
 }
 
-UINT DirectionalLight::GetLightType() const
+UINT PointLight::GetLightType() const
 {
-	return 2u;
+	return 0u;
 }
 
-void DirectionalLight::RenderShadow(ShadowPassContext context)
+void PointLight::RenderShadow(ShadowPassContext context)
 {}
 
-void DirectionalLight::AppendShadowData(UINT shadowStartSlot, std::vector<LightShadowData>& shadowData, std::vector<Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>>& srvs) const
+void PointLight::AppendShadowData(UINT shadowStartSlot, std::vector<LightShadowData>& shadowData, std::vector<Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>>& srvs) const
 {}
 
-UINT DirectionalLight::GetShadowSRVCount() const
+UINT PointLight::GetShadowSRVCount() const
 {
-	return HasShadow() ? 1u : 0u;
+	return HasShadow() ? 6u : 0u;
 }
