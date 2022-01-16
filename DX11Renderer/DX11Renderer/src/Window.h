@@ -2,7 +2,6 @@
 
 #include "CommonHeader.h"
 #include "WindowsInclude.h"
-#include "CustomException.h"
 #include "Graphics.h"
 #include <optional>
 

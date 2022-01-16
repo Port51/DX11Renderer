@@ -51,9 +51,6 @@
     <Filter Include="Headers\Drawable">
       <UniqueIdentifier>{d2554c7e-94bc-4df3-a883-c163c42eb8c2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Headers\Chili">
-      <UniqueIdentifier>{0ed1cb02-d74b-4beb-ae43-a69b6b4bac2a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Headers\Lights">
       <UniqueIdentifier>{d7601bca-e00b-4862-9869-caf6b1f2bb41}</UniqueIdentifier>
     </Filter>
@@ -109,9 +106,6 @@
     <Filter Include="Source\Drawable">
       <UniqueIdentifier>{4e165349-dfc5-4e90-81fa-dca11b89d8d0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Chili">
-      <UniqueIdentifier>{995e54a0-ad31-487c-a175-10cff89eaa2a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\Lights">
       <UniqueIdentifier>{517d7428-2772-48f9-87e5-a15bd13622ce}</UniqueIdentifier>
     </Filter>
@@ -127,23 +121,26 @@
     <Filter Include="Source\Util">
       <UniqueIdentifier>{a795e74b-c6da-4f32-ba97-ecb5aadcee81}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Vendor">
-      <UniqueIdentifier>{70fec4ed-a6bc-4573-affe-722a6033227f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Vendor\Imgui">
-      <UniqueIdentifier>{63a44a69-fee4-4577-bd39-7f483c24ac7d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Vendor\Imgui\Headers">
-      <UniqueIdentifier>{83614022-dea1-4ccd-8ee8-6d01d2f323ab}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Vendor\Imgui\Source">
-      <UniqueIdentifier>{befc9f39-bb2d-4683-b3ca-7269e999390f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Precompiled">
       <UniqueIdentifier>{cd21a933-8e37-4072-9ea8-c90a9ff4c55b}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source\Common">
       <UniqueIdentifier>{66849626-dd94-4dbe-ab2d-4fd9187e3b4f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Vendors">
+      <UniqueIdentifier>{70fec4ed-a6bc-4573-affe-722a6033227f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Vendors\Imgui">
+      <UniqueIdentifier>{63a44a69-fee4-4577-bd39-7f483c24ac7d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Vendors\Imgui\Headers">
+      <UniqueIdentifier>{83614022-dea1-4ccd-8ee8-6d01d2f323ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Vendors\Imgui\Source">
+      <UniqueIdentifier>{befc9f39-bb2d-4683-b3ca-7269e999390f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Vendors\stb_image">
+      <UniqueIdentifier>{96b97a18-ad5f-41a9-953e-1fdb3edb8755}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -165,9 +162,6 @@
     <ClCompile Include="src\ComputeShader.cpp">
       <Filter>Source\Bindable\Shaders</Filter>
     </ClCompile>
-    <ClCompile Include="src\CustomException.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="src\DepthStencil.cpp">
       <Filter>Source</Filter>
     </ClCompile>
@@ -188,9 +182,6 @@
     </ClCompile>
     <ClCompile Include="src\Spotlight.cpp">
       <Filter>Source\Lights</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Surface.cpp">
-      <Filter>Source\Chili</Filter>
     </ClCompile>
     <ClCompile Include="src\Technique.cpp">
       <Filter>Source\RenderJobs</Filter>
@@ -285,9 +276,6 @@
     <ClCompile Include="src\RenderTexture.cpp">
       <Filter>Source\RenderPipeline</Filter>
     </ClCompile>
-    <ClCompile Include="src\GDIPlusManager.cpp">
-      <Filter>Source\Chili</Filter>
-    </ClCompile>
     <ClCompile Include="src\Graphics.cpp">
       <Filter>Source\RenderPipeline</Filter>
     </ClCompile>
@@ -298,31 +286,34 @@
       <Filter>Source\Util</Filter>
     </ClCompile>
     <ClCompile Include="src\vendor\imgui\imgui.cpp">
-      <Filter>Vendor\Imgui\Source</Filter>
+      <Filter>Vendors\Imgui\Source</Filter>
     </ClCompile>
     <ClCompile Include="src\vendor\imgui\imgui_demo.cpp">
-      <Filter>Vendor\Imgui\Source</Filter>
+      <Filter>Vendors\Imgui\Source</Filter>
     </ClCompile>
     <ClCompile Include="src\vendor\imgui\imgui_draw.cpp">
-      <Filter>Vendor\Imgui\Source</Filter>
+      <Filter>Vendors\Imgui\Source</Filter>
     </ClCompile>
     <ClCompile Include="src\vendor\imgui\imgui_impl_dx11.cpp">
-      <Filter>Vendor\Imgui\Source</Filter>
+      <Filter>Vendors\Imgui\Source</Filter>
     </ClCompile>
     <ClCompile Include="src\vendor\imgui\imgui_impl_win32.cpp">
-      <Filter>Vendor\Imgui\Source</Filter>
+      <Filter>Vendors\Imgui\Source</Filter>
     </ClCompile>
     <ClCompile Include="src\vendor\imgui\imgui_tables.cpp">
-      <Filter>Vendor\Imgui\Source</Filter>
+      <Filter>Vendors\Imgui\Source</Filter>
     </ClCompile>
     <ClCompile Include="src\vendor\imgui\imgui_widgets.cpp">
-      <Filter>Vendor\Imgui\Source</Filter>
+      <Filter>Vendors\Imgui\Source</Filter>
     </ClCompile>
     <ClCompile Include="src\pch.cpp">
       <Filter>Precompiled</Filter>
     </ClCompile>
     <ClCompile Include="src\Log.cpp">
       <Filter>Source\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Image.cpp">
+      <Filter>Source\Util</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -371,9 +362,6 @@
     <ClInclude Include="src\ConstantBuffer.h">
       <Filter>Headers\Bindable\Buffers</Filter>
     </ClInclude>
-    <ClInclude Include="src\CustomException.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
     <ClInclude Include="src\DebugHelper.h">
       <Filter>Headers\FBXImporter</Filter>
     </ClInclude>
@@ -415,9 +403,6 @@
     </ClInclude>
     <ClInclude Include="src\StructuredBufferData.h">
       <Filter>Headers\Bindable\Buffers\Data</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Surface.h">
-      <Filter>Headers\Chili</Filter>
     </ClInclude>
     <ClInclude Include="src\Technique.h">
       <Filter>Headers\RenderJobs</Filter>
@@ -530,9 +515,6 @@
     <ClInclude Include="src\RenderTarget.h">
       <Filter>Headers\RenderPipeline</Filter>
     </ClInclude>
-    <ClInclude Include="src\GDIPlusManager.h">
-      <Filter>Headers\Chili</Filter>
-    </ClInclude>
     <ClInclude Include="src\Graphics.h">
       <Filter>Headers\RenderPipeline</Filter>
     </ClInclude>
@@ -546,31 +528,31 @@
       <Filter>Headers\FBXImporter</Filter>
     </ClInclude>
     <ClInclude Include="src\vendor\imgui\imgui.h">
-      <Filter>Vendor\Imgui\Headers</Filter>
+      <Filter>Vendors\Imgui\Headers</Filter>
     </ClInclude>
     <ClInclude Include="src\vendor\imgui\imgui_impl_dx11.h">
-      <Filter>Vendor\Imgui\Headers</Filter>
+      <Filter>Vendors\Imgui\Headers</Filter>
     </ClInclude>
     <ClInclude Include="src\vendor\imgui\imgui_impl_win32.h">
-      <Filter>Vendor\Imgui\Headers</Filter>
+      <Filter>Vendors\Imgui\Headers</Filter>
     </ClInclude>
     <ClInclude Include="src\vendor\imgui\imgui_internal.h">
-      <Filter>Vendor\Imgui\Headers</Filter>
+      <Filter>Vendors\Imgui\Headers</Filter>
     </ClInclude>
     <ClInclude Include="src\ImguiManager.h">
-      <Filter>Vendor\Imgui\Headers</Filter>
+      <Filter>Vendors\Imgui\Headers</Filter>
     </ClInclude>
     <ClInclude Include="src\vendor\imgui\imstb_rectpack.h">
-      <Filter>Vendor\Imgui\Headers</Filter>
+      <Filter>Vendors\Imgui\Headers</Filter>
     </ClInclude>
     <ClInclude Include="src\vendor\imgui\imstb_textedit.h">
-      <Filter>Vendor\Imgui\Headers</Filter>
+      <Filter>Vendors\Imgui\Headers</Filter>
     </ClInclude>
     <ClInclude Include="src\vendor\imgui\imstb_truetype.h">
-      <Filter>Vendor\Imgui\Headers</Filter>
+      <Filter>Vendors\Imgui\Headers</Filter>
     </ClInclude>
     <ClInclude Include="src\vendor\imgui\imconfig.h">
-      <Filter>Vendor\Imgui\Headers</Filter>
+      <Filter>Vendors\Imgui\Headers</Filter>
     </ClInclude>
     <ClInclude Include="src\pch.h">
       <Filter>Precompiled</Filter>
@@ -598,6 +580,12 @@
     </ClInclude>
     <ClInclude Include="src\ExceptionHandling.h">
       <Filter>Precompiled</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vendor\stb_image\stb_image.h">
+      <Filter>Vendors\stb_image</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Image.h">
+      <Filter>Headers\Util</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -4,7 +4,7 @@
 DepthStencil::DepthStencil(Graphics& gfx, UINT width, UINT height)
 {
 	// create depth stensil texture
-	wrl::ComPtr<ID3D11Texture2D> pDepthStencil;
+	ComPtr<ID3D11Texture2D> pDepthStencil;
 	D3D11_TEXTURE2D_DESC descDepth = {};
 	descDepth.Width = width;
 	descDepth.Height = height;

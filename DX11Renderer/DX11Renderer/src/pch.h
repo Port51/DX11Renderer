@@ -1,6 +1,9 @@
 #pragma once
 
+// Windows
 #include "WindowsInclude.h"
+
+// Imgui
 #include "ImguiInclude.h"
 
 // DirectX 11
@@ -26,4 +29,4 @@
 
 #define SAFE_RELEASE(p) if (p) (p)->Release()
 
-namespace wrl = Microsoft::WRL;
+using namespace Microsoft::WRL;

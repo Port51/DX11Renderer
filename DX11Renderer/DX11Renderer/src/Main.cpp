@@ -22,11 +22,6 @@ int CALLBACK WinMain(
 	{
 		return App(1280, 720).Go();
 	}
-	catch (const CustomException& e)
-	{
-		MessageBox(nullptr, e.what(), e.GetType(), MB_OK | MB_ICONERROR);
-		returnCode = -1;
-	}
 	catch (const std::exception& e)
 	{
 		MessageBox(nullptr, e.what(), "Exception", MB_OK | MB_ICONERROR);

@@ -1,7 +1,6 @@
 #pragma once
 #include "CommonHeader.h"
 #include "WindowsInclude.h"
-#include "CustomException.h"
 #include "DX11Include.h"
 #include "DXMathInclude.h"
 #include <vector>

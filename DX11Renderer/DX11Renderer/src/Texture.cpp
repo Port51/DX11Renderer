@@ -1,8 +1,8 @@
 #include "pch.h"
 #include "Texture.h"
-#include "Surface.h"
 #include "SharedCodex.h"
 #include "RenderPass.h"
+#include "Image.h"
 
 Texture::Texture(Graphics & gfx)
 {
@@ -12,15 +12,15 @@ Texture::Texture(Graphics & gfx)
 Texture::Texture(Graphics& gfx, const std::string& path)
 	: path(path)
 {
-	// load surface
-	const auto s = Surface::FromFile(path);
+	// Load image from file
+	const Image image(path);
 
 	// todo: use staging texture for mips, and copy into immutable texture
 
 	// create texture resource
 	D3D11_TEXTURE2D_DESC textureDesc = {};
-	textureDesc.Width = s.GetWidth();
-	textureDesc.Height = s.GetHeight();
+	textureDesc.Width = image.GetWidth();
+	textureDesc.Height = image.GetHeight();
 	textureDesc.MipLevels = 0;
 	textureDesc.ArraySize = 1;
 	textureDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
@@ -37,7 +37,7 @@ Texture::Texture(Graphics& gfx, const std::string& path)
 
 	// write image data into top mip level
 	gfx.GetContext()->UpdateSubresource(
-		pTexture.Get(), 0u, nullptr, s.GetBufferPtrConst(), s.GetWidth() * sizeof(Surface::Color), 0u
+		pTexture.Get(), 0u, nullptr, image.GetData(), image.GetPitch(), 0u
 	);
 
 	// create the resource view on the texture
@@ -56,13 +56,13 @@ Texture::Texture(Graphics& gfx, const std::string& path)
 Texture::Texture(Graphics& gfx, const std::string& path, D3D11_TEXTURE2D_DESC textureDesc)
 	: path(path)
 {
-	// load surface
-	const auto s = Surface::FromFile(path);
+	// Load image from file
+	const Image image(path);
 
 	D3D11_SUBRESOURCE_DATA sd = {};
-	sd.pSysMem = s.GetBufferPtr();
-	sd.SysMemPitch = s.GetWidth() * sizeof(Surface::Color); // distance in bytes between rows - keep in mind padding!
-	wrl::ComPtr<ID3D11Texture2D> pTexture;
+	sd.pSysMem = image.GetData();
+	sd.SysMemPitch = image.GetPitch(); // distance in bytes between rows - keep in mind padding!
+	ComPtr<ID3D11Texture2D> pTexture;
 
 	THROW_IF_FAILED(gfx.GetDevice()->CreateTexture2D(
 		&textureDesc, &sd, &pTexture
@@ -82,13 +82,13 @@ Texture::Texture(Graphics& gfx, const std::string& path, D3D11_TEXTURE2D_DESC te
 Texture::Texture(Graphics& gfx, const std::string& path, D3D11_TEXTURE2D_DESC textureDesc, D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc)
 	: path(path)
 {
-	// load surface
-	const auto s = Surface::FromFile(path);
+	// Load image from file
+	const Image image(path);
 
 	D3D11_SUBRESOURCE_DATA sd = {};
-	sd.pSysMem = s.GetBufferPtr();
-	sd.SysMemPitch = s.GetWidth() * sizeof(Surface::Color); // distance in bytes between rows - keep in mind padding!
-	wrl::ComPtr<ID3D11Texture2D> pTexture;
+	sd.pSysMem = image.GetData();
+	sd.SysMemPitch = image.GetPitch(); // distance in bytes between rows - keep in mind padding!
+	ComPtr<ID3D11Texture2D> pTexture;
 
 	THROW_IF_FAILED(gfx.GetDevice()->CreateTexture2D(
 		&textureDesc, &sd, &pTexture

@@ -167,19 +167,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Image.cpp" />
     <ClCompile Include="src\App.cpp" />
     <ClCompile Include="src\Bindable.cpp" />
     <ClCompile Include="src\Binding.cpp" />
     <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\ComputeKernel.cpp" />
     <ClCompile Include="src\ComputeShader.cpp" />
-    <ClCompile Include="src\CustomException.cpp" />
     <ClCompile Include="src\DepthStencil.cpp" />
     <ClCompile Include="src\DepthStencilTarget.cpp" />
     <ClCompile Include="src\DirectionalLight.cpp" />
     <ClCompile Include="src\Frustum.cpp" />
     <ClCompile Include="src\FullscreenPass.cpp" />
-    <ClCompile Include="src\GDIPlusManager.cpp" />
     <ClCompile Include="src\Graphics.cpp" />
     <ClCompile Include="src\ImguiManager.cpp" />
     <ClCompile Include="src\IndexBuffer.cpp" />
@@ -209,7 +208,6 @@
     <ClCompile Include="src\RenderStep.cpp" />
     <ClCompile Include="src\DepthStencilState.cpp" />
     <ClCompile Include="src\Spotlight.cpp" />
-    <ClCompile Include="src\Surface.cpp" />
     <ClCompile Include="src\Technique.cpp" />
     <ClCompile Include="src\Texture.cpp" />
     <ClCompile Include="src\Timer.cpp" />
@@ -263,6 +261,7 @@
     <ClCompile Include="src\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Image.h" />
     <ClInclude Include="src\App.h" />
     <ClInclude Include="src\BaseBufferData.h" />
     <ClInclude Include="src\BaseMesh.h" />
@@ -299,14 +298,12 @@
     <ClInclude Include="src\BindableInclude.h" />
     <ClInclude Include="src\Camera.h" />
     <ClInclude Include="src\Buffer.h" />
-    <ClInclude Include="src\CustomException.h" />
     <ClInclude Include="src\DebugHelper.h" />
     <ClInclude Include="src\DepthStencil.h" />
     <ClInclude Include="src\DepthStencilTarget.h" />
     <ClInclude Include="src\FBXImporter.h" />
     <ClInclude Include="src\Renderer.h" />
     <ClInclude Include="src\FullscreenPass.h" />
-    <ClInclude Include="src\GDIPlusManager.h" />
     <ClInclude Include="src\Graphics.h" />
     <ClInclude Include="src\ImguiManager.h" />
     <ClInclude Include="src\IndexBuffer.h" />
@@ -333,7 +330,6 @@
     <ClInclude Include="src\SceneGraphNode.h" />
     <ClInclude Include="src\DepthStencilState.h" />
     <ClInclude Include="src\RenderStep.h" />
-    <ClInclude Include="src\Surface.h" />
     <ClInclude Include="src\Technique.h" />
     <ClInclude Include="src\Texture.h" />
     <ClInclude Include="src\Timer.h" />
@@ -348,6 +344,7 @@
     <ClInclude Include="src\vendor\imgui\imstb_rectpack.h" />
     <ClInclude Include="src\vendor\imgui\imstb_textedit.h" />
     <ClInclude Include="src\vendor\imgui\imstb_truetype.h" />
+    <ClInclude Include="src\vendor\stb_image\stb_image.h" />
     <ClInclude Include="src\VertexBufferWrapper.h" />
     <ClInclude Include="src\RawBufferData.h" />
     <ClInclude Include="src\VertexLayout.h" />

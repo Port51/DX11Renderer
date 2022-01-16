@@ -1,18 +1,17 @@
 #include "pch.h"
 #include "App.h"
-#include "Surface.h"
 #include "MeshRenderer.h"
 #include "RendererList.h"
 #include "ModelInstance.h"
-#include "GDIPlusManager.h"
 #include "FBXImporter.h"
 #include "SharedCodex.h"
 #include "VertexShader.h"
 #include "Sampler.h"
 #include "LightManager.h"
 #include "Renderer.h"
+//#include "GDIPlusManager.h"
 
-GDIPlusManager gdipm;
+//GDIPlusManager gdipm;
 
 App::App(int screenWidth, int screenHeight)
 	:

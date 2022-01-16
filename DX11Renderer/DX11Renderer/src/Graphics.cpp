@@ -63,7 +63,7 @@ Graphics::Graphics(HWND hWnd, int windowWidth, int windowHeight)
 	}
 
 	// Gain access to texture subresource in swap chain (back buffer)
-	wrl::ComPtr<ID3D11Resource> pBackBuffer;
+	ComPtr<ID3D11Resource> pBackBuffer;
 	// Reinterpret here = creating pointer to a pointer
 	THROW_IF_FAILED(pSwapChain->GetBuffer(0, __uuidof(ID3D11Resource), &pBackBuffer));
 	THROW_IF_FAILED(pDevice->CreateRenderTargetView(
