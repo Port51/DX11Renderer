@@ -7,30 +7,32 @@
 #include "DebugHelper.h"
 #include "BaseMesh.h"
 
-///
-/// Storage class that can be used to make mesh instances
-///
-class MeshAsset : public BaseMesh
+namespace gfx
 {
-public:
-	MeshAsset()
+	///
+	/// Storage class that can be used to make mesh instances
+	///
+	class MeshAsset : public BaseMesh
 	{
-	}
+	public:
+		MeshAsset()
+		{}
 
-public:
-	// Store vertex attributes separately, and combine when making instances based on what attributes are needed
-	std::vector<dx::XMFLOAT3> vertices;
+	public:
+		// Store vertex attributes separately, and combine when making instances based on what attributes are needed
+		std::vector<dx::XMFLOAT3> vertices;
 
-	bool hasNormals;
-	std::vector<dx::XMFLOAT3> normals;
+		bool hasNormals;
+		std::vector<dx::XMFLOAT3> normals;
 
-	bool hasTangents;
-	std::vector<dx::XMFLOAT3> tangents;
+		bool hasTangents;
+		std::vector<dx::XMFLOAT3> tangents;
 
-	std::vector<std::vector<dx::XMFLOAT2>> texcoords;
+		std::vector<std::vector<dx::XMFLOAT2>> texcoords;
 
-	UINT numFaces;
-	std::vector<int> indices;
+		UINT numFaces;
+		std::vector<int> indices;
 
-	int materialIndex;
-};
+		int materialIndex;
+	};
+}

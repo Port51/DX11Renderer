@@ -7,73 +7,76 @@
 
 using namespace std::string_literals;
 
-class TextParser
+
+namespace gfx
 {
-public:
-	class ParsedKeyValues
+	class TextParser
 	{
 	public:
-		std::string key;
-		std::vector<std::string> values;
-	};
-
-	TextParser(std::string_view filePath)
-		: file(std::string(filePath).c_str())
-	{
-	}
-
-	~TextParser()
-	{
-		Dispose();
-	}
-
-	void Dispose()
-	{
-		if (fileOpen)
+		class ParsedKeyValues
 		{
-			file.close();
-			fileOpen = false;
-		}
-	}
+		public:
+			std::string key;
+			std::vector<std::string> values;
+		};
 
-	bool ReadParsedLine(ParsedKeyValues& result)
-	{
-		if (!file.is_open())
+		TextParser(std::string_view filePath)
+			: file(std::string(filePath).c_str())
+		{}
+
+		~TextParser()
 		{
-			return false;
+			Dispose();
 		}
 
-		std::string line;
-		if (std::getline(file, line))
+		void Dispose()
 		{
-			// Clean up line first
-			line.erase(std::remove_if(line.begin(), line.end(), &IsWhitespace), line.end());
-
-			std::istringstream iss(line);
-
-			// Read property key
-			getline(iss, result.key, ',');
-
-			// Read values
-			result.values.clear();
-			std::string token;
-			while (getline(iss, token, ','))
+			if (fileOpen)
 			{
-				result.values.push_back(token);
+				file.close();
+				fileOpen = false;
+			}
+		}
+
+		bool ReadParsedLine(ParsedKeyValues& result)
+		{
+			if (!file.is_open())
+			{
+				return false;
 			}
 
-			return true;
-		}
-		return false;
-	}
-private:
-	static bool IsWhitespace(unsigned char c)
-	{
-		return (c == ' ' || c == '\n' || c == '\r' ||
-			c == '\t' || c == '\v' || c == '\f');
-	}
+			std::string line;
+			if (std::getline(file, line))
+			{
+				// Clean up line first
+				line.erase(std::remove_if(line.begin(), line.end(), &IsWhitespace), line.end());
 
-private:
-	std::ifstream file;
-	bool fileOpen;
-};
+				std::istringstream iss(line);
+
+				// Read property key
+				getline(iss, result.key, ',');
+
+				// Read values
+				result.values.clear();
+				std::string token;
+				while (getline(iss, token, ','))
+				{
+					result.values.push_back(token);
+				}
+
+				return true;
+			}
+			return false;
+		}
+	private:
+		static bool IsWhitespace(unsigned char c)
+		{
+			return (c == ' ' || c == '\n' || c == '\r' ||
+				c == '\t' || c == '\v' || c == '\f');
+		}
+
+	private:
+		std::ifstream file;
+		bool fileOpen;
+	};
+}

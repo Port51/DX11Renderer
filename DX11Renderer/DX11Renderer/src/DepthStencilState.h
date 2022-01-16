@@ -4,10 +4,10 @@
 #include "SharedCodex.h"
 #include "DX11Include.h"
 
-class Graphics;
-
-namespace Bind
+namespace gfx
 {
+	class Graphics;
+
 	class DepthStencilState : public Bindable
 	{
 	public:

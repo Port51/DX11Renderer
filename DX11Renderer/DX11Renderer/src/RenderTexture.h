@@ -9,21 +9,24 @@ struct ID3D11DepthStencilView;
 struct ID3D11RenderTargetView;
 struct ID3D11Texture2D;
 
-class RenderTexture : public Texture
+namespace gfx
 {
-public:
-	RenderTexture(Graphics& gfx);
-	//~RenderTexture();
+	class RenderTexture : public Texture
+	{
+	public:
+		RenderTexture(Graphics& gfx);
+		//~RenderTexture();
 
-	virtual void Init(ComPtr<ID3D11Device> pDevice, UINT textureWidth, UINT textureHeight);
-	void Shutdown();
+		virtual void Init(ComPtr<ID3D11Device> pDevice, UINT textureWidth, UINT textureHeight);
+		void Shutdown();
 
-	ComPtr<ID3D11RenderTargetView> GetView() const;
+		ComPtr<ID3D11RenderTargetView> GetView() const;
 
-	void BindCS(Graphics& gfx, UINT slot) override;
-	void BindVS(Graphics& gfx, UINT slot) override;
-	void BindPS(Graphics& gfx, UINT slot) override;
+		void BindCS(Graphics& gfx, UINT slot) override;
+		void BindVS(Graphics& gfx, UINT slot) override;
+		void BindPS(Graphics& gfx, UINT slot) override;
 
-protected:
-	ComPtr<ID3D11RenderTargetView> pRenderTargetView;
-};
+	protected:
+		ComPtr<ID3D11RenderTargetView> pRenderTargetView;
+	};
+}

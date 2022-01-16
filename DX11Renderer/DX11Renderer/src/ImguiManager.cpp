@@ -1,14 +1,17 @@
 #include "pch.h"
 #include "ImguiManager.h"
 
-ImguiManager::ImguiManager()
+namespace gfx
 {
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-	ImGui::StyleColorsDark();
-}
+	ImguiManager::ImguiManager()
+	{
+		IMGUI_CHECKVERSION();
+		ImGui::CreateContext();
+		ImGui::StyleColorsDark();
+	}
 
-ImguiManager::~ImguiManager()
-{
-	ImGui::DestroyContext();
+	ImguiManager::~ImguiManager()
+	{
+		ImGui::DestroyContext();
+	}
 }

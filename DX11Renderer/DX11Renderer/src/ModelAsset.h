@@ -5,30 +5,33 @@
 #include "MeshAsset.h"
 #include "DebugHelper.h"
 
-class ModelAsset
+namespace gfx
 {
-	friend class ModelInstance;
-public:
-	ModelAsset(std::unique_ptr<SceneGraphNode<MeshAsset>> _pSceneGraph, std::vector<std::string> _materialPaths)
-		: pSceneGraph(std::move(_pSceneGraph)), materialPaths(std::move(_materialPaths))
+	class ModelAsset
 	{
-
-	}
-
-	void Print()
-	{
-		if (pSceneGraph)
+		friend class ModelInstance;
+	public:
+		ModelAsset(std::unique_ptr<SceneGraphNode<MeshAsset>> _pSceneGraph, std::vector<std::string> _materialPaths)
+			: pSceneGraph(std::move(_pSceneGraph)), materialPaths(std::move(_materialPaths))
 		{
-			printf("Model:\n");
-			pSceneGraph->Print(0);
-		}
-		else
-		{
-			printf("No scene graph!\n");
-		}
-	}
 
-private:
-	std::unique_ptr<SceneGraphNode<MeshAsset>> pSceneGraph;
-	std::vector<std::string> materialPaths;
-};
+		}
+
+		void Print()
+		{
+			if (pSceneGraph)
+			{
+				printf("Model:\n");
+				pSceneGraph->Print(0);
+			}
+			else
+			{
+				printf("No scene graph!\n");
+			}
+		}
+
+	private:
+		std::unique_ptr<SceneGraphNode<MeshAsset>> pSceneGraph;
+		std::vector<std::string> materialPaths;
+	};
+}

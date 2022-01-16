@@ -1,8 +1,11 @@
 #pragma once
 #include <string>
 
-class BaseMesh
+namespace gfx
 {
-public:
-	std::string name;
-};
+	class BaseMesh
+	{
+	public:
+		std::string name;
+	};
+}

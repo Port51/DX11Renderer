@@ -5,38 +5,41 @@
 #include "DX11Include.h"
 #include "BaseBufferData.h"
 
-class Graphics;
-
 struct ID3D11Buffer;
 struct ID3D11ShaderResourceView;
 struct ID3D11UnorderedAccessView;
 
-class Buffer : public Bindable
+namespace gfx
 {
-public:
-	Buffer(D3D11_USAGE usage, UINT bindFlags, UINT byteWidth)
-		: usage(usage), bindFlags(bindFlags), byteWidth(byteWidth)
-	{}
-	virtual ~Buffer() {}
+	class Graphics;
 
-public:
-	ComPtr<ID3D11Buffer> GetD3DBuffer()
+	class Buffer : public Bindable
 	{
-		return pBuffer;
-	}
-	ComPtr<ID3D11ShaderResourceView> GetD3DSRV()
-	{
-		return pSRV;
-	}
-	ComPtr<ID3D11UnorderedAccessView> GetD3DUAV()
-	{
-		return pUAV;
-	}
-protected:
-	ComPtr<ID3D11Buffer> pBuffer;
-	ComPtr<ID3D11ShaderResourceView> pSRV;
-	ComPtr<ID3D11UnorderedAccessView> pUAV;
-	UINT bindFlags;
-	D3D11_USAGE usage;
-	UINT byteWidth;
-};
+	public:
+		Buffer(D3D11_USAGE usage, UINT bindFlags, UINT byteWidth)
+			: usage(usage), bindFlags(bindFlags), byteWidth(byteWidth)
+		{}
+		virtual ~Buffer() {}
+
+	public:
+		ComPtr<ID3D11Buffer> GetD3DBuffer()
+		{
+			return pBuffer;
+		}
+		ComPtr<ID3D11ShaderResourceView> GetD3DSRV()
+		{
+			return pSRV;
+		}
+		ComPtr<ID3D11UnorderedAccessView> GetD3DUAV()
+		{
+			return pUAV;
+		}
+	protected:
+		ComPtr<ID3D11Buffer> pBuffer;
+		ComPtr<ID3D11ShaderResourceView> pSRV;
+		ComPtr<ID3D11UnorderedAccessView> pUAV;
+		UINT bindFlags;
+		D3D11_USAGE usage;
+		UINT byteWidth;
+	};
+}

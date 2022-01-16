@@ -1,9 +1,12 @@
 #pragma once
 #include "DXMathInclude.h"
 
-struct Transforms
+namespace gfx
 {
-	dx::XMMATRIX model;
-	dx::XMMATRIX modelView;
-	dx::XMMATRIX modelViewProj;
-};
+	struct Transforms
+	{
+		dx::XMMATRIX model;
+		dx::XMMATRIX modelView;
+		dx::XMMATRIX modelViewProj;
+	};
+}

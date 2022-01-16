@@ -3,7 +3,10 @@
 #include "MeshRenderer.h"
 #include "Renderer.h"
 
-void RenderStep::SubmitDrawCalls(const MeshRenderer& meshRenderer, const DrawContext& drawContext) const
+namespace gfx
 {
-	drawContext.renderer.AcceptDrawCall(DrawCall(this, &meshRenderer, drawContext), targetPass);
+	void RenderStep::SubmitDrawCalls(const MeshRenderer& meshRenderer, const DrawContext& drawContext) const
+	{
+		drawContext.renderer.AcceptDrawCall(DrawCall(this, &meshRenderer, drawContext), targetPass);
+	}
 }

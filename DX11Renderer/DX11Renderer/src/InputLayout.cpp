@@ -3,31 +3,34 @@
 #include "SharedCodex.h"
 #include "VertexLayout.h"
 
-InputLayout::InputLayout(Graphics& gfx, VertexLayout _layout, std::string vertexShaderName, ID3DBlob* pVertexShaderBytecode)
-	: layout(std::move(_layout)),
-	vertexShaderName(vertexShaderName)
+namespace gfx
 {
-	const auto d3dLayout = layout.GetD3DLayout();
-	THROW_IF_FAILED(gfx.GetDevice()->CreateInputLayout(
-		d3dLayout.data(), (UINT)d3dLayout.size(),
-		pVertexShaderBytecode->GetBufferPointer(),
-		pVertexShaderBytecode->GetBufferSize(),
-		&pInputLayout
-	));
-}
+	InputLayout::InputLayout(Graphics& gfx, VertexLayout _layout, std::string vertexShaderName, ID3DBlob* pVertexShaderBytecode)
+		: layout(std::move(_layout)),
+		vertexShaderName(vertexShaderName)
+	{
+		const auto d3dLayout = layout.GetD3DLayout();
+		THROW_IF_FAILED(gfx.GetDevice()->CreateInputLayout(
+			d3dLayout.data(), (UINT)d3dLayout.size(),
+			pVertexShaderBytecode->GetBufferPointer(),
+			pVertexShaderBytecode->GetBufferSize(),
+			&pInputLayout
+		));
+	}
 
-void InputLayout::BindIA(Graphics& gfx, UINT slot)
-{
-	gfx.GetContext()->IASetInputLayout(pInputLayout.Get());
-}
+	void InputLayout::BindIA(Graphics& gfx, UINT slot)
+	{
+		gfx.GetContext()->IASetInputLayout(pInputLayout.Get());
+	}
 
-std::shared_ptr<InputLayout> InputLayout::Resolve(Graphics & gfx, const VertexLayout & layout, std::string vertexShaderName, ID3DBlob * pVertexShaderBytecode)
-{
-	return Bind::Codex::Resolve<InputLayout>(gfx, GenerateUID(layout, vertexShaderName, pVertexShaderBytecode), layout, vertexShaderName, pVertexShaderBytecode);
-}
+	std::shared_ptr<InputLayout> InputLayout::Resolve(Graphics & gfx, const VertexLayout & layout, std::string vertexShaderName, ID3DBlob * pVertexShaderBytecode)
+	{
+		return Codex::Resolve<InputLayout>(gfx, GenerateUID(layout, vertexShaderName, pVertexShaderBytecode), layout, vertexShaderName, pVertexShaderBytecode);
+	}
 
-std::string InputLayout::GenerateUID(const VertexLayout & layout, std::string vertexShaderName, ID3DBlob * pVertexShaderBytecode)
-{
-	using namespace std::string_literals;
-	return typeid(InputLayout).name() + "#"s + layout.GetCode() + "|" + vertexShaderName;
+	std::string InputLayout::GenerateUID(const VertexLayout & layout, std::string vertexShaderName, ID3DBlob * pVertexShaderBytecode)
+	{
+		using namespace std::string_literals;
+		return typeid(InputLayout).name() + "#"s + layout.GetCode() + "|" + vertexShaderName;
+	}
 }

@@ -20,7 +20,7 @@ int CALLBACK WinMain(
 	int returnCode = 0;
 	try
 	{
-		return App(1280, 720).Go();
+		return gfx::App(1280, 720).Go();
 	}
 	catch (const std::exception& e)
 	{

@@ -2,7 +2,7 @@
 #include "DepthStencilState.h"
 #include "Graphics.h"
 
-namespace Bind
+namespace gfx
 {
 	DepthStencilState::DepthStencilState(Graphics& gfx, Mode mode)
 		: mode(mode)

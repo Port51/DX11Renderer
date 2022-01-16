@@ -3,11 +3,12 @@
 #include "CommonHeader.h"
 #include <array>
 
-class Graphics;
 class ID3D11RasterizerState;
 
-namespace Bind
+namespace gfx
 {
+	class Graphics;
+
 	class RasterizerState : public Bindable
 	{
 	public:

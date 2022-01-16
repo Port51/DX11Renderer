@@ -2,25 +2,28 @@
 #include "DXMathInclude.h"
 #include <vector>
 
-class Renderer;
-
-struct DrawContext
+namespace gfx
 {
-public:
-	DrawContext(Renderer& renderer)
-		: renderer(renderer)
-	{}
-	void SetRenderPasses(std::string _renderPass)
+	class Renderer;
+
+	struct DrawContext
 	{
-		renderPasses.emplace_back(_renderPass);
-	}
-	void SetRenderPasses(std::vector<std::string> _renderPasses)
-	{
-		renderPasses = std::move(_renderPasses);
-	}
-public:
-	Renderer& renderer;
-	dx::XMMATRIX viewMatrix;
-	dx::XMMATRIX projMatrix;
-	std::vector<std::string> renderPasses;
-};
+	public:
+		DrawContext(Renderer& renderer)
+			: renderer(renderer)
+		{}
+		void SetRenderPasses(std::string _renderPass)
+		{
+			renderPasses.emplace_back(_renderPass);
+		}
+		void SetRenderPasses(std::vector<std::string> _renderPasses)
+		{
+			renderPasses = std::move(_renderPasses);
+		}
+	public:
+		Renderer& renderer;
+		dx::XMMATRIX viewMatrix;
+		dx::XMMATRIX projMatrix;
+		std::vector<std::string> renderPasses;
+	};
+}

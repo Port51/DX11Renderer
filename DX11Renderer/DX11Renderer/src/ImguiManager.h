@@ -1,8 +1,11 @@
 #pragma once
 
-class ImguiManager
+namespace gfx
 {
-public:
-	ImguiManager();
-	~ImguiManager();
-};
+	class ImguiManager
+	{
+	public:
+		ImguiManager();
+		~ImguiManager();
+	};
+}

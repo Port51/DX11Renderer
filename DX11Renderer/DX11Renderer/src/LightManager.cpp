@@ -13,186 +13,189 @@
 #include "ModelInstance.h"
 #include "LightShadowData.h"
 
-LightManager::LightManager(Graphics & gfx, std::shared_ptr<RendererList> pRendererList)
+namespace gfx
 {
-	pLightData = std::make_unique<StructuredBuffer<LightData>>(gfx, D3D11_USAGE_DYNAMIC, D3D11_BIND_SHADER_RESOURCE, MaxLightCount);
-	cachedLightData.resize(MaxLightCount);
-
-	/*for (int i = 0; i < 3; ++i)
+	LightManager::LightManager(Graphics & gfx, std::shared_ptr<RendererList> pRendererList)
 	{
-		pLights.emplace_back(std::make_unique<PointLight>(gfx, i, dx::XMFLOAT3((i - 1) * 7.5, 1.0f, 0.f), dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 3.0f));
-	}*/
+		pLightData = std::make_unique<StructuredBuffer<LightData>>(gfx, D3D11_USAGE_DYNAMIC, D3D11_BIND_SHADER_RESOURCE, MaxLightCount);
+		cachedLightData.resize(MaxLightCount);
 
-	pLights.emplace_back(std::make_unique<PointLight>(gfx, 0, dx::XMFLOAT3(2.5f, 1.0f, 7.5f), dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 3.0f));
-	pLights.emplace_back(std::make_unique<PointLight>(gfx, 1, dx::XMFLOAT3(0.0f, 1.0f, 7.5f), dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 3.0f));
-	/*pLights.emplace_back(std::make_unique<PointLight>(gfx, 2, dx::XMFLOAT3(-7.5f, 1.0f, 7.5f), dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 3.0f));
-	pLights.emplace_back(std::make_unique<PointLight>(gfx, 3, dx::XMFLOAT3(-7.5f, 1.0f, 0.0f), dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 3.0f));
-	pLights.emplace_back(std::make_unique<PointLight>(gfx, 4, dx::XMFLOAT3(-7.5f, 1.0f, -7.5f), dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 3.0f));
-	pLights.emplace_back(std::make_unique<PointLight>(gfx, 5, dx::XMFLOAT3(0.0f, 1.0f, -7.5f), dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 3.0f));
-	pLights.emplace_back(std::make_unique<PointLight>(gfx, 6, dx::XMFLOAT3(7.5f, 1.0f, -7.5f), dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 3.0f));
-	pLights.emplace_back(std::make_unique<PointLight>(gfx, 7, dx::XMFLOAT3(7.5f, 1.0f, 0.0f), dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 3.0f));
-	*/
-	pLights.emplace_back(std::make_unique<Spotlight>(gfx, 8, dx::XMFLOAT3(0.0, 1.0f, 0.f), 0.0f, 0.0f, dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 50.0f, 50.0f));
-	//pLights.emplace_back(std::make_unique<DirectionalLight>(gfx, 4, dx::XMFLOAT3(-2.0, 1.0f, -5.f), 0.0f, 0.0f, dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 50.0f, 5.0f));
-
-	pLightInputCB = std::make_unique<ConstantBuffer<LightInputCB>>(gfx, D3D11_USAGE_DYNAMIC);
-
-	/*int shadowLightCt = 0;
-	for (const auto& l : pLights)
-	{
-		if (l->HasShadow())
+		/*for (int i = 0; i < 3; ++i)
 		{
-			shadowLightCt++;
-		}
-	}*/
-	pLightShadowSB = std::make_unique<StructuredBuffer<LightShadowData>>(gfx, D3D11_USAGE_DYNAMIC, D3D11_BIND_SHADER_RESOURCE, MaxShadowCount);
-	pShadowMapSRVs.resize(MaxShadowCount);
-	cachedShadowData.resize(MaxShadowCount);
+			pLights.emplace_back(std::make_unique<PointLight>(gfx, i, dx::XMFLOAT3((i - 1) * 7.5, 1.0f, 0.f), dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 3.0f));
+		}*/
 
-	pShadowRendererList = std::make_shared<RendererList>(pRendererList);
-}
+		pLights.emplace_back(std::make_unique<PointLight>(gfx, 0, dx::XMFLOAT3(2.5f, 1.0f, 7.5f), dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 3.0f));
+		pLights.emplace_back(std::make_unique<PointLight>(gfx, 1, dx::XMFLOAT3(0.0f, 1.0f, 7.5f), dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 3.0f));
+		/*pLights.emplace_back(std::make_unique<PointLight>(gfx, 2, dx::XMFLOAT3(-7.5f, 1.0f, 7.5f), dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 3.0f));
+		pLights.emplace_back(std::make_unique<PointLight>(gfx, 3, dx::XMFLOAT3(-7.5f, 1.0f, 0.0f), dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 3.0f));
+		pLights.emplace_back(std::make_unique<PointLight>(gfx, 4, dx::XMFLOAT3(-7.5f, 1.0f, -7.5f), dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 3.0f));
+		pLights.emplace_back(std::make_unique<PointLight>(gfx, 5, dx::XMFLOAT3(0.0f, 1.0f, -7.5f), dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 3.0f));
+		pLights.emplace_back(std::make_unique<PointLight>(gfx, 6, dx::XMFLOAT3(7.5f, 1.0f, -7.5f), dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 3.0f));
+		pLights.emplace_back(std::make_unique<PointLight>(gfx, 7, dx::XMFLOAT3(7.5f, 1.0f, 0.0f), dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 3.0f));
+		*/
+		pLights.emplace_back(std::make_unique<Spotlight>(gfx, 8, dx::XMFLOAT3(0.0, 1.0f, 0.f), 0.0f, 0.0f, dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 50.0f, 50.0f));
+		//pLights.emplace_back(std::make_unique<DirectionalLight>(gfx, 4, dx::XMFLOAT3(-2.0, 1.0f, -5.f), 0.0f, 0.0f, dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 50.0f, 5.0f));
 
-void LightManager::AddLightModelsToList(RendererList & pRendererList)
-{
-	for (const auto& l : pLights)
-	{
-		pRendererList.AddModelInstance(l->GetModelInstance());
+		pLightInputCB = std::make_unique<ConstantBuffer<LightInputCB>>(gfx, D3D11_USAGE_DYNAMIC);
+
+		/*int shadowLightCt = 0;
+		for (const auto& l : pLights)
+		{
+			if (l->HasShadow())
+			{
+				shadowLightCt++;
+			}
+		}*/
+		pLightShadowSB = std::make_unique<StructuredBuffer<LightShadowData>>(gfx, D3D11_USAGE_DYNAMIC, D3D11_BIND_SHADER_RESOURCE, MaxShadowCount);
+		pShadowMapSRVs.resize(MaxShadowCount);
+		cachedShadowData.resize(MaxShadowCount);
+
+		pShadowRendererList = std::make_shared<RendererList>(pRendererList);
 	}
-}
 
-void LightManager::CullLights(Graphics & gfx, const Camera & cam)
-{
-	dx::XMFLOAT4 frustumCornersVS;
-	dx::XMStoreFloat4(&frustumCornersVS, cam.GetFrustumCornersVS());
-
-	dx::XMVECTOR aabbCenter = dx::XMVectorSet(0.f, 0.f, (cam.GetNearClipPlane() + cam.GetFarClipPlane()) * 0.5f, 0.f);
-	dx::XMVECTOR aabbExtents = dx::XMVectorSet(frustumCornersVS.z * 0.5f, frustumCornersVS.w * -0.5f, cam.GetFarClipPlane() - cam.GetNearClipPlane(), 0.f);
-
-	visibleLightCt = 0u;
-	for (int i = 0; i < pLights.size(); ++i)
+	void LightManager::AddLightModelsToList(RendererList & pRendererList)
 	{
-		const auto data = pLights[i]->GetLightData(cam.GetViewMatrix());
+		for (const auto& l : pLights)
+		{
+			pRendererList.AddModelInstance(l->GetModelInstance());
+		}
+	}
+
+	void LightManager::CullLights(Graphics & gfx, const Camera & cam)
+	{
+		dx::XMFLOAT4 frustumCornersVS;
+		dx::XMStoreFloat4(&frustumCornersVS, cam.GetFrustumCornersVS());
+
+		dx::XMVECTOR aabbCenter = dx::XMVectorSet(0.f, 0.f, (cam.GetNearClipPlane() + cam.GetFarClipPlane()) * 0.5f, 0.f);
+		dx::XMVECTOR aabbExtents = dx::XMVectorSet(frustumCornersVS.z * 0.5f, frustumCornersVS.w * -0.5f, cam.GetFarClipPlane() - cam.GetNearClipPlane(), 0.f);
+
+		visibleLightCt = 0u;
+		for (int i = 0; i < pLights.size(); ++i)
+		{
+			const auto data = pLights[i]->GetLightData(cam.GetViewMatrix());
+
+			bool inFrustum = true;
+			switch (pLights[i]->GetLightType())
+			{
+			case 0:
+				// Point light
+				inFrustum &= FrustumSphereIntersection(data.positionVS_range, frustumCornersVS, cam.GetFarClipPlane());
+				break;
+			case 1:
+				// Spotlight (move sphere to middle and half the size)
+				dx::XMFLOAT4 positionRange;
+				dx::XMStoreFloat4(&positionRange, data.positionVS_range);
+				auto lightSphere = dx::XMVectorAdd(data.positionVS_range, dx::XMVectorScale(data.directionVS, positionRange.w * 0.5f));
+				lightSphere = dx::XMVectorSetW(lightSphere, positionRange.w * 0.5f);
+				inFrustum &= FrustumSphereIntersection(lightSphere, frustumCornersVS, cam.GetFarClipPlane());
+				break;
+			case 2:
+				// Directional (do nothing)
+				break;
+			}
+
+			if (inFrustum)
+			{
+				cachedLightData[visibleLightCt++] = data;
+			}
+		}
+		// Update SB
+		pLightData->Update(gfx, cachedLightData, visibleLightCt);
+
+		// Update CB
+		LightInputCB lightInputCB;
+		ZeroMemory(&lightInputCB, sizeof(lightInputCB));
+		lightInputCB.visibleLightCount = visibleLightCt;
+		pLightInputCB->Update(gfx, lightInputCB);
+		gfx.GetContext()->CSSetConstantBuffers(RenderSlots::CS_LightInputCB, 1u, pLightInputCB->GetD3DBuffer().GetAddressOf());
+	}
+
+	void LightManager::BindShadowMaps(Graphics& gfx, UINT startSlot) const
+	{
+		// todo: size should change based on shadow culling
+		gfx.GetContext()->CSSetShaderResources(startSlot, pShadowMapSRVs.size(), pShadowMapSRVs.data()->GetAddressOf());
+	}
+
+	void LightManager::RenderShadows(ShadowPassContext context)
+	{
+		context.pRendererList = pShadowRendererList;
+
+		// todo: cull shadows
+		int shadowMapIdx = 0;
+		for (int i = 0; i < pLights.size(); ++i)
+		{
+			if (pLights[i]->HasShadow())
+			{
+				pLights[i]->RenderShadow(context); //, gfx, cam, pass, pTransformationCB
+				pLights[i]->AppendShadowData(shadowMapIdx, cachedShadowData, pShadowMapSRVs);
+				shadowMapIdx += pLights[i]->GetShadowSRVCount();
+			}
+		}
+
+		pLightShadowSB->Update(context.gfx, cachedShadowData, cachedShadowData.size());
+	}
+
+	ComPtr<ID3D11ShaderResourceView> LightManager::GetLightDataSRV() const
+	{
+		return pLightData->GetD3DSRV();
+	}
+
+	ComPtr<ID3D11ShaderResourceView> LightManager::GetShadowDataSRV() const
+	{
+		return pLightShadowSB->GetD3DSRV();
+	}
+
+	void LightManager::DrawImguiControlWindows()
+	{
+		for (auto& l : pLights)
+		{
+			l->DrawImguiControlWindow();
+		}
+	}
+
+	bool LightManager::FrustumSphereIntersection(dx::XMVECTOR lightSphere, dx::XMFLOAT4 frustumCorners, float farClipPlane)
+	{
+		// Use cross product to turn tile view directions into plane directions
+		// The cross product is done by flipping X or Y with Z
+		// Also, flip y here as it was previously flipped for GPU
+		const auto plane0 = dx::XMVector3Normalize(dx::XMVectorSet(1, 0, -frustumCorners.x, 0));
+		const auto plane1 = dx::XMVector3Normalize(dx::XMVectorSet(0, 1, frustumCorners.y, 0));
+		const auto plane2 = dx::XMVector3Normalize(dx::XMVectorSet(-1, 0, -frustumCorners.x, 0));
+		const auto plane3 = dx::XMVector3Normalize(dx::XMVectorSet(0, -1, frustumCorners.y, 0));
+
+		dx::XMFLOAT4 positionVS_range;
+		dx::XMStoreFloat4(&positionVS_range, lightSphere);
 
 		bool inFrustum = true;
-		switch (pLights[i]->GetLightType())
-		{
-		case 0:
-			// Point light
-			inFrustum &= FrustumSphereIntersection(data.positionVS_range, frustumCornersVS, cam.GetFarClipPlane());
-			break;
-		case 1:
-			// Spotlight (move sphere to middle and half the size)
-			dx::XMFLOAT4 positionRange;
-			dx::XMStoreFloat4(&positionRange, data.positionVS_range);
-			auto lightSphere = dx::XMVectorAdd(data.positionVS_range, dx::XMVectorScale(data.directionVS, positionRange.w * 0.5f));
-			lightSphere = dx::XMVectorSetW(lightSphere, positionRange.w * 0.5f);
-			inFrustum &= FrustumSphereIntersection(lightSphere, frustumCornersVS, cam.GetFarClipPlane());
-			break;
-		case 2:
-			// Directional (do nothing)
-			break;
-		}
+		float d;
+		dx::XMStoreFloat(&d, dx::XMVector3Dot(lightSphere, plane0));
+		inFrustum &= d <= positionVS_range.w;
+		dx::XMStoreFloat(&d, dx::XMVector3Dot(lightSphere, plane1));
+		inFrustum &= d <= positionVS_range.w;
+		dx::XMStoreFloat(&d, dx::XMVector3Dot(lightSphere, plane2));
+		inFrustum &= d <= positionVS_range.w;
+		dx::XMStoreFloat(&d, dx::XMVector3Dot(lightSphere, plane3));
+		inFrustum &= d <= positionVS_range.w;
 
-		if (inFrustum)
-		{
-			cachedLightData[visibleLightCt++] = data;
-		}
+		inFrustum &= positionVS_range.z <= farClipPlane;
+
+		return inFrustum;
 	}
-	// Update SB
-	pLightData->Update(gfx, cachedLightData, visibleLightCt);
 
-	// Update CB
-	LightInputCB lightInputCB;
-	ZeroMemory(&lightInputCB, sizeof(lightInputCB));
-	lightInputCB.visibleLightCount = visibleLightCt;
-	pLightInputCB->Update(gfx, lightInputCB);
-	gfx.GetContext()->CSSetConstantBuffers(RenderSlots::CS_LightInputCB, 1u, pLightInputCB->GetD3DBuffer().GetAddressOf());
-}
-
-void LightManager::BindShadowMaps(Graphics& gfx, UINT startSlot) const
-{
-	// todo: size should change based on shadow culling
-	gfx.GetContext()->CSSetShaderResources(startSlot, pShadowMapSRVs.size(), pShadowMapSRVs.data()->GetAddressOf());
-}
-
-void LightManager::RenderShadows(ShadowPassContext context)
-{
-	context.pRendererList = pShadowRendererList;
-
-	// todo: cull shadows
-	int shadowMapIdx = 0;
-	for (int i = 0; i < pLights.size(); ++i)
+	bool LightManager::AABBSphereIntersection(const LightData & lightData, dx::XMVECTOR aabbCenter, dx::XMVECTOR aabbExtents)
 	{
-		if (pLights[i]->HasShadow())
-		{
-			pLights[i]->RenderShadow(context); //, gfx, cam, pass, pTransformationCB
-			pLights[i]->AppendShadowData(shadowMapIdx, cachedShadowData, pShadowMapSRVs);
-			shadowMapIdx += pLights[i]->GetShadowSRVCount();
-		}
+		dx::XMFLOAT4 positionVS_range;
+		dx::XMStoreFloat4(&positionVS_range, lightData.positionVS_range);
+
+		// Formula: float3 displ = max(0, abs(aabbCenter - spherePos) - aabbExtents);
+		dx::XMVECTOR displ = dx::XMVectorAbs(dx::XMVectorSubtract(aabbCenter, dx::XMVectorSet(positionVS_range.x, positionVS_range.y, positionVS_range.z, 0.f)));
+		displ = dx::XMVectorSubtract(displ, aabbExtents);
+		displ = dx::XMVectorMax(dx::XMVectorSet(0, 0, 0, 0), displ);
+
+		float sdfSqr;
+		dx::XMStoreFloat(&sdfSqr, dx::XMVector3Dot(displ, displ));
+
+		return sdfSqr <= positionVS_range.w * positionVS_range.w;
 	}
-
-	pLightShadowSB->Update(context.gfx, cachedShadowData, cachedShadowData.size());
-}
-
-ComPtr<ID3D11ShaderResourceView> LightManager::GetLightDataSRV() const
-{
-	return pLightData->GetD3DSRV();
-}
-
-ComPtr<ID3D11ShaderResourceView> LightManager::GetShadowDataSRV() const
-{
-	return pLightShadowSB->GetD3DSRV();
-}
-
-void LightManager::DrawImguiControlWindows()
-{
-	for (auto& l : pLights)
-	{
-		l->DrawImguiControlWindow();
-	}
-}
-
-bool LightManager::FrustumSphereIntersection(dx::XMVECTOR lightSphere, dx::XMFLOAT4 frustumCorners, float farClipPlane)
-{
-	// Use cross product to turn tile view directions into plane directions
-	// The cross product is done by flipping X or Y with Z
-	// Also, flip y here as it was previously flipped for GPU
-	const auto plane0 = dx::XMVector3Normalize(dx::XMVectorSet(1, 0, -frustumCorners.x, 0));
-	const auto plane1 = dx::XMVector3Normalize(dx::XMVectorSet(0, 1, frustumCorners.y, 0));
-	const auto plane2 = dx::XMVector3Normalize(dx::XMVectorSet(-1, 0, -frustumCorners.x, 0));
-	const auto plane3 = dx::XMVector3Normalize(dx::XMVectorSet(0, -1, frustumCorners.y, 0));
-
-	dx::XMFLOAT4 positionVS_range;
-	dx::XMStoreFloat4(&positionVS_range, lightSphere);
-
-	bool inFrustum = true;
-	float d;
-	dx::XMStoreFloat(&d, dx::XMVector3Dot(lightSphere, plane0));
-	inFrustum &= d <= positionVS_range.w;
-	dx::XMStoreFloat(&d, dx::XMVector3Dot(lightSphere, plane1));
-	inFrustum &= d <= positionVS_range.w;
-	dx::XMStoreFloat(&d, dx::XMVector3Dot(lightSphere, plane2));
-	inFrustum &= d <= positionVS_range.w;
-	dx::XMStoreFloat(&d, dx::XMVector3Dot(lightSphere, plane3));
-	inFrustum &= d <= positionVS_range.w;
-
-	inFrustum &= positionVS_range.z <= farClipPlane;
-
-	return inFrustum;
-}
-
-bool LightManager::AABBSphereIntersection(const LightData & lightData, dx::XMVECTOR aabbCenter, dx::XMVECTOR aabbExtents)
-{
-	dx::XMFLOAT4 positionVS_range;
-	dx::XMStoreFloat4(&positionVS_range, lightData.positionVS_range);
-
-	// Formula: float3 displ = max(0, abs(aabbCenter - spherePos) - aabbExtents);
-	dx::XMVECTOR displ = dx::XMVectorAbs(dx::XMVectorSubtract(aabbCenter, dx::XMVectorSet(positionVS_range.x, positionVS_range.y, positionVS_range.z, 0.f)));
-	displ = dx::XMVectorSubtract(displ, aabbExtents);
-	displ = dx::XMVectorMax(dx::XMVectorSet(0, 0, 0, 0), displ);
-
-	float sdfSqr;
-	dx::XMStoreFloat(&sdfSqr, dx::XMVector3Dot(displ, displ));
-
-	return sdfSqr <= positionVS_range.w * positionVS_range.w;
 }

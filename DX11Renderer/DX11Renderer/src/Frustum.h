@@ -1,7 +1,10 @@
 #pragma once
 
-struct Frustum
+namespace gfx
 {
-public:
-	// todo: add planes
-};
+	struct Frustum
+	{
+	public:
+		// todo: add planes
+	};
+}

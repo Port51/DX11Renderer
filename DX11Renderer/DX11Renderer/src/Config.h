@@ -1,15 +1,18 @@
 #pragma once
 
-class Config
+namespace gfx
 {
-public:
-	enum ShadowType
+	class Config
 	{
-		Hard,
-		HardwarePCF,
-		Moment
+	public:
+		enum ShadowType
+		{
+			Hard,
+			HardwarePCF,
+			Moment
+		};
+	public:
+		static inline ShadowType ShadowType = ShadowType::HardwarePCF;
+		static inline int ShadowResolution = 256;
 	};
-public:
-	static inline ShadowType ShadowType = ShadowType::HardwarePCF;
-	static inline int ShadowResolution = 256;
-};
+}

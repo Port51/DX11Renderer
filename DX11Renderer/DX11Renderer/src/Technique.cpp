@@ -4,13 +4,16 @@
 #include "Renderer.h"
 #include "DrawContext.h"
 
-void Technique::SubmitDrawCalls(const MeshRenderer& meshRenderer, const DrawContext& drawContext) const
+namespace gfx
 {
-	if (active)
+	void Technique::SubmitDrawCalls(const MeshRenderer& meshRenderer, const DrawContext& drawContext) const
 	{
-		for (const auto& step : pSteps)
+		if (active)
 		{
-			step->SubmitDrawCalls(meshRenderer, drawContext);
+			for (const auto& step : pSteps)
+			{
+				step->SubmitDrawCalls(meshRenderer, drawContext);
+			}
 		}
 	}
 }

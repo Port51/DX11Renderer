@@ -1,10 +1,13 @@
 #pragma once
 #include <DirectXMath.h>
 
-struct LightData
+namespace gfx
 {
-	DirectX::XMVECTOR positionVS_range;
-	DirectX::XMVECTOR color_intensity;
-	DirectX::XMVECTOR directionVS;
-	DirectX::XMVECTOR data0;
-};
+	struct LightData
+	{
+		DirectX::XMVECTOR positionVS_range;
+		DirectX::XMVECTOR color_intensity;
+		DirectX::XMVECTOR directionVS;
+		DirectX::XMVECTOR data0;
+	};
+}

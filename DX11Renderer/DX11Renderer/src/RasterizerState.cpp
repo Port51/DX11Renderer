@@ -3,7 +3,7 @@
 #include "SharedCodex.h"
 #include "Graphics.h"
 
-namespace Bind
+namespace gfx
 {
 	RasterizerState::RasterizerState(Graphics& gfx, bool twoSided)
 		:

@@ -3,10 +3,10 @@
 #include "CommonHeader.h"
 #include <string>
 
-class Graphics;
-
-namespace Bind
+namespace gfx
 {
+	class Graphics;
+
 	class NullPixelShader : public Bindable
 	{
 	public:

@@ -4,11 +4,11 @@
 #include <unordered_map>
 #include "CodexElement.h"
 
-class Graphics;
-class CodexElement;
-
-namespace Bind
+namespace gfx
 {
+	class Graphics;
+	class CodexElement;
+
 	class Codex
 	{
 	public:

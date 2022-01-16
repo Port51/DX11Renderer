@@ -1,6 +1,9 @@
 #pragma once
 
-class CodexElement
+namespace gfx
 {
+	class CodexElement
+	{
 
-};
+	};
+}

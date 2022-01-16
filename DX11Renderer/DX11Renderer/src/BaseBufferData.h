@@ -2,11 +2,14 @@
 
 struct D3D11_SUBRESOURCE_DATA;
 
-class BaseBufferData
+namespace gfx
 {
-public:
-	virtual D3D11_SUBRESOURCE_DATA GetSubresourceData() const = 0;
-	virtual UINT GetElementCount() const = 0;
-	virtual UINT GetSizeInBytes() const = 0;
-	virtual UINT GetStride() const = 0;
-};
+	class BaseBufferData
+	{
+	public:
+		virtual D3D11_SUBRESOURCE_DATA GetSubresourceData() const = 0;
+		virtual UINT GetElementCount() const = 0;
+		virtual UINT GetSizeInBytes() const = 0;
+		virtual UINT GetStride() const = 0;
+	};
+}

@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Colors
+namespace gfx
 {
 	struct BGRAColor
 	{
