@@ -19,6 +19,8 @@ namespace gfx
 		friend class ModelInstance;
 	public:
 		ModelNode(int id, const dx::XMMATRIX& _transform, std::shared_ptr<MeshRenderer> pMeshPtr, std::vector<std::unique_ptr<ModelNode>> pChildNodes);
+		virtual ~ModelNode() = default;
+	public:
 		void SubmitDrawCalls(const DrawContext& drawContext) const;
 		void RebuildTransform(dx::XMMATRIX accumulatedTransform);
 	private:

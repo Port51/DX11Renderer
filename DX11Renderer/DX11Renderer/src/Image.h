@@ -8,7 +8,7 @@ namespace gfx
 	{
 	public:
 		Image(const std::string& path);
-		~Image();
+		virtual ~Image();
 	public:
 		const unsigned char* GetData() const;
 		const UINT GetPitch() const;

@@ -22,6 +22,7 @@ namespace gfx
 	public:
 		RendererList() {}
 		RendererList(std::shared_ptr<RendererList> source);
+		virtual ~RendererList() = default;
 	public:
 		UINT GetRendererCount() const;
 		void Filter(Frustum frustum, RendererSorting sorting);

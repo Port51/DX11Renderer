@@ -9,6 +9,7 @@ namespace gfx
 	{
 	public:
 		Camera(float fov, float aspect, float nearClipPlane, float farClipPlane);
+		virtual ~Camera() = default;
 	public:
 		dx::XMMATRIX GetViewMatrix() const;
 		dx::XMMATRIX GetProjectionMatrix() const;

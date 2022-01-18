@@ -22,18 +22,10 @@ namespace gfx
 		{
 			// C++11 <type_traits> ensures M is a valid mesh type
 			static_assert(std::is_base_of<BaseMesh, M>::value, "M must derive from BaseMesh");
-
-			// Transfer ownership of vector elements
-			/*for (const auto& child : _pChildNodes)
-			{
-				pChildNodes.emplace_back(std::move(child));
-			}*/
 		}
+		virtual ~SceneGraphNode() = default;
 
-		/*void AddChildNode(SceneGraphNode<M> pNode)
-		{
-			pChildNodes.emplace_back(std::move(pNode));
-		}*/
+	public:
 
 		void Print(int level)
 		{

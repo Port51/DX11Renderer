@@ -28,7 +28,7 @@ namespace gfx
 
 	public:
 		Window(int width, int height, const char* name);
-		~Window();
+		virtual ~Window();
 		Window(const Window&) = delete;
 		Window& operator=(const Window&) = delete;
 	public:

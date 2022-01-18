@@ -6,8 +6,9 @@
 // References:
 // https://wickedengine.net/2018/01/10/optimizing-tile-based-light-culling/
 
-//#define USE_HARD_SHADOWS
-#define USE_HARDWARE_PCF
+// Settings:
+#define USE_HARD_SHADOWS
+//#define USE_HARDWARE_PCF
 #define PCF_TAPS            2   // number of times to sample in each direction. Set 0 for 1-tap PCF.
 
 #define MAX_TILE_LIGHTS     64
@@ -33,6 +34,8 @@ Texture2D<float> ShadowMaps[MAX_SHADOWS] : register(t4);
 #elif defined(USE_HARDWARE_PCF)
     SamplerComparisonState ShadowMapSampler : register(s0);
 #endif
+
+#include "./Lighting/Shadows.hlsli"
 
 // Outputs
 RWTexture2D<float4> SpecularLightingOut : register(u0);
@@ -253,7 +256,7 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
             //lightAtten = lightDirVS.x > 0;
             //lightAtten = displ.y > 0;
         
-            //[branch] // should be same for each thread group
+            [branch] // should be same for each thread group, as thread groups are the size of 1 tile
             if (type == 1u)
             {
                 // Apply spotlight cone
@@ -262,6 +265,7 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
                 // todo: replace with [MAD] op, depending on light culling?
                 float spotCos = dot(spotlightDir, -lightDirVS);
                 lightAtten *= saturate((spotCos - light.data0.w) / (light.data0.z - light.data0.w));
+                lightAtten *= GetSpotlightShadowAttenuation(shadowData[0], ShadowMaps[0], positionVS);
             }
         }
         
@@ -296,39 +300,8 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     //debugColor = _VisibleLightCount * 0.2;
     
     // Debug shadowmap output
-    float4 shadowNDC = mul(shadowData[0].shadowMatrix, float4(positionVS, 1));
-    shadowNDC.xyz /= shadowNDC.w;
-    float2 shadowUV = shadowNDC.xy * float2(0.5, -0.5) + 0.5;
-
-    float isInShadow;
-    const float ShadowBias = 0.001;
-#if defined(USE_HARD_SHADOWS)
-    float shadowDepth = ShadowMaps[0].SampleLevel(ShadowMapSampler, shadowUV.xy, 0);
-    isInShadow = (shadowDepth + ShadowBias < shadowNDC.z);
-#elif defined(USE_HARDWARE_PCF)
-    // Ref: https://takinginitiative.wordpress.com/2011/05/25/directx10-tutorial-10-shadow-mapping-part-2/
+    debugColor = (1 - GetSpotlightShadowAttenuation(shadowData[0], ShadowMaps[0], positionVS));
     
-    float sum = 0;
- 
-    #if (PCF_TAPS > 0)
-        [unroll]
-        for (int y = -PCF_TAPS; y <= PCF_TAPS; y += 1)
-        {
-            [unroll]
-            for (int x = -PCF_TAPS; x <= PCF_TAPS; x += 1)
-            {
-                sum += ShadowMaps[0].SampleCmpLevelZero(ShadowMapSampler, shadowUV.xy, shadowNDC.z - ShadowBias, int2(x, y));
-            }
-        }
-        isInShadow = sum / ((PCF_TAPS + 1) * (PCF_TAPS + 1));
-    #else
-        // 1-top PCF
-        isInShadow = ShadowMaps[0].SampleCmpLevelZero(ShadowMapSampler, shadowUV.xy, shadowNDC.z - ShadowBias);
-    #endif
-#endif
-    
-    isInShadow *= (shadowNDC.z > 0.0) * (shadowNDC.z < 1.0);
-    debugColor = (1 - isInShadow);
     //debugColor = shadowDepth;
     //debugColor = (shadowUV.x < 0 || shadowUV.x > 1);
     

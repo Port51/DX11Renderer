@@ -142,6 +142,12 @@
     <Filter Include="Vendors\stb_image">
       <UniqueIdentifier>{96b97a18-ad5f-41a9-953e-1fdb3edb8755}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\FBXImporter">
+      <UniqueIdentifier>{94d16d11-bb1c-4de9-b9fc-607464283899}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Shadows">
+      <UniqueIdentifier>{5cf7faf1-03da-4c60-8f6a-832218e06f6b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp">
@@ -314,6 +320,21 @@
     </ClCompile>
     <ClCompile Include="src\Image.cpp">
       <Filter>Source\Util</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Renderer.cpp">
+      <Filter>Source\RenderPipeline</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ModelAsset.cpp">
+      <Filter>Source\FBXImporter</Filter>
+    </ClCompile>
+    <ClCompile Include="src\DrawContext.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ShadowPassContext.cpp">
+      <Filter>Source\Shadows</Filter>
+    </ClCompile>
+    <ClCompile Include="src\TextParser.cpp">
+      <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -500,9 +521,6 @@
     <ClInclude Include="src\RenderConstants.h">
       <Filter>Headers\RenderPipeline</Filter>
     </ClInclude>
-    <ClInclude Include="src\Renderer.h">
-      <Filter>Headers\RenderJobs</Filter>
-    </ClInclude>
     <ClInclude Include="src\RendererList.h">
       <Filter>Headers\Drawable</Filter>
     </ClInclude>
@@ -587,6 +605,9 @@
     <ClInclude Include="src\Image.h">
       <Filter>Headers\Util</Filter>
     </ClInclude>
+    <ClInclude Include="src\Renderer.h">
+      <Filter>Headers\RenderPipeline</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DX11Renderer.rc">
@@ -636,6 +657,9 @@
       <Filter>Assets\Models</Filter>
     </None>
     <None Include="Shaders\Lighting\Lights.hlsli">
+      <Filter>Shaders\Lighting</Filter>
+    </None>
+    <None Include="Shaders\Lighting\Shadows.hlsli">
       <Filter>Shaders\Lighting</Filter>
     </None>
   </ItemGroup>

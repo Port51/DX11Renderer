@@ -1,5 +1,8 @@
 #include "pch.h"
 #include "App.h"
+#include "Timer.h"
+#include "ImguiManager.h"
+#include "Camera.h"
 #include "MeshRenderer.h"
 #include "RendererList.h"
 #include "ModelInstance.h"
@@ -14,11 +17,13 @@ namespace gfx
 {
 	App::App(int screenWidth, int screenHeight)
 		:
-		wnd(screenWidth, screenHeight, "DX11 Renderer"),
-		cam(40.0f, (float)screenWidth / (float)screenHeight, 0.1f, 100.0f),
+		pImgui(std::make_unique<ImguiManager>()),
+		pWindow(std::make_unique<Window>(screenWidth, screenHeight, "DX11 Renderer")),
+		pCamera(std::make_unique<Camera>(40.0f, (float)screenWidth / (float)screenHeight, 0.1f, 100.0f)),
+		pTimer(std::make_unique<Timer>()),
 		pRendererList(std::make_shared<RendererList>())
 	{
-		pLightManager = std::make_unique<LightManager>(wnd.Gfx(), pRendererList);
+		pLightManager = std::make_unique<LightManager>(pWindow->Gfx(), pRendererList);
 
 		std::string fn;
 		dx::XMMATRIX modelTransform;
@@ -56,24 +61,24 @@ namespace gfx
 			break;
 		}
 
-		auto pModelAsset = FBXImporter::LoadFBX(wnd.Gfx(), fn.c_str(), FBXImporter::FBXNormalsMode::Import, false);
+		auto pModelAsset = FBXImporter::LoadFBX(pWindow->Gfx(), fn.c_str(), FBXImporter::FBXNormalsMode::Import, false);
 		if (pModelAsset)
 		{
-			wnd.Gfx().GetLog()->Info("Model loaded");
+			pWindow->Gfx().GetLog()->Info("Model loaded");
 		}
 		else
 		{
-			wnd.Gfx().GetLog()->Error("Failed to load model");
+			pWindow->Gfx().GetLog()->Error("Failed to load model");
 		}
 
-		pModel0 = std::make_unique<ModelInstance>(wnd.Gfx(), pModelAsset, modelTransform);
-		pModel1 = std::make_unique<ModelInstance>(wnd.Gfx(), pModelAsset, modelTransform * dx::XMMatrixTranslation(4.5f, 0.f, 0.f));
+		pModel0 = std::make_unique<ModelInstance>(pWindow->Gfx(), pModelAsset, modelTransform);
+		pModel1 = std::make_unique<ModelInstance>(pWindow->Gfx(), pModelAsset, modelTransform * dx::XMMatrixTranslation(4.5f, 0.f, 0.f));
 
 		pRendererList->AddModelInstance(*pModel0);
 		pRendererList->AddModelInstance(*pModel1);
 		pLightManager->AddLightModelsToList(*pRendererList);
 
-		renderer = std::make_unique<Renderer>(wnd.Gfx(), pLightManager, pRendererList);
+		pRenderer = std::make_unique<Renderer>(pWindow->Gfx(), pLightManager, pRendererList);
 
 		return;
 		/*class Factory
@@ -103,12 +108,12 @@ namespace gfx
 			std::uniform_int_distribution<int> tessDist{ 3,30 };
 		};
 
-		Factory f(wnd.Gfx(), pModelAsset);
+		Factory f(wnd->Gfx(), pModelAsset);
 		drawables.reserve(nDrawables);
 		std::generate_n(std::back_inserter(drawables), nDrawables, f);*/
 
-		//wnd.Gfx().SetProjectionMatrix(dx::XMMatrixPerspectiveLH(1.0f, (float)ResolutionY / (float)ResolutionX, 0.5f, 40.0f));
-		//wnd.Gfx().SetProjectionMatrix(dx::XMMatrixPerspectiveFovLH(dx::XMConvertToRadians(40.0f), (float)ResolutionX / (float)ResolutionY, 0.5f, 100.0f));
+		//wnd->Gfx().SetProjectionMatrix(dx::XMMatrixPerspectiveLH(1.0f, (float)ResolutionY / (float)ResolutionX, 0.5f, 40.0f));
+		//wnd->Gfx().SetProjectionMatrix(dx::XMMatrixPerspectiveFovLH(dx::XMConvertToRadians(40.0f), (float)ResolutionX / (float)ResolutionY, 0.5f, 100.0f));
 	}
 
 	App::~App()
@@ -130,15 +135,15 @@ namespace gfx
 
 	void App::DoFrame()
 	{
-		auto dt = timer.Mark() * simulationSpeed;
+		auto dt = pTimer->Mark() * simulationSpeed;
 
-		wnd.Gfx().BeginFrame();
+		pWindow->Gfx().BeginFrame();
 
-		renderer->Execute(wnd.Gfx(), cam, pLightManager);
+		pRenderer->Execute(pWindow->Gfx(), pCamera, pLightManager);
 
 		if (true)
 		{
-			// imgui window to control simulation speed
+			// Imgui window to control simulation speed
 			if (ImGui::Begin("Simulation Speed")) // checks if window open
 			{
 				ImGui::SliderFloat("Speed Factor", &simulationSpeed, 0.0f, 4.0f);
@@ -146,34 +151,13 @@ namespace gfx
 			}
 			ImGui::End();
 
-			// imgui windows
-			cam.DrawImguiControlWindow();
+			// Imgui windows
+			pCamera->DrawImguiControlWindow();
 			pLightManager->DrawImguiControlWindows();
-			wnd.Gfx().GetLog()->DrawImguiControlWindow();
+			pWindow->Gfx().GetLog()->DrawImguiControlWindow();
 		}
 
-		wnd.Gfx().EndFrame();
-		renderer->Reset();
-
-		/*while (!wnd.mouse.IsEmpty())
-		{
-			const auto e = wnd.mouse.Read();
-			if (e.GetType() == Mouse::Event::Type::Leave)
-			{
-				wnd.SetTitle("Gone");
-			}
-			else if (e.GetType() == Mouse::Event::Type::Move)
-			{
-				std::ostringstream oss;
-				if (wnd.mouse.IsInWindow())
-				{
-					oss << "MP: " << e.GetPosX() << "," << e.GetPosY();
-				}
-				else {
-					oss << "Gone!";
-				}
-				wnd.SetTitle(oss.str());
-			}
-		}*/
+		pWindow->Gfx().EndFrame();
+		pRenderer->Reset();
 	}
 }

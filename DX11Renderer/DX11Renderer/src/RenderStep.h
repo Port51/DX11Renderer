@@ -2,41 +2,27 @@
 #include "CommonHeader.h"
 #include <vector>
 #include <string>
-#include "Bindable.h"
-#include "Binding.h"
-#include "Graphics.h"
 
 namespace gfx
 {
+	class Graphics;
 	class MeshRenderer;
 	class Renderer;
 	class RenderPass;
+	class Binding;
+	class Bindable;
 	struct DrawContext;
 
 	class RenderStep
 	{
 	public:
-		RenderStep(std::string _targetPass)
-			: targetPass{ _targetPass }
-		{}
-		Binding& AddBinding(std::shared_ptr<Bindable> pBindable)
-		{
-			bindings.push_back(Binding(std::move(pBindable)));
-			return bindings[bindings.size() - 1];
-		}
-		Binding& AddBinding(Binding pBinding)
-		{
-			bindings.push_back(std::move(pBinding));
-			return bindings[bindings.size() - 1];
-		}
+		RenderStep(std::string _targetPass);
+		virtual ~RenderStep() = default;
+	public:
+		Binding& AddBinding(std::shared_ptr<Bindable> pBindable);
+		Binding& AddBinding(Binding pBinding);
 		void SubmitDrawCalls(const MeshRenderer& meshRenderer, const DrawContext& drawContext) const;
-		void Bind(Graphics& gfx) const
-		{
-			for (const auto& b : bindings)
-			{
-				b.Bind(gfx);
-			}
-		}
+		void Bind(Graphics& gfx) const;
 	private:
 		std::string targetPass;
 		std::vector<Binding> bindings;

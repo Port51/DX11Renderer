@@ -12,7 +12,7 @@ namespace gfx
 			Moment
 		};
 	public:
-		static inline ShadowType ShadowType = ShadowType::HardwarePCF;
+		static inline ShadowType ShadowType = ShadowType::Hard;
 		static inline int ShadowResolution = 256;
 	};
 }

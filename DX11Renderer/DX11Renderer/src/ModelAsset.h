@@ -1,9 +1,6 @@
 #pragma once
-#include <assert.h>
-#include <stdio.h>
 #include "SceneGraphNode.h"
 #include "MeshAsset.h"
-#include "DebugHelper.h"
 
 namespace gfx
 {
@@ -11,24 +8,10 @@ namespace gfx
 	{
 		friend class ModelInstance;
 	public:
-		ModelAsset(std::unique_ptr<SceneGraphNode<MeshAsset>> _pSceneGraph, std::vector<std::string> _materialPaths)
-			: pSceneGraph(std::move(_pSceneGraph)), materialPaths(std::move(_materialPaths))
-		{
+		ModelAsset(std::unique_ptr<SceneGraphNode<MeshAsset>> _pSceneGraph, std::vector<std::string> _materialPaths);
+		virtual ~ModelAsset() = default;
 
-		}
-
-		void Print()
-		{
-			if (pSceneGraph)
-			{
-				printf("Model:\n");
-				pSceneGraph->Print(0);
-			}
-			else
-			{
-				printf("No scene graph!\n");
-			}
-		}
+		void Print();
 
 	private:
 		std::unique_ptr<SceneGraphNode<MeshAsset>> pSceneGraph;

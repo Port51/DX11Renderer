@@ -33,6 +33,7 @@ namespace gfx
 		};
 	public:
 		Light(Graphics& gfx, UINT index, dx::XMFLOAT3 positionWS, dx::XMFLOAT3 color, float intensity);
+		virtual ~Light();
 	public:
 		virtual void DrawImguiControlWindow() = 0;
 		virtual LightData GetLightData(dx::XMMATRIX viewMatrix) const = 0;

@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "Material.h"
 #include <typeinfo>
-#include <string>
 #include "Graphics.h"
 #include "VertexShader.h"
 #include "PixelShader.h"
@@ -15,6 +14,7 @@
 #include "RenderStep.h"
 #include "Technique.h"
 #include "Buffer.h"
+#include "Binding.h"
 #include "ConstantBuffer.h"
 #include "NullPixelShader.h"
 #include "RenderConstants.h"

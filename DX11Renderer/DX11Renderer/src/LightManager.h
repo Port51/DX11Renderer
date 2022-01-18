@@ -3,7 +3,12 @@
 #include "DXMathInclude.h"
 #include <vector>
 #include "ShadowPassContext.h"
+
+#include "StructuredBuffer.h"
+#include "ConstantBuffer.h"
 #include "LightShadowData.h"
+#include "CommonCbuffers.h"
+#include "LightData.h"
 
 struct ID3D11ShaderResourceView;
 
@@ -16,15 +21,15 @@ namespace gfx
 	class RenderPass;
 	class ShadowPassContext;
 
-	struct LightInputCB;
+	//struct LightInputCB;
 	struct GlobalTransformCB;
 	struct LightData;
-	struct LightShadowData;
+	//struct LightShadowData;
 
 	template<typename Type>
 	class ConstantBuffer;
-	template<typename Type>
-	class StructuredBuffer;
+	//template<typename Type>
+	//class StructuredBuffer;
 
 	class LightManager
 	{
@@ -33,9 +38,10 @@ namespace gfx
 		const static int MaxShadowCount = 4;
 	public:
 		LightManager(Graphics& gfx, std::shared_ptr<RendererList> pRendererList);
+		virtual ~LightManager() = default;
 	public:
 		void AddLightModelsToList(RendererList& pRendererList);
-		void CullLights(Graphics& gfx, const Camera& cam);
+		void CullLights(Graphics& gfx, const std::unique_ptr<Camera>& cam);
 		void BindShadowMaps(Graphics& gfx, UINT startSlot) const;
 		void RenderShadows(ShadowPassContext context);
 		ComPtr<ID3D11ShaderResourceView> GetLightDataSRV() const;

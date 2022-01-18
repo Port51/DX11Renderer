@@ -167,6 +167,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\DrawContext.cpp" />
+    <ClCompile Include="src\ModelAsset.cpp" />
+    <ClCompile Include="src\Renderer.cpp" />
     <ClCompile Include="src\Image.cpp" />
     <ClCompile Include="src\App.cpp" />
     <ClCompile Include="src\Bindable.cpp" />
@@ -207,8 +210,10 @@
     <ClCompile Include="src\Sampler.cpp" />
     <ClCompile Include="src\RenderStep.cpp" />
     <ClCompile Include="src\DepthStencilState.cpp" />
+    <ClCompile Include="src\ShadowPassContext.cpp" />
     <ClCompile Include="src\Spotlight.cpp" />
     <ClCompile Include="src\Technique.cpp" />
+    <ClCompile Include="src\TextParser.cpp" />
     <ClCompile Include="src\Texture.cpp" />
     <ClCompile Include="src\Timer.cpp" />
     <ClCompile Include="src\Topology.cpp" />
@@ -375,6 +380,7 @@
     <None Include="Shaders\PhongCommon.hlsli" />
     <None Include="Shaders\Lighting\Diffuse.hlsli" />
     <None Include="Assets\Models\DefaultSphere.asset" />
+    <None Include="Shaders\Lighting\Shadows.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\TiledLightingCompute.hlsl">

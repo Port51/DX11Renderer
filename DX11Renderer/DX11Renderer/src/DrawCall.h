@@ -12,6 +12,8 @@ namespace gfx
 	{
 	public:
 		DrawCall(const RenderStep* pStep, const MeshRenderer* pRenderer, const DrawContext& drawContext);
+		virtual ~DrawCall() = default;
+	public:
 		void Execute(Graphics& gfx) const;
 	private:
 		const MeshRenderer* pRenderer;

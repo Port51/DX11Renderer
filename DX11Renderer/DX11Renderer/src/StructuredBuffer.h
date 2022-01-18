@@ -1,10 +1,10 @@
 #pragma once
 #include "Buffer.h"
 #include "DX11Include.h"
+#include "Graphics.h"
 
 namespace gfx
 {
-	class Graphics;
 
 	template<typename T>
 	class StructuredBuffer : public Buffer

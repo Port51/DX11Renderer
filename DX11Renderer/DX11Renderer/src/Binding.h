@@ -11,7 +11,7 @@ namespace gfx
 	{
 	public:
 		Binding(std::shared_ptr<Bindable> _pBindable);
-		~Binding() = default;
+		virtual ~Binding() = default;
 	public:
 		void Bind(Graphics& gfx) const;
 		std::shared_ptr<Bindable> GetBindable() const;

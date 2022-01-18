@@ -44,6 +44,9 @@ namespace gfx
 		assert(pShaderResourceView != NULL && "Depth SRV is null!");
 	}
 
+	DepthStencilTarget::~DepthStencilTarget()
+	{}
+
 	void DepthStencilTarget::Clear(Graphics& gfx)
 	{
 		gfx.GetContext()->ClearDepthStencilView(pDepthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.f, 0u);

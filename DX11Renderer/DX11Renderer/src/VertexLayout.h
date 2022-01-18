@@ -13,6 +13,7 @@ namespace gfx
 	{
 	public:
 		VertexLayout() {}
+		virtual ~VertexLayout() = default;
 	public:
 		template <class T> // T should be the CPU type
 		VertexLayout& AppendVertexDesc(D3D11_INPUT_ELEMENT_DESC desc)

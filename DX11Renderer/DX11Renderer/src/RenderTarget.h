@@ -10,6 +10,8 @@ namespace gfx
 	{
 	public:
 		RenderTarget(Graphics& gfx);
+		virtual ~RenderTarget() = default;
+	public:
 		void Init(ComPtr<ID3D11Device> pDevice, UINT textureWidth, UINT textureHeight) override;
 		void BindAsTexture(Graphics& gfx, UINT slot) const;
 		void BindAsTarget(Graphics& gfx) const;

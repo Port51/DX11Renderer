@@ -1,7 +1,6 @@
 #pragma once
 #include "CommonHeader.h"
-#include "DX11Include.h"
-#include "Camera.h"
+#include "DXMathInclude.h"
 
 namespace gfx
 {
@@ -19,13 +18,11 @@ namespace gfx
 	class ShadowPassContext
 	{
 	public:
-		ShadowPassContext(Graphics& gfx, const Camera& cam, Renderer& renderer, const std::unique_ptr<RenderPass>& pRenderPass, std::unique_ptr<ConstantBuffer<GlobalTransformCB>>& pTransformationCB, std::shared_ptr<RendererList> pRendererList)
-			: gfx(gfx), cam(cam), renderer(renderer), pRenderPass(pRenderPass), pTransformationCB(pTransformationCB), pRendererList(pRendererList)
-		{
-			invViewMatrix = dx::XMMatrixInverse(nullptr, cam.GetViewMatrix());
-		}
+		ShadowPassContext(Graphics& gfx, const std::unique_ptr<Camera>& cam, Renderer& renderer, const std::unique_ptr<RenderPass>& pRenderPass, std::unique_ptr<ConstantBuffer<GlobalTransformCB>>& pTransformationCB, std::shared_ptr<RendererList> pRendererList);
+		virtual ~ShadowPassContext() = default;
+	public:
 		Graphics& gfx;
-		const Camera& cam;
+		const std::unique_ptr<Camera>& pCamera;
 		dx::XMMATRIX invViewMatrix;
 		Renderer& renderer;
 		const std::unique_ptr<RenderPass>& pRenderPass;

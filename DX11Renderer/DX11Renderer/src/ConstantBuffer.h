@@ -1,4 +1,6 @@
 #pragma once
+#include "CommonHeader.h"
+#include "ExceptionHandling.h"
 #include "Buffer.h"
 #include "RenderPass.h"
 #include "DX11Include.h"

@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "LightManager.h"
 
+#include "Graphics.h"
+#include "Camera.h"
 #include "StructuredBuffer.h"
 #include "Renderer.h"
 #include "RenderConstants.h"
@@ -62,25 +64,25 @@ namespace gfx
 		}
 	}
 
-	void LightManager::CullLights(Graphics & gfx, const Camera & cam)
+	void LightManager::CullLights(Graphics & gfx, const std::unique_ptr<Camera>& cam)
 	{
 		dx::XMFLOAT4 frustumCornersVS;
-		dx::XMStoreFloat4(&frustumCornersVS, cam.GetFrustumCornersVS());
+		dx::XMStoreFloat4(&frustumCornersVS, cam->GetFrustumCornersVS());
 
-		dx::XMVECTOR aabbCenter = dx::XMVectorSet(0.f, 0.f, (cam.GetNearClipPlane() + cam.GetFarClipPlane()) * 0.5f, 0.f);
-		dx::XMVECTOR aabbExtents = dx::XMVectorSet(frustumCornersVS.z * 0.5f, frustumCornersVS.w * -0.5f, cam.GetFarClipPlane() - cam.GetNearClipPlane(), 0.f);
+		dx::XMVECTOR aabbCenter = dx::XMVectorSet(0.f, 0.f, (cam->GetNearClipPlane() + cam->GetFarClipPlane()) * 0.5f, 0.f);
+		dx::XMVECTOR aabbExtents = dx::XMVectorSet(frustumCornersVS.z * 0.5f, frustumCornersVS.w * -0.5f, cam->GetFarClipPlane() - cam->GetNearClipPlane(), 0.f);
 
 		visibleLightCt = 0u;
 		for (int i = 0; i < pLights.size(); ++i)
 		{
-			const auto data = pLights[i]->GetLightData(cam.GetViewMatrix());
+			const auto data = pLights[i]->GetLightData(cam->GetViewMatrix());
 
 			bool inFrustum = true;
 			switch (pLights[i]->GetLightType())
 			{
 			case 0:
 				// Point light
-				inFrustum &= FrustumSphereIntersection(data.positionVS_range, frustumCornersVS, cam.GetFarClipPlane());
+				inFrustum &= FrustumSphereIntersection(data.positionVS_range, frustumCornersVS, cam->GetFarClipPlane());
 				break;
 			case 1:
 				// Spotlight (move sphere to middle and half the size)
@@ -88,7 +90,7 @@ namespace gfx
 				dx::XMStoreFloat4(&positionRange, data.positionVS_range);
 				auto lightSphere = dx::XMVectorAdd(data.positionVS_range, dx::XMVectorScale(data.directionVS, positionRange.w * 0.5f));
 				lightSphere = dx::XMVectorSetW(lightSphere, positionRange.w * 0.5f);
-				inFrustum &= FrustumSphereIntersection(lightSphere, frustumCornersVS, cam.GetFarClipPlane());
+				inFrustum &= FrustumSphereIntersection(lightSphere, frustumCornersVS, cam->GetFarClipPlane());
 				break;
 			case 2:
 				// Directional (do nothing)

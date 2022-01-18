@@ -27,6 +27,7 @@ namespace gfx
 	{
 	public:
 		ModelInstance(Graphics& gfx, std::unique_ptr<ModelAsset> const& pModelAsset, dx::XMMATRIX transform);
+		virtual ~ModelInstance() = default;
 	public:
 		void SubmitDrawCalls(const DrawContext& drawContext) const;
 		void SetPositionWS(dx::XMFLOAT3 positionWS);

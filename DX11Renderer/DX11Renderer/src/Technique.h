@@ -2,6 +2,7 @@
 #include "CommonHeader.h"
 #include "RenderStep.h"
 #include <vector>
+#include <string>
 
 namespace gfx
 {
@@ -13,27 +14,14 @@ namespace gfx
 	{
 	public:
 		Technique() = default;
-		Technique(std::string name)
-			:
-			name(name)
-		{}
+		Technique(std::string name);
+		virtual ~Technique() = default;
+	public:
 		void SubmitDrawCalls(const MeshRenderer& meshRenderer, const DrawContext& drawContext) const;
-		void AddStep(std::unique_ptr<RenderStep> step)
-		{
-			pSteps.push_back(std::move(step));
-		}
-		bool IsActive() const
-		{
-			return active;
-		}
-		void SetActiveState(bool active_in)
-		{
-			active = active_in;
-		}
-		const std::string& GetName() const
-		{
-			return name;
-		}
+		void AddStep(std::unique_ptr<RenderStep> step);
+		bool IsActive() const;
+		void SetActiveState(bool active_in);
+		const std::string& GetName() const;
 	private:
 		bool active = true;
 		std::vector<std::unique_ptr<RenderStep>> pSteps;

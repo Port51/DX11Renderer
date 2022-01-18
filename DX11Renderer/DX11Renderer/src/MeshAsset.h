@@ -15,8 +15,8 @@ namespace gfx
 	class MeshAsset : public BaseMesh
 	{
 	public:
-		MeshAsset()
-		{}
+		MeshAsset() = default;
+		virtual ~MeshAsset() = default;
 
 	public:
 		// Store vertex attributes separately, and combine when making instances based on what attributes are needed

@@ -7,7 +7,6 @@
 
 using namespace std::string_literals;
 
-
 namespace gfx
 {
 	class TextParser
@@ -20,60 +19,15 @@ namespace gfx
 			std::vector<std::string> values;
 		};
 
-		TextParser(std::string_view filePath)
-			: file(std::string(filePath).c_str())
-		{}
+		TextParser(std::string_view filePath);
 
-		~TextParser()
-		{
-			Dispose();
-		}
+		virtual ~TextParser();
 
-		void Dispose()
-		{
-			if (fileOpen)
-			{
-				file.close();
-				fileOpen = false;
-			}
-		}
+		void Dispose();
 
-		bool ReadParsedLine(ParsedKeyValues& result)
-		{
-			if (!file.is_open())
-			{
-				return false;
-			}
-
-			std::string line;
-			if (std::getline(file, line))
-			{
-				// Clean up line first
-				line.erase(std::remove_if(line.begin(), line.end(), &IsWhitespace), line.end());
-
-				std::istringstream iss(line);
-
-				// Read property key
-				getline(iss, result.key, ',');
-
-				// Read values
-				result.values.clear();
-				std::string token;
-				while (getline(iss, token, ','))
-				{
-					result.values.push_back(token);
-				}
-
-				return true;
-			}
-			return false;
-		}
+		bool ReadParsedLine(ParsedKeyValues& result);
 	private:
-		static bool IsWhitespace(unsigned char c)
-		{
-			return (c == ' ' || c == '\n' || c == '\r' ||
-				c == '\t' || c == '\v' || c == '\f');
-		}
+		static bool IsWhitespace(unsigned char c);
 
 	private:
 		std::ifstream file;

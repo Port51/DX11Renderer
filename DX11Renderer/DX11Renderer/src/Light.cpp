@@ -17,6 +17,9 @@ namespace gfx
 		pModel = std::make_unique<ModelInstance>(gfx, pModelAsset, dx::XMMatrixIdentity());
 	}
 
+	Light::~Light()
+	{}
+
 	bool Light::HasShadow() const
 	{
 		return shadowSettings.hasShadow;

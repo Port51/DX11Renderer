@@ -17,7 +17,7 @@ namespace gfx
 		Graphics(HWND hWnd, int windowWidth, int windowHeight);
 		Graphics(const Graphics&) = delete; // here because of destructor, but don't want this...
 		Graphics& operator=(const Graphics&) = delete; // here because of destructor, but don't want this...
-		~Graphics() = default;
+		virtual ~Graphics() = default;
 	public:
 		void BeginFrame();
 		void EndFrame();

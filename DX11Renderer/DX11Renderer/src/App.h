@@ -1,8 +1,5 @@
 #pragma once
 #include "Window.h"
-#include "Timer.h"
-#include "ImguiManager.h"
-#include "Camera.h"
 
 namespace gfx
 {
@@ -11,29 +8,36 @@ namespace gfx
 	class ModelInstance;
 	class LightManager;
 	class Renderer;
+	class ImguiManager;
+	class Window;
+	class Camera;
+	class Timer;
 
 	class App
 	{
 	public:
 		App(int screenWidth, int screenHeight);
-		~App();
+		virtual ~App();
 		// master frame / message loop
 		int Go();
 	private:
 		void DoFrame();
 	private:
-		ImguiManager imgui; // must be initialized before wnd
-		Window wnd;
-		Timer timer;
-		bool showDemoWindow = true;
-		Camera cam;
+		std::unique_ptr<ImguiManager> pImgui; // must be initialized before wnd
+		std::unique_ptr<Window> pWindow;
+		std::unique_ptr<Camera> pCamera;
+		std::unique_ptr<LightManager> pLightManager;
+		std::unique_ptr<Renderer> pRenderer;
+		std::unique_ptr<Timer> pTimer;
+
 		std::unique_ptr<ModelInstance> pModel0;
 		std::unique_ptr<ModelInstance> pModel1;
-		float simulationSpeed = 1.f;
-		std::unique_ptr<LightManager> pLightManager;
-		std::unique_ptr<Renderer> renderer;
 		std::vector<std::unique_ptr<MeshRenderer>> pDrawables;
 		std::shared_ptr<RendererList> pRendererList;
+
+		bool showDemoWindow = true;
+		float simulationSpeed = 1.f;
+
 		static constexpr UINT nDrawables = 1;
 	};
 }

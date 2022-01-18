@@ -1,6 +1,10 @@
 #pragma once
-#include "DX11Include.h"
 #include "CommonHeader.h"
+
+struct ID3D11DepthStencilView;
+struct ID3D11ShaderResourceView;
+struct ID3D11Texture2D;
+struct ID3D11ShaderResourceView;
 
 namespace gfx
 {
@@ -10,6 +14,8 @@ namespace gfx
 	{
 	public:
 		DepthStencilTarget(Graphics& gfx, int width, int height);
+		virtual ~DepthStencilTarget();
+	public:
 		void Clear(Graphics& gfx);
 		ComPtr<ID3D11DepthStencilView> GetView() const;
 		ComPtr<ID3D11ShaderResourceView> GetSRV() const;

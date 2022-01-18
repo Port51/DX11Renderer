@@ -7,6 +7,7 @@ namespace gfx
 	{
 	public:
 		Timer();
+		virtual ~Timer() = default;
 		float Mark();
 		float Peek() const;
 	private:
