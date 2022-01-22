@@ -662,6 +662,12 @@
     <None Include="Shaders\Lighting\Shadows.hlsli">
       <Filter>Shaders\Lighting</Filter>
     </None>
+    <None Include="Assets\Materials\GreyboxMaterial.asset">
+      <Filter>Assets\Materials</Filter>
+    </None>
+    <None Include="Assets\Models\ShadowTestScene.asset">
+      <Filter>Assets\Models</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\SolidPS.hlsl">

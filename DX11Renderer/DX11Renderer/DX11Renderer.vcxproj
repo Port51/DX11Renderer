@@ -364,11 +364,13 @@
     <Image Include="icon1.ico" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\Materials\GreyboxMaterial.asset" />
     <None Include="Assets\Materials\HeadMaterial.asset" />
     <None Include="Assets\Materials\LightMaterial.asset" />
     <None Include="Assets\Models\Head.asset" />
     <None Include="Assets\Materials\HairMaterial.asset" />
     <None Include="Assets\Models\DefaultQuad.asset" />
+    <None Include="Assets\Models\ShadowTestScene.asset" />
     <None Include="Shaders\Lighting\Lights.hlsli" />
     <None Include="Shaders\Lighting\LightStructs.hlsli" />
     <None Include="Shaders\CbufCommon.hlsli">

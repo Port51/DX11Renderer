@@ -29,7 +29,7 @@ namespace gfx
 		dx::XMMATRIX modelTransform;
 
 		// temporary...
-		int select = 5;
+		int select = 6;
 		switch (select)
 		{
 		case 0:
@@ -59,6 +59,10 @@ namespace gfx
 			fn = std::string("Assets\\Models\\DefaultQuad.asset");
 			modelTransform = dx::XMMatrixIdentity() * dx::XMMatrixScaling(51.f, 51.f, 51.f);
 			break;
+		case 6:
+			fn = std::string("Assets\\Models\\ShadowTestScene.asset");
+			modelTransform = dx::XMMatrixRotationY(3.1415f) * dx::XMMatrixScaling(12.f, 12.f, 12.f);
+			break;
 		}
 
 		auto pModelAsset = FBXImporter::LoadFBX(pWindow->Gfx(), fn.c_str(), FBXImporter::FBXNormalsMode::Import, false);
@@ -72,10 +76,10 @@ namespace gfx
 		}
 
 		pModel0 = std::make_unique<ModelInstance>(pWindow->Gfx(), pModelAsset, modelTransform);
-		pModel1 = std::make_unique<ModelInstance>(pWindow->Gfx(), pModelAsset, modelTransform * dx::XMMatrixTranslation(4.5f, 0.f, 0.f));
+		//pModel1 = std::make_unique<ModelInstance>(pWindow->Gfx(), pModelAsset, modelTransform * dx::XMMatrixTranslation(4.5f, 0.f, 0.f));
 
 		pRendererList->AddModelInstance(*pModel0);
-		pRendererList->AddModelInstance(*pModel1);
+		//pRendererList->AddModelInstance(*pModel1);
 		pLightManager->AddLightModelsToList(*pRendererList);
 
 		pRenderer = std::make_unique<Renderer>(pWindow->Gfx(), pLightManager, pRendererList);

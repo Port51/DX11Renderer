@@ -1,0 +1,38 @@
+Properties
+{
+	// Properties shared between passes
+	Texture, tex, Assets\\Textures\\face_albedo_256.png
+	Texture, nmap, Assets\\Textures\\face_normal_256.png
+	Color, 1.0, 1.0, 1.0, 1.0
+	Roughness, 0.9
+}
+Pass
+{
+	Name, ShadowPass
+	Cull, Front
+	VS, Assets\\Built\\Shaders\\PhongVS.cso
+}
+Pass
+{
+	Name, DepthPrepass
+	Cull, Back
+	VS, Assets\\Built\\Shaders\\PhongVS.cso
+}
+Pass
+{
+	Name, GBuffer
+	Cull, Back
+	VS, Assets\\Built\\Shaders\\PhongVS.cso
+	PS, Assets\\Built\\Shaders\\OpaqueGbuffer.cso
+	Texture, tex, 0
+	Texture, nmap, 1
+}
+Pass
+{
+	Name, Geometry
+	Cull, Back
+	VS, Assets\\Built\\Shaders\\PhongVS.cso
+	PS, Assets\\Built\\Shaders\\PhongPS.cso
+	Texture, tex, 0
+	Texture, nmap, 1
+}
