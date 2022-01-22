@@ -29,7 +29,7 @@ namespace gfx
 			pLights.emplace_back(std::make_unique<PointLight>(gfx, i, dx::XMFLOAT3((i - 1) * 7.5, 1.0f, 0.f), dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 3.0f));
 		}*/
 
-		pLights.emplace_back(std::make_unique<PointLight>(gfx, 0, dx::XMFLOAT3(0.f, 2.f, 0.f), dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 3.0f));
+		pLights.emplace_back(std::make_unique<PointLight>(gfx, 0, dx::XMFLOAT3(0.f, 2.f, 0.f), dx::XMFLOAT3(1.f, 1.f, 1.f), 3.f, 3.f, 5.f));
 		pLights.emplace_back(std::make_unique<Spotlight>(gfx, 1, dx::XMFLOAT3(8.5f, 1.5f, -2.f), 0.0f, 0.0f, dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 50.0f, 50.0f));
 		//pLights.emplace_back(std::make_unique<DirectionalLight>(gfx, 4, dx::XMFLOAT3(-2.0, 1.0f, -5.f), 0.0f, 0.0f, dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 50.0f, 5.0f));
 

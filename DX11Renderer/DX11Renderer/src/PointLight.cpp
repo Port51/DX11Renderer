@@ -9,10 +9,31 @@
 #include "ShadowPassContext.h"
 #include "ConstantBuffer.h"
 #include "Graphics.h"
+#include "Frustum.h"
+#include "DrawContext.h"
+#include "Renderer.h"
 #include "LightShadowData.h"
+#include "RendererList.h"
+#include "Config.h"
 
 namespace gfx
 {
+	// The order is direction, up, direction up, ...
+	std::vector<dx::XMVECTOR> PointLight::viewDirectionsWS = std::vector<dx::XMVECTOR>{
+		dx::XMVectorSet(0, 0, 1, 0),
+		dx::XMVectorSet(0, 1, 0, 0),
+		dx::XMVectorSet(1, 0, 0, 0),
+		dx::XMVectorSet(0, 1, 0, 0),
+		dx::XMVectorSet(0, 0, -1, 0),
+		dx::XMVectorSet(0, 1, 0, 0),
+		dx::XMVectorSet(-1, 0, 0, 0),
+		dx::XMVectorSet(0, 1, 0, 0),
+		dx::XMVectorSet(0, 1, 0, 0),
+		dx::XMVectorSet(-1, 0, 0, 0),
+		dx::XMVectorSet(0, -1, 0, 0),
+		dx::XMVectorSet(1, 0, 0, 0),
+	};
+
 	PointLight::PointLight(Graphics& gfx, UINT index, dx::XMFLOAT3 positionWS, dx::XMFLOAT3 color, float intensity, float sphereRad, float range)
 		: Light(gfx, index, positionWS, color, intensity),
 		sphereRad(sphereRad),
@@ -20,6 +41,11 @@ namespace gfx
 	{
 		// todo: set shadow via settings
 		shadowSettings.hasShadow = true;
+
+		if (shadowSettings.hasShadow)
+		{
+			lightShadowData.resize(6);
+		}
 	}
 
 	void PointLight::DrawImguiControlWindow()
@@ -78,10 +104,67 @@ namespace gfx
 	}
 
 	void PointLight::RenderShadow(ShadowPassContext context)
-	{}
+	{
+		static const float fovTheta = (float)dx::XM_PI / 2.0f;
+		static const float nearPlane = 0.1f;
+		const auto projMatrix = dx::XMMatrixPerspectiveFovLH(fovTheta, 1.0f, nearPlane, range);
+
+		// Render x6 shadow tiles
+		// todo: add option to disable upward tile for scenes with no ceiling
+		for (UINT i = 0u; i < 6u; ++i)
+		{
+			// Apply look-at and local orientation
+			// +Y = up
+			const auto lightPos = dx::XMLoadFloat3(&positionWS);
+			const auto viewMatrix = dx::XMMatrixLookAtLH(lightPos, dx::XMVectorAdd(lightPos, viewDirectionsWS[i * 2u + 0u]), viewDirectionsWS[i * 2u + 1u]);
+
+			static Frustum frustum;
+
+			// Setup transformation buffer
+			static GlobalTransformCB transformationCB;
+			transformationCB.viewMatrix = viewMatrix;
+			transformationCB.projMatrix = projMatrix;
+			context.pTransformationCB->Update(context.gfx, transformationCB);
+
+			static DrawContext drawContext(context.renderer, context.renderer.ShadowPassName);
+			drawContext.viewMatrix = viewMatrix;
+			drawContext.projMatrix = projMatrix;
+
+			// This means all shadow draw calls need to be setup on the same thread
+			context.pRendererList->Filter(frustum, RendererList::RendererSorting::FrontToBack);
+			context.pRendererList->SubmitDrawCalls(drawContext);
+			auto ct = context.pRendererList->GetRendererCount();
+
+			// Calculate tile in shadow atlas
+			int tileIdx = shadowMapIdx + i;
+			int tileX = (tileIdx % Config::ShadowAtlasTileDimension);
+			int tileY = (tileIdx / Config::ShadowAtlasTileDimension);
+
+			// todo: defer the rendering
+			{
+				// Render to tile in atlas using viewport
+				context.gfx.SetViewport(tileX * Config::ShadowAtlasTileResolution, tileY * Config::ShadowAtlasTileResolution, Config::ShadowAtlasTileResolution, Config::ShadowAtlasTileResolution);
+				context.pRenderPass->Execute(context.gfx);
+				context.pRenderPass->Reset(); // required to handle multiple shadows at once
+			}
+
+			// todo: move elsewhere
+			{
+				lightShadowData[i].lightViewMatrix = viewMatrix;
+				lightShadowData[i].lightViewProjMatrix = viewMatrix * projMatrix;
+				lightShadowData[i].shadowMatrix = context.invViewMatrix * lightShadowData[i].lightViewProjMatrix;
+				dx::XMStoreUInt2(&lightShadowData[i].tile, dx::XMVectorSet(tileX, tileY, 0, 0));
+			}
+		}
+	}
 
 	void PointLight::AppendShadowData(UINT shadowStartSlot, std::vector<LightShadowData>& shadowData) const
-	{}
+	{
+		for (UINT i = 0u; i < 6u; ++i)
+		{
+			shadowData[shadowStartSlot + i] = lightShadowData[i];
+		}
+	}
 
 	UINT PointLight::GetShadowSRVCount() const
 	{

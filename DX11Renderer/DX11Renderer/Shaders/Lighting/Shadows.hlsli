@@ -20,6 +20,16 @@
     #define SHADOW_PCF_TOTAL_TAPS   49
 #endif
 
+static float3 PointLightFaceDirWS[] =
+{
+    float3(0, 0, 1),
+    float3(1, 0, 0),
+    float3(0, 0, -1),
+    float3(-1, 0, 0),
+    float3(0, 1, 0),
+    float3(0, -1, 0),
+};
+
 SamplerComparisonState ShadowAtlasSampler : register(s0);
 Texture2D<float> ShadowAtlas : register(t4);
 
@@ -28,6 +38,7 @@ Texture2D<float> ShadowAtlas : register(t4);
 float2 GetShadowTileUV(float4 shadowNDC, uint2 tile)
 {
     // Select tile
+    tile = 0;
     
     // Original version:
     //shadowNDC.xy = shadowNDC.xy * float2(SHADOW_ATLAS_TILE_SCALE, -SHADOW_ATLAS_TILE_SCALE) + tile * 2 * SHADOW_ATLAS_TILE_SCALE - (1 - SHADOW_ATLAS_TILE_SCALE);

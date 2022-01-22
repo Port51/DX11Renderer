@@ -30,5 +30,7 @@ namespace gfx
 		float sphereRad;
 		float range;
 		std::vector<std::unique_ptr<DepthStencilTarget>> pShadowMaps;
+		std::vector<LightShadowData> lightShadowData;
+		static std::vector<dx::XMVECTOR> viewDirectionsWS;
 	};
 }
