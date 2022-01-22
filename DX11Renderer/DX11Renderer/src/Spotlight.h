@@ -34,7 +34,7 @@ namespace gfx
 		float sphereRad;
 		float range;
 		float innerAngle = 80.f;
-		float outerAngle = 60.f;
+		float outerAngle = 31.f;
 		LightShadowData lightShadowData;
 	};
 }
