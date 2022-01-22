@@ -36,7 +36,6 @@ namespace gfx
 	{
 	private:
 		const static int MaxLightCount = 256;
-		const static int MaxShadowCount = 4;
 	public:
 		LightManager(Graphics& gfx, std::shared_ptr<RendererList> pRendererList);
 		virtual ~LightManager() = default;

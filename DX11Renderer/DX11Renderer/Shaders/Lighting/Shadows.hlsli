@@ -1,6 +1,9 @@
 #ifndef _SHADOWS_INCLUDED
 #define _SHADOWS_INCLUDED
 
+#define SHADOW_ATLAS_TILES_PER_SIDE     4
+#define SHADOW_ATLAS_TILE_SCALE         (1.f / SHADOW_ATLAS_TILES_PER_SIDE)
+
 // Ref: https://stackoverflow.com/questions/17123735/how-to-enable-hardware-percentage-closer-filtering
 
 #if defined(SHADOW_PCF_3_TAP)
@@ -25,7 +28,12 @@ Texture2D<float> ShadowAtlas : register(t4);
 float2 GetShadowTileUV(float4 shadowNDC, uint2 tile)
 {
     // Select tile
-    shadowNDC.xy = shadowNDC.xy * float2(0.5, -0.5) + tile - 0.5;
+    
+    // Original version:
+    //shadowNDC.xy = shadowNDC.xy * float2(SHADOW_ATLAS_TILE_SCALE, -SHADOW_ATLAS_TILE_SCALE) + tile * 2 * SHADOW_ATLAS_TILE_SCALE - (1 - SHADOW_ATLAS_TILE_SCALE);
+    // Optimized version:
+    shadowNDC.xy = (shadowNDC.xy * float2(1.f, -1.f) + tile * 2.f + 1.f) * SHADOW_ATLAS_TILE_SCALE - 1.f;
+    
     // Remap to 0-1 range
     return shadowNDC.xy * float2(0.5, 0.5) + 0.5;
 }

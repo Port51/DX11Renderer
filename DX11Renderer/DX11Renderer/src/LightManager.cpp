@@ -43,8 +43,8 @@ namespace gfx
 				shadowLightCt++;
 			}
 		}*/
-		pLightShadowSB = std::make_unique<StructuredBuffer<LightShadowData>>(gfx, D3D11_USAGE_DYNAMIC, D3D11_BIND_SHADER_RESOURCE, MaxShadowCount);
-		cachedShadowData.resize(MaxShadowCount);
+		pLightShadowSB = std::make_unique<StructuredBuffer<LightShadowData>>(gfx, D3D11_USAGE_DYNAMIC, D3D11_BIND_SHADER_RESOURCE, Config::ShadowAtlasTileCount);
+		cachedShadowData.resize(Config::ShadowAtlasTileCount);
 
 		pShadowRendererList = std::make_shared<RendererList>(pRendererList);
 

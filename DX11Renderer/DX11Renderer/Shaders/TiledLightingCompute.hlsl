@@ -296,7 +296,7 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     }
 #elif defined(DEBUG_VIEW_SHADOW)
     // Show shadow for a light
-    debugColor = GetSpotlightShadowAttenuation(shadowData[0], positionVS, normalRough.xyz, dot(normalRough.xyz, -lights[1].direction.xyz));
+    debugColor = GetSpotlightShadowAttenuation(shadowData[6], positionVS, normalRough.xyz, dot(normalRough.xyz, -lights[1].direction.xyz));
 #elif defined(DEBUG_VIEW_GEOMETRY)
     debugColor = frac(positionVS.z * 3.0);
 #endif

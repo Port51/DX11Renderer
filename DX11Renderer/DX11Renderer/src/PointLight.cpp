@@ -18,7 +18,8 @@ namespace gfx
 		sphereRad(sphereRad),
 		range(range)
 	{
-
+		// todo: set shadow via settings
+		shadowSettings.hasShadow = true;
 	}
 
 	void PointLight::DrawImguiControlWindow()
