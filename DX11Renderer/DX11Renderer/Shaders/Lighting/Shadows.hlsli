@@ -49,6 +49,28 @@ float2 GetShadowTileUV(float4 shadowNDC, uint2 tile)
     return shadowNDC.xy * float2(0.5, 0.5) + 0.5;
 }
 
+#define CUBEMAPFACE_POSITIVE_Z 0u
+#define CUBEMAPFACE_POSITIVE_X 1u
+#define CUBEMAPFACE_NEGATIVE_Z 2u
+#define CUBEMAPFACE_NEGATIVE_X 3u
+#define CUBEMAPFACE_POSITIVE_Y 4u
+#define CUBEMAPFACE_NEGATIVE_Y 5u
+uint GetCubeMapFaceID(float3 dir)
+{
+    if (abs(dir.z) >= abs(dir.x) && abs(dir.z) >= abs(dir.y))
+    {
+        return (dir.z < 0.0) ? CUBEMAPFACE_NEGATIVE_Z : CUBEMAPFACE_POSITIVE_Z;
+    }
+    else if (abs(dir.y) >= abs(dir.x))
+    {
+        return (dir.y < 0.0) ? CUBEMAPFACE_NEGATIVE_Y : CUBEMAPFACE_POSITIVE_Y;
+    }
+    else
+    {
+        return (dir.x < 0.0) ? CUBEMAPFACE_NEGATIVE_X : CUBEMAPFACE_POSITIVE_X;
+    }
+}
+
 float GetSpotlightShadowAttenuation(StructuredShadow shadow, float3 positionVS, float3 normalVS, float NdotL)
 {
     // Apply large bias at grazing angles, small bias when light dir is similar to normal
@@ -58,7 +80,7 @@ float GetSpotlightShadowAttenuation(StructuredShadow shadow, float3 positionVS, 
     
     float2 shadowUV = GetShadowTileUV(shadowNDC, shadow.tile);
     
-    float isInShadow = 0;
+    float shadowAtten = 0;
     const float ShadowBias = 0.001;
 #if defined(SHADOW_USE_PCF_FILTERING)
     // PCF filtering
@@ -72,15 +94,15 @@ float GetSpotlightShadowAttenuation(StructuredShadow shadow, float3 positionVS, 
             sum += ShadowAtlas.SampleCmpLevelZero(ShadowAtlasSampler, shadowUV.xy, shadowNDC.z - ShadowBias, int2(x, y));
         }
     }
-    isInShadow = sum / SHADOW_PCF_TOTAL_TAPS;
+    shadowAtten = sum / SHADOW_PCF_TOTAL_TAPS;
 #else
     // Fallback to hard shadows
-    isInShadow = ShadowAtlas.SampleCmpLevelZero(ShadowAtlasSampler, shadowUV.xy, shadowNDC.z - ShadowBias);
+    shadowAtten = ShadowAtlas.SampleCmpLevelZero(ShadowAtlasSampler, shadowUV.xy, shadowNDC.z - ShadowBias);
 #endif
     
     // Limit to current tile
-    isInShadow *= (all(shadowNDC.xy > -1.0) * all(shadowNDC.xyz < 1.0) * (shadowNDC.z > 0.0));
-    return isInShadow;
+    shadowAtten = saturate(shadowAtten + any(shadowNDC.xy < -1.0) + any(shadowNDC.xyz > 1.0) + (shadowNDC.z < 0.0));
+    return shadowAtten;
 }
 
 #endif

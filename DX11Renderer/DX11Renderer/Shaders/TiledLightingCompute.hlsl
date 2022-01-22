@@ -23,7 +23,8 @@
 // Debug views
 //
 
-#define DEBUG_VIEW_SHADOW
+#define DEBUG_VIEW_ALL_SHADOWS
+//#define DEBUG_VIEW_SHADOW
 //#define DEBUG_VIEW_LIGHT_COUNTS
 //#define DEBUG_VIEW_GEOMETRY
 
@@ -147,6 +148,7 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
 #endif
     
     uint i;
+    float debugAllShadowAtten = 1.f;
     for (i = gIndex; i < _VisibleLightCount; i += TILED_GROUP_SIZE * TILED_GROUP_SIZE)
     {
         StructuredLight light = lights[i];
@@ -212,6 +214,8 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     float3 positionVS = frustumPlaneVS * linearDepth;
     float3 viewDirVS = normalize(positionVS);
     
+    float3 positionWS = mul(_InvViewMatrix, float4(positionVS.xyz, 1.f)).xyz;
+    
     float4 normalRough = NormalRoughRT[tId.xy];
     //float4 gbuff1 = GBuffer1RT[tId.xy];
     float3 normalVS = normalize(normalRough.xyz * 2.0 - 1.0);
@@ -268,8 +272,26 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
                 [branch]
                 if (shadowIdx != -1)
                 {
-                    lightAtten *= GetSpotlightShadowAttenuation(shadowData[shadowIdx], positionVS, normalVS, NdotL);
+                    // Spotlight shadow
+                    float shadowAtten = GetSpotlightShadowAttenuation(shadowData[shadowIdx], positionVS, normalVS, NdotL);
+                    lightAtten *= shadowAtten;
+                    debugAllShadowAtten *= shadowAtten;
                 }
+            }
+            else if (shadowIdx != -1)
+            {
+                // Point light shadow
+                
+                // Get cubemap face based on WS offset
+                float3 lightPosWS = mul(_InvViewMatrix, float4(light.positionVS_range.xyz, 1.f)).xyz;
+                float3 offsetWS = positionWS - lightPosWS;
+                uint shadowFaceIdx = shadowIdx + GetCubeMapFaceID(offsetWS);
+                
+                // Attenuation
+                float shadowAtten = GetSpotlightShadowAttenuation(shadowData[shadowFaceIdx], positionVS, normalVS, NdotL);
+                //shadowAtten = GetCubeMapFaceID(offsetWS) * 0.2;
+                lightAtten *= shadowAtten;
+                debugAllShadowAtten *= shadowAtten;
             }
         }
         
@@ -294,6 +316,8 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
         // Draw grid
         debugColor = float3(0.3, 0.1, 0.8);
     }
+#elif defined(DEBUG_VIEW_ALL_SHADOWS)
+    debugColor = debugAllShadowAtten;
 #elif defined(DEBUG_VIEW_SHADOW)
     // Show shadow for a light
     //debugColor = GetSpotlightShadowAttenuation(shadowData[6], positionVS, normalRough.xyz, dot(normalRough.xyz, -lights[1].direction.xyz));
