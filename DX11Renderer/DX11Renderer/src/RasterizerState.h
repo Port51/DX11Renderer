@@ -12,13 +12,14 @@ namespace gfx
 	class RasterizerState : public Bindable
 	{
 	public:
-		RasterizerState(Graphics& gfx, bool twoSided);
+		RasterizerState(Graphics& gfx, D3D11_CULL_MODE cullMode);
 		void BindRS(Graphics& gfx) override;
-		static std::shared_ptr<RasterizerState> Resolve(Graphics& gfx, bool twoSided);
+		static std::shared_ptr<RasterizerState> Resolve(Graphics& gfx, D3D11_CULL_MODE cullMode);
+		static D3D11_CULL_MODE GetCullModeFromMaterialString(std::string name);
 	protected:
-		static std::string GenerateUID(bool twoSided);
+		static std::string GenerateUID(D3D11_CULL_MODE cullMode);
 	protected:
 		ComPtr<ID3D11RasterizerState> pRasterizer;
-		bool twoSided;
+		D3D11_CULL_MODE cullMode;
 	};
 }

@@ -9,16 +9,19 @@ Properties
 Pass
 {
 	Name, ShadowPass
+	Cull, Back
 	VS, Assets\\Built\\Shaders\\PhongVS.cso
 }
 Pass
 {
 	Name, DepthPrepass
+	Cull, Back
 	VS, Assets\\Built\\Shaders\\PhongVS.cso
 }
 Pass
 {
 	Name, GBuffer
+	Cull, Back
 	VS, Assets\\Built\\Shaders\\PhongVS.cso
 	PS, Assets\\Built\\Shaders\\OpaqueGbuffer.cso
 	Texture, tex, 0
@@ -27,6 +30,7 @@ Pass
 Pass
 {
 	Name, Geometry
+	Cull, Back
 	VS, Assets\\Built\\Shaders\\PhongVS.cso
 	PS, Assets\\Built\\Shaders\\PhongPS.cso
 	Texture, tex, 0

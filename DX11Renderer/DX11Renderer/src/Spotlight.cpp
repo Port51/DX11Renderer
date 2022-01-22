@@ -26,7 +26,6 @@ namespace gfx
 	{
 		// todo: set shadow via settings
 		shadowSettings.hasShadow = true;
-		pShadowMap = std::make_unique<DepthStencilTarget>(gfx, Config::ShadowResolution, Config::ShadowResolution);
 
 		pShadowPassCB = std::make_unique<ConstantBuffer<ShadowPassCB>>(gfx, D3D11_USAGE_DYNAMIC);
 	}
@@ -63,7 +62,7 @@ namespace gfx
 		const auto posWS_Vector = dx::XMLoadFloat4(&dx::XMFLOAT4(positionWS.x, positionWS.y, positionWS.z, 1.0f));
 		light.positionVS_range = dx::XMVectorSetW(dx::XMVector4Transform(posWS_Vector, viewMatrix), range); // pack range into W
 		light.color_intensity = dx::XMVectorSetW(dx::XMLoadFloat3(&color), intensity);
-		light.directionVS = dx::XMVector4Transform(GetDirectionWS(), viewMatrix);
+		light.directionVS = dx::XMVectorSetW(dx::XMVector4Transform(GetDirectionWS(), viewMatrix), (float)shadowMapIdx);
 		light.data0 = dx::XMVectorSet(1, 1.f / sphereRad, dx::XMMax(std::cos(dx::XMConvertToRadians(outerAngle)) + 0.01f, std::cos(dx::XMConvertToRadians(innerAngle))), std::cos(dx::XMConvertToRadians(outerAngle)));
 		return light;
 	}
@@ -93,22 +92,23 @@ namespace gfx
 		transformationCB.projMatrix = projMatrix;
 		context.pTransformationCB->Update(context.gfx, transformationCB);
 
-		static DrawContext drawContext(context.renderer);
+		static DrawContext drawContext(context.renderer, context.renderer.ShadowPassName);
 		drawContext.viewMatrix = viewMatrix;
 		drawContext.projMatrix = projMatrix;
-		drawContext.SetRenderPasses(context.renderer.ShadowPassName);
 
 		// This means all shadow draw calls need to be setup on the same thread
 		context.pRendererList->Filter(frustum, RendererList::RendererSorting::FrontToBack);
 		context.pRendererList->SubmitDrawCalls(drawContext);
 		auto ct = context.pRendererList->GetRendererCount();
 
+		// Calculate tile in shadow atlas
+		int tileX = (shadowMapIdx % Config::ShadowAtlasTileDimension);
+		int tileY = (shadowMapIdx / Config::ShadowAtlasTileDimension);
+
 		// todo: defer the rendering
 		{
-			pShadowMap->Clear(context.gfx);
-			context.gfx.GetContext()->OMSetRenderTargets(0, nullptr, pShadowMap->GetView().Get());
-			context.gfx.SetViewport(Config::ShadowResolution, Config::ShadowResolution);
-
+			// Render to tile in atlas using viewport
+			context.gfx.SetViewport(tileX * Config::ShadowAtlasTileResolution, tileY * Config::ShadowAtlasTileResolution, Config::ShadowAtlasTileResolution, Config::ShadowAtlasTileResolution);
 			context.pRenderPass->Execute(context.gfx);
 			context.pRenderPass->Reset(); // required to handle multiple shadows at once
 		}
@@ -117,19 +117,16 @@ namespace gfx
 		{
 			lightShadowData.lightViewMatrix = viewMatrix;
 			lightShadowData.lightViewProjMatrix = viewMatrix * projMatrix;
-			//lightShadowData.shadowMapSize = Config::ShadowResolution;
-			//lightShadowData.shadowMatrix = dx::XMMatrixInverse(nullptr, context.cam.GetViewMatrix()) * lightShadowData.lightViewProjMatrix;
-			//lightShadowData.shadowMatrix = dx::XMMatrixInverse(nullptr, context.cam.GetViewMatrix());
-			//lightShadowData.shadowMatrix = context.invViewMatrix;
 			lightShadowData.shadowMatrix = context.invViewMatrix * lightShadowData.lightViewProjMatrix;
+			dx::XMStoreUInt2(&lightShadowData.tile, dx::XMVectorSet(tileX, tileY, 0, 0));
+			//SetShadowMatrixTile(lightShadowData.shadowMatrix, tileX, tileY);
 		}
 
 	}
 
-	void Spotlight::AppendShadowData(UINT shadowStartSlot, std::vector<LightShadowData>& shadowData, std::vector<ComPtr<ID3D11ShaderResourceView>>& srvs) const
+	void Spotlight::AppendShadowData(UINT shadowStartSlot, std::vector<LightShadowData>& shadowData) const
 	{
 		shadowData[shadowStartSlot] = lightShadowData;
-		srvs[shadowStartSlot] = pShadowMap->GetSRV();
 	}
 
 	UINT Spotlight::GetShadowSRVCount() const

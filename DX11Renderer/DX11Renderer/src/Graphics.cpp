@@ -155,6 +155,18 @@ namespace gfx
 		pContext->OMSetRenderTargets(1u, renderTargetView.GetAddressOf(), pDepthStencil->GetView().Get());
 	}
 
+	void Graphics::SetViewport(int x, int y, int width, int height)
+	{
+		D3D11_VIEWPORT vp;
+		vp.Width = (FLOAT)width;
+		vp.Height = (FLOAT)height;
+		vp.MinDepth = 0;
+		vp.MaxDepth = 1;
+		vp.TopLeftX = (FLOAT)x;
+		vp.TopLeftY = (FLOAT)y;
+		pContext->RSSetViewports(1u, &vp);
+	}
+
 	void Graphics::SetViewport(int width, int height)
 	{
 		D3D11_VIEWPORT vp;

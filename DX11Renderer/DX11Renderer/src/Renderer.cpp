@@ -85,15 +85,15 @@ namespace gfx
 
 		// todo: move to static class?
 		D3D11_SAMPLER_DESC shadowSamplerDesc = {};
-		if (Config::ShadowType == Config::ShadowType::HardwarePCF)
+		//if (Config::ShadowType == Config::ShadowType::HardwarePCF)
 		{
 			shadowSamplerDesc.Filter = D3D11_FILTER_COMPARISON_MIN_MAG_LINEAR_MIP_POINT;
 			shadowSamplerDesc.ComparisonFunc = D3D11_COMPARISON_LESS;
 		}
-		else
-		{
-			shadowSamplerDesc.Filter = D3D11_FILTER_ANISOTROPIC;
-		}
+		//else
+		//{
+		//	shadowSamplerDesc.Filter = D3D11_FILTER_ANISOTROPIC;
+		//}
 		shadowSamplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
 		shadowSamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
 		shadowSamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
@@ -239,7 +239,7 @@ namespace gfx
 			const std::unique_ptr<RenderPass>& pass = pRenderPasses[TiledLightingPassName];
 
 			pass->BindSharedResources(gfx);
-			pLightManager->BindShadowMaps(gfx, RenderSlots::CS_FreeSRV + 1u);
+			pLightManager->BindShadowAtlas(gfx, RenderSlots::CS_FreeSRV + 1u);
 			pass->Execute(gfx); // setup binds
 
 			pTiledLightingKernel->Dispatch(gfx, *pass, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1);

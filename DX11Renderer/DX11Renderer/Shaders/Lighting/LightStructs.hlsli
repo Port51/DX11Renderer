@@ -14,6 +14,8 @@ struct StructuredShadow
     matrix shadowMatrix;
     matrix lightViewMatrix;
     matrix lightViewProjMatrix;
+    uint2 tile;
+    uint2 padding;
     //float shadowMapSize;
     //float3 padding;
 };

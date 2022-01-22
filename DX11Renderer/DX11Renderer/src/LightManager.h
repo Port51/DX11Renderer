@@ -20,6 +20,7 @@ namespace gfx
 	class Light;
 	class RenderPass;
 	class ShadowPassContext;
+	class DepthStencilTarget;
 
 	//struct LightInputCB;
 	struct GlobalTransformCB;
@@ -42,7 +43,7 @@ namespace gfx
 	public:
 		void AddLightModelsToList(RendererList& pRendererList);
 		void CullLights(Graphics& gfx, const std::unique_ptr<Camera>& cam);
-		void BindShadowMaps(Graphics& gfx, UINT startSlot) const;
+		void BindShadowAtlas(Graphics& gfx, UINT startSlot) const;
 		void RenderShadows(ShadowPassContext context);
 		ComPtr<ID3D11ShaderResourceView> GetLightDataSRV() const;
 		ComPtr<ID3D11ShaderResourceView> GetShadowDataSRV() const;
@@ -60,6 +61,6 @@ namespace gfx
 		std::unique_ptr<StructuredBuffer<LightShadowData>> pLightShadowSB;
 		std::shared_ptr<RendererList> pShadowRendererList;
 		std::vector<LightShadowData> cachedShadowData;
-		std::vector<ComPtr<ID3D11ShaderResourceView>> pShadowMapSRVs;
+		std::unique_ptr<DepthStencilTarget> pShadowAtlas;
 	};
 }

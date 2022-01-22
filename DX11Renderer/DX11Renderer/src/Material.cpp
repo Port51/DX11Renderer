@@ -19,6 +19,7 @@
 #include "NullPixelShader.h"
 #include "RenderConstants.h"
 #include "DrawContext.h"
+#include "RasterizerState.h"
 
 #include <fstream>
 #include <sstream>
@@ -124,6 +125,15 @@ namespace gfx
 					// todo: add to codex using std::string(_materialAssetPath)?
 					pPassStep->AddBinding(std::move(std::make_shared<ConstantBuffer<PSMaterialConstant>>(gfx, D3D11_USAGE_IMMUTABLE, pmc)))
 						.SetupPSBinding(RenderSlots::PS_FreeCB + 0u);
+				}
+			}
+			else if (p.key == "Cull")
+			{
+				if (state == MaterialParseState::Pass)
+				{
+					// Read culling type
+					pPassStep->AddBinding(RasterizerState::Resolve(gfx, RasterizerState::GetCullModeFromMaterialString(p.values[0])))
+						.SetupRSBinding();
 				}
 			}
 			else if (state == MaterialParseState::Properties)

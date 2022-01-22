@@ -26,14 +26,7 @@ StructuredBuffer<StructuredLight> lights : register(t0);
 StructuredBuffer<StructuredShadow> shadowData : register(t1);
 Texture2D<float4> NormalRoughRT : register(t2);
 Texture2D<float> DepthRT : register(t3);
-Texture2D<float> ShadowMaps[MAX_SHADOWS] : register(t4);
-
-// Ref: https://stackoverflow.com/questions/17123735/how-to-enable-hardware-percentage-closer-filtering
-#if defined(USE_HARD_SHADOWS)
-    SamplerState ShadowMapSampler : register(s0);
-#elif defined(USE_HARDWARE_PCF)
-    SamplerComparisonState ShadowMapSampler : register(s0);
-#endif
+// Register 4 reserved for shadow atlas
 
 #include "./Lighting/Shadows.hlsli"
 
@@ -147,7 +140,8 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     const float3 aabbExtents = (maxAABB - minAABB) * 0.5;
 #endif
     
-    for (uint i = gIndex; i < _VisibleLightCount; i += TILED_GROUP_SIZE * TILED_GROUP_SIZE)
+    uint i;
+    for (i = gIndex; i < _VisibleLightCount; i += TILED_GROUP_SIZE * TILED_GROUP_SIZE)
     {
         StructuredLight light = lights[i];
         
@@ -228,9 +222,10 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     // For now, just set it to 1.0
     float f90 = 1.0;
     
+    // https://gamedev.net/forums/topic/579417-forced-to-unroll-loop-but-unrolling-failed-resolved/4690649/
     float3 diffuseLight = 0;
     float3 specularLight = 0;
-    for (uint i = 0; i < tileLightCount; ++i)
+    for (i = 0; i < tileLightCount; ++i)
     {
         StructuredLight light = lights[tileLightIndices[i]];
         
@@ -238,6 +233,7 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
         float3 lightDirVS;
         
         uint type = light.data0.x;
+        int shadowIdx = light.direction.w;
         [branch] // should be same for each thread group
         if (type == 2u)
         {
@@ -250,6 +246,7 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
             float3 displ = light.positionVS_range.xyz - positionVS.xyz;
             float lightDist = length(displ);
             lightDirVS = displ / max(lightDist, 0.0001);
+            float NdotL = dot(normalRough.xyz, -lightDirVS.xyz);
             
             float lightRSqr = 1 * 1; // temporary...
             lightAtten = GetSphericalLightAttenuation(lightDist, light.data0.y, light.positionVS_range.w);
@@ -265,7 +262,11 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
                 // todo: replace with [MAD] op, depending on light culling?
                 float spotCos = dot(spotlightDir, -lightDirVS);
                 lightAtten *= saturate((spotCos - light.data0.w) / (light.data0.z - light.data0.w));
-                lightAtten *= GetSpotlightShadowAttenuation(shadowData[0], ShadowMaps[0], positionVS);
+                [branch]
+                if (shadowIdx != -1)
+                {
+                    lightAtten *= GetSpotlightShadowAttenuation(shadowData[shadowIdx], positionVS, normalRough.xyz, NdotL);
+                }
             }
         }
         
@@ -300,7 +301,7 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     //debugColor = _VisibleLightCount * 0.2;
     
     // Debug shadowmap output
-    debugColor = (1 - GetSpotlightShadowAttenuation(shadowData[0], ShadowMaps[0], positionVS));
+    debugColor = GetSpotlightShadowAttenuation(shadowData[1], positionVS, normalRough.xyz, dot(normalRough.xyz, -lights[0].direction.xyz));
     
     //debugColor = shadowDepth;
     //debugColor = (shadowUV.x < 0 || shadowUV.x > 1);

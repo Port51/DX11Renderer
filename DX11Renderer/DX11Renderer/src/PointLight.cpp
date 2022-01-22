@@ -79,7 +79,7 @@ namespace gfx
 	void PointLight::RenderShadow(ShadowPassContext context)
 	{}
 
-	void PointLight::AppendShadowData(UINT shadowStartSlot, std::vector<LightShadowData>& shadowData, std::vector<ComPtr<ID3D11ShaderResourceView>>& srvs) const
+	void PointLight::AppendShadowData(UINT shadowStartSlot, std::vector<LightShadowData>& shadowData) const
 	{}
 
 	UINT PointLight::GetShadowSRVCount() const

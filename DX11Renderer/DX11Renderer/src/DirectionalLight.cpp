@@ -68,7 +68,7 @@ namespace gfx
 	void DirectionalLight::RenderShadow(ShadowPassContext context)
 	{}
 
-	void DirectionalLight::AppendShadowData(UINT shadowStartSlot, std::vector<LightShadowData>& shadowData, std::vector<ComPtr<ID3D11ShaderResourceView>>& srvs) const
+	void DirectionalLight::AppendShadowData(UINT shadowStartSlot, std::vector<LightShadowData>& shadowData) const
 	{}
 
 	UINT DirectionalLight::GetShadowSRVCount() const

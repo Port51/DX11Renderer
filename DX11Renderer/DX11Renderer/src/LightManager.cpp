@@ -14,6 +14,8 @@
 #include "RendererList.h"
 #include "ModelInstance.h"
 #include "LightShadowData.h"
+#include "DepthStencilTarget.h"
+#include "Config.h"
 
 namespace gfx
 {
@@ -50,10 +52,11 @@ namespace gfx
 			}
 		}*/
 		pLightShadowSB = std::make_unique<StructuredBuffer<LightShadowData>>(gfx, D3D11_USAGE_DYNAMIC, D3D11_BIND_SHADER_RESOURCE, MaxShadowCount);
-		pShadowMapSRVs.resize(MaxShadowCount);
 		cachedShadowData.resize(MaxShadowCount);
 
 		pShadowRendererList = std::make_shared<RendererList>(pRendererList);
+
+		pShadowAtlas = std::make_unique<DepthStencilTarget>(gfx, Config::ShadowAtlasResolution, Config::ShadowAtlasResolution);
 	}
 
 	void LightManager::AddLightModelsToList(RendererList & pRendererList)
@@ -73,8 +76,15 @@ namespace gfx
 		dx::XMVECTOR aabbExtents = dx::XMVectorSet(frustumCornersVS.z * 0.5f, frustumCornersVS.w * -0.5f, cam->GetFarClipPlane() - cam->GetNearClipPlane(), 0.f);
 
 		visibleLightCt = 0u;
+		int shadowMapIdx = 0;
 		for (int i = 0; i < pLights.size(); ++i)
 		{
+			if (pLights[i]->HasShadow())
+			{
+				pLights[i]->SetCurrentShadowIdx(shadowMapIdx);
+				shadowMapIdx += pLights[i]->GetShadowSRVCount();
+			}
+
 			const auto data = pLights[i]->GetLightData(cam->GetViewMatrix());
 
 			bool inFrustum = true;
@@ -113,24 +123,27 @@ namespace gfx
 		gfx.GetContext()->CSSetConstantBuffers(RenderSlots::CS_LightInputCB, 1u, pLightInputCB->GetD3DBuffer().GetAddressOf());
 	}
 
-	void LightManager::BindShadowMaps(Graphics& gfx, UINT startSlot) const
+	void LightManager::BindShadowAtlas(Graphics& gfx, UINT startSlot) const
 	{
 		// todo: size should change based on shadow culling
-		gfx.GetContext()->CSSetShaderResources(startSlot, pShadowMapSRVs.size(), pShadowMapSRVs.data()->GetAddressOf());
+		gfx.GetContext()->CSSetShaderResources(startSlot, 1u, pShadowAtlas->GetSRV().GetAddressOf());
 	}
 
 	void LightManager::RenderShadows(ShadowPassContext context)
 	{
 		context.pRendererList = pShadowRendererList;
 
+		pShadowAtlas->Clear(context.gfx);
+		context.gfx.GetContext()->OMSetRenderTargets(0, nullptr, pShadowAtlas->GetView().Get());
+
 		// todo: cull shadows
-		int shadowMapIdx = 0;
 		for (int i = 0; i < pLights.size(); ++i)
 		{
 			if (pLights[i]->HasShadow())
 			{
+				int shadowMapIdx = pLights[i]->GetCurrentShadowIdx();
 				pLights[i]->RenderShadow(context); //, gfx, cam, pass, pTransformationCB
-				pLights[i]->AppendShadowData(shadowMapIdx, cachedShadowData, pShadowMapSRVs);
+				pLights[i]->AppendShadowData(shadowMapIdx, cachedShadowData);
 				shadowMapIdx += pLights[i]->GetShadowSRVCount();
 			}
 		}

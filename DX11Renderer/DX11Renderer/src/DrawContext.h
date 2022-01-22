@@ -10,6 +10,8 @@ namespace gfx
 	{
 	public:
 		DrawContext(Renderer& renderer);
+		DrawContext(Renderer& renderer, std::string _renderPass);
+		DrawContext(Renderer& renderer, std::vector<std::string> _renderPasses);
 		void SetRenderPasses(std::string _renderPass);
 		void SetRenderPasses(std::vector<std::string> _renderPasses);
 	public:

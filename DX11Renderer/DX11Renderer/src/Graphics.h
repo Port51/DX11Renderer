@@ -24,6 +24,7 @@ namespace gfx
 		void ClearBuffer(float red, float green, float blue);
 		void DrawIndexed(UINT count);
 		void SetRenderTarget(ComPtr<ID3D11RenderTargetView> renderTargetView);
+		void SetViewport(int x, int y, int width, int height);
 		void SetViewport(int width, int height);
 		int GetScreenWidth() const;
 		int GetScreenHeight() const;
