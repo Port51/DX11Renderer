@@ -77,14 +77,13 @@ namespace gfx
 		// Apply look-at and local orientation
 		// +Y = up
 		const auto lightPos = dx::XMLoadFloat3(&positionWS);
-		const auto viewMatrix = dx::XMMatrixLookAtLH(lightPos, dx::XMVectorAdd(lightPos, GetDirectionWS()), dx::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f))
-			* dx::XMMatrixRotationRollPitchYaw(dx::XMConvertToRadians(tilt), dx::XMConvertToRadians(-pan), 0.f);
+		const auto viewMatrix = dx::XMMatrixLookAtLH(lightPos, dx::XMVectorAdd(lightPos, GetDirectionWS()), dx::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
 
 		float fovTheta = dx::XMConvertToRadians(2.0f * outerAngle);
 		const float nearPlane = 0.1f;
 		const auto projMatrix = dx::XMMatrixPerspectiveFovLH(fovTheta, 1.0f, nearPlane, range);
 
-		Frustum frustum;
+		static Frustum frustum;
 
 		// Setup transformation buffer
 		static GlobalTransformCB transformationCB;

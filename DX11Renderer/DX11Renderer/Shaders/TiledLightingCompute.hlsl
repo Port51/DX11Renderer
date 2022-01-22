@@ -155,7 +155,7 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
         // Calculate sphere to test against
         float4 sphereData;
         sphereData = light.positionVS_range;
-        /*if (light.data0.x == 0)
+        if (light.data0.x == 0)
         {
             // Point light:
             sphereData = light.positionVS_range;
@@ -171,7 +171,7 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
             // Directional light:
             // For now, just make it so light will always be seen
             sphereData = float4(aabbCenter.xyz, 1000.0);
-        }*/
+        }
         
 #if defined(USE_FRUSTUM_INTERSECTION_TEST)     
         [unroll]
