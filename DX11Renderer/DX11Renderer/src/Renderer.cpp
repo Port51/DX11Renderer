@@ -27,6 +27,7 @@
 #include "Binding.h"
 #include "Bindable.h"
 #include "Config.h"
+#include "RasterizerState.h"
 
 namespace gfx
 {
@@ -72,9 +73,12 @@ namespace gfx
 			.PSSetCB(RenderSlots::PS_TransformationCB, pTransformationCB->GetD3DBuffer())
 			.PSSetCB(RenderSlots::PS_PerCameraCB, pPerCameraCB->GetD3DBuffer());
 
-		CreateRenderPass(DepthPrepassName);
-		CreateRenderPass(ShadowPassName);
-		CreateRenderPass(GBufferRenderPassName);
+		CreateRenderPass(DepthPrepassName)
+			->AddBinding(RasterizerState::Resolve(gfx, D3D11_CULL_BACK)).SetupRSBinding();
+		CreateRenderPass(ShadowPassName)
+			->AddBinding(RasterizerState::Resolve(gfx, D3D11_CULL_FRONT)).SetupRSBinding(); // Reduce shadow acne w/ front face culling during shadow pass
+		CreateRenderPass(GBufferRenderPassName)
+			->AddBinding(RasterizerState::Resolve(gfx, D3D11_CULL_BACK)).SetupRSBinding();
 		CreateRenderPass(GeometryRenderPassName);
 		CreateRenderPass(GeometryRenderPassName)->
 			PSSetSRV(0u, pSpecularLighting->GetSRV())

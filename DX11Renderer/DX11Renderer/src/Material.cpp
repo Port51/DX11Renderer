@@ -132,8 +132,8 @@ namespace gfx
 				if (state == MaterialParseState::Pass)
 				{
 					// Read culling type
-					pPassStep->AddBinding(RasterizerState::Resolve(gfx, RasterizerState::GetCullModeFromMaterialString(p.values[0])))
-						.SetupRSBinding();
+					//pPassStep->AddBinding(RasterizerState::Resolve(gfx, RasterizerState::GetCullModeFromMaterialString(p.values[0])))
+					//	.SetupRSBinding();
 				}
 			}
 			else if (state == MaterialParseState::Properties)

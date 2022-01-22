@@ -11,6 +11,11 @@ namespace gfx
 		D3D11_RASTERIZER_DESC rasterDesc = CD3D11_RASTERIZER_DESC(CD3D11_DEFAULT{});
 		rasterDesc.CullMode = cullMode;
 
+		if (cullMode == D3D11_CULL_FRONT)
+		{
+			rasterDesc.FrontCounterClockwise = true;
+		}
+
 		THROW_IF_FAILED(gfx.GetDevice()->CreateRasterizerState(&rasterDesc, &pRasterizer));
 	}
 

@@ -23,8 +23,8 @@
 // Debug views
 //
 
-//#define DEBUG_VIEW_SHADOW
-#define DEBUG_VIEW_LIGHT_COUNTS
+#define DEBUG_VIEW_SHADOW
+//#define DEBUG_VIEW_LIGHT_COUNTS
 
 // Inputs
 StructuredBuffer<StructuredLight> lights : register(t0);
