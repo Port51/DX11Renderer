@@ -6,21 +6,22 @@ namespace gfx
 	struct alignas(16) LightInputCB
 	{
 		UINT visibleLightCount;
+		dx::XMVECTOR shadowAtlasTexelResolution;
 	};
 
 	struct alignas(16) PerFrameCB
 	{
-		DirectX::XMVECTOR time; // (t/20, t, t*2, t*3)
+		dx::XMVECTOR time; // (t/20, t, t*2, t*3)
 	};
 
 	struct alignas(16) GlobalTransformCB
 	{
-		DirectX::XMMATRIX viewMatrix;
-		DirectX::XMMATRIX projMatrix;
-		DirectX::XMMATRIX viewProjMatrix;
-		DirectX::XMMATRIX invViewMatrix;
-		DirectX::XMMATRIX invProjMatrix;
-		DirectX::XMMATRIX invViewProjMatrix;
+		dx::XMMATRIX viewMatrix;
+		dx::XMMATRIX projMatrix;
+		dx::XMMATRIX viewProjMatrix;
+		dx::XMMATRIX invViewMatrix;
+		dx::XMMATRIX invProjMatrix;
+		dx::XMMATRIX invViewProjMatrix;
 	};
 
 	struct alignas(16) PerCameraCB
@@ -29,13 +30,13 @@ namespace gfx
 		// y = near plane
 		// z = far plane
 		// w = 1/far plane
-		DirectX::XMVECTOR projectionParams;
+		dx::XMVECTOR projectionParams;
 
 		// x = width
 		// y = height
 		// z = 1 + 1.0/width
 		// w = 1 + 1.0/height
-		DirectX::XMVECTOR screenParams;
+		dx::XMVECTOR screenParams;
 
 		// Values used to linearize the Z buffer (http://www.humus.name/temp/Linearize%20depth.txt)
 		// x = 1-far/near
@@ -47,14 +48,14 @@ namespace gfx
 		// y = 1
 		// z = x/far
 		// w = 1/far
-		DirectX::XMVECTOR zBufferParams;
+		dx::XMVECTOR zBufferParams;
 
 		// x = orthographic camera's width
 		// y = orthographic camera's height
 		// z = unused
 		// w = 1.0 if camera is ortho, 0.0 if perspective
-		DirectX::XMVECTOR orthoParams;
+		dx::XMVECTOR orthoParams;
 
-		DirectX::XMVECTOR frustumCornerDataVS;
+		dx::XMVECTOR frustumCornerDataVS;
 	};
 }

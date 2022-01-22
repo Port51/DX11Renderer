@@ -115,14 +115,17 @@ namespace gfx
 
 		pTiledLightingKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, std::string("Assets\\Built\\Shaders\\TiledLightingCompute.cso"), std::string("CSMain")));
 	}
+
 	Renderer::~Renderer()
 	{
 
 	}
+
 	void Renderer::AcceptDrawCall(DrawCall job, std::string targetPass)
 	{
 		pRenderPasses[targetPass]->EnqueueJob(job);
 	}
+
 	void Renderer::Execute(Graphics & gfx, const std::unique_ptr<Camera>& cam, const std::unique_ptr<LightManager>& pLightManager)
 	{
 		gfx.GetContext()->ClearState();
@@ -287,6 +290,7 @@ namespace gfx
 		}
 
 	}
+
 	void Renderer::Reset()
 	{
 		for (auto& p : pRenderPasses)
@@ -294,11 +298,13 @@ namespace gfx
 			p.second->Reset();
 		}
 	}
+
 	const std::unique_ptr<RenderPass>& Renderer::CreateRenderPass(const std::string name)
 	{
 		pRenderPasses.emplace(name, std::make_unique<RenderPass>(name));
 		return pRenderPasses[name];
 	}
+
 	const std::unique_ptr<RenderPass>& Renderer::CreateRenderPass(const std::string name, std::unique_ptr<RenderPass> pRenderPass)
 	{
 		pRenderPasses.emplace(name, std::move(pRenderPass));

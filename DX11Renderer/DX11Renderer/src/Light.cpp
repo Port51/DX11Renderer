@@ -28,7 +28,7 @@ namespace gfx
 
 	void Light::SetCurrentShadowIdx(int _shadowMapIdx)
 	{
-		shadowMapIdx = _shadowMapIdx + 1u;
+		shadowMapIdx = _shadowMapIdx;
 	}
 
 	bool Light::HasShadow() const

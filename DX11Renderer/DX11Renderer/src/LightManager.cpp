@@ -38,7 +38,7 @@ namespace gfx
 		pLights.emplace_back(std::make_unique<PointLight>(gfx, 6, dx::XMFLOAT3(7.5f, 1.0f, -7.5f), dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 3.0f));
 		pLights.emplace_back(std::make_unique<PointLight>(gfx, 7, dx::XMFLOAT3(7.5f, 1.0f, 0.0f), dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 3.0f));
 		*/
-		pLights.emplace_back(std::make_unique<Spotlight>(gfx, 8, dx::XMFLOAT3(0.0, 1.0f, 0.f), 0.0f, 0.0f, dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 50.0f, 50.0f));
+		pLights.emplace_back(std::make_unique<Spotlight>(gfx, 8, dx::XMFLOAT3(0.0, 2.f, 0.f), 0.0f, 0.0f, dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 50.0f, 50.0f));
 		//pLights.emplace_back(std::make_unique<DirectionalLight>(gfx, 4, dx::XMFLOAT3(-2.0, 1.0f, -5.f), 0.0f, 0.0f, dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 50.0f, 5.0f));
 
 		pLightInputCB = std::make_unique<ConstantBuffer<LightInputCB>>(gfx, D3D11_USAGE_DYNAMIC);
@@ -119,6 +119,7 @@ namespace gfx
 		LightInputCB lightInputCB;
 		ZeroMemory(&lightInputCB, sizeof(lightInputCB));
 		lightInputCB.visibleLightCount = visibleLightCt;
+		lightInputCB.shadowAtlasTexelResolution = dx::XMVectorSet(Config::ShadowAtlasResolution, Config::ShadowAtlasResolution, 1.f / Config::ShadowAtlasResolution, 1.f / Config::ShadowAtlasResolution);
 		pLightInputCB->Update(gfx, lightInputCB);
 		gfx.GetContext()->CSSetConstantBuffers(RenderSlots::CS_LightInputCB, 1u, pLightInputCB->GetD3DBuffer().GetAddressOf());
 	}

@@ -6,10 +6,11 @@
 // References:
 // https://wickedengine.net/2018/01/10/optimizing-tile-based-light-culling/
 
-// Settings:
-#define USE_HARD_SHADOWS
-//#define USE_HARDWARE_PCF
-#define PCF_TAPS            2   // number of times to sample in each direction. Set 0 for 1-tap PCF.
+// Shadow settings:
+//#define SHADOW_PCF_3_TAP
+//#define SHADOW_PCF_5_TAP
+#define SHADOW_PCF_7_TAP
+//#define USE_HARD_SHADOWS
 
 #define MAX_TILE_LIGHTS     64
 #define TILED_GROUP_SIZE    16
@@ -18,8 +19,12 @@
 #define USE_FRUSTUM_INTERSECTION_TEST
 #define USE_AABB_INTERSECTION_TEST
 
-#define DEBUG_GRID
-#define DEBUG_LIGHT_RANGES
+//
+// Debug views
+//
+
+//#define DEBUG_VIEW_SHADOW
+#define DEBUG_VIEW_LIGHT_COUNTS
 
 // Inputs
 StructuredBuffer<StructuredLight> lights : register(t0);
@@ -283,46 +288,20 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     diffuseLight *= (rawDepth < 1);
     specularLight *= (rawDepth < 1);
     
-    // todo: iterate through light list of tile and execute BRDF
-    float3 debugColor = debugValue;// * (rawDepth < 1);
-    
-#if defined(DEBUG_LIGHT_RANGES)
+    float3 debugColor = debugValue;
+#if defined(DEBUG_VIEW_LIGHT_COUNTS)
     debugColor = float3((diffuseLight.r) * (rawDepth < 1), tileLightCount * 0.1, 0);
-#endif
-    
-#if defined(DEBUG_GRID)
     if (groupThreadId.x == 0 || groupThreadId.y == 0)
     {
+        // Draw grid
         debugColor = float3(0.3, 0.1, 0.8);
     }
+#elif defined(DEBUG_VIEW_SHADOW)
+    // Show shadow for a light
+    debugColor = GetSpotlightShadowAttenuation(shadowData[0], positionVS, normalRough.xyz, dot(normalRough.xyz, -lights[0].direction.xyz));
 #endif
-    //debugColor = saturate(asfloat(maxTileZ) - asfloat(minTileZ));
-    //debugColor = asfloat(minTileZ) / 20.0;
-    //debugColor = _VisibleLightCount * 0.2;
-    
-    // Debug shadowmap output
-    debugColor = GetSpotlightShadowAttenuation(shadowData[1], positionVS, normalRough.xyz, dot(normalRough.xyz, -lights[0].direction.xyz));
-    
-    //debugColor = shadowDepth;
-    //debugColor = (shadowUV.x < 0 || shadowUV.x > 1);
-    
-    float3 shadowPosWS = mul(shadowData[0].shadowMatrix, float4(positionVS, 1)).xyz;
-    //debugColor = shadowPosWS.y;
-    
-    //float3 referencePosWS = mul(_InvViewMatrix, float4(positionVS, 1)).xyz;
-    //debugColor = referencePosWS.x;
-    //debugColor = abs(referencePosWS.x - shadowPosWS.x);
-    //debugColor = length(referencePosWS - shadowPosWS) * 100.0;
     
     SpecularLightingOut[tId.xy] = float4(specularLight, 1);
     DiffuseLightingOut[tId.xy] = float4(diffuseLight, 1);
-    //DebugOut[tId.xy] = float4(lerp(float3(1, 1, 1), float3(1, 0, 0), tileLightCount * 0.333) * (rawDepth < 1), 1);
     DebugOut[tId.xy] = float4(debugColor, 1);
-    //DebugOut[tId.xy] = float4(diffuseLight, 1);
-    //DebugOut[tId.xy] = sides[0].y;
-    //DebugOut[tId.xy] = positionVS.x > 0;
-    //DebugOut[tId.xy] = rawDepth < 1;
-    //DebugOut[tId.xy] = rawDepth;
-    //DebugOut[tId.xy] = viewDirVS.y;
-
 }

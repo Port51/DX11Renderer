@@ -47,7 +47,7 @@ namespace gfx
 	/// XY = distance 1, ZW = far
 	/// Use in shader with NDC to get view dir or reconstruct positionVS
 	/// This assumes a "normal" camera frustum, so don't try this with a planar reflection camera!
-	DirectX::XMVECTOR Camera::GetFrustumCornersVS() const
+	dx::XMVECTOR Camera::GetFrustumCornersVS() const
 	{
 		// Reference: http://davidlively.com/programming/graphics/frustum-calculation-and-culling-hopefully-demystified/
 

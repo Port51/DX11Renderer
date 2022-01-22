@@ -5,9 +5,9 @@ namespace gfx
 {
 	struct LightData
 	{
-		DirectX::XMVECTOR positionVS_range;
-		DirectX::XMVECTOR color_intensity;
-		DirectX::XMVECTOR directionVS;
-		DirectX::XMVECTOR data0;
+		dx::XMVECTOR positionVS_range;
+		dx::XMVECTOR color_intensity;
+		dx::XMVECTOR directionVS;
+		dx::XMVECTOR data0;
 	};
 }

@@ -56,6 +56,7 @@ cbuffer PerCameraCB : register(b2)
 cbuffer LightInputCB : register(b3)
 {
     uint _VisibleLightCount;
+    float4 _ShadowAtlasTexelResolution;
 };
 
 #endif
