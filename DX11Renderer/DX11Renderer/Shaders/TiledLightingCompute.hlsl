@@ -251,12 +251,9 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
             float3 displ = light.positionVS_range.xyz - positionVS.xyz;
             float lightDist = length(displ);
             lightDirVS = displ / max(lightDist, 0.0001);
-            float NdotL = dot(normalRough.xyz, -lightDirVS.xyz);
+            float NdotL = dot(normalVS, -lightDirVS.xyz);
             
-            float lightRSqr = 1 * 1; // temporary...
             lightAtten = GetSphericalLightAttenuation(lightDist, light.data0.y, light.positionVS_range.w);
-            //lightAtten = lightDirVS.x > 0;
-            //lightAtten = displ.y > 0;
         
             [branch] // should be same for each thread group, as thread groups are the size of 1 tile
             if (type == 1u)
@@ -270,7 +267,7 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
                 [branch]
                 if (shadowIdx != -1)
                 {
-                    lightAtten *= GetSpotlightShadowAttenuation(shadowData[shadowIdx], positionVS, normalRough.xyz, NdotL);
+                    lightAtten *= GetSpotlightShadowAttenuation(shadowData[shadowIdx], positionVS, normalVS, NdotL);
                 }
             }
         }
@@ -298,7 +295,7 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     }
 #elif defined(DEBUG_VIEW_SHADOW)
     // Show shadow for a light
-    debugColor = GetSpotlightShadowAttenuation(shadowData[0], positionVS, normalRough.xyz, dot(normalRough.xyz, -lights[0].direction.xyz));
+    debugColor = GetSpotlightShadowAttenuation(shadowData[0], positionVS, normalRough.xyz, dot(normalRough.xyz, -lights[2].direction.xyz));
 #endif
     
     SpecularLightingOut[tId.xy] = float4(specularLight, 1);

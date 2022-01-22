@@ -46,19 +46,14 @@ BRDFLighting BRDF(float3 f0, float f90, float roughness, float linearRoughness, 
 
     // Specular BRDF
     float3 FF = F_Schlick(f0, f90, LdotH);
-    //float3 F = F_Schlick(f0, f90, NdotV); // bad!
-    //F = f0 + (1.0 - f0) * pow(1.0 - LdotH, 5.0);
 
-
-    float GSF = SmithGGXCorrelated(NdotL, NdotV, roughness); // opposite side?
-    //float GSF = SmithGSF(NdotL, NdotV, roughness);
-    float NDF = GGX(NdotH, roughness); // looks good!
+    float GSF = SmithGGXCorrelated(NdotL, NdotV, roughness);
+    float NDF = GGX(NdotH, roughness);
     //float Fr = NDF * FF * GSF / (PI * 4.0 * NdotL * NdotV);
     float Fr = NDF * FF * GSF / PI;
 
     // Diffuse BRDF
     float Fd = NormalizedDisneyDiffuse(NdotV, NdotL, LdotH, linearRoughness) / PI;
-    //float Fd = DisneyDiffuse(NdotV, NdotL, LdotH, linearRoughness) / PI;
 
     brdf.diffuseLight = Fd * NdotL;
     brdf.specularLight = Fr * NdotL;
