@@ -193,6 +193,7 @@ namespace gfx
 			perCameraCB.zBufferParams = dx::XMVectorSet(1.f - cam->farClipPlane / cam->nearClipPlane, cam->farClipPlane / cam->nearClipPlane, 1.f / cam->farClipPlane - 1.f / cam->nearClipPlane, 1.f / cam->nearClipPlane);
 			perCameraCB.orthoParams = dx::XMVectorSet(0.f, 0.f, 0.f, 0.f);
 			perCameraCB.frustumCornerDataVS = cam->GetFrustumCornersVS();
+			perCameraCB.cameraPositionWS = cam->GetPositionWS();
 			pPerCameraCB->Update(gfx, perCameraCB);
 		}
 

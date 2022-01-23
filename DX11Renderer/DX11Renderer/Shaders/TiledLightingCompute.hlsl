@@ -23,9 +23,10 @@
 // Debug views
 //
 
-#define DEBUG_VIEW_ALL_SHADOWS
+//#define DEBUG_VIEW_ALL_SHADOWS
 //#define DEBUG_VIEW_SHADOW
 //#define DEBUG_VIEW_LIGHT_COUNTS
+#define DEBUG_VIEW_CASCADE_IDX
 //#define DEBUG_VIEW_GEOMETRY
 
 // Inputs
@@ -149,6 +150,7 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     
     uint i;
     float debugAllShadowAtten = 1.f;
+    float debugCascade = 0.f;
     for (i = gIndex; i < _VisibleLightCount; i += TILED_GROUP_SIZE * TILED_GROUP_SIZE)
     {
         StructuredLight light = lights[i];
@@ -249,7 +251,24 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
         {
             // Directional light
             lightDirVS = light.direction.xyz;
-            lightAtten = saturate(dot(normalVS, lightDirVS));
+            float NdotL = dot(normalVS, -lightDirVS.xyz);
+            lightAtten = saturate(NdotL);
+            
+            [branch]
+            if (shadowIdx != -1)
+            {
+                // Directional shadow
+                
+                // Choose cascade
+                uint shadowCascadeIdx = shadowIdx + GetShadowCascade(positionWS);
+#if defined(DEBUG_VIEW_CASCADE_IDX)
+                debugCascade = GetShadowCascade(positionWS) * 0.25;
+#endif
+                
+                float shadowAtten = GetDirectionalShadowAttenuation(shadowData[shadowCascadeIdx], positionVS, normalVS, NdotL);
+                lightAtten *= shadowAtten;
+                debugAllShadowAtten *= shadowAtten;
+            }
         }
         else
         {
@@ -323,6 +342,8 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     //debugColor = GetSpotlightShadowAttenuation(shadowData[6], positionVS, normalRough.xyz, dot(normalRough.xyz, -lights[1].direction.xyz));
     const uint ptLightMapIdx = 0u;
     debugColor = GetSpotlightShadowAttenuation(shadowData[ptLightMapIdx], positionVS, normalRough.xyz, dot(normalRough.xyz, PointLightFaceDirWS[ptLightMapIdx]));
+#elif defined(DEBUG_VIEW_CASCADE_IDX)
+    debugColor = debugCascade;
 #elif defined(DEBUG_VIEW_GEOMETRY)
     debugColor = frac(positionVS.z * 3.0);
 #endif

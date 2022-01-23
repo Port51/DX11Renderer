@@ -25,11 +25,10 @@ namespace gfx
 		UINT GetLightType() const override;
 		void RenderShadow(ShadowPassContext context) override;
 		void AppendShadowData(UINT shadowStartSlot, std::vector<LightShadowData>& shadowData) const override;
-		UINT GetShadowSRVCount() const override;
+		UINT GetShadowTileCount() const override;
 	private:
 		float sphereRad;
 		float range;
-		std::vector<std::unique_ptr<DepthStencilTarget>> pShadowMaps;
 		std::vector<LightShadowData> lightShadowData;
 		static std::vector<dx::XMVECTOR> viewDirectionsWS;
 	};

@@ -11,6 +11,8 @@ namespace gfx
 		Camera(float fov, float aspect, float nearClipPlane, float farClipPlane);
 		virtual ~Camera() = default;
 	public:
+		dx::XMVECTOR GetPositionWS() const;
+		dx::XMVECTOR GetForwardWS() const;
 		dx::XMMATRIX GetViewMatrix() const;
 		dx::XMMATRIX GetProjectionMatrix() const;
 		dx::XMVECTOR GetFrustumCornersVS() const;

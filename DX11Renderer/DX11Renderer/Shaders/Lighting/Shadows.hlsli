@@ -105,4 +105,65 @@ float GetSpotlightShadowAttenuation(StructuredShadow shadow, float3 positionVS, 
     return shadowAtten;
 }
 
+float CascadeDistSqr(float3 dist)
+{
+    return dot(dist, dist);
+}
+
+uint GetShadowCascade(float3 positionWS)
+{
+    [branch]
+    if (CascadeDistSqr(positionWS - _ShadowCascadeSphere0.xyz) < _ShadowCascadeSphere0.w)
+    {
+        return 0u;
+    }
+    else if (CascadeDistSqr(positionWS - _ShadowCascadeSphere1.xyz) < _ShadowCascadeSphere1.w)
+    {
+        return 1u;
+    }
+    else if (CascadeDistSqr(positionWS - _ShadowCascadeSphere2.xyz) < _ShadowCascadeSphere2.w)
+    {
+        return 2u;
+    }
+    else
+    {
+        return 3u;
+    }
+}
+
+float GetDirectionalShadowAttenuation(StructuredShadow shadow, float3 positionVS, float3 normalVS, float NdotL)
+{
+    // Apply large bias at grazing angles, small bias when light dir is similar to normal
+    float3 normalBiasVS = normalVS * (NdotL * -0.075 + 0.085);
+    float4 shadowNDC = mul(shadow.shadowMatrix, float4(positionVS + normalBiasVS, 1));
+    shadowNDC.xyz /= shadowNDC.w;
+    
+    float2 shadowUV = GetShadowTileUV(shadowNDC, shadow.tile);
+    //return shadowUV.x;
+    
+    float shadowAtten = 0;
+    const float ShadowBias = 0.001;
+#if defined(SHADOW_USE_PCF_FILTERING)
+    // PCF filtering
+    float sum = 0;
+    [unroll]
+    for (int y = -SHADOW_PCF_DIR_TAPS; y <= SHADOW_PCF_DIR_TAPS; y += 1)
+    {
+        [unroll]
+        for (int x = -SHADOW_PCF_DIR_TAPS; x <= SHADOW_PCF_DIR_TAPS; x += 1)
+        {
+            sum += ShadowAtlas.SampleCmpLevelZero(ShadowAtlasSampler, shadowUV.xy, shadowNDC.z - ShadowBias, int2(x, y));
+        }
+    }
+    shadowAtten = sum / SHADOW_PCF_TOTAL_TAPS;
+#else
+    // Fallback to hard shadows
+    shadowAtten = ShadowAtlas.SampleCmpLevelZero(ShadowAtlasSampler, shadowUV.xy, shadowNDC.z - ShadowBias);
+#endif
+    
+    // Limit to current tile
+    shadowAtten = saturate(shadowAtten + any(shadowNDC.xy < -1.0) + any(shadowNDC.xyz > 1.0) + (shadowNDC.z < 0.0));
+    return shadowAtten;
+}
+
 #endif

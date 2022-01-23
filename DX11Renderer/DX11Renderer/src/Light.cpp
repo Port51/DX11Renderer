@@ -23,12 +23,12 @@ namespace gfx
 
 	int Light::GetCurrentShadowIdx() const
 	{
-		return shadowMapIdx;
+		return shadowAtlasTileIdx;
 	}
 
 	void Light::SetCurrentShadowIdx(int _shadowMapIdx)
 	{
-		shadowMapIdx = _shadowMapIdx;
+		shadowAtlasTileIdx = _shadowMapIdx;
 	}
 
 	bool Light::HasShadow() const

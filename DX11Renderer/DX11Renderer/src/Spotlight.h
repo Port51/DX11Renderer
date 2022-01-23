@@ -25,7 +25,7 @@ namespace gfx
 		UINT GetLightType() const override;
 		void RenderShadow(ShadowPassContext context) override;
 		void AppendShadowData(UINT shadowStartSlot, std::vector<LightShadowData>& shadowData) const override;
-		UINT GetShadowSRVCount() const override;
+		UINT GetShadowTileCount() const override;
 	private:
 		dx::XMVECTOR GetDirectionWS() const;
 	private:

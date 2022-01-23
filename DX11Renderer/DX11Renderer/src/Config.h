@@ -22,5 +22,11 @@ namespace gfx
 		static inline int ShadowAtlasTileDimension = ShadowAtlasResolution / ShadowAtlasTileResolution;
 		// Total number of tiles
 		static inline int ShadowAtlasTileCount = ShadowAtlasResolution * ShadowAtlasResolution / (ShadowAtlasTileResolution * ShadowAtlasTileResolution);
+
+		// Cascades per dir light
+		static inline int ShadowCascades = 4;
+		static std::vector<float> ShadowCascadeDistances;
+		// Distance to start cascades in reverse direction of light (increase to receive more shadows from behind the camera)
+		static inline float ShadowCascadeOffset = 10.f;
 	};
 }

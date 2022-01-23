@@ -26,12 +26,13 @@ namespace gfx
 
 		/*for (int i = 0; i < 3; ++i)
 		{
-			pLights.emplace_back(std::make_unique<PointLight>(gfx, i, dx::XMFLOAT3((i - 1) * 7.5, 1.0f, 0.f), dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 3.0f));
+			pLights.emplace_back(std::make_shared<PointLight>(gfx, i, dx::XMFLOAT3((i - 1) * 7.5, 1.0f, 0.f), dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 3.0f));
 		}*/
 
-		pLights.emplace_back(std::make_unique<PointLight>(gfx, 0, dx::XMFLOAT3(0.f, 2.f, 0.f), dx::XMFLOAT3(1.f, 1.f, 1.f), 3.f, 3.f, 5.f));
-		pLights.emplace_back(std::make_unique<Spotlight>(gfx, 1, dx::XMFLOAT3(8.5f, 1.5f, -2.f), 0.0f, 0.0f, dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 50.0f, 50.0f));
-		//pLights.emplace_back(std::make_unique<DirectionalLight>(gfx, 4, dx::XMFLOAT3(-2.0, 1.0f, -5.f), 0.0f, 0.0f, dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 50.0f, 5.0f));
+		//pLights.emplace_back(std::make_shared<PointLight>(gfx, 0, dx::XMFLOAT3(0.f, 2.f, 0.f), dx::XMFLOAT3(1.f, 1.f, 1.f), 3.f, 3.f, 5.f));
+		//pLights.emplace_back(std::make_shared<Spotlight>(gfx, 1, dx::XMFLOAT3(8.5f, 1.5f, -2.f), 0.0f, 0.0f, dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 50.0f, 50.0f));
+		pMainLight = std::make_shared<DirectionalLight>(gfx, 0, dx::XMFLOAT3(-2.0, 1.0f, -5.f), 10.0f, 20.0f, dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 50.0f, 5.0f);
+		pLights.emplace_back(pMainLight);
 
 		pLightInputCB = std::make_unique<ConstantBuffer<LightInputCB>>(gfx, D3D11_USAGE_DYNAMIC);
 
@@ -74,7 +75,7 @@ namespace gfx
 			if (pLights[i]->HasShadow())
 			{
 				pLights[i]->SetCurrentShadowIdx(shadowMapIdx);
-				shadowMapIdx += pLights[i]->GetShadowSRVCount();
+				shadowMapIdx += pLights[i]->GetShadowTileCount();
 			}
 
 			const auto data = pLights[i]->GetLightData(cam->GetViewMatrix());
@@ -95,7 +96,7 @@ namespace gfx
 				inFrustum &= FrustumSphereIntersection(lightSphere, frustumCornersVS, cam->GetFarClipPlane());
 				break;
 			case 2:
-				// Directional (do nothing)
+				// Directional
 				break;
 			}
 
@@ -112,6 +113,15 @@ namespace gfx
 		ZeroMemory(&lightInputCB, sizeof(lightInputCB));
 		lightInputCB.visibleLightCount = visibleLightCt;
 		lightInputCB.shadowAtlasTexelResolution = dx::XMVectorSet(Config::ShadowAtlasResolution, Config::ShadowAtlasResolution, 1.f / Config::ShadowAtlasResolution, 1.f / Config::ShadowAtlasResolution);
+
+		if (pMainLight)
+		{
+			lightInputCB.shadowCascadeSphere0 = pMainLight->GetShadowCascadeSphere(0);
+			lightInputCB.shadowCascadeSphere1 = pMainLight->GetShadowCascadeSphere(1);
+			lightInputCB.shadowCascadeSphere2 = pMainLight->GetShadowCascadeSphere(2);
+			lightInputCB.shadowCascadeSphere3 = pMainLight->GetShadowCascadeSphere(3);
+		}
+
 		pLightInputCB->Update(gfx, lightInputCB);
 		gfx.GetContext()->CSSetConstantBuffers(RenderSlots::CS_LightInputCB, 1u, pLightInputCB->GetD3DBuffer().GetAddressOf());
 	}
@@ -137,7 +147,7 @@ namespace gfx
 				int shadowMapIdx = pLights[i]->GetCurrentShadowIdx();
 				pLights[i]->RenderShadow(context); //, gfx, cam, pass, pTransformationCB
 				pLights[i]->AppendShadowData(shadowMapIdx, cachedShadowData);
-				shadowMapIdx += pLights[i]->GetShadowSRVCount();
+				shadowMapIdx += pLights[i]->GetShadowTileCount();
 			}
 		}
 

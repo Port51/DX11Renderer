@@ -62,7 +62,7 @@ namespace gfx
 		const auto posWS_Vector = dx::XMLoadFloat4(&dx::XMFLOAT4(positionWS.x, positionWS.y, positionWS.z, 1.0f));
 		light.positionVS_range = dx::XMVectorSetW(dx::XMVector4Transform(posWS_Vector, viewMatrix), range); // pack range into W
 		light.color_intensity = dx::XMVectorSetW(dx::XMLoadFloat3(&color), intensity);
-		light.directionVS = dx::XMVectorSetW(dx::XMVector4Transform(GetDirectionWS(), viewMatrix), (float)shadowMapIdx);
+		light.directionVS = dx::XMVectorSetW(dx::XMVector4Transform(GetDirectionWS(), viewMatrix), (float)shadowAtlasTileIdx);
 		light.data0 = dx::XMVectorSet(1, 1.f / sphereRad, dx::XMMax(std::cos(dx::XMConvertToRadians(outerAngle)) + 0.01f, std::cos(dx::XMConvertToRadians(innerAngle))), std::cos(dx::XMConvertToRadians(outerAngle)));
 		return light;
 	}
@@ -101,8 +101,8 @@ namespace gfx
 		auto ct = context.pRendererList->GetRendererCount();
 
 		// Calculate tile in shadow atlas
-		int tileX = (shadowMapIdx % Config::ShadowAtlasTileDimension);
-		int tileY = (shadowMapIdx / Config::ShadowAtlasTileDimension);
+		int tileX = (shadowAtlasTileIdx % Config::ShadowAtlasTileDimension);
+		int tileY = (shadowAtlasTileIdx / Config::ShadowAtlasTileDimension);
 
 		// todo: defer the rendering
 		{
@@ -128,7 +128,7 @@ namespace gfx
 		shadowData[shadowStartSlot] = lightShadowData;
 	}
 
-	UINT Spotlight::GetShadowSRVCount() const
+	UINT Spotlight::GetShadowTileCount() const
 	{
 		return HasShadow() ? 1u : 0u;
 	}

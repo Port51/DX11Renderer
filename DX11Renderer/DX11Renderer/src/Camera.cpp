@@ -11,18 +11,26 @@ namespace gfx
 		UpdateProjectionMatrix();
 	}
 
-	dx::XMMATRIX Camera::GetViewMatrix() const
+	dx::XMVECTOR Camera::GetPositionWS() const
 	{
 		// LookAt fails if position = target
 		const auto safeRad = dx::XMMax(r, 0.01f);
-		const auto pos = dx::XMVector3Transform(
-			dx::XMVectorSet(0.0f, 0.0f, -safeRad, 0.0f), // move camera back in Z axis
+		return dx::XMVectorScale(GetForwardWS(), -safeRad);
+	}
+
+	dx::XMVECTOR Camera::GetForwardWS() const
+	{
+		return dx::XMVector3Transform(
+			dx::XMVectorSet(0.f, 0.f, 1.f, 0.f),
 			dx::XMMatrixRotationRollPitchYaw(phi, -theta, 0.0f) // rotate that offset
 		);
+	}
 
+	dx::XMMATRIX Camera::GetViewMatrix() const
+	{
 		// Apply look-at and local orientation
 		// +Y = up
-		return dx::XMMatrixLookAtLH(pos, dx::XMVectorZero(), dx::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f))
+		return dx::XMMatrixLookAtLH(GetPositionWS(), dx::XMVectorZero(), dx::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f))
 			* dx::XMMatrixRotationRollPitchYaw(pitch, -yaw, roll);
 	}
 

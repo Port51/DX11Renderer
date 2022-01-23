@@ -93,7 +93,7 @@ namespace gfx
 		const auto posWS_Vector = dx::XMLoadFloat4(&dx::XMFLOAT4(positionWS.x, positionWS.y, positionWS.z, 1.0f));
 		light.positionVS_range = dx::XMVectorSetW(dx::XMVector4Transform(posWS_Vector, viewMatrix), range); // pack range into W
 		light.color_intensity = dx::XMVectorSetW(dx::XMLoadFloat3(&color), intensity);
-		light.directionVS = dx::XMVectorSet(0, 0, 0, 0);
+		light.directionVS = dx::XMVectorSet(0, 0, 0, (float)shadowAtlasTileIdx);
 		light.data0 = dx::XMVectorSet(0, 1.f / sphereRad, 0, 0);
 		return light;
 	}
@@ -136,7 +136,7 @@ namespace gfx
 			auto ct = context.pRendererList->GetRendererCount();
 
 			// Calculate tile in shadow atlas
-			int tileIdx = shadowMapIdx + i;
+			int tileIdx = shadowAtlasTileIdx + i;
 			int tileX = (tileIdx % Config::ShadowAtlasTileDimension);
 			int tileY = (tileIdx / Config::ShadowAtlasTileDimension);
 
@@ -166,7 +166,7 @@ namespace gfx
 		}
 	}
 
-	UINT PointLight::GetShadowSRVCount() const
+	UINT PointLight::GetShadowTileCount() const
 	{
 		return HasShadow() ? 6u : 0u;
 	}

@@ -43,7 +43,7 @@ namespace gfx
 		void SetCurrentShadowIdx(int shadowMapIdx);
 		bool HasShadow() const;
 		virtual void AppendShadowData(UINT shadowStartSlot, std::vector<LightShadowData>& shadowData) const = 0;
-		virtual UINT GetShadowSRVCount() const = 0;
+		virtual UINT GetShadowTileCount() const = 0;
 		ModelInstance& GetModelInstance() const;
 		void SetShadowMatrixTile(dx::XMMATRIX& shadowMatrix, int tileX, int tileY);
 	protected:
@@ -54,6 +54,6 @@ namespace gfx
 		std::unique_ptr<ModelInstance> pModel;
 		ShadowSettings shadowSettings;
 		std::unique_ptr<ConstantBuffer<ShadowPassCB>> pShadowPassCB;
-		int shadowMapIdx;
+		int shadowAtlasTileIdx;
 	};
 }

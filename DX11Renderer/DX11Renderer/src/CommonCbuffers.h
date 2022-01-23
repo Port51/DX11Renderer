@@ -7,6 +7,10 @@ namespace gfx
 	{
 		UINT visibleLightCount;
 		dx::XMVECTOR shadowAtlasTexelResolution;
+		dx::XMVECTOR shadowCascadeSphere0;
+		dx::XMVECTOR shadowCascadeSphere1;
+		dx::XMVECTOR shadowCascadeSphere2;
+		dx::XMVECTOR shadowCascadeSphere3;
 	};
 
 	struct alignas(16) PerFrameCB
@@ -57,5 +61,6 @@ namespace gfx
 		dx::XMVECTOR orthoParams;
 
 		dx::XMVECTOR frustumCornerDataVS;
+		dx::XMVECTOR cameraPositionWS;
 	};
 }

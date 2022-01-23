@@ -21,6 +21,7 @@ namespace gfx
 	class RenderPass;
 	class ShadowPassContext;
 	class DepthStencilTarget;
+	class DirectionalLight;
 
 	//struct LightInputCB;
 	struct GlobalTransformCB;
@@ -52,6 +53,7 @@ namespace gfx
 		bool AABBSphereIntersection(const LightData& lightData, dx::XMVECTOR aabbCenter, dx::XMVECTOR aabbExtents);
 	private:
 		std::vector<std::shared_ptr<Light>> pLights;
+		std::shared_ptr<DirectionalLight> pMainLight;
 		std::vector<LightData> cachedLightData;
 		UINT visibleLightCt;
 	private:

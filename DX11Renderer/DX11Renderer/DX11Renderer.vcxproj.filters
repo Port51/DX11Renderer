@@ -336,6 +336,9 @@
     <ClCompile Include="src\TextParser.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="src\Config.cpp">
+      <Filter>Source\Common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">

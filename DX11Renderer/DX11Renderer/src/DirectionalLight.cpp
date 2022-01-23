@@ -11,6 +11,11 @@
 #include "ConstantBuffer.h"
 #include "Graphics.h"
 #include "LightShadowData.h"
+#include "Frustum.h"
+#include "DrawContext.h"
+#include "Renderer.h"
+#include "RendererList.h"
+#include "Config.h"
 
 namespace gfx
 {
@@ -21,7 +26,14 @@ namespace gfx
 		sphereRad(sphereRad),
 		range(range)
 	{
+		// todo: set shadow via settings
+		shadowSettings.hasShadow = true;
 
+		if (shadowSettings.hasShadow)
+		{
+			lightShadowData.resize(Config::ShadowCascades);
+			shadowCascadeSpheres.resize(Config::ShadowCascades);
+		}
 	}
 
 	void DirectionalLight::DrawImguiControlWindow()
@@ -55,7 +67,7 @@ namespace gfx
 		const auto dirWS_Vector = dx::XMVector4Transform(dx::XMVectorSet(0, 0, 1, 0), dx::XMMatrixRotationRollPitchYaw(dx::XMConvertToRadians(tilt), dx::XMConvertToRadians(pan), 0.0f));
 		light.positionVS_range = dx::XMVectorSetW(dx::XMVector4Transform(posWS_Vector, viewMatrix), range); // pack range into W
 		light.color_intensity = dx::XMVectorSetW(dx::XMLoadFloat3(&color), intensity);
-		light.directionVS = dx::XMVector4Transform(dirWS_Vector, viewMatrix);
+		light.directionVS = dx::XMVectorSetW(dx::XMVector4Transform(dirWS_Vector, viewMatrix), (float)shadowAtlasTileIdx);
 		light.data0 = dx::XMVectorSet(2, 1.f / sphereRad, 0, 0);
 		return light;
 	}
@@ -66,13 +78,88 @@ namespace gfx
 	}
 
 	void DirectionalLight::RenderShadow(ShadowPassContext context)
-	{}
+	{
+		const auto cameraPositionWS = context.pCamera->GetPositionWS();
+		const auto cameraForwardWS = context.pCamera->GetForwardWS();
+		const float farthestCascade = Config::ShadowCascadeDistances[Config::ShadowCascadeDistances.size() - 1u];
+
+		const auto shadowDirWS = GetDirectionWS();
+
+		// Render all cascades
+		for (UINT i = 0u; i < Config::ShadowCascades; ++i)
+		{
+			const float nearPlane = 0.5f;
+			const float currentOffset = i * Config::ShadowCascadeOffset / (Config::ShadowCascades - 1);
+			const auto cascadeDistance = Config::ShadowCascadeDistances[i];
+			const auto cascadeSphereCenterWS = dx::XMVectorAdd(cameraPositionWS, dx::XMVectorScale(cameraForwardWS, cascadeDistance * 0.5f - currentOffset));
+			const auto cascadeFrustumStartWS = dx::XMVectorSubtract(cascadeSphereCenterWS, dx::XMVectorScale(shadowDirWS, cascadeDistance * 0.5f + nearPlane));
+
+			const auto viewMatrix = dx::XMMatrixLookAtLH(cascadeFrustumStartWS, dx::XMVectorAdd(cascadeFrustumStartWS, shadowDirWS), dx::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
+			const auto projMatrix = dx::XMMatrixOrthographicLH(cascadeDistance, cascadeDistance, nearPlane, cascadeDistance);
+
+			// Record shadow sphere
+			shadowCascadeSpheres[i] = dx::XMVectorSetW(cascadeSphereCenterWS, cascadeDistance * cascadeDistance);
+
+			static Frustum frustum;
+
+			// Setup transformation buffer
+			static GlobalTransformCB transformationCB;
+			transformationCB.viewMatrix = viewMatrix;
+			transformationCB.projMatrix = projMatrix;
+			context.pTransformationCB->Update(context.gfx, transformationCB);
+
+			static DrawContext drawContext(context.renderer, context.renderer.ShadowPassName);
+			drawContext.viewMatrix = viewMatrix;
+			drawContext.projMatrix = projMatrix;
+
+			// This means all shadow draw calls need to be setup on the same thread
+			context.pRendererList->Filter(frustum, RendererList::RendererSorting::FrontToBack);
+			context.pRendererList->SubmitDrawCalls(drawContext);
+			auto ct = context.pRendererList->GetRendererCount();
+
+			// Calculate tile in shadow atlas
+			int tileIdx = shadowAtlasTileIdx + i;
+			int tileX = (tileIdx % Config::ShadowAtlasTileDimension);
+			int tileY = (tileIdx / Config::ShadowAtlasTileDimension);
+
+			// todo: defer the rendering
+			{
+				// Render to tile in atlas using viewport
+				context.gfx.SetViewport(tileX * Config::ShadowAtlasTileResolution, tileY * Config::ShadowAtlasTileResolution, Config::ShadowAtlasTileResolution, Config::ShadowAtlasTileResolution);
+				context.pRenderPass->Execute(context.gfx);
+				context.pRenderPass->Reset(); // required to handle multiple shadows at once
+			}
+
+			// todo: move elsewhere
+			{
+				lightShadowData[i].lightViewMatrix = viewMatrix;
+				lightShadowData[i].lightViewProjMatrix = viewMatrix * projMatrix;
+				lightShadowData[i].shadowMatrix = context.invViewMatrix * lightShadowData[i].lightViewProjMatrix;
+				dx::XMStoreUInt2(&lightShadowData[i].tile, dx::XMVectorSet(tileX, tileY, 0, 0));
+			}
+		}
+	}
 
 	void DirectionalLight::AppendShadowData(UINT shadowStartSlot, std::vector<LightShadowData>& shadowData) const
-	{}
-
-	UINT DirectionalLight::GetShadowSRVCount() const
 	{
-		return HasShadow() ? 1u : 0u;
+		for (UINT i = 0u; i < Config::ShadowCascades; ++i)
+		{
+			shadowData[shadowStartSlot + i] = lightShadowData[i];
+		}
+	}
+
+	UINT DirectionalLight::GetShadowTileCount() const
+	{
+		return HasShadow() ? Config::ShadowCascades : 0u;
+	}
+
+	dx::XMVECTOR DirectionalLight::GetShadowCascadeSphere(UINT idx) const
+	{
+		return shadowCascadeSpheres[idx];
+	}
+
+	dx::XMVECTOR DirectionalLight::GetDirectionWS() const
+	{
+		return dx::XMVector4Transform(dx::XMVectorSet(0, 0, 1, 0), dx::XMMatrixRotationRollPitchYaw(dx::XMConvertToRadians(tilt), dx::XMConvertToRadians(pan), 0.0f));
 	}
 }

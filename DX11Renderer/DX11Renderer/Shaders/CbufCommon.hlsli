@@ -51,12 +51,18 @@ cbuffer PerCameraCB : register(b2)
     float4 _OrthoParams;
     
     float4 _FrustumCornerDataVS;
+    
+    float4 _CameraPositionWS;
 };
 
 cbuffer LightInputCB : register(b3)
 {
     uint _VisibleLightCount;
     float4 _ShadowAtlasTexelResolution;
+    float4 _ShadowCascadeSphere0;
+    float4 _ShadowCascadeSphere1;
+    float4 _ShadowCascadeSphere2;
+    float4 _ShadowCascadeSphere3;
 };
 
 #endif
