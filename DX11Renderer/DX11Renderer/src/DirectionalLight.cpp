@@ -19,8 +19,8 @@
 
 namespace gfx
 {
-	DirectionalLight::DirectionalLight(Graphics& gfx, UINT index, dx::XMFLOAT3 positionWS, float pan, float tilt, dx::XMFLOAT3 color, float intensity, float sphereRad, float range)
-		: Light(gfx, index, positionWS, color, intensity),
+	DirectionalLight::DirectionalLight(Graphics& gfx, UINT index, float pan, float tilt, dx::XMFLOAT3 color, float intensity, float sphereRad, float range)
+		: Light(gfx, index, dx::XMFLOAT3(0.f, 0.f, 0.f), color, intensity),
 		pan(pan),
 		tilt(tilt),
 		sphereRad(sphereRad),
@@ -42,9 +42,6 @@ namespace gfx
 		if (ImGui::Begin(identifier.c_str()))
 		{
 			ImGui::Text("Position");
-			ImGui::SliderFloat("X", &positionWS.x, -60.0f, 60.0f, "%.1f");
-			ImGui::SliderFloat("Y", &positionWS.y, -60.0f, 60.0f, "%.1f");
-			ImGui::SliderFloat("Z", &positionWS.z, -60.0f, 60.0f, "%.1f");
 			ImGui::SliderFloat("Pan", &pan, -360.0f, 360.0f, "%.1f");
 			ImGui::SliderFloat("Tilt", &tilt, -180.0f, 180.0f, "%.1f");
 
@@ -81,7 +78,6 @@ namespace gfx
 	{
 		const auto cameraPositionWS = context.pCamera->GetPositionWS();
 		const auto cameraForwardWS = context.pCamera->GetForwardWS();
-		const float farthestCascade = Config::ShadowCascadeDistances[Config::ShadowCascadeDistances.size() - 1u];
 
 		const auto shadowDirWS = GetDirectionWS();
 
@@ -89,16 +85,19 @@ namespace gfx
 		for (UINT i = 0u; i < Config::ShadowCascades; ++i)
 		{
 			const float nearPlane = 0.5f;
-			const float currentOffset = i * Config::ShadowCascadeOffset / (Config::ShadowCascades - 1);
-			const auto cascadeDistance = Config::ShadowCascadeDistances[i];
-			const auto cascadeSphereCenterWS = dx::XMVectorAdd(cameraPositionWS, dx::XMVectorScale(cameraForwardWS, cascadeDistance * 0.5f - currentOffset));
-			const auto cascadeFrustumStartWS = dx::XMVectorSubtract(cascadeSphereCenterWS, dx::XMVectorScale(shadowDirWS, cascadeDistance * 0.5f + nearPlane));
+			const float currentOffset = i * 5.f / (Config::ShadowCascades - 1);
+			const float cascadeDistance = Config::ShadowCascadeDistances[i];
+			auto cascadeSphereCenterWS = dx::XMVectorAdd(cameraPositionWS, dx::XMVectorScale(cameraForwardWS, cascadeDistance * 0.5f - currentOffset));
+			//cascadeSphereCenterWS = dx::XMVectorSet(0, 0, 0, 1);
+			const auto cascadeFrustumStartWS = dx::XMVectorSubtract(cascadeSphereCenterWS, dx::XMVectorScale(shadowDirWS, cascadeDistance * 0.5f + Config::ShadowCascadeOffset + nearPlane));
 
-			const auto viewMatrix = dx::XMMatrixLookAtLH(cascadeFrustumStartWS, dx::XMVectorAdd(cascadeFrustumStartWS, shadowDirWS), dx::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
-			const auto projMatrix = dx::XMMatrixOrthographicLH(cascadeDistance, cascadeDistance, nearPlane, cascadeDistance);
+			const auto viewMatrix = dx::XMMatrixLookAtLH(cascadeFrustumStartWS, cascadeSphereCenterWS, dx::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
+
+			const float padding = 1.01f;
+			const auto projMatrix = dx::XMMatrixOrthographicLH(cascadeDistance * padding, cascadeDistance * padding, nearPlane, cascadeDistance + Config::ShadowCascadeOffset * 2.f + nearPlane);
 
 			// Record shadow sphere
-			shadowCascadeSpheres[i] = dx::XMVectorSetW(cascadeSphereCenterWS, cascadeDistance * cascadeDistance);
+			shadowCascadeSpheres[i] = dx::XMVectorSetW(cascadeSphereCenterWS, cascadeDistance * cascadeDistance * 0.25f); // 0.25 is because cascadeDistance is a diameter
 
 			static Frustum frustum;
 

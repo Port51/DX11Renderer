@@ -20,6 +20,8 @@
     #define SHADOW_PCF_TOTAL_TAPS   49
 #endif
 
+//#define SHADOW_DEBUG_SHOW_DEPTH_MAP
+
 static float3 PointLightFaceDirWS[] =
 {
     float3(0, 0, 1),
@@ -38,7 +40,6 @@ Texture2D<float> ShadowAtlas : register(t4);
 float2 GetShadowTileUV(float4 shadowNDC, uint2 tile)
 {
     // Select tile
-    tile = 0;
     
     // Original version:
     //shadowNDC.xy = shadowNDC.xy * float2(SHADOW_ATLAS_TILE_SCALE, -SHADOW_ATLAS_TILE_SCALE) + tile * 2 * SHADOW_ATLAS_TILE_SCALE - (1 - SHADOW_ATLAS_TILE_SCALE);
@@ -74,14 +75,14 @@ uint GetCubeMapFaceID(float3 dir)
 float GetSpotlightShadowAttenuation(StructuredShadow shadow, float3 positionVS, float3 normalVS, float NdotL)
 {
     // Apply large bias at grazing angles, small bias when light dir is similar to normal
-    float3 normalBiasVS = normalVS * (NdotL * -0.075 + 0.085);
+    float3 normalBiasVS = normalVS * (NdotL * -0.075 + 0.085) * 0;
     float4 shadowNDC = mul(shadow.shadowMatrix, float4(positionVS + normalBiasVS, 1));
     shadowNDC.xyz /= shadowNDC.w;
     
     float2 shadowUV = GetShadowTileUV(shadowNDC, shadow.tile);
     
     float shadowAtten = 0;
-    const float ShadowBias = 0.001;
+    const float ShadowBias = 0.001 * 0;
 #if defined(SHADOW_USE_PCF_FILTERING)
     // PCF filtering
     float sum = 0;
@@ -100,6 +101,10 @@ float GetSpotlightShadowAttenuation(StructuredShadow shadow, float3 positionVS, 
     shadowAtten = ShadowAtlas.SampleCmpLevelZero(ShadowAtlasSampler, shadowUV.xy, shadowNDC.z - ShadowBias);
 #endif
     
+#if defined(SHADOW_DEBUG_SHOW_DEPTH_MAP)
+    shadowAtten = ShadowAtlas.Load(int3(shadowUV.xy * _ShadowAtlasTexelResolution.xy, 0u));
+#endif
+    
     // Limit to current tile
     shadowAtten = saturate(shadowAtten + any(shadowNDC.xy < -1.0) + any(shadowNDC.xyz > 1.0) + (shadowNDC.z < 0.0));
     return shadowAtten;
@@ -112,6 +117,13 @@ float CascadeDistSqr(float3 dist)
 
 uint GetShadowCascade(float3 positionWS)
 {
+    // 0 is crazy
+    // 1 looks better farther away (looking FROM light)
+    // 2 works
+    // 3 works when facing towards light
+    
+    //return 3u;
+    
     [branch]
     if (CascadeDistSqr(positionWS - _ShadowCascadeSphere0.xyz) < _ShadowCascadeSphere0.w)
     {
@@ -135,14 +147,18 @@ float GetDirectionalShadowAttenuation(StructuredShadow shadow, float3 positionVS
 {
     // Apply large bias at grazing angles, small bias when light dir is similar to normal
     float3 normalBiasVS = normalVS * (NdotL * -0.075 + 0.085);
-    float4 shadowNDC = mul(shadow.shadowMatrix, float4(positionVS + normalBiasVS, 1));
+    float4 shadowNDC = mul(shadow.shadowMatrix, float4(positionVS + normalBiasVS, 1.f));
     shadowNDC.xyz /= shadowNDC.w;
     
     float2 shadowUV = GetShadowTileUV(shadowNDC, shadow.tile);
+    //return shadow.tile.x * 0.25;
+    //return shadow.shadowMatrix[0][0];
     //return shadowUV.x;
+    //return (shadowNDC.x < 1.f) * (shadowNDC.x > -1.f);
+    //return (shadowNDC.x * 0.5 + 0.5);
     
     float shadowAtten = 0;
-    const float ShadowBias = 0.001;
+    const float ShadowBias = 0.001f * 10.f;
 #if defined(SHADOW_USE_PCF_FILTERING)
     // PCF filtering
     float sum = 0;
@@ -159,6 +175,10 @@ float GetDirectionalShadowAttenuation(StructuredShadow shadow, float3 positionVS
 #else
     // Fallback to hard shadows
     shadowAtten = ShadowAtlas.SampleCmpLevelZero(ShadowAtlasSampler, shadowUV.xy, shadowNDC.z - ShadowBias);
+#endif
+    
+#if defined(SHADOW_DEBUG_SHOW_DEPTH_MAP)
+    shadowAtten = ShadowAtlas.Load(int3(shadowUV.xy * _ShadowAtlasTexelResolution.xy, 0u));
 #endif
     
     // Limit to current tile

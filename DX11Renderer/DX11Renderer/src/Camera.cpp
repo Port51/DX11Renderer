@@ -15,15 +15,15 @@ namespace gfx
 	{
 		// LookAt fails if position = target
 		const auto safeRad = dx::XMMax(r, 0.01f);
-		return dx::XMVectorScale(GetForwardWS(), -safeRad);
+		return dx::XMVectorSetW(dx::XMVectorScale(GetForwardWS(), -safeRad), 1.f);
 	}
 
 	dx::XMVECTOR Camera::GetForwardWS() const
 	{
-		return dx::XMVector3Transform(
+		return dx::XMVectorSetW(dx::XMVector3Transform(
 			dx::XMVectorSet(0.f, 0.f, 1.f, 0.f),
 			dx::XMMatrixRotationRollPitchYaw(phi, -theta, 0.0f) // rotate that offset
-		);
+		), 0.f);
 	}
 
 	dx::XMMATRIX Camera::GetViewMatrix() const

@@ -23,10 +23,10 @@
 // Debug views
 //
 
-//#define DEBUG_VIEW_ALL_SHADOWS
+#define DEBUG_VIEW_ALL_SHADOWS
 //#define DEBUG_VIEW_SHADOW
 //#define DEBUG_VIEW_LIGHT_COUNTS
-#define DEBUG_VIEW_CASCADE_IDX
+//#define DEBUG_VIEW_CASCADE_IDX
 //#define DEBUG_VIEW_GEOMETRY
 
 // Inputs
@@ -55,17 +55,6 @@ groupshared uint maxTileZ;
     
     return (near * far) / (far - depth * (far - near));
 
-}
-
-float3 GetPositionVS(float2 texcoord, float depth)
-{
-    float4 clipSpaceLocation;
-    clipSpaceLocation.xy = texcoord * 2.0f - 1.0f;
-    clipSpaceLocation.y *= -1;
-    clipSpaceLocation.z = depth;
-    clipSpaceLocation.w = 1.0f;
-    float4 homogenousLocation = mul(clipSpaceLocation, inverse_projection);
-    return homogenousLocation.xyz / homogenousLocation.w;
 }*/
 
 // Z buffer to linear depth.
@@ -101,9 +90,9 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     
     if (gIndex == 0)
     {
-        tileLightCount = 0;
-        minTileZ = asuint(10000.0);
-        maxTileZ = asuint(0.0);
+        tileLightCount = 0u;
+        minTileZ = asuint(10000.f);
+        maxTileZ = asuint(0.f);
     }
     
     GroupMemoryBarrierWithGroupSync();
@@ -122,10 +111,10 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     // todo: use gId to setup frustums
     // todo: early out if only sky
     
-    float debugValue = 0;
+    float debugValue = 0.f;
     
     // Calculate NDC for tile corners
-    const float4 planeNDC = ((float4) (gId.xyxy * TILED_GROUP_SIZE + float4(TILED_GROUP_SIZE, 0, 0, TILED_GROUP_SIZE)) * _ScreenParams.zwzw) * 2.0 - 1.0;
+    const float4 planeNDC = ((float4) (gId.xyxy * TILED_GROUP_SIZE + float4(TILED_GROUP_SIZE, 0.f, 0.f, TILED_GROUP_SIZE)) * _ScreenParams.zwzw) * 2.f - 1.f;
 
 #if defined(USE_FRUSTUM_INTERSECTION_TEST)
     // Derive frustum planes
@@ -134,18 +123,18 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     
     // Use cross product to turn tile view directions into plane directions
     // The cross product is done by flipping X or Y with Z
-    frustumPlanes[0] = normalize(float3(1, 0, -planeNDC.x * _FrustumCornerDataVS.x));
-    frustumPlanes[1] = normalize(float3(0, 1, -planeNDC.y * _FrustumCornerDataVS.y));
-    frustumPlanes[2] = normalize(float3(-1, 0, planeNDC.z * _FrustumCornerDataVS.x));
-    frustumPlanes[3] = normalize(float3(0, -1, planeNDC.w * _FrustumCornerDataVS.y));
+    frustumPlanes[0] = normalize(float3(1.f, 0.f, -planeNDC.x * _FrustumCornerDataVS.x));
+    frustumPlanes[1] = normalize(float3(0.f, 1.f, -planeNDC.y * _FrustumCornerDataVS.y));
+    frustumPlanes[2] = normalize(float3(-1.f, 0.f, planeNDC.z * _FrustumCornerDataVS.x));
+    frustumPlanes[3] = normalize(float3(0.f, -1.f, planeNDC.w * _FrustumCornerDataVS.y));
 #endif
     
 #if defined(USE_AABB_INTERSECTION_TEST)
     // Note: Use min depth for corners in order to construct AABB that encapsulates entire frustum
     const float3 minAABB = float3(planeNDC.zy * _FrustumCornerDataVS.xy * tileDepthRange.x, tileDepthRange.x);
     const float3 maxAABB = float3(planeNDC.xw * _FrustumCornerDataVS.xy * tileDepthRange.x, tileDepthRange.y);
-    const float3 aabbCenter = (minAABB + maxAABB) * 0.5;
-    const float3 aabbExtents = (maxAABB - minAABB) * 0.5;
+    const float3 aabbCenter = (minAABB + maxAABB) * 0.5f;
+    const float3 aabbExtents = (maxAABB - minAABB) * 0.5f;
 #endif
     
     uint i;
@@ -159,7 +148,7 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
         
         // Calculate sphere to test against
         float4 sphereData;
-        sphereData = light.positionVS_range;
+        [branch]
         if (light.data0.x == 0)
         {
             // Point light:
@@ -174,7 +163,7 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
         else
         {
             // Directional light:
-            // For now, just make it so light will always be seen
+            // Make it so light will always be seen
             sphereData = float4(aabbCenter.xyz, 1000.0);
         }
         
@@ -185,12 +174,14 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
             float d = dot(frustumPlanes[j], sphereData.xyz);
             inFrustum = inFrustum && (d < sphereData.w);
         }
-        // Not needed due to AABB test:
-        //inFrustum = inFrustum && (light.positionVS_range.z >= tileDepthRange.x - light.positionVS_range.w);
-        //inFrustum = inFrustum && (light.positionVS_range.z <= tileDepthRange.y + light.positionVS_range.w);
+    #if !defined(USE_AABB_INTERSECTION_TEST)
+        // Only need to test near and far planes if AABB test is not used
+        inFrustum = inFrustum && (light.positionVS_range.z >= tileDepthRange.x - light.positionVS_range.w);
+        inFrustum = inFrustum && (light.positionVS_range.z <= tileDepthRange.y + light.positionVS_range.w);
+    #endif
 #endif
 
-#if defined(USE_AABB_INTERSECTION_TEST)        
+#if defined(USE_AABB_INTERSECTION_TEST)
         // Sphere-AABB test
         inFrustum = inFrustum && AABBSphereIntersection(sphereData.xyz, sphereData.w, aabbCenter, aabbExtents);
 #endif
@@ -210,17 +201,16 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     // Apply lighting
     //
     float2 screenUV = tId.xy * _ScreenParams.zw;
-    float2 positionNDC = screenUV * 2.0 - 1.0;
+    float2 positionNDC = screenUV * 2.f - 1.f;
     
-    float3 frustumPlaneVS = float3(positionNDC * _FrustumCornerDataVS.xy, 1);
+    float3 frustumPlaneVS = float3(positionNDC * _FrustumCornerDataVS.xy, 1.f);
     float3 positionVS = frustumPlaneVS * linearDepth;
     float3 viewDirVS = normalize(positionVS);
     
     float3 positionWS = mul(_InvViewMatrix, float4(positionVS.xyz, 1.f)).xyz;
     
     float4 normalRough = NormalRoughRT[tId.xy];
-    //float4 gbuff1 = GBuffer1RT[tId.xy];
-    float3 normalVS = normalize(normalRough.xyz * 2.0 - 1.0);
+    float3 normalVS = normalize(normalRough.xyz * 2.f - 1.f);
     float linearRoughness = normalRough.w;
     float roughness = linearRoughness * linearRoughness;
     
@@ -228,15 +218,15 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     // f90 = fresnel reflectance at grazing angles (usually 1)
     //float metalness = 1;
     //float3 reflectance = lerp(0.04, 1.0, metalness);
-    float3 f0 = 1.0; //0.16 * reflectance * reflectance;
+    float3 f0 = 1.f; //0.16 * reflectance * reflectance;
     
     // note: Filament uses f0 of 0.0-0.02 to indicate pre-baked specular, and turn off f90 in that case
     // For now, just set it to 1.0
-    float f90 = 1.0;
+    float f90 = 1.f;
     
     // https://gamedev.net/forums/topic/579417-forced-to-unroll-loop-but-unrolling-failed-resolved/4690649/
-    float3 diffuseLight = 0;
-    float3 specularLight = 0;
+    float3 diffuseLight = 0.f;
+    float3 specularLight = 0.f;
     for (i = 0; i < tileLightCount; ++i)
     {
         StructuredLight light = lights[tileLightIndices[i]];
@@ -244,7 +234,7 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
         float lightAtten;
         float3 lightDirVS;
         
-        uint type = light.data0.x;
+        uint type = (uint)light.data0.x;
         int shadowIdx = light.direction.w;
         [branch] // should be same for each thread group
         if (type == 2u)
@@ -262,7 +252,7 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
                 // Choose cascade
                 uint shadowCascadeIdx = shadowIdx + GetShadowCascade(positionWS);
 #if defined(DEBUG_VIEW_CASCADE_IDX)
-                debugCascade = GetShadowCascade(positionWS) * 0.25;
+                debugCascade = GetShadowCascade(positionWS) * 0.25f;
 #endif
                 
                 float shadowAtten = GetDirectionalShadowAttenuation(shadowData[shadowCascadeIdx], positionVS, normalVS, NdotL);
@@ -274,7 +264,7 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
         {
             float3 displ = light.positionVS_range.xyz - positionVS.xyz;
             float lightDist = length(displ);
-            lightDirVS = displ / max(lightDist, 0.0001);
+            lightDirVS = displ / max(lightDist, 0.0001f);
             float NdotL = dot(normalVS, -lightDirVS.xyz);
             
             lightAtten = GetSphericalLightAttenuation(lightDist, light.data0.y, light.positionVS_range.w);
@@ -319,8 +309,6 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
         
         BRDFLighting brdf = BRDF(f0, f90, roughness, linearRoughness, normalVS, viewDirVS, lightDirVS);
         diffuseLight += brdf.diffuseLight * lightColorInput;
-        //diffuseLight += saturate(dot(normalVS, lightDirVS));
-        //diffuseLight += lightAtten;
         specularLight += brdf.specularLight * lightColorInput;
     }
     

@@ -10,7 +10,7 @@ Pass
 {
 	Name, ShadowPass
 	Cull, Front
-	VS, Assets\\Built\\Shaders\\PhongVS.cso
+	VS, Assets\\Built\\Shaders\\ShadowPassVS.cso
 }
 Pass
 {

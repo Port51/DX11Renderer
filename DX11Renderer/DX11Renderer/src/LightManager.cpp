@@ -24,14 +24,11 @@ namespace gfx
 		pLightData = std::make_unique<StructuredBuffer<LightData>>(gfx, D3D11_USAGE_DYNAMIC, D3D11_BIND_SHADER_RESOURCE, MaxLightCount);
 		cachedLightData.resize(MaxLightCount);
 
-		/*for (int i = 0; i < 3; ++i)
-		{
-			pLights.emplace_back(std::make_shared<PointLight>(gfx, i, dx::XMFLOAT3((i - 1) * 7.5, 1.0f, 0.f), dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 3.0f));
-		}*/
+		//pLights.emplace_back(std::make_shared<PointLight>(gfx, 0u, dx::XMFLOAT3(0.f, 2.f, 0.f), dx::XMFLOAT3(1.f, 1.f, 1.f), 3.f, 3.f, 5.f));
 
-		//pLights.emplace_back(std::make_shared<PointLight>(gfx, 0, dx::XMFLOAT3(0.f, 2.f, 0.f), dx::XMFLOAT3(1.f, 1.f, 1.f), 3.f, 3.f, 5.f));
-		//pLights.emplace_back(std::make_shared<Spotlight>(gfx, 1, dx::XMFLOAT3(8.5f, 1.5f, -2.f), 0.0f, 0.0f, dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 50.0f, 50.0f));
-		pMainLight = std::make_shared<DirectionalLight>(gfx, 0, dx::XMFLOAT3(-2.0, 1.0f, -5.f), 10.0f, 20.0f, dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 50.0f, 5.0f);
+		// Alignment bug:
+		//pLights.emplace_back(std::make_shared<Spotlight>(gfx, 1u, dx::XMFLOAT3(8.5f, 1.5f, -2.0f), 0.0f, 0.0f, dx::XMFLOAT3(1.0f, 1.0f, 1.0f), 3.0f, 50.f, 50.f));
+		pMainLight = std::make_shared<DirectionalLight>(gfx, 0u, 0.f, 30.f, dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 50.0f, 5.0f);
 		pLights.emplace_back(pMainLight);
 
 		pLightInputCB = std::make_unique<ConstantBuffer<LightInputCB>>(gfx, D3D11_USAGE_DYNAMIC);
@@ -112,7 +109,7 @@ namespace gfx
 		LightInputCB lightInputCB;
 		ZeroMemory(&lightInputCB, sizeof(lightInputCB));
 		lightInputCB.visibleLightCount = visibleLightCt;
-		lightInputCB.shadowAtlasTexelResolution = dx::XMVectorSet(Config::ShadowAtlasResolution, Config::ShadowAtlasResolution, 1.f / Config::ShadowAtlasResolution, 1.f / Config::ShadowAtlasResolution);
+		lightInputCB.shadowAtlasTexelResolution = dx::XMVectorSet((float)Config::ShadowAtlasResolution, (float)Config::ShadowAtlasResolution, 1.f / (float)Config::ShadowAtlasResolution, 1.f / (float)Config::ShadowAtlasResolution);
 
 		if (pMainLight)
 		{
@@ -151,7 +148,7 @@ namespace gfx
 			}
 		}
 
-		pLightShadowSB->Update(context.gfx, cachedShadowData, cachedShadowData.size());
+		pLightShadowSB->Update(context.gfx, cachedShadowData, (UINT)cachedShadowData.size());
 	}
 
 	ComPtr<ID3D11ShaderResourceView> LightManager::GetLightDataSRV() const

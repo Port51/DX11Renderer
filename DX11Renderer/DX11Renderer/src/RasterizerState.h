@@ -3,7 +3,7 @@
 #include "CommonHeader.h"
 #include <array>
 
-class ID3D11RasterizerState;
+struct ID3D11RasterizerState;
 
 namespace gfx
 {

@@ -671,6 +671,9 @@
     <None Include="Assets\Models\ShadowTestScene.asset">
       <Filter>Assets\Models</Filter>
     </None>
+    <None Include="Assets\Models\CascadeTestScene.asset">
+      <Filter>Assets\Models</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\SolidPS.hlsl">
@@ -707,6 +710,9 @@
       <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="Shaders\SolidColorGbuffer.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Shaders\ShadowPassVS.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>

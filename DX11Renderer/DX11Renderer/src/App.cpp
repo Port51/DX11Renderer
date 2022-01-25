@@ -63,6 +63,10 @@ namespace gfx
 			fn = std::string("Assets\\Models\\ShadowTestScene.asset");
 			modelTransform = dx::XMMatrixRotationY(3.1415f) * dx::XMMatrixScaling(12.f, 12.f, 12.f);
 			break;
+		case 7:
+			fn = std::string("Assets\\Models\\CascadeTestScene.asset");
+			modelTransform = dx::XMMatrixRotationY(3.1415f) * dx::XMMatrixScaling(12.f, 12.f, 12.f);
+			break;
 		}
 
 		auto pModelAsset = FBXImporter::LoadFBX(pWindow->Gfx(), fn.c_str(), FBXImporter::FBXNormalsMode::Import, false);

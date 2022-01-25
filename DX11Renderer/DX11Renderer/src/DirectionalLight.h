@@ -17,7 +17,7 @@ namespace gfx
 	class DirectionalLight : public Light
 	{
 	public:
-		DirectionalLight(Graphics& gfx, UINT index, dx::XMFLOAT3 positionWS, float pan, float tilt, dx::XMFLOAT3 color, float intensity = 1.f, float sphereRad = 1.f, float range = 2.5f);
+		DirectionalLight(Graphics& gfx, UINT index, float pan, float tilt, dx::XMFLOAT3 color, float intensity = 1.f, float sphereRad = 1.f, float range = 2.5f);
 	public:
 		void DrawImguiControlWindow() override;
 		LightData GetLightData(dx::XMMATRIX viewMatrix) const override;
