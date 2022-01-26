@@ -113,10 +113,10 @@ namespace gfx
 
 		if (pMainLight)
 		{
-			lightInputCB.shadowCascadeSphere0 = pMainLight->GetShadowCascadeSphere(0);
-			lightInputCB.shadowCascadeSphere1 = pMainLight->GetShadowCascadeSphere(1);
-			lightInputCB.shadowCascadeSphere2 = pMainLight->GetShadowCascadeSphere(2);
-			lightInputCB.shadowCascadeSphere3 = pMainLight->GetShadowCascadeSphere(3);
+			lightInputCB.shadowCascadeSphere0 = pMainLight->GetShadowCascadeSphereVS(0);
+			lightInputCB.shadowCascadeSphere1 = pMainLight->GetShadowCascadeSphereVS(1);
+			lightInputCB.shadowCascadeSphere2 = pMainLight->GetShadowCascadeSphereVS(2);
+			lightInputCB.shadowCascadeSphere3 = pMainLight->GetShadowCascadeSphereVS(3);
 		}
 
 		pLightInputCB->Update(gfx, lightInputCB);

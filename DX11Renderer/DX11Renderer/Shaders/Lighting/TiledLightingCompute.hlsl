@@ -250,7 +250,7 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
                 // Directional shadow
                 
                 // Choose cascade
-                uint shadowCascadeIdx = shadowIdx + GetShadowCascade(positionWS);
+                uint shadowCascadeIdx = shadowIdx + GetShadowCascade(positionVS);
 #if defined(DEBUG_VIEW_CASCADE_IDX)
                 debugCascade = GetShadowCascade(positionWS) * 0.25f;
 #endif

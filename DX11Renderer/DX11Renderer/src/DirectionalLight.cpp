@@ -33,7 +33,7 @@ namespace gfx
 		if (shadowSettings.hasShadow)
 		{
 			lightShadowData.resize(Config::ShadowCascades);
-			shadowCascadeSpheres.resize(Config::ShadowCascades);
+			shadowCascadeSpheresVS.resize(Config::ShadowCascades);
 		}
 	}
 
@@ -135,8 +135,8 @@ namespace gfx
 			// Calculate transforms that use stabilized sphere center
 			ViewProjTransforms transforms = GetShadowTransforms(cascadeSphereCenterWS, cascadeDistance);
 
-			// Record shadow sphere
-			shadowCascadeSpheres[i] = dx::XMVectorSetW(cascadeSphereCenterWS, cascadeDistance * cascadeDistance * 0.25f); // 0.25 is because cascadeDistance is a diameter
+			// Record shadow sphere in VS
+			shadowCascadeSpheresVS[i] = dx::XMVectorSetW(dx::XMVector3Transform(cascadeSphereCenterWS, context.pCamera->GetViewMatrix()), cascadeDistance * cascadeDistance * 0.25f); // 0.25 is because cascadeDistance is a diameter
 
 			static Frustum frustum;
 
@@ -189,9 +189,9 @@ namespace gfx
 		return HasShadow() ? Config::ShadowCascades : 0u;
 	}
 
-	dx::XMVECTOR DirectionalLight::GetShadowCascadeSphere(UINT idx) const
+	dx::XMVECTOR DirectionalLight::GetShadowCascadeSphereVS(UINT idx) const
 	{
-		return shadowCascadeSpheres[idx];
+		return shadowCascadeSpheresVS[idx];
 	}
 
 	dx::XMVECTOR DirectionalLight::GetDirectionWS() const

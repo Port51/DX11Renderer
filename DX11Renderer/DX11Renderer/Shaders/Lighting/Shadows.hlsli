@@ -115,7 +115,7 @@ float CascadeDistSqr(float3 dist)
     return dot(dist, dist);
 }
 
-uint GetShadowCascade(float3 positionWS)
+uint GetShadowCascade(float3 positionVS)
 {
     // 0 is crazy
     // 1 looks better farther away (looking FROM light)
@@ -125,15 +125,15 @@ uint GetShadowCascade(float3 positionWS)
     //return 3u;
     
     [branch]
-    if (CascadeDistSqr(positionWS - _ShadowCascadeSphere0.xyz) < _ShadowCascadeSphere0.w)
+    if (CascadeDistSqr(positionVS - _ShadowCascadeSphere0.xyz) < _ShadowCascadeSphere0.w)
     {
         return 0u;
     }
-    else if (CascadeDistSqr(positionWS - _ShadowCascadeSphere1.xyz) < _ShadowCascadeSphere1.w)
+    else if (CascadeDistSqr(positionVS - _ShadowCascadeSphere1.xyz) < _ShadowCascadeSphere1.w)
     {
         return 1u;
     }
-    else if (CascadeDistSqr(positionWS - _ShadowCascadeSphere2.xyz) < _ShadowCascadeSphere2.w)
+    else if (CascadeDistSqr(positionVS - _ShadowCascadeSphere2.xyz) < _ShadowCascadeSphere2.w)
     {
         return 2u;
     }

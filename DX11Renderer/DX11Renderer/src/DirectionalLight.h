@@ -26,7 +26,7 @@ namespace gfx
 		void RenderShadow(ShadowPassContext context) override;
 		void AppendShadowData(UINT shadowStartSlot, std::vector<LightShadowData>& shadowData) const override;
 		UINT GetShadowTileCount() const override;
-		dx::XMVECTOR GetShadowCascadeSphere(UINT idx) const;
+		dx::XMVECTOR GetShadowCascadeSphereVS(UINT idx) const;
 	private:
 		dx::XMVECTOR GetDirectionWS() const;
 		ViewProjTransforms GetShadowTransforms(dx::XMVECTOR cascadeSphereCenterWS, float cascadeDistance) const;
@@ -36,6 +36,6 @@ namespace gfx
 		float sphereRad;
 		float range;
 		std::vector<LightShadowData> lightShadowData;
-		std::vector<dx::XMVECTOR> shadowCascadeSpheres;
+		std::vector<dx::XMVECTOR> shadowCascadeSpheresVS;
 	};
 }
