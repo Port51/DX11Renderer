@@ -122,14 +122,16 @@ namespace gfx
 				const float texelScale = 2.f * (float)Config::ShadowAtlasTileResolution;
 				const float invTexelScale = 1.f / texelScale;
 
-				const auto viewProjMatrix = initialTransforms.viewMatrix;// *initialTransforms.projMatrix;
-				const auto projectedCenter = dx::XMVector4Transform(dx::XMVectorSetW(cascadeSphereCenterWS, 1.f), viewProjMatrix);
-				const float x = std::floor(dx::XMVectorGetX(projectedCenter) / invTexelScale) / texelScale;
-				const float y = std::floor(dx::XMVectorGetY(projectedCenter) / invTexelScale) / texelScale;
-				const float z = dx::XMVectorGetZ(projectedCenter);
-				dx::XMVECTOR correctedCenterWS = dx::XMVector4Transform(dx::XMVectorSet(x, y, z, 1.0f), dx::XMMatrixInverse(nullptr, viewProjMatrix));
-				cascadeSphereCenterWS = correctedCenterWS;
-				//cascadeSphereCenterWS = dx::XMVectorSet(0, 0, 0, 1);
+				const auto viewProjMatrix = initialTransforms.viewMatrix * initialTransforms.projMatrix;
+				const auto projectedCenter = dx::XMVector4Transform(dx::XMVectorSet(0.f, 0.f, 0.f, 1.f), viewProjMatrix);
+				const float texelX = dx::XMVectorGetX(projectedCenter) * texelScale;
+				const float texelY = dx::XMVectorGetY(projectedCenter) * texelScale;
+				float xOffset = texelX - std::floor(texelX);
+				if (xOffset > 0.5f) xOffset -= 1.f;
+				float yOffset = texelY - std::floor(texelY);
+				if (yOffset > 0.5f) yOffset -= 1.f;
+				dx::XMVECTOR offsetWS = dx::XMVector4Transform(dx::XMVectorSet(xOffset * invTexelScale, yOffset * invTexelScale, 0.f, 1.f), dx::XMMatrixInverse(nullptr, viewProjMatrix));
+				cascadeSphereCenterWS = dx::XMVectorSubtract(cascadeSphereCenterWS, offsetWS);
 			}
 
 			// Calculate transforms that use stabilized sphere center
