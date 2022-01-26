@@ -131,14 +131,14 @@ namespace gfx
 				float yOffset = texelY - std::floor(texelY);
 				if (yOffset > 0.5f) yOffset -= 1.f;
 				dx::XMVECTOR offsetWS = dx::XMVector4Transform(dx::XMVectorSet(xOffset * invTexelScale, yOffset * invTexelScale, 0.f, 1.f), dx::XMMatrixInverse(nullptr, viewProjMatrix));
-				cascadeSphereCenterWS = dx::XMVectorSubtract(cascadeSphereCenterWS, offsetWS);
+				//cascadeSphereCenterWS = dx::XMVectorSubtract(cascadeSphereCenterWS, offsetWS);
 			}
 
 			// Calculate transforms that use stabilized sphere center
 			ViewProjTransforms transforms = GetShadowTransforms(cascadeSphereCenterWS, cascadeDistance);
 
 			// Record shadow sphere in VS
-			shadowCascadeSpheresVS[i] = dx::XMVectorSetW(dx::XMVector3Transform(cascadeSphereCenterWS, context.pCamera->GetViewMatrix()), cascadeDistance * cascadeDistance * 0.25f); // 0.25 is because cascadeDistance is a diameter
+			shadowCascadeSpheresVS[i] = dx::XMVectorSetW(dx::XMVector4Transform(dx::XMVectorSetW(cascadeSphereCenterWS, 1.f), context.pCamera->GetViewMatrix()), cascadeDistance * cascadeDistance * 0.25f); // 0.25 is because cascadeDistance is a diameter
 
 			static Frustum frustum;
 

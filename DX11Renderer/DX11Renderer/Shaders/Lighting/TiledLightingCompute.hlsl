@@ -9,8 +9,8 @@
 // Shadow settings:
 //#define SHADOW_PCF_3_TAP
 //#define SHADOW_PCF_5_TAP
-//#define SHADOW_PCF_7_TAP
-#define USE_HARD_SHADOWS
+#define SHADOW_PCF_7_TAP
+//#define USE_HARD_SHADOWS
 
 #define MAX_TILE_LIGHTS     64
 #define TILED_GROUP_SIZE    16
@@ -34,7 +34,10 @@ StructuredBuffer<StructuredLight> lights : register(t0);
 StructuredBuffer<StructuredShadow> shadowData : register(t1);
 Texture2D<float4> NormalRoughRT : register(t2);
 Texture2D<float> DepthRT : register(t3);
-// Register 4 reserved for shadow atlas
+Texture2D<float> ShadowAtlas : register(t4);
+Texture2D<float> DitherTex : register(t5);
+
+SamplerComparisonState ShadowAtlasSampler : register(s0);
 
 #include "./../Lighting/Shadows.hlsli"
 
@@ -94,6 +97,8 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
         minTileZ = asuint(10000.f);
         maxTileZ = asuint(0.f);
     }
+    
+    float dither = DitherTex.Load(int3(tId.xy % 8, 0));
     
     GroupMemoryBarrierWithGroupSync();
     
@@ -250,10 +255,10 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
                 // Directional shadow
                 
                 // Choose cascade
-                uint shadowCascadeIdx = shadowIdx + GetShadowCascade(positionVS);
-#if defined(DEBUG_VIEW_CASCADE_IDX)
-                debugCascade = GetShadowCascade(positionWS) * 0.25f;
-#endif
+                uint shadowCascadeIdx = shadowIdx + GetShadowCascade(positionVS, dither);
+//#if defined(DEBUG_VIEW_CASCADE_IDX)
+                debugCascade = GetShadowCascade(positionVS, dither) * 0.25f;
+//#endif
                 
                 float shadowAtten = GetDirectionalShadowAttenuation(shadowData[shadowCascadeIdx], positionVS, normalVS, NdotL);
                 lightAtten *= shadowAtten;
@@ -324,7 +329,7 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
         debugColor = float3(0.3, 0.1, 0.8);
     }
 #elif defined(DEBUG_VIEW_ALL_SHADOWS)
-    debugColor = debugAllShadowAtten;
+    debugColor = debugAllShadowAtten; // - debugCascade;
 #elif defined(DEBUG_VIEW_SHADOW)
     // Show shadow for a light
     //debugColor = GetSpotlightShadowAttenuation(shadowData[6], positionVS, normalRough.xyz, dot(normalRough.xyz, -lights[1].direction.xyz));

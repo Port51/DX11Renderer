@@ -34,6 +34,7 @@ namespace gfx
 	Renderer::Renderer(Graphics & gfx, const std::unique_ptr<LightManager>& pLightManager, std::shared_ptr<RendererList> pRendererList)
 		: pRendererList(pRendererList)
 	{
+		std::shared_ptr<Texture> pDither = std::dynamic_pointer_cast<Texture>(Texture::Resolve(gfx, "Assets\\Textures\\Dither8x8.png"));
 
 		pVisibleRendererList = std::make_unique<RendererList>(pRendererList);
 
@@ -111,6 +112,7 @@ namespace gfx
 		CreateRenderPass(TiledLightingPassName)->
 			CSSetSRV(RenderSlots::CS_GbufferNormalRoughSRV, pNormalRoughTarget->GetSRV())
 			.CSSetSRV(RenderSlots::CS_FreeSRV, gfx.pDepthStencil->GetSRV())
+			.CSSetSRV(RenderSlots::CS_FreeSRV + 2u, pDither->GetSRV())
 			.CSSetUAV(0u, pSpecularLighting->GetUAV())
 			.CSSetUAV(1u, pDiffuseLighting->GetUAV())
 			.CSSetUAV(2u, pDebugTiledLightingCS->GetUAV())

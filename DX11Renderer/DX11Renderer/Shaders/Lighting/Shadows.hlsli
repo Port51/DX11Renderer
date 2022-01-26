@@ -32,8 +32,6 @@ static float3 PointLightFaceDirWS[] =
     float3(0, -1, 0),
 };
 
-SamplerComparisonState ShadowAtlasSampler : register(s0);
-Texture2D<float> ShadowAtlas : register(t4);
 
 #include "./LightStructs.hlsli"
 
@@ -115,25 +113,18 @@ float CascadeDistSqr(float3 dist)
     return dot(dist, dist);
 }
 
-uint GetShadowCascade(float3 positionVS)
+uint GetShadowCascade(float3 positionVS, float dither)
 {
-    // 0 is crazy
-    // 1 looks better farther away (looking FROM light)
-    // 2 works
-    // 3 works when facing towards light
-    
-    //return 3u;
-    
     [branch]
-    if (CascadeDistSqr(positionVS - _ShadowCascadeSphere0.xyz) < _ShadowCascadeSphere0.w)
+    if (CascadeDistSqr(positionVS - _ShadowCascadeSphere0.xyz) < _ShadowCascadeSphere0.w - dither * 5.f)
     {
         return 0u;
     }
-    else if (CascadeDistSqr(positionVS - _ShadowCascadeSphere1.xyz) < _ShadowCascadeSphere1.w)
+    else if (CascadeDistSqr(positionVS - _ShadowCascadeSphere1.xyz) < _ShadowCascadeSphere1.w - dither * 20.f)
     {
         return 1u;
     }
-    else if (CascadeDistSqr(positionVS - _ShadowCascadeSphere2.xyz) < _ShadowCascadeSphere2.w)
+    else if (CascadeDistSqr(positionVS - _ShadowCascadeSphere2.xyz) < _ShadowCascadeSphere2.w - dither * 40.f)
     {
         return 2u;
     }
