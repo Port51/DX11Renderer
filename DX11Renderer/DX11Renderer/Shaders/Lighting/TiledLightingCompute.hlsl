@@ -1,7 +1,7 @@
-#include "./CbufCommon.hlsli"
-#include "./Lighting/LightStructs.hlsli"
-#include "./Lighting/Lights.hlsli"
-#include "./Lighting/BRDF.hlsli"
+#include "./../CbufCommon.hlsli"
+#include "./../Lighting/LightStructs.hlsli"
+#include "./../Lighting/Lights.hlsli"
+#include "./../Lighting/BRDF.hlsli"
 
 // References:
 // https://wickedengine.net/2018/01/10/optimizing-tile-based-light-culling/
@@ -9,8 +9,8 @@
 // Shadow settings:
 //#define SHADOW_PCF_3_TAP
 //#define SHADOW_PCF_5_TAP
-#define SHADOW_PCF_7_TAP
-//#define USE_HARD_SHADOWS
+//#define SHADOW_PCF_7_TAP
+#define USE_HARD_SHADOWS
 
 #define MAX_TILE_LIGHTS     64
 #define TILED_GROUP_SIZE    16
@@ -36,7 +36,7 @@ Texture2D<float4> NormalRoughRT : register(t2);
 Texture2D<float> DepthRT : register(t3);
 // Register 4 reserved for shadow atlas
 
-#include "./Lighting/Shadows.hlsli"
+#include "./../Lighting/Shadows.hlsli"
 
 // Outputs
 RWTexture2D<float4> SpecularLightingOut : register(u0);

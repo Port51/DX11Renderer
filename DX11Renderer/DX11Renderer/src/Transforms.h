@@ -9,4 +9,10 @@ namespace gfx
 		dx::XMMATRIX modelView;
 		dx::XMMATRIX modelViewProj;
 	};
+
+	struct ViewProjTransforms
+	{
+		dx::XMMATRIX viewMatrix;
+		dx::XMMATRIX projMatrix;
+	};
 }

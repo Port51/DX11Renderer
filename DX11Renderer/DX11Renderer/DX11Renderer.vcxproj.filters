@@ -700,12 +700,6 @@
     <FxCompile Include="Shaders\OpaqueGbuffer.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="ClusteredLightingCompute.hlsl">
-      <Filter>Shaders\TiledLighting</Filter>
-    </FxCompile>
-    <FxCompile Include="Shaders\TiledLightingCompute.hlsl">
-      <Filter>Shaders\TiledLighting</Filter>
-    </FxCompile>
     <FxCompile Include="Shaders\SolidColorPS.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
@@ -713,6 +707,15 @@
       <Filter>Shaders</Filter>
     </FxCompile>
     <FxCompile Include="Shaders\ShadowPassVS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Shaders\Lighting\ClusteredLightingCompute.hlsl">
+      <Filter>Shaders\TiledLighting</Filter>
+    </FxCompile>
+    <FxCompile Include="Shaders\Lighting\TiledLightingCompute.hlsl">
+      <Filter>Shaders\TiledLighting</Filter>
+    </FxCompile>
+    <FxCompile Include="Shaders\ShadowPassPS.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>

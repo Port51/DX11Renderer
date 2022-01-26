@@ -12,8 +12,6 @@ struct StructuredLight
 struct StructuredShadow
 {
     matrix shadowMatrix;
-    matrix lightViewMatrix;
-    matrix lightViewProjMatrix;
     uint2 tile;
     uint2 padding;
     //float shadowMapSize;

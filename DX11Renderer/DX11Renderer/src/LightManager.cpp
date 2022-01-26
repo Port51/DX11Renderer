@@ -28,7 +28,7 @@ namespace gfx
 
 		// Alignment bug:
 		//pLights.emplace_back(std::make_shared<Spotlight>(gfx, 1u, dx::XMFLOAT3(8.5f, 1.5f, -2.0f), 0.0f, 0.0f, dx::XMFLOAT3(1.0f, 1.0f, 1.0f), 3.0f, 50.f, 50.f));
-		pMainLight = std::make_shared<DirectionalLight>(gfx, 0u, 0.f, 30.f, dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 50.0f, 5.0f);
+		pMainLight = std::make_shared<DirectionalLight>(gfx, 0u, 30.f, 30.f, dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 50.0f, 5.0f);
 		pLights.emplace_back(pMainLight);
 
 		pLightInputCB = std::make_unique<ConstantBuffer<LightInputCB>>(gfx, D3D11_USAGE_DYNAMIC);

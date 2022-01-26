@@ -150,9 +150,7 @@ namespace gfx
 
 			// todo: move elsewhere
 			{
-				lightShadowData[i].lightViewMatrix = viewMatrix;
-				lightShadowData[i].lightViewProjMatrix = viewMatrix * projMatrix;
-				lightShadowData[i].shadowMatrix = context.invViewMatrix * lightShadowData[i].lightViewProjMatrix;
+				lightShadowData[i].shadowMatrix = context.invViewMatrix * viewMatrix * projMatrix;
 				dx::XMStoreUInt2(&lightShadowData[i].tile, dx::XMVectorSet(tileX, tileY, 0, 0));
 			}
 		}

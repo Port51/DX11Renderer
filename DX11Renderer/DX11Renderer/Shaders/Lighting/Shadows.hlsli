@@ -158,7 +158,7 @@ float GetDirectionalShadowAttenuation(StructuredShadow shadow, float3 positionVS
     //return (shadowNDC.x * 0.5 + 0.5);
     
     float shadowAtten = 0;
-    const float ShadowBias = 0.001f * 10.f;
+    const float ShadowBias = 0.005f;
 #if defined(SHADOW_USE_PCF_FILTERING)
     // PCF filtering
     float sum = 0;

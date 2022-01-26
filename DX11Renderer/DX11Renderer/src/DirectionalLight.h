@@ -13,6 +13,7 @@ namespace gfx
 
 	struct LightData;
 	struct LightShadowData;
+	struct ViewProjTransforms;
 
 	class DirectionalLight : public Light
 	{
@@ -28,6 +29,7 @@ namespace gfx
 		dx::XMVECTOR GetShadowCascadeSphere(UINT idx) const;
 	private:
 		dx::XMVECTOR GetDirectionWS() const;
+		ViewProjTransforms GetShadowTransforms(dx::XMVECTOR cascadeSphereCenterWS, float cascadeDistance) const;
 	private:
 		float pan;
 		float tilt;

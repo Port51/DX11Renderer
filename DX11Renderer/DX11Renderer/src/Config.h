@@ -15,9 +15,9 @@ namespace gfx
 		static inline ShadowType ShadowType = ShadowType::Hard;
 
 		// Each tile represents a shadowmap, which can be a spotlight shadow, cubemap face, or a specific directional cascade
-		static inline int ShadowAtlasResolution = 2048;
+		static inline int ShadowAtlasResolution = 1024;
 		// Size of each tile
-		static inline int ShadowAtlasTileResolution = 512;
+		static inline int ShadowAtlasTileResolution = ShadowAtlasResolution / 4;
 		// Number of tiles on a side
 		static inline int ShadowAtlasTileDimension = ShadowAtlasResolution / ShadowAtlasTileResolution;
 		// Total number of tiles

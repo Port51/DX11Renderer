@@ -16,6 +16,7 @@
 #include "Renderer.h"
 #include "RendererList.h"
 #include "Config.h"
+#include "Transforms.h"
 
 namespace gfx
 {
@@ -74,6 +75,24 @@ namespace gfx
 		return 2u;
 	}
 
+	ViewProjTransforms DirectionalLight::GetShadowTransforms(dx::XMVECTOR cascadeSphereCenterWS, float cascadeDistance) const
+	{
+		const float nearPlane = 0.5f;
+		const auto cascadeFrustumStartWS = dx::XMVectorSubtract(cascadeSphereCenterWS, dx::XMVectorScale(GetDirectionWS(), cascadeDistance * 0.5f + Config::ShadowCascadeOffset + nearPlane));
+
+		const auto viewMatrix = dx::XMMatrixLookAtLH(cascadeFrustumStartWS, cascadeSphereCenterWS, dx::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
+
+		// Add padding according to account for 1/2 of max "softness" kernel (like PCF)
+		// In this case, 7-tap PCF
+		const float padding = 1.f + 3.5f / (float)Config::ShadowAtlasTileResolution;
+		const auto projMatrix = dx::XMMatrixOrthographicLH(cascadeDistance * padding, cascadeDistance * padding, nearPlane, cascadeDistance + Config::ShadowCascadeOffset * 1.01f + nearPlane);
+
+		ViewProjTransforms transforms;
+		transforms.viewMatrix = viewMatrix;
+		transforms.projMatrix = projMatrix;
+		return transforms;
+	}
+
 	void DirectionalLight::RenderShadow(ShadowPassContext context)
 	{
 		const auto cameraPositionWS = context.pCamera->GetPositionWS();
@@ -84,17 +103,37 @@ namespace gfx
 		// Render all cascades
 		for (UINT i = 0u; i < Config::ShadowCascades; ++i)
 		{
-			const float nearPlane = 0.5f;
-			const float currentOffset = i * 5.f / (Config::ShadowCascades - 1);
+			const float sphereOffset = 5.f; // distance to gradually move spheres backwards along camera forward
+			const float currentOffset = i * sphereOffset / (Config::ShadowCascades - 1);
 			const float cascadeDistance = Config::ShadowCascadeDistances[i];
 			auto cascadeSphereCenterWS = dx::XMVectorAdd(cameraPositionWS, dx::XMVectorScale(cameraForwardWS, cascadeDistance * 0.5f - currentOffset));
-			//cascadeSphereCenterWS = dx::XMVectorSet(0, 0, 0, 1);
-			const auto cascadeFrustumStartWS = dx::XMVectorSubtract(cascadeSphereCenterWS, dx::XMVectorScale(shadowDirWS, cascadeDistance * 0.5f + Config::ShadowCascadeOffset + nearPlane));
 
-			const auto viewMatrix = dx::XMMatrixLookAtLH(cascadeFrustumStartWS, cascadeSphereCenterWS, dx::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
+			// todo: calculate initial VP here
 
-			const float padding = 1.01f;
-			const auto projMatrix = dx::XMMatrixOrthographicLH(cascadeDistance * padding, cascadeDistance * padding, nearPlane, cascadeDistance + Config::ShadowCascadeOffset * 2.f + nearPlane);
+			// Stabilize shadows so texel reads will match previous frame
+			// References: 
+			// - https://www.junkship.net/News/2020/11/22/shadow-of-a-doubt-part-2
+			// - https://docs.microsoft.com/en-us/windows/win32/dxtecharts/common-techniques-to-improve-shadow-depth-maps
+			// todo: move to separate method
+			{
+				const auto initialTransforms = GetShadowTransforms(cascadeSphereCenterWS, cascadeDistance);
+
+				// Multiply by 2 since comparing to NDC
+				const float texelScale = 2.f * (float)Config::ShadowAtlasTileResolution;
+				const float invTexelScale = 1.f / texelScale;
+
+				const auto viewProjMatrix = initialTransforms.viewMatrix;// *initialTransforms.projMatrix;
+				const auto projectedCenter = dx::XMVector4Transform(dx::XMVectorSetW(cascadeSphereCenterWS, 1.f), viewProjMatrix);
+				const float x = std::floor(dx::XMVectorGetX(projectedCenter) / invTexelScale) / texelScale;
+				const float y = std::floor(dx::XMVectorGetY(projectedCenter) / invTexelScale) / texelScale;
+				const float z = dx::XMVectorGetZ(projectedCenter);
+				dx::XMVECTOR correctedCenterWS = dx::XMVector4Transform(dx::XMVectorSet(x, y, z, 1.0f), dx::XMMatrixInverse(nullptr, viewProjMatrix));
+				cascadeSphereCenterWS = correctedCenterWS;
+				//cascadeSphereCenterWS = dx::XMVectorSet(0, 0, 0, 1);
+			}
+
+			// Calculate transforms that use stabilized sphere center
+			ViewProjTransforms transforms = GetShadowTransforms(cascadeSphereCenterWS, cascadeDistance);
 
 			// Record shadow sphere
 			shadowCascadeSpheres[i] = dx::XMVectorSetW(cascadeSphereCenterWS, cascadeDistance * cascadeDistance * 0.25f); // 0.25 is because cascadeDistance is a diameter
@@ -103,13 +142,13 @@ namespace gfx
 
 			// Setup transformation buffer
 			static GlobalTransformCB transformationCB;
-			transformationCB.viewMatrix = viewMatrix;
-			transformationCB.projMatrix = projMatrix;
+			transformationCB.viewMatrix = transforms.viewMatrix;
+			transformationCB.projMatrix = transforms.projMatrix;
 			context.pTransformationCB->Update(context.gfx, transformationCB);
 
 			static DrawContext drawContext(context.renderer, context.renderer.ShadowPassName);
-			drawContext.viewMatrix = viewMatrix;
-			drawContext.projMatrix = projMatrix;
+			drawContext.viewMatrix = transforms.viewMatrix;
+			drawContext.projMatrix = transforms.projMatrix;
 
 			// This means all shadow draw calls need to be setup on the same thread
 			context.pRendererList->Filter(frustum, RendererList::RendererSorting::FrontToBack);
@@ -131,9 +170,7 @@ namespace gfx
 
 			// todo: move elsewhere
 			{
-				lightShadowData[i].lightViewMatrix = viewMatrix;
-				lightShadowData[i].lightViewProjMatrix = viewMatrix * projMatrix;
-				lightShadowData[i].shadowMatrix = context.invViewMatrix * lightShadowData[i].lightViewProjMatrix;
+				lightShadowData[i].shadowMatrix = context.invViewMatrix * transforms.viewMatrix * transforms.projMatrix;
 				dx::XMStoreUInt2(&lightShadowData[i].tile, dx::XMVectorSet(tileX, tileY, 0, 0));
 			}
 		}

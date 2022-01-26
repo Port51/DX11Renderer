@@ -1,6 +1,5 @@
 
 #include "CbufCommon.hlsli"
-#include "PhongCommon.hlsli"
 
 cbuffer CBuf : register(b3)
 {
@@ -18,6 +17,12 @@ struct attrib
     float3 instancePosition : INSTANCEPOS;
 };
 
+struct v2f
+{
+    float4 pos : SV_POSITION;
+    float depth : TEXCOORD0;
+};
+
 float4 ComputeNonStereoScreenPos(float4 pos)
 {
     float4 o = pos * 0.5f;
@@ -29,14 +34,7 @@ float4 ComputeNonStereoScreenPos(float4 pos)
 v2f main(attrib i)
 {
     v2f o;
-    o.positionVS = (float3) mul(modelView, float4(i.pos, 1.0f));
-    o.normalWS = mul((float3x3) model, i.n);
-    o.normalVS = mul((float3x3) modelView, i.n);
-    o.tangentVS = mul((float3x3) modelView, i.t);
     o.pos = mul(modelViewProj, float4(i.pos, 1.0f));
-    // Avoid shadow pancaking for directional shadows
-    //o.pos.z = max(o.pos.z, o.pos.w * 0.5);
-    o.uv0 = float2(i.uv0.x, 1.f - i.uv0.y);
-    o.screenPos = o.pos;
+    o.depth = o.pos.z;
     return o;
 }
