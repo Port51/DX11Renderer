@@ -65,10 +65,10 @@ namespace gfx
 	{
 		gfx.GetContext()->CSSetShader(pComputeShader.Get(), nullptr, 0);
 
-		// Determine thread counts
-		UINT threadGroupCountX = threadCountX / kernelSizeX;
-		UINT threadGroupCountY = threadCountY / kernelSizeY;
-		UINT threadGroupCountZ = threadCountZ / kernelSizeZ;
+		// Determine thread counts by dividing and rounding up
+		UINT threadGroupCountX = (threadCountX + kernelSizeX - 1u) / kernelSizeX;
+		UINT threadGroupCountY = (threadCountY + kernelSizeY - 1u) / kernelSizeY;
+		UINT threadGroupCountZ = (threadCountZ + kernelSizeZ - 1u) / kernelSizeZ;
 
 		if (threadGroupCountX > 0u && threadGroupCountY > 0u && threadGroupCountZ > 0u)
 		{

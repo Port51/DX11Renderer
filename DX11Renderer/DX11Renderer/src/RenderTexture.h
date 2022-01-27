@@ -16,6 +16,7 @@ namespace gfx
 	public:
 		RenderTexture(Graphics& gfx);
 		RenderTexture(Graphics& gfx, UINT mipCount);
+		RenderTexture(Graphics& gfx, DXGI_FORMAT format, UINT mipCount);
 
 		virtual void Init(ComPtr<ID3D11Device> pDevice, UINT textureWidth, UINT textureHeight);
 		void Shutdown();
@@ -33,5 +34,6 @@ namespace gfx
 	protected:
 		ComPtr<ID3D11RenderTargetView> pRenderTargetView;
 		D3D11_VIEWPORT viewport;
+		DXGI_FORMAT format;
 	};
 }

@@ -42,7 +42,7 @@ namespace gfx
 		pNormalRoughTarget = std::make_shared<RenderTexture>(gfx);
 		pNormalRoughTarget->Init(gfx.GetDevice(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
-		pHiZBufferTarget = std::make_shared<RenderTexture>(gfx, 8u);
+		pHiZBufferTarget = std::make_shared<RenderTexture>(gfx, DXGI_FORMAT_R16G16_FLOAT, 8u);
 		pHiZBufferTarget->Init(gfx.GetDevice(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
 		pSpecularLighting = std::make_shared<RenderTexture>(gfx);

@@ -16,12 +16,21 @@ namespace gfx
 	RenderTexture::RenderTexture(Graphics& gfx)
 		: Texture::Texture(gfx)
 	{
+		format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 		mipCount = 1u;
 	}
 
 	RenderTexture::RenderTexture(Graphics & gfx, UINT _mipCount)
 		: Texture::Texture(gfx)
 	{
+		format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		mipCount = _mipCount;
+	}
+
+	RenderTexture::RenderTexture(Graphics & gfx, DXGI_FORMAT _format, UINT _mipCount)
+		: Texture::Texture(gfx)
+	{
+		format = _format;
 		mipCount = _mipCount;
 	}
 
@@ -42,7 +51,7 @@ namespace gfx
 		rtDesc.Height = textureHeight;
 		rtDesc.MipLevels = mipCount;
 		rtDesc.ArraySize = 1;
-		rtDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		rtDesc.Format = format;
 		rtDesc.SampleDesc.Count = 1;
 		rtDesc.SampleDesc.Quality = 0;
 		rtDesc.Usage = D3D11_USAGE_DEFAULT; //D3D11_USAGE_DYNAMIC
