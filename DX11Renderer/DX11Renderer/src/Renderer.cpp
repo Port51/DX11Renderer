@@ -81,6 +81,7 @@ namespace gfx
 		CreateRenderPass(HiZPassName)
 			->CSSetSRV(RenderSlots::CS_FreeSRV + 0u, gfx.pDepthStencil->GetSRV())
 			.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, pHiZBufferTarget->GetUAV())
+			.CSSetUAV(RenderSlots::CS_FreeUAV + 1u, nullptr)
 			.CSSetCB(RenderSlots::CS_FreeCB + 0u, pHiZCreationCB->GetD3DBuffer());
 		CreateRenderPass(ShadowPassName)
 			->AddBinding(RasterizerState::Resolve(gfx, D3D11_CULL_FRONT)).SetupRSBinding(); // Reduce shadow acne w/ front face culling during shadow pass
@@ -118,7 +119,9 @@ namespace gfx
 		CreateRenderPass(TiledLightingPassName)->
 			CSSetSRV(RenderSlots::CS_GbufferNormalRoughSRV, pNormalRoughTarget->GetSRV())
 			.CSSetSRV(RenderSlots::CS_FreeSRV, gfx.pDepthStencil->GetSRV())
-			.CSSetSRV(RenderSlots::CS_FreeSRV + 2u, pDither->GetSRV())
+			.CSSetSRV(RenderSlots::CS_FreeSRV + 1u, pHiZBufferTarget->GetSRV())
+			.CSSetSRV(RenderSlots::CS_FreeSRV + 2u, nullptr) // reserve this slot for shadow atlas!
+			.CSSetSRV(RenderSlots::CS_FreeSRV + 3u, pDither->GetSRV())
 			.CSSetUAV(0u, pSpecularLighting->GetUAV())
 			.CSSetUAV(1u, pDiffuseLighting->GetUAV())
 			.CSSetUAV(2u, pDebugTiledLightingCS->GetUAV())
@@ -199,6 +202,7 @@ namespace gfx
 
 			PerCameraCB perCameraCB;
 			ZeroMemory(&perCameraCB, sizeof(perCameraCB));
+			perCameraCB.projectionParams = dx::XMVectorSet(1.f, cam->GetNearClipPlane(), cam->GetFarClipPlane(), 1.f / cam->farClipPlane);
 			perCameraCB.screenParams = dx::XMVectorSet((float)gfx.GetScreenWidth(), (float)gfx.GetScreenHeight(), 1.0f / gfx.GetScreenWidth(), 1.0f / gfx.GetScreenHeight());
 			perCameraCB.zBufferParams = dx::XMVectorSet(1.f - cam->farClipPlane / cam->nearClipPlane, cam->farClipPlane / cam->nearClipPlane, 1.f / cam->farClipPlane - 1.f / cam->nearClipPlane, 1.f / cam->nearClipPlane);
 			perCameraCB.orthoParams = dx::XMVectorSet(0.f, 0.f, 0.f, 0.f);
@@ -301,7 +305,7 @@ namespace gfx
 			const std::unique_ptr<RenderPass>& pass = pRenderPasses[TiledLightingPassName];
 
 			pass->BindSharedResources(gfx);
-			pLightManager->BindShadowAtlas(gfx, RenderSlots::CS_FreeSRV + 1u);
+			pLightManager->BindShadowAtlas(gfx, RenderSlots::CS_FreeSRV + 2u);
 			pass->Execute(gfx); // setup binds
 
 			pTiledLightingKernel->Dispatch(gfx, *pass, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1);

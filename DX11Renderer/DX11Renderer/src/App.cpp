@@ -29,7 +29,7 @@ namespace gfx
 		dx::XMMATRIX modelTransform;
 
 		// temporary...
-		int select = 7;
+		int select = 6;
 		switch (select)
 		{
 		case 0:

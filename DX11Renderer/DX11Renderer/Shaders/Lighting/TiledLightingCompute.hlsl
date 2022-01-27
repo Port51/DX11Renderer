@@ -16,6 +16,8 @@
 #define TILED_GROUP_SIZE    16
 #define MAX_SHADOWS         4
 
+#define USE_HI_Z_BUFFER
+
 #define USE_FRUSTUM_INTERSECTION_TEST
 #define USE_AABB_INTERSECTION_TEST
 
@@ -26,6 +28,8 @@
 #define DEBUG_VIEW_ALL_SHADOWS
 //#define DEBUG_VIEW_SHADOW
 //#define DEBUG_VIEW_LIGHT_COUNTS
+#define DEBUG_VIEW_LIGHT_COUNTS_AND_RANGES
+//#define DEBUG_VIEW_VERIFY_AABB_BOUNDS
 //#define DEBUG_VIEW_CASCADE_IDX
 //#define DEBUG_VIEW_GEOMETRY
 
@@ -34,8 +38,9 @@ StructuredBuffer<StructuredLight> lights : register(t0);
 StructuredBuffer<StructuredShadow> shadowData : register(t1);
 Texture2D<float4> NormalRoughRT : register(t2);
 Texture2D<float> DepthRT : register(t3);
-Texture2D<float> ShadowAtlas : register(t4);
-Texture2D<float> DitherTex : register(t5);
+Texture2D<float2> HiZBuffer : register(t4);
+Texture2D<float> ShadowAtlas : register(t5);
+Texture2D<float> DitherTex : register(t6);
 
 SamplerComparisonState ShadowAtlasSampler : register(s0);
 
@@ -102,18 +107,23 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     
     GroupMemoryBarrierWithGroupSync();
     
-    // todo: replace w/ Hi-Z buffer, or do depth slices here
-    float rawDepth = DepthRT.Load(int3(tId.xy, 0));
-    float linearDepth = RawDepthToLinearDepth(rawDepth);
-    uint intDepth = asuint(linearDepth);
+#if defined(USE_HI_Z_BUFFER)
+    const float linearDepth = HiZBuffer.Load(int3(tId.xy, 0)).r * _ProjectionParams.z;
+    const float2 tileDepthRange = HiZBuffer.Load(int3(tId.xy / 16, 4)).rg * _ProjectionParams.z;
+    const float isGeometry = linearDepth < 10000.f;
+#else
+    const float rawDepth = DepthRT.Load(int3(tId.xy, 0));
+    const float isGeometry = rawDepth < 1.f;
+    const float linearDepth = RawDepthToLinearDepth(rawDepth);
+    const uint intDepth = asuint(linearDepth);
     InterlockedMin(minTileZ, intDepth);
     InterlockedMax(maxTileZ, intDepth);
     
     GroupMemoryBarrierWithGroupSync();
     
     const float2 tileDepthRange = float2(asfloat(minTileZ), asfloat(maxTileZ));
+#endif
     
-    // todo: use gId to setup frustums
     // todo: early out if only sky
     
     float debugValue = 0.f;
@@ -135,15 +145,22 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
 #endif
     
 #if defined(USE_AABB_INTERSECTION_TEST)
-    // Note: Use min depth for corners in order to construct AABB that encapsulates entire frustum
-    const float3 minAABB = float3(planeNDC.zy * _FrustumCornerDataVS.xy * tileDepthRange.x, tileDepthRange.x);
-    const float3 maxAABB = float3(planeNDC.xw * _FrustumCornerDataVS.xy * tileDepthRange.x, tileDepthRange.y);
+    // For each side, select depth in order to get min/max of frustum points
+    float4 frustumPointSelection = float4(
+        min(planeNDC.z * tileDepthRange.y, planeNDC.z * tileDepthRange.x),
+        max(planeNDC.w * tileDepthRange.y, planeNDC.w * tileDepthRange.x),
+        max(planeNDC.x * tileDepthRange.y, planeNDC.x * tileDepthRange.x),
+        min(planeNDC.y * tileDepthRange.y, planeNDC.y * tileDepthRange.x)
+    );
+    const float3 minAABB = float3(_FrustumCornerDataVS.xy * frustumPointSelection.xy, tileDepthRange.x);
+    const float3 maxAABB = float3(_FrustumCornerDataVS.xy * frustumPointSelection.zw, tileDepthRange.y);
     const float3 aabbCenter = (minAABB + maxAABB) * 0.5f;
-    const float3 aabbExtents = (maxAABB - minAABB) * 0.5f;
+    const float3 aabbExtents = (maxAABB - minAABB) * 0.501f;
 #endif
     
     uint i;
     float debugAllShadowAtten = 1.f;
+    float debugAllLightsInRange = 0.f;
     float debugCascade = 0.f;
     for (i = gIndex; i < _VisibleLightCount; i += TILED_GROUP_SIZE * TILED_GROUP_SIZE)
     {
@@ -168,8 +185,7 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
         else
         {
             // Directional light:
-            // Make it so light will always be seen
-            sphereData = float4(aabbCenter.xyz, 1000.0);
+            sphereData = (float4)0.f;
         }
         
 #if defined(USE_FRUSTUM_INTERSECTION_TEST)     
@@ -184,6 +200,7 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
         inFrustum = inFrustum && (light.positionVS_range.z >= tileDepthRange.x - light.positionVS_range.w);
         inFrustum = inFrustum && (light.positionVS_range.z <= tileDepthRange.y + light.positionVS_range.w);
     #endif
+        inFrustum = inFrustum || (light.data0.x == 2); // always show directional lights
 #endif
 
 #if defined(USE_AABB_INTERSECTION_TEST)
@@ -271,6 +288,7 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
             float lightDist = length(displ);
             lightDirVS = displ / max(lightDist, 0.0001f);
             float NdotL = dot(normalVS, -lightDirVS.xyz);
+            float outOfRange = lightDist > light.positionVS_range.w;
             
             lightAtten = GetSphericalLightAttenuation(lightDist, light.data0.y, light.positionVS_range.w);
         
@@ -288,6 +306,7 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
                 {
                     // Spotlight shadow
                     float shadowAtten = GetSpotlightShadowAttenuation(shadowData[shadowIdx], positionVS, normalVS, NdotL);
+                    shadowAtten = saturate(shadowAtten + outOfRange);
                     lightAtten *= shadowAtten;
                     debugAllShadowAtten *= shadowAtten;
                 }
@@ -304,9 +323,15 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
                 // Attenuation
                 float shadowAtten = GetSpotlightShadowAttenuation(shadowData[shadowFaceIdx], positionVS, normalVS, NdotL);
                 //shadowAtten = GetCubeMapFaceID(offsetWS) * 0.2;
+                shadowAtten = saturate(shadowAtten + outOfRange);
                 lightAtten *= shadowAtten;
                 debugAllShadowAtten *= shadowAtten;
             }
+            
+#if defined(DEBUG_VIEW_LIGHT_COUNTS_AND_RANGES)
+            // This debug view shows a solid color if in light range
+            debugAllLightsInRange += (lightDist < light.positionVS_range.w);
+#endif
         }
         
         lightAtten *= light.color_intensity.w;
@@ -317,17 +342,22 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
         specularLight += brdf.specularLight * lightColorInput;
     }
     
-    diffuseLight *= (rawDepth < 1);
-    specularLight *= (rawDepth < 1);
+    diffuseLight *= isGeometry;
+    specularLight *= isGeometry;
     
     float3 debugColor = debugValue;
 #if defined(DEBUG_VIEW_LIGHT_COUNTS)
-    debugColor = float3((diffuseLight.r) * (rawDepth < 1), tileLightCount * 0.1, 0);
-    if (groupThreadId.x == 0 || groupThreadId.y == 0)
-    {
-        // Draw grid
-        debugColor = float3(0.3, 0.1, 0.8);
-    }
+    debugColor = float3((diffuseLight.r) * isGeometry, tileLightCount * 0.2, 0);
+    #define DEBUG_VIEW_SHOW_GRID
+#elif defined(DEBUG_VIEW_VERIFY_AABB_BOUNDS)
+    // Show green where position is within AABB, and red where it isn't
+    // Entire screen should be green
+    bool inBounds = all(positionVS.xyz >= minAABB.xyz) * all(positionVS.xyz <= maxAABB.xyz);
+    debugColor = inBounds ? float3(0, 1, 0) : float3(1, 0, 0);
+    #define DEBUG_VIEW_SHOW_GRID
+#elif defined(DEBUG_VIEW_LIGHT_COUNTS_AND_RANGES)
+    debugColor = float3(debugAllLightsInRange * isGeometry * 0.2, tileLightCount * 0.2, 0);
+    #define DEBUG_VIEW_SHOW_GRID
 #elif defined(DEBUG_VIEW_ALL_SHADOWS)
     debugColor = debugAllShadowAtten; // - debugCascade;
 #elif defined(DEBUG_VIEW_SHADOW)
@@ -339,6 +369,13 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     debugColor = debugCascade;
 #elif defined(DEBUG_VIEW_GEOMETRY)
     debugColor = frac(positionVS.z * 3.0);
+#endif
+    
+#if defined(DEBUG_VIEW_SHOW_GRID)
+    if (groupThreadId.x == 0 || groupThreadId.y == 0)
+    {
+        debugColor = float3(0.3, 0.1, 0.8);
+    }
 #endif
     
     SpecularLightingOut[tId.xy] = float4(specularLight, 1);

@@ -73,14 +73,14 @@ uint GetCubeMapFaceID(float3 dir)
 float GetSpotlightShadowAttenuation(StructuredShadow shadow, float3 positionVS, float3 normalVS, float NdotL)
 {
     // Apply large bias at grazing angles, small bias when light dir is similar to normal
-    float3 normalBiasVS = normalVS * (NdotL * -0.075 + 0.085) * 0;
+    float3 normalBiasVS = normalVS * (NdotL * -0.075 + 0.085);
     float4 shadowNDC = mul(shadow.shadowMatrix, float4(positionVS + normalBiasVS, 1));
     shadowNDC.xyz /= shadowNDC.w;
     
     float2 shadowUV = GetShadowTileUV(shadowNDC, shadow.tile);
     
     float shadowAtten = 0;
-    const float ShadowBias = 0.001 * 0;
+    const float ShadowBias = 0.001;
 #if defined(SHADOW_USE_PCF_FILTERING)
     // PCF filtering
     float sum = 0;
