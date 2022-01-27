@@ -9,7 +9,7 @@
 #include "PointLight.h"
 #include "Spotlight.h"
 #include "DirectionalLight.h"
-#include "RenderTarget.h"
+#include "RenderTexture.h"
 #include "RenderPass.h"
 #include "RendererList.h"
 #include "ModelInstance.h"

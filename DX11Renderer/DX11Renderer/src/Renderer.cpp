@@ -8,7 +8,7 @@
 #include "RenderPass.h"
 #include "FullscreenPass.h"
 #include "NullPixelShader.h"
-#include "RenderTarget.h"
+#include "RenderTexture.h"
 #include "DepthStencilTarget.h"
 #include "ComputeShader.h"
 #include "ComputeKernel.h"
@@ -39,26 +39,28 @@ namespace gfx
 		pVisibleRendererList = std::make_unique<RendererList>(pRendererList);
 
 		// Setup render targets
-		pNormalRoughTarget = std::make_shared<RenderTarget>(gfx);
+		pNormalRoughTarget = std::make_shared<RenderTexture>(gfx);
 		pNormalRoughTarget->Init(gfx.GetDevice(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
-		pSpecularLighting = std::make_shared<RenderTarget>(gfx);
+		pHiZBufferTarget = std::make_shared<RenderTexture>(gfx, 8u);
+		pHiZBufferTarget->Init(gfx.GetDevice(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
+
+		pSpecularLighting = std::make_shared<RenderTexture>(gfx);
 		pSpecularLighting->Init(gfx.GetDevice(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
-		pDiffuseLighting = std::make_shared<RenderTarget>(gfx);
+		pDiffuseLighting = std::make_shared<RenderTexture>(gfx);
 		pDiffuseLighting->Init(gfx.GetDevice(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
-		pCameraColor = std::make_shared<RenderTarget>(gfx);
+		pCameraColor = std::make_shared<RenderTexture>(gfx);
 		pCameraColor->Init(gfx.GetDevice(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
-		pDebugTiledLightingCS = std::make_shared<RenderTarget>(gfx);
+		pDebugTiledLightingCS = std::make_shared<RenderTexture>(gfx);
 		pDebugTiledLightingCS->Init(gfx.GetDevice(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
-
-		pSmallDepthStencil = std::make_shared<DepthStencilTarget>(gfx, gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
 		pPerFrameCB = std::make_unique<ConstantBuffer<PerFrameCB>>(gfx, D3D11_USAGE_DYNAMIC);
 		pTransformationCB = std::make_unique<ConstantBuffer<GlobalTransformCB>>(gfx, D3D11_USAGE_DYNAMIC);
 		pPerCameraCB = std::make_unique<ConstantBuffer<PerCameraCB>>(gfx, D3D11_USAGE_DYNAMIC);
+		pHiZCreationCB = std::make_unique<ConstantBuffer<HiZCreationCB>>(gfx, D3D11_USAGE_DYNAMIC);
 
 		// Setup passes
 		CreateRenderPass(PerCameraPassName)->
@@ -76,6 +78,10 @@ namespace gfx
 
 		CreateRenderPass(DepthPrepassName)
 			->AddBinding(RasterizerState::Resolve(gfx, D3D11_CULL_BACK)).SetupRSBinding();
+		CreateRenderPass(HiZPassName)
+			->CSSetSRV(RenderSlots::CS_FreeSRV + 0u, gfx.pDepthStencil->GetSRV())
+			.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, pHiZBufferTarget->GetUAV())
+			.CSSetCB(RenderSlots::CS_FreeCB + 0u, pHiZCreationCB->GetD3DBuffer());
 		CreateRenderPass(ShadowPassName)
 			->AddBinding(RasterizerState::Resolve(gfx, D3D11_CULL_FRONT)).SetupRSBinding(); // Reduce shadow acne w/ front face culling during shadow pass
 		CreateRenderPass(GBufferRenderPassName)
@@ -119,6 +125,8 @@ namespace gfx
 			.AddBinding(pShadowSampler)
 			.SetupCSBinding(0u);
 
+		pHiZDepthCopyKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, std::string("Assets\\Built\\Shaders\\HiZDepthCopy.cso"), std::string("CSMain")));
+		pHiZCreateMipKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, std::string("Assets\\Built\\Shaders\\HiZCreateMip.cso"), std::string("CSMain")));
 		pTiledLightingKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, std::string("Assets\\Built\\Shaders\\TiledLightingCompute.cso"), std::string("CSMain")));
 	}
 
@@ -221,6 +229,50 @@ namespace gfx
 			gfx.SetViewport(gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
 			pass->Execute(gfx);
+			pass->UnbindSharedResources(gfx);
+		}
+
+		// Hi-Z buffer pass
+		{
+			const std::unique_ptr<RenderPass>& pass = pRenderPasses[HiZPassName];
+
+			//gfx.GetContext()->ClearState();
+			gfx.GetContext()->OMSetRenderTargets(0, nullptr, nullptr); // need in order to access depth
+
+			pass->BindSharedResources(gfx);
+			pass->Execute(gfx);
+
+			UINT screenWidth = (UINT)gfx.GetScreenWidth();
+			UINT screenHeight = (UINT)gfx.GetScreenHeight();
+
+			HiZCreationCB hiZCreationCB;
+			hiZCreationCB.resolutionSrcDst = { screenWidth, screenHeight, screenWidth, screenHeight };
+			hiZCreationCB.zBufferParams = dx::XMVectorSet(1.f - cam->farClipPlane / cam->nearClipPlane, cam->farClipPlane / cam->nearClipPlane, 1.f / cam->farClipPlane - 1.f / cam->nearClipPlane, 1.f / cam->nearClipPlane);
+			pHiZCreationCB->Update(gfx, hiZCreationCB);
+
+			// Copy from depth-stencil
+			gfx.GetContext()->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV, 1u, pHiZBufferTarget->GetUAV(0u).GetAddressOf(), nullptr);
+			pHiZDepthCopyKernel->Dispatch(gfx, *pass, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1);
+
+			// Create other mips
+			for (UINT mip = 1u; mip < 8u; ++mip)
+			{
+				UINT dstWidth = screenWidth >> mip;
+				UINT dstHeight = screenHeight >> mip;
+
+				if (dstWidth == 0u || dstHeight == 0u)
+					continue;
+
+				hiZCreationCB.resolutionSrcDst = { dstWidth << 1u, dstHeight << 1u, dstWidth, dstHeight };
+				pHiZCreationCB->Update(gfx, hiZCreationCB);
+
+				// Bind mip slice views as UAVs
+				gfx.GetContext()->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 0u, 1u, pHiZBufferTarget->GetUAV(mip - 1u).GetAddressOf(), nullptr);
+				gfx.GetContext()->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 1u, 1u, pHiZBufferTarget->GetUAV(mip).GetAddressOf(), nullptr);
+
+				pHiZCreateMipKernel->Dispatch(gfx, *pass, dstWidth, dstHeight, 1u);
+			}
+
 			pass->UnbindSharedResources(gfx);
 		}
 

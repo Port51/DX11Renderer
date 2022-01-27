@@ -276,9 +276,6 @@
     <ClCompile Include="src\RenderStep.cpp">
       <Filter>Source\RenderJobs</Filter>
     </ClCompile>
-    <ClCompile Include="src\RenderTarget.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="src\RenderTexture.cpp">
       <Filter>Source\RenderPipeline</Filter>
     </ClCompile>
@@ -533,9 +530,6 @@
     <ClInclude Include="src\RenderStep.h">
       <Filter>Headers\RenderJobs</Filter>
     </ClInclude>
-    <ClInclude Include="src\RenderTarget.h">
-      <Filter>Headers\RenderPipeline</Filter>
-    </ClInclude>
     <ClInclude Include="src\Graphics.h">
       <Filter>Headers\RenderPipeline</Filter>
     </ClInclude>
@@ -716,6 +710,12 @@
       <Filter>Shaders\TiledLighting</Filter>
     </FxCompile>
     <FxCompile Include="Shaders\ShadowPassPS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Shaders\HiZCreateMip.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Shaders\HiZDepthCopy.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>

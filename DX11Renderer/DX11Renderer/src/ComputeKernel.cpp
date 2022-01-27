@@ -15,7 +15,6 @@ namespace gfx
 
 	void ComputeKernel::Dispatch(Graphics& gfx, const RenderPass& renderPass, UINT threadCountX, UINT threadCountY, UINT threadCountZ)
 	{
-		gfx.GetContext()->CSSetShader(pComputeShader->GetComputeShader().Get(), nullptr, 0);
 		pComputeShader->Dispatch(gfx, threadCountX, threadCountY, threadCountZ);
 	}
 }

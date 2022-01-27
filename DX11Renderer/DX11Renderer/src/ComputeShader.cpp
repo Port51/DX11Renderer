@@ -70,7 +70,10 @@ namespace gfx
 		UINT threadGroupCountY = threadCountY / kernelSizeY;
 		UINT threadGroupCountZ = threadCountZ / kernelSizeZ;
 
-		gfx.GetContext()->Dispatch(threadGroupCountX, threadGroupCountY, threadGroupCountZ);
+		if (threadGroupCountX > 0u && threadGroupCountY > 0u && threadGroupCountZ > 0u)
+		{
+			gfx.GetContext()->Dispatch(threadGroupCountX, threadGroupCountY, threadGroupCountZ);
+		}
 	}
 
 	ComPtr<ID3D11ComputeShader> ComputeShader::GetComputeShader() const

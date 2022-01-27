@@ -63,4 +63,10 @@ namespace gfx
 		dx::XMVECTOR frustumCornerDataVS;
 		dx::XMVECTOR cameraPositionWS;
 	};
+
+	struct alignas(16) HiZCreationCB
+	{
+		dx::XMVECTORU32 resolutionSrcDst;
+		dx::XMVECTOR zBufferParams;
+	};
 }

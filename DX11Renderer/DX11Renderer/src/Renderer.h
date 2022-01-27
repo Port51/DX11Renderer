@@ -14,13 +14,14 @@ namespace gfx
 	class DrawCall;
 	class RenderPass;
 	class DepthStencilTarget;
-	class RenderTarget;
+	class RenderTexture;
 	class ComputeKernel;
 	class Sampler;
 
 	struct GlobalTransformCB;
 	struct PerFrameCB;
 	struct PerCameraCB;
+	struct HiZCreationCB;
 
 	template<typename Type>
 	class ConstantBuffer;
@@ -39,22 +40,25 @@ namespace gfx
 		const std::unique_ptr<RenderPass>& CreateRenderPass(const std::string name, std::unique_ptr<RenderPass> pRenderPass);
 
 	private:
-		std::shared_ptr<DepthStencilTarget> pSmallDepthStencil;
-		std::shared_ptr<RenderTarget> pNormalRoughTarget;
 		std::unordered_map<std::string, std::unique_ptr<RenderPass>> pRenderPasses;
 
-		std::shared_ptr<RenderTarget> pSpecularLighting;
-		std::shared_ptr<RenderTarget> pDiffuseLighting;
+		std::shared_ptr<RenderTexture> pNormalRoughTarget;
+		std::shared_ptr<RenderTexture> pSpecularLighting;
+		std::shared_ptr<RenderTexture> pDiffuseLighting;
+		std::shared_ptr<RenderTexture> pHiZBufferTarget;
 
 		// Debug views
-		std::shared_ptr<RenderTarget> pDebugTiledLightingCS;
+		std::shared_ptr<RenderTexture> pDebugTiledLightingCS;
 
-		std::shared_ptr<RenderTarget> pCameraColor;
+		std::shared_ptr<RenderTexture> pCameraColor;
 
+		std::unique_ptr<ComputeKernel> pHiZDepthCopyKernel;
+		std::unique_ptr<ComputeKernel> pHiZCreateMipKernel;
 		std::unique_ptr<ComputeKernel> pTiledLightingKernel;
 		std::unique_ptr<ConstantBuffer<GlobalTransformCB>> pTransformationCB;
 		std::unique_ptr<ConstantBuffer<PerFrameCB>> pPerFrameCB;
 		std::unique_ptr<ConstantBuffer<PerCameraCB>> pPerCameraCB;
+		std::unique_ptr<ConstantBuffer<HiZCreationCB>> pHiZCreationCB;
 
 		std::shared_ptr<RendererList> pRendererList;
 		std::unique_ptr<RendererList> pVisibleRendererList; // filtered by camera frustum
@@ -64,6 +68,7 @@ namespace gfx
 		const std::string PerCameraPassName = std::string("PerCameraPass");
 		const std::string ShadowPassName = std::string("ShadowPass");
 		const std::string DepthPrepassName = std::string("DepthPrepass");
+		const std::string HiZPassName = std::string("HiZPass");
 		const std::string GBufferRenderPassName = std::string("GBuffer");
 		const std::string TiledLightingPassName = std::string("TiledLighting");
 		const std::string GeometryRenderPassName = std::string("Geometry");

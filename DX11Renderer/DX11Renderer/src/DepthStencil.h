@@ -5,7 +5,7 @@ namespace gfx
 {
 	class DepthStencil
 	{
-		friend class RenderTarget;
+		friend class RenderTexture;
 		friend class Graphics;
 	public:
 		DepthStencil(Graphics& gfx, UINT width, UINT height);
