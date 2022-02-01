@@ -4,6 +4,7 @@
 #include <d3dcompiler.h>
 #include "DepthStencilTarget.h"
 #include <random>
+#include "Config.h"
 
 namespace gfx
 {
@@ -20,8 +21,8 @@ namespace gfx
 		swapChainDesc.BufferDesc.RefreshRate.Denominator = 0;
 		swapChainDesc.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
 		swapChainDesc.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
-		swapChainDesc.SampleDesc.Count = 1; // basically AA
-		swapChainDesc.SampleDesc.Quality = 0;
+		swapChainDesc.SampleDesc.Count = (UINT)Config::MsaaSamples;
+		swapChainDesc.SampleDesc.Quality = (UINT)Config::MsaaQuality;
 		swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 		swapChainDesc.BufferCount = 1; // this gives 1 back buffer and 1 front buffer
 		swapChainDesc.OutputWindow = hWnd;

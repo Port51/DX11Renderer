@@ -28,6 +28,7 @@
 #include "Bindable.h"
 #include "Config.h"
 #include "RasterizerState.h"
+#include "Sampler.h"
 
 namespace gfx
 {
@@ -37,6 +38,8 @@ namespace gfx
 		std::shared_ptr<Texture> pDither = std::dynamic_pointer_cast<Texture>(Texture::Resolve(gfx, "Assets\\Textures\\Dither8x8.png"));
 
 		pVisibleRendererList = std::make_unique<RendererList>(pRendererList);
+
+		pSampler_ClampedBilinear = std::make_shared<Sampler>(gfx, D3D11_FILTER_MIN_MAG_MIP_LINEAR, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP);
 
 		// Setup render targets
 		pNormalRoughTarget = std::make_shared<RenderTexture>(gfx);
@@ -54,6 +57,9 @@ namespace gfx
 		pCameraColor = std::make_shared<RenderTexture>(gfx);
 		pCameraColor->Init(gfx.GetDevice(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
+		pCameraColor2 = std::make_shared<RenderTexture>(gfx);
+		pCameraColor2->Init(gfx.GetDevice(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
+
 		pDebugTiledLightingCS = std::make_shared<RenderTexture>(gfx);
 		pDebugTiledLightingCS->Init(gfx.GetDevice(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
@@ -61,6 +67,8 @@ namespace gfx
 		pTransformationCB = std::make_unique<ConstantBuffer<GlobalTransformCB>>(gfx, D3D11_USAGE_DYNAMIC);
 		pPerCameraCB = std::make_unique<ConstantBuffer<PerCameraCB>>(gfx, D3D11_USAGE_DYNAMIC);
 		pHiZCreationCB = std::make_unique<ConstantBuffer<HiZCreationCB>>(gfx, D3D11_USAGE_DYNAMIC);
+
+		pFXAA_CB = std::make_unique<ConstantBuffer<FXAA_CB>>(gfx, D3D11_USAGE_DYNAMIC);
 
 		// Setup passes
 		CreateRenderPass(PerCameraPassName)->
@@ -87,10 +95,21 @@ namespace gfx
 			->AddBinding(RasterizerState::Resolve(gfx, D3D11_CULL_FRONT)).SetupRSBinding(); // Reduce shadow acne w/ front face culling during shadow pass
 		CreateRenderPass(GBufferRenderPassName)
 			->AddBinding(RasterizerState::Resolve(gfx, D3D11_CULL_BACK)).SetupRSBinding();
-		CreateRenderPass(GeometryRenderPassName);
 		CreateRenderPass(GeometryRenderPassName)->
 			PSSetSRV(0u, pSpecularLighting->GetSRV())
 			.PSSetSRV(1u, pDiffuseLighting->GetSRV());
+		CreateRenderPass(SSRRenderPassName)->
+			CSSetSRV(RenderSlots::CS_GbufferNormalRoughSRV, pNormalRoughTarget->GetSRV())
+			.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, pCameraColor->GetSRV())
+			.CSSetSRV(RenderSlots::CS_FreeSRV + 1u, pHiZBufferTarget->GetSRV())
+			.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, pCameraColor2->GetUAV())
+			//.CSSetCB(RenderSlots::CS_FreeCB + 0u, pFXAA_CB->GetD3DBuffer())
+			.CSSetSPL(RenderSlots::CS_FreeSPL + 0u, pSampler_ClampedBilinear->GetD3DSampler());
+		CreateRenderPass(FXAARenderPassName)->
+			CSSetSRV(RenderSlots::CS_FreeSRV + 0u, pCameraColor2->GetSRV())
+			.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, pCameraColor->GetUAV())
+			.CSSetCB(RenderSlots::CS_FreeCB + 0u, pFXAA_CB->GetD3DBuffer())
+			.CSSetSPL(RenderSlots::CS_FreeSPL + 0u, pSampler_ClampedBilinear->GetD3DSampler());
 
 		CreateRenderPass(FinalBlitRenderPassName,
 			std::move(std::make_unique<FullscreenPass>(gfx, FinalBlitRenderPassName, "Assets\\Built\\Shaders\\BlitPS.cso")));
@@ -131,6 +150,8 @@ namespace gfx
 		pHiZDepthCopyKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, std::string("Assets\\Built\\Shaders\\HiZDepthCopy.cso"), std::string("CSMain")));
 		pHiZCreateMipKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, std::string("Assets\\Built\\Shaders\\HiZCreateMip.cso"), std::string("CSMain")));
 		pTiledLightingKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, std::string("Assets\\Built\\Shaders\\TiledLightingCompute.cso"), std::string("CSMain")));
+		pSSRKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, std::string("Assets\\Built\\Shaders\\SSR.cso"), std::string("CSMain")));
+		pFXAAKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, std::string("Assets\\Built\\Shaders\\FXAA.cso"), std::string("CSMain")));
 	}
 
 	Renderer::~Renderer()
@@ -300,6 +321,26 @@ namespace gfx
 			pass->UnbindSharedResources(gfx);
 		}
 
+		// SSR pass000
+		{
+			const std::unique_ptr<RenderPass>& pass = pRenderPasses[SSRRenderPassName];
+
+			pass->BindSharedResources(gfx);
+			pass->Execute(gfx); // setup binds
+
+			/*FXAA_CB fxaaCB;
+			fxaaCB.minThreshold = 0.1f;
+			fxaaCB.maxThreshold = 2.f;
+			fxaaCB.edgeSharpness = 0.25f;
+			fxaaCB.padding = 0.f;
+			pFXAA_CB->Update(gfx, fxaaCB);*/
+
+			pSSRKernel->Dispatch(gfx, *pass, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1);
+
+			pass->Execute(gfx);
+			pass->UnbindSharedResources(gfx);
+		}
+
 		// Tiled lighting pass
 		{
 			const std::unique_ptr<RenderPass>& pass = pRenderPasses[TiledLightingPassName];
@@ -328,6 +369,51 @@ namespace gfx
 
 			pass->Execute(gfx);
 			pass->UnbindSharedResources(gfx);
+
+			// todo: unbind these in a cleaner way
+			std::vector<ID3D11RenderTargetView*> nullRTVs(1u, nullptr);
+			gfx.GetContext()->OMSetRenderTargets(1, nullRTVs.data(), nullptr);
+		}
+
+		// SSR pass
+		{
+			const std::unique_ptr<RenderPass>& pass = pRenderPasses[SSRRenderPassName];
+
+			pass->BindSharedResources(gfx);
+			pass->Execute(gfx); // setup binds
+
+			/*FXAA_CB fxaaCB;
+			fxaaCB.minThreshold = 0.1f;
+			fxaaCB.maxThreshold = 2.f;
+			fxaaCB.edgeSharpness = 0.25f;
+			fxaaCB.padding = 0.f;
+			pFXAA_CB->Update(gfx, fxaaCB);*/
+
+			pSSRKernel->Dispatch(gfx, *pass, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1);
+
+			pass->Execute(gfx);
+			pass->UnbindSharedResources(gfx);
+		}
+
+		// FXAA pass
+		if (Config::AAType == Config::AAType::FXAA)
+		{
+			const std::unique_ptr<RenderPass>& pass = pRenderPasses[FXAARenderPassName];
+
+			pass->BindSharedResources(gfx);
+			pass->Execute(gfx); // setup binds
+
+			FXAA_CB fxaaCB;
+			fxaaCB.minThreshold = 0.1f;
+			fxaaCB.maxThreshold = 2.f;
+			fxaaCB.edgeSharpness = 0.25f;
+			fxaaCB.padding = 0.f;
+			pFXAA_CB->Update(gfx, fxaaCB);
+
+			pFXAAKernel->Dispatch(gfx, *pass, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1);
+
+			pass->Execute(gfx);
+			pass->UnbindSharedResources(gfx);
 		}
 
 		// Final blit
@@ -342,8 +428,9 @@ namespace gfx
 			DepthStencilState::Resolve(gfx, DepthStencilState::Mode::StencilOff)->BindOM(gfx);
 
 			// Debug view overrides: (do this here so it can be changed dynamically later)
-			//fsPass->SetInputTarget(pCameraColor);
-			fsPass->SetInputTarget(pDebugTiledLightingCS);
+			fsPass->SetInputTarget(pCameraColor);
+			//fsPass->SetInputTarget(pCameraColor2);
+			//fsPass->SetInputTarget(pDebugTiledLightingCS);
 
 			gfx.SetViewport(gfx.GetScreenWidth(), gfx.GetScreenHeight());
 			gfx.GetContext()->OMSetRenderTargets(1u, gfx.pBackBufferView.GetAddressOf(), gfx.pDepthStencil->GetView().Get());

@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "DepthStencil.h"
+#include "Config.h"
 
 namespace gfx
 {
@@ -13,8 +14,8 @@ namespace gfx
 		descDepth.MipLevels = 1u;
 		descDepth.ArraySize = 1u;
 		descDepth.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-		descDepth.SampleDesc.Count = 1u;
-		descDepth.SampleDesc.Quality = 0u;
+		descDepth.SampleDesc.Count = (UINT)Config::MsaaSamples;
+		descDepth.SampleDesc.Quality = (UINT)Config::MsaaQuality;
 		descDepth.Usage = D3D11_USAGE_DEFAULT;
 		descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 		THROW_IF_FAILED(gfx.GetDevice()->CreateTexture2D(&descDepth, nullptr, &pDepthStencil));

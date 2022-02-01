@@ -154,12 +154,12 @@ namespace gfx
 
 	ComPtr<ID3D11ShaderResourceView> LightManager::GetLightDataSRV() const
 	{
-		return pLightData->GetD3DSRV();
+		return pLightData->GetSRV();
 	}
 
 	ComPtr<ID3D11ShaderResourceView> LightManager::GetShadowDataSRV() const
 	{
-		return pLightShadowSB->GetD3DSRV();
+		return pLightShadowSB->GetSRV();
 	}
 
 	void LightManager::DrawImguiControlWindows()

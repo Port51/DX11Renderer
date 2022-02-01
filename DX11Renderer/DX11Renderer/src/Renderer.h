@@ -22,9 +22,12 @@ namespace gfx
 	struct PerFrameCB;
 	struct PerCameraCB;
 	struct HiZCreationCB;
+	struct FXAA_CB;
 
 	template<typename Type>
 	class ConstantBuffer;
+	template<typename Type>
+	class StructuredBuffer;
 
 	class Renderer
 	{
@@ -42,6 +45,8 @@ namespace gfx
 	private:
 		std::unordered_map<std::string, std::unique_ptr<RenderPass>> pRenderPasses;
 
+		std::shared_ptr<Sampler> pSampler_ClampedBilinear;
+
 		std::shared_ptr<RenderTexture> pNormalRoughTarget;
 		std::shared_ptr<RenderTexture> pSpecularLighting;
 		std::shared_ptr<RenderTexture> pDiffuseLighting;
@@ -51,14 +56,18 @@ namespace gfx
 		std::shared_ptr<RenderTexture> pDebugTiledLightingCS;
 
 		std::shared_ptr<RenderTexture> pCameraColor;
+		std::shared_ptr<RenderTexture> pCameraColor2; // used for post-fx
 
 		std::unique_ptr<ComputeKernel> pHiZDepthCopyKernel;
 		std::unique_ptr<ComputeKernel> pHiZCreateMipKernel;
 		std::unique_ptr<ComputeKernel> pTiledLightingKernel;
+		std::unique_ptr<ComputeKernel> pSSRKernel;
+		std::unique_ptr<ComputeKernel> pFXAAKernel;
 		std::unique_ptr<ConstantBuffer<GlobalTransformCB>> pTransformationCB;
 		std::unique_ptr<ConstantBuffer<PerFrameCB>> pPerFrameCB;
 		std::unique_ptr<ConstantBuffer<PerCameraCB>> pPerCameraCB;
 		std::unique_ptr<ConstantBuffer<HiZCreationCB>> pHiZCreationCB;
+		std::unique_ptr<ConstantBuffer<FXAA_CB>> pFXAA_CB;
 
 		std::shared_ptr<RendererList> pRendererList;
 		std::unique_ptr<RendererList> pVisibleRendererList; // filtered by camera frustum
@@ -72,6 +81,8 @@ namespace gfx
 		const std::string GBufferRenderPassName = std::string("GBuffer");
 		const std::string TiledLightingPassName = std::string("TiledLighting");
 		const std::string GeometryRenderPassName = std::string("Geometry");
+		const std::string SSRRenderPassName = std::string("SSR");
+		const std::string FXAARenderPassName = std::string("FXAA");
 		const std::string FinalBlitRenderPassName = std::string("FinalBlit");
 	};
 }

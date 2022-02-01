@@ -16,6 +16,7 @@ namespace gfx
 		static const UINT CS_LightShadowDataSRV = 1u;
 		static const UINT CS_GbufferNormalRoughSRV = 2u;
 		static const UINT CS_FreeSRV = 3u; // 1st available general-purpose slot
+		static const UINT CS_FreeSPL = 0u; // 1st available general-purpose slot
 
 		static const UINT CS_FreeUAV = 0u; // 1st available general-purpose slot
 
@@ -24,6 +25,7 @@ namespace gfx
 		static const UINT VS_PerCameraCB = 2u;
 		static const UINT VS_TransformCB = 3u;
 		static const UINT VS_FreeCB = 4u; // 1st available general-purpose slot
+		static const UINT VS_FreeSPL = 0u; // 1st available general-purpose slot
 
 		static const UINT VS_FreeSRV = 0u; // 1st available general-purpose slot
 
@@ -31,6 +33,7 @@ namespace gfx
 		static const UINT PS_TransformationCB = 1u;
 		static const UINT PS_PerCameraCB = 2u;
 		static const UINT PS_FreeCB = 3u; // 1st available general-purpose slot
+		static const UINT PS_FreeSPL = 0u; // 1st available general-purpose slot
 
 		static const UINT PS_FreeSRV = 2u; // 1st available general-purpose slot
 	};

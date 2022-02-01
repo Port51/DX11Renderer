@@ -146,7 +146,7 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     
 #if defined(USE_AABB_INTERSECTION_TEST)
     // For each side, select depth in order to get min/max of frustum points
-    float4 frustumPointSelection = float4(
+    const float4 frustumPointSelection = float4(
         min(planeNDC.z * tileDepthRange.y, planeNDC.z * tileDepthRange.x),
         max(planeNDC.w * tileDepthRange.y, planeNDC.w * tileDepthRange.x),
         max(planeNDC.x * tileDepthRange.y, planeNDC.x * tileDepthRange.x),
@@ -322,7 +322,6 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
                 
                 // Attenuation
                 float shadowAtten = GetSpotlightShadowAttenuation(shadowData[shadowFaceIdx], positionVS, normalVS, NdotL);
-                //shadowAtten = GetCubeMapFaceID(offsetWS) * 0.2;
                 shadowAtten = saturate(shadowAtten + outOfRange);
                 lightAtten *= shadowAtten;
                 debugAllShadowAtten *= shadowAtten;

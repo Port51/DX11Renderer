@@ -718,5 +718,9 @@
     <FxCompile Include="Shaders\HiZDepthCopy.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="Shaders\FXAA.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Shaders\SSR.hlsl" />
   </ItemGroup>
 </Project>

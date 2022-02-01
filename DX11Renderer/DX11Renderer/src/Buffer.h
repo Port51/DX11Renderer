@@ -26,11 +26,11 @@ namespace gfx
 		{
 			return pBuffer;
 		}
-		ComPtr<ID3D11ShaderResourceView> GetD3DSRV()
+		ComPtr<ID3D11ShaderResourceView> GetSRV()
 		{
 			return pSRV;
 		}
-		ComPtr<ID3D11UnorderedAccessView> GetD3DUAV()
+		ComPtr<ID3D11UnorderedAccessView> GetUAV()
 		{
 			return pUAV;
 		}

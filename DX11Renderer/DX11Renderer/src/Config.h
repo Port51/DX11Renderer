@@ -8,11 +8,21 @@ namespace gfx
 		enum ShadowType
 		{
 			Hard,
-			HardwarePCF,
-			Moment
+			PCF,
+			Moment,
 		};
+		enum AAType
+		{
+			None,
+			FXAA,
+		};
+
 	public:
-		static inline ShadowType ShadowType = ShadowType::Hard;
+		static inline ShadowType ShadowType = ShadowType::PCF;
+		static inline AAType AAType = AAType::FXAA;
+
+		static constexpr int MsaaSamples = 1;
+		static constexpr int MsaaQuality = 0;
 
 		// Each tile represents a shadowmap, which can be a spotlight shadow, cubemap face, or a specific directional cascade
 		static inline int ShadowAtlasResolution = 4096;
@@ -28,5 +38,6 @@ namespace gfx
 		static std::vector<float> ShadowCascadeDistances;
 		// Distance to start cascades in reverse direction of light (increase to receive more shadows from behind the camera)
 		static inline float ShadowCascadeOffset = 20.f;
+
 	};
 }

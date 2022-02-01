@@ -69,4 +69,12 @@ namespace gfx
 		dx::XMVECTORU32 resolutionSrcDst;
 		dx::XMVECTOR zBufferParams;
 	};
+
+	struct alignas(16) FXAA_CB
+	{
+		float minThreshold;
+		float maxThreshold;
+		float edgeSharpness;
+		float padding;
+	};
 }
