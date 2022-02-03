@@ -47,7 +47,7 @@ namespace gfx
 
 		std::shared_ptr<Sampler> pSampler_ClampedBilinear;
 
-		std::shared_ptr<RenderTexture> pNormalRoughTarget;
+		std::shared_ptr<RenderTexture> pNormalRoughReflectivityTarget;
 		std::shared_ptr<RenderTexture> pSpecularLighting;
 		std::shared_ptr<RenderTexture> pDiffuseLighting;
 		std::shared_ptr<RenderTexture> pHiZBufferTarget;

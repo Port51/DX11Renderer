@@ -36,7 +36,7 @@
 // Inputs
 StructuredBuffer<StructuredLight> lights : register(t0);
 StructuredBuffer<StructuredShadow> shadowData : register(t1);
-Texture2D<float4> NormalRoughRT : register(t2);
+Texture2D<float4> NormalRoughReflectivityRT : register(t2);
 Texture2D<float> DepthRT : register(t3);
 Texture2D<float2> HiZBuffer : register(t4);
 Texture2D<float> ShadowAtlas : register(t5);
@@ -231,10 +231,14 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     
     float3 positionWS = mul(_InvViewMatrix, float4(positionVS.xyz, 1.f)).xyz;
     
-    float4 normalRough = NormalRoughRT[tId.xy];
-    float3 normalVS = normalize(normalRough.xyz * 2.f - 1.f);
-    float linearRoughness = normalRough.w;
+    float4 gbufferTex = NormalRoughReflectivityRT[tId.xy];
+    float3 normalVS;
+    normalVS.xy = gbufferTex.xy * 2.f - 1.f;
+    normalVS.z = -sqrt(1.f - dot(normalVS.xy, normalVS.xy)); // positive Z points away from the camera
+    
+    float linearRoughness = gbufferTex.z;
     float roughness = linearRoughness * linearRoughness;
+    float reflectivity = gbufferTex.w;
     
     // f0 = fresnel reflectance at normal incidence
     // f90 = fresnel reflectance at grazing angles (usually 1)
@@ -369,6 +373,7 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
 #elif defined(DEBUG_VIEW_GEOMETRY)
     debugColor = frac(positionVS.z * 3.0);
 #endif
+    debugColor = -normalVS.z;
     
 #if defined(DEBUG_VIEW_SHOW_GRID)
     if (groupThreadId.x == 0 || groupThreadId.y == 0)

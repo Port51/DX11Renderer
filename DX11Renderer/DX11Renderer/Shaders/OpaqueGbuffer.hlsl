@@ -60,6 +60,7 @@ float4 main(v2f i) : SV_Target
     
     // cheap ambient gradient
     float3 ambient = pow(i.normalWS.y * -0.5 + 0.5, 2) * 0.15 * float3(0.75, 0.95, 1.0);
+    float reflectivity = 1.f;
     
-    return float4(i.normalVS * 0.5 + 0.5, roughness);
+    return float4(i.normalVS.xy * 0.5f + 0.5f, roughness, reflectivity);
 }

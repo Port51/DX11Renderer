@@ -42,8 +42,8 @@ namespace gfx
 		pSampler_ClampedBilinear = std::make_shared<Sampler>(gfx, D3D11_FILTER_MIN_MAG_MIP_LINEAR, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP);
 
 		// Setup render targets
-		pNormalRoughTarget = std::make_shared<RenderTexture>(gfx);
-		pNormalRoughTarget->Init(gfx.GetDevice(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
+		pNormalRoughReflectivityTarget = std::make_shared<RenderTexture>(gfx);
+		pNormalRoughReflectivityTarget->Init(gfx.GetDevice(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
 		pHiZBufferTarget = std::make_shared<RenderTexture>(gfx, DXGI_FORMAT_R16G16_FLOAT, 8u);
 		pHiZBufferTarget->Init(gfx.GetDevice(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
@@ -99,7 +99,7 @@ namespace gfx
 			PSSetSRV(0u, pSpecularLighting->GetSRV())
 			.PSSetSRV(1u, pDiffuseLighting->GetSRV());
 		CreateRenderPass(SSRRenderPassName)->
-			CSSetSRV(RenderSlots::CS_GbufferNormalRoughSRV, pNormalRoughTarget->GetSRV())
+			CSSetSRV(RenderSlots::CS_GbufferNormalRoughSRV, pNormalRoughReflectivityTarget->GetSRV())
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, pCameraColor->GetSRV())
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 1u, pHiZBufferTarget->GetSRV())
 			.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, pCameraColor2->GetUAV())
@@ -136,7 +136,7 @@ namespace gfx
 		pShadowSampler = std::make_shared<Sampler>(gfx, shadowSamplerDesc);
 
 		CreateRenderPass(TiledLightingPassName)->
-			CSSetSRV(RenderSlots::CS_GbufferNormalRoughSRV, pNormalRoughTarget->GetSRV())
+			CSSetSRV(RenderSlots::CS_GbufferNormalRoughSRV, pNormalRoughReflectivityTarget->GetSRV())
 			.CSSetSRV(RenderSlots::CS_FreeSRV, gfx.pDepthStencil->GetSRV())
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 1u, pHiZBufferTarget->GetSRV())
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 2u, nullptr) // reserve this slot for shadow atlas!
@@ -301,15 +301,15 @@ namespace gfx
 			pass->UnbindSharedResources(gfx);
 		}
 
-		// Normal-rough pass
+		// Normal-rough-reflectivity pass
 		{
 			const std::unique_ptr<RenderPass>& pass = pRenderPasses[GBufferRenderPassName];
 
 			pass->BindSharedResources(gfx);
 			DepthStencilState::Resolve(gfx, DepthStencilState::Mode::Gbuffer)->BindOM(gfx);
-			pNormalRoughTarget->ClearRenderTarget(gfx.GetContext().Get(), 1.f, 0.f, 0.f, 1.f);
+			pNormalRoughReflectivityTarget->ClearRenderTarget(gfx.GetContext().Get(), 1.f, 0.f, 0.f, 1.f);
 
-			gfx.GetContext()->OMSetRenderTargets(1, pNormalRoughTarget->GetView().GetAddressOf(), gfx.pDepthStencil->GetView().Get());
+			gfx.GetContext()->OMSetRenderTargets(1, pNormalRoughReflectivityTarget->GetView().GetAddressOf(), gfx.pDepthStencil->GetView().Get());
 			gfx.SetViewport(gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
 			pass->Execute(gfx);
@@ -318,26 +318,6 @@ namespace gfx
 			std::vector<ID3D11RenderTargetView*> nullRTVs(1u, nullptr);
 			gfx.GetContext()->OMSetRenderTargets(1u, nullRTVs.data(), nullptr);
 
-			pass->UnbindSharedResources(gfx);
-		}
-
-		// SSR pass000
-		{
-			const std::unique_ptr<RenderPass>& pass = pRenderPasses[SSRRenderPassName];
-
-			pass->BindSharedResources(gfx);
-			pass->Execute(gfx); // setup binds
-
-			/*FXAA_CB fxaaCB;
-			fxaaCB.minThreshold = 0.1f;
-			fxaaCB.maxThreshold = 2.f;
-			fxaaCB.edgeSharpness = 0.25f;
-			fxaaCB.padding = 0.f;
-			pFXAA_CB->Update(gfx, fxaaCB);*/
-
-			pSSRKernel->Dispatch(gfx, *pass, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1);
-
-			pass->Execute(gfx);
 			pass->UnbindSharedResources(gfx);
 		}
 
