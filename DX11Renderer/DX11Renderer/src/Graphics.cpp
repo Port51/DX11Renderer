@@ -16,7 +16,7 @@ namespace gfx
 		DXGI_SWAP_CHAIN_DESC swapChainDesc = {};
 		swapChainDesc.BufferDesc.Width = 0; // use window size
 		swapChainDesc.BufferDesc.Height = 0;
-		swapChainDesc.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+		swapChainDesc.BufferDesc.Format = Config::LinearLighting ? DXGI_FORMAT_B8G8R8A8_UNORM_SRGB : DXGI_FORMAT_B8G8R8A8_UNORM;
 		swapChainDesc.BufferDesc.RefreshRate.Numerator = 0; // use whatever's there already
 		swapChainDesc.BufferDesc.RefreshRate.Denominator = 0;
 		swapChainDesc.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;

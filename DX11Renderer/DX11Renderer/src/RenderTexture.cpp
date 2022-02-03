@@ -3,14 +3,6 @@
 #include <assert.h>
 #include "Graphics.h"
 
-// Dev notes:
-// - One-line pathway for Texture loaded from file with dimensions, generated mipmaps/no mips. Always has SRV.
-// - RT requires Init()
-	// Common options:
-		// - FORMAT, no mips, bind flags
-		// - All descriptions done manually
-	// - Add Viewport
-
 namespace gfx
 {
 	RenderTexture::RenderTexture(Graphics& gfx)

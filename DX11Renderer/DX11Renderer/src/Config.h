@@ -18,6 +18,8 @@ namespace gfx
 		};
 
 	public:
+		static constexpr bool LinearLighting = true;
+
 		static inline ShadowType ShadowType = ShadowType::PCF;
 		static inline AAType AAType = AAType::FXAA;
 
