@@ -2,6 +2,7 @@
 #include "PointLight.h"
 #include "MeshRenderer.h"
 #include "ModelInstance.h"
+#include "ModelAsset.h"
 #include "LightData.h"
 #include "Camera.h"
 #include "DepthStencilTarget.h"
@@ -34,13 +35,13 @@ namespace gfx
 		dx::XMVectorSet(1, 0, 0, 0),
 	};
 
-	PointLight::PointLight(Graphics& gfx, UINT index, dx::XMFLOAT3 positionWS, dx::XMFLOAT3 color, float intensity, float sphereRad, float range)
-		: Light(gfx, index, positionWS, color, intensity),
+	PointLight::PointLight(Graphics& gfx, UINT index, bool allowUserControl, bool hasShadow, std::shared_ptr<ModelAsset> const& pModelAsset, dx::XMFLOAT3 positionWS, dx::XMFLOAT3 color, float intensity, float sphereRad, float range)
+		: Light(gfx, index, allowUserControl, pModelAsset, positionWS, color, intensity),
 		sphereRad(sphereRad),
 		range(range)
 	{
 		// todo: set shadow via settings
-		shadowSettings.hasShadow = true;
+		shadowSettings.hasShadow = hasShadow;
 
 		if (shadowSettings.hasShadow)
 		{
@@ -50,6 +51,9 @@ namespace gfx
 
 	void PointLight::DrawImguiControlWindow()
 	{
+		if (!allowUserControl)
+			return;
+
 		const auto identifier = std::string("Light") + std::to_string(index);
 		if (ImGui::Begin(identifier.c_str()))
 		{

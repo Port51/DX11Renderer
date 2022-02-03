@@ -12,7 +12,7 @@
 
 namespace gfx
 {
-	ModelInstance::ModelInstance(Graphics& gfx, std::unique_ptr<ModelAsset> const& pModelAsset, dx::XMMATRIX transform)
+	ModelInstance::ModelInstance(Graphics& gfx, std::shared_ptr<ModelAsset> const& pModelAsset, dx::XMMATRIX transform)
 		: transform(transform) // todo: set position
 	{
 		pMaterials.reserve(pModelAsset->materialPaths.size());

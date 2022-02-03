@@ -48,6 +48,8 @@ namespace gfx
 		ComPtr<ID3D11ShaderResourceView> GetLightDataSRV() const;
 		ComPtr<ID3D11ShaderResourceView> GetShadowDataSRV() const;
 		void DrawImguiControlWindows();
+		UINT GetLightCount() const;
+		std::shared_ptr<Light> GetLight(UINT index) const;
 	private:
 		bool FrustumSphereIntersection(dx::XMVECTOR lightSphere, dx::XMFLOAT4 frustumCorners, float farClipPlane);
 		bool AABBSphereIntersection(const LightData& lightData, dx::XMVECTOR aabbCenter, dx::XMVECTOR aabbExtents);

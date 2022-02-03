@@ -26,7 +26,7 @@ namespace gfx
 	class ModelInstance
 	{
 	public:
-		ModelInstance(Graphics& gfx, std::unique_ptr<ModelAsset> const& pModelAsset, dx::XMMATRIX transform);
+		ModelInstance(Graphics& gfx, std::shared_ptr<ModelAsset> const& pModelAsset, dx::XMMATRIX transform);
 		virtual ~ModelInstance() = default;
 	public:
 		void SubmitDrawCalls(const DrawContext& drawContext) const;

@@ -428,9 +428,9 @@ namespace gfx
 			DepthStencilState::Resolve(gfx, DepthStencilState::Mode::StencilOff)->BindOM(gfx);
 
 			// Debug view overrides: (do this here so it can be changed dynamically later)
-			fsPass->SetInputTarget(pCameraColor);
+			//fsPass->SetInputTarget(pCameraColor);
 			//fsPass->SetInputTarget(pCameraColor2);
-			//fsPass->SetInputTarget(pDebugTiledLightingCS);
+			fsPass->SetInputTarget(pDebugTiledLightingCS);
 
 			gfx.SetViewport(gfx.GetScreenWidth(), gfx.GetScreenHeight());
 			gfx.GetContext()->OMSetRenderTargets(1u, gfx.pBackBufferView.GetAddressOf(), gfx.pDepthStencil->GetView().Get());

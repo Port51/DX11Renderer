@@ -3,6 +3,7 @@
 #include "DX11Include.h"
 #include "MeshRenderer.h"
 #include "ModelInstance.h"
+#include "ModelAsset.h"
 #include "LightData.h"
 #include "Camera.h"
 #include "DepthStencilTarget.h"
@@ -20,15 +21,15 @@
 
 namespace gfx
 {
-	DirectionalLight::DirectionalLight(Graphics& gfx, UINT index, float pan, float tilt, dx::XMFLOAT3 color, float intensity, float sphereRad, float range)
-		: Light(gfx, index, dx::XMFLOAT3(0.f, 0.f, 0.f), color, intensity),
+	DirectionalLight::DirectionalLight(Graphics& gfx, UINT index, bool allowUserControl, bool hasShadow, std::shared_ptr<ModelAsset> const& pModelAsset, float pan, float tilt, dx::XMFLOAT3 color, float intensity, float sphereRad, float range)
+		: Light(gfx, index, allowUserControl, pModelAsset, dx::XMFLOAT3(0.f, 0.f, 0.f), color, intensity),
 		pan(pan),
 		tilt(tilt),
 		sphereRad(sphereRad),
 		range(range)
 	{
 		// todo: set shadow via settings
-		shadowSettings.hasShadow = true;
+		shadowSettings.hasShadow = hasShadow;
 
 		if (shadowSettings.hasShadow)
 		{
@@ -39,6 +40,9 @@ namespace gfx
 
 	void DirectionalLight::DrawImguiControlWindow()
 	{
+		if (!allowUserControl)
+			return;
+
 		const auto identifier = std::string("Light") + std::to_string(index);
 		if (ImGui::Begin(identifier.c_str()))
 		{

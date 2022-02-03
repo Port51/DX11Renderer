@@ -39,7 +39,7 @@ namespace gfx
 			FlatShaded,
 		};
 
-		static std::unique_ptr<ModelAsset> LoadFBX(Graphics& gfx, const char* filename, FBXNormalsMode normalsMode, bool triangulate = true)
+		static std::shared_ptr<ModelAsset> LoadFBX(Graphics& gfx, const char* filename, FBXNormalsMode normalsMode, bool triangulate = true)
 		{
 			// todo: load model asset instead, which contains an FBX path
 
@@ -63,8 +63,6 @@ namespace gfx
 				}
 			}
 			parser.Dispose();
-
-			std::unique_ptr<ModelAsset> pOutputModel;
 
 			// Init memory manager if needed
 			if (fbxSdkManager == nullptr)
@@ -95,7 +93,7 @@ namespace gfx
 					{
 						std::vector<std::string> materials;
 						auto pSceneGraph = UnpackFbxSceneGraph(gfx, pFbxRootNode, normalsMode, materialSources);
-						auto pModelAsset = std::make_unique<ModelAsset>(std::move(pSceneGraph), std::move(materialSources.materialPaths));
+						auto pModelAsset = std::make_shared<ModelAsset>(std::move(pSceneGraph), std::move(materialSources.materialPaths));
 
 						return std::move(pModelAsset);
 					}

@@ -2,20 +2,24 @@
 #include "Light.h"
 #include "FBXImporter.h"
 #include "ModelInstance.h"
+#include "ModelAsset.h"
 #include "ConstantBuffer.h"
 #include "Graphics.h"
 #include "Config.h"
 
 namespace gfx
 {
-	Light::Light(Graphics & gfx, UINT index, dx::XMFLOAT3 positionWS, dx::XMFLOAT3 color, float intensity)
+	Light::Light(Graphics & gfx, UINT index, bool allowUserControl, std::shared_ptr<ModelAsset> const& pModelAsset, dx::XMFLOAT3 positionWS, dx::XMFLOAT3 color, float intensity)
 		: index(index),
+		allowUserControl(allowUserControl),
 		positionWS(positionWS),
 		color(color),
 		intensity(intensity)
 	{
-		auto pModelAsset = FBXImporter::LoadFBX(gfx, "Assets\\Models\\DefaultSphere.asset", FBXImporter::FBXNormalsMode::Import, false);
-		pModel = std::make_unique<ModelInstance>(gfx, pModelAsset, dx::XMMatrixIdentity());
+		if (pModelAsset != nullptr)
+		{
+			pModel = std::make_unique<ModelInstance>(gfx, pModelAsset, dx::XMMatrixIdentity());
+		}
 	}
 
 	Light::~Light()
@@ -29,6 +33,16 @@ namespace gfx
 	void Light::SetCurrentShadowIdx(int _shadowMapIdx)
 	{
 		shadowAtlasTileIdx = _shadowMapIdx;
+	}
+
+	dx::XMFLOAT3 Light::GetPositionWS() const
+	{
+		return positionWS;
+	}
+
+	void Light::SetPositionWS(dx::XMVECTOR _positionWS)
+	{
+		dx::XMStoreFloat3(&positionWS, _positionWS);
 	}
 
 	bool Light::HasShadow() const
@@ -55,5 +69,9 @@ namespace gfx
 		shadowMatrix = shadowMatrix
 			* dx::XMMatrixScaling(scale, -scale, 1.f)
 			* dx::XMMatrixTranslation(offsetX, offsetY, 0.f);
+	}
+	bool Light::AllowUserControl() const
+	{
+		return allowUserControl;
 	}
 }

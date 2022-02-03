@@ -1,10 +1,11 @@
 #pragma once
+#include "CodexElement.h"
 #include "SceneGraphNode.h"
 #include "MeshAsset.h"
 
 namespace gfx
 {
-	class ModelAsset
+	class ModelAsset : CodexElement
 	{
 		friend class ModelInstance;
 	public:

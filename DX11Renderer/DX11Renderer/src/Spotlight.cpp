@@ -2,6 +2,7 @@
 #include "Spotlight.h"
 #include "MeshRenderer.h"
 #include "ModelInstance.h"
+#include "ModelAsset.h"
 #include "LightData.h"
 #include "Camera.h"
 #include "DepthStencilTarget.h"
@@ -17,21 +18,27 @@
 
 namespace gfx
 {
-	Spotlight::Spotlight(Graphics& gfx, UINT index, dx::XMFLOAT3 positionWS, float pan, float tilt, dx::XMFLOAT3 color, float intensity, float sphereRad, float range)
-		: Light(gfx, index, positionWS, color, intensity),
+	Spotlight::Spotlight(Graphics& gfx, UINT index, bool allowUserControl, bool hasShadow, std::shared_ptr<ModelAsset> const& pModelAsset, dx::XMFLOAT3 positionWS, float pan, float tilt, dx::XMFLOAT3 color, float intensity, float sphereRad, float range)
+		: Light(gfx, index, allowUserControl, pModelAsset, positionWS, color, intensity),
 		pan(pan),
 		tilt(tilt),
 		sphereRad(sphereRad),
 		range(range)
 	{
 		// todo: set shadow via settings
-		shadowSettings.hasShadow = true;
+		shadowSettings.hasShadow = hasShadow;
 
-		pShadowPassCB = std::make_unique<ConstantBuffer<ShadowPassCB>>(gfx, D3D11_USAGE_DYNAMIC);
+		if (shadowSettings.hasShadow)
+		{
+			pShadowPassCB = std::make_unique<ConstantBuffer<ShadowPassCB>>(gfx, D3D11_USAGE_DYNAMIC);
+		}
 	}
 
 	void Spotlight::DrawImguiControlWindow()
 	{
+		if (!allowUserControl)
+			return;
+
 		const auto identifier = std::string("Light") + std::to_string(index);
 		if (ImGui::Begin(identifier.c_str()))
 		{

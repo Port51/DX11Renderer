@@ -15,24 +15,36 @@
 #include "ModelInstance.h"
 #include "LightShadowData.h"
 #include "DepthStencilTarget.h"
+#include "FBXImporter.h"
 #include "Config.h"
 
 namespace gfx
 {
 	LightManager::LightManager(Graphics & gfx, std::shared_ptr<RendererList> pRendererList)
 	{
+		auto pLightModelAsset = FBXImporter::LoadFBX(gfx, "Assets\\Models\\DefaultSphere.asset", FBXImporter::FBXNormalsMode::Import, false);
+
 		pLightData = std::make_unique<StructuredBuffer<LightData>>(gfx, D3D11_USAGE_DYNAMIC, D3D11_BIND_SHADER_RESOURCE, MaxLightCount);
 		cachedLightData.resize(MaxLightCount);
 
 		UINT lightIdx = 0u;
-		pLights.emplace_back(std::make_shared<PointLight>(gfx, lightIdx++, dx::XMFLOAT3(0.f, 2.f, 0.f), dx::XMFLOAT3(1.f, 1.f, 1.f), 3.f, 3.f, 5.f));
+		pLights.emplace_back(std::make_shared<PointLight>(gfx, lightIdx++, true, true, pLightModelAsset, dx::XMFLOAT3(0.f, 2.f, 0.f), dx::XMFLOAT3(1.f, 1.f, 1.f), 3.f, 3.f, 5.f));
 
 		// Alignment bug:
-		//pLights.emplace_back(std::make_shared<Spotlight>(gfx, lightIdx++, dx::XMFLOAT3(8.5f, 1.5f, -2.0f), 0.0f, 0.0f, dx::XMFLOAT3(1.0f, 1.0f, 1.0f), 3.0f, 50.f, 50.f));
-		//pMainLight = std::make_shared<DirectionalLight>(gfx, lightIdx++, 30.f, 30.f, dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 50.0f, 5.0f);
+		//pLights.emplace_back(std::make_shared<Spotlight>(gfx, lightIdx++, true, true, pLightModelAsset, dx::XMFLOAT3(8.5f, 1.5f, -2.0f), 0.0f, 0.0f, dx::XMFLOAT3(1.0f, 1.0f, 1.0f), 3.0f, 50.f, 50.f));
+		//pMainLight = std::make_shared<DirectionalLight>(gfx, lightIdx++, true, true, pLightModelAsset, 30.f, 30.f, dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 50.0f, 5.0f);
 		//pLights.emplace_back(pMainLight);
 
 		pLightInputCB = std::make_unique<ConstantBuffer<LightInputCB>>(gfx, D3D11_USAGE_DYNAMIC);
+
+		// Create grid of lights
+		for (int x = -3; x <= 3; ++x)
+		{
+			for (int y = -3; y <= 3; ++y)
+			{
+				pLights.emplace_back(std::make_shared<PointLight>(gfx, lightIdx++, false, false, pLightModelAsset, dx::XMFLOAT3(x * 2.f, 1.5f, y * 2.f), dx::XMFLOAT3(1.f, 1.f, 1.f), 3.f, 3.f, 5.f));
+			}
+		}
 
 		/*int shadowLightCt = 0;
 		for (const auto& l : pLights)
@@ -168,6 +180,16 @@ namespace gfx
 		{
 			l->DrawImguiControlWindow();
 		}
+	}
+
+	UINT LightManager::GetLightCount() const
+	{
+		return pLights.size();
+	}
+
+	std::shared_ptr<Light> LightManager::GetLight(UINT index) const
+	{
+		return pLights[index];
 	}
 
 	bool LightManager::FrustumSphereIntersection(dx::XMVECTOR lightSphere, dx::XMFLOAT4 frustumCorners, float farClipPlane)

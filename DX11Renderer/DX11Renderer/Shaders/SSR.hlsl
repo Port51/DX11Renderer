@@ -39,15 +39,19 @@ void CSMain(uint3 tId : SV_DispatchThreadID)
     float3 reflectColor = 0;
     float3 uv = float3(screenUV, linearDepth);
     float3 dir = float3(reflectDirVS.xy / _FrustumCornerDataVS.xy * 0.5f, reflectDirVS.z); // mix of UV space and VS
+    float2 halfSignDir = sign(dir.xy) * 0.5f;
     uint iter = 0u;
     while (iter < 50u)
     {
         // Get position inside tile
         float2 pixelXY = uv.xy * _ScreenParams.xy;
+        float2 tileSize = mip;
         uint2 tile = (uint2)floor(pixelXY) >> mip;
         
         // Find intersection pt of next tile
-        float3 tileIntersection = uv + dir;
+        float2 planes = (tile + 0.5f) * tileSize + tileSize * halfSignDir;
+        float2 solutions = (planes - uv.xy) / dir.xy;
+        float3 tileIntersection = uv + dir * min(solutions.x, solutions.y);
         
         // Get my depth range (current depth and intersection depth)
         float2 rayDepthRange = float2(min(uv.z, tileIntersection.z), max(uv.z, tileIntersection.z));

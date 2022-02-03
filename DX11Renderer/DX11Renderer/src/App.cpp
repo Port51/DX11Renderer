@@ -11,6 +11,7 @@
 #include "VertexShader.h"
 #include "Sampler.h"
 #include "LightManager.h"
+#include "Light.h"
 #include "Renderer.h"
 
 namespace gfx
@@ -144,6 +145,25 @@ namespace gfx
 	void App::DoFrame()
 	{
 		auto dt = pTimer->Mark() * simulationSpeed;
+
+		// Run lights
+		{
+			UINT ct = pLightManager->GetLightCount();
+			for (UINT i = 0u; i < ct; ++i)
+			{
+				const auto light = pLightManager->GetLight(i);
+				if (!light->AllowUserControl())
+				{
+					auto positionWS = dx::XMLoadFloat3(&light->GetPositionWS());
+					float theta = i * 0.52738f;
+					float speed = 0.5f * dt;
+					auto velWS = dx::XMVectorSet(std::sin(theta) * speed, 0.f, std::cos(theta) * speed, 0.f);
+					positionWS = dx::XMVectorAdd(positionWS, velWS);
+
+					light->SetPositionWS(positionWS);
+				}
+			}
+		}
 
 		pWindow->Gfx().BeginFrame();
 
