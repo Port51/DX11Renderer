@@ -23,6 +23,8 @@ namespace gfx
 	struct PerCameraCB;
 	struct HiZCreationCB;
 	struct FXAA_CB;
+	struct SSR_CB;
+	struct DitherCB;
 
 	template<typename Type>
 	class ConstantBuffer;
@@ -63,11 +65,14 @@ namespace gfx
 		std::unique_ptr<ComputeKernel> pTiledLightingKernel;
 		std::unique_ptr<ComputeKernel> pSSRKernel;
 		std::unique_ptr<ComputeKernel> pFXAAKernel;
+		std::unique_ptr<ComputeKernel> pDitherKernel;
 		std::unique_ptr<ConstantBuffer<GlobalTransformCB>> pTransformationCB;
 		std::unique_ptr<ConstantBuffer<PerFrameCB>> pPerFrameCB;
 		std::unique_ptr<ConstantBuffer<PerCameraCB>> pPerCameraCB;
 		std::unique_ptr<ConstantBuffer<HiZCreationCB>> pHiZCreationCB;
 		std::unique_ptr<ConstantBuffer<FXAA_CB>> pFXAA_CB;
+		std::unique_ptr<ConstantBuffer<SSR_CB>> pSSR_CB;
+		std::unique_ptr<ConstantBuffer<DitherCB>> pDitherCB;
 
 		std::shared_ptr<RendererList> pRendererList;
 		std::unique_ptr<RendererList> pVisibleRendererList; // filtered by camera frustum
@@ -83,6 +88,7 @@ namespace gfx
 		const std::string GeometryRenderPassName = std::string("Geometry");
 		const std::string SSRRenderPassName = std::string("SSR");
 		const std::string FXAARenderPassName = std::string("FXAA");
+		const std::string DitherRenderPassName = std::string("Dither");
 		const std::string FinalBlitRenderPassName = std::string("FinalBlit");
 	};
 }

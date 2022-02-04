@@ -69,6 +69,8 @@ namespace gfx
 		pHiZCreationCB = std::make_unique<ConstantBuffer<HiZCreationCB>>(gfx, D3D11_USAGE_DYNAMIC);
 
 		pFXAA_CB = std::make_unique<ConstantBuffer<FXAA_CB>>(gfx, D3D11_USAGE_DYNAMIC);
+		pSSR_CB = std::make_unique<ConstantBuffer<SSR_CB>>(gfx, D3D11_USAGE_DYNAMIC);
+		pDitherCB = std::make_unique<ConstantBuffer<DitherCB>>(gfx, D3D11_USAGE_DYNAMIC);
 
 		// Setup passes
 		CreateRenderPass(PerCameraPassName)->
@@ -103,13 +105,18 @@ namespace gfx
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, pCameraColor->GetSRV())
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 1u, pHiZBufferTarget->GetSRV())
 			.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, pCameraColor2->GetUAV())
-			//.CSSetCB(RenderSlots::CS_FreeCB + 0u, pFXAA_CB->GetD3DBuffer())
+			.CSSetCB(RenderSlots::CS_FreeCB + 0u, pSSR_CB->GetD3DBuffer())
 			.CSSetSPL(RenderSlots::CS_FreeSPL + 0u, pSampler_ClampedBilinear->GetD3DSampler());
 		CreateRenderPass(FXAARenderPassName)->
 			CSSetSRV(RenderSlots::CS_FreeSRV + 0u, pCameraColor2->GetSRV())
 			.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, pCameraColor->GetUAV())
 			.CSSetCB(RenderSlots::CS_FreeCB + 0u, pFXAA_CB->GetD3DBuffer())
 			.CSSetSPL(RenderSlots::CS_FreeSPL + 0u, pSampler_ClampedBilinear->GetD3DSampler());
+		CreateRenderPass(DitherRenderPassName)->
+			CSSetSRV(RenderSlots::CS_FreeSRV + 0u, pCameraColor->GetSRV())
+			.CSSetSRV(RenderSlots::CS_FreeSRV + 1u, pDither->GetSRV())
+			.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, pCameraColor2->GetUAV())
+			.CSSetCB(RenderSlots::CS_FreeCB + 0u, pDitherCB->GetD3DBuffer());
 
 		CreateRenderPass(FinalBlitRenderPassName,
 			std::move(std::make_unique<FullscreenPass>(gfx, FinalBlitRenderPassName, "Assets\\Built\\Shaders\\BlitPS.cso")));
@@ -152,6 +159,7 @@ namespace gfx
 		pTiledLightingKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, std::string("Assets\\Built\\Shaders\\TiledLightingCompute.cso"), std::string("CSMain")));
 		pSSRKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, std::string("Assets\\Built\\Shaders\\SSR.cso"), std::string("CSMain")));
 		pFXAAKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, std::string("Assets\\Built\\Shaders\\FXAA.cso"), std::string("CSMain")));
+		pDitherKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, std::string("Assets\\Built\\Shaders\\Dither.cso"), std::string("CSMain")));
 	}
 
 	Renderer::~Renderer()
@@ -167,6 +175,8 @@ namespace gfx
 	void Renderer::Execute(Graphics & gfx, const std::unique_ptr<Camera>& cam, const std::unique_ptr<LightManager>& pLightManager)
 	{
 		gfx.GetContext()->ClearState();
+		static int frameCt = 0;
+		frameCt++;
 
 		/*
 		pLightManager->CullLights(gfx, cam);
@@ -362,12 +372,9 @@ namespace gfx
 			pass->BindSharedResources(gfx);
 			pass->Execute(gfx); // setup binds
 
-			/*FXAA_CB fxaaCB;
-			fxaaCB.minThreshold = 0.1f;
-			fxaaCB.maxThreshold = 2.f;
-			fxaaCB.edgeSharpness = 0.25f;
-			fxaaCB.padding = 0.f;
-			pFXAA_CB->Update(gfx, fxaaCB);*/
+			SSR_CB ssrCB;
+			ssrCB.debugViewStep = (frameCt / 30u) % 50u;
+			pSSR_CB->Update(gfx, ssrCB);
 
 			pSSRKernel->Dispatch(gfx, *pass, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1);
 
@@ -396,6 +403,24 @@ namespace gfx
 			pass->UnbindSharedResources(gfx);
 		}
 
+		// Dither pass
+		{
+			const std::unique_ptr<RenderPass>& pass = pRenderPasses[DitherRenderPassName];
+
+			pass->BindSharedResources(gfx);
+			pass->Execute(gfx); // setup binds
+
+			DitherCB ditherCB;
+			ditherCB.shadowDither = 0.15f;
+			ditherCB.midDither = 0.04f;
+			pDitherCB->Update(gfx, ditherCB);
+
+			pDitherKernel->Dispatch(gfx, *pass, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1);
+
+			pass->Execute(gfx);
+			pass->UnbindSharedResources(gfx);
+		}
+
 		// Final blit
 		{
 			const std::unique_ptr<RenderPass>& pass = pRenderPasses[FinalBlitRenderPassName];
@@ -409,8 +434,8 @@ namespace gfx
 
 			// Debug view overrides: (do this here so it can be changed dynamically later)
 			//fsPass->SetInputTarget(pCameraColor);
-			//fsPass->SetInputTarget(pCameraColor2);
-			fsPass->SetInputTarget(pDebugTiledLightingCS);
+			fsPass->SetInputTarget(pCameraColor2);
+			//fsPass->SetInputTarget(pDebugTiledLightingCS);
 
 			gfx.SetViewport(gfx.GetScreenWidth(), gfx.GetScreenHeight());
 			gfx.GetContext()->OMSetRenderTargets(1u, gfx.pBackBufferView.GetAddressOf(), gfx.pDepthStencil->GetView().Get());

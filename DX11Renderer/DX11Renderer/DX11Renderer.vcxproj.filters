@@ -682,9 +682,6 @@
     <FxCompile Include="Shaders\PhongVS.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="FullscreenVS.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
     <FxCompile Include="Shaders\BlitPS.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
@@ -721,6 +718,14 @@
     <FxCompile Include="Shaders\FXAA.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="Shaders\SSR.hlsl" />
+    <FxCompile Include="Shaders\FullscreenVS.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Shaders\Dither.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Shaders\SSR.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>
