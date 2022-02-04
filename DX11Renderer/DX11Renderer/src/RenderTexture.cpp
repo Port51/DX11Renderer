@@ -8,14 +8,18 @@ namespace gfx
 	RenderTexture::RenderTexture(Graphics& gfx)
 		: Texture::Texture(gfx)
 	{
-		format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		format = DXGI_FORMAT_R16G16B16A16_FLOAT;
+		//format = DXGI_FORMAT_R16G16B16A16_UNORM;
+		//format = DXGI_FORMAT_R8G8B8A8_UNORM;
 		mipCount = 1u;
 	}
 
 	RenderTexture::RenderTexture(Graphics & gfx, UINT _mipCount)
 		: Texture::Texture(gfx)
 	{
-		format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		format = DXGI_FORMAT_R16G16B16A16_FLOAT;
+		//format = DXGI_FORMAT_R16G16B16A16_UNORM;
+		//format = DXGI_FORMAT_R8G8B8A8_UNORM;
 		mipCount = _mipCount;
 	}
 

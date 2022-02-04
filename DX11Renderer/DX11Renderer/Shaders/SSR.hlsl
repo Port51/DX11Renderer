@@ -1,6 +1,8 @@
 #include "./CbufCommon.hlsli"
 
 #define MAX_MIP 7u
+#define DEBUG_TRACE_START_X 500u
+#define DEBUG_TRACE_START_Y 550u
 
 Texture2D<float4> NormalRoughRT : register(t2);
 Texture2D<float4> CameraColorIn : register(t3);
@@ -8,11 +10,23 @@ Texture2D<float2> HiZBuffer : register(t4);
 
 RWTexture2D<float4> CameraColorOut : register(u0);
 
+cbuffer SSR_CB : register(b4)
+{
+    uint _DebugViewStep;
+    uint3 padding;
+};
+
 [numthreads(16, 16, 1)]
 void CSMain(uint3 tId : SV_DispatchThreadID)
 {
     if (tId.x >= (uint) _ScreenParams.x || tId.y >= (uint) _ScreenParams.y)
         return;
+    
+    //
+    // Setup debug views
+    //
+    bool isDebugTrace = (tId.x == DEBUG_TRACE_START_X && tId.y == DEBUG_TRACE_START_Y);
+    uint2 debugTraceId = 0;
     
     //
     // Get surface info
@@ -43,6 +57,12 @@ void CSMain(uint3 tId : SV_DispatchThreadID)
     uint iter = 0u;
     while (iter < 50u)
     {
+        uint2 ptId = uv.xy * _ScreenParams.xy;
+        if (iter == _DebugViewStep)
+        {
+            debugTraceId = ptId;
+        }
+        
         // Get position inside tile
         float2 pixelXY = uv.xy * _ScreenParams.xy;
         float2 tileSize = mip;
@@ -89,6 +109,28 @@ void CSMain(uint3 tId : SV_DispatchThreadID)
     //reflectColor = abs(reflectDirVS.z);
     //reflectColor = -normalVS.z;
     //reflectColor = dir.x;
+    
+    reflectColor = colorIn;
+    //reflectColor = (float)_DebugViewStep / 50;
+    
+    //
+    // Debug views!
+    //
+    if (isDebugTrace)
+    {
+        // Show start point
+        reflectColor = float4(1, 1, 0, 0);
+        
+        // Show current point
+        if (all(tId.xy == debugTraceId.xy))
+        {
+            reflectColor = float4(0, 1, 0, 0);
+        }
+        else if (any(tId.xy == debugTraceId.xy))
+        {
+            reflectColor = lerp(reflectColor, float4(0, 1, 0, 0), 0.5f);
+        }
+    }
     
     CameraColorOut[tId.xy] = float4(reflectColor, colorIn.a);
     
