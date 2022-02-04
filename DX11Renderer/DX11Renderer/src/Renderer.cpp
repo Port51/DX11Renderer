@@ -117,6 +117,10 @@ namespace gfx
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 1u, pDither->GetSRV())
 			.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, pCameraColor2->GetUAV())
 			.CSSetCB(RenderSlots::CS_FreeCB + 0u, pDitherCB->GetD3DBuffer());
+		CreateRenderPass(TonemappingRenderPassName)->
+			CSSetSRV(RenderSlots::CS_FreeSRV + 0u, pCameraColor2->GetSRV())
+			.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, pCameraColor->GetUAV());
+			//.CSSetCB(RenderSlots::CS_FreeCB + 0u, pDitherCB->GetD3DBuffer());
 
 		CreateRenderPass(FinalBlitRenderPassName,
 			std::move(std::make_unique<FullscreenPass>(gfx, FinalBlitRenderPassName, "Assets\\Built\\Shaders\\BlitPS.cso")));
@@ -160,6 +164,7 @@ namespace gfx
 		pSSRKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, std::string("Assets\\Built\\Shaders\\SSR.cso"), std::string("CSMain")));
 		pFXAAKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, std::string("Assets\\Built\\Shaders\\FXAA.cso"), std::string("CSMain")));
 		pDitherKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, std::string("Assets\\Built\\Shaders\\Dither.cso"), std::string("CSMain")));
+		pTonemappingKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, std::string("Assets\\Built\\Shaders\\Tonemapping.cso"), std::string("CSMain")));
 	}
 
 	Renderer::~Renderer()
@@ -421,6 +426,24 @@ namespace gfx
 			pass->UnbindSharedResources(gfx);
 		}
 
+		// Tonemapping pass
+		{
+			const std::unique_ptr<RenderPass>& pass = pRenderPasses[TonemappingRenderPassName];
+
+			pass->BindSharedResources(gfx);
+			pass->Execute(gfx); // setup binds
+
+			/*DitherCB ditherCB;
+			ditherCB.shadowDither = 0.15f;
+			ditherCB.midDither = 0.04f;
+			pDitherCB->Update(gfx, ditherCB);*/
+
+			pTonemappingKernel->Dispatch(gfx, *pass, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1);
+
+			pass->Execute(gfx);
+			pass->UnbindSharedResources(gfx);
+		}
+
 		// Final blit
 		{
 			const std::unique_ptr<RenderPass>& pass = pRenderPasses[FinalBlitRenderPassName];
@@ -433,8 +456,8 @@ namespace gfx
 			DepthStencilState::Resolve(gfx, DepthStencilState::Mode::StencilOff)->BindOM(gfx);
 
 			// Debug view overrides: (do this here so it can be changed dynamically later)
-			//fsPass->SetInputTarget(pCameraColor);
-			fsPass->SetInputTarget(pCameraColor2);
+			fsPass->SetInputTarget(pCameraColor);
+			//fsPass->SetInputTarget(pCameraColor2);
 			//fsPass->SetInputTarget(pDebugTiledLightingCS);
 
 			gfx.SetViewport(gfx.GetScreenWidth(), gfx.GetScreenHeight());

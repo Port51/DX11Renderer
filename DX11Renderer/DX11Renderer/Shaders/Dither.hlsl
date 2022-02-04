@@ -26,6 +26,6 @@ void CSMain(uint3 tId : SV_DispatchThreadID)
     
     float ditherMult = lerp(lerp(_ShadowDither, _MidDither, lum), 0.f, saturate(lum * lum * 1.2f));
     float dither = DitherTex[tId.xy % ditherRes].r * ditherMult + 1.f;
-    c.rgb = saturate(c.rgb * dither);
+    c.rgb = (c.rgb * dither);
     CameraColorOut[tId.xy] = c;
 }

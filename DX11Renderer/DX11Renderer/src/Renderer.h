@@ -66,6 +66,8 @@ namespace gfx
 		std::unique_ptr<ComputeKernel> pSSRKernel;
 		std::unique_ptr<ComputeKernel> pFXAAKernel;
 		std::unique_ptr<ComputeKernel> pDitherKernel;
+		std::unique_ptr<ComputeKernel> pTonemappingKernel;
+
 		std::unique_ptr<ConstantBuffer<GlobalTransformCB>> pTransformationCB;
 		std::unique_ptr<ConstantBuffer<PerFrameCB>> pPerFrameCB;
 		std::unique_ptr<ConstantBuffer<PerCameraCB>> pPerCameraCB;
@@ -89,6 +91,7 @@ namespace gfx
 		const std::string SSRRenderPassName = std::string("SSR");
 		const std::string FXAARenderPassName = std::string("FXAA");
 		const std::string DitherRenderPassName = std::string("Dither");
+		const std::string TonemappingRenderPassName = std::string("Tonemapping");
 		const std::string FinalBlitRenderPassName = std::string("FinalBlit");
 	};
 }
