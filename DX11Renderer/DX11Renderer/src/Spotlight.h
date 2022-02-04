@@ -19,7 +19,7 @@ namespace gfx
 	class Spotlight : public Light
 	{
 	public:
-		Spotlight(Graphics& gfx, UINT index, bool allowUserControl, bool hasShadow, std::shared_ptr<ModelAsset> const& pModelAsset, dx::XMFLOAT3 positionWS, float pan, float tilt, dx::XMFLOAT3 color, float intensity = 1.f, float sphereRad = 1.f, float range = 2.5f);
+		Spotlight(Graphics& gfx, UINT index, bool allowUserControl, bool hasShadow, std::shared_ptr<ModelAsset> const& pModelAsset, dx::XMFLOAT3 positionWS, float pan, float tilt, dx::XMFLOAT3 color, float intensity = 1.f, float attenuationQ = 4.f, float range = 2.5f);
 	public:
 		void DrawImguiControlWindow() override;
 		LightData GetLightData(dx::XMMATRIX viewMatrix) const override;
@@ -32,7 +32,7 @@ namespace gfx
 	private:
 		float pan;
 		float tilt;
-		float sphereRad;
+		float attenuationQ;
 		float range;
 		float innerAngle = 80.f;
 		float outerAngle = 31.f;

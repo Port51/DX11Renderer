@@ -341,7 +341,8 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
         float3 lightColorInput = saturate(light.color_intensity.rgb * lightAtten);
         
         BRDFLighting brdf = BRDF(f0, f90, roughness, linearRoughness, normalVS, viewDirVS, lightDirVS);
-        diffuseLight += brdf.diffuseLight * lightColorInput;
+        diffuseLight += lightColorInput;
+        //diffuseLight += brdf.diffuseLight * lightColorInput;
         specularLight += brdf.specularLight * lightColorInput;
     }
     

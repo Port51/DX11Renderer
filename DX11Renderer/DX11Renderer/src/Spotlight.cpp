@@ -18,11 +18,11 @@
 
 namespace gfx
 {
-	Spotlight::Spotlight(Graphics& gfx, UINT index, bool allowUserControl, bool hasShadow, std::shared_ptr<ModelAsset> const& pModelAsset, dx::XMFLOAT3 positionWS, float pan, float tilt, dx::XMFLOAT3 color, float intensity, float sphereRad, float range)
+	Spotlight::Spotlight(Graphics& gfx, UINT index, bool allowUserControl, bool hasShadow, std::shared_ptr<ModelAsset> const& pModelAsset, dx::XMFLOAT3 positionWS, float pan, float tilt, dx::XMFLOAT3 color, float intensity, float attenuationQ, float range)
 		: Light(gfx, index, allowUserControl, pModelAsset, positionWS, color, intensity),
 		pan(pan),
 		tilt(tilt),
-		sphereRad(sphereRad),
+		attenuationQ(attenuationQ),
 		range(range)
 	{
 		// todo: set shadow via settings
@@ -52,8 +52,8 @@ namespace gfx
 			ImGui::Text("Intensity/Color");
 			// ImGuiSliderFlags_Logarithmic makes it power of 2?
 			ImGui::SliderFloat("Intensity", &intensity, 0.01f, 5.0f, "%.2f", ImGuiSliderFlags_Logarithmic);
-			ImGui::SliderFloat("SphereRad", &sphereRad, 0.05f, 50.0f, "%.2f", ImGuiSliderFlags_Logarithmic);
 			ImGui::SliderFloat("Range", &range, 0.05f, 50.0f, "%.2f", ImGuiSliderFlags_Logarithmic);
+			ImGui::SliderFloat("Attenuation Q", &attenuationQ, 1.0f, 100.0f, "%.1f", ImGuiSliderFlags_Logarithmic);
 			ImGui::SliderFloat("InnerAng", &innerAngle, 0.0f, 90.0f, "%.1f");
 			ImGui::SliderFloat("OuterAng", &outerAngle, 0.0f, 90.0f, "%.1f");
 			ImGui::ColorEdit3("Diffuse Color", &color.x);
@@ -66,11 +66,16 @@ namespace gfx
 	LightData Spotlight::GetLightData(dx::XMMATRIX viewMatrix) const
 	{
 		LightData light;
+
+		// Precalculate sphere radius
+		// (The shader math is the same, but it's easier to tune lights this way)
+		float invSphereRad = attenuationQ / std::sqrtf(range);
+
 		const auto posWS_Vector = dx::XMLoadFloat4(&dx::XMFLOAT4(positionWS.x, positionWS.y, positionWS.z, 1.0f));
 		light.positionVS_range = dx::XMVectorSetW(dx::XMVector4Transform(posWS_Vector, viewMatrix), range); // pack range into W
 		light.color_intensity = dx::XMVectorSetW(dx::XMLoadFloat3(&color), intensity);
 		light.directionVS = dx::XMVectorSetW(dx::XMVector4Transform(GetDirectionWS(), viewMatrix), (float)shadowAtlasTileIdx);
-		light.data0 = dx::XMVectorSet(1, 1.f / sphereRad, dx::XMMax(std::cos(dx::XMConvertToRadians(outerAngle)) + 0.01f, std::cos(dx::XMConvertToRadians(innerAngle))), std::cos(dx::XMConvertToRadians(outerAngle)));
+		light.data0 = dx::XMVectorSet(1, invSphereRad, dx::XMMax(std::cos(dx::XMConvertToRadians(outerAngle)) + 0.01f, std::cos(dx::XMConvertToRadians(innerAngle))), std::cos(dx::XMConvertToRadians(outerAngle)));
 		return light;
 	}
 
