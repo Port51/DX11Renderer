@@ -19,7 +19,7 @@ namespace gfx
 			bd.Usage = usage;
 			bd.ByteWidth = sizeof(T) * numElements;
 			bd.BindFlags = bindFlags;
-			bd.CPUAccessFlags = (usage == D3D11_USAGE_DYNAMIC) ? D3D11_CPU_ACCESS_WRITE : 0;
+			bd.CPUAccessFlags = (usage == D3D11_USAGE_DYNAMIC) ? D3D11_CPU_ACCESS_WRITE : 0u;
 			bd.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
 			bd.StructureByteStride = sizeof(T);
 

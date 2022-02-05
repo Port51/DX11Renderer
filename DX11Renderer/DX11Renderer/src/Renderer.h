@@ -74,6 +74,7 @@ namespace gfx
 		std::unique_ptr<ConstantBuffer<HiZCreationCB>> pHiZCreationCB;
 		std::unique_ptr<ConstantBuffer<FXAA_CB>> pFXAA_CB;
 		std::unique_ptr<ConstantBuffer<SSR_CB>> pSSR_CB;
+		std::unique_ptr<StructuredBuffer<int>> pSSR_DebugData;
 		std::unique_ptr<ConstantBuffer<DitherCB>> pDitherCB;
 
 		std::shared_ptr<RendererList> pRendererList;

@@ -70,6 +70,7 @@ namespace gfx
 
 		pFXAA_CB = std::make_unique<ConstantBuffer<FXAA_CB>>(gfx, D3D11_USAGE_DYNAMIC);
 		pSSR_CB = std::make_unique<ConstantBuffer<SSR_CB>>(gfx, D3D11_USAGE_DYNAMIC);
+		pSSR_DebugData = std::make_unique<StructuredBuffer<int>>(gfx, D3D11_USAGE_DEFAULT, D3D11_BIND_UNORDERED_ACCESS, 4u);
 		pDitherCB = std::make_unique<ConstantBuffer<DitherCB>>(gfx, D3D11_USAGE_DYNAMIC);
 
 		// Setup passes
@@ -105,6 +106,7 @@ namespace gfx
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, pCameraColor->GetSRV())
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 1u, pHiZBufferTarget->GetSRV())
 			.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, pCameraColor2->GetUAV())
+			.CSSetUAV(RenderSlots::CS_FreeUAV + 1u, pSSR_DebugData->GetUAV())
 			.CSSetCB(RenderSlots::CS_FreeCB + 0u, pSSR_CB->GetD3DBuffer())
 			.CSSetSPL(RenderSlots::CS_FreeSPL + 0u, pSampler_ClampedBilinear->GetD3DSampler());
 		CreateRenderPass(FXAARenderPassName)->

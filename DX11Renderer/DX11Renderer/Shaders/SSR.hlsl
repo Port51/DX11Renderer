@@ -13,6 +13,9 @@ Texture2D<float4> CameraColorIn : register(t3);
 Texture2D<float2> HiZBuffer : register(t4);
 
 RWTexture2D<float4> CameraColorOut : register(u0);
+globallycoherent RWStructuredBuffer<uint> DebugData : register(u1);
+
+groupshared uint2 debugTraceId;
 
 cbuffer SSR_CB : register(b4)
 {
@@ -23,14 +26,13 @@ cbuffer SSR_CB : register(b4)
 [numthreads(16, 16, 1)]
 void CSMain(uint3 tId : SV_DispatchThreadID)
 {
-    if (tId.x >= (uint) _ScreenParams.x || tId.y >= (uint) _ScreenParams.y)
-        return;
+    //if (tId.x >= (uint) _ScreenParams.x || tId.y >= (uint) _ScreenParams.y)
+    //    return;
     
     //
     // Setup debug views
     //
     bool isDebugTrace = (tId.x == DEBUG_TRACE_START_X && tId.y == DEBUG_TRACE_START_Y);
-    uint2 debugTraceId = 0;
     
     //
     // Get surface info
@@ -59,16 +61,24 @@ void CSMain(uint3 tId : SV_DispatchThreadID)
     float3 dir = float3(reflectDirVS.xy / _FrustumCornerDataVS.xy * 0.5f, reflectDirVS.z); // mix of UV space and VS
     float2 halfSignDir = sign(dir.xy) * 0.5f;
     uint iter = 0u;
+    
     while (iter < 50u)
     {
         uint2 ptId = uv.xy * _ScreenParams.xy;
-        if (iter == _DebugViewStep)
+        
+        if (isDebugTrace && iter == _DebugViewStep)
         {
-            debugTraceId = ptId;
+            DebugData[0] = ptId.x;
+            DebugData[1] = ptId.y;
+            DebugData[2] = mip;
         }
         
+        // Move
+        //uv += dir * 0.001f;
+        uv.xy += _ScreenParams.zw;
+        
         // Get position inside tile
-        float2 pixelXY = uv.xy * _ScreenParams.xy;
+        /*float2 pixelXY = uv.xy * _ScreenParams.xy;
         float2 tileSize = mip;
         uint2 tile = (uint2)floor(pixelXY) >> mip;
         
@@ -102,7 +112,7 @@ void CSMain(uint3 tId : SV_DispatchThreadID)
             // Move to tile intersection and increase mip
             uv = tileIntersection;
             mip = min(mip + 1u, MAX_MIP);
-        }
+        }*/
         
         ++iter;
     }
@@ -124,16 +134,18 @@ void CSMain(uint3 tId : SV_DispatchThreadID)
     {
         // Show start point
         reflectColor = float4(1, 1, 0, 0);
-        
-        // Show current point
-        if (all(tId.xy == debugTraceId.xy))
-        {
-            reflectColor = float4(0, 1, 0, 0);
-        }
-        else if (any(tId.xy == debugTraceId.xy))
-        {
-            reflectColor = lerp(reflectColor, float3(0, 1, 0), 0.5f);
-        }
+    }
+    
+    // Show current point
+    //GroupMemoryBarrierWithGroupSync();
+    AllMemoryBarrierWithGroupSync();
+    if (tId.x == DebugData[0] && tId.y == DebugData[1])
+    {
+        reflectColor = float4(0, 1, 0, 0);
+    }
+    else if (tId.x == DebugData[0] || tId.y == DebugData[1])
+    {
+        reflectColor = lerp(reflectColor, float3(0, 1, 0), 0.1f);
     }
     
     CameraColorOut[tId.xy] = float4(reflectColor, colorIn.a);
