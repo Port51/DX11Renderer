@@ -22,7 +22,7 @@ float3 ReinhardExtendedLuminance(float3 c, float maxWhiteLuminance)
     float lum = Luminance(c);
     float numerator = lum * (1.0f + (lum / (maxWhiteLuminance * maxWhiteLuminance)));
     float newLum = numerator / (1.0f + lum);
-    return c * (newLum / max(lum, 0.001));
+    return c * (newLum / max(lum, 0.001f));
 }
 
 [numthreads(16, 16, 1)]

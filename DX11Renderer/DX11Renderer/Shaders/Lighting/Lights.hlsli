@@ -19,7 +19,7 @@ inline float GetSphericalLightAttenuation(float lightDist, float rcpLightSphereR
     
     float dp = lightDist / lightRange;
     float d0 = lightDist * lightDist / (dp * -dp + 1.0);
-    return 1.0 / pow(d0 * rcpLightSphereRad + 1.0, 2);
+    return step(lightDist, lightRange) / pow(d0 * rcpLightSphereRad + 1.0, 2);
 }
 
 #endif

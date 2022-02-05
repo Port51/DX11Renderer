@@ -1,3 +1,7 @@
+// References:
+//  - https://www.jpgrenier.org/ssr.html
+//  - https://sakibsaikia.github.io/graphics/2016/12/26/Screen-Space-Reflection-in-Killing-Floor-2.html
+
 #include "./CbufCommon.hlsli"
 
 #define MAX_MIP 7u
@@ -128,7 +132,7 @@ void CSMain(uint3 tId : SV_DispatchThreadID)
         }
         else if (any(tId.xy == debugTraceId.xy))
         {
-            reflectColor = lerp(reflectColor, float4(0, 1, 0, 0), 0.5f);
+            reflectColor = lerp(reflectColor, float3(0, 1, 0), 0.5f);
         }
     }
     
