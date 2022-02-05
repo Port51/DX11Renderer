@@ -20,6 +20,7 @@
 #include <cassert>
 #include <chrono>
 #include <wrl.h>
+#include <stdlib.h>     // srand, rand
 
 #include "Log.h"
 
@@ -28,5 +29,11 @@
 #include "ExceptionHandling.h"
 
 #define SAFE_RELEASE(p) if (p) (p)->Release()
+
+float RandomRange(float min, float max);
+dx::XMFLOAT3 RandomColorRGB();
+dx::XMFLOAT4 RandomColorRGBA();
+dx::XMFLOAT3 RandomSaturatedColorRGB();
+dx::XMFLOAT4 RandomSaturatedColorRGBA();
 
 using namespace Microsoft::WRL;
