@@ -148,6 +148,9 @@
     <Filter Include="Source\Shadows">
       <UniqueIdentifier>{5cf7faf1-03da-4c60-8f6a-832218e06f6b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Bindable\Buffers">
+      <UniqueIdentifier>{96c1e996-bdfc-45d8-9ca5-9b398d73d020}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp">
@@ -335,6 +338,9 @@
     </ClCompile>
     <ClCompile Include="src\Config.cpp">
       <Filter>Source\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RawBuffer.cpp">
+      <Filter>Source\Bindable\Buffers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -604,6 +610,9 @@
     </ClInclude>
     <ClInclude Include="src\Renderer.h">
       <Filter>Headers\RenderPipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="src\RawBuffer.h">
+      <Filter>Headers\Bindable\Buffers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
