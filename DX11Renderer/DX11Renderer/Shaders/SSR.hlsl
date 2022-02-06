@@ -8,7 +8,7 @@
 #define DEBUG_TRACE_START_X 450u
 #define DEBUG_TRACE_START_Y 480u
 
-Texture2D<float4> NormalRoughRT : register(t2);
+Texture2D<float4> NormalRoughReflectivityRT : register(t2);
 Texture2D<float4> CameraColorIn : register(t3);
 Texture2D<float> DepthRT : register(t4);
 Texture2D<float2> HiZBuffer : register(t5);
@@ -29,13 +29,13 @@ float3 GetReflectionDirSS(float3 positionVS, float3 viewDirVS, float2 uv, float 
     float3 positionSS = float3(uv.xy, rawDepth);
     float3 reflectVS = reflect(viewDirVS, normalVS);
     
-    const float Offset = 0.1f;
+    const float Offset = 0.5f;
     float3 offsetPositionVS = positionVS + reflectVS * Offset;
     float4 offsetPositionSS = mul(_ProjMatrix, float4(offsetPositionVS, 0.f));
     offsetPositionSS.xyz /= offsetPositionSS.w;
     offsetPositionSS.xy = offsetPositionSS.xy * 0.5f + 0.5f;
 
-    return normalize(offsetPositionSS.xyz - positionSS);
+    return (offsetPositionSS.xyz - positionSS);
 }
 
 [numthreads(16, 16, 1)]
@@ -64,9 +64,12 @@ void CSMain(uint3 tId : SV_DispatchThreadID)
     const float3 positionVS = frustumPlaneVS * linearDepth;
     const float3 viewDirVS = normalize(positionVS);
     
-    const float4 normalRough = NormalRoughRT[tId.xy];
-    const float3 normalVS = normalize(normalRough.xyz * 2.f - 1.f);
-    const float linearRoughness = normalRough.w;
+    float4 gbufferTex = NormalRoughReflectivityRT[tId.xy];
+    float3 normalVS;
+    normalVS.xy = gbufferTex.xy * 2.f - 1.f;
+    normalVS.z = -sqrt(1.f - dot(normalVS.xy, normalVS.xy)); // positive Z points away from the camera
+    
+    const float linearRoughness = gbufferTex.z;
     const float roughness = linearRoughness * linearRoughness;
     
     //
@@ -195,14 +198,7 @@ void CSMain(uint3 tId : SV_DispatchThreadID)
     }
     
     float4 colorIn = CameraColorIn[tId.xy];
-    //reflectColor *= colorIn.rgb;
-    
-    //reflectColor = abs(reflectDirVS.z);
-    //reflectColor = -normalVS.z;
-    //reflectColor = dir.x;
-    
-    reflectColor = colorIn;
-    //reflectColor = (float)_DebugViewStep / 50;
+    //reflectColor = colorIn;
     
     //
     // Debug views!
@@ -230,6 +226,9 @@ void CSMain(uint3 tId : SV_DispatchThreadID)
         reflectColor = lerp(reflectColor, float3(0, 1, 0), 0.1f);
     }
     
-    CameraColorOut[tId.xy] = float4(reflectColor, colorIn.a);
+    CameraColorOut[tId.xy] = float4(lerp(colorIn.rgb, reflectColor, 0.5f), colorIn.a);
+    
+    //CameraColorOut[tId.xy] = reflectDirSS.x;
+    //CameraColorOut[tId.xy] = normalVS.y;
     
 }
