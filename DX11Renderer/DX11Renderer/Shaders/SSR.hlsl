@@ -5,12 +5,13 @@
 #include "./Common.hlsli"
 
 #define MAX_MIP 7u
-#define DEBUG_TRACE_START_X 500u
-#define DEBUG_TRACE_START_Y 550u
+#define DEBUG_TRACE_START_X 450u
+#define DEBUG_TRACE_START_Y 480u
 
 Texture2D<float4> NormalRoughRT : register(t2);
 Texture2D<float4> CameraColorIn : register(t3);
-Texture2D<float2> HiZBuffer : register(t4);
+Texture2D<float> DepthRT : register(t4);
+Texture2D<float2> HiZBuffer : register(t5);
 
 RWTexture2D<float4> CameraColorOut : register(u0);
 globallycoherent RWStructuredBuffer<uint> DebugData : register(u1);
@@ -23,11 +24,18 @@ cbuffer SSR_CB : register(b4)
     uint3 padding;
 };
 
-float GetInterpolatedZ(float invZ0, float invZ1, float lerpValue)
+float3 GetReflectionDirSS(float3 positionVS, float3 viewDirVS, float2 uv, float rawDepth, float3 normalVS)
 {
-    // Equation:
-    // z = 1 / (1/z0 + s * (1/z1 - 1/z0))
-    return rcp(lerp(invZ0, invZ1, lerpValue));
+    float3 positionSS = float3(uv.xy, rawDepth);
+    float3 reflectVS = reflect(viewDirVS, normalVS);
+    
+    const float Offset = 0.1f;
+    float3 offsetPositionVS = positionVS + reflectVS * Offset;
+    float4 offsetPositionSS = mul(_ProjMatrix, float4(offsetPositionVS, 0.f));
+    offsetPositionSS.xyz /= offsetPositionSS.w;
+    offsetPositionSS.xy = offsetPositionSS.xy * 0.5f + 0.5f;
+
+    return normalize(offsetPositionSS.xyz - positionSS);
 }
 
 [numthreads(16, 16, 1)]
@@ -44,7 +52,11 @@ void CSMain(uint3 tId : SV_DispatchThreadID)
     //
     // Get surface info
     //
-    const float linearDepth = HiZBuffer.Load(int3(tId.xy, 0)).r * _ProjectionParams.z;
+    const float rawDepth = DepthRT.Load(int3(tId.xy, 0));
+    const float isGeometry = rawDepth < 1.f;
+    const float linearDepth = RawDepthToLinearDepth(rawDepth);
+    
+    //const float linearDepth = HiZBuffer.Load(int3(tId.xy, 0)).r * _ProjectionParams.z;
     const float2 screenUV = tId.xy * _ScreenParams.zw;
     const float2 positionNDC = screenUV * 2.f - 1.f;
     
@@ -60,14 +72,14 @@ void CSMain(uint3 tId : SV_DispatchThreadID)
     //
     // Calculate reflection
     //
-    float3 reflectDirVS = reflect(viewDirVS, normalVS);
+    float3 reflectDirSS = GetReflectionDirSS(positionVS, viewDirVS, screenUV, rawDepth, normalVS);
     uint mip = 3u;
     
     float3 reflectColor = 0;
-    float3 uv = float3(screenUV + 0.5f * _ScreenParams.zw, linearDepth); // start from center of pixel
-    float3 dir = float3(reflectDirVS.xy / _FrustumCornerDataVS.xy * 0.5f, reflectDirVS.z); // mix of UV space and VS
-    float3 invDir = 1.f / dir;
-    float2 halfSignDir = sign(dir.xy) * 0.5f;
+    float3 uv = float3(screenUV + 0.5f * _ScreenParams.zw, rawDepth - 0.01f); // start from center of pixel
+    //float3 dir = float3(reflectDirVS.xy / _FrustumCornerDataVS.xy * 0.5f, reflectDirVS.z); // mix of UV space and VS
+    float3 invDir = 1.f / reflectDirSS;
+    float2 halfSignDir = sign(reflectDirSS.xy) * 0.5f;
     uint iter = 0u;
     
     while (iter < 10u)
@@ -93,23 +105,51 @@ void CSMain(uint3 tId : SV_DispatchThreadID)
         // Calculate nearest intersection
         float2 intersectionSolutions = (planesUV - uv.xy) * invDir.xy;
         float intersectDist = min(intersectionSolutions.x, intersectionSolutions.y);
+        float3 intersectUV;
         
+        float tileIntersectDist;
+        float2 tileIntersectOffset;
         if (intersectionSolutions.x < intersectionSolutions.y)
         {
-            uv += dir * intersectionSolutions.x;
-            uv.x += halfSignDir.x * _ScreenParams.z; // 1/2 pixel offset
+            tileIntersectDist = intersectionSolutions.x;
+            tileIntersectOffset = float2(halfSignDir.x * _ScreenParams.z, 0.f); // 1/2 pixel offset
         }
         else
         {
-            uv += dir * intersectionSolutions.y;
-            uv.y += halfSignDir.y * _ScreenParams.w; // 1/2 pixel offset
+            tileIntersectDist = intersectionSolutions.y;
+            tileIntersectOffset = float2(0.f, halfSignDir.y * _ScreenParams.w); // 1/2 pixel offset
         }
         
-        mip = min(mip + 1u, MAX_MIP);
         
-        // Move
-        //uv += dir * 0.001f;
-        //uv += dir * intersectDist;
+        // Calculate depth plane intersection
+        float mipDepthPlane = HiZBuffer.Load(int3(tile.xy, mip)).x;
+        float mipDepthDispl = mipDepthPlane - uv.z;
+        float depthPlaneSolution = mipDepthDispl / reflectDirSS.z;
+        
+        // Test depth ranges
+        if (depthPlaneSolution < tileIntersectDist)
+        {
+            if (mip == 0u)
+            {
+                reflectColor = CameraColorIn[(uint2) ptId].rgb;
+                break;
+            }
+            else
+            {
+                --mip;
+                uv = reflectDirSS * depthPlaneSolution + uv;
+            }
+        }
+        else
+        {
+            // Move to tile intersection and increase mip
+            uv = reflectDirSS * tileIntersectDist + uv + float3(tileIntersectOffset.xy, 0.f);
+            mip = min(mip + 1u, MAX_MIP);
+        }
+        
+        // Choose movement
+        //uv = intersectUV;
+        //mip = min(mip + 1u, MAX_MIP);
         
         
         //uv.xy += _ScreenParams.zw;

@@ -92,8 +92,12 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     GroupMemoryBarrierWithGroupSync();
     
 #if defined(USE_HI_Z_BUFFER)
-    const float linearDepth = HiZBuffer.Load(int3(tId.xy, 0)).r * _ProjectionParams.z;
-    const float2 tileDepthRange = HiZBuffer.Load(int3(tId.xy / 16, 4)).rg * _ProjectionParams.z;
+    //const float linearDepth = HiZBuffer.Load(int3(tId.xy, 0)).r * _ProjectionParams.z;
+    const float linearDepth = LinearEyeDepth(HiZBuffer.Load(int3(tId.xy, 0)).r, _ZBufferParams);
+    //const float2 tileDepthRange = HiZBuffer.Load(int3(tId.xy / 16, 4)).rg * _ProjectionParams.z;
+    float2 tileDepthRange = HiZBuffer.Load(int3(tId.xy / 16, 4)).rg;
+    tileDepthRange.x = LinearEyeDepth(tileDepthRange.x, _ZBufferParams);
+    tileDepthRange.y = LinearEyeDepth(tileDepthRange.y, _ZBufferParams);
     const float isGeometry = linearDepth < 10000.f;
 #else
     const float rawDepth = DepthRT.Load(int3(tId.xy, 0));

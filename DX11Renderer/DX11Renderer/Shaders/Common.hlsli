@@ -12,12 +12,28 @@ float LinearEyeDepth(float depth, float4 zBufferParam)
     return 1.0 / (zBufferParam.z * depth + zBufferParam.w);
 }
 
+// Z buffer to linear 0..1 depth (0 at camera position, 1 at far plane).
+// Does NOT work with orthographic projections.
+// Does NOT correctly handle oblique view frustums.
+// zBufferParam = { (f-n)/n, 1, (f-n)/n*f, 1/f }
+float Linear01Depth(float depth, float4 zBufferParam)
+{
+    return 1.0 / (zBufferParam.x * depth + zBufferParam.y);
+}
+
 float RawDepthToLinearDepth(float rawDepth)
 {
     // See: https://forum.unity.com/threads/getting-scene-depth-z-buffer-of-the-orthographic-camera.601825/#post-4966334
     float persp = LinearEyeDepth(rawDepth, _ZBufferParams);
     float ortho = (_ZBufferParams.z - _ZBufferParams.y) * (1 - rawDepth) + _ZBufferParams.y;
     return lerp(persp, ortho, _OrthoParams.w);
+}
+
+float GetInterpolatedZ(float invZ0, float invZ1, float lerpValue)
+{
+    // Equation:
+    // z = 1 / (1/z0 + s * (1/z1 - 1/z0))
+    return rcp(lerp(invZ0, invZ1, lerpValue));
 }
 
 float Luminance(float3 v)

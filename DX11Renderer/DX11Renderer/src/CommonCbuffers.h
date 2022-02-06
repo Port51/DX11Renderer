@@ -67,7 +67,7 @@ namespace gfx
 	struct alignas(16) HiZCreationCB
 	{
 		dx::XMVECTORU32 resolutionSrcDst;
-		dx::XMVECTOR zBufferParams;
+		//dx::XMVECTOR zBufferParams;
 	};
 
 	struct alignas(16) FXAA_CB

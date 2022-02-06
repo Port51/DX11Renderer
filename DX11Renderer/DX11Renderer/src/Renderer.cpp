@@ -45,7 +45,7 @@ namespace gfx
 		pNormalRoughReflectivityTarget = std::make_shared<RenderTexture>(gfx);
 		pNormalRoughReflectivityTarget->Init(gfx.GetDevice(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
-		pHiZBufferTarget = std::make_shared<RenderTexture>(gfx, DXGI_FORMAT_R16G16_FLOAT, 8u);
+		pHiZBufferTarget = std::make_shared<RenderTexture>(gfx, DXGI_FORMAT_R16G16_UNORM, 8u);
 		pHiZBufferTarget->Init(gfx.GetDevice(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
 		pSpecularLighting = std::make_shared<RenderTexture>(gfx);
@@ -104,7 +104,8 @@ namespace gfx
 		CreateRenderPass(SSRRenderPassName)->
 			CSSetSRV(RenderSlots::CS_GbufferNormalRoughSRV, pNormalRoughReflectivityTarget->GetSRV())
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, pCameraColor->GetSRV())
-			.CSSetSRV(RenderSlots::CS_FreeSRV + 1u, pHiZBufferTarget->GetSRV())
+			.CSSetSRV(RenderSlots::CS_FreeSRV + 1u, gfx.pDepthStencil->GetSRV())
+			.CSSetSRV(RenderSlots::CS_FreeSRV + 2u, pHiZBufferTarget->GetSRV())
 			.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, pCameraColor2->GetUAV())
 			.CSSetUAV(RenderSlots::CS_FreeUAV + 1u, pSSR_DebugData->GetUAV())
 			.CSSetCB(RenderSlots::CS_FreeCB + 0u, pSSR_CB->GetD3DBuffer())
@@ -289,7 +290,7 @@ namespace gfx
 
 			HiZCreationCB hiZCreationCB;
 			hiZCreationCB.resolutionSrcDst = { screenWidth, screenHeight, screenWidth, screenHeight };
-			hiZCreationCB.zBufferParams = dx::XMVectorSet(1.f - cam->farClipPlane / cam->nearClipPlane, cam->farClipPlane / cam->nearClipPlane, 1.f / cam->farClipPlane - 1.f / cam->nearClipPlane, 1.f / cam->nearClipPlane);
+			//hiZCreationCB.zBufferParams = dx::XMVectorSet(1.f - cam->farClipPlane / cam->nearClipPlane, cam->farClipPlane / cam->nearClipPlane, 1.f / cam->farClipPlane - 1.f / cam->nearClipPlane, 1.f / cam->nearClipPlane);
 			pHiZCreationCB->Update(gfx, hiZCreationCB);
 
 			// Copy from depth-stencil
