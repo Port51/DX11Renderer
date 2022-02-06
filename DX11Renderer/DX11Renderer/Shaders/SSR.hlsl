@@ -54,17 +54,20 @@ void CSMain(uint3 tId : SV_DispatchThreadID)
     // Calculate reflection
     //
     float3 reflectDirVS = reflect(viewDirVS, normalVS);
-    uint mip = 2u;
+    uint mip = 3u;
     
     float3 reflectColor = 0;
-    float3 uv = float3(screenUV, linearDepth);
+    float3 uv = float3(screenUV + 0.5f * _ScreenParams.zw, linearDepth); // start from center of pixel
     float3 dir = float3(reflectDirVS.xy / _FrustumCornerDataVS.xy * 0.5f, reflectDirVS.z); // mix of UV space and VS
     float2 halfSignDir = sign(dir.xy) * 0.5f;
     uint iter = 0u;
     
-    while (iter < 50u)
+    while (iter < 10u)
     {
-        uint2 ptId = uv.xy * _ScreenParams.xy;
+        float2 pixelUV = uv.xy * _ScreenParams.xy;
+        uint2 ptId = (uint2)pixelUV;
+        uint2 tile = ptId >> mip;
+        uint tilePixelSize = 1u << mip;
         
         if (isDebugTrace && iter == _DebugViewStep)
         {
@@ -73,9 +76,33 @@ void CSMain(uint3 tId : SV_DispatchThreadID)
             DebugData[2] = mip;
         }
         
+        // Setup planes
+        float2 planesUV = ((tile + 0.5f) * tilePixelSize + tilePixelSize * halfSignDir) * _ScreenParams.zw;
+        
+        // Local pos in tile
+        //float2 tilePos = pixelUV - tile * tilePixelSize;
+        
+        // Calculate nearest intersection
+        float2 intersectionSolutions = (planesUV - uv.xy) / dir.xy;
+        float intersectDist = min(intersectionSolutions.x, intersectionSolutions.y);
+        
+        if (intersectionSolutions.x < intersectionSolutions.y)
+        {
+            uv += dir * intersectionSolutions.x;
+            uv.x += halfSignDir.x * _ScreenParams.z; // 1/2 pixel offset
+        }
+        else
+        {
+            uv += dir * intersectionSolutions.y;
+            uv.y += halfSignDir.y * _ScreenParams.w; // 1/2 pixel offset
+        }
+        
         // Move
         //uv += dir * 0.001f;
-        uv.xy += _ScreenParams.zw;
+        //uv += dir * intersectDist;
+        
+        
+        //uv.xy += _ScreenParams.zw;
         
         // Get position inside tile
         /*float2 pixelXY = uv.xy * _ScreenParams.xy;
@@ -139,11 +166,16 @@ void CSMain(uint3 tId : SV_DispatchThreadID)
     // Show current point
     //GroupMemoryBarrierWithGroupSync();
     AllMemoryBarrierWithGroupSync();
+    uint2 mipMod = tId.xy % (1u << DebugData[2]);
     if (tId.x == DebugData[0] && tId.y == DebugData[1])
     {
         reflectColor = float4(0, 1, 0, 0);
     }
     else if (tId.x == DebugData[0] || tId.y == DebugData[1])
+    {
+        reflectColor = lerp(reflectColor, float3(1, 0, 0), 0.8f);
+    }
+    else if (DebugData[2] > 0u && any(mipMod == 0u))
     {
         reflectColor = lerp(reflectColor, float3(0, 1, 0), 0.1f);
     }

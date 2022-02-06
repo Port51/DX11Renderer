@@ -380,7 +380,7 @@ namespace gfx
 			pass->Execute(gfx); // setup binds
 
 			SSR_CB ssrCB;
-			ssrCB.debugViewStep = (frameCt / 30u) % 50u;
+			ssrCB.debugViewStep = (frameCt / 30u) % 10u;
 			pSSR_CB->Update(gfx, ssrCB);
 
 			pSSRKernel->Dispatch(gfx, *pass, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1);
