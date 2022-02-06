@@ -677,6 +677,9 @@
     <None Include="Assets\Models\CascadeTestScene.asset">
       <Filter>Assets\Models</Filter>
     </None>
+    <None Include="Shaders\Common.hlsli">
+      <Filter>Shaders\Common</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\SolidPS.hlsl">

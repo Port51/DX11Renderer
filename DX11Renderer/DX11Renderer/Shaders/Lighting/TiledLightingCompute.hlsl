@@ -1,4 +1,4 @@
-#include "./../CbufCommon.hlsli"
+#include "./../Common.hlsli"
 #include "./../Lighting/LightStructs.hlsli"
 #include "./../Lighting/Lights.hlsli"
 #include "./../Lighting/BRDF.hlsli"
@@ -65,22 +65,6 @@ groupshared uint maxTileZ;
 
 }*/
 
-// Z buffer to linear depth.
-// Does NOT correctly handle oblique view frustums.
-// Does NOT work with orthographic projection.
-// zBufferParam = { (f-n)/n, 1, (f-n)/n*f, 1/f }
-float LinearEyeDepth(float depth, float4 zBufferParam)
-{
-    return 1.0 / (zBufferParam.z * depth + zBufferParam.w);
-}
-
-float RawDepthToLinearDepth(float rawDepth)
-{
-    // See: https://forum.unity.com/threads/getting-scene-depth-z-buffer-of-the-orthographic-camera.601825/#post-4966334
-    float persp = LinearEyeDepth(rawDepth, _ZBufferParams);
-    float ortho = (_ZBufferParams.z - _ZBufferParams.y) * (1 - rawDepth) + _ZBufferParams.y;
-    return lerp(persp, ortho, _OrthoParams.w);
-}
 
 bool AABBSphereIntersection(float3 spherePos, float sphereRad, float3 aabbCenter, float3 aabbExtents)
 {

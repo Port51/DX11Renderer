@@ -1,7 +1,7 @@
 // References:
 // - https://graphics-programming.org/resources/tonemapping/index.html
 
-#include "CbufCommon.hlsli"
+#include "./Common.hlsli"
 
 Texture2D<float4> CameraColorIn : register(t3);
 RWTexture2D<float4> CameraColorOut : register(u0);
@@ -11,11 +11,6 @@ cbuffer TonemappingCB : register(b4)
     float _WhitePoint;
     float3 padding;
 };
-
-float Luminance(float3 v)
-{
-    return dot(v, float3(0.2126f, 0.7152f, 0.0722f));
-}
 
 float3 ReinhardExtendedLuminance(float3 c, float maxWhiteLuminance)
 {

@@ -1,4 +1,4 @@
-#include "CbufCommon.hlsli"
+#include "./Common.hlsli"
 
 Texture2D<float4> CameraColorIn : register(t3);
 Texture2D<float> DitherTex : register(t4);
@@ -19,7 +19,7 @@ void CSMain(uint3 tId : SV_DispatchThreadID)
         return;
     
     float4 c = CameraColorIn[tId.xy];
-    float lum = saturate(dot(float3(0.2125, 0.7154, 0.0721), c.rgb)); // maybe pre-calculate luminance in alpha?
+    float lum = saturate(Luminance(c.rgb)); // maybe pre-calculate luminance in alpha?
     
     uint2 ditherRes;
     DitherTex.GetDimensions(ditherRes.x, ditherRes.y);

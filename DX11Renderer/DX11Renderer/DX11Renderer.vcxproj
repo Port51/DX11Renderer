@@ -385,6 +385,12 @@
     <None Include="Assets\Materials\HairMaterial.asset" />
     <None Include="Assets\Models\DefaultQuad.asset" />
     <None Include="Assets\Models\ShadowTestScene.asset" />
+    <None Include="Shaders\Common.hlsli">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </None>
     <None Include="Shaders\Lighting\Lights.hlsli" />
     <None Include="Shaders\Lighting\LightStructs.hlsli" />
     <None Include="Shaders\CbufCommon.hlsli">

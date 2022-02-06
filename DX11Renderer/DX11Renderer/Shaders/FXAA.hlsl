@@ -12,7 +12,7 @@
 // Debug views:
 #define DEBUG_VIEW_CONTRAST
 
-#include "CbufCommon.hlsli"
+#include "./Common.hlsli"
 
 #if defined(PREVIOUS_PASS_STORED_ALPHA)
     // Previous pass helpfully stored luminance into alpha channel
@@ -36,13 +36,6 @@ cbuffer FXAA_CB : register(b4)
     float _EdgeSharpness;
     float padding;
 };
-
-float SCurve(float x)
-{
-    // (3x^2 - 2x^3)
-    float xSqr = x * x;
-    return (-2 * x + 3) * xSqr;
-}
 
 [numthreads(16, 16, 1)]
 void CSMain(uint3 tId : SV_DispatchThreadID)

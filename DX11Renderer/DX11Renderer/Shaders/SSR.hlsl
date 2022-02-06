@@ -2,7 +2,7 @@
 //  - https://www.jpgrenier.org/ssr.html
 //  - https://sakibsaikia.github.io/graphics/2016/12/26/Screen-Space-Reflection-in-Killing-Floor-2.html
 
-#include "./CbufCommon.hlsli"
+#include "./Common.hlsli"
 
 #define MAX_MIP 7u
 #define DEBUG_TRACE_START_X 500u
@@ -22,6 +22,13 @@ cbuffer SSR_CB : register(b4)
     uint _DebugViewStep;
     uint3 padding;
 };
+
+float GetInterpolatedZ(float invZ0, float invZ1, float lerpValue)
+{
+    // Equation:
+    // z = 1 / (1/z0 + s * (1/z1 - 1/z0))
+    return rcp(lerp(invZ0, invZ1, lerpValue));
+}
 
 [numthreads(16, 16, 1)]
 void CSMain(uint3 tId : SV_DispatchThreadID)
@@ -59,6 +66,7 @@ void CSMain(uint3 tId : SV_DispatchThreadID)
     float3 reflectColor = 0;
     float3 uv = float3(screenUV + 0.5f * _ScreenParams.zw, linearDepth); // start from center of pixel
     float3 dir = float3(reflectDirVS.xy / _FrustumCornerDataVS.xy * 0.5f, reflectDirVS.z); // mix of UV space and VS
+    float3 invDir = 1.f / dir;
     float2 halfSignDir = sign(dir.xy) * 0.5f;
     uint iter = 0u;
     
@@ -83,7 +91,7 @@ void CSMain(uint3 tId : SV_DispatchThreadID)
         //float2 tilePos = pixelUV - tile * tilePixelSize;
         
         // Calculate nearest intersection
-        float2 intersectionSolutions = (planesUV - uv.xy) / dir.xy;
+        float2 intersectionSolutions = (planesUV - uv.xy) * invDir.xy;
         float intersectDist = min(intersectionSolutions.x, intersectionSolutions.y);
         
         if (intersectionSolutions.x < intersectionSolutions.y)
@@ -96,6 +104,8 @@ void CSMain(uint3 tId : SV_DispatchThreadID)
             uv += dir * intersectionSolutions.y;
             uv.y += halfSignDir.y * _ScreenParams.w; // 1/2 pixel offset
         }
+        
+        mip = min(mip + 1u, MAX_MIP);
         
         // Move
         //uv += dir * 0.001f;

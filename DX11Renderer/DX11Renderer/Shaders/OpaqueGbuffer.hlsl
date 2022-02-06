@@ -28,12 +28,6 @@ Texture2D tex : register(t0);
 Texture2D nmap : register(t1);
 SamplerState splr : register(s0);
 
-float SCurve(float x)
-{
-    // (3x^2 - 2x^3)
-    return (-2 * x + 3) * x * x; // OPS: [MAD] [MUL] [MUL]
-}
-
 float4 main(v2f i) : SV_Target
 {
     //return float4(lightColor, 1);
