@@ -48,4 +48,13 @@ float SCurve(float x)
     return (-2 * x + 3) * xSqr;
 }
 
+float3 GetNormalVSFromGBuffer(float4 gbufferTex)
+{
+    float3 normalVS;
+    normalVS.xy = gbufferTex.xy * 2.f - 1.f;
+    normalVS.z = -sqrt(1.f - dot(normalVS.xy, normalVS.xy)); // positive Z points away from the camera
+    return normalVS;
+
+}
+
 #endif

@@ -56,16 +56,6 @@ groupshared uint tileLightIndices[MAX_TILE_LIGHTS];
 groupshared uint minTileZ;
 groupshared uint maxTileZ;
 
-/*float ConvertZToLinearDepth(float depth)
-{
-    float near = camera_near;
-    float far = camera_far;
-    
-    return (near * far) / (far - depth * (far - near));
-
-}*/
-
-
 bool AABBSphereIntersection(float3 spherePos, float sphereRad, float3 aabbCenter, float3 aabbExtents)
 {
     float3 displ = max(0, abs(aabbCenter - spherePos) - aabbExtents);
@@ -210,23 +200,21 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     //
     // Apply lighting
     //
-    float2 screenUV = tId.xy * _ScreenParams.zw;
-    float2 positionNDC = screenUV * 2.f - 1.f;
+    const float2 screenUV = tId.xy * _ScreenParams.zw;
+    const float2 positionNDC = screenUV * 2.f - 1.f;
     
-    float3 frustumPlaneVS = float3(positionNDC * _FrustumCornerDataVS.xy, 1.f);
-    float3 positionVS = frustumPlaneVS * linearDepth;
-    float3 viewDirVS = normalize(positionVS);
+    const float3 frustumPlaneVS = float3(positionNDC * _FrustumCornerDataVS.xy, 1.f);
+    const float3 positionVS = frustumPlaneVS * linearDepth;
+    const float3 viewDirVS = normalize(positionVS);
     
-    float3 positionWS = mul(_InvViewMatrix, float4(positionVS.xyz, 1.f)).xyz;
+    const float3 positionWS = mul(_InvViewMatrix, float4(positionVS.xyz, 1.f)).xyz;
     
-    float4 gbufferTex = NormalRoughReflectivityRT[tId.xy];
-    float3 normalVS;
-    normalVS.xy = gbufferTex.xy * 2.f - 1.f;
-    normalVS.z = -sqrt(1.f - dot(normalVS.xy, normalVS.xy)); // positive Z points away from the camera
+    const float4 gbufferTex = NormalRoughReflectivityRT[tId.xy];
+    const float3 normalVS = GetNormalVSFromGBuffer(gbufferTex);
     
-    float linearRoughness = gbufferTex.z;
-    float roughness = linearRoughness * linearRoughness;
-    float reflectivity = gbufferTex.w;
+    const float linearRoughness = gbufferTex.z;
+    const float roughness = linearRoughness * linearRoughness;
+    const float reflectivity = gbufferTex.w;
     
     // f0 = fresnel reflectance at normal incidence
     // f90 = fresnel reflectance at grazing angles (usually 1)

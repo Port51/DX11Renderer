@@ -4,9 +4,12 @@
 
 #include "./Common.hlsli"
 
-#define MAX_MIP 7u
-#define DEBUG_TRACE_START_X 450u
-#define DEBUG_TRACE_START_Y 480u
+#define MAX_MIP                 7u
+#define MAX_TRACE_ITERATIONS    20u
+
+#define DEBUG_VIEW_SHOW_TRACE
+#define DEBUG_TRACE_START_X     450u
+#define DEBUG_TRACE_START_Y     480u
 
 Texture2D<float4> NormalRoughReflectivityRT : register(t2);
 Texture2D<float4> CameraColorIn : register(t3);
@@ -26,11 +29,11 @@ cbuffer SSR_CB : register(b4)
 
 float3 GetReflectionDirSS(float3 positionVS, float3 viewDirVS, float2 uv, float rawDepth, float3 normalVS)
 {
-    float3 positionSS = float3(uv.xy, rawDepth);
-    float3 reflectVS = reflect(viewDirVS, normalVS);
+    const float3 positionSS = float3(uv.xy, rawDepth);
+    const float3 reflectVS = reflect(viewDirVS, normalVS);
     
     const float Offset = 0.5f;
-    float3 offsetPositionVS = positionVS + reflectVS * Offset;
+    const float3 offsetPositionVS = positionVS + reflectVS * Offset;
     float4 offsetPositionSS = mul(_ProjMatrix, float4(offsetPositionVS, 0.f));
     offsetPositionSS.xyz /= offsetPositionSS.w;
     offsetPositionSS.xy = (offsetPositionSS.xy * float2(0.5f, -0.5f) + 0.5f) * _ScreenParams.xy;
@@ -47,7 +50,7 @@ void CSMain(uint3 tId : SV_DispatchThreadID)
     //
     // Setup debug views
     //
-    bool isDebugTrace = (tId.x == DEBUG_TRACE_START_X && tId.y == DEBUG_TRACE_START_Y);
+    const bool isDebugTrace = (tId.x == DEBUG_TRACE_START_X && tId.y == DEBUG_TRACE_START_Y);
     
     //
     // Get surface info
@@ -64,13 +67,8 @@ void CSMain(uint3 tId : SV_DispatchThreadID)
     const float3 positionVS = frustumPlaneVS * linearDepth;
     const float3 viewDirVS = normalize(positionVS);
     
-    float4 gbufferTex = NormalRoughReflectivityRT[tId.xy];
-    float3 normalVS;
-    normalVS.xy = gbufferTex.xy * 2.f - 1.f;
-    normalVS.z = -sqrt(1.f - dot(normalVS.xy, normalVS.xy)); // positive Z points away from the camera
-    
-    // FOR DEBUG:
-    //normalVS = mul(_ViewMatrix, float4(0, 1, 0, 0)).xyz;
+    const float4 gbufferTex = NormalRoughReflectivityRT[tId.xy];
+    const float3 normalVS = GetNormalVSFromGBuffer(gbufferTex);
     
     const float linearRoughness = gbufferTex.z;
     const float roughness = linearRoughness * linearRoughness;
@@ -78,39 +76,35 @@ void CSMain(uint3 tId : SV_DispatchThreadID)
     //
     // Calculate reflection
     //
-    float3 reflectDirSS = GetReflectionDirSS(positionVS, viewDirVS, tId.xy, rawDepth, normalVS);
-    float3 invDir = 1.f / reflectDirSS;
-    float2 halfSignDir = sign(reflectDirSS.xy) * 0.5f;
+    const float3 reflectDirSS = GetReflectionDirSS(positionVS, viewDirVS, tId.xy, rawDepth, normalVS);
+    const float3 invDir = 1.f / reflectDirSS;
+    const float2 halfSignDir = sign(reflectDirSS.xy) * 0.5f;
     
-    float3 reflectColor = 0;
     float3 uv = float3(tId.xy + 0.5f, rawDepth - 0.01f); // start from center of pixel, with small offset
-    //float3 dir = float3(reflectDirVS.xy / _FrustumCornerDataVS.xy * 0.5f, reflectDirVS.z); // mix of UV space and VS
-    
+    float4 reflectColor = 0.f;
     uint iter = 0u;
     uint mip = 3u;
     
     [branch]
     if (reflectDirSS.z > 0.f)
     {
-        while (iter < 20u)
+        while (iter < MAX_TRACE_ITERATIONS)
         {
-            //float2 pixelUV = uv.xy * _ScreenParams.xy;
-            uint2 ptId = (uint2) floor(uv.xy);
-            uint2 tile = ptId >> mip;
+            uint2 ptId = (uint2)floor(uv.xy);
+            uint2 tileId = ptId >> mip;
             uint tilePixelSize = 1u << mip;
         
+#if defined(DEBUG_VIEW_SHOW_TRACE)
             if (isDebugTrace && iter == _DebugViewStep)
             {
                 DebugData[0] = ptId.x;
                 DebugData[1] = ptId.y;
                 DebugData[2] = mip;
             }
+#endif
         
             // Setup planes
-            float2 planesUV = ((tile + 0.5f) * tilePixelSize + tilePixelSize * halfSignDir);
-        
-            // Local pos in tile
-            //float2 tilePos = pixelUV - tile * tilePixelSize;
+            float2 planesUV = ((tileId + 0.5f) * tilePixelSize + tilePixelSize * halfSignDir);
         
             // Calculate nearest intersection
             float2 intersectionSolutions = (planesUV - uv.xy) * invDir.xy;
@@ -129,26 +123,19 @@ void CSMain(uint3 tId : SV_DispatchThreadID)
                 tileIntersectDist = intersectionSolutions.y;
                 tileIntersectOffset = float2(0.f, halfSignDir.y); // 1/2 pixel offset
             }
-        
-        
+            
             // Calculate depth plane intersection
-            float mipDepthPlane = HiZBuffer.Load(int3(tile.xy, mip)).x;
+            float mipDepthPlane = HiZBuffer.Load(int3(tileId.xy, mip)).x;
             float mipDepthDispl = (mipDepthPlane - uv.z);
-            float depthPlaneSolution = mipDepthDispl / reflectDirSS.z;
-        
-            if (iter == 5u && false)
-            {
-                reflectColor = CameraColorIn[(uint2) ptId].rgb;
-                break;
-            }
-        
+            float depthPlaneSolution = mipDepthDispl * invDir.z;
         
             // Test depth ranges
             if (depthPlaneSolution < tileIntersectDist)
             {
                 if (mip == 0u)
                 {
-                    reflectColor = CameraColorIn[(uint2) ptId].rgb;
+                    reflectColor.rgb = CameraColorIn[ptId].rgb;
+                    reflectColor.a = 1.f;
                     break;
                 }
                 else
@@ -164,87 +151,48 @@ void CSMain(uint3 tId : SV_DispatchThreadID)
                 mip = min(mip + 1u, MAX_MIP);
             }
         
-            // Choose movement
-            //uv = intersectUV;
-            //mip = min(mip + 1u, MAX_MIP);
-        
-        
-            //uv.xy += _ScreenParams.zw;
-        
-            // Get position inside tile
-            /*float2 pixelXY = uv.xy * _ScreenParams.xy;
-            float2 tileSize = mip;
-            uint2 tile = (uint2)floor(pixelXY) >> mip;
-        
-            // Find intersection pt of next tile
-            float2 planes = (tile + 0.5f) * tileSize + tileSize * halfSignDir;
-            float2 solutions = (planes - uv.xy) / dir.xy;
-            float3 tileIntersection = uv + dir * min(solutions.x, solutions.y);
-        
-            // Get my depth range (current depth and intersection depth)
-            float2 rayDepthRange = float2(min(uv.z, tileIntersection.z), max(uv.z, tileIntersection.z));
-        
-            // Get mip depth
-            float2 mipDepthRange = HiZBuffer.Load(int3(tile.xy, mip)).xy;
-        
-            // Test depth ranges
-            if (rayDepthRange.y > mipDepthRange.x && rayDepthRange.x < mipDepthRange.y)
-            {
-                // Intersection!
-                if (mip == 0u)
-                {
-                    reflectColor = CameraColorIn[(uint2)pixelXY].rgb;
-                    break;
-                }
-                else
-                {
-                    --mip;
-                }
-            }
-            else
-            {
-                // Move to tile intersection and increase mip
-                uv = tileIntersection;
-                mip = min(mip + 1u, MAX_MIP);
-            }*/
-        
             ++iter;
         }
     }
     
-    float4 colorIn = CameraColorIn[tId.xy];
-    //reflectColor = colorIn;
+    // todo: use fallback when reflectColor.a = 0
     
-    CameraColorOut[tId.xy] = float4(lerp(colorIn.rgb, reflectColor, 0.5f), colorIn.a);
+    float4 colorIn = CameraColorIn[tId.xy];
+    CameraColorOut[tId.xy] = float4(colorIn.rgb + reflectColor.rgb * reflectColor.a, colorIn.a);
     
     //
     // Debug views!
-    //
+    //    
+#if defined(DEBUG_VIEW_SHOW_TRACE)
+    // Show trace of current point
+    
+    AllMemoryBarrierWithGroupSync();
+    
+    float3 debugColor = saturate(CameraColorOut[tId.xy].rgb);
+    
     if (isDebugTrace)
     {
         // Show start point
-        reflectColor = float4(1, 1, 0, 0);
+        debugColor = float3(1, 1, 0);
     }
     
-    // Show current point
-    //GroupMemoryBarrierWithGroupSync();
-    AllMemoryBarrierWithGroupSync();
     uint2 mipMod = tId.xy % (1u << DebugData[2]);
     if (tId.x == DebugData[0] && tId.y == DebugData[1])
     {
-        reflectColor = float4(0, 1, 0, 0);
+        debugColor = float3(0, 1, 0);
     }
     else if (tId.x == DebugData[0] || tId.y == DebugData[1])
     {
-        reflectColor = lerp(reflectColor, float3(1, 0, 0), 0.8f);
+        debugColor = lerp(debugColor.rgb, float3(1, 0, 0), 0.8f);
     }
     else if (DebugData[2] > 0u && any(mipMod == 0u))
     {
-        reflectColor = lerp(reflectColor, float3(0, 1, 0), 0.1f);
+        // Tiles
+        debugColor = lerp(debugColor, float3(0, 1, 0), 0.15f);
+
     }
     
-    //CameraColorOut[tId.xy] = saturate(reflectDirSS.z); // XYZ = good
-    //CameraColorOut[tId.xy] = saturate(screenUV.y); // XYZ = good
-    //CameraColorOut[tId.xy] = normalVS.y;
+    CameraColorOut[tId.xy] = float4(debugColor.rgb, colorIn.a);
+#endif
     
 }
