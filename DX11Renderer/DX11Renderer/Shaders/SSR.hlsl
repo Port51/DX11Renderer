@@ -33,7 +33,7 @@ float3 GetReflectionDirSS(float3 positionVS, float3 viewDirVS, float2 uv, float 
     float3 offsetPositionVS = positionVS + reflectVS * Offset;
     float4 offsetPositionSS = mul(_ProjMatrix, float4(offsetPositionVS, 0.f));
     offsetPositionSS.xyz /= offsetPositionSS.w;
-    offsetPositionSS.xy = offsetPositionSS.xy * 0.5f + 0.5f;
+    offsetPositionSS.xy = (offsetPositionSS.xy * float2(0.5f, -0.5f) + 0.5f) * _ScreenParams.xy;
 
     return (offsetPositionSS.xyz - positionSS);
 }
@@ -69,136 +69,153 @@ void CSMain(uint3 tId : SV_DispatchThreadID)
     normalVS.xy = gbufferTex.xy * 2.f - 1.f;
     normalVS.z = -sqrt(1.f - dot(normalVS.xy, normalVS.xy)); // positive Z points away from the camera
     
+    // FOR DEBUG:
+    //normalVS = mul(_ViewMatrix, float4(0, 1, 0, 0)).xyz;
+    
     const float linearRoughness = gbufferTex.z;
     const float roughness = linearRoughness * linearRoughness;
     
     //
     // Calculate reflection
     //
-    float3 reflectDirSS = GetReflectionDirSS(positionVS, viewDirVS, screenUV, rawDepth, normalVS);
-    uint mip = 3u;
-    
-    float3 reflectColor = 0;
-    float3 uv = float3(screenUV + 0.5f * _ScreenParams.zw, rawDepth - 0.01f); // start from center of pixel
-    //float3 dir = float3(reflectDirVS.xy / _FrustumCornerDataVS.xy * 0.5f, reflectDirVS.z); // mix of UV space and VS
+    float3 reflectDirSS = GetReflectionDirSS(positionVS, viewDirVS, tId.xy, rawDepth, normalVS);
     float3 invDir = 1.f / reflectDirSS;
     float2 halfSignDir = sign(reflectDirSS.xy) * 0.5f;
-    uint iter = 0u;
     
-    while (iter < 10u)
+    float3 reflectColor = 0;
+    float3 uv = float3(tId.xy + 0.5f, rawDepth - 0.01f); // start from center of pixel, with small offset
+    //float3 dir = float3(reflectDirVS.xy / _FrustumCornerDataVS.xy * 0.5f, reflectDirVS.z); // mix of UV space and VS
+    
+    uint iter = 0u;
+    uint mip = 3u;
+    
+    [branch]
+    if (reflectDirSS.z > 0.f)
     {
-        float2 pixelUV = uv.xy * _ScreenParams.xy;
-        uint2 ptId = (uint2)pixelUV;
-        uint2 tile = ptId >> mip;
-        uint tilePixelSize = 1u << mip;
-        
-        if (isDebugTrace && iter == _DebugViewStep)
+        while (iter < 20u)
         {
-            DebugData[0] = ptId.x;
-            DebugData[1] = ptId.y;
-            DebugData[2] = mip;
-        }
+            //float2 pixelUV = uv.xy * _ScreenParams.xy;
+            uint2 ptId = (uint2) floor(uv.xy);
+            uint2 tile = ptId >> mip;
+            uint tilePixelSize = 1u << mip;
         
-        // Setup planes
-        float2 planesUV = ((tile + 0.5f) * tilePixelSize + tilePixelSize * halfSignDir) * _ScreenParams.zw;
+            if (isDebugTrace && iter == _DebugViewStep)
+            {
+                DebugData[0] = ptId.x;
+                DebugData[1] = ptId.y;
+                DebugData[2] = mip;
+            }
         
-        // Local pos in tile
-        //float2 tilePos = pixelUV - tile * tilePixelSize;
+            // Setup planes
+            float2 planesUV = ((tile + 0.5f) * tilePixelSize + tilePixelSize * halfSignDir);
         
-        // Calculate nearest intersection
-        float2 intersectionSolutions = (planesUV - uv.xy) * invDir.xy;
-        float intersectDist = min(intersectionSolutions.x, intersectionSolutions.y);
-        float3 intersectUV;
+            // Local pos in tile
+            //float2 tilePos = pixelUV - tile * tilePixelSize;
         
-        float tileIntersectDist;
-        float2 tileIntersectOffset;
-        if (intersectionSolutions.x < intersectionSolutions.y)
-        {
-            tileIntersectDist = intersectionSolutions.x;
-            tileIntersectOffset = float2(halfSignDir.x * _ScreenParams.z, 0.f); // 1/2 pixel offset
-        }
-        else
-        {
-            tileIntersectDist = intersectionSolutions.y;
-            tileIntersectOffset = float2(0.f, halfSignDir.y * _ScreenParams.w); // 1/2 pixel offset
-        }
+            // Calculate nearest intersection
+            float2 intersectionSolutions = (planesUV - uv.xy) * invDir.xy;
+            float intersectDist = min(intersectionSolutions.x, intersectionSolutions.y);
+            float3 intersectUV;
+        
+            float tileIntersectDist;
+            float2 tileIntersectOffset;
+            if (intersectionSolutions.x < intersectionSolutions.y)
+            {
+                tileIntersectDist = intersectionSolutions.x;
+                tileIntersectOffset = float2(halfSignDir.x, 0.f); // 1/2 pixel offset
+            }
+            else
+            {
+                tileIntersectDist = intersectionSolutions.y;
+                tileIntersectOffset = float2(0.f, halfSignDir.y); // 1/2 pixel offset
+            }
         
         
-        // Calculate depth plane intersection
-        float mipDepthPlane = HiZBuffer.Load(int3(tile.xy, mip)).x;
-        float mipDepthDispl = mipDepthPlane - uv.z;
-        float depthPlaneSolution = mipDepthDispl / reflectDirSS.z;
+            // Calculate depth plane intersection
+            float mipDepthPlane = HiZBuffer.Load(int3(tile.xy, mip)).x;
+            float mipDepthDispl = (mipDepthPlane - uv.z);
+            float depthPlaneSolution = mipDepthDispl / reflectDirSS.z;
         
-        // Test depth ranges
-        if (depthPlaneSolution < tileIntersectDist)
-        {
-            if (mip == 0u)
+            if (iter == 5u && false)
             {
                 reflectColor = CameraColorIn[(uint2) ptId].rgb;
                 break;
             }
-            else
+        
+        
+            // Test depth ranges
+            if (depthPlaneSolution < tileIntersectDist)
             {
-                --mip;
-                uv = reflectDirSS * depthPlaneSolution + uv;
-            }
-        }
-        else
-        {
-            // Move to tile intersection and increase mip
-            uv = reflectDirSS * tileIntersectDist + uv + float3(tileIntersectOffset.xy, 0.f);
-            mip = min(mip + 1u, MAX_MIP);
-        }
-        
-        // Choose movement
-        //uv = intersectUV;
-        //mip = min(mip + 1u, MAX_MIP);
-        
-        
-        //uv.xy += _ScreenParams.zw;
-        
-        // Get position inside tile
-        /*float2 pixelXY = uv.xy * _ScreenParams.xy;
-        float2 tileSize = mip;
-        uint2 tile = (uint2)floor(pixelXY) >> mip;
-        
-        // Find intersection pt of next tile
-        float2 planes = (tile + 0.5f) * tileSize + tileSize * halfSignDir;
-        float2 solutions = (planes - uv.xy) / dir.xy;
-        float3 tileIntersection = uv + dir * min(solutions.x, solutions.y);
-        
-        // Get my depth range (current depth and intersection depth)
-        float2 rayDepthRange = float2(min(uv.z, tileIntersection.z), max(uv.z, tileIntersection.z));
-        
-        // Get mip depth
-        float2 mipDepthRange = HiZBuffer.Load(int3(tile.xy, mip)).xy;
-        
-        // Test depth ranges
-        if (rayDepthRange.y > mipDepthRange.x && rayDepthRange.x < mipDepthRange.y)
-        {
-            // Intersection!
-            if (mip == 0u)
-            {
-                reflectColor = CameraColorIn[(uint2)pixelXY].rgb;
-                break;
+                if (mip == 0u)
+                {
+                    reflectColor = CameraColorIn[(uint2) ptId].rgb;
+                    break;
+                }
+                else
+                {
+                    --mip;
+                    uv = reflectDirSS * depthPlaneSolution + uv;
+                }
             }
             else
             {
-                --mip;
+                // Move to tile intersection and increase mip
+                uv = reflectDirSS * tileIntersectDist + uv + float3(tileIntersectOffset.xy, 0.f);
+                mip = min(mip + 1u, MAX_MIP);
             }
-        }
-        else
-        {
-            // Move to tile intersection and increase mip
-            uv = tileIntersection;
-            mip = min(mip + 1u, MAX_MIP);
-        }*/
         
-        ++iter;
+            // Choose movement
+            //uv = intersectUV;
+            //mip = min(mip + 1u, MAX_MIP);
+        
+        
+            //uv.xy += _ScreenParams.zw;
+        
+            // Get position inside tile
+            /*float2 pixelXY = uv.xy * _ScreenParams.xy;
+            float2 tileSize = mip;
+            uint2 tile = (uint2)floor(pixelXY) >> mip;
+        
+            // Find intersection pt of next tile
+            float2 planes = (tile + 0.5f) * tileSize + tileSize * halfSignDir;
+            float2 solutions = (planes - uv.xy) / dir.xy;
+            float3 tileIntersection = uv + dir * min(solutions.x, solutions.y);
+        
+            // Get my depth range (current depth and intersection depth)
+            float2 rayDepthRange = float2(min(uv.z, tileIntersection.z), max(uv.z, tileIntersection.z));
+        
+            // Get mip depth
+            float2 mipDepthRange = HiZBuffer.Load(int3(tile.xy, mip)).xy;
+        
+            // Test depth ranges
+            if (rayDepthRange.y > mipDepthRange.x && rayDepthRange.x < mipDepthRange.y)
+            {
+                // Intersection!
+                if (mip == 0u)
+                {
+                    reflectColor = CameraColorIn[(uint2)pixelXY].rgb;
+                    break;
+                }
+                else
+                {
+                    --mip;
+                }
+            }
+            else
+            {
+                // Move to tile intersection and increase mip
+                uv = tileIntersection;
+                mip = min(mip + 1u, MAX_MIP);
+            }*/
+        
+            ++iter;
+        }
     }
     
     float4 colorIn = CameraColorIn[tId.xy];
     //reflectColor = colorIn;
+    
+    CameraColorOut[tId.xy] = float4(lerp(colorIn.rgb, reflectColor, 0.5f), colorIn.a);
     
     //
     // Debug views!
@@ -226,9 +243,8 @@ void CSMain(uint3 tId : SV_DispatchThreadID)
         reflectColor = lerp(reflectColor, float3(0, 1, 0), 0.1f);
     }
     
-    CameraColorOut[tId.xy] = float4(lerp(colorIn.rgb, reflectColor, 0.5f), colorIn.a);
-    
-    //CameraColorOut[tId.xy] = reflectDirSS.x;
+    //CameraColorOut[tId.xy] = saturate(reflectDirSS.z); // XYZ = good
+    //CameraColorOut[tId.xy] = saturate(screenUV.y); // XYZ = good
     //CameraColorOut[tId.xy] = normalVS.y;
     
 }

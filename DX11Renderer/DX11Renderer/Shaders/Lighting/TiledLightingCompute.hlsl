@@ -373,5 +373,7 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     
     SpecularLightingOut[tId.xy] = float4(specularLight, 1);
     DiffuseLightingOut[tId.xy] = float4(diffuseLight, 1);
+    DiffuseLightingOut[tId.xy] = float4(positionWS.yyy, 1);
+    DiffuseLightingOut[tId.xy] = float4(mul(_InvViewMatrix, -float4(normalVS.xyz, 0.f)).rgb, 1);
     DebugOut[tId.xy] = float4(debugColor, 1);
 }

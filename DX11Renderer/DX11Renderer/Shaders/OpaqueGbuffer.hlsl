@@ -42,7 +42,7 @@ float4 main(v2f i) : SV_Target
     float4 diffuseTex = tex.Sample(splr, i.uv0);
     
     float3 n;
-    if (normalMapEnabled)
+    if (normalMapEnabled && false)
     {
         const float3 normalSample = nmap.Sample(splr, i.uv0).xyz;
         n.x = normalSample.x * 2.0f - 1.0f;

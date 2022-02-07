@@ -381,7 +381,7 @@ namespace gfx
 			pass->Execute(gfx); // setup binds
 
 			SSR_CB ssrCB;
-			ssrCB.debugViewStep = (frameCt / 30u) % 10u;
+			ssrCB.debugViewStep = (frameCt / 30u) % 20u;
 			pSSR_CB->Update(gfx, ssrCB);
 
 			pSSRKernel->Dispatch(gfx, *pass, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1);
@@ -391,7 +391,7 @@ namespace gfx
 		}
 
 		// FXAA pass
-		if (Config::AAType == Config::AAType::FXAA)
+		if (Config::AAType == Config::AAType::FXAA && false)
 		{
 			const std::unique_ptr<RenderPass>& pass = pRenderPasses[FXAARenderPassName];
 
@@ -412,6 +412,7 @@ namespace gfx
 		}
 
 		// Dither pass
+		if (false)
 		{
 			const std::unique_ptr<RenderPass>& pass = pRenderPasses[DitherRenderPassName];
 
@@ -430,6 +431,7 @@ namespace gfx
 		}
 
 		// Tonemapping pass
+		if (false)
 		{
 			const std::unique_ptr<RenderPass>& pass = pRenderPasses[TonemappingRenderPassName];
 
@@ -459,8 +461,8 @@ namespace gfx
 			DepthStencilState::Resolve(gfx, DepthStencilState::Mode::StencilOff)->BindOM(gfx);
 
 			// Debug view overrides: (do this here so it can be changed dynamically later)
-			fsPass->SetInputTarget(pCameraColor);
-			//fsPass->SetInputTarget(pCameraColor2);
+			//fsPass->SetInputTarget(pCameraColor);
+			fsPass->SetInputTarget(pCameraColor2);
 			//fsPass->SetInputTarget(pDebugTiledLightingCS);
 
 			gfx.SetViewport(gfx.GetScreenWidth(), gfx.GetScreenHeight());
