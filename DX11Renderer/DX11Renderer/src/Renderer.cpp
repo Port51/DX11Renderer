@@ -192,7 +192,7 @@ namespace gfx
 			// Assign inputs and outputs
 			auto& pColorIn = (cameraOutSlot0) ? pCameraColor0 : pCameraColor1;
 			auto& pColorOut = (cameraOutSlot0) ? pCameraColor1 : pCameraColor0;
-			cameraOutSlot0 != cameraOutSlot0;
+			cameraOutSlot0 = !cameraOutSlot0;
 
 			GetRenderPass(SSRRenderPassName)->
 				CSSetSRV(RenderSlots::CS_GbufferNormalRoughSRV, pNormalRoughReflectivityTarget->GetSRV())
@@ -210,7 +210,7 @@ namespace gfx
 			// Assign inputs and outputs
 			auto& pColorIn = (cameraOutSlot0) ? pCameraColor0 : pCameraColor1;
 			auto& pColorOut = (cameraOutSlot0) ? pCameraColor1 : pCameraColor0;
-			cameraOutSlot0 != cameraOutSlot0;
+			cameraOutSlot0 = !cameraOutSlot0;
 
 			GetRenderPass(FXAARenderPassName)->
 				CSSetSRV(RenderSlots::CS_FreeSRV + 0u, pColorIn->GetSRV())
@@ -224,7 +224,7 @@ namespace gfx
 			// Assign inputs and outputs
 			auto& pColorIn = (cameraOutSlot0) ? pCameraColor0 : pCameraColor1;
 			auto& pColorOut = (cameraOutSlot0) ? pCameraColor1 : pCameraColor0;
-			cameraOutSlot0 != cameraOutSlot0;
+			cameraOutSlot0 = !cameraOutSlot0;
 
 			GetRenderPass(DitherRenderPassName)->
 				CSSetSRV(RenderSlots::CS_FreeSRV + 0u, pColorIn->GetSRV())
@@ -238,7 +238,7 @@ namespace gfx
 			// Assign inputs and outputs
 			auto& pColorIn = (cameraOutSlot0) ? pCameraColor0 : pCameraColor1;
 			auto& pColorOut = (cameraOutSlot0) ? pCameraColor1 : pCameraColor0;
-			cameraOutSlot0 != cameraOutSlot0;
+			cameraOutSlot0 = !cameraOutSlot0;
 
 			GetRenderPass(TonemappingRenderPassName)->
 				CSSetSRV(RenderSlots::CS_FreeSRV + 0u, pColorIn->GetSRV())
@@ -378,6 +378,7 @@ namespace gfx
 				pHiZCreationCB->Update(gfx, hiZCreationCB);
 
 				// Bind mip slice views as UAVs
+				gfx.GetContext()->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 0u, 2u, pass->pNullUAVs.data(), nullptr);
 				gfx.GetContext()->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 0u, 1u, pHiZBufferTarget->GetUAV(mip - 1u).GetAddressOf(), nullptr);
 				gfx.GetContext()->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 1u, 1u, pHiZBufferTarget->GetUAV(mip).GetAddressOf(), nullptr);
 

@@ -8,7 +8,7 @@ cbuffer HiZCreationCB : register(b4)
 };
 
 Texture2D<float> CameraDepthStencil : register(t3);
-RWTexture2D<float2> HiZOutput : register(u0);
+RWTexture2D<unorm float2> HiZOutput : register(u0);
 
 [numthreads(16, 16, 1)]
 void CSMain(uint3 tId : SV_DispatchThreadID)

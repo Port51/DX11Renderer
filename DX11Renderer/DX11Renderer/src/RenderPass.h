@@ -62,6 +62,7 @@ namespace gfx
 
 		std::shared_ptr<RenderTexture> pCameraColorOut;
 
+	public:
 		static std::vector<ID3D11Buffer*> pNullBuffers;
 		static std::vector<ID3D11ShaderResourceView*> pNullSRVs;
 		static std::vector<ID3D11UnorderedAccessView*> pNullUAVs;

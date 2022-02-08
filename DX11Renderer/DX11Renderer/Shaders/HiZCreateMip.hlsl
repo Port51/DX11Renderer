@@ -7,8 +7,8 @@ cbuffer HiZCreationCB : register(b4)
     float4 _ZBufferParams;
 };
 
-RWTexture2D<float2> HiZInput : register(u0);
-RWTexture2D<float2> HiZOutput : register(u1);
+RWTexture2D<unorm float2> HiZInput : register(u0);
+RWTexture2D<unorm float2> HiZOutput : register(u1);
 
 [numthreads(16, 16, 1)]
 void CSMain(uint3 tId : SV_DispatchThreadID)
