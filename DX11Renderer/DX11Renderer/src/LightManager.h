@@ -42,7 +42,7 @@ namespace gfx
 		virtual ~LightManager() = default;
 	public:
 		void AddLightModelsToList(RendererList& pRendererList);
-		void CullLights(Graphics& gfx, const std::unique_ptr<Camera>& cam);
+		void CullLights(Graphics& gfx, const std::unique_ptr<Camera>& cam, bool enableShadows);
 		void BindShadowAtlas(Graphics& gfx, UINT startSlot) const;
 		void RenderShadows(ShadowPassContext context);
 		ComPtr<ID3D11ShaderResourceView> GetLightDataSRV() const;

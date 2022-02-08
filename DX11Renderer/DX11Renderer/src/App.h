@@ -26,7 +26,7 @@ namespace gfx
 		std::unique_ptr<ImguiManager> pImgui; // must be initialized before wnd
 		std::unique_ptr<Window> pWindow;
 		std::unique_ptr<Camera> pCamera;
-		std::unique_ptr<LightManager> pLightManager;
+		std::shared_ptr<LightManager> pLightManager;
 		std::unique_ptr<Renderer> pRenderer;
 		std::unique_ptr<Timer> pTimer;
 

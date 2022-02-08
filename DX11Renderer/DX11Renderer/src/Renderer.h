@@ -17,6 +17,7 @@ namespace gfx
 	class RenderTexture;
 	class ComputeKernel;
 	class Sampler;
+	class Texture;
 
 	struct GlobalTransformCB;
 	struct PerFrameCB;
@@ -34,13 +35,20 @@ namespace gfx
 	class Renderer
 	{
 	public:
-		Renderer(Graphics& gfx, const std::unique_ptr<LightManager>& pLightManager, std::shared_ptr<RendererList> pRendererList);
+		enum RendererView { Final, TiledLighting, SSRTrace };
+		enum RendererFeature { Shadows, FXAA, HZBSSR, Dither, Tonemapping, COUNT }; // for COUNT to be accurate, don't set these values to anything weird...
+	public:
+		Renderer(Graphics& gfx, std::shared_ptr<LightManager> pLightManager, std::shared_ptr<RendererList> pRendererList);
 		virtual ~Renderer();
 	public:
 		void AcceptDrawCall(DrawCall job, std::string targetPass);
-		void Execute(Graphics& gfx, const std::unique_ptr<Camera>& cam, const std::unique_ptr<LightManager>& pLightManager);
+		void Execute(Graphics& gfx, const std::unique_ptr<Camera>& cam, float timeElapsed);
+		void DrawImguiControlWindow();
 		void Reset();
+		bool IsFeatureEnabled(RendererFeature feature) const;
 	private:
+		void SetupRenderPassDependencies(Graphics& gfx);
+		const std::unique_ptr<RenderPass>& GetRenderPass(const std::string name);
 		const std::unique_ptr<RenderPass>& CreateRenderPass(const std::string name);
 		const std::unique_ptr<RenderPass>& CreateRenderPass(const std::string name, std::unique_ptr<RenderPass> pRenderPass);
 
@@ -57,8 +65,9 @@ namespace gfx
 		// Debug views
 		std::shared_ptr<RenderTexture> pDebugTiledLightingCS;
 
-		std::shared_ptr<RenderTexture> pCameraColor;
-		std::shared_ptr<RenderTexture> pCameraColor2; // used for post-fx
+		std::shared_ptr<RenderTexture> pCameraColor0;
+		std::shared_ptr<RenderTexture> pCameraColor1;
+		bool pFinalBlitInputIs0;
 
 		std::unique_ptr<ComputeKernel> pHiZDepthCopyKernel;
 		std::unique_ptr<ComputeKernel> pHiZCreateMipKernel;
@@ -77,10 +86,19 @@ namespace gfx
 		std::unique_ptr<StructuredBuffer<int>> pSSR_DebugData;
 		std::unique_ptr<ConstantBuffer<DitherCB>> pDitherCB;
 
+		std::shared_ptr<Texture> pDither;
+
 		std::shared_ptr<RendererList> pRendererList;
 		std::unique_ptr<RendererList> pVisibleRendererList; // filtered by camera frustum
 
+		std::shared_ptr<LightManager> pLightManager;
+
 		std::shared_ptr<Sampler> pShadowSampler;
+
+	private:
+		RendererView viewIdx = RendererView::Final;
+		std::vector<bool> rendererFeatureEnabled;
+
 	public:
 		const std::string PerCameraPassName = std::string("PerCameraPass");
 		const std::string ShadowPassName = std::string("ShadowPass");

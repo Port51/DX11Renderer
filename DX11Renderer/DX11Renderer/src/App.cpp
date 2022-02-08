@@ -24,7 +24,7 @@ namespace gfx
 		pTimer(std::make_unique<Timer>()),
 		pRendererList(std::make_shared<RendererList>())
 	{
-		pLightManager = std::make_unique<LightManager>(pWindow->Gfx(), pRendererList);
+		pLightManager = std::make_shared<LightManager>(pWindow->Gfx(), pRendererList);
 
 		std::string fn;
 		dx::XMMATRIX modelTransform;
@@ -144,14 +144,18 @@ namespace gfx
 
 	void App::DoFrame()
 	{
+		static float timeElapsed = 0.f;
 		auto dt = pTimer->Mark() * simulationSpeed;
+		timeElapsed += dt;
 
-		// Run lights
+		// Animate lights
 		{
 			UINT ct = pLightManager->GetLightCount();
 			for (UINT i = 0u; i < ct; ++i)
 			{
 				const auto light = pLightManager->GetLight(i);
+
+				// Only move lights the user can't control
 				if (!light->AllowUserControl())
 				{
 					auto positionWS = dx::XMLoadFloat3(&light->GetPositionWS());
@@ -167,7 +171,7 @@ namespace gfx
 
 		pWindow->Gfx().BeginFrame();
 
-		pRenderer->Execute(pWindow->Gfx(), pCamera, pLightManager);
+		pRenderer->Execute(pWindow->Gfx(), pCamera, timeElapsed);
 
 		if (true)
 		{
@@ -180,6 +184,7 @@ namespace gfx
 			ImGui::End();
 
 			// Imgui windows
+			pRenderer->DrawImguiControlWindow();
 			pCamera->DrawImguiControlWindow();
 			pLightManager->DrawImguiControlWindows();
 			pWindow->Gfx().GetLog()->DrawImguiControlWindow();

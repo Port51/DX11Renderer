@@ -181,6 +181,7 @@
   <ItemGroup>
     <ClCompile Include="src\Config.cpp" />
     <ClCompile Include="src\DrawContext.cpp" />
+    <ClCompile Include="src\ImguiHelpers.cpp" />
     <ClCompile Include="src\ModelAsset.cpp" />
     <ClCompile Include="src\RawBuffer.cpp" />
     <ClCompile Include="src\Renderer.cpp" />
@@ -279,6 +280,7 @@
     <ClCompile Include="src\Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\ImguiHelpers.h" />
     <ClInclude Include="src\RawBuffer.h" />
     <ClInclude Include="src\Image.h" />
     <ClInclude Include="src\App.h" />

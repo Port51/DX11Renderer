@@ -9,6 +9,7 @@ namespace gfx
 {
 	class Binding;
 	class Bindable;
+	class RenderTexture;
 
 	///
 	/// Wrapper containing jobs
@@ -36,8 +37,11 @@ namespace gfx
 		RenderPass& PSSetCB(UINT slot, ComPtr<ID3D11Buffer> pResource);
 		RenderPass& PSSetSRV(UINT slot, ComPtr<ID3D11ShaderResourceView> pResource);
 		RenderPass& PSSetSPL(UINT slot, ComPtr<ID3D11SamplerState> pResource);
+		RenderPass& SetCameraColorOut(std::shared_ptr<RenderTexture> pCameraColor);
 		Binding& AddBinding(std::shared_ptr<Bindable> pBindable);
 		Binding& AddBinding(Binding pBinding);
+
+		std::shared_ptr<RenderTexture> GetCameraColorOut() const;
 	protected:
 		std::vector<Binding> bindings;
 	private:
@@ -55,6 +59,8 @@ namespace gfx
 		std::vector<std::pair<UINT, ComPtr<ID3D11Buffer>>> pPS_CB_Binds;
 		std::vector<std::pair<UINT, ComPtr<ID3D11ShaderResourceView>>> pPS_SRV_Binds;
 		std::vector<std::pair<UINT, ComPtr<ID3D11SamplerState>>> pPS_SPL_Binds;
+
+		std::shared_ptr<RenderTexture> pCameraColorOut;
 
 		static std::vector<ID3D11Buffer*> pNullBuffers;
 		static std::vector<ID3D11ShaderResourceView*> pNullSRVs;

@@ -70,7 +70,7 @@ namespace gfx
 		}
 	}
 
-	void LightManager::CullLights(Graphics & gfx, const std::unique_ptr<Camera>& cam)
+	void LightManager::CullLights(Graphics & gfx, const std::unique_ptr<Camera>& cam, bool enableShadows)
 	{
 		dx::XMFLOAT4 frustumCornersVS;
 		dx::XMStoreFloat4(&frustumCornersVS, cam->GetFrustumCornersVS());
@@ -82,7 +82,7 @@ namespace gfx
 		int shadowMapIdx = 0;
 		for (int i = 0; i < pLights.size(); ++i)
 		{
-			if (pLights[i]->HasShadow())
+			if (enableShadows && pLights[i]->HasShadow())
 			{
 				pLights[i]->SetCurrentShadowIdx(shadowMapIdx);
 				shadowMapIdx += pLights[i]->GetShadowTileCount();

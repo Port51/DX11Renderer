@@ -342,6 +342,9 @@
     <ClCompile Include="src\RawBuffer.cpp">
       <Filter>Source\Bindable\Buffers</Filter>
     </ClCompile>
+    <ClCompile Include="src\ImguiHelpers.cpp">
+      <Filter>Precompiled</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -613,6 +616,9 @@
     </ClInclude>
     <ClInclude Include="src\RawBuffer.h">
       <Filter>Headers\Bindable\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ImguiHelpers.h">
+      <Filter>Precompiled</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

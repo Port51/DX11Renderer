@@ -2,6 +2,7 @@
 #include "RenderPass.h"
 #include "Binding.h"
 #include "Bindable.h"
+#include "RenderTexture.h"
 
 namespace gfx
 {
@@ -204,6 +205,12 @@ namespace gfx
 		return *this;
 	}
 
+	RenderPass & RenderPass::SetCameraColorOut(std::shared_ptr<RenderTexture> pCameraColor)
+	{
+		pCameraColorOut = pCameraColor;
+		return *this;
+	}
+
 	Binding& RenderPass::AddBinding(std::shared_ptr<Bindable> pBindable)
 	{
 		bindings.push_back(Binding(std::move(pBindable)));
@@ -214,5 +221,10 @@ namespace gfx
 	{
 		bindings.push_back(std::move(pBinding));
 		return bindings[bindings.size() - 1];
+	}
+
+	std::shared_ptr<RenderTexture> RenderPass::GetCameraColorOut() const
+	{
+		return pCameraColorOut;
 	}
 }
