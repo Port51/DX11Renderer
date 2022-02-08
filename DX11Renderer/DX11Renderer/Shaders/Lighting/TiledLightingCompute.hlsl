@@ -336,7 +336,7 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     debugColor = inBounds ? float3(0, 1, 0) : float3(1, 0, 0);
     #define DEBUG_VIEW_SHOW_GRID
 #elif defined(DEBUG_VIEW_LIGHT_COUNTS_AND_RANGES)
-    debugColor = float3(debugAllLightsInRange * isGeometry * 0.2, tileLightCount * 0.2, 0);
+    debugColor = float3(tileLightCount * 0.05 - debugAllLightsInRange * isGeometry * 0.05, tileLightCount * 0.05, tileLightCount * 0.05);
     #define DEBUG_VIEW_SHOW_GRID
 #elif defined(DEBUG_VIEW_ALL_SHADOWS)
     debugColor = debugAllShadowAtten; // - debugCascade;
@@ -350,7 +350,6 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
 #elif defined(DEBUG_VIEW_GEOMETRY)
     debugColor = frac(positionVS.z * 3.0);
 #endif
-    debugColor = -normalVS.z;
     
 #if defined(DEBUG_VIEW_SHOW_GRID)
     if (groupThreadId.x == 0 || groupThreadId.y == 0)
@@ -361,7 +360,5 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     
     SpecularLightingOut[tId.xy] = float4(specularLight, 1);
     DiffuseLightingOut[tId.xy] = float4(diffuseLight, 1);
-    DiffuseLightingOut[tId.xy] = float4(positionWS.yyy, 1);
-    DiffuseLightingOut[tId.xy] = float4(mul(_InvViewMatrix, -float4(normalVS.xyz, 0.f)).rgb, 1);
     DebugOut[tId.xy] = float4(debugColor, 1);
 }

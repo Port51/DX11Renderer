@@ -36,7 +36,6 @@ namespace gfx
 		std::shared_ptr<RendererList> pRendererList;
 
 		bool showDemoWindow = true;
-		float simulationSpeed = 1.f;
 
 		static constexpr UINT nDrawables = 1;
 	};

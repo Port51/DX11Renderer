@@ -145,7 +145,7 @@ namespace gfx
 	void App::DoFrame()
 	{
 		static float timeElapsed = 0.f;
-		auto dt = pTimer->Mark() * simulationSpeed;
+		auto dt = pTimer->Mark();
 		timeElapsed += dt;
 
 		// Animate lights
@@ -175,14 +175,6 @@ namespace gfx
 
 		if (true)
 		{
-			// Imgui window to control simulation speed
-			if (ImGui::Begin("Simulation Speed")) // checks if window open
-			{
-				ImGui::SliderFloat("Speed Factor", &simulationSpeed, 0.0f, 4.0f);
-				ImGui::Text("%.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-			}
-			ImGui::End();
-
 			// Imgui windows
 			pRenderer->DrawImguiControlWindow();
 			pCamera->DrawImguiControlWindow();

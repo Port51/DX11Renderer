@@ -44,7 +44,11 @@ bool gfx::DrawToggleOnOffButton(int id, const char* label, bool isSelected, ImVe
 		ImGui::SameLine();
 	}
 	ImGui::PushID(id + 3048);
+
+	ImGui::TableNextRow();
+	ImGui::TableSetColumnIndex(0);
 	ImGui::Text(label);
+	ImGui::SetCursorPosX(500);
 	
 	// Off button
 	{
@@ -52,7 +56,7 @@ bool gfx::DrawToggleOnOffButton(int id, const char* label, bool isSelected, ImVe
 		{
 			ImGui::PushStyleColor(ImGuiCol_Button, selectedColor);
 		}
-		ImGui::SameLine();
+		ImGui::TableSetColumnIndex(1);
 		if (ImGui::Button("OFF", size))
 		{
 			returnValue = false;

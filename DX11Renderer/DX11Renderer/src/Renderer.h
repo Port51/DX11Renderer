@@ -63,7 +63,8 @@ namespace gfx
 		std::shared_ptr<RenderTexture> pHiZBufferTarget;
 
 		// Debug views
-		std::shared_ptr<RenderTexture> pDebugTiledLightingCS;
+		std::shared_ptr<RenderTexture> pDebugTiledLighting;
+		std::shared_ptr<RenderTexture> pDebugSSR;
 
 		std::shared_ptr<RenderTexture> pCameraColor0;
 		std::shared_ptr<RenderTexture> pCameraColor1;

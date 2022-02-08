@@ -18,6 +18,7 @@ Texture2D<float2> HiZBuffer : register(t5);
 
 RWTexture2D<float4> CameraColorOut : register(u0);
 globallycoherent RWStructuredBuffer<uint> DebugData : register(u1);
+RWTexture2D<float4> DebugOut : register(u2);
 
 groupshared uint2 debugTraceId;
 
@@ -158,7 +159,7 @@ void CSMain(uint3 tId : SV_DispatchThreadID)
     // todo: use fallback when reflectColor.a = 0
     
     float4 colorIn = CameraColorIn[tId.xy];
-    CameraColorOut[tId.xy] = float4(colorIn.rgb + reflectColor.rgb * reflectColor.a, colorIn.a);
+    CameraColorOut[tId.xy] = float4(colorIn.rgb + reflectColor.rgb * reflectColor.a*0, colorIn.a);
     
     //
     // Debug views!
@@ -192,7 +193,7 @@ void CSMain(uint3 tId : SV_DispatchThreadID)
 
     }
     
-    CameraColorOut[tId.xy] = float4(debugColor.rgb, colorIn.a);
+    DebugOut[tId.xy] = float4(debugColor.rgb, colorIn.a);
 #endif
     
 }
