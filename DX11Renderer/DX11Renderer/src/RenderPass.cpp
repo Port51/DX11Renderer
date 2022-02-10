@@ -37,6 +37,11 @@ namespace gfx
 
 	void RenderPass::BindSharedResources(Graphics & gfx) const
 	{
+		for (auto& binding : bindings)
+		{
+			binding.Bind(gfx);
+		}
+
 		// todo: can optimize by passing one array for each of these
 		for (size_t i = 0; i < pCS_CB_Binds.size(); ++i)
 		{
@@ -130,10 +135,6 @@ namespace gfx
 
 	void RenderPass::Execute(Graphics & gfx) const
 	{
-		for (auto& binding : bindings)
-		{
-			binding.Bind(gfx);
-		}
 		for (const auto& j : jobs)
 		{
 			j.Execute(gfx);

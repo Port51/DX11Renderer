@@ -20,7 +20,7 @@ namespace gfx
 		:
 		pImgui(std::make_unique<ImguiManager>()),
 		pWindow(std::make_unique<Window>(screenWidth, screenHeight, "DX11 Renderer")),
-		pCamera(std::make_unique<Camera>(40.0f, (float)screenWidth / (float)screenHeight, 0.1f, 100.0f)),
+		pCamera(std::make_unique<Camera>(40.0f, (float)screenWidth / (float)screenHeight, 0.5f, 50.0f)),
 		pTimer(std::make_unique<Timer>()),
 		pRendererList(std::make_shared<RendererList>())
 	{

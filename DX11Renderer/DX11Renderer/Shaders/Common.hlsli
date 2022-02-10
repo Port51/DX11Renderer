@@ -54,7 +54,11 @@ float3 GetNormalVSFromGBuffer(float4 gbufferTex)
     normalVS.xy = gbufferTex.xy * 2.f - 1.f;
     normalVS.z = -sqrt(1.f - dot(normalVS.xy, normalVS.xy)); // positive Z points away from the camera
     return normalVS;
+}
 
+uint2 GetPixelCoordFromNDC(float3 positionNDC)
+{
+    return floor((positionNDC.xy * 0.5f + 0.5f) * _ScreenParams.xy);
 }
 
 #endif

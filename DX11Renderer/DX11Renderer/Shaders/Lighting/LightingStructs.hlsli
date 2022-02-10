@@ -1,5 +1,5 @@
-#ifndef _LIGHT_STRUCTS_INCLUDED
-#define _LIGHT_STRUCTS_INCLUDED
+#ifndef _LIGHTING_STRUCTS_INCLUDED
+#define _LIGHTING_STRUCTS_INCLUDED
 
 struct StructuredLight
 {
@@ -16,6 +16,18 @@ struct StructuredShadow
     uint2 padding;
     //float shadowMapSize;
     //float3 padding;
+};
+
+struct AABB
+{
+    float3 centerVS;
+    float3 extentsVS;
+};
+
+struct SphereBounds
+{
+    float3 positionVS;
+    float radius;
 };
 
 #endif

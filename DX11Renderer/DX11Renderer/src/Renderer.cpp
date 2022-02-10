@@ -75,6 +75,9 @@ namespace gfx
 		pHiZBufferTarget = std::make_shared<RenderTexture>(gfx, DXGI_FORMAT_R16G16_UNORM, 8u);
 		pHiZBufferTarget->Init(gfx.GetDevice(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
+		pBloomPyramid = std::make_shared<RenderTexture>(gfx, DXGI_FORMAT_R16G16B16A16_FLOAT, 8u);
+		pBloomPyramid->Init(gfx.GetDevice(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
+
 		pSpecularLighting = std::make_shared<RenderTexture>(gfx);
 		pSpecularLighting->Init(gfx.GetDevice(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
@@ -90,6 +93,9 @@ namespace gfx
 		pDebugTiledLighting = std::make_shared<RenderTexture>(gfx);
 		pDebugTiledLighting->Init(gfx.GetDevice(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
+		pDebugClusteredLighting = std::make_shared<RenderTexture>(gfx);
+		pDebugClusteredLighting->Init(gfx.GetDevice(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
+
 		pDebugSSR = std::make_shared<RenderTexture>(gfx);
 		pDebugSSR->Init(gfx.GetDevice(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
@@ -100,9 +106,12 @@ namespace gfx
 		pTransformationCB = std::make_unique<ConstantBuffer<GlobalTransformCB>>(gfx, D3D11_USAGE_DYNAMIC);
 		pPerCameraCB = std::make_unique<ConstantBuffer<PerCameraCB>>(gfx, D3D11_USAGE_DYNAMIC);
 		pHiZCreationCB = std::make_unique<ConstantBuffer<HiZCreationCB>>(gfx, D3D11_USAGE_DYNAMIC);
+		pClusteredLightingCB = std::make_unique<ConstantBuffer<ClusteredLightingCB>>(gfx, D3D11_USAGE_DYNAMIC);
 
 		pFXAA_CB = std::make_unique<ConstantBuffer<FXAA_CB>>(gfx, D3D11_USAGE_DYNAMIC);
 		pSSR_CB = std::make_unique<ConstantBuffer<SSR_CB>>(gfx, D3D11_USAGE_DYNAMIC);
+		// todo: move indices to LightManager
+		pClusteredIndices = std::make_unique<StructuredBuffer<int>>(gfx, D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS, pLightManager->GetClusterCount() * LightManager::MaxLightsPerCluster);
 		pSSR_DebugData = std::make_unique<StructuredBuffer<int>>(gfx, D3D11_USAGE_DEFAULT, D3D11_BIND_UNORDERED_ACCESS, 4u);
 		pDitherCB = std::make_unique<ConstantBuffer<DitherCB>>(gfx, D3D11_USAGE_DYNAMIC);
 
@@ -112,6 +121,7 @@ namespace gfx
 		pHiZDepthCopyKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, std::string("Assets\\Built\\Shaders\\HiZDepthCopy.cso"), std::string("CSMain")));
 		pHiZCreateMipKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, std::string("Assets\\Built\\Shaders\\HiZCreateMip.cso"), std::string("CSMain")));
 		pTiledLightingKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, std::string("Assets\\Built\\Shaders\\TiledLightingCompute.cso"), std::string("CSMain")));
+		pClusteredLightingKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, std::string("Assets\\Built\\Shaders\\ClusteredLightingCompute.cso"), std::string("CSMain")));
 		pSSRKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, std::string("Assets\\Built\\Shaders\\SSR.cso"), std::string("CSMain")));
 		pFXAAKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, std::string("Assets\\Built\\Shaders\\FXAA.cso"), std::string("CSMain")));
 		pDitherKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, std::string("Assets\\Built\\Shaders\\Dither.cso"), std::string("CSMain")));
@@ -126,7 +136,9 @@ namespace gfx
 		CreateRenderPass(ShadowPassName);
 		CreateRenderPass(GBufferRenderPassName);
 		CreateRenderPass(TiledLightingPassName);
-		CreateRenderPass(GeometryRenderPassName);
+		CreateRenderPass(ClusteredLightingPassName);
+		CreateRenderPass(OpaqueRenderPassName);
+		CreateRenderPass(BlurPyramidPassName);
 		CreateRenderPass(SSRRenderPassName);
 		CreateRenderPass(FXAARenderPassName);
 		CreateRenderPass(DitherRenderPassName);
@@ -151,6 +163,7 @@ namespace gfx
 			CSSetCB(RenderSlots::CS_PerFrameCB, pPerFrameCB->GetD3DBuffer())
 			.CSSetCB(RenderSlots::CS_TransformationCB, pTransformationCB->GetD3DBuffer())
 			.CSSetCB(RenderSlots::CS_PerCameraCB, pPerCameraCB->GetD3DBuffer())
+			.CSSetCB(RenderSlots::CS_LightInputCB, pLightManager->GetLightInputCB()->GetD3DBuffer())
 			.CSSetSRV(RenderSlots::CS_LightDataSRV, pLightManager->GetLightDataSRV())
 			.CSSetSRV(RenderSlots::CS_LightShadowDataSRV, pLightManager->GetShadowDataSRV())
 			.VSSetCB(RenderSlots::VS_PerFrameCB, pPerFrameCB->GetD3DBuffer())
@@ -158,7 +171,8 @@ namespace gfx
 			.VSSetCB(RenderSlots::VS_PerCameraCB, pPerCameraCB->GetD3DBuffer())
 			.PSSetCB(RenderSlots::PS_PerFrameCB, pPerFrameCB->GetD3DBuffer())
 			.PSSetCB(RenderSlots::PS_TransformationCB, pTransformationCB->GetD3DBuffer())
-			.PSSetCB(RenderSlots::PS_PerCameraCB, pPerCameraCB->GetD3DBuffer());
+			.PSSetCB(RenderSlots::PS_PerCameraCB, pPerCameraCB->GetD3DBuffer())
+			.PSSetCB(RenderSlots::PS_LightInputCB, pLightManager->GetLightInputCB()->GetD3DBuffer());
 
 		GetRenderPass(DepthPrepassName)
 			->AddBinding(RasterizerState::Resolve(gfx, D3D11_CULL_BACK)).SetupRSBinding();
@@ -177,18 +191,32 @@ namespace gfx
 
 		GetRenderPass(TiledLightingPassName)->
 			CSSetSRV(RenderSlots::CS_GbufferNormalRoughSRV, pNormalRoughReflectivityTarget->GetSRV())
-			.CSSetSRV(RenderSlots::CS_FreeSRV, gfx.pDepthStencil->GetSRV())
+			.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, gfx.pDepthStencil->GetSRV())
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 1u, pHiZBufferTarget->GetSRV())
-			.CSSetSRV(RenderSlots::CS_FreeSRV + 2u, nullptr) // reserve this slot for shadow atlas!
+			.CSSetSRV(RenderSlots::CS_FreeSRV + 2u, pLightManager->GetShadowAtlas()->GetSRV())
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 3u, pDither->GetSRV())
-			.CSSetUAV(0u, pSpecularLighting->GetUAV())
-			.CSSetUAV(1u, pDiffuseLighting->GetUAV())
-			.CSSetUAV(2u, pDebugTiledLighting->GetUAV())
-			.AddBinding(pShadowSampler).SetupCSBinding(0u);
+			.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, pSpecularLighting->GetUAV())
+			.CSSetUAV(RenderSlots::CS_FreeUAV + 1u, pDiffuseLighting->GetUAV())
+			.CSSetUAV(RenderSlots::CS_FreeUAV + 2u, pDebugTiledLighting->GetUAV())
+			.AddBinding(pShadowSampler).SetupCSBinding(0u); // todo: bind as below
 
-		GetRenderPass(GeometryRenderPassName)->
-			PSSetSRV(0u, pSpecularLighting->GetSRV())
-			.PSSetSRV(1u, pDiffuseLighting->GetSRV());
+		GetRenderPass(ClusteredLightingPassName)->
+			CSSetSRV(RenderSlots::CS_FreeSRV + 0u, gfx.pDepthStencil->GetSRV())
+			.CSSetSRV(RenderSlots::CS_FreeSRV + 1u, pHiZBufferTarget->GetSRV())
+			.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, pClusteredIndices->GetUAV())
+			.CSSetUAV(RenderSlots::CS_FreeUAV + 1u, pDebugClusteredLighting->GetUAV())
+			.CSSetCB(RenderSlots::CS_FreeCB + 0u, pClusteredLightingCB->GetD3DBuffer());
+
+		GetRenderPass(OpaqueRenderPassName)->
+			PSSetSRV(RenderSlots::PS_FreeSRV + 0u, pSpecularLighting->GetSRV())
+			.PSSetSRV(RenderSlots::PS_FreeSRV + 1u, pDiffuseLighting->GetSRV())
+			.PSSetSRV(RenderSlots::PS_FreeSRV + 2u, pClusteredIndices->GetSRV())
+			.PSSetSRV(RenderSlots::PS_FreeSRV + 3u, pDither->GetSRV())
+			.PSSetSRV(RenderSlots::PS_FreeSRV + 4u, pLightManager->GetLightDataSRV())
+			.PSSetSRV(RenderSlots::PS_FreeSRV + 5u, pLightManager->GetShadowDataSRV())
+			.PSSetSRV(RenderSlots::PS_FreeSRV + 6u, pLightManager->GetShadowAtlas()->GetSRV())
+			.PSSetCB(RenderSlots::PS_FreeCB + 0u, pClusteredLightingCB->GetD3DBuffer())
+			.PSSetSPL(RenderSlots::PS_FreeSPL + 0u, pShadowSampler->GetD3DSampler());
 
 		if (IsFeatureEnabled(RendererFeature::HZBSSR))
 		{
@@ -291,7 +319,7 @@ namespace gfx
 			static DrawContext drawContext(*this);
 			drawContext.viewMatrix = cam->GetViewMatrix();
 			drawContext.projMatrix = cam->GetProjectionMatrix();
-			drawContext.SetRenderPasses(std::move(std::vector<std::string> { DepthPrepassName, GBufferRenderPassName, GeometryRenderPassName }));
+			drawContext.SetRenderPasses(std::move(std::vector<std::string> { DepthPrepassName, GBufferRenderPassName, OpaqueRenderPassName }));
 
 			// todo: filter by render passes too
 			pVisibleRendererList->Filter(cam->GetFrustumWS(), RendererList::RendererSorting::BackToFront);
@@ -328,10 +356,7 @@ namespace gfx
 		// Per-frame and per-camera binds
 		{
 			const std::unique_ptr<RenderPass>& pass = GetRenderPass(PerCameraPassName);
-
 			pass->BindSharedResources(gfx);
-
-			pass->Execute(gfx);
 		}
 
 		// Early Z pass
@@ -355,9 +380,7 @@ namespace gfx
 			const std::unique_ptr<RenderPass>& pass = GetRenderPass(HiZPassName);
 
 			context->OMSetRenderTargets(0u, nullptr, nullptr); // need in order to access depth
-
 			pass->BindSharedResources(gfx);
-			pass->Execute(gfx);
 
 			UINT screenWidth = (UINT)gfx.GetScreenWidth();
 			UINT screenHeight = (UINT)gfx.GetScreenHeight();
@@ -416,21 +439,31 @@ namespace gfx
 		// Tiled lighting pass
 		{
 			const std::unique_ptr<RenderPass>& pass = GetRenderPass(TiledLightingPassName);
-
 			pass->BindSharedResources(gfx);
-			pLightManager->BindShadowAtlas(gfx, RenderSlots::CS_FreeSRV + 2u);
-			pass->Execute(gfx); // setup binds
 
 			pTiledLightingKernel->Dispatch(gfx, *pass, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1);
 
 			pass->UnbindSharedResources(gfx);
 		}
 
-		// Geometry pass
+		// Clustered lighting pass
 		{
-			const std::unique_ptr<RenderPass>& pass = GetRenderPass(GeometryRenderPassName);
+			const std::unique_ptr<RenderPass>& pass = GetRenderPass(ClusteredLightingPassName);
+			pass->BindSharedResources(gfx);
 
-			// Bind global textures here
+			static ClusteredLightingCB clusteredLightingCB;
+			clusteredLightingCB.groupResolutions = { pLightManager->GetClusterDimensionX(), pLightManager->GetClusterDimensionY(), pLightManager->GetClusterDimensionZ(), 0u };
+			pClusteredLightingCB->Update(gfx, clusteredLightingCB);
+
+			// Round up
+			pClusteredLightingKernel->Dispatch(gfx, *pass, pLightManager->GetClusterDimensionX(), pLightManager->GetClusterDimensionY(), pLightManager->GetClusterDimensionZ());
+
+			pass->UnbindSharedResources(gfx);
+		}
+
+		// Opaque pass
+		{
+			const std::unique_ptr<RenderPass>& pass = GetRenderPass(OpaqueRenderPassName);
 			pass->BindSharedResources(gfx);
 
 			DepthStencilState::Resolve(gfx, DepthStencilState::Mode::Gbuffer)->BindOM(gfx);
@@ -447,13 +480,46 @@ namespace gfx
 			context->OMSetRenderTargets(1u, nullRTVs.data(), nullptr);
 		}
 
+		// Blur pyramid
+		{
+			/*const std::unique_ptr<RenderPass>& pass = GetRenderPass(BlurPyramidPassName);
+			pass->BindSharedResources(gfx);
+
+			UINT screenWidth = (UINT)gfx.GetScreenWidth();
+			UINT screenHeight = (UINT)gfx.GetScreenHeight();
+
+			static BlurPyramidCreationCB blurPyramidCreationCB;
+			blurPyramidCreationCB.resolutionSrcDst = { screenWidth, screenHeight, screenWidth, screenHeight };
+			pBlurPyramidCreationCB->Update(gfx, blurPyramidCreationCB);
+
+			// Downsample
+			for (UINT mip = 0u; mip < 8u; ++mip)
+			{
+				UINT dstWidth = screenWidth >> (mip + 1u);
+				UINT dstHeight = screenHeight >> (mip + 1u);
+
+				if (dstWidth == 0u || dstHeight == 0u)
+					continue;
+
+				hiZCreationCB.resolutionSrcDst = { dstWidth << 1u, dstHeight << 1u, dstWidth, dstHeight };
+				pHiZCreationCB->Update(gfx, hiZCreationCB);
+
+				// Bind mip slice views as UAVs
+				context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 0u, 2u, pass->pNullUAVs.data(), nullptr);
+				context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 0u, 1u, pHiZBufferTarget->GetUAV(mip - 1u).GetAddressOf(), nullptr);
+				context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 1u, 1u, pHiZBufferTarget->GetUAV(mip).GetAddressOf(), nullptr);
+
+				pHiZCreateMipKernel->Dispatch(gfx, *pass, dstWidth, dstHeight, 1u);
+			}
+
+			pass->UnbindSharedResources(gfx);*/
+		}
+
 		// SSR pass
 		if (IsFeatureEnabled(RendererFeature::HZBSSR))
 		{
 			const std::unique_ptr<RenderPass>& pass = GetRenderPass(SSRRenderPassName);
-
 			pass->BindSharedResources(gfx);
-			pass->Execute(gfx); // setup binds
 
 			static SSR_CB ssrCB;
 			ssrCB.debugViewStep = (frameCt / 30u) % 20u;
@@ -461,7 +527,6 @@ namespace gfx
 
 			pSSRKernel->Dispatch(gfx, *pass, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1);
 
-			pass->Execute(gfx);
 			pass->UnbindSharedResources(gfx);
 		}
 
@@ -469,9 +534,7 @@ namespace gfx
 		if (Config::AAType == Config::AAType::FXAA && IsFeatureEnabled(RendererFeature::FXAA))
 		{
 			const std::unique_ptr<RenderPass>& pass = GetRenderPass(FXAARenderPassName);
-
 			pass->BindSharedResources(gfx);
-			pass->Execute(gfx); // setup binds
 
 			static FXAA_CB fxaaCB;
 			fxaaCB.minThreshold = 0.1f;
@@ -482,7 +545,6 @@ namespace gfx
 
 			pFXAAKernel->Dispatch(gfx, *pass, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1);
 
-			pass->Execute(gfx);
 			pass->UnbindSharedResources(gfx);
 		}
 
@@ -490,9 +552,7 @@ namespace gfx
 		if (viewIdx == RendererView::Final && IsFeatureEnabled(RendererFeature::Dither))
 		{
 			const std::unique_ptr<RenderPass>& pass = GetRenderPass(DitherRenderPassName);
-
 			pass->BindSharedResources(gfx);
-			pass->Execute(gfx); // setup binds
 
 			static DitherCB ditherCB;
 			ditherCB.shadowDither = 0.15f;
@@ -501,7 +561,6 @@ namespace gfx
 
 			pDitherKernel->Dispatch(gfx, *pass, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1);
 
-			pass->Execute(gfx);
 			pass->UnbindSharedResources(gfx);
 		}
 
@@ -509,13 +568,10 @@ namespace gfx
 		if (viewIdx == RendererView::Final && IsFeatureEnabled(RendererFeature::Tonemapping))
 		{
 			const std::unique_ptr<RenderPass>& pass = GetRenderPass(TonemappingRenderPassName);
-
 			pass->BindSharedResources(gfx);
-			pass->Execute(gfx); // setup binds
 
 			pTonemappingKernel->Dispatch(gfx, *pass, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1);
 
-			pass->Execute(gfx);
 			pass->UnbindSharedResources(gfx);
 		}
 
@@ -538,6 +594,9 @@ namespace gfx
 				break;
 			case RendererView::TiledLighting:
 				fsPass->SetInputTarget(pDebugTiledLighting);
+				break;
+			case RendererView::ClusteredLighting:
+				fsPass->SetInputTarget(pDebugClusteredLighting);
 				break;
 			case RendererView::SSRTrace:
 				fsPass->SetInputTarget(pDebugSSR);
@@ -565,7 +624,8 @@ namespace gfx
 			int newViewIdx = (int)viewIdx;
 			newViewIdx = DrawSelectableButtonInArray(0, "Final", newViewIdx, buttonSize, false);
 			newViewIdx = DrawSelectableButtonInArray(1, "Tiled Lighting", newViewIdx, buttonSize, true);
-			newViewIdx = DrawSelectableButtonInArray(2, "SSR Trace", newViewIdx, buttonSize, true);
+			newViewIdx = DrawSelectableButtonInArray(2, "Clustered Lighting", newViewIdx, buttonSize, true);
+			newViewIdx = DrawSelectableButtonInArray(3, "SSR Trace", newViewIdx, buttonSize, true);
 			viewIdx = (RendererView)newViewIdx;
 
 			// Toggle features

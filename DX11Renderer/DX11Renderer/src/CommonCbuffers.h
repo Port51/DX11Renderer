@@ -70,6 +70,17 @@ namespace gfx
 		//dx::XMVECTOR zBufferParams;
 	};
 
+	struct alignas(16) ClusteredLightingCB
+	{
+		dx::XMVECTORU32 groupResolutions; // groupsX, groupsY, groupsZ, padding
+	};
+
+	struct alignas(16) BlurPyramidCreationCB
+	{
+		dx::XMVECTORU32 resolutionSrcDst;
+		//dx::XMVECTOR zBufferParams;
+	};
+
 	struct alignas(16) FXAA_CB
 	{
 		float minThreshold;

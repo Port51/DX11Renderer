@@ -33,8 +33,6 @@ static float3 PointLightFaceDirWS[] =
 };
 
 
-#include "./LightStructs.hlsli"
-
 float2 GetShadowTileUV(float4 shadowNDC, uint2 tile)
 {
     // Select tile
@@ -70,7 +68,7 @@ uint GetCubeMapFaceID(float3 dir)
     }
 }
 
-float GetSpotlightShadowAttenuation(StructuredShadow shadow, float3 positionVS, float3 normalVS, float NdotL)
+float GetSpotlightShadowAttenuation(StructuredShadow shadow, Texture2D<float> shadowAtlas, SamplerComparisonState shadowAtlasSampler, float3 positionVS, float3 normalVS, float NdotL)
 {
     // Apply large bias at grazing angles, small bias when light dir is similar to normal
     float3 normalBiasVS = normalVS * (NdotL * -0.075 + 0.085);
@@ -90,13 +88,13 @@ float GetSpotlightShadowAttenuation(StructuredShadow shadow, float3 positionVS, 
         [unroll]
         for (int x = -SHADOW_PCF_DIR_TAPS; x <= SHADOW_PCF_DIR_TAPS; x += 1)
         {
-            sum += ShadowAtlas.SampleCmpLevelZero(ShadowAtlasSampler, shadowUV.xy, shadowNDC.z - ShadowBias, int2(x, y));
+            sum += shadowAtlas.SampleCmpLevelZero(shadowAtlasSampler, shadowUV.xy, shadowNDC.z - ShadowBias, int2(x, y));
         }
     }
     shadowAtten = sum / SHADOW_PCF_TOTAL_TAPS;
 #else
     // Fallback to hard shadows
-    shadowAtten = ShadowAtlas.SampleCmpLevelZero(ShadowAtlasSampler, shadowUV.xy, shadowNDC.z - ShadowBias);
+    shadowAtten = shadowAtlas.SampleCmpLevelZero(shadowAtlasSampler, shadowUV.xy, shadowNDC.z - ShadowBias);
 #endif
     
 #if defined(SHADOW_DEBUG_SHOW_DEPTH_MAP)
@@ -134,7 +132,7 @@ uint GetShadowCascade(float3 positionVS, float dither)
     }
 }
 
-float GetDirectionalShadowAttenuation(StructuredShadow shadow, float3 positionVS, float3 normalVS, float NdotL)
+float GetDirectionalShadowAttenuation(StructuredShadow shadow, Texture2D<float> shadowAtlas, SamplerComparisonState shadowAtlasSampler, float3 positionVS, float3 normalVS, float NdotL)
 {
     // Apply large bias at grazing angles, small bias when light dir is similar to normal
     float3 normalBiasVS = normalVS * (NdotL * -0.075 + 0.085);
@@ -159,13 +157,13 @@ float GetDirectionalShadowAttenuation(StructuredShadow shadow, float3 positionVS
         [unroll]
         for (int x = -SHADOW_PCF_DIR_TAPS; x <= SHADOW_PCF_DIR_TAPS; x += 1)
         {
-            sum += ShadowAtlas.SampleCmpLevelZero(ShadowAtlasSampler, shadowUV.xy, shadowNDC.z - ShadowBias, int2(x, y));
+            sum += shadowAtlas.SampleCmpLevelZero(shadowAtlasSampler, shadowUV.xy, shadowNDC.z - ShadowBias, int2(x, y));
         }
     }
     shadowAtten = sum / SHADOW_PCF_TOTAL_TAPS;
 #else
     // Fallback to hard shadows
-    shadowAtten = ShadowAtlas.SampleCmpLevelZero(ShadowAtlasSampler, shadowUV.xy, shadowNDC.z - ShadowBias);
+    shadowAtten = shadowAtlas.SampleCmpLevelZero(shadowAtlasSampler, shadowUV.xy, shadowNDC.z - ShadowBias);
 #endif
     
 #if defined(SHADOW_DEBUG_SHOW_DEPTH_MAP)

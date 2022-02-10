@@ -1,6 +1,6 @@
 
-#include "CbufCommon.hlsli"
-#include "PhongCommon.hlsli"
+#include "./CbufCommon.hlsli"
+#include "./PhongCommon.hlsli"
 
 cbuffer LightCBuf : register(b0)
 {
@@ -27,8 +27,8 @@ cbuffer ObjectCBuf : register(b1)
 };*/
 
 // Per-frame
-Texture2D SpecularLightingRT : register(t0);
-Texture2D DiffuseLightingRT : register(t1);
+Texture2D SpecularLightingRT : register(t2);
+Texture2D DiffuseLightingRT : register(t3);
 
 // Per-draw
 Texture2D tex : register(t2);
@@ -36,12 +36,6 @@ Texture2D nmap : register(t3);
 SamplerState splr : register(s0);
 
 #include "Lighting/BRDF.hlsli"
-
-float SCurve(float x)
-{
-    // (3x^2 - 2x^3)
-    return (-2 * x + 3) * x * x; // OPS: [MAD] [MUL] [MUL]
-}
 
 float4 main(v2f i) : SV_Target
 {

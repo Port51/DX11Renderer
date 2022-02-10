@@ -32,8 +32,17 @@ namespace gfx
 		static const UINT PS_PerFrameCB = 0u;
 		static const UINT PS_TransformationCB = 1u;
 		static const UINT PS_PerCameraCB = 2u;
-		static const UINT PS_FreeCB = 3u; // 1st available general-purpose slot
+		static const UINT PS_LightInputCB = 3u;
+		static const UINT PS_FreeCB = 4u; // 1st available general-purpose slot
 		static const UINT PS_FreeSPL = 0u; // 1st available general-purpose slot
+
+		// These are the first slots available for renderers
+		static const UINT VS_FreeRendererCB = 0u;
+		static const UINT VS_FreeRendererSRV = 0u;
+		static const UINT VS_FreeRendererSPL = 0u;
+		static const UINT PS_FreeRendererCB = 5u;
+		static const UINT PS_FreeRendererSRV = 8u;
+		static const UINT PS_FreeRendererSPL = 1u;
 
 		static const UINT PS_FreeSRV = 2u; // 1st available general-purpose slot
 	};

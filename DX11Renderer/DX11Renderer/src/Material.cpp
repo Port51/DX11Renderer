@@ -124,7 +124,7 @@ namespace gfx
 					// Init cbuffer
 					// todo: add to codex using std::string(_materialAssetPath)?
 					pPassStep->AddBinding(std::move(std::make_shared<ConstantBuffer<PSMaterialConstant>>(gfx, D3D11_USAGE_IMMUTABLE, pmc)))
-						.SetupPSBinding(RenderSlots::PS_FreeCB + 0u);
+						.SetupPSBinding(RenderSlots::PS_FreeRendererCB + 0u);
 				}
 			}
 			else if (p.key == "Cull")
@@ -185,7 +185,7 @@ namespace gfx
 					if (iter != pTexturesByPropName.end())
 					{
 						pPassStep->AddBinding(iter->second)
-							.SetupPSBinding(RenderSlots::PS_FreeSRV + slotIdx);
+							.SetupPSBinding(RenderSlots::PS_FreeRendererSRV + slotIdx);
 					}
 					else
 					{

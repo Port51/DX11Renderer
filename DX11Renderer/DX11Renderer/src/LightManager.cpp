@@ -60,6 +60,11 @@ namespace gfx
 		pShadowRendererList = std::make_shared<RendererList>(pRendererList);
 
 		pShadowAtlas = std::make_unique<DepthStencilTarget>(gfx, Config::ShadowAtlasResolution, Config::ShadowAtlasResolution);
+
+		// Setup cluster dimensions based on screen size, rounding up
+		clusterDimensionX = ((UINT)gfx.GetScreenWidth() + LightManager::ClusteredLightingClusterPixels - 1u) / LightManager::ClusteredLightingClusterPixels;
+		clusterDimensionY = ((UINT)gfx.GetScreenHeight() + LightManager::ClusteredLightingClusterPixels - 1u) / LightManager::ClusteredLightingClusterPixels;
+		clusterDimensionZ = ClusteredLightingZLevels;
 	}
 
 	void LightManager::AddLightModelsToList(RendererList & pRendererList)
@@ -134,12 +139,17 @@ namespace gfx
 
 		pLightInputCB->Update(gfx, lightInputCB);
 		gfx.GetContext()->CSSetConstantBuffers(RenderSlots::CS_LightInputCB, 1u, pLightInputCB->GetD3DBuffer().GetAddressOf());
+		gfx.GetContext()->CSSetConstantBuffers(RenderSlots::PS_LightInputCB, 1u, pLightInputCB->GetD3DBuffer().GetAddressOf());
 	}
 
-	void LightManager::BindShadowAtlas(Graphics& gfx, UINT startSlot) const
+	std::unique_ptr<DepthStencilTarget>& LightManager::GetShadowAtlas()
 	{
-		// todo: size should change based on shadow culling
-		gfx.GetContext()->CSSetShaderResources(startSlot, 1u, pShadowAtlas->GetSRV().GetAddressOf());
+		return pShadowAtlas;
+	}
+
+	std::unique_ptr<ConstantBuffer<LightInputCB>>& LightManager::GetLightInputCB()
+	{
+		return pLightInputCB;
 	}
 
 	void LightManager::RenderShadows(ShadowPassContext context)
@@ -190,6 +200,26 @@ namespace gfx
 	std::shared_ptr<Light> LightManager::GetLight(UINT index) const
 	{
 		return pLights[index];
+	}
+
+	UINT LightManager::GetClusterCount() const
+	{
+		return clusterDimensionX * clusterDimensionY * clusterDimensionZ;
+	}
+
+	UINT LightManager::GetClusterDimensionX() const
+	{
+		return clusterDimensionX;
+	}
+
+	UINT LightManager::GetClusterDimensionY() const
+	{
+		return clusterDimensionY;
+	}
+
+	UINT LightManager::GetClusterDimensionZ() const
+	{
+		return clusterDimensionZ;
 	}
 
 	bool LightManager::FrustumSphereIntersection(dx::XMVECTOR lightSphere, dx::XMFLOAT4 frustumCorners, float farClipPlane)

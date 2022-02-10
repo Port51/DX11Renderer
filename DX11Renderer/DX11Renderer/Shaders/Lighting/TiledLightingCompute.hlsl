@@ -1,7 +1,7 @@
 #include "./../Common.hlsli"
-#include "./../Lighting/LightStructs.hlsli"
-#include "./../Lighting/Lights.hlsli"
-#include "./../Lighting/BRDF.hlsli"
+#include "./Lights.hlsli"
+#include "./BRDF.hlsli"
+#include "./HybridLightingCommon.hlsli"
 
 // References:
 // https://wickedengine.net/2018/01/10/optimizing-tile-based-light-culling/
@@ -56,13 +56,6 @@ groupshared uint tileLightIndices[MAX_TILE_LIGHTS];
 groupshared uint minTileZ;
 groupshared uint maxTileZ;
 
-bool AABBSphereIntersection(float3 spherePos, float sphereRad, float3 aabbCenter, float3 aabbExtents)
-{
-    float3 displ = max(0, abs(aabbCenter - spherePos) - aabbExtents);
-    float sdfSqr = dot(displ, displ);
-    return sdfSqr <= sphereRad * sphereRad;
-}
-
 [numthreads(TILED_GROUP_SIZE, TILED_GROUP_SIZE, 1)]
 void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThreadId : SV_GroupThreadID, uint3 tId : SV_DispatchThreadID)
 {
@@ -83,9 +76,9 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     
 #if defined(USE_HI_Z_BUFFER)
     //const float linearDepth = HiZBuffer.Load(int3(tId.xy, 0)).r * _ProjectionParams.z;
-    const float linearDepth = LinearEyeDepth(HiZBuffer.Load(int3(tId.xy, 0)).r, _ZBufferParams);
+    const float linearDepth = LinearEyeDepth(HiZBuffer.Load(int3(tId.xy, 0u)).r, _ZBufferParams);
     //const float2 tileDepthRange = HiZBuffer.Load(int3(tId.xy / 16, 4)).rg * _ProjectionParams.z;
-    float2 tileDepthRange = HiZBuffer.Load(int3(tId.xy / 16, 4)).rg;
+    float2 tileDepthRange = HiZBuffer.Load(int3(tId.xy >> 4u, 4u)).rg;
     tileDepthRange.x = LinearEyeDepth(tileDepthRange.x, _ZBufferParams);
     tileDepthRange.y = LinearEyeDepth(tileDepthRange.y, _ZBufferParams);
     const float isGeometry = linearDepth < 10000.f;
@@ -257,7 +250,7 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
                 debugCascade = GetShadowCascade(positionVS, dither) * 0.25f;
 //#endif
                 
-                float shadowAtten = GetDirectionalShadowAttenuation(shadowData[shadowCascadeIdx], positionVS, normalVS, NdotL);
+                float shadowAtten = GetDirectionalShadowAttenuation(shadowData[shadowCascadeIdx], ShadowAtlas, ShadowAtlasSampler, positionVS, normalVS, NdotL);
                 lightAtten *= shadowAtten;
                 debugAllShadowAtten *= shadowAtten;
             }
@@ -285,7 +278,7 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
                 if (shadowIdx != -1)
                 {
                     // Spotlight shadow
-                    float shadowAtten = GetSpotlightShadowAttenuation(shadowData[shadowIdx], positionVS, normalVS, NdotL);
+                    float shadowAtten = GetSpotlightShadowAttenuation(shadowData[shadowIdx], ShadowAtlas, ShadowAtlasSampler, positionVS, normalVS, NdotL);
                     shadowAtten = saturate(shadowAtten + outOfRange);
                     lightAtten *= shadowAtten;
                     debugAllShadowAtten *= shadowAtten;
@@ -301,7 +294,7 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
                 uint shadowFaceIdx = shadowIdx + GetCubeMapFaceID(offsetWS);
                 
                 // Attenuation
-                float shadowAtten = GetSpotlightShadowAttenuation(shadowData[shadowFaceIdx], positionVS, normalVS, NdotL);
+                float shadowAtten = GetSpotlightShadowAttenuation(shadowData[shadowFaceIdx], ShadowAtlas, ShadowAtlasSampler, positionVS, normalVS, NdotL);
                 shadowAtten = saturate(shadowAtten + outOfRange);
                 lightAtten *= shadowAtten;
                 debugAllShadowAtten *= shadowAtten;

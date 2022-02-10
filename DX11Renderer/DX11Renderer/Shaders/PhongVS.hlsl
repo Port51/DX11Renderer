@@ -30,11 +30,13 @@ v2f main(attrib i)
 {
     v2f o;
     i.pos -= i.instancePosition * 0.5;
-    o.positionVS = (float3) mul(modelView, float4(i.pos, 1.0f));
-    o.normalWS = mul((float3x3) model, i.n);
-    o.normalVS = mul((float3x3) modelView, i.n);
-    o.tangentVS = mul((float3x3) modelView, i.t);
+    o.positionVS = (float3) mul(modelView, float4(i.pos, 1.0f)).xyz;
+    o.positionWS = (float3) mul(model, float4(i.pos, 1.0f)).xyz;
+    o.normalWS = mul((float3x3) model, i.n).xyz;
+    o.normalVS = mul((float3x3) modelView, i.n).xyz;
+    o.tangentVS = mul((float3x3) modelView, i.t).xyz;
 	o.pos = mul(modelViewProj, float4(i.pos, 1.0f));
+    o.positionNDC = o.pos;
     o.uv0 = float2(i.uv0.x, 1.f - i.uv0.y);
     o.screenPos = o.pos;
 	return o;
