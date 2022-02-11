@@ -62,6 +62,7 @@ namespace gfx
 
 		dx::XMVECTOR frustumCornerDataVS;
 		dx::XMVECTOR cameraPositionWS;
+		dx::XMVECTOR clusterPrecalc;
 	};
 
 	struct alignas(16) HiZCreationCB

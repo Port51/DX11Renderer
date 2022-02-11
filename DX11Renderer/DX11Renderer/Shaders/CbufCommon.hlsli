@@ -53,6 +53,8 @@ cbuffer PerCameraCB : register(b2)
     float4 _FrustumCornerDataVS;
     
     float4 _CameraPositionWS;
+    
+    float4 _ClusterPrecalc; // mult slice, add slice
 };
 
 cbuffer LightInputCB : register(b3)

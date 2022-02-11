@@ -1,7 +1,9 @@
 
 //#define DEBUG_VIEW_CLUSTER_XY
 //#define DEBUG_VIEW_CLUSTER_Z
-#define DEBUG_VIEW_LIGHT_COUNTS
+//#define DEBUG_VIEW_LIGHT_COUNTS
+#define DEBUG_VIEW_LIGHT_COUNTS_AND_RANGES
+//#define SHOW_LIGHT_LIMITS
 
 #include "./CbufCommon.hlsli"
 #include "./PhongCommon.hlsli"
@@ -60,7 +62,7 @@ float4 main(v2f i) : SV_Target
     uint lightCt = ClusteredIndices[clusterDataIdx];
     float4 debugViews = 0.f;
     float3 diffuseLight = 0.f;
-    for (uint li = 0u; li < lightCt; ++li)
+    for (uint li = 1u; li <= lightCt; ++li) // intentionally start from 1
     {
         StructuredLight light = lights[ClusteredIndices[clusterDataIdx + li]];
         float lightAtten = GetLightAttenuation(light, shadowData, ShadowAtlas, ShadowAtlasSampler, i.normalVS, i.positionVS, i.positionWS, dither, debugViews);
@@ -81,6 +83,8 @@ float4 main(v2f i) : SV_Target
     return float4(debugClusterRGB.rgb, 1.f);
 #elif defined(DEBUG_VIEW_LIGHT_COUNTS)
     return float4((float3)lightCt / MAX_LIGHTS_PER_CLUSTER, 1.f);
+#elif defined(DEBUG_VIEW_LIGHT_COUNTS_AND_RANGES)
+    return float4(debugViews.z, (float)lightCt / MAX_LIGHTS_PER_CLUSTER, 0.f, 1.f);
 #endif
     
     

@@ -95,16 +95,18 @@ uint GetClusterIdx(uint3 groupResolutions, uint3 cluster)
     return (groupResolutions.y * cluster.x + cluster.y) * groupResolutions.z + cluster.z;
 }
 
-uint GetClusterSlice(float z01)
+uint GetClusterSlice(float linearDepth)
 {
-    // Given: Z = NearZ (FarZ / NearZ) ^ (slice / numSlices)
-    // Solve for slice:
-    //      ln(Z) = ln(NearZ) + ln( (FarZ / NearZ) ) * (slice / numSlices)
-    //      slice / numSlices = (ln(Z) - ln(NearZ)) / ln( (FarZ / NearZ) )
-    //      slice = ln(Z / NearZ) * numSlices / ln( (FarZ / NearZ) )
+    // EQ: floor( log(Z) * numSlices / (log(FarZ/NearZ)) - numSlices * log(NearZ) / log(FarZ/NearZ) )
+    // From: http://www.aortiz.me/2018/12/21/CG.html#part-2 and DOOM 2016 SIGGRAPH
     
     // todo: pack some of these calcs into a cbuffer
-    return DEPTH_SLICES * (log(z01 / _ProjectionParams.y) / log(_ZBufferParams.y));
+    
+    // _ProjectionParams: Y = near, Z = far
+    // _ZBufferParams: Y = far / near
+    return (uint)max(log2(linearDepth) * _ClusterPrecalc.x + _ClusterPrecalc.y, 0.f);
+    //return floor(log2(z) * DEPTH_SLICES / log2(_ZBufferParams.y) - DEPTH_SLICES * log2(_ProjectionParams.y) / log2(_ZBufferParams.y));
+    //return floor((log(z) - log(_ProjectionParams.y)) * DEPTH_SLICES / log(_ZBufferParams.y));
 }
 
 uint2 GetClusterXYFromNDC(float3 positionNDC)

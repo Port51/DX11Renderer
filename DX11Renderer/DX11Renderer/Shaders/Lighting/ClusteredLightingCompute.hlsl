@@ -3,7 +3,8 @@
 
 #define ENABLE_DEBUG_VIEWS // much faster if turned off
 //#define DEBUG_VIEW_IS_COUNT_AT_DEPTH
-#define DEBUG_VIEW_IS_COUNT_AT_ALL_DEPTHS
+//#define DEBUG_VIEW_IS_COUNT_AT_ALL_DEPTHS
+#define DEBUG_VIEW_IS_CLUSTER_VALIDATION
 
 #include "./../Common.hlsli"
 #include "./Lights.hlsli"
@@ -68,7 +69,7 @@ void CSMain(uint3 tId : SV_DispatchThreadID)
     }
 
 #if defined(ENABLE_DEBUG_VIEWS)
-    #if defined(DEBUG_VIEW_IS_COUNT_AT_DEPTH)
+#if defined(DEBUG_VIEW_IS_COUNT_AT_DEPTH)
     // Show light count for one depth
     const uint depthLevel = 1u;
     float lightCountValue = (float) nextLightIdx / MAX_LIGHTS_PER_CLUSTER;
@@ -82,21 +83,44 @@ void CSMain(uint3 tId : SV_DispatchThreadID)
             }
         }
     }
-    #elif defined (DEBUG_VIEW_IS_COUNT_AT_ALL_DEPTHS)
+#elif defined (DEBUG_VIEW_IS_COUNT_AT_ALL_DEPTHS)
     // Each column represents light count at a depth level
+    
     for (uint y = 0; y < 16u; ++y)
     {
         uint y2 = 16u - y;
         uint2 pixelId = tId.xy * 16u + uint2(tId.z, y2);
+        uint2 outId = tId.xy * 16u + uint2(tId.z, y2);
         float greyscale = Linear01Depth(HiZBuffer.Load(int3(pixelId, 0u)).r, _ZBufferParams);
         greyscale *= greyscale;
-        DebugOut[tId.xy * 16u + uint2(tId.z, y2)] = (y * 2u <= nextLightIdx) ? 1.f : greyscale;
+        DebugOut[outId] = (y * 2u <= nextLightIdx) ? 1.f : greyscale;
         // Draw grid
         if (y == 0u || tId.z == 0u)
         {
-            DebugOut[tId.xy * 16u + uint2(tId.z, y2)] = 1.f;
+            DebugOut[outId] = 1.f;
         }
     }
-    #endif
+#elif defined(DEBUG_VIEW_IS_CLUSTER_VALIDATION)
+    // Validate
+    float2 screenUV = (tId.xy * CLUSTER_DIMENSION + CLUSTER_DIMENSION * 0.5f) * _ScreenParams.zw;
+    float3 positionNDC = float3(screenUV * 2.f - 1.f, 0.f);
+    float linearDepth = (zNear + zFar) * 0.5f;
+    uint3 cluster = GetClusterFromNDC(positionNDC, linearDepth);
+
+    bool isValid = (cluster.xyz == tId.xyz);
+    
+    for (uint y = 0; y < 16u; ++y)
+    {
+        uint y2 = 16u - y;
+        uint2 outId = tId.xy * 16u + uint2(tId.z, y2);
+        DebugOut[outId] = isValid ? float4(0, 1, 0, 1) : float4(1, 0, 0, 1);
+        //DebugOut[outId] = (cluster.z - 2 - tId.z) * 0.2f;
+        // Draw grid
+        if (y == 0u || tId.z == 0u)
+        {
+            DebugOut[outId] = 1.f;
+        }
+    }
+#endif
 #endif
 }
