@@ -2,7 +2,7 @@
 //#define DEBUG_VIEW_CLUSTER_XY
 //#define DEBUG_VIEW_CLUSTER_Z
 //#define DEBUG_VIEW_LIGHT_COUNTS
-#define DEBUG_VIEW_LIGHT_COUNTS_AND_RANGES
+//#define DEBUG_VIEW_LIGHT_COUNTS_AND_RANGES
 //#define SHOW_LIGHT_LIMITS
 
 #include "./CbufCommon.hlsli"
@@ -48,11 +48,15 @@ float4 main(v2f i) : SV_Target
 {
     float3 positionNDC = i.positionNDC.xyz / i.positionNDC.w;
     float linearDepth = LinearEyeDepth(i.pos.z, _ZBufferParams);
+    linearDepth = i.positionVS.z;
     
     float4 diffuseTex = tex.Sample(splr, i.uv0);
-    //diffuseTex.rgb *= combinedLight;
     
     uint3 cluster = GetClusterFromNDC(positionNDC, linearDepth);
+    if (cluster.x >= _ClusterGroupResolutions.x || cluster.y >= _ClusterGroupResolutions.y)
+    {
+        return half4(0, 1, 0, 1);
+    }
     uint clusterIdx = GetClusterIdx(_ClusterGroupResolutions.xyz, cluster);
     uint clusterDataIdx = GetClusterDataIdx(clusterIdx);
     
@@ -62,7 +66,7 @@ float4 main(v2f i) : SV_Target
     uint lightCt = ClusteredIndices[clusterDataIdx];
     float4 debugViews = 0.f;
     float3 diffuseLight = 0.f;
-    for (uint li = 1u; li <= lightCt; ++li) // intentionally start from 1
+    for (uint li = 1u; li <= lightCt; ++li) // intentionally start from 1 to save an addition
     {
         StructuredLight light = lights[ClusteredIndices[clusterDataIdx + li]];
         float lightAtten = GetLightAttenuation(light, shadowData, ShadowAtlas, ShadowAtlasSampler, i.normalVS, i.positionVS, i.positionWS, dither, debugViews);
@@ -80,14 +84,12 @@ float4 main(v2f i) : SV_Target
     // Create RGB debug values based on cluster Z coord
     float debugClusterZ = (float)cluster.z / _ClusterGroupResolutions.z;
     float3 debugClusterRGB = frac(cluster.z * float3(0.12894f, 0.44832f, 0.8342f));
-    return float4(debugClusterRGB.rgb, 1.f);
+    return float4(debugClusterRGB.rgb, 1.f); // (lightCt > 0 ? 1.f : 0.5f)
 #elif defined(DEBUG_VIEW_LIGHT_COUNTS)
     return float4((float3)lightCt / MAX_LIGHTS_PER_CLUSTER, 1.f);
 #elif defined(DEBUG_VIEW_LIGHT_COUNTS_AND_RANGES)
     return float4(debugViews.z, (float)lightCt / MAX_LIGHTS_PER_CLUSTER, 0.f, 1.f);
 #endif
     
-    
     return diffuseLight.rgbb;
-    return diffuseTex;
 }

@@ -27,6 +27,7 @@ namespace gfx
 		virtual void Execute(Graphics& gfx) const;
 		void Reset();
 	public:
+		RenderPass& ClearBinds();
 		RenderPass& CSSetCB(UINT slot, ComPtr<ID3D11Buffer> pResource);
 		RenderPass& CSSetSRV(UINT slot, ComPtr<ID3D11ShaderResourceView> pResource);
 		RenderPass& CSSetUAV(UINT slot, ComPtr<ID3D11UnorderedAccessView> pResource);

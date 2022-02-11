@@ -146,6 +146,21 @@ namespace gfx
 		jobs.clear();
 	}
 
+	RenderPass & RenderPass::ClearBinds()
+	{
+		pCS_CB_Binds.clear();
+		pCS_SRV_Binds.clear();
+		pCS_UAV_Binds.clear();
+		pCS_SPL_Binds.clear();
+		pVS_CB_Binds.clear();
+		pVS_SRV_Binds.clear();
+		pVS_SPL_Binds.clear();
+		pPS_CB_Binds.clear();
+		pPS_SRV_Binds.clear();
+		pPS_SPL_Binds.clear();
+		return *this;
+	}
+
 	RenderPass & RenderPass::CSSetCB(UINT slot, ComPtr<ID3D11Buffer> pResource)
 	{
 		pCS_CB_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11Buffer>>(slot, pResource));

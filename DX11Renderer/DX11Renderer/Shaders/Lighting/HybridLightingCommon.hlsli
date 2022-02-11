@@ -2,6 +2,7 @@
 #define _HYBRID_LIGHTING_COMMON_INCLUDED
 
 #define CLUSTER_DIMENSION           16u
+#define INV_CLUSTER_DIMENSION       0.0625f
 #define DEPTH_SLICES                16u
 #define INV_DEPTH_SLICES            0.0625f
 #define MAX_LIGHTS_PER_CLUSTER      32u
@@ -111,16 +112,27 @@ uint GetClusterSlice(float linearDepth)
 
 uint2 GetClusterXYFromNDC(float3 positionNDC)
 {
+    // Full EQ: floor((positionNDC.xy * 0.5f + 0.5f) * _ScreenParams.xy * INV_CLUSTER_DIMENSION);
+    // Below is an optimized version where most calculations are done on the CPU
+    // floor((positionNDC.xy * 0.5f + 0.5f) * _ScreenParams.xy * INV_CLUSTER_DIMENSION);
+    
     // todo: precalculate (_ScreenParams.xy * 0.5f / CLUSTER_DIMENSION) on CPU
     // Which would turn this into a [MAD] op
-    return floor((positionNDC.xy * 0.5f + 0.5f) * _ScreenParams.xy / CLUSTER_DIMENSION);
+    return (uint2) (positionNDC.xy * _ClusterXYRemap.xy + _ClusterXYRemap.xy); // happens to multiply and add by same value
 }
 
 uint3 GetClusterFromNDC(float3 positionNDC, float linearDepth)
 {
     uint3 cluster;
-    cluster.xy = GetClusterXYFromNDC(positionNDC);
     cluster.z = GetClusterSlice(linearDepth);
+    
+    // Reproject NDC to match cluster system
+    // This is required as clusters are tightly packed AABBs without overlap, rather than frustums
+    // A pixel may be located outside the frustum of a cluster, but within the AABB
+    float projectionRatio = linearDepth / GetClusterZNear(cluster.z + 1u); // todo: calculate ZNear and 1/ZNear for each slice on CPU
+    float3 clusterNDC = positionNDC * projectionRatio;
+    
+    cluster.xy = GetClusterXYFromNDC(clusterNDC);
     return cluster;
 }
 

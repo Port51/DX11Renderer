@@ -42,7 +42,7 @@ namespace gfx
 		{
 			for (int y = -3; y <= 3; ++y)
 			{
-				//pLights.emplace_back(std::make_shared<PointLight>(gfx, lightIdx++, false, false, pLightModelAsset, dx::XMFLOAT3(x * 2.f, 1.5f, y * 2.f), RandomSaturatedColorRGB(), 3.f, 3.f, 5.f));
+				pLights.emplace_back(std::make_shared<PointLight>(gfx, lightIdx++, false, false, pLightModelAsset, dx::XMFLOAT3(x * 2.f, 1.5f, y * 2.f), RandomSaturatedColorRGB(), 3.f, 3.f, 5.f));
 			}
 		}
 

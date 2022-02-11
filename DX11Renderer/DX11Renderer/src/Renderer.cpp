@@ -160,7 +160,8 @@ namespace gfx
 		bool cameraOutSlot0 = true;
 
 		GetRenderPass(PerCameraPassName)->
-			CSSetCB(RenderSlots::CS_PerFrameCB, pPerFrameCB->GetD3DBuffer())
+			ClearBinds()
+			.CSSetCB(RenderSlots::CS_PerFrameCB, pPerFrameCB->GetD3DBuffer())
 			.CSSetCB(RenderSlots::CS_TransformationCB, pTransformationCB->GetD3DBuffer())
 			.CSSetCB(RenderSlots::CS_PerCameraCB, pPerCameraCB->GetD3DBuffer())
 			.CSSetCB(RenderSlots::CS_LightInputCB, pLightManager->GetLightInputCB()->GetD3DBuffer())
@@ -174,23 +175,28 @@ namespace gfx
 			.PSSetCB(RenderSlots::PS_PerCameraCB, pPerCameraCB->GetD3DBuffer())
 			.PSSetCB(RenderSlots::PS_LightInputCB, pLightManager->GetLightInputCB()->GetD3DBuffer());
 
-		GetRenderPass(DepthPrepassName)
-			->AddBinding(RasterizerState::Resolve(gfx, D3D11_CULL_BACK)).SetupRSBinding();
+		GetRenderPass(DepthPrepassName)->
+			ClearBinds()
+			.AddBinding(RasterizerState::Resolve(gfx, D3D11_CULL_BACK)).SetupRSBinding();
 
-		GetRenderPass(HiZPassName)
-			->CSSetSRV(RenderSlots::CS_FreeSRV + 0u, gfx.pDepthStencil->GetSRV())
+		GetRenderPass(HiZPassName)->
+			ClearBinds()
+			.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, gfx.pDepthStencil->GetSRV())
 			.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, pHiZBufferTarget->GetUAV())
 			.CSSetUAV(RenderSlots::CS_FreeUAV + 1u, nullptr)
 			.CSSetCB(RenderSlots::CS_FreeCB + 0u, pHiZCreationCB->GetD3DBuffer());
 
-		GetRenderPass(ShadowPassName)
-			->AddBinding(RasterizerState::Resolve(gfx, D3D11_CULL_FRONT)).SetupRSBinding(); // Reduce shadow acne w/ front face culling during shadow pass
+		GetRenderPass(ShadowPassName)->
+			ClearBinds()
+			.AddBinding(RasterizerState::Resolve(gfx, D3D11_CULL_FRONT)).SetupRSBinding(); // Reduce shadow acne w/ front face culling during shadow pass
 
-		GetRenderPass(GBufferRenderPassName)
-			->AddBinding(RasterizerState::Resolve(gfx, D3D11_CULL_BACK)).SetupRSBinding();
+		GetRenderPass(GBufferRenderPassName)->
+			ClearBinds()
+			.AddBinding(RasterizerState::Resolve(gfx, D3D11_CULL_BACK)).SetupRSBinding();
 
 		GetRenderPass(TiledLightingPassName)->
-			CSSetSRV(RenderSlots::CS_GbufferNormalRoughSRV, pNormalRoughReflectivityTarget->GetSRV())
+			ClearBinds()
+			.CSSetSRV(RenderSlots::CS_GbufferNormalRoughSRV, pNormalRoughReflectivityTarget->GetSRV())
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, gfx.pDepthStencil->GetSRV())
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 1u, pHiZBufferTarget->GetSRV())
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 2u, pLightManager->GetShadowAtlas()->GetSRV())
@@ -201,14 +207,16 @@ namespace gfx
 			.AddBinding(pShadowSampler).SetupCSBinding(0u); // todo: bind as below
 
 		GetRenderPass(ClusteredLightingPassName)->
-			CSSetSRV(RenderSlots::CS_FreeSRV + 0u, gfx.pDepthStencil->GetSRV())
+			ClearBinds()
+			.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, gfx.pDepthStencil->GetSRV())
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 1u, pHiZBufferTarget->GetSRV())
 			.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, pClusteredIndices->GetUAV())
 			.CSSetUAV(RenderSlots::CS_FreeUAV + 1u, pDebugClusteredLighting->GetUAV())
 			.CSSetCB(RenderSlots::CS_FreeCB + 0u, pClusteredLightingCB->GetD3DBuffer());
 
 		GetRenderPass(OpaqueRenderPassName)->
-			PSSetSRV(RenderSlots::PS_FreeSRV + 0u, pSpecularLighting->GetSRV())
+			ClearBinds()
+			.PSSetSRV(RenderSlots::PS_FreeSRV + 0u, pSpecularLighting->GetSRV())
 			.PSSetSRV(RenderSlots::PS_FreeSRV + 1u, pDiffuseLighting->GetSRV())
 			.PSSetSRV(RenderSlots::PS_FreeSRV + 2u, pClusteredIndices->GetSRV())
 			.PSSetSRV(RenderSlots::PS_FreeSRV + 3u, pDither->GetSRV())
@@ -226,7 +234,8 @@ namespace gfx
 			cameraOutSlot0 = !cameraOutSlot0;
 
 			GetRenderPass(SSRRenderPassName)->
-				CSSetSRV(RenderSlots::CS_GbufferNormalRoughSRV, pNormalRoughReflectivityTarget->GetSRV())
+				ClearBinds()
+				.CSSetSRV(RenderSlots::CS_GbufferNormalRoughSRV, pNormalRoughReflectivityTarget->GetSRV())
 				.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, pColorIn->GetSRV())
 				.CSSetSRV(RenderSlots::CS_FreeSRV + 1u, gfx.pDepthStencil->GetSRV())
 				.CSSetSRV(RenderSlots::CS_FreeSRV + 2u, pHiZBufferTarget->GetSRV())
@@ -245,7 +254,8 @@ namespace gfx
 			cameraOutSlot0 = !cameraOutSlot0;
 
 			GetRenderPass(FXAARenderPassName)->
-				CSSetSRV(RenderSlots::CS_FreeSRV + 0u, pColorIn->GetSRV())
+				ClearBinds()
+				.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, pColorIn->GetSRV())
 				.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, pColorOut->GetUAV())
 				.CSSetCB(RenderSlots::CS_FreeCB + 0u, pFXAA_CB->GetD3DBuffer())
 				.CSSetSPL(RenderSlots::CS_FreeSPL + 0u, pSampler_ClampedBilinear->GetD3DSampler());
@@ -259,13 +269,14 @@ namespace gfx
 			cameraOutSlot0 = !cameraOutSlot0;
 
 			GetRenderPass(DitherRenderPassName)->
-				CSSetSRV(RenderSlots::CS_FreeSRV + 0u, pColorIn->GetSRV())
+				ClearBinds()
+				.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, pColorIn->GetSRV())
 				.CSSetSRV(RenderSlots::CS_FreeSRV + 1u, pDither->GetSRV())
 				.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, pColorOut->GetUAV())
 				.CSSetCB(RenderSlots::CS_FreeCB + 0u, pDitherCB->GetD3DBuffer());
 		}
 
-		if (IsFeatureEnabled(RendererFeature::Dither))
+		if (IsFeatureEnabled(RendererFeature::Tonemapping))
 		{
 			// Assign inputs and outputs
 			auto& pColorIn = (cameraOutSlot0) ? pCameraColor0 : pCameraColor1;
@@ -273,7 +284,8 @@ namespace gfx
 			cameraOutSlot0 = !cameraOutSlot0;
 
 			GetRenderPass(TonemappingRenderPassName)->
-				CSSetSRV(RenderSlots::CS_FreeSRV + 0u, pColorIn->GetSRV())
+				ClearBinds()
+				.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, pColorIn->GetSRV())
 				.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, pColorOut->GetUAV());
 			//.CSSetCB(RenderSlots::CS_FreeCB + 0u, pDitherCB->GetD3DBuffer());
 		}
@@ -351,9 +363,20 @@ namespace gfx
 			perCameraCB.frustumCornerDataVS = cam->GetFrustumCornersVS();
 			perCameraCB.cameraPositionWS = cam->GetPositionWS();
 
+			// todo: move elsewhere, and only calculate when FOV or resolution changes?
 			float fClustersZ = (float)pLightManager->GetClusterDimensionZ();
 			float logFarOverNear = std::log2f(cam->GetFarClipPlane() / cam->GetNearClipPlane());
 			perCameraCB.clusterPrecalc = dx::XMVectorSet(fClustersZ / logFarOverNear, -(fClustersZ * std::log2f(cam->GetNearClipPlane()) / logFarOverNear), 0.f, 0.f);
+
+			// This is used when calculating cluster.xy from NDC
+			// These calculations turn it into a single [MAD] operation
+			const float invClusterDim = 1.f / 16.f; // todo: make this a setting?
+			perCameraCB.clusterXYRemap = dx::XMVectorSet(
+				gfx.GetScreenWidth() * 0.5f * invClusterDim,
+				gfx.GetScreenHeight() * 0.5f * invClusterDim,
+				0.f,
+				0.f
+			);
 			pPerCameraCB->Update(gfx, perCameraCB);
 		}
 
@@ -616,20 +639,22 @@ namespace gfx
 
 	}
 
-	void Renderer::DrawImguiControlWindow()
+	void Renderer::DrawImguiControlWindow(Graphics& gfx)
 	{
 		if (ImGui::Begin("Renderer"))
 		{
 			static ImVec2 buttonSize = { 110, 25 };
 			static ImVec2 featureButtonSize = { 70, 18 };
 
+			bool changed = false;
+
 			// Select view
 			ImGui::Text("View:");
 			int newViewIdx = (int)viewIdx;
-			newViewIdx = DrawSelectableButtonInArray(0, "Final", newViewIdx, buttonSize, false);
-			newViewIdx = DrawSelectableButtonInArray(1, "Tiled Lighting", newViewIdx, buttonSize, true);
-			newViewIdx = DrawSelectableButtonInArray(2, "Clustered Lighting", newViewIdx, buttonSize, true);
-			newViewIdx = DrawSelectableButtonInArray(3, "SSR Trace", newViewIdx, buttonSize, true);
+			newViewIdx = DrawSelectableButtonInArray(0, "Final", newViewIdx, buttonSize, changed, false);
+			newViewIdx = DrawSelectableButtonInArray(1, "Tiled Lighting", newViewIdx, buttonSize, changed, true);
+			newViewIdx = DrawSelectableButtonInArray(2, "Clustered Lighting", newViewIdx, buttonSize, changed, true);
+			newViewIdx = DrawSelectableButtonInArray(3, "SSR Trace", newViewIdx, buttonSize, changed, true);
 			viewIdx = (RendererView)newViewIdx;
 
 			// Toggle features
@@ -637,13 +662,19 @@ namespace gfx
 
 			//static ImGuiTableFlags flags = ImGuiTableFlags_PreciseWidths;
 			ImGui::BeginTable("FeatureTable", 2);
-			rendererFeatureEnabled[(int)RendererFeature::Shadows] = DrawToggleOnOffButton(0, "Shadows", rendererFeatureEnabled[(int)RendererFeature::Shadows], featureButtonSize);
-			rendererFeatureEnabled[(int)RendererFeature::FXAA] = DrawToggleOnOffButton(1, "FXAA", rendererFeatureEnabled[(int)RendererFeature::FXAA], featureButtonSize);
-			rendererFeatureEnabled[(int)RendererFeature::HZBSSR] = DrawToggleOnOffButton(2, "Hi-Z SSR", rendererFeatureEnabled[(int)RendererFeature::HZBSSR], featureButtonSize);
-			rendererFeatureEnabled[(int)RendererFeature::Dither] = DrawToggleOnOffButton(3, "Dither", rendererFeatureEnabled[(int)RendererFeature::Dither], featureButtonSize);
-			rendererFeatureEnabled[(int)RendererFeature::Tonemapping] = DrawToggleOnOffButton(4, "Tonemapping", rendererFeatureEnabled[(int)RendererFeature::Tonemapping], featureButtonSize);
+			rendererFeatureEnabled[(int)RendererFeature::Shadows] = DrawToggleOnOffButton(0, "Shadows", rendererFeatureEnabled[(int)RendererFeature::Shadows], featureButtonSize, changed);
+			rendererFeatureEnabled[(int)RendererFeature::FXAA] = DrawToggleOnOffButton(1, "FXAA", rendererFeatureEnabled[(int)RendererFeature::FXAA], featureButtonSize, changed);
+			rendererFeatureEnabled[(int)RendererFeature::HZBSSR] = DrawToggleOnOffButton(2, "Hi-Z SSR", rendererFeatureEnabled[(int)RendererFeature::HZBSSR], featureButtonSize, changed);
+			rendererFeatureEnabled[(int)RendererFeature::Dither] = DrawToggleOnOffButton(3, "Dither", rendererFeatureEnabled[(int)RendererFeature::Dither], featureButtonSize, changed);
+			rendererFeatureEnabled[(int)RendererFeature::Tonemapping] = DrawToggleOnOffButton(4, "Tonemapping", rendererFeatureEnabled[(int)RendererFeature::Tonemapping], featureButtonSize, changed);
 			ImGui::EndTable();
 			
+			if (changed)
+			{
+				// Need to re-route inputs and outputs
+				SetupRenderPassDependencies(gfx);
+			}
+
 		}
 		ImGui::End();
 	}

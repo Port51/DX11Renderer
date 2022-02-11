@@ -55,6 +55,7 @@ cbuffer PerCameraCB : register(b2)
     float4 _CameraPositionWS;
     
     float4 _ClusterPrecalc; // mult slice, add slice
+    float4 _ClusterXYRemap;
 };
 
 cbuffer LightInputCB : register(b3)

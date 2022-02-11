@@ -176,7 +176,7 @@ namespace gfx
 		if (true)
 		{
 			// Imgui windows
-			pRenderer->DrawImguiControlWindow();
+			pRenderer->DrawImguiControlWindow(pWindow->Gfx());
 			pCamera->DrawImguiControlWindow();
 			pLightManager->DrawImguiControlWindows();
 			pWindow->Gfx().GetLog()->DrawImguiControlWindow();
