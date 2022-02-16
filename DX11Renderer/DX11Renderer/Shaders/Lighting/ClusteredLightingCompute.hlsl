@@ -22,20 +22,28 @@ cbuffer ClusterLight_CB : register(b4)
 };
 
 [numthreads(4, 4, 4)]
+//[numthreads(1, 1, 1)]
 void CSMain(uint3 tId : SV_DispatchThreadID)
 {
+    if (any(tId.xyz >= _ClusterGroupResolutions.xyz))
+        return;
+    
     // This one is for debug
-    float3 idPerc = (float3)tId / _ClusterGroupResolutions.xyz;
+    float3 idPerc = (float3) tId / _ClusterGroupResolutions.xyz;
     uint zSlice = tId.z;
     
     // Construct AABB
     float zNear = GetClusterZNear(zSlice);
     float zFar = GetClusterZNear(zSlice + 1u);
     
-    // Get max depth
-    float2 tileDepthRange = HiZBuffer.Load(int3(tId.xy >> 4u, 4u)).rg;
-    tileDepthRange.x = Linear01Depth(tileDepthRange.x, _ZBufferParams);
-    tileDepthRange.y = Linear01Depth(tileDepthRange.y, _ZBufferParams);
+    bool isOccluded = false;
+#if defined(CLUSTER_USE_FRUSTUM_TILES)
+    // Since clusters match tiles with this method, we can test if every pixel is occluded
+    float tileMaxDepth = HiZBuffer.Load(int3(tId.xy >> 4u, 4u)).g;
+    tileMaxDepth = LinearEyeDepth(tileMaxDepth, _ZBufferParams);
+    
+    isOccluded = (tileMaxDepth < zNear);
+#endif
     
     uint clusterIdx = GetClusterIdx(_ClusterGroupResolutions.xyz, tId);
     uint clusterDataIdx = MAX_LIGHTS_PER_CLUSTER_PLUS * clusterIdx;
@@ -45,64 +53,65 @@ void CSMain(uint3 tId : SV_DispatchThreadID)
     uint nextLightIdx = 0u;
     
     // Calculate NDC for cluster corners
+#if defined(CLUSTER_USE_AABB_TILES)
     float4 planeNDC = ((float4) (tId.xyxy * CLUSTER_DIMENSION + float4(CLUSTER_DIMENSION, CLUSTER_DIMENSION, 0.f, 0.f)) * _ScreenParams.zwzw) * 2.f - 1.f;
-    planeNDC.yw *= -1.f; // flip Y coords
+    planeNDC.yw *= -1.f;
+#elif defined(CLUSTER_USE_FRUSTUM_TILES)
+    float4 planeNDC = ((float4) (tId.xyxy * CLUSTER_DIMENSION + float4(CLUSTER_DIMENSION, 0.f, 0.f, CLUSTER_DIMENSION)) * _ScreenParams.zwzw) * 2.f - 1.f;
+#endif
+    
+#if defined(CLUSTER_USE_AABB_TILES)
     AABB aabb = GetConservativeFrustumAABBFromNDC(planeNDC, zNear, zFar);
-    //AABB aabb = GetFrustumAABBFromNDC(planeNDC, zNear, zFar);
+#elif defined(CLUSTER_USE_FRUSTUM_TILES)
+    AABB aabb = GetFrustumAABBFromNDC(planeNDC, zNear, zFar);
     
-    /*for (uint y = 0; y < 16u; ++y)
-    {
-        // Remap ids so Y direction matches NDC
-        uint2 outId = (uint2(tId.x, tId.y) * 16u + uint2(tId.z, y));
-        
-        //DebugOut[outId] = saturate(idPerc.x);
-        //DebugOut[outId] = saturate(idPerc.y);
-        //DebugOut[outId] = saturate(idPerc.z);
-        //DebugOut[outId] = saturate(planeNDC.x);
-        //DebugOut[outId] = planeNDC.x > planeNDC.z; // should be white
-        DebugOut[outId] = saturate(planeNDC.y);
-        //DebugOut[outId] = planeNDC.y > planeNDC.w; // should be white
-        DebugOut[outId] = saturate(tId.y * 16u * 0.01f); // counts from top of screen!
-        //DebugOut[outId] = saturate((clusterIdx % 10) * 0.1f); // counts from top of screen!
-        DebugOut[outId] = 0.f;
-        
-        // Draw grid
-        if (y == 0u || tId.z == 0u)
-        {
-            DebugOut[outId] = 1.f;
-        }
-    }*/
+    // Derive frustum planes
+    // #0 faces to the right, and the rest continue in CCW fashion
+    float3 frustumPlanes[4];
     
-    if (tId.z == 1u)
+    // Use cross product to turn tile view directions into plane directions
+    // The cross product is done by flipping X or Y with Z
+    frustumPlanes[0] = normalize(float3(1.f, 0.f, -planeNDC.x * _FrustumCornerDataVS.x));
+    frustumPlanes[1] = normalize(float3(0.f, 1.f, -planeNDC.y * _FrustumCornerDataVS.y));
+    frustumPlanes[2] = normalize(float3(-1.f, 0.f, planeNDC.z * _FrustumCornerDataVS.x));
+    frustumPlanes[3] = normalize(float3(0.f, -1.f, planeNDC.w * _FrustumCornerDataVS.y));
+#endif
+    
+    [branch]
+    if (!isOccluded)
     {
-        for (uint x = 0; x < 16u; ++x)
+        // Find lights in cluster
+        [loop]
+        for (uint i = 0u; i < _VisibleLightCount; ++i)
         {
-            for (uint y = 0; y < 16u; ++y)
+            if (nextLightIdx >= MAX_LIGHTS_PER_CLUSTER)
+                break;
+            StructuredLight light = lights[i];
+        
+            // Calculate sphere to test against
+            SphereBounds sphereBounds = GetSphereBoundsFromLight(light);
+            
+            bool inFrustum = true;
+            
+        #if defined(CLUSTER_USE_FRUSTUM_TILES)
+            [unroll]
+            for (uint j = 0u; j < 4u; ++j)
             {
-                uint2 outId = (uint2(tId.x, tId.y) * 16u + uint2(x, y));
-                //DebugOut[outId] = saturate((clusterIdx % 7) * 0.1f); // counts from top of screen!
-                //DebugOut[outId] = 1;
-
+                float d = dot(frustumPlanes[j], sphereBounds.positionVS.xyz);
+                inFrustum = inFrustum && (d < sphereBounds.radius);
             }
-        }
-    }
-    //return;
-    
-    // Find lights in cluster
-    for (uint i = 0u; i < _VisibleLightCount; ++i)
-    {
-        if (nextLightIdx >= MAX_LIGHTS_PER_CLUSTER)
-            break;
-        StructuredLight light = lights[i];
+        #endif
+            
+            inFrustum = inFrustum && AABBSphereIntersection(sphereBounds.positionVS, sphereBounds.radius, aabb.centerVS, aabb.extentsVS);
+            
+            inFrustum = inFrustum || (light.data0.x == 2); // always show directional lights
         
-        // Calculate sphere to test against
-        SphereBounds sphereBounds = GetSphereBoundsFromLight(light);
-        
-        [branch]
-        if (AABBSphereIntersection(sphereBounds.positionVS, sphereBounds.radius, aabb.centerVS, aabb.extentsVS))
-        {
-            ClusteredIndices[clusterDataIdx + nextLightIdx + 1u] = i;
-            nextLightIdx++;
+            [branch]
+            if (inFrustum)
+            {
+                ClusteredIndices[clusterDataIdx + nextLightIdx + 1u] = i;
+                nextLightIdx++;
+            }
         }
     }
     // Set light count
@@ -137,6 +146,7 @@ void CSMain(uint3 tId : SV_DispatchThreadID)
         float greyscale = Linear01Depth(HiZBuffer.Load(int3(pixelId, 0u)).r, _ZBufferParams);
         greyscale *= greyscale;
         DebugOut[outId] = (y <= nextLightIdx) ? 1.f : greyscale;
+        //DebugOut[outId] = saturate(-planeNDC.y);
         // Draw grid
         if (y == 0u || tId.z == 0u)
         {

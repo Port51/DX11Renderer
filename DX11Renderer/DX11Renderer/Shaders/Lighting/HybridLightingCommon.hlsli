@@ -1,6 +1,10 @@
 #ifndef _HYBRID_LIGHTING_COMMON_INCLUDED
 #define _HYBRID_LIGHTING_COMMON_INCLUDED
 
+// Set cluster method here:
+#define CLUSTER_USE_FRUSTUM_TILES // Frustums match screen pixels and use a combination of frustum and AABB intersection tests. This increases false positives from intersections, but allows culling with the Hi-Z buffer.
+//#define CLUSTER_USE_AABB_TILES    // Clusters are rectangles defined by far plane of each cluster depth. These rectangles don't overlap, which lowers false positives. Clusters don't match pixels.
+
 #define CLUSTER_DIMENSION           16u
 #define INV_CLUSTER_DIMENSION       0.0625f
 #define DEPTH_SLICES                16u
@@ -114,10 +118,6 @@ uint2 GetClusterXYFromNDC(float3 positionNDC)
 {
     // Full EQ: floor((positionNDC.xy * 0.5f + 0.5f) * _ScreenParams.xy * INV_CLUSTER_DIMENSION);
     // Below is an optimized version where most calculations are done on the CPU
-    // floor((positionNDC.xy * 0.5f + 0.5f) * _ScreenParams.xy * INV_CLUSTER_DIMENSION);
-    
-    // todo: precalculate (_ScreenParams.xy * 0.5f / CLUSTER_DIMENSION) on CPU
-    // Which would turn this into a [MAD] op
     return (uint2) (positionNDC.xy * _ClusterXYRemap.xy + _ClusterXYRemap.xy); // happens to multiply and add by same value
 }
 
@@ -126,13 +126,18 @@ uint3 GetClusterFromNDC(float3 positionNDC, float linearDepth)
     uint3 cluster;
     cluster.z = GetClusterSlice(linearDepth);
     
+#if defined(CLUSTER_USE_AABB_TILES)
     // Reproject NDC to match cluster system
     // This is required as clusters are tightly packed AABBs without overlap, rather than frustums
     // A pixel may be located outside the frustum of a cluster, but within the AABB
     float projectionRatio = linearDepth / GetClusterZNear(cluster.z + 1u); // todo: calculate ZNear and 1/ZNear for each slice on CPU
     float3 clusterNDC = positionNDC * projectionRatio;
-    
     cluster.xy = GetClusterXYFromNDC(clusterNDC);
+#elif defined(CLUSTER_USE_FRUSTUM_TILES)
+    // No reprojection needed in this case
+    positionNDC.y *= -1.f;
+    cluster.xy = GetClusterXYFromNDC(positionNDC);
+#endif
     return cluster;
 }
 

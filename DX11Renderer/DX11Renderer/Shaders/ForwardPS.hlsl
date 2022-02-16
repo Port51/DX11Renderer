@@ -53,6 +53,8 @@ float4 main(v2f i) : SV_Target
     float4 diffuseTex = tex.Sample(splr, i.uv0);
     
     uint3 cluster = GetClusterFromNDC(positionNDC, linearDepth);
+    //return saturate(positionNDC.y);
+    //return (float)cluster.y / _ClusterGroupResolutions.y;
     if (cluster.x >= _ClusterGroupResolutions.x || cluster.y >= _ClusterGroupResolutions.y)
     {
         return half4(0, 1, 0, 1);
@@ -64,7 +66,7 @@ float4 main(v2f i) : SV_Target
     
     // Light loop
     uint lightCt = ClusteredIndices[clusterDataIdx];
-    float4 debugViews = 0.f;
+    float4 debugViews = float4(0.f, 1.f, 0.f, 0.f); // cascades, all shadow atten, lights in range, -
     float3 diffuseLight = 0.f;
     for (uint li = 1u; li <= lightCt; ++li) // intentionally start from 1 to save an addition
     {
