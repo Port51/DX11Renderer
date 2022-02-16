@@ -1,8 +1,3 @@
-#include "./../Common.hlsli"
-#include "./Lights.hlsli"
-#include "./BRDF.hlsli"
-#include "./HybridLightingCommon.hlsli"
-
 // References:
 // https://wickedengine.net/2018/01/10/optimizing-tile-based-light-culling/
 
@@ -32,6 +27,11 @@
 //#define DEBUG_VIEW_VERIFY_AABB_BOUNDS
 //#define DEBUG_VIEW_CASCADE_IDX
 //#define DEBUG_VIEW_GEOMETRY
+
+#include "./../Common.hlsli"
+#include "./Lights.hlsli"
+#include "./BRDF.hlsli"
+#include "./HybridLightingCommon.hlsli"
 
 // Inputs
 StructuredBuffer<StructuredLight> lights : register(t0);
@@ -117,7 +117,7 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     
 #if defined(USE_AABB_INTERSECTION_TEST)
     // For each side, select depth in order to get min/max of frustum points
-    const float4 frustumPointSelection = float4(
+    /*const float4 frustumPointSelection = float4(
         min(planeNDC.z * tileDepthRange.y, planeNDC.z * tileDepthRange.x),
         max(planeNDC.w * tileDepthRange.y, planeNDC.w * tileDepthRange.x),
         max(planeNDC.x * tileDepthRange.y, planeNDC.x * tileDepthRange.x),
@@ -126,13 +126,11 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     const float3 minAABB = float3(_FrustumCornerDataVS.xy * frustumPointSelection.xy, tileDepthRange.x);
     const float3 maxAABB = float3(_FrustumCornerDataVS.xy * frustumPointSelection.zw, tileDepthRange.y);
     const float3 aabbCenter = (minAABB + maxAABB) * 0.5f;
-    const float3 aabbExtents = (maxAABB - minAABB) * 0.501f;
+    const float3 aabbExtents = (maxAABB - minAABB) * 0.501f;*/
+    AABB aabb = GetFrustumAABBFromNDC(planeNDC, tileDepthRange.x, tileDepthRange.y);
 #endif
     
     uint i;
-    float debugAllShadowAtten = 1.f;
-    float debugAllLightsInRange = 0.f;
-    float debugCascade = 0.f;
     for (i = gIndex; i < _VisibleLightCount; i += TILED_GROUP_SIZE * TILED_GROUP_SIZE)
     {
         StructuredLight light = lights[i];
@@ -140,31 +138,14 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
         bool inFrustum = true;
         
         // Calculate sphere to test against
-        float4 sphereData;
-        [branch]
-        if (light.data0.x == 0)
-        {
-            // Point light:
-            sphereData = light.positionVS_range;
-        }
-        else if (light.data0.x == 1)
-        {
-            // Spotlight:
-            // Project sphere halfway along cone
-            sphereData = float4(light.positionVS_range.xyz + light.direction.xyz * light.positionVS_range.w * 0.5, light.positionVS_range.w * 0.5);
-        }
-        else
-        {
-            // Directional light:
-            sphereData = (float4)0.f;
-        }
+        SphereBounds sphereBounds = GetSphereBoundsFromLight(light);
         
 #if defined(USE_FRUSTUM_INTERSECTION_TEST)     
         [unroll]
-        for (uint j = 0; j < 4; ++j)
+        for (uint j = 0u; j < 4u; ++j)
         {
-            float d = dot(frustumPlanes[j], sphereData.xyz);
-            inFrustum = inFrustum && (d < sphereData.w);
+            float d = dot(frustumPlanes[j], sphereBounds.positionVS.xyz);
+            inFrustum = inFrustum && (d < sphereBounds.radius);
         }
     #if !defined(USE_AABB_INTERSECTION_TEST)
         // Only need to test near and far planes if AABB test is not used
@@ -176,7 +157,7 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
 
 #if defined(USE_AABB_INTERSECTION_TEST)
         // Sphere-AABB test
-        inFrustum = inFrustum && AABBSphereIntersection(sphereData.xyz, sphereData.w, aabbCenter, aabbExtents);
+        inFrustum = inFrustum && AABBSphereIntersection(sphereBounds.positionVS.xyz, sphereBounds.radius, aabb.centerVS, aabb.extentsVS);
 #endif
         
         [branch]
@@ -220,13 +201,16 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     float f90 = 1.f;
     
     // https://gamedev.net/forums/topic/579417-forced-to-unroll-loop-but-unrolling-failed-resolved/4690649/
+    float4 debugViews = float4(0.f, 1.f, 0.f, 0.f); // cascades, all shadow atten, lights in range, -
     float3 diffuseLight = 0.f;
     float3 specularLight = 0.f;
+    [loop]
     for (i = 0; i < tileLightCount; ++i)
     {
         StructuredLight light = lights[tileLightIndices[i]];
+        float lightAtten = GetLightAttenuation(light, shadowData, ShadowAtlas, ShadowAtlasSampler, normalVS, positionVS, positionWS, dither, debugViews);
         
-        float lightAtten;
+        /*float lightAtten;
         float3 lightDirVS;
         
         uint type = (uint)light.data0.x;
@@ -304,15 +288,15 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
             // This debug view shows a solid color if in light range
             debugAllLightsInRange += (lightDist < light.positionVS_range.w);
 #endif
-        }
+        }*/
         
         lightAtten *= light.color_intensity.w;
         float3 lightColorInput = saturate(light.color_intensity.rgb * lightAtten);
         
-        BRDFLighting brdf = BRDF(f0, f90, roughness, linearRoughness, normalVS, viewDirVS, lightDirVS);
+        //BRDFLighting brdf = BRDF(f0, f90, roughness, linearRoughness, normalVS, viewDirVS, lightDirVS);
         diffuseLight += lightColorInput;
         //diffuseLight += brdf.diffuseLight * lightColorInput;
-        specularLight += brdf.specularLight * lightColorInput;
+        //specularLight += brdf.specularLight * lightColorInput;
     }
     
     diffuseLight *= isGeometry;
@@ -329,10 +313,10 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     debugColor = inBounds ? float3(0, 1, 0) : float3(1, 0, 0);
     #define DEBUG_VIEW_SHOW_GRID
 #elif defined(DEBUG_VIEW_LIGHT_COUNTS_AND_RANGES)
-    debugColor = float3(tileLightCount * 0.05 - debugAllLightsInRange * isGeometry * 0.05, tileLightCount * 0.05, tileLightCount * 0.05);
+    debugColor = float3(tileLightCount * 0.05 - debugViews.z * isGeometry * 0.05, tileLightCount * 0.05, tileLightCount * 0.05);
     #define DEBUG_VIEW_SHOW_GRID
 #elif defined(DEBUG_VIEW_ALL_SHADOWS)
-    debugColor = debugAllShadowAtten; // - debugCascade;
+    debugColor = debugViews.y; // - debugCascade;
 #elif defined(DEBUG_VIEW_SHADOW)
     // Show shadow for a light
     //debugColor = GetSpotlightShadowAttenuation(shadowData[6], positionVS, normalRough.xyz, dot(normalRough.xyz, -lights[1].direction.xyz));
