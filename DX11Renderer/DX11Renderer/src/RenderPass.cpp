@@ -70,7 +70,7 @@ namespace gfx
 		}
 		for (size_t i = 0; i < pVS_SPL_Binds.size(); ++i)
 		{
-			gfx.GetContext()->CSSetSamplers(pVS_SPL_Binds[i].first, 1u, pVS_SPL_Binds[i].second.GetAddressOf());
+			gfx.GetContext()->VSSetSamplers(pVS_SPL_Binds[i].first, 1u, pVS_SPL_Binds[i].second.GetAddressOf());
 		}
 
 		for (size_t i = 0; i < pPS_CB_Binds.size(); ++i)
@@ -83,7 +83,7 @@ namespace gfx
 		}
 		for (size_t i = 0; i < pPS_SPL_Binds.size(); ++i)
 		{
-			gfx.GetContext()->CSSetSamplers(pPS_SPL_Binds[i].first, 1u, pPS_SPL_Binds[i].second.GetAddressOf());
+			gfx.GetContext()->PSSetSamplers(pPS_SPL_Binds[i].first, 1u, pPS_SPL_Binds[i].second.GetAddressOf());
 		}
 	}
 
@@ -103,7 +103,7 @@ namespace gfx
 		}
 		if (pCS_SPL_Binds.size() > 0)
 		{
-			gfx.GetContext()->CSSetSamplers(pCS_SPL_Binds[0].first, pNullSPLs.size(), pNullSPLs.data());
+			gfx.GetContext()->CSSetSamplers(pCS_SPL_Binds[0].first, pCS_SPL_Binds.size(), pNullSPLs.data());
 		}
 
 		if (pVS_CB_Binds.size() > 0)
@@ -116,7 +116,7 @@ namespace gfx
 		}
 		if (pVS_SPL_Binds.size() > 0)
 		{
-			gfx.GetContext()->CSSetSamplers(pVS_SPL_Binds[0].first, pNullSPLs.size(), pNullSPLs.data());
+			gfx.GetContext()->VSSetSamplers(pVS_SPL_Binds[0].first, pVS_SPL_Binds.size(), pNullSPLs.data());
 		}
 
 		if (pPS_CB_Binds.size() > 0)
@@ -129,7 +129,7 @@ namespace gfx
 		}
 		if (pPS_SPL_Binds.size() > 0)
 		{
-			gfx.GetContext()->CSSetSamplers(pPS_SPL_Binds[0].first, pNullSPLs.size(), pNullSPLs.data());
+			gfx.GetContext()->PSSetSamplers(pPS_SPL_Binds[0].first, pPS_SPL_Binds.size(), pNullSPLs.data());
 		}
 	}
 

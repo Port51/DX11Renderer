@@ -49,7 +49,7 @@ namespace gfx
 
 	std::shared_ptr<IndexBuffer> IndexBuffer::Resolve(Graphics& gfx, std::string id, const std::vector<u32>& indices)
 	{
-		return Codex::Resolve<IndexBuffer>(gfx, GenerateUID(id), indices);
+		return std::move(Codex::Resolve<IndexBuffer>(gfx, GenerateUID(id), indices));
 	}
 
 	std::string IndexBuffer::GenerateUID(const std::string& tag)

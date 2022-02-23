@@ -27,12 +27,12 @@ cbuffer ObjectCBuf : register(b1)
 };*/
 
 // Per-frame
-Texture2D SpecularLightingRT : register(t2);
-Texture2D DiffuseLightingRT : register(t3);
+Texture2D SpecularLightingRT : register(t5);
+Texture2D DiffuseLightingRT : register(t6);
 
 // Per-draw
-Texture2D tex : register(t2);
-Texture2D nmap : register(t3);
+Texture2D tex : register(t0);
+Texture2D nmap : register(t1);
 SamplerState splr : register(s0);
 
 #include "Lighting/BRDF.hlsli"

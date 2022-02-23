@@ -43,8 +43,8 @@ namespace gfx
 		//return std::make_unique<ModelInstance>(gfx, *this, std::move(transform));
 	}
 
-	ModelAssetNode::ModelAssetNode(std::shared_ptr<MeshAsset> pMeshAsset, dx::XMFLOAT4X4 localTransform)
-		: pMeshAsset(pMeshAsset), localTransform(localTransform)
+	ModelAssetNode::ModelAssetNode(std::string _name, std::shared_ptr<MeshAsset> pMeshAsset, dx::XMFLOAT4X4 _localTransform)
+		: name(_name), pMeshAsset(std::move(pMeshAsset)), localTransform(std::move(_localTransform))
 	{}
 
 	std::shared_ptr<MeshAsset> ModelAssetNode::GetMeshAsset() const

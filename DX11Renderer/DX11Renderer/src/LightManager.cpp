@@ -38,11 +38,12 @@ namespace gfx
 		pLightInputCB = std::make_unique<ConstantBuffer<LightInputCB>>(gfx, D3D11_USAGE_DYNAMIC);
 
 		// Create grid of lights
+		const bool renderLightGrid = false;
 		for (int x = -3; x <= 3; ++x)
 		{
 			for (int y = -3; y <= 3; ++y)
 			{
-				pLights.emplace_back(std::make_shared<PointLight>(gfx, lightIdx++, false, false, pLightModelAsset, dx::XMFLOAT3(x * 2.f, 1.5f, y * 2.f), RandomSaturatedColorRGB(), 3.f, 3.f, 5.f));
+				pLights.emplace_back(std::make_shared<PointLight>(gfx, lightIdx++, renderLightGrid, false, pLightModelAsset, dx::XMFLOAT3(x * 2.f, 1.5f, y * 2.f), RandomSaturatedColorRGB(), 3.f, 3.f, 5.f));
 			}
 		}
 
@@ -71,7 +72,10 @@ namespace gfx
 	{
 		for (const auto& l : pLights)
 		{
-			pRendererList.AddModelInstance(l->GetModelInstance());
+			if (l->GetModelInstance() != nullptr)
+			{
+				pRendererList.AddModelInstance(*l->GetModelInstance());
+			}
 		}
 	}
 

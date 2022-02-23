@@ -26,7 +26,7 @@ namespace gfx
 
 	std::shared_ptr<RasterizerState> RasterizerState::Resolve(Graphics& gfx, D3D11_CULL_MODE cullMode)
 	{
-		return Codex::Resolve<RasterizerState>(gfx, GenerateUID(cullMode), cullMode);
+		return std::move(Codex::Resolve<RasterizerState>(gfx, GenerateUID(cullMode), cullMode));
 	}
 
 	D3D11_CULL_MODE RasterizerState::GetCullModeFromMaterialString(std::string name)

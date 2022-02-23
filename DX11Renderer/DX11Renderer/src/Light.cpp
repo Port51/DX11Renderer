@@ -15,7 +15,7 @@ namespace gfx
 		color(color),
 		intensity(intensity)
 	{
-		if (pModelAsset != nullptr)
+		if (allowUserControl && pModelAsset != nullptr)
 		{
 			pModel = std::make_unique<ModelInstance>(gfx, pModelAsset, dx::XMMatrixIdentity());
 		}
@@ -49,9 +49,9 @@ namespace gfx
 		return shadowSettings.hasShadow;
 	}
 
-	ModelInstance & Light::GetModelInstance() const
+	const std::unique_ptr<ModelInstance>& Light::GetModelInstance() const
 	{
-		return *pModel;
+		return pModel;
 	}
 
 	void Light::SetShadowMatrixTile(dx::XMMATRIX& shadowMatrix, int tileX, int tileY)

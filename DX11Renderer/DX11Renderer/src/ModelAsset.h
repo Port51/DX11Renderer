@@ -14,12 +14,13 @@ namespace gfx
 		friend class ModelImporter;
 
 	public:
-		ModelAssetNode(std::shared_ptr<MeshAsset> pMeshAsset, dx::XMFLOAT4X4 localTransform);
+		ModelAssetNode(std::string name, std::shared_ptr<MeshAsset> pMeshAsset, dx::XMFLOAT4X4 localTransform);
 	public:
 		std::shared_ptr<MeshAsset> GetMeshAsset() const;
 		dx::XMFLOAT4X4 GetLocalTransform() const;
 		void SetChildNodes(std::vector<std::shared_ptr<ModelAssetNode>> pChildNodes);
 	private:
+		std::string name;
 		std::shared_ptr<MeshAsset> pMeshAsset;
 		dx::XMFLOAT4X4 localTransform;
 		std::vector<std::shared_ptr<ModelAssetNode>> pChildNodes;

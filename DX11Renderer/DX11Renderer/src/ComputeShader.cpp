@@ -88,7 +88,7 @@ namespace gfx
 
 	std::shared_ptr<ComputeShader> ComputeShader::Resolve(Graphics& gfx, const std::string& path, const std::string& kernelName)
 	{
-		return Codex::Resolve<ComputeShader>(gfx, GenerateUID(path, kernelName), path, kernelName);
+		return std::move(Codex::Resolve<ComputeShader>(gfx, GenerateUID(path, kernelName), path, kernelName));
 	}
 
 	std::string ComputeShader::GenerateUID(const std::string& path, const std::string& kernelName)

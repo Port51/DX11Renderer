@@ -14,7 +14,7 @@ namespace gfx
 	}
 	std::shared_ptr<NullPixelShader> NullPixelShader::Resolve(Graphics& gfx)
 	{
-		return Codex::Resolve<NullPixelShader>(gfx, GenerateUID());
+		return std::move(Codex::Resolve<NullPixelShader>(gfx, GenerateUID()));
 	}
 	std::string NullPixelShader::GenerateUID()
 	{

@@ -77,6 +77,8 @@ namespace gfx
 	static int nextNodeId = 0; // todo: move
 	std::shared_ptr<SceneGraphNode> ModelInstance::CreateModelInstanceNode(Graphics& gfx, std::shared_ptr<ModelAssetNode> const& pSourceNode)
 	{
+		gfx.GetLog()->Info("Create ModelInstanceNode " + pSourceNode->name + " w/ " + std::to_string(pSourceNode->pChildNodes.size()) + " children");
+
 		// Copy mesh if needed
 		auto pMeshRenderer = std::shared_ptr<MeshRenderer>();
 		if (pSourceNode->pMeshAsset)
@@ -97,12 +99,16 @@ namespace gfx
 			//pChildNodes.emplace_back(std::move(pChildNode));
 		}*/
 
-		auto pNode = std::make_unique<SceneGraphNode>(nextNodeId++, dx::XMLoadFloat4x4(&pSourceNode->localTransform), pMeshRenderer, std::move(pChildNodes));
+		auto pNode = std::make_shared<SceneGraphNode>(nextNodeId++, dx::XMLoadFloat4x4(&pSourceNode->localTransform), pMeshRenderer, std::move(pChildNodes));
 		return std::move(pNode);
 	}
 
 	std::shared_ptr<MeshRenderer> ModelInstance::CreateMeshRenderer(Graphics& gfx, std::shared_ptr<MeshAsset> const& pMeshAsset)
 	{
+		// temporary
+		const bool isInstance = false;
+		const UINT instanceCount = 10u;
+
 		const auto pMaterial = pMaterials[pMeshAsset->materialIndex];
 		RawBufferData vbuf(pMeshAsset->vertices.size(), pMaterial->GetVertexLayout().GetPerVertexStride(), pMaterial->GetVertexLayout().GetPerVertexPadding());
 
@@ -137,19 +143,8 @@ namespace gfx
 		struct InstanceData
 		{
 			dx::XMFLOAT3 positionWS;
-			float padding;
+			UINT instanceId;
 		};
-
-		const UINT instanceCount = 10u;
-		//InstanceData* instances = new InstanceData[instanceCount];
-		StructuredBufferData<InstanceData> instanceBuf(instanceCount);
-		for (int i = 0; i < instanceCount; ++i)
-		{
-			instanceBuf.EmplaceBack(InstanceData{ dx::XMFLOAT3(i, 0, 0), 0.f });
-		}
-
-		// Release the instance array now that the instance buffer has been created and loaded.
-		//delete[] instances;
 
 		// todo: better way to copy this?
 		std::vector<u32> indices;
@@ -159,16 +154,33 @@ namespace gfx
 			indices.push_back(pMeshAsset->indices[i]);
 		}
 
-		auto meshTag = "Mesh%" + pMeshAsset->name;
-		std::unique_ptr<VertexBufferWrapper> pVertexBuffer = std::make_unique<VertexBufferWrapper>(gfx, vbuf, instanceBuf);
+		const auto meshTag = "Mesh%" + pMeshAsset->name;
+
+		std::shared_ptr<VertexBufferWrapper> pVertexBuffer;
+		if (isInstance)
+		{
+			StructuredBufferData<InstanceData> instanceBuf(instanceCount);
+			for (int i = 0; i < instanceCount; ++i)
+			{
+				instanceBuf.EmplaceBack(InstanceData{ dx::XMFLOAT3(i, 0, 0), (UINT)i });
+			}
+			pVertexBuffer = VertexBufferWrapper::Resolve(gfx, meshTag, vbuf, instanceBuf);
+		}
+		else
+		{
+			pVertexBuffer = VertexBufferWrapper::Resolve(gfx, meshTag, vbuf);
+		}
+		
 		std::shared_ptr<IndexBuffer> pIndexBuffer = IndexBuffer::Resolve(gfx, meshTag, indices);
 		std::shared_ptr<Topology> pTopology = Topology::Resolve(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-		// temporary
-		const bool IsInstance = false;
-		if (IsInstance)
+		if (isInstance)
+		{
 			return std::make_shared<InstancedMeshRenderer>(gfx, pMeshAsset->name, pMaterial, std::move(pVertexBuffer), std::move(pIndexBuffer), std::move(pTopology), instanceCount);
+		}
 		else
+		{
 			return std::make_shared<MeshRenderer>(gfx, pMeshAsset->name, pMaterial, std::move(pVertexBuffer), std::move(pIndexBuffer), std::move(pTopology));
+		}
 	}
 }

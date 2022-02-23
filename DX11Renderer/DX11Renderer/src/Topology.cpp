@@ -16,7 +16,7 @@ namespace gfx
 
 	std::shared_ptr<Topology> Topology::Resolve(Graphics& gfx, D3D11_PRIMITIVE_TOPOLOGY type)
 	{
-		return Codex::Resolve<Topology>(gfx, GenerateUID(type), type);
+		return std::move(Codex::Resolve<Topology>(gfx, GenerateUID(type), type));
 	}
 
 	std::string Topology::GenerateUID(D3D11_PRIMITIVE_TOPOLOGY type)

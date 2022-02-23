@@ -35,7 +35,7 @@ namespace gfx
 			}
 			else if (p.key == "Map")
 			{
-				gfx.GetLog()->Info(p.values[0]);
+				//gfx.GetLog()->Info(p.values[0]);
 				settings.materialPaths.emplace_back(p.values[1]);
 				settings.materialIndicesByName[p.values[0]] = settings.materialPaths.size() - 1;
 			}
@@ -300,7 +300,9 @@ namespace gfx
 
 			dx::XMFLOAT4X4 localTransformFloat;
 			dx::XMStoreFloat4x4(&localTransformFloat, localTransform);
-			pNodes.emplace_back(std::make_shared<ModelAssetNode>(std::move(pMeshes[node.mesh]), std::move(localTransformFloat)));
+
+			// pMeshes can be shared, so don't std::move()
+			pNodes.emplace_back(std::make_shared<ModelAssetNode>(node.name, pMeshes[node.mesh], std::move(localTransformFloat)));
 		}
 		
 		// Special case for single meshes, to avoid clunky node structures
@@ -347,7 +349,7 @@ namespace gfx
 		// Create empty root node (never used as a child)
 		dx::XMFLOAT4X4 localTransformFloat;
 		dx::XMStoreFloat4x4(&localTransformFloat, dx::XMMatrixIdentity());
-		pNodes.emplace_back(std::make_shared<ModelAssetNode>(nullptr, std::move(localTransformFloat)));
+		pNodes.emplace_back(std::make_shared<ModelAssetNode>(std::move("Root"), nullptr, std::move(localTransformFloat)));
 		const auto& pRootNode = pNodes[pNodes.size() - 1u];
 		pRootNode->SetChildNodes(std::move(pLevel0Nodes));
 

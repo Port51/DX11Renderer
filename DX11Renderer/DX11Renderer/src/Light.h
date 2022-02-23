@@ -47,7 +47,7 @@ namespace gfx
 		bool HasShadow() const;
 		virtual void AppendShadowData(UINT shadowStartSlot, std::vector<LightShadowData>& shadowData) const = 0;
 		virtual UINT GetShadowTileCount() const = 0;
-		ModelInstance& GetModelInstance() const;
+		const std::unique_ptr<ModelInstance>& GetModelInstance() const;
 		void SetShadowMatrixTile(dx::XMMATRIX& shadowMatrix, int tileX, int tileY);
 		bool AllowUserControl() const;
 	protected:

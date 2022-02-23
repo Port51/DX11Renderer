@@ -143,9 +143,7 @@ namespace gfx
 	std::shared_ptr<Bindable> Texture::Resolve(Graphics& gfx, const std::string& path)
 	{
 		// Create 2D texture with default settings
-
-
-		return Codex::Resolve<Texture>(gfx, GenerateUID(path), path);
+		return std::move(Codex::Resolve<Texture>(gfx, GenerateUID(path), path));
 	}
 
 	std::string Texture::GenerateUID(const std::string& tag)

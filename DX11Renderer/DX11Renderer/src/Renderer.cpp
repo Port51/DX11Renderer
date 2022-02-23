@@ -204,7 +204,7 @@ namespace gfx
 			.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, pSpecularLighting->GetUAV())
 			.CSSetUAV(RenderSlots::CS_FreeUAV + 1u, pDiffuseLighting->GetUAV())
 			.CSSetUAV(RenderSlots::CS_FreeUAV + 2u, pDebugTiledLighting->GetUAV())
-			.AddBinding(pShadowSampler).SetupCSBinding(0u); // todo: bind as below
+			.CSSetSPL(RenderSlots::CS_FreeSPL + 0u, pShadowSampler->GetD3DSampler());
 
 		GetRenderPass(ClusteredLightingPassName)->
 			ClearBinds()

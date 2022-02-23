@@ -22,7 +22,7 @@ namespace gfx
 
 	std::shared_ptr<PixelShader> PixelShader::Resolve(Graphics& gfx, const std::string& path)
 	{
-		return Codex::Resolve<PixelShader>(gfx, GenerateUID(path), path);
+		return std::move(Codex::Resolve<PixelShader>(gfx, GenerateUID(path), path));
 	}
 
 	std::string PixelShader::GenerateUID(const std::string& path)

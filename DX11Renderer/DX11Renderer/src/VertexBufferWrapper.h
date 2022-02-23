@@ -1,5 +1,5 @@
 #pragma once
-#include "Bindable.h"
+#include "CodexElement.h"
 #include "CommonHeader.h"
 #include <vector>
 
@@ -10,7 +10,7 @@ namespace gfx
 	class Graphics;
 	class BaseBufferData;
 
-	class VertexBufferWrapper
+	class VertexBufferWrapper : public CodexElement
 	{
 	public:
 		VertexBufferWrapper(Graphics& gfx, const BaseBufferData& vertexBuffer);
@@ -22,6 +22,11 @@ namespace gfx
 	protected:
 		void SetupVertexBuffer(Graphics& gfx, const BaseBufferData& data);
 		void SetupInstanceBuffer(Graphics& gfx, const BaseBufferData& data);
+	public:
+		static std::shared_ptr<VertexBufferWrapper> Resolve(Graphics& gfx, std::string id, const BaseBufferData& vertexBuffer);
+		static std::shared_ptr<VertexBufferWrapper> Resolve(Graphics& gfx, std::string id, const BaseBufferData& vertexBuffer, const BaseBufferData& instanceBuffer);
+	private:
+		static std::string GenerateUID(const std::string& tag);
 	protected:
 		UINT vertexCount;
 		std::vector<UINT> strides;

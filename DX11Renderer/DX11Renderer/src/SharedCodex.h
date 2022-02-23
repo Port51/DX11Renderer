@@ -19,7 +19,7 @@ namespace gfx
 		static std::shared_ptr<T> Resolve( Graphics& gfx, std::string id, Params&&...p )
 		{
 			static_assert( std::is_base_of<CodexElement,T>::value, "Can only resolve classes derived from CodexElement" );
-			return GetInstance().InternalResolve<T>( gfx, id, std::forward<Params>( p )... );
+			return std::move(GetInstance().InternalResolve<T>( gfx, id, std::forward<Params>( p )... ));
 		}
 	private:
 		template<class T,typename...Params>

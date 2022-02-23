@@ -185,7 +185,7 @@ namespace gfx
 					if (iter != pTexturesByPropName.end())
 					{
 						pPassStep->AddBinding(iter->second)
-							.SetupPSBinding(RenderSlots::PS_FreeRendererSRV + slotIdx);
+							.SetupPSBinding(slotIdx);
 					}
 					else
 					{
@@ -227,7 +227,7 @@ namespace gfx
 
 	std::shared_ptr<Bindable> Material::Resolve(Graphics& gfx, const std::string_view assetPath)
 	{
-		return Codex::Resolve<Material>(gfx, GenerateUID(assetPath), assetPath);
+		return std::move(Codex::Resolve<Material>(gfx, GenerateUID(assetPath), assetPath));
 	}
 
 	std::string Material::GenerateUID(const std::string_view assetPath)

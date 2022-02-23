@@ -38,7 +38,7 @@ namespace gfx
 	///
 	std::shared_ptr<VertexShader> VertexShader::Resolve(Graphics& gfx, const std::string& path)
 	{
-		return Codex::Resolve<VertexShader>(gfx, GenerateUID(path), path);
+		return std::move(Codex::Resolve<VertexShader>(gfx, GenerateUID(path), path));
 	}
 
 	std::string VertexShader::GenerateUID(const std::string& path)

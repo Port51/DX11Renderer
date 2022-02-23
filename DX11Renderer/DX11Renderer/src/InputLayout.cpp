@@ -25,7 +25,7 @@ namespace gfx
 
 	std::shared_ptr<InputLayout> InputLayout::Resolve(Graphics & gfx, const VertexLayout & layout, std::string vertexShaderName, ID3DBlob * pVertexShaderBytecode)
 	{
-		return Codex::Resolve<InputLayout>(gfx, GenerateUID(layout, vertexShaderName, pVertexShaderBytecode), layout, vertexShaderName, pVertexShaderBytecode);
+		return std::move(Codex::Resolve<InputLayout>(gfx, GenerateUID(layout, vertexShaderName, pVertexShaderBytecode), layout, vertexShaderName, pVertexShaderBytecode));
 	}
 
 	std::string InputLayout::GenerateUID(const VertexLayout & layout, std::string vertexShaderName, ID3DBlob * pVertexShaderBytecode)

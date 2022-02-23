@@ -32,15 +32,16 @@ cbuffer ClusterLight_CB : register(b4)
     uint4 _ClusterGroupResolutions; // groupsX, groupsY, groupsZ, padding
 };
 
-Texture2D tex : register(t2);
-Texture2D nmap : register(t3);
-StructuredBuffer<uint> ClusteredIndices : register(t4);
-Texture2D<float> DitherTex : register(t5);
-StructuredBuffer<StructuredLight> lights : register(t6);
-StructuredBuffer<StructuredShadow> shadowData : register(t7);
-Texture2D<float> ShadowAtlas : register(t8);
+Texture2D tex : register(t0);
+Texture2D nmap : register(t1);
+StructuredBuffer<uint> ClusteredIndices : register(t7);
+Texture2D<float> DitherTex : register(t8);
+StructuredBuffer<StructuredLight> lights : register(t9);
+StructuredBuffer<StructuredShadow> shadowData : register(t10);
+Texture2D<float> ShadowAtlas : register(t11);
+
 SamplerState splr : register(s0);
-SamplerComparisonState ShadowAtlasSampler : register(s1);
+SamplerComparisonState ShadowAtlasSampler : register(s5);
 
 #include "Lighting/BRDF.hlsli"
 
