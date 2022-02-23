@@ -1,8 +1,11 @@
 #include "pch.h"
 #include "ModelInstance.h"
-#include "BindableInclude.h"
 #include "ModelAsset.h"
 #include "MeshAsset.h"
+#include "MeshRenderer.h"
+#include "VertexBufferWrapper.h"
+#include "IndexBuffer.h"
+#include "Topology.h"
 #include <exception>
 #include <assert.h>
 #include "InstancedMeshRenderer.h"

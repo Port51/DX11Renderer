@@ -318,7 +318,6 @@
     <ClInclude Include="src\Colors.h" />
     <ClInclude Include="src\Bindable.h" />
     <ClInclude Include="src\SharedCodex.h" />
-    <ClInclude Include="src\BindableInclude.h" />
     <ClInclude Include="src\Camera.h" />
     <ClInclude Include="src\Buffer.h" />
     <ClInclude Include="src\DebugHelper.h" />

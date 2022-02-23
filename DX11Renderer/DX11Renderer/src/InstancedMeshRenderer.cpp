@@ -1,6 +1,9 @@
 #include "pch.h"
 #include "InstancedMeshRenderer.h"
-#include "BindableInclude.h"
+#include "Material.h"
+#include "VertexBufferWrapper.h"
+#include "IndexBuffer.h"
+#include "Topology.h"
 #include <exception>
 #include <assert.h>
 #include "DepthStencilState.h"

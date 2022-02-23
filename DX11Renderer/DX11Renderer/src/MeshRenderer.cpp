@@ -1,12 +1,16 @@
 #include "pch.h"
 #include "MeshRenderer.h"
-#include "BindableInclude.h"
+#include "Material.h"
+#include "VertexBufferWrapper.h"
+#include "IndexBuffer.h"
+#include "Topology.h"
 #include <exception>
 #include <assert.h>
 #include "DepthStencilState.h"
 #include "RenderConstants.h"
 #include "DrawContext.h"
 #include "Transforms.h"
+#include "TransformCbuf.h"
 
 namespace gfx
 {
