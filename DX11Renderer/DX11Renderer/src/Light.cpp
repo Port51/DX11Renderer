@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "Light.h"
-#include "FBXImporter.h"
 #include "ModelInstance.h"
 #include "ModelAsset.h"
 #include "ConstantBuffer.h"

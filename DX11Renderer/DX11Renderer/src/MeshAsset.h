@@ -4,7 +4,6 @@
 #include <string>
 #include <vector>
 #include "DXMathInclude.h"
-#include "DebugHelper.h"
 #include "BaseMesh.h"
 
 namespace gfx
@@ -31,7 +30,7 @@ namespace gfx
 		std::vector<std::vector<dx::XMFLOAT2>> texcoords;
 
 		UINT numFaces;
-		std::vector<int> indices;
+		std::vector<u32> indices;
 
 		int materialIndex;
 	};

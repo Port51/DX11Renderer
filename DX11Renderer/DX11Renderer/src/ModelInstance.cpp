@@ -2,18 +2,32 @@
 #include "ModelInstance.h"
 #include "BindableInclude.h"
 #include "ModelAsset.h"
+#include "MeshAsset.h"
 #include <exception>
 #include <assert.h>
 #include "InstancedMeshRenderer.h"
 #include "RawBufferData.h"
 #include "StructuredBufferData.h"
-#include "ModelNode.h"
 #include "DrawContext.h"
 
 namespace gfx
 {
-	ModelInstance::ModelInstance(Graphics& gfx, std::shared_ptr<ModelAsset> const& pModelAsset, dx::XMMATRIX transform)
-		: transform(transform) // todo: set position
+	ModelInstance::ModelInstance(Graphics& gfx, const ModelAsset& pModelAsset, dx::XMMATRIX transform)
+		: transform(transform)
+	{
+		pMaterials.reserve(pModelAsset.materialPaths.size());
+		for (const auto& materialPath : pModelAsset.materialPaths)
+		{
+			std::shared_ptr<Material> pMaterial = std::dynamic_pointer_cast<Material>(Material::Resolve(gfx, materialPath.c_str()));
+			pMaterials.push_back(pMaterial);
+		}
+
+		pSceneGraph = CreateModelInstanceNode(gfx, pModelAsset.pSceneGraph);
+		UpdateSceneGraph();
+	}
+
+	ModelInstance::ModelInstance(Graphics & gfx, std::shared_ptr<ModelAsset> pModelAsset, dx::XMMATRIX transform)
+		: transform(transform)
 	{
 		pMaterials.reserve(pModelAsset->materialPaths.size());
 		for (const auto& materialPath : pModelAsset->materialPaths)
@@ -61,17 +75,17 @@ namespace gfx
 	}
 
 	static int nextNodeId = 0; // todo: move
-	std::unique_ptr<ModelNode> ModelInstance::CreateModelInstanceNode(Graphics& gfx, std::unique_ptr<SceneGraphNode<MeshAsset>> const& pSourceNode)
+	std::shared_ptr<SceneGraphNode> ModelInstance::CreateModelInstanceNode(Graphics& gfx, std::shared_ptr<ModelAssetNode> const& pSourceNode)
 	{
 		// Copy mesh if needed
-		auto pMeshInstance = std::shared_ptr<MeshRenderer>();
-		if (pSourceNode->pMesh)
+		auto pMeshRenderer = std::shared_ptr<MeshRenderer>();
+		if (pSourceNode->pMeshAsset)
 		{
-			pMeshInstance = ParseMesh(gfx, pSourceNode->pMesh);
-			pMeshes.emplace_back(pMeshInstance);
+			pMeshRenderer = CreateMeshRenderer(gfx, pSourceNode->pMeshAsset);
+			pMeshes.emplace_back(pMeshRenderer);
 		}
 
-		auto pChildNodes = std::vector<std::unique_ptr<ModelNode>>();
+		auto pChildNodes = std::vector<std::shared_ptr<SceneGraphNode>>();
 		for (const auto& child : pSourceNode->pChildNodes)
 		{
 			auto pChildNode = CreateModelInstanceNode(gfx, child);
@@ -83,11 +97,11 @@ namespace gfx
 			//pChildNodes.emplace_back(std::move(pChildNode));
 		}*/
 
-		auto pNode = std::make_unique<ModelNode>(nextNodeId++, pSourceNode->localTransform, pMeshInstance, std::move(pChildNodes));
+		auto pNode = std::make_unique<SceneGraphNode>(nextNodeId++, dx::XMLoadFloat4x4(&pSourceNode->localTransform), pMeshRenderer, std::move(pChildNodes));
 		return std::move(pNode);
 	}
 
-	std::shared_ptr<MeshRenderer> ModelInstance::ParseMesh(Graphics& gfx, std::unique_ptr<MeshAsset> const& pMeshAsset)
+	std::shared_ptr<MeshRenderer> ModelInstance::CreateMeshRenderer(Graphics& gfx, std::shared_ptr<MeshAsset> const& pMeshAsset)
 	{
 		const auto pMaterial = pMaterials[pMeshAsset->materialIndex];
 		RawBufferData vbuf(pMeshAsset->vertices.size(), pMaterial->GetVertexLayout().GetPerVertexStride(), pMaterial->GetVertexLayout().GetPerVertexPadding());
@@ -138,7 +152,7 @@ namespace gfx
 		//delete[] instances;
 
 		// todo: better way to copy this?
-		std::vector<unsigned short> indices;
+		std::vector<u32> indices;
 		indices.reserve(pMeshAsset->indices.size());
 		for (unsigned int i = 0; i < pMeshAsset->indices.size(); ++i)
 		{

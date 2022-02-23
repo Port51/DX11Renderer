@@ -1,5 +1,5 @@
 #pragma once
-#include <fbxsdk.h>
+/*#include <fbxsdk.h>
 #include <fbxgeometryconverter.h>
 #include <assert.h>
 #include <stdio.h>
@@ -117,8 +117,8 @@ namespace gfx
 		}
 
 		// Recursively unpack scene graph and return root node
-		//static std::unique_ptr<SceneGraphNode<MeshAsset>> UnpackFbxSceneGraph(std::unique_ptr<FbxNode> pFbxNode)
-		static std::unique_ptr<SceneGraphNode<MeshAsset>> UnpackFbxSceneGraph(Graphics& gfx, FbxNode* pFbxNode, FBXNormalsMode normalsMode, const FBXImporterMaterialSources& materialSources)
+		//static std::unique_ptr<SceneGraphNode> UnpackFbxSceneGraph(std::unique_ptr<FbxNode> pFbxNode)
+		static std::unique_ptr<SceneGraphNode> UnpackFbxSceneGraph(Graphics& gfx, FbxNode* pFbxNode, FBXNormalsMode normalsMode, const FBXImporterMaterialSources& materialSources)
 		{
 			const auto name = pFbxNode->GetName();
 
@@ -154,7 +154,7 @@ namespace gfx
 			//
 			// Iterate through children
 			//
-			auto pChildNodes = std::vector<std::unique_ptr<SceneGraphNode<MeshAsset>>>();
+			auto pChildNodes = std::vector<std::unique_ptr<SceneGraphNode>>();
 			for (int i = 0; i < pFbxNode->GetChildCount(); i++)
 			{
 				//auto pFbxChildNode = std::make_unique<FbxNode>(pFbxNode->GetChild(i));
@@ -167,7 +167,7 @@ namespace gfx
 			}
 
 			auto pResult
-				= std::make_unique<SceneGraphNode<MeshAsset>>(localTransform, std::move(pMeshAsset), std::move(pChildNodes));
+				= std::make_unique<SceneGraphNode>(localTransform, std::move(pMeshAsset), std::move(pChildNodes));
 			return std::move(pResult);
 		}
 
@@ -350,23 +350,6 @@ namespace gfx
 
 			return std::move(vertices);
 		}
-
-		// https://stackoverflow.com/questions/50926809/fetching-indices-with-fbx-sdk
-		/*static FbxVector4 getNormal(FbxGeometryElementNormal* normalElement, int polyIndex, int posIndex) {
-			if (normalElement->GetMappingMode() == FbxGeometryElement::eByControlPoint) {
-				if (normalElement->GetReferenceMode() == FbxGeometryElement::eDirect)
-					return normalElement->GetDirectArray().GetAt(posIndex);
-				int i = normalElement->GetIndexArray().GetAt(posIndex);
-				return normalElement->GetDirectArray().GetAt(i);
-			}
-			else if (normalElement->GetMappingMode() == FbxGeometryElement::eByPolygonVertex) {
-				if (normalElement->GetReferenceMode() == FbxGeometryElement::eDirect)
-					return normalElement->GetDirectArray().GetAt(polyIndex);
-				int i = normalElement->GetIndexArray().GetAt(polyIndex);
-				return normalElement->GetDirectArray().GetAt(i);
-			}
-			return FbxVector4();
-		}*/
 
 		static FbxVector2 getUV(FbxGeometryElementUV* uvElement, int polyIndex, int posIndex)
 		{
@@ -596,4 +579,4 @@ namespace gfx
 		}
 
 	};
-}
+}*/

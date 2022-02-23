@@ -3,30 +3,25 @@
 #include <string>
 #include "DX11Include.h"
 #include "SceneGraphNode.h"
-#include "ModelNode.h"
 #include "MeshRenderer.h"
-
-namespace DirectX
-{
-	struct XMMATRIX;
-	struct XMFLOAT3;
-}
+//#include "ModelAsset.h"
 
 namespace gfx
 {
 	class Graphics;
 	class Material;
 	class MeshRenderer;
-	class ModelNode;
+	class SceneGraphNode;
 	class ModelAsset;
+	class ModelAssetNode;
 	class MeshAsset;
-	class Renderer;
 	struct DrawContext;
 
 	class ModelInstance
 	{
 	public:
-		ModelInstance(Graphics& gfx, std::shared_ptr<ModelAsset> const& pModelAsset, dx::XMMATRIX transform);
+		ModelInstance(Graphics& gfx, const ModelAsset& pModelAsset, dx::XMMATRIX transform);
+		ModelInstance(Graphics& gfx, std::shared_ptr<ModelAsset> pModelAsset, dx::XMMATRIX transform);
 		virtual ~ModelInstance() = default;
 	public:
 		void SubmitDrawCalls(const DrawContext& drawContext) const;
@@ -34,11 +29,11 @@ namespace gfx
 		void UpdateSceneGraph();
 		std::vector<std::shared_ptr<MeshRenderer>> GetMeshRenderers() const;
 	private:
-		std::shared_ptr<MeshRenderer> ParseMesh(Graphics& gfx, std::unique_ptr<MeshAsset> const& pMeshAsset);
-		std::unique_ptr<ModelNode> CreateModelInstanceNode(Graphics& gfx, std::unique_ptr<SceneGraphNode<MeshAsset>> const& pSourceNode);
+		std::shared_ptr<MeshRenderer> CreateMeshRenderer(Graphics& gfx, std::shared_ptr<MeshAsset> const& pMeshAsset);
+		std::shared_ptr<SceneGraphNode> CreateModelInstanceNode(Graphics& gfx, std::shared_ptr<ModelAssetNode> const& pSourceNode);
 	private:
 		std::vector<std::shared_ptr<Material>> pMaterials;
-		std::unique_ptr<ModelNode> pSceneGraph;
+		std::shared_ptr<SceneGraphNode> pSceneGraph;
 		std::vector<std::shared_ptr<MeshRenderer>> pMeshes;
 		dx::XMMATRIX transform;
 	};

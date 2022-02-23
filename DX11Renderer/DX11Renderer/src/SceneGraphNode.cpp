@@ -1,17 +1,17 @@
 #include "pch.h"
-#include "ModelNode.h"
+#include "SceneGraphNode.h"
 #include "MeshRenderer.h"
 #include "DrawContext.h"
 
 namespace gfx
 {
-	ModelNode::ModelNode(int id, const dx::XMMATRIX & _transform, std::shared_ptr<MeshRenderer> pMeshPtr, std::vector<std::unique_ptr<ModelNode>> pChildNodes)
+	SceneGraphNode::SceneGraphNode(int id, const dx::XMMATRIX & _transform, std::shared_ptr<MeshRenderer> pMeshPtr, std::vector<std::shared_ptr<SceneGraphNode>> pChildNodes)
 		: pMeshPtr(pMeshPtr), pChildNodes(std::move(pChildNodes))
 	{
 		dx::XMStoreFloat4x4(&localTransform, _transform);
 	}
 
-	void ModelNode::RebuildTransform(dx::XMMATRIX accumulatedTransform)
+	void SceneGraphNode::RebuildTransform(dx::XMMATRIX accumulatedTransform)
 	{
 		const auto worldMatrix = dx::XMLoadFloat4x4(&localTransform) * accumulatedTransform;
 		dx::XMStoreFloat4x4(&accumulatedWorldTransform, worldMatrix);
@@ -27,7 +27,7 @@ namespace gfx
 		}
 	}
 
-	void ModelNode::SubmitDrawCalls(const DrawContext& drawContext) const
+	void SceneGraphNode::SubmitDrawCalls(const DrawContext& drawContext) const
 	{
 		if (pMeshPtr)
 		{

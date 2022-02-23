@@ -53,8 +53,6 @@ float4 main(v2f i) : SV_Target
     float4 diffuseTex = tex.Sample(splr, i.uv0);
     
     uint3 cluster = GetClusterFromNDC(positionNDC, linearDepth);
-    //return saturate(positionNDC.y);
-    //return (float)cluster.y / _ClusterGroupResolutions.y;
     if (cluster.x >= _ClusterGroupResolutions.x || cluster.y >= _ClusterGroupResolutions.y)
     {
         return half4(0, 1, 0, 1);

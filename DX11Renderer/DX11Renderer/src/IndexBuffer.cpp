@@ -5,16 +5,33 @@
 
 namespace gfx
 {
-	IndexBuffer::IndexBuffer(Graphics& gfx, const std::vector<unsigned short>& indices)
-		: count((UINT)indices.size())
+	IndexBuffer::IndexBuffer(Graphics& gfx, const std::vector<u16>& indices)
+		: count((UINT)indices.size()),
+		format(DXGI_FORMAT_R16_UINT)
 	{
 		D3D11_BUFFER_DESC ibd = {};
 		ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
 		ibd.Usage = D3D11_USAGE_DEFAULT;
 		ibd.CPUAccessFlags = 0u;
 		ibd.MiscFlags = 0u;
-		ibd.ByteWidth = UINT(count * sizeof(unsigned short));
-		ibd.StructureByteStride = sizeof(unsigned short);
+		ibd.ByteWidth = UINT(count * sizeof(u16));
+		ibd.StructureByteStride = sizeof(u16);
+		D3D11_SUBRESOURCE_DATA isd = {};
+		isd.pSysMem = indices.data();
+		THROW_IF_FAILED(gfx.GetDevice()->CreateBuffer(&ibd, &isd, &pIndexBuffer));
+	}
+
+	IndexBuffer::IndexBuffer(Graphics& gfx, const std::vector<u32>& indices)
+		: count((UINT)indices.size()),
+		format(DXGI_FORMAT_R32_UINT)
+	{
+		D3D11_BUFFER_DESC ibd = {};
+		ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
+		ibd.Usage = D3D11_USAGE_DEFAULT;
+		ibd.CPUAccessFlags = 0u;
+		ibd.MiscFlags = 0u;
+		ibd.ByteWidth = UINT(count * sizeof(u32));
+		ibd.StructureByteStride = sizeof(u32);
 		D3D11_SUBRESOURCE_DATA isd = {};
 		isd.pSysMem = indices.data();
 		THROW_IF_FAILED(gfx.GetDevice()->CreateBuffer(&ibd, &isd, &pIndexBuffer));
@@ -22,7 +39,7 @@ namespace gfx
 
 	void IndexBuffer::BindIA(Graphics& gfx, UINT slot)
 	{
-		gfx.GetContext()->IASetIndexBuffer(pIndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0u);
+		gfx.GetContext()->IASetIndexBuffer(pIndexBuffer.Get(), format, 0u);
 	}
 
 	UINT IndexBuffer::GetIndexCount() const
@@ -30,7 +47,7 @@ namespace gfx
 		return count;
 	}
 
-	std::shared_ptr<IndexBuffer> IndexBuffer::Resolve(Graphics& gfx, std::string id, const std::vector<unsigned short>& indices)
+	std::shared_ptr<IndexBuffer> IndexBuffer::Resolve(Graphics& gfx, std::string id, const std::vector<u32>& indices)
 	{
 		return Codex::Resolve<IndexBuffer>(gfx, GenerateUID(id), indices);
 	}

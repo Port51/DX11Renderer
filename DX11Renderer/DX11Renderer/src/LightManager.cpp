@@ -15,14 +15,14 @@
 #include "ModelInstance.h"
 #include "LightShadowData.h"
 #include "DepthStencilTarget.h"
-#include "FBXImporter.h"
+#include "ModelImporter.h"
 #include "Config.h"
 
 namespace gfx
 {
 	LightManager::LightManager(Graphics & gfx, std::shared_ptr<RendererList> pRendererList)
 	{
-		auto pLightModelAsset = FBXImporter::LoadFBX(gfx, "Assets\\Models\\DefaultSphere.asset", FBXImporter::FBXNormalsMode::Import, false);
+		auto pLightModelAsset = ModelImporter::LoadGLTF(gfx, "Assets\\Models\\DefaultSphere.asset");
 
 		pLightData = std::make_unique<StructuredBuffer<LightData>>(gfx, D3D11_USAGE_DYNAMIC, D3D11_BIND_SHADER_RESOURCE, MaxLightCount);
 		cachedLightData.resize(MaxLightCount);

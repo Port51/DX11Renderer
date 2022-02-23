@@ -6,7 +6,7 @@
 #include "MeshRenderer.h"
 #include "RendererList.h"
 #include "ModelInstance.h"
-#include "FBXImporter.h"
+#include "ModelImporter.h"
 #include "SharedCodex.h"
 #include "VertexShader.h"
 #include "Sampler.h"
@@ -68,9 +68,13 @@ namespace gfx
 			fn = std::string("Assets\\Models\\CascadeTestScene.asset");
 			modelTransform = dx::XMMatrixRotationY(3.1415f) * dx::XMMatrixScaling(12.f, 12.f, 12.f);
 			break;
+		case 8:
+			fn = std::string("Assets\\Models\\SimpleCastle.asset");
+			modelTransform = dx::XMMatrixRotationY(3.1415f) * dx::XMMatrixScaling(1.f, 1.f, 1.f);
+			break;
 		}
 
-		auto pModelAsset = FBXImporter::LoadFBX(pWindow->Gfx(), fn.c_str(), FBXImporter::FBXNormalsMode::Import, false);
+		auto pModelAsset = ModelImporter::LoadGLTF(pWindow->Gfx(), fn.c_str());
 		if (pModelAsset)
 		{
 			pWindow->Gfx().GetLog()->Info("Model loaded");
@@ -81,10 +85,8 @@ namespace gfx
 		}
 
 		pModel0 = std::make_unique<ModelInstance>(pWindow->Gfx(), pModelAsset, modelTransform);
-		//pModel1 = std::make_unique<ModelInstance>(pWindow->Gfx(), pModelAsset, modelTransform * dx::XMMatrixTranslation(4.5f, 0.f, 0.f));
 
 		pRendererList->AddModelInstance(*pModel0);
-		//pRendererList->AddModelInstance(*pModel1);
 		pLightManager->AddLightModelsToList(*pRendererList);
 
 		pRenderer = std::make_unique<Renderer>(pWindow->Gfx(), pLightManager, pRendererList);

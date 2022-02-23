@@ -54,9 +54,6 @@
     <Filter Include="Headers\FBXImporter">
       <UniqueIdentifier>{c77c837e-d2e8-4dab-a2f2-f2310fda3244}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Headers\FBXImporter\Meshes">
-      <UniqueIdentifier>{d89bbeda-33c0-4f48-9e9b-df739a460b7d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Headers\VertexData">
       <UniqueIdentifier>{47cdc64d-d4a1-4d88-9540-9dbd4d084d36}</UniqueIdentifier>
     </Filter>
@@ -139,9 +136,6 @@
     <Filter Include="Vendors\stb_image">
       <UniqueIdentifier>{96b97a18-ad5f-41a9-953e-1fdb3edb8755}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\FBXImporter">
-      <UniqueIdentifier>{94d16d11-bb1c-4de9-b9fc-607464283899}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\Shadows">
       <UniqueIdentifier>{5cf7faf1-03da-4c60-8f6a-832218e06f6b}</UniqueIdentifier>
     </Filter>
@@ -159,6 +153,27 @@
     </Filter>
     <Filter Include="Shaders\DrawPasses">
       <UniqueIdentifier>{7fdabc25-30fa-47d6-b448-45c088c156ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Vendors\tinygltf">
+      <UniqueIdentifier>{046f19a8-290d-4be9-ad7b-194827712d0a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Vendors\json">
+      <UniqueIdentifier>{0913c213-81ac-4147-954f-2d978d0a2fda}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headers\MeshImport">
+      <UniqueIdentifier>{6a12e977-8f4b-4215-8cb0-d78a93a86236}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headers\MeshImport\Meshes">
+      <UniqueIdentifier>{d89bbeda-33c0-4f48-9e9b-df739a460b7d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headers\MeshImport\Models">
+      <UniqueIdentifier>{f73739b6-d3f0-49a8-bd63-64e812c5d0a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\MeshImport">
+      <UniqueIdentifier>{44f76996-7ce0-4907-8154-54358bb35810}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\SceneGraphs">
+      <UniqueIdentifier>{4a37ee07-81fd-408d-b26e-7c6d4310e2a5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -261,9 +276,6 @@
     <ClCompile Include="src\ModelInstance.cpp">
       <Filter>Source\Drawable</Filter>
     </ClCompile>
-    <ClCompile Include="src\ModelNode.cpp">
-      <Filter>Source\Drawable</Filter>
-    </ClCompile>
     <ClCompile Include="src\NullPixelShader.cpp">
       <Filter>Source\Bindable\Shaders</Filter>
     </ClCompile>
@@ -333,9 +345,6 @@
     <ClCompile Include="src\Renderer.cpp">
       <Filter>Source\RenderPipeline</Filter>
     </ClCompile>
-    <ClCompile Include="src\ModelAsset.cpp">
-      <Filter>Source\FBXImporter</Filter>
-    </ClCompile>
     <ClCompile Include="src\DrawContext.cpp">
       <Filter>Source</Filter>
     </ClCompile>
@@ -354,6 +363,15 @@
     <ClCompile Include="src\ImguiHelpers.cpp">
       <Filter>Precompiled</Filter>
     </ClCompile>
+    <ClCompile Include="src\ModelAsset.cpp">
+      <Filter>Source\MeshImport</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ModelImporter.cpp">
+      <Filter>Source\MeshImport</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SceneGraphNode.cpp">
+      <Filter>Source\SceneGraphs</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -366,7 +384,7 @@
       <Filter>Headers\Bindable\Buffers\Data</Filter>
     </ClInclude>
     <ClInclude Include="src\BaseMesh.h">
-      <Filter>Headers\FBXImporter\Meshes</Filter>
+      <Filter>Headers\MeshImport\Meshes</Filter>
     </ClInclude>
     <ClInclude Include="src\Bindable.h">
       <Filter>Headers\Bindable</Filter>
@@ -424,9 +442,6 @@
     </ClInclude>
     <ClInclude Include="src\Sampler.h">
       <Filter>Headers\Bindable</Filter>
-    </ClInclude>
-    <ClInclude Include="src\SceneGraphNode.h">
-      <Filter>Headers\SceneGraphs</Filter>
     </ClInclude>
     <ClInclude Include="src\ShadowPassContext.h">
       <Filter>Headers\Shadows</Filter>
@@ -507,18 +522,12 @@
       <Filter>Headers\Bindable\Materials</Filter>
     </ClInclude>
     <ClInclude Include="src\MeshAsset.h">
-      <Filter>Headers\FBXImporter\Meshes</Filter>
+      <Filter>Headers\MeshImport\Meshes</Filter>
     </ClInclude>
     <ClInclude Include="src\MeshRenderer.h">
       <Filter>Headers\Drawable</Filter>
     </ClInclude>
-    <ClInclude Include="src\ModelAsset.h">
-      <Filter>Headers\FBXImporter</Filter>
-    </ClInclude>
     <ClInclude Include="src\ModelInstance.h">
-      <Filter>Headers\Drawable</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ModelNode.h">
       <Filter>Headers\Drawable</Filter>
     </ClInclude>
     <ClInclude Include="src\NullPixelShader.h">
@@ -629,6 +638,30 @@
     <ClInclude Include="src\ImguiHelpers.h">
       <Filter>Precompiled</Filter>
     </ClInclude>
+    <ClInclude Include="src\vendor\stb_image\stb_image_write.h">
+      <Filter>Vendors\stb_image</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vendor\tinygltf\tiny_gltf.h">
+      <Filter>Vendors\tinygltf</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vendor\json\json.hpp">
+      <Filter>Vendors\json</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ModelAsset.h">
+      <Filter>Headers\MeshImport\Models</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GLTFInclude.h">
+      <Filter>Headers\MeshImport</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ModelImporter.h">
+      <Filter>Headers\MeshImport</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SceneGraphNode2.h">
+      <Filter>Headers\SceneGraphs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SceneGraphNode.h">
+      <Filter>Headers\SceneGraphs</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DX11Renderer.rc">
@@ -698,6 +731,7 @@
     <None Include="Shaders\Lighting\LightingStructs.hlsli">
       <Filter>Shaders\HybridLighting</Filter>
     </None>
+    <None Include="Assets\Models\SimpleCastle.asset" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\Lighting\TiledLightingCompute.hlsl">

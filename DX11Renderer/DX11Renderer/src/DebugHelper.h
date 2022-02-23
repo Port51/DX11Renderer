@@ -1,5 +1,5 @@
 #pragma once
-#include <fbxsdk.h>
+/*#include <fbxsdk.h>
 #include <assert.h>
 #include <stdio.h>
 
@@ -20,9 +20,9 @@ namespace gfx
 				printf("\t");
 		}
 
-		/**
-		 * Return a string-based representation based on the attribute type.
-		 */
+		//
+		// Return a string-based representation based on the attribute type.
+		//
 		static FbxString GetAttributeTypeName(FbxNodeAttribute::EType type)
 		{
 			switch (type)
@@ -51,9 +51,9 @@ namespace gfx
 			}
 		}
 
-		/**
-		 * Print an attribute.
-		 */
+		//
+		// Print an attribute.
+		//
 		static void PrintAttribute(FbxNodeAttribute* pAttribute)
 		{
 			if (!pAttribute) return;
@@ -65,9 +65,9 @@ namespace gfx
 			printf("<attribute type='%s' name='%s'/>\n", typeName.Buffer(), attrName.Buffer());
 		}
 
-		/**
-		 * Print a node, its attributes, and all its children recursively.
-		 */
+		//
+		// Print a node, its attributes, and all its children recursively.
+		//
 		static void PrintNode(FbxNode* pNode)
 		{
 			PrintTabs();
@@ -144,4 +144,4 @@ namespace gfx
 	public:
 		static int numTabs;
 	};
-}
+}*/

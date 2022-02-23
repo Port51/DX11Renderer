@@ -76,7 +76,7 @@ namespace gfx
 		vbuf.EmplacePadding();
 		pVertexBufferWrapper = std::make_unique<VertexBufferWrapper>(gfx, std::move(vbuf));
 
-		std::vector<unsigned short> indices = { 0, 1, 2 };
+		std::vector<u32> indices = { 0u, 1u, 2u };
 		AddBinding(IndexBuffer::Resolve(gfx, "$Blit", std::move(indices)))
 			.SetupIABinding();
 	}
