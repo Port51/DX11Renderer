@@ -73,6 +73,7 @@ void CSMain(uint3 tId : SV_DispatchThreadID)
     
     const float linearRoughness = gbufferTex.z;
     const float roughness = linearRoughness * linearRoughness;
+    const float reflectivity = gbufferTex.w;
     
     //
     // Calculate reflection
@@ -81,7 +82,7 @@ void CSMain(uint3 tId : SV_DispatchThreadID)
     const float3 invDir = 1.f / reflectDirSS;
     const float2 halfSignDir = sign(reflectDirSS.xy) * 0.5f;
     
-    float3 uv = float3(tId.xy + 0.5f, rawDepth - 0.01f); // start from center of pixel, with small offset
+    float3 uv = float3(tId.xy + 0.5f, rawDepth - 0.05f); // start from center of pixel, with small offset
     float4 reflectColor = 0.f;
     uint iter = 0u;
     uint mip = 3u;
@@ -159,7 +160,7 @@ void CSMain(uint3 tId : SV_DispatchThreadID)
     // todo: use fallback when reflectColor.a = 0
     
     float4 colorIn = CameraColorIn[tId.xy];
-    CameraColorOut[tId.xy] = float4(colorIn.rgb + reflectColor.rgb * reflectColor.a*0, colorIn.a);
+    CameraColorOut[tId.xy] = float4(colorIn.rgb + reflectColor.rgb * (reflectColor.a * reflectivity), colorIn.a);
     
     //
     // Debug views!

@@ -44,6 +44,6 @@ namespace gfx
 			return codex;
 		}
 	private:
-		std::unordered_map<std::string,std::shared_ptr<class CodexElement>> binds;
+		std::unordered_map<std::string, std::shared_ptr<class CodexElement>> binds;
 	};
 }
