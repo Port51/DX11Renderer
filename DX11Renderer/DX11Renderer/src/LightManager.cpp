@@ -28,7 +28,7 @@ namespace gfx
 		cachedLightData.resize(MaxLightCount);
 
 		UINT lightIdx = 0u;
-		pLights.emplace_back(std::make_shared<PointLight>(gfx, lightIdx++, true, true, pLightModelAsset, dx::XMFLOAT3(0.f, 2.f, 0.f), dx::XMFLOAT3(1.f, 1.f, 1.f), 3.f, 3.f, 5.f));
+		pLights.emplace_back(std::make_shared<PointLight>(gfx, lightIdx++, true, true, pLightModelAsset, dx::XMFLOAT3(0.f, 2.5f, 0.f), dx::XMFLOAT3(1.f, 1.f, 1.f), 3.f, 3.f, 5.f));
 
 		// Alignment bug:
 		//pLights.emplace_back(std::make_shared<Spotlight>(gfx, lightIdx++, true, true, pLightModelAsset, dx::XMFLOAT3(8.5f, 1.5f, -2.0f), 0.0f, 0.0f, dx::XMFLOAT3(1.0f, 1.0f, 1.0f), 3.0f, 50.f, 50.f));

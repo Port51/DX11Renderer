@@ -40,6 +40,7 @@ namespace gfx
 		// Debug stuff
 		//
 		rendererFeatureEnabled.resize(RendererFeature::COUNT, true); // enable all features by default
+		//rendererFeatureEnabled[RendererFeature::HZBSSR] = false;
 
 		//
 		// Components
@@ -298,7 +299,7 @@ namespace gfx
 		pRenderPasses[targetPass]->EnqueueJob(job);
 	}
 
-	void Renderer::Execute(Graphics & gfx, const std::unique_ptr<Camera>& cam, float timeElapsed)
+	void Renderer::Execute(Graphics & gfx, const std::unique_ptr<Camera>& cam, float timeElapsed, UINT pixelSelectionX, UINT pixelSelectionY)
 	{
 		auto context = gfx.GetContext();
 
@@ -341,6 +342,7 @@ namespace gfx
 		{
 			static PerFrameCB perFrameCB;
 			ZeroMemory(&perFrameCB, sizeof(perFrameCB));
+			perFrameCB.pixelSelection = { pixelSelectionX, pixelSelectionY, 0u, 0u };
 			perFrameCB.time = { timeElapsed, 0, 0, 0 };
 			pPerFrameCB->Update(gfx, perFrameCB);
 

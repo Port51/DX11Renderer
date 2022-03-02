@@ -3,6 +3,7 @@
 #include "CommonHeader.h"
 #include "WindowsInclude.h"
 #include "Graphics.h"
+#include "MouseInput.h"
 #include <optional>
 
 namespace gfx
@@ -35,6 +36,7 @@ namespace gfx
 		static std::optional<int> ProcessMessages();
 		void SetTitle(const std::string& title);
 		Graphics& Gfx();
+		MouseInput& GetMouse();
 	private:
 		// What we pass to Windows needs to be static
 		// these get the instance
@@ -43,8 +45,9 @@ namespace gfx
 		// Instance handle method
 		LRESULT HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 		const BOOL IsPointInWindow(const POINTS pt) const;
-	public:
+	private:
 		std::unique_ptr<Graphics> pGfx;
+		MouseInput mouse;
 	private:
 		int width;
 		int height;

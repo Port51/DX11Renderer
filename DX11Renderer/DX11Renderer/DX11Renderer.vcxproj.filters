@@ -372,6 +372,12 @@
     <ClCompile Include="src\SceneGraphNode.cpp">
       <Filter>Source\SceneGraphs</Filter>
     </ClCompile>
+    <ClCompile Include="src\MouseInput.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MouseEvent.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -659,6 +665,12 @@
     <ClInclude Include="src\SceneGraphNode.h">
       <Filter>Headers\SceneGraphs</Filter>
     </ClInclude>
+    <ClInclude Include="src\MouseInput.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MouseEvent.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DX11Renderer.rc">
@@ -728,7 +740,12 @@
     <None Include="Shaders\Lighting\LightingStructs.hlsli">
       <Filter>Shaders\HybridLighting</Filter>
     </None>
-    <None Include="Assets\Models\SimpleCastle.asset" />
+    <None Include="Shaders\HiZCommon.hlsli">
+      <Filter>Shaders\PostFX</Filter>
+    </None>
+    <None Include="Assets\Models\SimpleCastle.asset">
+      <Filter>Assets\Models</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\Lighting\TiledLightingCompute.hlsl">

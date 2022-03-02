@@ -124,6 +124,11 @@ namespace gfx
 		return *pGfx;
 	}
 
+	MouseInput & Window::GetMouse()
+	{
+		return mouse;
+	}
+
 	// Setup message handler
 	// note: WINAPI == CALLBACK
 	LRESULT WINAPI Window::HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -183,12 +188,48 @@ namespace gfx
 
 		switch (msg)
 		{
-
 		case WM_CLOSE:
+		{
 			PostQuitMessage(0);
 			// Return to avoid allowing DefWindowProc() to destroy
 			// Use destructor instead (when frame loop receives 0, it will do this)
 			return 0;
+		}
+		case WM_MOUSEMOVE:
+		{
+			int x = LOWORD(lParam);
+			int y = HIWORD(lParam);
+			mouse.OnMouseMove(x, y);
+			return 0;
+		}
+		case WM_LBUTTONDOWN:
+		{
+			int x = LOWORD(lParam);
+			int y = HIWORD(lParam);
+			mouse.OnLeftPressed(x, y);
+			return 0;
+		}
+		case WM_RBUTTONDOWN:
+		{
+			int x = LOWORD(lParam);
+			int y = HIWORD(lParam);
+			mouse.OnRightPressed(x, y);
+			return 0;
+		}
+		case WM_LBUTTONUP:
+		{
+			int x = LOWORD(lParam);
+			int y = HIWORD(lParam);
+			mouse.OnLeftReleased(x, y);
+			return 0;
+		}
+		case WM_RBUTTONUP:
+		{
+			int x = LOWORD(lParam);
+			int y = HIWORD(lParam);
+			mouse.OnRightReleased(x, y);
+			return 0;
+		}
 		}
 
 		return DefWindowProc(hWnd, msg, wParam, lParam);

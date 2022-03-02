@@ -184,6 +184,8 @@
     <ClCompile Include="src\ImguiHelpers.cpp" />
     <ClCompile Include="src\ModelImporter.cpp" />
     <ClCompile Include="src\ModelAsset.cpp" />
+    <ClCompile Include="src\MouseEvent.cpp" />
+    <ClCompile Include="src\MouseInput.cpp" />
     <ClCompile Include="src\RawBuffer.cpp" />
     <ClCompile Include="src\Renderer.cpp" />
     <ClCompile Include="src\Image.cpp" />
@@ -283,6 +285,8 @@
   <ItemGroup>
     <ClInclude Include="src\GLTFInclude.h" />
     <ClInclude Include="src\ImguiHelpers.h" />
+    <ClInclude Include="src\MouseEvent.h" />
+    <ClInclude Include="src\MouseInput.h" />
     <ClInclude Include="src\RawBuffer.h" />
     <ClInclude Include="src\Image.h" />
     <ClInclude Include="src\App.h" />
@@ -399,6 +403,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </None>
+    <None Include="Shaders\HiZCommon.hlsli" />
     <None Include="Shaders\Lighting\HybridLightingCommon.hlsli" />
     <None Include="Shaders\Lighting\LightingStructs.hlsli" />
     <None Include="Shaders\Lighting\Lights.hlsli" />

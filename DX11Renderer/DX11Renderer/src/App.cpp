@@ -150,6 +150,23 @@ namespace gfx
 		auto dt = pTimer->Mark();
 		timeElapsed += dt;
 
+		// Process input
+		{
+			auto& mouse = pWindow->GetMouse();
+			while (!mouse.EventBufferIsEmpty())
+			{
+				MouseEvent evt = pWindow->GetMouse().ReadEvent();
+				switch (evt.GetType())
+				{
+				case MouseEvent::EventType::LPress:
+				{
+					pixelSelectionX = mouse.GetPosX();
+					pixelSelectionY = mouse.GetPosY();
+				}
+				}
+			}
+		}
+
 		// Animate lights
 		{
 			UINT ct = pLightManager->GetLightCount();
@@ -173,7 +190,7 @@ namespace gfx
 
 		pWindow->Gfx().BeginFrame();
 
-		pRenderer->Execute(pWindow->Gfx(), pCamera, timeElapsed);
+		pRenderer->Execute(pWindow->Gfx(), pCamera, timeElapsed, pixelSelectionX, pixelSelectionY);
 
 		if (true)
 		{

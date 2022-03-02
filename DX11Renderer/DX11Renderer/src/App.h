@@ -36,6 +36,8 @@ namespace gfx
 		std::shared_ptr<RendererList> pRendererList;
 
 		bool showDemoWindow = true;
+		UINT pixelSelectionX = 450u;
+		UINT pixelSelectionY = 480u;
 
 		static constexpr UINT nDrawables = 1;
 	};

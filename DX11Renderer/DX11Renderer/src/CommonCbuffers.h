@@ -15,6 +15,7 @@ namespace gfx
 
 	struct alignas(16) PerFrameCB
 	{
+		dx::XMVECTORU32 pixelSelection;
 		dx::XMVECTOR time; // (t/20, t, t*2, t*3)
 	};
 
