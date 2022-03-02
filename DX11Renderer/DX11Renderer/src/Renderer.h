@@ -43,7 +43,7 @@ namespace gfx
 		virtual ~Renderer();
 	public:
 		void AcceptDrawCall(DrawCall job, std::string targetPass);
-		void Execute(Graphics& gfx, const std::unique_ptr<Camera>& cam, float timeElapsed);
+		void Execute(Graphics& gfx, const std::unique_ptr<Camera>& cam, float timeElapsed, UINT pixelSelectionX, UINT pixelSelectionY);
 		void DrawImguiControlWindow(Graphics& gfx);
 		void Reset();
 		bool IsFeatureEnabled(RendererFeature feature) const;

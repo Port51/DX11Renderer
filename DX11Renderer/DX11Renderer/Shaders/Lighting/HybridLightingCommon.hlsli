@@ -148,6 +148,8 @@ uint GetClusterDataIdx(uint clusterIdx)
 
 float GetLightAttenuation(StructuredLight light, StructuredBuffer<StructuredShadow> shadowData, Texture2D<float> shadowAtlas, SamplerComparisonState shadowAtlasSampler, float3 normalVS, float3 positionVS, float3 positionWS, float dither, inout float4 debugViews)
 {
+    debugViews = float4(0.f, 1.f, 0.f, 0.f); // cascades, all shadow atten, lights in range, -
+    
     float lightAtten;
     float3 lightDirVS;
         

@@ -7,18 +7,23 @@
 // Does NOT correctly handle oblique view frustums.
 // Does NOT work with orthographic projection.
 // zBufferParam = { (f-n)/n, 1, (f-n)/n*f, 1/f }
-float LinearEyeDepth(float depth, float4 zBufferParam)
+float LinearEyeDepth(float depth01, float4 zBufferParam)
 {
-    return 1.0 / (zBufferParam.z * depth + zBufferParam.w);
+    return 1.0 / (zBufferParam.z * depth01 + zBufferParam.w);
 }
 
 // Z buffer to linear 0..1 depth (0 at camera position, 1 at far plane).
 // Does NOT work with orthographic projections.
 // Does NOT correctly handle oblique view frustums.
 // zBufferParam = { (f-n)/n, 1, (f-n)/n*f, 1/f }
-float Linear01Depth(float depth, float4 zBufferParam)
+float Linear01Depth(float depth01, float4 zBufferParam)
 {
-    return 1.0 / (zBufferParam.x * depth + zBufferParam.y);
+    return 1.0 / (zBufferParam.x * depth01 + zBufferParam.y);
+}
+
+float Depth01ToEyeDepth(float depth01)
+{
+    return depth01 * _ProjectionParams.z;
 }
 
 float RawDepthToLinearDepth(float rawDepth)

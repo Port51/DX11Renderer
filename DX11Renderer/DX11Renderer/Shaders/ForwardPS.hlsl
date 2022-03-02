@@ -1,4 +1,6 @@
 
+//#define DEBUG_VIEW_ALL_SHADOWS
+//#define DEBUG_VIEW_SHADOW
 //#define DEBUG_VIEW_CLUSTER_XY
 //#define DEBUG_VIEW_CLUSTER_Z
 //#define DEBUG_VIEW_LIGHT_COUNTS
@@ -47,6 +49,7 @@ SamplerComparisonState ShadowAtlasSampler : register(s5);
 
 float4 main(v2f i) : SV_Target
 {
+    i.normalVS = normalize(i.normalVS);
     float3 positionNDC = i.positionNDC.xyz / i.positionNDC.w;
     float linearDepth = LinearEyeDepth(i.pos.z, _ZBufferParams);
     linearDepth = i.positionVS.z;
@@ -76,8 +79,16 @@ float4 main(v2f i) : SV_Target
         float3 lightColorInput = saturate(light.color_intensity.rgb * lightAtten);
         diffuseLight += lightColorInput;
     }
-  
-#if defined(DEBUG_VIEW_CLUSTER_XY)
+    
+    // DEBUG: Show normal dir
+    float3 normalDirColor = 0.f;
+    normalDirColor += saturate(abs(i.normalWS.x) * 2.f - 1.f) * float3(1.f, 0.25f, 0.f);
+    normalDirColor += saturate(abs(i.normalWS.z) * 2.f - 1.f) * float3(0.f, 0.25f, 1.f);
+    return float4(normalDirColor, 1.f);
+    
+#if defined(DEBUG_VIEW_ALL_SHADOWS)
+    return float4(debugViews.yyy, 1.f);
+#elif defined(DEBUG_VIEW_CLUSTER_XY)
     // Create RGB debug values based on cluster XY coords
     float3 debugClusterRGB = float3(frac(cluster.xy * 0.27841f), frac(dot(cluster.xy, float2(0.1783f, 0.5782f))));
     return float4(debugClusterRGB.rgb, 1.f);
