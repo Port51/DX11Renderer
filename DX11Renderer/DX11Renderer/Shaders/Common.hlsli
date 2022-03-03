@@ -34,11 +34,18 @@ float RawDepthToLinearDepth(float rawDepth)
     return lerp(persp, ortho, _OrthoParams.w);
 }
 
-float GetInterpolatedZ(float invZ0, float invZ1, float lerpValue)
+// https://www.scratchapixel.com/lessons/3d-basic-rendering/rasterization-practical-implementation/perspective-correct-interpolation-vertex-attributes
+float GetPerspectiveCorrectDepth(float depth0, float depth1, float lerpValue)
 {
-    // Equation:
-    // z = 1 / (1/z0 + s * (1/z1 - 1/z0))
-    return rcp(lerp(invZ0, invZ1, lerpValue));
+    // EQ: Z = 1 / [ 1/Z0 (1 - lerp) + 1/Z1 * lerp ]
+    return rcp(lerp(rcp(depth0), rcp(depth1), lerpValue));
+}
+
+// https://www.scratchapixel.com/lessons/3d-basic-rendering/rasterization-practical-implementation/perspective-correct-interpolation-vertex-attributes
+float GetPerspectiveCorrectDepth_Optimized(float invDepth0, float invDepth1, float lerpValue)
+{
+    // EQ: Z = 1 / [ 1/Z0 (1 - lerp) + 1/Z1 * lerp ]
+    return rcp(lerp(invDepth0, invDepth1, lerpValue));
 }
 
 float Luminance(float3 v)

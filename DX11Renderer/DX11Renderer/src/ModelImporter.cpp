@@ -37,7 +37,7 @@ namespace gfx
 			{
 				//gfx.GetLog()->Info(p.values[0]);
 				settings.materialPaths.emplace_back(p.values[1]);
-				settings.materialIndicesByName[p.values[0]] = settings.materialPaths.size() - 1;
+				settings.materialIndicesByName[p.values[0]] = (int)settings.materialPaths.size() - 1;
 			}
 		}
 		parser.Dispose();
@@ -152,8 +152,6 @@ namespace gfx
 
 					// Load INDICES
 					{
-						// todo: detect if 16 or 32 bit indices
-
 						const int accessorIdx = primitive.indices;
 						const auto accessor = model.accessors[accessorIdx];
 						const auto& view = model.bufferViews[accessor.bufferView];

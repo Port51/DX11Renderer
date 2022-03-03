@@ -28,7 +28,6 @@ namespace gfx
 		sphereRad(sphereRad),
 		range(range)
 	{
-		// todo: set shadow via settings
 		shadowSettings.hasShadow = hasShadow;
 
 		if (shadowSettings.hasShadow)
@@ -105,14 +104,12 @@ namespace gfx
 		const auto shadowDirWS = GetDirectionWS();
 
 		// Render all cascades
-		for (UINT i = 0u; i < Config::ShadowCascades; ++i)
+		for (UINT i = 0u; i < (UINT)Config::ShadowCascades; ++i)
 		{
 			const float sphereOffset = 5.f; // distance to gradually move spheres backwards along camera forward
 			const float currentOffset = i * sphereOffset / (Config::ShadowCascades - 1);
 			const float cascadeDistance = Config::ShadowCascadeDistances[i];
 			auto cascadeSphereCenterWS = dx::XMVectorAdd(cameraPositionWS, dx::XMVectorScale(cameraForwardWS, cascadeDistance * 0.5f - currentOffset));
-
-			// todo: calculate initial VP here
 
 			// Stabilize shadows so texel reads will match previous frame
 			// References: 
@@ -177,14 +174,14 @@ namespace gfx
 			// todo: move elsewhere
 			{
 				lightShadowData[i].shadowMatrix = context.invViewMatrix * transforms.viewMatrix * transforms.projMatrix;
-				dx::XMStoreUInt2(&lightShadowData[i].tile, dx::XMVectorSet(tileX, tileY, 0, 0));
+				dx::XMStoreUInt2(&lightShadowData[i].tile, dx::XMVectorSet((float)tileX, (float)tileY, 0, 0));
 			}
 		}
 	}
 
 	void DirectionalLight::AppendShadowData(UINT shadowStartSlot, std::vector<LightShadowData>& shadowData) const
 	{
-		for (UINT i = 0u; i < Config::ShadowCascades; ++i)
+		for (UINT i = 0u; i < (UINT)Config::ShadowCascades; ++i)
 		{
 			shadowData[shadowStartSlot + i] = lightShadowData[i];
 		}

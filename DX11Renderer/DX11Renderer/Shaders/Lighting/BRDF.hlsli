@@ -50,7 +50,7 @@ BRDFLighting BRDF(float3 f0, float f90, float roughness, float linearRoughness, 
     float GSF = SmithGGXCorrelated(NdotL, NdotV, roughness);
     float NDF = GGX(NdotH, roughness);
     //float Fr = NDF * FF * GSF / (PI * 4.0 * NdotL * NdotV);
-    float Fr = NDF * FF * GSF / PI;
+    float3 Fr = NDF * FF * GSF / PI;
 
     // Diffuse BRDF
     float Fd = NormalizedDisneyDiffuse(NdotV, NdotL, LdotH, linearRoughness) / PI;

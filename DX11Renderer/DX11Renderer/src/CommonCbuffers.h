@@ -17,6 +17,8 @@ namespace gfx
 	{
 		dx::XMVECTORU32 pixelSelection;
 		dx::XMVECTOR time; // (t/20, t, t*2, t*3)
+		dx::XMVECTOR sinTime; // sin(t/8), sin(t/4), sin(t/2), sin(t)
+		dx::XMVECTOR cosTime; // cos(t/8), cos(t/4), cos(t/2), cos(t)
 	};
 
 	struct alignas(16) GlobalTransformCB

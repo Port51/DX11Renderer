@@ -25,11 +25,9 @@ namespace gfx
 		void Reset();
 	private:
 		void UpdateProjectionMatrix();
-	public:
-		// todo: make private
+	private:
 		float nearClipPlane;
 		float farClipPlane;
-	private:
 		float r = 19.9f;// 10.0f;// 13.3f; // dist from origin
 		float theta = -0.383972f;// -0.471225f; // rotate around origin
 		float phi = 0.558505;// 0.209f; // rotate around origin

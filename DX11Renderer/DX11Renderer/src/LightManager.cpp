@@ -198,7 +198,7 @@ namespace gfx
 
 	UINT LightManager::GetLightCount() const
 	{
-		return pLights.size();
+		return (UINT)pLights.size();
 	}
 
 	std::shared_ptr<Light> LightManager::GetLight(UINT index) const

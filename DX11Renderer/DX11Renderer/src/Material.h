@@ -22,7 +22,6 @@ namespace gfx
 	{
 	public:
 		Material(Graphics& gfx, std::string_view assetPath);
-		void Bind(Graphics& gfx, UINT slot) {} // todo: remove
 		void Bind(Graphics& gfx, std::string_view passName);
 		void SubmitDrawCalls(const MeshRenderer& meshRenderer, const DrawContext& drawContext) const;
 	public:
@@ -36,7 +35,7 @@ namespace gfx
 		std::shared_ptr<PixelShader> pPixelShader;
 	private:
 		std::unordered_map<std::string, std::unique_ptr<MaterialPass>> pPasses;
-		std::vector<std::shared_ptr<Bindable>> pBindables; // shaders and such
+		std::vector<std::shared_ptr<Bindable>> pBindables;
 		std::string materialAssetPath;
 		VertexLayout vertexLayout;
 	};

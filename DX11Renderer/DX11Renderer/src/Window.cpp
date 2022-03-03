@@ -151,7 +151,6 @@ namespace gfx
 			SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pWnd));
 
 			// Change message proc now that setup is finished
-			// todo: move to method
 			SetWindowLongPtr(hWnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(&Window::HandleMsgAdapter));
 
 			// Forward message to window class handler

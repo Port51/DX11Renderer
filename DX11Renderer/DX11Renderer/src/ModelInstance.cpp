@@ -43,19 +43,6 @@ namespace gfx
 		UpdateSceneGraph();
 	}
 
-	/*ModelInstance::ModelInstance(Graphics& gfx, std::unique_ptr<ModelAsset> const& pModelAsset, std::vector<std::string> materialPaths, dx::XMMATRIX transform)
-		: transform(transform) // todo: set position
-	{
-		pMaterials.reserve(materialPaths.size());
-		for (const auto& path : materialPaths)
-		{
-			std::shared_ptr<Material> pMaterial = std::dynamic_pointer_cast<Material>(Material::Resolve(gfx, path.c_str()));
-			pMaterials.push_back(pMaterial);
-		}
-
-		pSceneGraph = CreateModelInstanceNode(gfx, pModelAsset->pSceneGraph);
-	}*/
-
 	void ModelInstance::SubmitDrawCalls(const DrawContext& drawContext) const
 	{
 		pSceneGraph->SubmitDrawCalls(drawContext);
@@ -96,11 +83,6 @@ namespace gfx
 			auto pChildNode = CreateModelInstanceNode(gfx, child);
 			pChildNodes.emplace_back(std::move(pChildNode));
 		}
-		/*for (UINT i = 0; i < pSourceNode->pChildNodes.size(); ++i)
-		{
-			auto pChildNode = CreateModelInstanceNode(gfx, pSourceNode->pChildNodes[i]);
-			//pChildNodes.emplace_back(std::move(pChildNode));
-		}*/
 
 		auto pNode = std::make_shared<SceneGraphNode>(nextNodeId++, dx::XMLoadFloat4x4(&pSourceNode->localTransform), pMeshRenderer, std::move(pChildNodes));
 		return std::move(pNode);
@@ -108,7 +90,7 @@ namespace gfx
 
 	std::shared_ptr<MeshRenderer> ModelInstance::CreateMeshRenderer(Graphics& gfx, std::shared_ptr<MeshAsset> const& pMeshAsset)
 	{
-		// temporary
+		// temporary way of testing instances
 		const bool isInstance = false;
 		const UINT instanceCount = 10u;
 

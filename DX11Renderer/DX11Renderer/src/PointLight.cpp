@@ -40,7 +40,6 @@ namespace gfx
 		attenuationQ(attenuationQ),
 		range(range)
 	{
-		// todo: set shadow via settings
 		shadowSettings.hasShadow = hasShadow;
 
 		if (shadowSettings.hasShadow)
@@ -118,7 +117,6 @@ namespace gfx
 		const auto projMatrix = dx::XMMatrixPerspectiveFovLH(fovTheta, 1.0f, nearPlane, range);
 
 		// Render x6 shadow tiles
-		// todo: add option to disable upward tile for scenes with no ceiling
 		for (UINT i = 0u; i < 6u; ++i)
 		{
 			// Apply look-at and local orientation

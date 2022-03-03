@@ -4,6 +4,7 @@
 #include <d3dcompiler.h>
 #include "DepthStencilTarget.h"
 #include <random>
+#include "DX11Include.h"
 #include "Config.h"
 
 namespace gfx
@@ -29,8 +30,6 @@ namespace gfx
 		swapChainDesc.Windowed = TRUE;
 		swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD; // how to present - usually this is the best
 		swapChainDesc.Flags = 0;
-
-		HRESULT hr;
 
 		UINT swapCreateFlags = 0u;
 #ifndef NDEBUG
@@ -203,5 +202,13 @@ namespace gfx
 	std::unique_ptr<Log>& Graphics::GetLog()
 	{
 		return log;
+	}
+	std::shared_ptr<DepthStencilTarget>& Graphics::GetDepthStencilTarget()
+	{
+		return pDepthStencil;
+	}
+	ComPtr<ID3D11RenderTargetView>& Graphics::GetBackBufferView()
+	{
+		return pBackBufferView;
 	}
 }

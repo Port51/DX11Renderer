@@ -9,7 +9,6 @@ namespace gfx
 	{
 		D3D11_DEPTH_STENCIL_DESC dsDesc = CD3D11_DEPTH_STENCIL_DESC{ CD3D11_DEFAULT{} };
 
-		// todo: set this somewhere else
 		if (mode == Mode::Gbuffer)
 		{
 			dsDesc.StencilEnable = FALSE;

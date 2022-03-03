@@ -44,8 +44,8 @@ inline float NormalizedDisneyDiffuse(float NdotV, float NdotL, float LdotH, floa
     float energyFactor = lerp(1.0, 1.0 / 1.51, linearRoughness);
     float fd90 = (LdotH * LdotH * linearRoughness) * 2.0 + energyBias;
     float3 f0 = (float3) 1.0;
-    float lightScatter = F_Schlick_2(f0, fd90, NdotL);
-    float viewScatter = F_Schlick_2(f0, fd90, NdotV);
+    float lightScatter = F_Schlick_2(f0, fd90, NdotL).x;
+    float viewScatter = F_Schlick_2(f0, fd90, NdotV).x;
     float Fd = lightScatter * viewScatter * energyFactor * NdotL;
     //return NdotL;
     //return energyBias * NdotL;

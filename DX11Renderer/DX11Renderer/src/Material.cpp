@@ -30,14 +30,12 @@ namespace gfx
 
 	enum MaterialParseState { None, Properties, Pass };
 
-	// todo: pass actual VertexLayout class?
 	Material::Material(Graphics& gfx, std::string_view _materialAssetPath)
 		: materialAssetPath(std::string(_materialAssetPath))
 	{
-		// NOTE: This is very WIP and should be replaced by something entirely different later
+		// todo: This is very WIP and should be replaced by something entirely different later
 		// with most of the parsing logic moved to a different class
 
-		// todo: make this not always the same
 		vertexLayout
 			.AppendVertexDesc<dx::XMFLOAT3>({ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 })
 			.AppendVertexDesc<dx::XMFLOAT3>({ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 })
@@ -45,7 +43,6 @@ namespace gfx
 			.AppendVertexDesc<dx::XMFLOAT2>({ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 })
 			.AppendInstanceDesc<dx::XMFLOAT3>({ "INSTANCEPOS", 0, DXGI_FORMAT_R32G32B32_FLOAT, 1, 0, D3D11_INPUT_PER_INSTANCE_DATA, 1 }); // last = # instances to draw before moving onto next instance
 		assert(vertexLayout.GetPerVertexStride() % 16 == 0);
-		//assert(vertexLayout.GetPerInstanceStride() % 16 == 0);
 
 		dx::XMFLOAT3 colorProp = { 0.8f, 0.8f, 0.8f };
 		float roughnessProp = 0.75f;

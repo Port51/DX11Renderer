@@ -7,10 +7,14 @@
 
 // Set SSR method here
 //#define SSR_METHOD_3D_RAYMARCH
-#define SSR_METHOD_NC_DDA
-//#define SSR_METHOD_BINARY_SEARCH
+//#define SSR_METHOD_NC_DDA
+#define SSR_METHOD_BINARY_SEARCH
 //#define SSR_METHOD_HI_Z
 //#define SSR_METHOD_CONE_TRACE
+
+//#define SSR_USES_THICKNESS_TEST
+#define SSR_THICKNESS           0.1f
+#define SSR_ALLOWS_CAMERA_FACING_RAYS
 
 #define MAX_MIP                 7u
 #define MAX_TRACE_ITERATIONS    20u
@@ -21,6 +25,7 @@ Texture2D<float4> NormalRoughReflectivityRT : register(t2);
 Texture2D<float4> CameraColorIn : register(t3);
 Texture2D<float> DepthRT : register(t4);
 Texture2D<float2> HiZBuffer : register(t5);
+Texture2D<float> DitherTex : register(t6);
 
 RWTexture2D<float4> CameraColorOut : register(u0);
 globallycoherent RWStructuredBuffer<uint> DebugData : register(u1);
@@ -42,19 +47,11 @@ float4 PositionVSToSS(float3 positionVS)
     return positionSS; // return w component as well for linear depth
 }
 
-// https://www.scratchapixel.com/lessons/3d-basic-rendering/rasterization-practical-implementation/perspective-correct-interpolation-vertex-attributes
-float GetPerspectiveCorrectDepth(float d0, float d1, float lerpValue)
-{
-    // todo: optimize!
-    // EQ: Z = 1 / [ 1/Z0 (1 - lerp) + 1/Z1 * lerp ]
-    return rcp(lerp(rcp(d0), rcp(d1), lerpValue));
-}
-
 // ref: https://jhstrom.blogspot.com/2021/03/screen-space-reflections-explained.html
 float3 GetReflectionDirSS(float3 positionVS, float3 reflectDirVS, float2 uv, float rawDepth)
 {
     float3 positionSS = float3(uv, rawDepth); // screen pixels, and non-linear depth
-    float3 offsetPositionSS = PositionVSToSS(positionVS + reflectDirVS);
+    float3 offsetPositionSS = PositionVSToSS(positionVS + reflectDirVS).xyz;
     float3 initialDir = normalize(offsetPositionSS - positionSS);
     
     // Ensure each axis is not too close to zero
@@ -64,16 +61,141 @@ float3 GetReflectionDirSS(float3 positionVS, float3 reflectDirVS, float2 uv, flo
         absDir.x < ep ? ep : initialDir.x,
         absDir.y < ep ? ep : initialDir.y,
         absDir.z < ep ? ep : initialDir.z);
-    
-    /*const float3 positionSS = float3(uv.xy, rawDepth);
-    
-    const float Offset = 0.5f;
-    const float3 offsetPositionVS = positionVS + reflectDirVS * Offset;
-    float4 offsetPositionSS = mul(_ProjMatrix, float4(offsetPositionVS, 0.f));
-    offsetPositionSS.xyz /= offsetPositionSS.w;
-    offsetPositionSS.xy = (offsetPositionSS.xy * float2(0.5f, -0.5f) + 0.5f) * _ScreenParams.xy;
+}
 
-    return (offsetPositionSS.xyz - positionSS);*/
+struct DDAParams
+{
+    bool swapXY;
+    float2 startPosSS;
+    float2 endPosSS;
+    float2 dSS;
+    float traceRange;
+    float invTraceRange;
+    float invStartDepth;
+    float invEndDepth;
+};
+
+DDAParams GetDDAParams(float4 startPosSS, float4 endPosSS)
+{
+    DDAParams params;
+    
+    // Handle case when endpt is very close
+    endPosSS += dot(startPosSS.xy - startPosSS.xy, endPosSS.xy - startPosSS.xy) < 0.0001f ? 0.01f : 0.f;
+    
+    float2 delta = endPosSS.xy - startPosSS.xy;
+    
+    // Decide whether to swap X and Y
+    params.swapXY = false;
+    if (abs(delta.x) < abs(delta.y))
+    {
+        params.swapXY = true;
+        delta = delta.yx;
+        startPosSS.xy = startPosSS.yx;
+        endPosSS.xy = endPosSS.yx;
+    }
+    
+    float stepDir = sign(delta.x);
+    params.dSS = float2(stepDir, delta.y * stepDir / delta.x);
+    
+    params.traceRange = abs(endPosSS.x - startPosSS.x);
+    params.invTraceRange = 1.f / params.traceRange;
+    params.startPosSS = startPosSS.xy;
+    params.endPosSS = endPosSS.xy;
+    params.invStartDepth = 1.f / startPosSS.w;
+    params.invEndDepth = 1.f / endPosSS.w;
+    
+    return params;
+
+}
+
+struct DDAPt
+{
+    float2 traceSS;
+    float traceDepth;
+    float sampleDepth;
+};
+// Output: (x, y, trace-depth, sampled-depth)
+DDAPt GetDDA(DDAParams params, float steps, float jitter)
+{
+    DDAPt pt = (DDAPt)0.f;
+    pt.sampleDepth = 0.f;
+    steps = min(params.traceRange, steps); // clamp to farthest pt
+    float2 traceSS = params.startPosSS.xy + params.dSS * steps;
+        
+    float2 unswappedSS = (params.swapXY) ? traceSS.yx : traceSS.xy;
+    float traceZ = GetPerspectiveCorrectDepth_Optimized(params.invStartDepth, params.invEndDepth, steps * params.invTraceRange);
+        
+        // Read depth and convert it to linear depth
+    float depth = HiZBuffer.Load(int3(unswappedSS.xy, 0)).x;
+    if (depth == 0.f)
+        return pt;
+#if !defined(HZB_USES_LINEAR_DEPTH)
+        depth = LinearEyeDepth(depth, _ZBufferParams);
+#else
+    depth = Depth01ToEyeDepth(depth);
+#endif
+    depth += jitter; // to cut down on banding
+    
+    pt.traceSS = unswappedSS;
+    pt.traceDepth = traceZ;
+    pt.sampleDepth = depth;
+    return pt;
+}
+
+// Output: (x, y, travelDistance, confidence)
+float4 CourseDDASearch(DDAParams params, float3 reflectDirVS, float stride, float jitter, bool isDebugTrace)
+{
+    // Debug
+    uint debugSampleSpread = ceil(params.traceRange / MAX_TRACE_ITERATIONS);
+    //sampleSpread = 1; // uncomment to verify stride
+    
+    float prevTraceZ = 1.f / params.invStartDepth;
+    
+    for (float i = 1.f; i <= params.traceRange; i += stride)
+    {
+        DDAPt pt = GetDDA(params, i, jitter);
+        if (pt.sampleDepth == 0.f)
+            break;
+        
+#if defined(DEBUG_VIEW_SHOW_TRACE)
+        if (isDebugTrace && (uint)i == _DebugViewStep * debugSampleSpread)
+        {
+            DebugData[0] = pt.traceSS.x;
+            DebugData[1] = pt.traceSS.y;
+            DebugData[2] = 0u;
+        }
+#endif
+        
+        // Test depth intersection
+        float maxTraceZ = max(pt.traceDepth, prevTraceZ);
+#if defined(SSR_USES_THICKNESS_TEST)
+        if (maxTraceZ > pt.sampleDepth && maxTraceZ <= pt.sampleDepth + SSR_THICKNESS)
+#else
+        if (maxTraceZ > pt.sampleDepth)
+#endif
+        {
+            float confidence = 1.f;
+            
+            // Ensure facing surface
+            const float3 traceNormalVS = GetNormalVSFromGBuffer(NormalRoughReflectivityRT[pt.traceSS.xy]);
+            float NdotL = saturate(dot(reflectDirVS, traceNormalVS) * -5.f);
+            confidence *= NdotL;
+            
+#if defined(DEBUG_VIEW_SHOW_TRACE)
+            if (isDebugTrace && (uint)i < _DebugViewStep * debugSampleSpread)
+            {
+                DebugData[0] = pt.traceSS.x;
+                DebugData[1] = pt.traceSS.y;
+                DebugData[2] = 0u;
+            }
+#endif
+            
+            return float4(pt.traceSS.xy, i, confidence * 0.5f);
+        }
+        
+        prevTraceZ = pt.traceDepth;
+    }
+    return 0.f;
 }
 
 // A simple 3D raymarch that oversamples as rays get farther from the camera
@@ -139,7 +261,7 @@ float4 GetReflectColor_3DRaymarch(uint3 tId, float3 positionVS, float3 reflectDi
     return 0.f;
 }
 
-float4 GetReflectColor_NC_DDA(uint3 tId, float3 positionVS, float4 positionSS, float3 reflectDirVS)
+float4 GetReflectColor_NC_DDA(uint3 tId, float3 positionVS, float4 positionSS, float3 reflectDirVS, float dither)
 {
     const bool isDebugTrace = (tId.x == _PixelSelection.x && tId.y == _PixelSelection.y);
     
@@ -147,12 +269,18 @@ float4 GetReflectColor_NC_DDA(uint3 tId, float3 positionVS, float4 positionSS, f
     const float stride = 1.f;
     const float thickness = 0.1f;
     
+    float jitter = dither * 0.0091f;
+    
     // Clip to near plane to avoid possible division by 0 during perspective divide
     float rayLength = ((positionVS.z + reflectDirVS.z * maxRayLength) < _ProjectionParams.y) ? (_ProjectionParams.y - positionVS.z) / reflectDirVS.z : maxRayLength;
     
     positionSS = PositionVSToSS(positionVS);
     float3 endPtVS = positionVS + reflectDirVS * rayLength;
     float4 endPtSS = PositionVSToSS(endPtVS);
+    
+    // Precalculate these (optimization)
+    float invStartPtDepth = 1.f / positionVS.z;
+    float invEndPtDepth = 1.f / endPtVS.z;
     
     // Handle case when endpt is very close
     endPtSS += dot(endPtSS.xy - positionSS.xy, endPtSS.xy - positionSS.xy) < 0.0001f ? 0.01f : 0.f;
@@ -170,28 +298,24 @@ float4 GetReflectColor_NC_DDA(uint3 tId, float3 positionVS, float4 positionSS, f
     }
     
     float stepDir = sign(delta.x);
-    float invDx = stepDir / delta.x;
+    float2 dSS = float2(stepDir, delta.y * stepDir / delta.x);
     
-    float2 dSS = float2(stepDir, delta.y * invDx) * stride;
+    float traceRange = abs(endPtSS.x - positionSS.x);
+    float invTraceRange = 1.f / traceRange;
     
-    float jitter = 0.01f; // todo: use RNG
-    float tracePts = abs(endPtSS.x - positionSS.x);
-    float invQ = stride / tracePts;
-    
-    float prevTraceZ = GetPerspectiveCorrectDepth(positionVS.z, endPtVS.z, invQ); // offset by 1 pixel
+    float prevTraceZ = positionVS.z;
+    float prevSampleZ = prevTraceZ;
     
     // Debug
-    uint sampleSpread = ceil(tracePts / MAX_TRACE_ITERATIONS);
+    uint sampleSpread = ceil(traceRange / MAX_TRACE_ITERATIONS);
     
-    // Offset
-    positionSS.xy += dSS;
-    
-    for (float i = 2.f; i <= tracePts; i += 1.f)
+    for (float i = 1.f; i <= traceRange; i += stride)
     {
+        i = min(traceRange, i); // clamp to farthest pt
         float2 traceSS = positionSS.xy + dSS * i;
         
         float2 unswappedSS = (swapXY) ? traceSS.yx : traceSS.xy;
-        float traceZ = GetPerspectiveCorrectDepth(positionVS.z, endPtVS.z, i * invQ);
+        float traceZ = GetPerspectiveCorrectDepth_Optimized(invStartPtDepth, invEndPtDepth, i * invTraceRange);
         
         // Read depth and convert it to linear depth
         float depth = HiZBuffer.Load(int3(unswappedSS.xy, 0)).x;
@@ -202,9 +326,10 @@ float4 GetReflectColor_NC_DDA(uint3 tId, float3 positionVS, float4 positionSS, f
 #else
         depth = Depth01ToEyeDepth(depth);
 #endif
+        depth += jitter; // to cut down on banding
         
 #if defined(DEBUG_VIEW_SHOW_TRACE)
-        if (isDebugTrace && i == _DebugViewStep * sampleSpread)
+        if (isDebugTrace && (uint)i == _DebugViewStep * sampleSpread)
         {
             DebugData[0] = unswappedSS.x;
             DebugData[1] = unswappedSS.y;
@@ -215,7 +340,7 @@ float4 GetReflectColor_NC_DDA(uint3 tId, float3 positionVS, float4 positionSS, f
         // Test depth intersection
         float minTraceZ = min(traceZ, prevTraceZ);
         float maxTraceZ = max(traceZ, prevTraceZ);
-        if ((maxTraceZ > depth && minTraceZ < depth + thickness) || i == 1000)
+        if (maxTraceZ > depth && minTraceZ < depth + thickness)
         {
             float confidence = 1.f;
             
@@ -237,39 +362,73 @@ float4 GetReflectColor_NC_DDA(uint3 tId, float3 positionVS, float4 positionSS, f
         }
         
         prevTraceZ = traceZ;
-
+        prevSampleZ = depth;
     }
     return 0.f;
 }
 
-float4 GetReflectColor_SimpleSearch(uint3 tId, float rawDepth, float3 reflectDirSS)
+float4 GetReflectColor_BinarySearch(uint3 tId, float3 positionVS, float4 positionSS, float3 reflectDirVS, float dither)
 {
+    //
+    // Setup search
+    //
     const bool isDebugTrace = (tId.x == _PixelSelection.x && tId.y == _PixelSelection.y);
     
-    reflectDirSS = normalize(reflectDirSS);
+    const float maxRayLength = 25.f;
+    const float stride = 16.f;
+    const uint strideRefinementSteps = 3u; // EQ: log2 (stride) - 1
     
-    float3 uv = float3(tId.xy + 0.5f, rawDepth - 0.001f);
-    const uint iterations = MAX_TRACE_ITERATIONS * 5u;
-    for (uint i = 0u; i < iterations; ++i)
+    float jitter = dither * 0.0111f;
+    
+    // Clip to near plane to avoid possible division by 0 during perspective divide
+    float rayLength = ((positionVS.z + reflectDirVS.z * maxRayLength) < _ProjectionParams.y) ? (_ProjectionParams.y - positionVS.z) / reflectDirVS.z : maxRayLength;
+    
+    positionSS = PositionVSToSS(positionVS);
+    float3 endPosVS = positionVS + reflectDirVS * rayLength;
+    float4 endPosSS = PositionVSToSS(endPosVS);
+    
+    DDAParams params = GetDDAParams(positionSS, endPosSS);
+    
+    float4 course = CourseDDASearch(params, reflectDirVS, stride, jitter, isDebugTrace);
+    //return float4(CameraColorIn[course.xy].rgb, course.w * 0.5f);
+    
+    //
+    // Binary search (refinement)
+    //
+    
+    // Setup sample pts for search
+    float q0 = course.z - stride;
+    float q1 = course.z;
+    
+    // Assume s1 is inside geometry
+    DDAPt s0 = GetDDA(params, q0, jitter);
+    DDAPt s1 = GetDDA(params, q1, jitter);
+    int iter = stride;
+    for (uint i = 0u; i < strideRefinementSteps; ++i)
     {
-#if defined(DEBUG_VIEW_SHOW_TRACE)
-        if (isDebugTrace && (i / 5u) == _DebugViewStep)
+        float qMid = (q0 + q1) * 0.5f;
+        DDAPt sMid = GetDDA(params, qMid, jitter);
+        if (sMid.traceDepth > sMid.sampleDepth)
         {
-            DebugData[0] = uv.x;
-            DebugData[1] = uv.y;
-            DebugData[2] = 0u;
+            s1 = sMid;
+            q1 = qMid;
         }
-#endif
-        
-        uv += reflectDirSS * 0.1f;
-        
-        // Test depth intersection
-        float depth = HiZBuffer.Load(int3(uv.xy, 0)).x;
-        if (uv.z > depth)
+        else
         {
-            return float4(CameraColorIn[uv.xy].rgb, 1.f - (float)i / iterations);
+            s0 = sMid;
+            q0 = qMid;
         }
+        iter--;
     }
+    
+#if !defined(SSR_ALLOWS_CAMERA_FACING_RAYS)
+    // Do an extra check here. The camera-facing check helps, but due to the thickness param, check again.
+    course.w *= (positionVS.z <= s1.sampleDepth);
+#endif
+    
+    // Note - rather than calculating a new midpoint, use the last intersecting pt
+    return float4(CameraColorIn[s1.traceSS.xy].rgb, course.w * 0.5f); // update confidence?
+    
     return 0.f;
 }
 
@@ -278,10 +437,6 @@ void CSMain(uint3 tId : SV_DispatchThreadID)
 {
     //if (tId.x >= (uint) _ScreenParams.x || tId.y >= (uint) _ScreenParams.y)
     //    return;
-    
-    // todo: determine if out of screen bounds if depth == 0 (accessing texture outside bounds returns 0)
-    // todo: get hyperbolic depth from p.z / p.w, and get linear depth from p.w
-    // todo: clip ray end pt against near plane for rays facing camera (to avoid division by 0 during perspective divide)
     
     //
     // Setup debug views
@@ -294,6 +449,8 @@ void CSMain(uint3 tId : SV_DispatchThreadID)
     const float rawDepth = DepthRT.Load(int3(tId.xy, 0));
     const float isGeometry = rawDepth < 1.f;
     const float linearDepth = RawDepthToLinearDepth(rawDepth);
+    
+    const float dither = DitherTex.Load(int3(tId.xy % 8, 0));
     
     //const float linearDepth = HiZBuffer.Load(int3(tId.xy, 0)).r * _ProjectionParams.z;
     const float2 screenUV = tId.xy * _ScreenParams.zw;
@@ -407,16 +564,30 @@ void CSMain(uint3 tId : SV_DispatchThreadID)
         }
     }*/
     
-#if defined(SSR_METHOD_3D_RAYMARCH)
-    reflectColor = GetReflectColor_3DRaymarch(tId, positionVS, reflectDirVS);
-#elif defined(SSR_METHOD_NC_DDA)
-    reflectColor = GetReflectColor_NC_DDA(tId, positionVS, positionSS, reflectDirVS);
+    bool allowSSR = true;
+#if !defined(SSR_ALLOWS_CAMERA_FACING_RAYS)
+    allowSSR = (reflectDirVS.z > 0.f);
 #endif
+    
+    if (allowSSR)
+    {
+#if defined(SSR_METHOD_3D_RAYMARCH)
+        reflectColor = GetReflectColor_3DRaymarch(tId, positionVS, reflectDirVS);
+#elif defined(SSR_METHOD_NC_DDA)
+        reflectColor = GetReflectColor_NC_DDA(tId, positionVS, positionSS, reflectDirVS, dither);
+#elif defined(SSR_METHOD_BINARY_SEARCH)
+        reflectColor = GetReflectColor_BinarySearch(tId, positionVS, positionSS, reflectDirVS, dither);
+#endif
+    }
     
     // todo: use fallback when reflectColor.a = 0
     
     float4 colorIn = CameraColorIn[tId.xy];
     CameraColorOut[tId.xy] = float4(colorIn.rgb + reflectColor.rgb * (reflectColor.a * reflectivity), colorIn.a);
+    /*if (!allowSSR)
+    {
+        CameraColorOut[tId.xy] = float4(1, 0, 0, 0);
+    }*/
     
     //CameraColorOut[tId.xy] = reflectColor;
     //CameraColorOut[tId.xy] = saturate(reflectDirVS.z);

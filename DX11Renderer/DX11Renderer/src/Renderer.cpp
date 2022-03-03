@@ -34,7 +34,7 @@ namespace gfx
 	Renderer::Renderer(Graphics& gfx, std::shared_ptr<LightManager> pLightManager, std::shared_ptr<RendererList> pRendererList)
 		: pRendererList(pRendererList), pLightManager(pLightManager)
 	{
-		// todo: move some of these to an asset manager class
+		// todo: move these to a RenderAssets class
 
 		//
 		// Debug stuff
@@ -50,7 +50,7 @@ namespace gfx
 		//
 		// Texture assets and samplers
 		//
-		pDither = std::dynamic_pointer_cast<Texture>(Texture::Resolve(gfx, "Assets\\Textures\\Dither8x8.png"));
+		pDitherTexture = std::dynamic_pointer_cast<Texture>(Texture::Resolve(gfx, "Assets\\Textures\\Dither8x8.png"));
 		pSampler_ClampedBilinear = std::make_shared<Sampler>(gfx, D3D11_FILTER_MIN_MAG_MIP_LINEAR, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP);
 		
 		D3D11_SAMPLER_DESC shadowSamplerDesc = {};
@@ -181,7 +181,7 @@ namespace gfx
 
 		GetRenderPass(HiZPassName)->
 			ClearBinds()
-			.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, gfx.pDepthStencil->GetSRV())
+			.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, gfx.GetDepthStencilTarget()->GetSRV())
 			.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, pHiZBufferTarget->GetUAV())
 			.CSSetUAV(RenderSlots::CS_FreeUAV + 1u, nullptr)
 			.CSSetCB(RenderSlots::CS_FreeCB + 0u, pHiZCreationCB->GetD3DBuffer());
@@ -197,10 +197,10 @@ namespace gfx
 		GetRenderPass(TiledLightingPassName)->
 			ClearBinds()
 			.CSSetSRV(RenderSlots::CS_GbufferNormalRoughSRV, pNormalRoughReflectivityTarget->GetSRV())
-			.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, gfx.pDepthStencil->GetSRV())
+			.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, gfx.GetDepthStencilTarget()->GetSRV())
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 1u, pHiZBufferTarget->GetSRV())
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 2u, pLightManager->GetShadowAtlas()->GetSRV())
-			.CSSetSRV(RenderSlots::CS_FreeSRV + 3u, pDither->GetSRV())
+			.CSSetSRV(RenderSlots::CS_FreeSRV + 3u, pDitherTexture->GetSRV())
 			.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, pSpecularLighting->GetUAV())
 			.CSSetUAV(RenderSlots::CS_FreeUAV + 1u, pDiffuseLighting->GetUAV())
 			.CSSetUAV(RenderSlots::CS_FreeUAV + 2u, pDebugTiledLighting->GetUAV())
@@ -208,7 +208,7 @@ namespace gfx
 
 		GetRenderPass(ClusteredLightingPassName)->
 			ClearBinds()
-			.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, gfx.pDepthStencil->GetSRV())
+			.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, gfx.GetDepthStencilTarget()->GetSRV())
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 1u, pHiZBufferTarget->GetSRV())
 			.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, pClusteredIndices->GetUAV())
 			.CSSetUAV(RenderSlots::CS_FreeUAV + 1u, pDebugClusteredLighting->GetUAV())
@@ -219,7 +219,7 @@ namespace gfx
 			.PSSetSRV(RenderSlots::PS_FreeSRV + 0u, pSpecularLighting->GetSRV())
 			.PSSetSRV(RenderSlots::PS_FreeSRV + 1u, pDiffuseLighting->GetSRV())
 			.PSSetSRV(RenderSlots::PS_FreeSRV + 2u, pClusteredIndices->GetSRV())
-			.PSSetSRV(RenderSlots::PS_FreeSRV + 3u, pDither->GetSRV())
+			.PSSetSRV(RenderSlots::PS_FreeSRV + 3u, pDitherTexture->GetSRV())
 			.PSSetSRV(RenderSlots::PS_FreeSRV + 4u, pLightManager->GetLightDataSRV())
 			.PSSetSRV(RenderSlots::PS_FreeSRV + 5u, pLightManager->GetShadowDataSRV())
 			.PSSetSRV(RenderSlots::PS_FreeSRV + 6u, pLightManager->GetShadowAtlas()->GetSRV())
@@ -229,16 +229,17 @@ namespace gfx
 		if (IsFeatureEnabled(RendererFeature::HZBSSR))
 		{
 			// Assign inputs and outputs
-			auto& pColorIn = (cameraOutSlot0) ? pCameraColor0 : pCameraColor1;
-			auto& pColorOut = (cameraOutSlot0) ? pCameraColor1 : pCameraColor0;
+			const auto& pColorIn = (cameraOutSlot0) ? pCameraColor0 : pCameraColor1;
+			const auto& pColorOut = (cameraOutSlot0) ? pCameraColor1 : pCameraColor0;
 			cameraOutSlot0 = !cameraOutSlot0;
 
 			GetRenderPass(SSRRenderPassName)->
 				ClearBinds()
 				.CSSetSRV(RenderSlots::CS_GbufferNormalRoughSRV, pNormalRoughReflectivityTarget->GetSRV())
 				.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, pColorIn->GetSRV())
-				.CSSetSRV(RenderSlots::CS_FreeSRV + 1u, gfx.pDepthStencil->GetSRV())
+				.CSSetSRV(RenderSlots::CS_FreeSRV + 1u, gfx.GetDepthStencilTarget()->GetSRV())
 				.CSSetSRV(RenderSlots::CS_FreeSRV + 2u, pHiZBufferTarget->GetSRV())
+				.CSSetSRV(RenderSlots::CS_FreeSRV + 3u, pDitherTexture->GetSRV())
 				.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, pColorOut->GetUAV())
 				.CSSetUAV(RenderSlots::CS_FreeUAV + 1u, pSSR_DebugData->GetUAV())
 				.CSSetUAV(RenderSlots::CS_FreeUAV + 2u, pDebugSSR->GetUAV())
@@ -249,8 +250,8 @@ namespace gfx
 		if (IsFeatureEnabled(RendererFeature::FXAA))
 		{
 			// Assign inputs and outputs
-			auto& pColorIn = (cameraOutSlot0) ? pCameraColor0 : pCameraColor1;
-			auto& pColorOut = (cameraOutSlot0) ? pCameraColor1 : pCameraColor0;
+			const auto& pColorIn = (cameraOutSlot0) ? pCameraColor0 : pCameraColor1;
+			const auto& pColorOut = (cameraOutSlot0) ? pCameraColor1 : pCameraColor0;
 			cameraOutSlot0 = !cameraOutSlot0;
 
 			GetRenderPass(FXAARenderPassName)->
@@ -264,14 +265,14 @@ namespace gfx
 		if (IsFeatureEnabled(RendererFeature::Dither))
 		{
 			// Assign inputs and outputs
-			auto& pColorIn = (cameraOutSlot0) ? pCameraColor0 : pCameraColor1;
-			auto& pColorOut = (cameraOutSlot0) ? pCameraColor1 : pCameraColor0;
+			const auto& pColorIn = (cameraOutSlot0) ? pCameraColor0 : pCameraColor1;
+			const auto& pColorOut = (cameraOutSlot0) ? pCameraColor1 : pCameraColor0;
 			cameraOutSlot0 = !cameraOutSlot0;
 
 			GetRenderPass(DitherRenderPassName)->
 				ClearBinds()
 				.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, pColorIn->GetSRV())
-				.CSSetSRV(RenderSlots::CS_FreeSRV + 1u, pDither->GetSRV())
+				.CSSetSRV(RenderSlots::CS_FreeSRV + 1u, pDitherTexture->GetSRV())
 				.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, pColorOut->GetUAV())
 				.CSSetCB(RenderSlots::CS_FreeCB + 0u, pDitherCB->GetD3DBuffer());
 		}
@@ -279,15 +280,14 @@ namespace gfx
 		if (IsFeatureEnabled(RendererFeature::Tonemapping))
 		{
 			// Assign inputs and outputs
-			auto& pColorIn = (cameraOutSlot0) ? pCameraColor0 : pCameraColor1;
-			auto& pColorOut = (cameraOutSlot0) ? pCameraColor1 : pCameraColor0;
+			const auto& pColorIn = (cameraOutSlot0) ? pCameraColor0 : pCameraColor1;
+			const auto& pColorOut = (cameraOutSlot0) ? pCameraColor1 : pCameraColor0;
 			cameraOutSlot0 = !cameraOutSlot0;
 
 			GetRenderPass(TonemappingRenderPassName)->
 				ClearBinds()
 				.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, pColorIn->GetSRV())
 				.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, pColorOut->GetUAV());
-			//.CSSetCB(RenderSlots::CS_FreeCB + 0u, pDitherCB->GetD3DBuffer());
 		}
 
 		// Determine what to use for final blit
@@ -343,7 +343,9 @@ namespace gfx
 			static PerFrameCB perFrameCB;
 			ZeroMemory(&perFrameCB, sizeof(perFrameCB));
 			perFrameCB.pixelSelection = { pixelSelectionX, pixelSelectionY, 0u, 0u };
-			perFrameCB.time = { timeElapsed, 0, 0, 0 };
+			perFrameCB.time = { timeElapsed / 20.f, timeElapsed, timeElapsed * 2.f, timeElapsed * 3.f };
+			perFrameCB.sinTime = { std::sin(timeElapsed / 8.f), std::sin(timeElapsed / 4.f), std::sin(timeElapsed / 2.f), std::sin(timeElapsed) };
+			perFrameCB.cosTime = { std::cos(timeElapsed / 8.f), std::cos(timeElapsed / 4.f), std::cos(timeElapsed / 2.f), std::cos(timeElapsed) };
 			pPerFrameCB->Update(gfx, perFrameCB);
 
 			static GlobalTransformCB transformationCB;
@@ -394,9 +396,9 @@ namespace gfx
 
 			pass->BindSharedResources(gfx);
 			DepthStencilState::Resolve(gfx, DepthStencilState::Mode::StencilOff)->BindOM(gfx);
-			gfx.pDepthStencil->Clear(gfx);
+			gfx.GetDepthStencilTarget()->Clear(gfx);
 
-			context->OMSetRenderTargets(0u, nullptr, gfx.pDepthStencil->GetView().Get());
+			context->OMSetRenderTargets(0u, nullptr, gfx.GetDepthStencilTarget()->GetView().Get());
 			gfx.SetViewport(gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
 			pass->Execute(gfx);
@@ -419,7 +421,7 @@ namespace gfx
 
 			// Copy from depth-stencil
 			context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV, 1u, pHiZBufferTarget->GetUAV(0u).GetAddressOf(), nullptr);
-			pHiZDepthCopyKernel->Dispatch(gfx, *pass, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1);
+			pHiZDepthCopyKernel->Dispatch(gfx, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1);
 
 			// Create other mips
 			for (UINT mip = 1u; mip < 8u; ++mip)
@@ -438,7 +440,7 @@ namespace gfx
 				context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 0u, 1u, pHiZBufferTarget->GetUAV(mip - 1u).GetAddressOf(), nullptr);
 				context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 1u, 1u, pHiZBufferTarget->GetUAV(mip).GetAddressOf(), nullptr);
 
-				pHiZCreateMipKernel->Dispatch(gfx, *pass, dstWidth, dstHeight, 1u);
+				pHiZCreateMipKernel->Dispatch(gfx, dstWidth, dstHeight, 1u);
 			}
 
 			pass->UnbindSharedResources(gfx);
@@ -452,7 +454,7 @@ namespace gfx
 			DepthStencilState::Resolve(gfx, DepthStencilState::Mode::Gbuffer)->BindOM(gfx);
 			pNormalRoughReflectivityTarget->ClearRenderTarget(context.Get(), 1.f, 0.f, 0.f, 1.f);
 
-			context->OMSetRenderTargets(1u, pNormalRoughReflectivityTarget->GetView().GetAddressOf(), gfx.pDepthStencil->GetView().Get());
+			context->OMSetRenderTargets(1u, pNormalRoughReflectivityTarget->GetView().GetAddressOf(), gfx.GetDepthStencilTarget()->GetView().Get());
 			gfx.SetViewport(gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
 			pass->Execute(gfx);
@@ -469,7 +471,7 @@ namespace gfx
 			const std::unique_ptr<RenderPass>& pass = GetRenderPass(TiledLightingPassName);
 			pass->BindSharedResources(gfx);
 
-			pTiledLightingKernel->Dispatch(gfx, *pass, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1);
+			pTiledLightingKernel->Dispatch(gfx, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1);
 
 			pass->UnbindSharedResources(gfx);
 		}
@@ -484,7 +486,7 @@ namespace gfx
 			pClusteredLightingCB->Update(gfx, clusteredLightingCB);
 
 			// Round up
-			pClusteredLightingKernel->Dispatch(gfx, *pass, pLightManager->GetClusterDimensionX(), pLightManager->GetClusterDimensionY(), pLightManager->GetClusterDimensionZ());
+			pClusteredLightingKernel->Dispatch(gfx, pLightManager->GetClusterDimensionX(), pLightManager->GetClusterDimensionY(), pLightManager->GetClusterDimensionZ());
 
 			pass->UnbindSharedResources(gfx);
 		}
@@ -497,7 +499,7 @@ namespace gfx
 			DepthStencilState::Resolve(gfx, DepthStencilState::Mode::Gbuffer)->BindOM(gfx);
 
 			pCameraColor0->ClearRenderTarget(context.Get(), 0.f, 0.f, 0.f, 0.f);
-			pCameraColor0->BindAsTarget(gfx, gfx.pDepthStencil->GetView());
+			pCameraColor0->BindAsTarget(gfx, gfx.GetDepthStencilTarget()->GetView());
 			gfx.SetViewport(gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
 			pass->Execute(gfx);
@@ -537,7 +539,7 @@ namespace gfx
 				context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 0u, 1u, pHiZBufferTarget->GetUAV(mip - 1u).GetAddressOf(), nullptr);
 				context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 1u, 1u, pHiZBufferTarget->GetUAV(mip).GetAddressOf(), nullptr);
 
-				pHiZCreateMipKernel->Dispatch(gfx, *pass, dstWidth, dstHeight, 1u);
+				pHiZCreateMipKernel->Dispatch(gfx, dstWidth, dstHeight, 1u);
 			}
 
 			pass->UnbindSharedResources(gfx);*/
@@ -553,7 +555,7 @@ namespace gfx
 			ssrCB.debugViewStep = (frameCt / 30u) % 20u;
 			pSSR_CB->Update(gfx, ssrCB);
 
-			pSSRKernel->Dispatch(gfx, *pass, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1);
+			pSSRKernel->Dispatch(gfx, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1);
 
 			pass->UnbindSharedResources(gfx);
 		}
@@ -571,7 +573,7 @@ namespace gfx
 			fxaaCB.padding = 0.f;
 			pFXAA_CB->Update(gfx, fxaaCB);
 
-			pFXAAKernel->Dispatch(gfx, *pass, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1);
+			pFXAAKernel->Dispatch(gfx, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1);
 
 			pass->UnbindSharedResources(gfx);
 		}
@@ -587,7 +589,7 @@ namespace gfx
 			ditherCB.midDither = 0.04f;
 			pDitherCB->Update(gfx, ditherCB);
 
-			pDitherKernel->Dispatch(gfx, *pass, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1);
+			pDitherKernel->Dispatch(gfx, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1);
 
 			pass->UnbindSharedResources(gfx);
 		}
@@ -598,7 +600,7 @@ namespace gfx
 			const std::unique_ptr<RenderPass>& pass = GetRenderPass(TonemappingRenderPassName);
 			pass->BindSharedResources(gfx);
 
-			pTonemappingKernel->Dispatch(gfx, *pass, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1);
+			pTonemappingKernel->Dispatch(gfx, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1);
 
 			pass->UnbindSharedResources(gfx);
 		}
@@ -632,7 +634,7 @@ namespace gfx
 			}
 
 			gfx.SetViewport(gfx.GetScreenWidth(), gfx.GetScreenHeight());
-			context->OMSetRenderTargets(1u, gfx.pBackBufferView.GetAddressOf(), gfx.pDepthStencil->GetView().Get());
+			context->OMSetRenderTargets(1u, gfx.GetBackBufferView().GetAddressOf(), gfx.GetDepthStencilTarget()->GetView().Get());
 
 			pass->Execute(gfx);
 			pass->UnbindSharedResources(gfx);

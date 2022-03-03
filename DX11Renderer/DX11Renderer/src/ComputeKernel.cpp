@@ -13,7 +13,7 @@ namespace gfx
 
 	}
 
-	void ComputeKernel::Dispatch(Graphics& gfx, const RenderPass& renderPass, UINT threadCountX, UINT threadCountY, UINT threadCountZ)
+	void ComputeKernel::Dispatch(Graphics& gfx, UINT threadCountX, UINT threadCountY, UINT threadCountZ)
 	{
 		pComputeShader->Dispatch(gfx, threadCountX, threadCountY, threadCountZ);
 	}

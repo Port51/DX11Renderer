@@ -25,7 +25,6 @@ namespace gfx
 		attenuationQ(attenuationQ),
 		range(range)
 	{
-		// todo: set shadow via settings
 		shadowSettings.hasShadow = hasShadow;
 
 		if (shadowSettings.hasShadow)

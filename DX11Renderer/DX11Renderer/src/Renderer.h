@@ -93,7 +93,7 @@ namespace gfx
 		std::unique_ptr<StructuredBuffer<int>> pSSR_DebugData;
 		std::unique_ptr<ConstantBuffer<DitherCB>> pDitherCB;
 
-		std::shared_ptr<Texture> pDither;
+		std::shared_ptr<Texture> pDitherTexture;
 
 		std::shared_ptr<RendererList> pRendererList;
 		std::unique_ptr<RendererList> pVisibleRendererList; // filtered by camera frustum
