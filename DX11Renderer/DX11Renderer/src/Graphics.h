@@ -26,7 +26,11 @@ namespace gfx
 		void EndFrame();
 		void ClearBuffer(float red, float green, float blue);
 		void DrawIndexed(UINT count);
+		void SetDepthOnlyRenderTarget();
+		void SetDepthOnlyRenderTarget(const std::shared_ptr<DepthStencilTarget>& pDepthStencil);
 		void SetRenderTarget(ComPtr<ID3D11RenderTargetView> renderTargetView);
+		void SetRenderTargets(std::vector<ID3D11RenderTargetView*> renderTargetViews);
+		void ClearRenderTargets();
 		void SetViewport(int x, int y, int width, int height);
 		void SetViewport(int width, int height);
 		int GetScreenWidth() const;
@@ -51,6 +55,9 @@ namespace gfx
 		ComPtr<ID3D11RenderTargetView> pBackBufferView;
 		std::shared_ptr<DepthStencilTarget> pDepthStencil;
 		ComPtr<IDXGISwapChain> pSwapChain;
+	private:
+		UINT currentRenderTargetCount = 0u;
+		std::vector<ID3D11RenderTargetView*> pNullRenderTargetViews;
 	private:
 		bool imguiEnabled = true;
 		int screenWidth;

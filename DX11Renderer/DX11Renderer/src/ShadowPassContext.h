@@ -20,6 +20,7 @@ namespace gfx
 	public:
 		ShadowPassContext(Graphics& gfx, const std::unique_ptr<Camera>& cam, Renderer& renderer, const std::unique_ptr<RenderPass>& pRenderPass, std::unique_ptr<ConstantBuffer<GlobalTransformCB>>& pTransformationCB, std::shared_ptr<RendererList> pRendererList);
 		virtual ~ShadowPassContext() = default;
+		void Update();
 	public:
 		Graphics& gfx;
 		const std::unique_ptr<Camera>& pCamera;

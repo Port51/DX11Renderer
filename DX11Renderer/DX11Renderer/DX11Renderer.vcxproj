@@ -324,10 +324,8 @@
     <ClInclude Include="src\SharedCodex.h" />
     <ClInclude Include="src\Camera.h" />
     <ClInclude Include="src\Buffer.h" />
-    <ClInclude Include="src\DebugHelper.h" />
     <ClInclude Include="src\DepthStencil.h" />
     <ClInclude Include="src\DepthStencilTarget.h" />
-    <ClInclude Include="src\FBXImporter.h" />
     <ClInclude Include="src\Renderer.h" />
     <ClInclude Include="src\FullscreenPass.h" />
     <ClInclude Include="src\Graphics.h" />

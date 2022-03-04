@@ -14,6 +14,8 @@ namespace gfx
 		, screenHeight(windowHeight)
 		, log(std::make_unique<Log>())
 	{
+		pNullRenderTargetViews.resize(10u, nullptr);
+
 		DXGI_SWAP_CHAIN_DESC swapChainDesc = {};
 		swapChainDesc.BufferDesc.Width = 0; // use window size
 		swapChainDesc.BufferDesc.Height = 0;
@@ -36,8 +38,8 @@ namespace gfx
 		swapCreateFlags |= D3D11_CREATE_DEVICE_DEBUG; // Debug will print more to Output window
 #endif
 
-	// Create device and front/back buffers, and swap chain and rendering context
-	// pass nullptr for defaults
+		// Create device and front/back buffers, and swap chain and rendering context
+		// pass nullptr for defaults
 		THROW_IF_FAILED(D3D11CreateDeviceAndSwapChain(
 			nullptr,
 			D3D_DRIVER_TYPE_HARDWARE,
@@ -150,9 +152,31 @@ namespace gfx
 		pContext->DrawIndexed(count, 0u, 0u);
 	}
 
+	void Graphics::SetDepthOnlyRenderTarget()
+	{
+		pContext->OMSetRenderTargets(0u, nullptr, pDepthStencil->GetView().Get());
+	}
+
+	void Graphics::SetDepthOnlyRenderTarget(const std::shared_ptr<DepthStencilTarget>& _pDepthStencil)
+	{
+		pContext->OMSetRenderTargets(0u, nullptr, _pDepthStencil->GetView().Get());
+	}
+
 	void Graphics::SetRenderTarget(ComPtr<ID3D11RenderTargetView> renderTargetView)
 	{
 		pContext->OMSetRenderTargets(1u, renderTargetView.GetAddressOf(), pDepthStencil->GetView().Get());
+		currentRenderTargetCount = 1u;
+	}
+
+	void Graphics::SetRenderTargets(std::vector<ID3D11RenderTargetView*> renderTargetViews)
+	{
+		pContext->OMSetRenderTargets(renderTargetViews.size(), renderTargetViews.data(), pDepthStencil->GetView().Get());
+		currentRenderTargetCount = renderTargetViews.size();
+	}
+
+	void Graphics::ClearRenderTargets()
+	{
+		pContext->OMSetRenderTargets(currentRenderTargetCount, pNullRenderTargetViews.data(), nullptr);
 	}
 
 	void Graphics::SetViewport(int x, int y, int width, int height)

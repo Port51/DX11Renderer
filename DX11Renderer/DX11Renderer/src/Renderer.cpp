@@ -34,8 +34,6 @@ namespace gfx
 	Renderer::Renderer(Graphics& gfx, std::shared_ptr<LightManager> pLightManager, std::shared_ptr<RendererList> pRendererList)
 		: pRendererList(pRendererList), pLightManager(pLightManager)
 	{
-		// todo: move these to a RenderAssets class
-
 		//
 		// Debug stuff
 		//
@@ -312,7 +310,8 @@ namespace gfx
 
 			pass->BindSharedResources(gfx);
 
-			ShadowPassContext context(gfx, cam, *this, pass, pTransformationCB, nullptr);
+			static ShadowPassContext context(gfx, cam, *this, pass, pTransformationCB, nullptr);
+			context.Update();
 
 			pLightManager->CullLights(gfx, cam, IsFeatureEnabled(RendererFeature::Shadows)); // changes the SRV, which will be bound in per-frame binds
 			if (IsFeatureEnabled(RendererFeature::Shadows))
@@ -325,11 +324,9 @@ namespace gfx
 
 		// Submit draw calls
 		{
-			// todo: store pass set ahead of time
-			static DrawContext drawContext(*this);
+			static DrawContext drawContext(*this, std::move(std::vector<std::string> { DepthPrepassName, GBufferRenderPassName, OpaqueRenderPassName }));
 			drawContext.viewMatrix = cam->GetViewMatrix();
 			drawContext.projMatrix = cam->GetProjectionMatrix();
-			drawContext.SetRenderPasses(std::move(std::vector<std::string> { DepthPrepassName, GBufferRenderPassName, OpaqueRenderPassName }));
 
 			// todo: filter by render passes too
 			pVisibleRendererList->Filter(cam->GetFrustumWS(), RendererList::RendererSorting::BackToFront);
@@ -371,7 +368,7 @@ namespace gfx
 
 			// This is used when calculating cluster.xy from NDC
 			// These calculations turn it into a single [MAD] operation
-			const float invClusterDim = 1.f / 16.f; // todo: make this a setting?
+			const float invClusterDim = 1.f / 16.f;
 			perCameraCB.clusterXYRemap = dx::XMVectorSet(
 				gfx.GetScreenWidth() * 0.5f * invClusterDim,
 				gfx.GetScreenHeight() * 0.5f * invClusterDim,
@@ -388,7 +385,6 @@ namespace gfx
 		}
 
 		// Early Z pass
-		// todo: put position into separate vert buffer and only bind that here
 		{
 			const std::unique_ptr<RenderPass>& pass = GetRenderPass(DepthPrepassName);
 
@@ -396,7 +392,7 @@ namespace gfx
 			DepthStencilState::Resolve(gfx, DepthStencilState::Mode::StencilOff)->BindOM(gfx);
 			gfx.GetDepthStencilTarget()->Clear(gfx);
 
-			context->OMSetRenderTargets(0u, nullptr, gfx.GetDepthStencilTarget()->GetView().Get());
+			gfx.SetDepthOnlyRenderTarget();
 			gfx.SetViewport(gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
 			pass->Execute(gfx);
@@ -407,11 +403,11 @@ namespace gfx
 		{
 			const std::unique_ptr<RenderPass>& pass = GetRenderPass(HiZPassName);
 
-			context->OMSetRenderTargets(0u, nullptr, nullptr); // need in order to access depth
+			gfx.ClearRenderTargets(); // need in order to access depth
 			pass->BindSharedResources(gfx);
 
-			UINT screenWidth = (UINT)gfx.GetScreenWidth();
-			UINT screenHeight = (UINT)gfx.GetScreenHeight();
+			const UINT screenWidth = (UINT)gfx.GetScreenWidth();
+			const UINT screenHeight = (UINT)gfx.GetScreenHeight();
 
 			static HiZCreationCB hiZCreationCB;
 			hiZCreationCB.resolutionSrcDst = { screenWidth, screenHeight, screenWidth, screenHeight };
@@ -424,8 +420,8 @@ namespace gfx
 			// Create other mips
 			for (UINT mip = 1u; mip < 8u; ++mip)
 			{
-				UINT dstWidth = screenWidth >> mip;
-				UINT dstHeight = screenHeight >> mip;
+				const UINT dstWidth = screenWidth >> mip;
+				const UINT dstHeight = screenHeight >> mip;
 
 				if (dstWidth == 0u || dstHeight == 0u)
 					continue;
@@ -452,14 +448,12 @@ namespace gfx
 			DepthStencilState::Resolve(gfx, DepthStencilState::Mode::Gbuffer)->BindOM(gfx);
 			pNormalRoughReflectivityTarget->ClearRenderTarget(context.Get(), 1.f, 0.f, 0.f, 1.f);
 
-			context->OMSetRenderTargets(1u, pNormalRoughReflectivityTarget->GetView().GetAddressOf(), gfx.GetDepthStencilTarget()->GetView().Get());
+			gfx.SetRenderTarget(pNormalRoughReflectivityTarget->GetView());
 			gfx.SetViewport(gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
 			pass->Execute(gfx);
 
-			// todo: unbind these in a cleaner way
-			std::vector<ID3D11RenderTargetView*> nullRTVs(1u, nullptr);
-			context->OMSetRenderTargets(1u, nullRTVs.data(), nullptr);
+			gfx.ClearRenderTargets();
 
 			pass->UnbindSharedResources(gfx);
 		}
@@ -483,7 +477,6 @@ namespace gfx
 			clusteredLightingCB.groupResolutions = { pLightManager->GetClusterDimensionX(), pLightManager->GetClusterDimensionY(), pLightManager->GetClusterDimensionZ(), 0u };
 			pClusteredLightingCB->Update(gfx, clusteredLightingCB);
 
-			// Round up
 			pClusteredLightingKernel->Dispatch(gfx, pLightManager->GetClusterDimensionX(), pLightManager->GetClusterDimensionY(), pLightManager->GetClusterDimensionZ());
 
 			pass->UnbindSharedResources(gfx);
@@ -503,9 +496,7 @@ namespace gfx
 			pass->Execute(gfx);
 			pass->UnbindSharedResources(gfx);
 
-			// todo: unbind these in a cleaner way
-			std::vector<ID3D11RenderTargetView*> nullRTVs(1u, nullptr);
-			context->OMSetRenderTargets(1u, nullRTVs.data(), nullptr);
+			gfx.ClearRenderTargets();
 		}
 
 		// Blur pyramid
@@ -632,7 +623,7 @@ namespace gfx
 			}
 
 			gfx.SetViewport(gfx.GetScreenWidth(), gfx.GetScreenHeight());
-			context->OMSetRenderTargets(1u, gfx.GetBackBufferView().GetAddressOf(), gfx.GetDepthStencilTarget()->GetView().Get());
+			gfx.SetRenderTarget(gfx.GetBackBufferView());
 
 			pass->Execute(gfx);
 			pass->UnbindSharedResources(gfx);

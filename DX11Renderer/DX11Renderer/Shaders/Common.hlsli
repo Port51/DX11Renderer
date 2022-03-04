@@ -48,6 +48,20 @@ float GetPerspectiveCorrectDepth_Optimized(float invDepth0, float invDepth1, flo
     return rcp(lerp(invDepth0, invDepth1, lerpValue));
 }
 
+// Returns the lerp value required for a certain depth
+float GetPerspectiveCorrectDepthLerp(float invDepth0, float invDepth1, float linearDepth)
+{
+    // EQ: Z = 1 / [ 1/Z0 (1 - lerp) + 1/Z1 * lerp ]
+    // Z = 1 / [ 1/Z0 - lerp/Z0 + lerp/Z1 ]
+    // Z * [ 1/Z0 - lerp/Z0 + lerp/Z1 ] = 1
+    // [ Z/Z0 - lerpZ/Z0 + lerpZ/Z1 ] = 1
+    // lerpZ/Z1 - lerpZ/Z0 = 1 - Z/Z0
+    // lerpZ (1/Z1 - 1/Z0) = 1 - Z/Z0
+    // lerp (Z/Z1 - Z/Z0) = 1 - Z/Z0
+    // lerp = [ 1 - linearDepth / Z0 ] / [ Z/Z1 - Z/Z0 ]
+    return (1.f - linearDepth * invDepth0) / (invDepth1 * linearDepth - invDepth0 * linearDepth);
+}
+
 float Luminance(float3 v)
 {
     return dot(v, float3(0.2126f, 0.7152f, 0.0722f));

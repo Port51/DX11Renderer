@@ -51,9 +51,6 @@
     <Filter Include="Headers\Lights">
       <UniqueIdentifier>{d7601bca-e00b-4862-9869-caf6b1f2bb41}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Headers\FBXImporter">
-      <UniqueIdentifier>{c77c837e-d2e8-4dab-a2f2-f2310fda3244}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Headers\VertexData">
       <UniqueIdentifier>{47cdc64d-d4a1-4d88-9540-9dbd4d084d36}</UniqueIdentifier>
     </Filter>
@@ -422,9 +419,6 @@
     <ClInclude Include="src\ConstantBuffer.h">
       <Filter>Headers\Bindable\Buffers</Filter>
     </ClInclude>
-    <ClInclude Include="src\DebugHelper.h">
-      <Filter>Headers\FBXImporter</Filter>
-    </ClInclude>
     <ClInclude Include="src\DepthStencil.h">
       <Filter>Headers</Filter>
     </ClInclude>
@@ -568,9 +562,6 @@
     </ClInclude>
     <ClInclude Include="src\Frustum.h">
       <Filter>Headers\Util</Filter>
-    </ClInclude>
-    <ClInclude Include="src\FBXImporter.h">
-      <Filter>Headers\FBXImporter</Filter>
     </ClInclude>
     <ClInclude Include="src\vendor\imgui\imgui.h">
       <Filter>Vendors\Imgui\Headers</Filter>
