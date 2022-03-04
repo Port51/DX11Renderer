@@ -58,6 +58,7 @@ namespace gfx
 		UINT GetClusterDimensionX() const;
 		UINT GetClusterDimensionY() const;
 		UINT GetClusterDimensionZ() const;
+		const std::unique_ptr<StructuredBuffer<int>>& GetClusteredIndices() const;
 	private:
 		bool FrustumSphereIntersection(dx::XMVECTOR lightSphere, dx::XMFLOAT4 frustumCorners, float farClipPlane);
 		bool AABBSphereIntersection(const LightData& lightData, dx::XMVECTOR aabbCenter, dx::XMVECTOR aabbExtents);
@@ -76,5 +77,6 @@ namespace gfx
 		std::shared_ptr<RendererList> pShadowRendererList;
 		std::vector<LightShadowData> cachedShadowData;
 		std::unique_ptr<DepthStencilTarget> pShadowAtlas;
+		std::unique_ptr<StructuredBuffer<int>> pClusteredIndices;
 	};
 }

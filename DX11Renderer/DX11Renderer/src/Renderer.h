@@ -87,7 +87,6 @@ namespace gfx
 		std::unique_ptr<ConstantBuffer<PerCameraCB>> pPerCameraCB;
 		std::unique_ptr<ConstantBuffer<HiZCreationCB>> pHiZCreationCB;
 		std::unique_ptr<ConstantBuffer<ClusteredLightingCB>> pClusteredLightingCB;
-		std::unique_ptr<StructuredBuffer<int>> pClusteredIndices;
 		std::unique_ptr<ConstantBuffer<FXAA_CB>> pFXAA_CB;
 		std::unique_ptr<ConstantBuffer<SSR_CB>> pSSR_CB;
 		std::unique_ptr<StructuredBuffer<int>> pSSR_DebugData;

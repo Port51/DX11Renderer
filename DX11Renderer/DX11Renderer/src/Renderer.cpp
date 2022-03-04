@@ -110,8 +110,6 @@ namespace gfx
 
 		pFXAA_CB = std::make_unique<ConstantBuffer<FXAA_CB>>(gfx, D3D11_USAGE_DYNAMIC);
 		pSSR_CB = std::make_unique<ConstantBuffer<SSR_CB>>(gfx, D3D11_USAGE_DYNAMIC);
-		// todo: move indices to LightManager
-		pClusteredIndices = std::make_unique<StructuredBuffer<int>>(gfx, D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS, pLightManager->GetClusterCount() * LightManager::MaxLightsPerCluster);
 		pSSR_DebugData = std::make_unique<StructuredBuffer<int>>(gfx, D3D11_USAGE_DEFAULT, D3D11_BIND_UNORDERED_ACCESS, 4u);
 		pDitherCB = std::make_unique<ConstantBuffer<DitherCB>>(gfx, D3D11_USAGE_DYNAMIC);
 
@@ -210,7 +208,7 @@ namespace gfx
 			ClearBinds()
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, gfx.GetDepthStencilTarget()->GetSRV())
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 1u, pHiZBufferTarget->GetSRV())
-			.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, pClusteredIndices->GetUAV())
+			.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, pLightManager->GetClusteredIndices()->GetUAV())
 			.CSSetUAV(RenderSlots::CS_FreeUAV + 1u, pDebugClusteredLighting->GetUAV())
 			.CSSetCB(RenderSlots::CS_FreeCB + 0u, pClusteredLightingCB->GetD3DBuffer());
 
@@ -218,7 +216,7 @@ namespace gfx
 			ClearBinds()
 			.PSSetSRV(RenderSlots::PS_FreeSRV + 0u, pSpecularLighting->GetSRV())
 			.PSSetSRV(RenderSlots::PS_FreeSRV + 1u, pDiffuseLighting->GetSRV())
-			.PSSetSRV(RenderSlots::PS_FreeSRV + 2u, pClusteredIndices->GetSRV())
+			.PSSetSRV(RenderSlots::PS_FreeSRV + 2u, pLightManager->GetClusteredIndices()->GetSRV())
 			.PSSetSRV(RenderSlots::PS_FreeSRV + 3u, pDitherTexture->GetSRV())
 			.PSSetSRV(RenderSlots::PS_FreeSRV + 4u, pLightManager->GetLightDataSRV())
 			.PSSetSRV(RenderSlots::PS_FreeSRV + 5u, pLightManager->GetShadowDataSRV())

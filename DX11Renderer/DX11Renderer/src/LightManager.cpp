@@ -36,6 +36,7 @@ namespace gfx
 		//pLights.emplace_back(pMainLight);
 
 		pLightInputCB = std::make_unique<ConstantBuffer<LightInputCB>>(gfx, D3D11_USAGE_DYNAMIC);
+		pClusteredIndices = std::make_unique<StructuredBuffer<int>>(gfx, D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS, GetClusterCount() * MaxLightsPerCluster);
 
 		// Create grid of lights
 		const bool renderLightGrid = false;
@@ -224,6 +225,11 @@ namespace gfx
 	UINT LightManager::GetClusterDimensionZ() const
 	{
 		return clusterDimensionZ;
+	}
+
+	const std::unique_ptr<StructuredBuffer<int>>& LightManager::GetClusteredIndices() const
+	{
+		return pClusteredIndices;
 	}
 
 	bool LightManager::FrustumSphereIntersection(dx::XMVECTOR lightSphere, dx::XMFLOAT4 frustumCorners, float farClipPlane)
