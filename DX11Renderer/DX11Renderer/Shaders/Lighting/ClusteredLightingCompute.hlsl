@@ -7,6 +7,7 @@
 //#define DEBUG_VIEW_IS_CLUSTER_VALIDATION
 
 #include "./../Common.hlsli"
+#include "./../HiZCommon.hlsli"
 #include "./Lights.hlsli"
 #include "./HybridLightingCommon.hlsli"
 
@@ -39,9 +40,7 @@ void CSMain(uint3 tId : SV_DispatchThreadID)
     bool isOccluded = false;
 #if defined(CLUSTER_USE_FRUSTUM_TILES)
     // Since clusters match tiles with this method, we can test if every pixel is occluded
-    float tileMaxDepth = HiZBuffer.Load(int3(tId.xy >> 4u, 4u)).g;
-    tileMaxDepth = LinearEyeDepth(tileMaxDepth, _ZBufferParams);
-    
+    float tileMaxDepth = HZB_LINEAR(HiZBuffer.Load(int3(tId.xy >> 4u, 4u)).g, _ZBufferParams);
     isOccluded = (tileMaxDepth < zNear);
 #endif
     

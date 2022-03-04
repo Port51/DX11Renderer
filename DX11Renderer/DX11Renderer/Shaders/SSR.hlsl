@@ -129,11 +129,7 @@ DDAPt GetDDA(DDAParams params, float steps, float jitter)
     float depth = HiZBuffer.Load(int3(unswappedSS.xy, 0)).x;
     if (depth == 0.f)
         return pt;
-#if !defined(HZB_USES_LINEAR_DEPTH)
-    depth = LinearEyeDepth(depth, _ZBufferParams);
-#else
-    depth = Depth01ToEyeDepth(depth);
-#endif
+    depth = HZB_LINEAR(depth, _ZBufferParams);
     depth += jitter; // to cut down on banding
     
     pt.traceSS = unswappedSS;
@@ -226,12 +222,7 @@ float4 GetReflectColor_3DRaymarch(uint3 tId, float3 positionVS, float3 reflectDi
 #endif
         
         // Read depth and convert it to linear depth
-        float depth = HiZBuffer.Load(int3(traceSS.xy, 0)).x;
-#if !defined(HZB_USES_LINEAR_DEPTH)
-        depth = LinearEyeDepth(depth, _ZBufferParams);
-#else
-        depth = Depth01ToEyeDepth(depth);
-#endif
+        float depth = HZB_LINEAR(HiZBuffer.Load(int3(traceSS.xy, 0)).x, _ZBufferParams);
         
         // Test depth intersection
         float minTraceZ = min(traceSS.w, lastTraceSS.w);
@@ -321,11 +312,7 @@ float4 GetReflectColor_NC_DDA(uint3 tId, float3 positionVS, float4 positionSS, f
         float depth = HiZBuffer.Load(int3(unswappedSS.xy, 0)).x;
         if (depth == 0.f)
             break;
-#if !defined(HZB_USES_LINEAR_DEPTH)
-        depth = LinearEyeDepth(depth, _ZBufferParams);
-#else
-        depth = Depth01ToEyeDepth(depth);
-#endif
+        depth = HZB_LINEAR(depth, _ZBufferParams);
         depth += jitter; // to cut down on banding
         
 #if defined(DEBUG_VIEW_SHOW_TRACE)
