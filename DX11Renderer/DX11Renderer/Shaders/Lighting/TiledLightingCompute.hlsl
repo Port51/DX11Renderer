@@ -29,6 +29,7 @@
 //#define DEBUG_VIEW_GEOMETRY
 
 #include "./../Common.hlsli"
+#include "./../HiZCommon.hlsli"
 #include "./Lights.hlsli"
 #include "./BRDF.hlsli"
 #include "./HybridLightingCommon.hlsli"
@@ -76,11 +77,12 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     
 #if defined(USE_HI_Z_BUFFER)
     //const float linearDepth = HiZBuffer.Load(int3(tId.xy, 0)).r * _ProjectionParams.z;
-    const float linearDepth = LinearEyeDepth(HiZBuffer.Load(int3(tId.xy, 0u)).r, _ZBufferParams);
+    const float linearDepth = HZB_LINEAR(HiZBuffer.Load(int3(tId.xy, 0u)).r, _ZBufferParams);
+    
     //const float2 tileDepthRange = HiZBuffer.Load(int3(tId.xy / 16, 4)).rg * _ProjectionParams.z;
     float2 tileDepthRange = HiZBuffer.Load(int3(tId.xy >> 4u, 4u)).rg;
-    tileDepthRange.x = LinearEyeDepth(tileDepthRange.x, _ZBufferParams);
-    tileDepthRange.y = LinearEyeDepth(tileDepthRange.y, _ZBufferParams);
+    tileDepthRange.x = HZB_LINEAR(tileDepthRange.x, _ZBufferParams);
+    tileDepthRange.y = HZB_LINEAR(tileDepthRange.y, _ZBufferParams);
     const float isGeometry = linearDepth < 10000.f;
 #else
     const float rawDepth = DepthRT.Load(int3(tId.xy, 0));
@@ -116,17 +118,6 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
 #endif
     
 #if defined(USE_AABB_INTERSECTION_TEST)
-    // For each side, select depth in order to get min/max of frustum points
-    /*const float4 frustumPointSelection = float4(
-        min(planeNDC.z * tileDepthRange.y, planeNDC.z * tileDepthRange.x),
-        max(planeNDC.w * tileDepthRange.y, planeNDC.w * tileDepthRange.x),
-        max(planeNDC.x * tileDepthRange.y, planeNDC.x * tileDepthRange.x),
-        min(planeNDC.y * tileDepthRange.y, planeNDC.y * tileDepthRange.x)
-    );
-    const float3 minAABB = float3(_FrustumCornerDataVS.xy * frustumPointSelection.xy, tileDepthRange.x);
-    const float3 maxAABB = float3(_FrustumCornerDataVS.xy * frustumPointSelection.zw, tileDepthRange.y);
-    const float3 aabbCenter = (minAABB + maxAABB) * 0.5f;
-    const float3 aabbExtents = (maxAABB - minAABB) * 0.501f;*/
     AABB aabb = GetFrustumAABBFromNDC(planeNDC, tileDepthRange.x, tileDepthRange.y);
 #endif
     
@@ -231,12 +222,12 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
                 // Choose cascade
                 uint shadowCascadeIdx = shadowIdx + GetShadowCascade(positionVS, dither);
 //#if defined(DEBUG_VIEW_CASCADE_IDX)
-                debugCascade = GetShadowCascade(positionVS, dither) * 0.25f;
+                //debugCascade = GetShadowCascade(positionVS, dither) * 0.25f;
 //#endif
                 
                 float shadowAtten = GetDirectionalShadowAttenuation(shadowData[shadowCascadeIdx], ShadowAtlas, ShadowAtlasSampler, positionVS, normalVS, NdotL);
                 lightAtten *= shadowAtten;
-                debugAllShadowAtten *= shadowAtten;
+                //debugAllShadowAtten *= shadowAtten;
             }
         }
         else
@@ -248,6 +239,9 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
             float outOfRange = lightDist > light.positionVS_range.w;
             
             lightAtten = GetSphericalLightAttenuation(lightDist, light.data0.y, light.positionVS_range.w);
+            lightAtten = lightDist < 15.f;
+            diffuseLight = lightAtten;
+            break;
         
             [branch] // should be same for each thread group, as thread groups are the size of 1 tile
             if (type == 1u)
@@ -265,7 +259,7 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
                     float shadowAtten = GetSpotlightShadowAttenuation(shadowData[shadowIdx], ShadowAtlas, ShadowAtlasSampler, positionVS, normalVS, NdotL);
                     shadowAtten = saturate(shadowAtten + outOfRange);
                     lightAtten *= shadowAtten;
-                    debugAllShadowAtten *= shadowAtten;
+                    //debugAllShadowAtten *= shadowAtten;
                 }
             }
             else if (shadowIdx != -1)
@@ -281,12 +275,12 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
                 float shadowAtten = GetSpotlightShadowAttenuation(shadowData[shadowFaceIdx], ShadowAtlas, ShadowAtlasSampler, positionVS, normalVS, NdotL);
                 shadowAtten = saturate(shadowAtten + outOfRange);
                 lightAtten *= shadowAtten;
-                debugAllShadowAtten *= shadowAtten;
+                //debugAllShadowAtten *= shadowAtten;
             }
             
 #if defined(DEBUG_VIEW_LIGHT_COUNTS_AND_RANGES)
             // This debug view shows a solid color if in light range
-            debugAllLightsInRange += (lightDist < light.positionVS_range.w);
+            //debugAllLightsInRange += (lightDist < light.positionVS_range.w);
 #endif
         }*/
         

@@ -130,7 +130,7 @@ DDAPt GetDDA(DDAParams params, float steps, float jitter)
     if (depth == 0.f)
         return pt;
 #if !defined(HZB_USES_LINEAR_DEPTH)
-        depth = LinearEyeDepth(depth, _ZBufferParams);
+    depth = LinearEyeDepth(depth, _ZBufferParams);
 #else
     depth = Depth01ToEyeDepth(depth);
 #endif
