@@ -256,7 +256,7 @@ namespace gfx
 		dx::XMStoreFloat(&d, dx::XMVector3Dot(lightSphere, plane3));
 		inFrustum &= d <= positionVS_range.w;
 
-		inFrustum &= positionVS_range.z <= farClipPlane;
+		inFrustum &= positionVS_range.z <= farClipPlane + positionVS_range.w;
 
 		return inFrustum;
 	}

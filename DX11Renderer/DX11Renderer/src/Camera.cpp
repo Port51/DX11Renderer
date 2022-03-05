@@ -101,6 +101,15 @@ namespace gfx
 			ImGui::SliderAngle("Roll", &roll, -180.0f, 180.0f);
 			ImGui::SliderAngle("Pitch", &pitch, -180.0f, 180.0f);
 			ImGui::SliderAngle("Yaw", &yaw, -180.0f, 180.0f);
+
+			ImGui::Text("Settings");
+			float newFov = fov;
+			ImGui::SliderFloat("FOV", &newFov, 10.0f, 180.0f, "%.1f");
+			if (std::abs(newFov - fov) > FLT_EPSILON)
+			{
+				SetFOV(newFov);
+			}
+
 			if (ImGui::Button("Reset"))
 			{
 				Reset();
@@ -117,5 +126,6 @@ namespace gfx
 		pitch = 0.0f;
 		yaw = 0.0f;
 		roll = 0.0f;
+		fov = 40.0f;
 	}
 }
