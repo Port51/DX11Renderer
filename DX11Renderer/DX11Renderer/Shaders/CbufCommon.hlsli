@@ -3,7 +3,7 @@
 
 cbuffer PerFrameCB : register(b0)
 {
-    uint4 _PixelSelection; // (x, y, -, -)
+    uint4 _PixelSelection; // (x, y, iteration, -)
     float4 _Time; // (t/20, t, t*2, t*3)
     float4 _SinTime; // sin(t/8), sin(t/4), sin(t/2), sin(t)
     float4 _CosTime; // cos(t/8), cos(t/4), cos(t/2), cos(t)

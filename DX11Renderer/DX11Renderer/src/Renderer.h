@@ -104,6 +104,7 @@ namespace gfx
 	private:
 		RendererView viewIdx = RendererView::Final;
 		std::vector<bool> rendererFeatureEnabled;
+		int pixelIteration;
 
 	public:
 		const std::string PerCameraPassName = std::string("PerCameraPass");

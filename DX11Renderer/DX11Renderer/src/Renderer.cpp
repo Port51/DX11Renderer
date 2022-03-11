@@ -108,7 +108,7 @@ namespace gfx
 
 		pFXAA_CB = std::make_unique<ConstantBuffer<FXAA_CB>>(gfx, D3D11_USAGE_DYNAMIC);
 		pSSR_CB = std::make_unique<ConstantBuffer<SSR_CB>>(gfx, D3D11_USAGE_DYNAMIC);
-		pSSR_DebugData = std::make_unique<StructuredBuffer<int>>(gfx, D3D11_USAGE_DEFAULT, D3D11_BIND_UNORDERED_ACCESS, 4u);
+		pSSR_DebugData = std::make_unique<StructuredBuffer<int>>(gfx, D3D11_USAGE_DEFAULT, D3D11_BIND_UNORDERED_ACCESS, 10u);
 		pDitherCB = std::make_unique<ConstantBuffer<DitherCB>>(gfx, D3D11_USAGE_DYNAMIC);
 
 		//
@@ -337,7 +337,7 @@ namespace gfx
 		{
 			static PerFrameCB perFrameCB;
 			ZeroMemory(&perFrameCB, sizeof(perFrameCB));
-			perFrameCB.pixelSelection = { pixelSelectionX, pixelSelectionY, 0u, 0u };
+			perFrameCB.pixelSelection = { pixelSelectionX, pixelSelectionY, (UINT)pixelIteration, 0u };
 			perFrameCB.time = { timeElapsed / 20.f, timeElapsed, timeElapsed * 2.f, timeElapsed * 3.f };
 			perFrameCB.sinTime = { std::sin(timeElapsed / 8.f), std::sin(timeElapsed / 4.f), std::sin(timeElapsed / 2.f), std::sin(timeElapsed) };
 			perFrameCB.cosTime = { std::cos(timeElapsed / 8.f), std::cos(timeElapsed / 4.f), std::cos(timeElapsed / 2.f), std::cos(timeElapsed) };
@@ -541,7 +541,7 @@ namespace gfx
 			pass->BindSharedResources(gfx);
 
 			static SSR_CB ssrCB;
-			ssrCB.debugViewStep = (frameCt / 30u) % 20u;
+			ssrCB.debugViewStep = (frameCt / 20u) % 25u;
 			pSSR_CB->Update(gfx, ssrCB);
 
 			pSSRKernel->Dispatch(gfx, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1);
@@ -648,6 +648,10 @@ namespace gfx
 			newViewIdx = DrawSelectableButtonInArray(2, "Clustered Lighting", newViewIdx, buttonSize, changed, true);
 			newViewIdx = DrawSelectableButtonInArray(3, "SSR Trace", newViewIdx, buttonSize, changed, true);
 			viewIdx = (RendererView)newViewIdx;
+
+			int _pixelIteration = pixelIteration;
+			ImGui::SliderInt("Iteration:", &_pixelIteration, 0, 100);
+			pixelIteration = _pixelIteration;
 
 			// Toggle features
 			ImGui::Text("Features:");

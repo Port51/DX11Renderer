@@ -38,6 +38,7 @@ namespace gfx
 		bool showDemoWindow = true;
 		UINT pixelSelectionX = 450u;
 		UINT pixelSelectionY = 480u;
+		UINT pixelIteration = 0u;
 
 		static constexpr UINT nDrawables = 1;
 	};
