@@ -352,18 +352,20 @@ namespace gfx
 			transformationCB.invViewProjMatrix = dx::XMMatrixInverse(nullptr, transformationCB.viewProjMatrix);
 			pTransformationCB->Update(gfx, transformationCB);
 
+			const float farNearRatio = cam->GetFarClipPlane() / cam->GetNearClipPlane();
+
 			static PerCameraCB perCameraCB;
 			ZeroMemory(&perCameraCB, sizeof(perCameraCB));
 			perCameraCB.projectionParams = dx::XMVectorSet(1.f, cam->GetNearClipPlane(), cam->GetFarClipPlane(), 1.f / cam->GetFarClipPlane());
 			perCameraCB.screenParams = dx::XMVectorSet((float)gfx.GetScreenWidth(), (float)gfx.GetScreenHeight(), 1.0f / gfx.GetScreenWidth(), 1.0f / gfx.GetScreenHeight());
-			perCameraCB.zBufferParams = dx::XMVectorSet(1.f - cam->GetFarClipPlane() / cam->GetNearClipPlane(), cam->GetFarClipPlane() / cam->GetNearClipPlane(), 1.f / cam->GetFarClipPlane() - 1.f / cam->GetNearClipPlane(), 1.f / cam->GetNearClipPlane());
+			perCameraCB.zBufferParams = dx::XMVectorSet(1.f - farNearRatio, farNearRatio, 1.f / cam->GetFarClipPlane() - 1.f / cam->GetNearClipPlane(), 1.f / cam->GetNearClipPlane());
 			perCameraCB.orthoParams = dx::XMVectorSet(0.f, 0.f, 0.f, 0.f);
 			perCameraCB.frustumCornerDataVS = cam->GetFrustumCornersVS();
 			perCameraCB.cameraPositionWS = cam->GetPositionWS();
 
 			// todo: move elsewhere, and only calculate when FOV or resolution changes?
 			float fClustersZ = (float)pLightManager->GetClusterDimensionZ();
-			float logFarOverNear = std::log2f(cam->GetFarClipPlane() / cam->GetNearClipPlane());
+			float logFarOverNear = std::log2f(farNearRatio);
 			perCameraCB.clusterPrecalc = dx::XMVectorSet(fClustersZ / logFarOverNear, -(fClustersZ * std::log2f(cam->GetNearClipPlane()) / logFarOverNear), 0.f, 0.f);
 
 			// This is used when calculating cluster.xy from NDC

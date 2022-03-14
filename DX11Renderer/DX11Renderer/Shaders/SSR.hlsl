@@ -7,9 +7,9 @@
 
 // Set SSR method here
 //#define SSR_METHOD_3D_RAYMARCH
-//#define SSR_METHOD_NC_DDA
+#define SSR_METHOD_NC_DDA
 //#define SSR_METHOD_BINARY_SEARCH
-#define SSR_METHOD_HI_Z
+//#define SSR_METHOD_HI_Z
 //#define SSR_METHOD_CONE_TRACE
 
 //#define SSR_USES_THICKNESS_TEST
@@ -496,9 +496,9 @@ float4 GetReflectColor_HZB(uint3 tId, float3 positionVS, float4 positionSS, floa
         float initTraceDistance = traceDistance;
         
         float2 traceSS = positionSS.xy + reflectDistSS.xy * saturate(traceDistance);
-        uint2 ptId = (uint2)floor(traceSS.xy + tileIntersectOffset);
+        uint2 ptId = (uint2)floor(traceSS.xy + tileIntersectOffset * 0);
         uint2 tileId = ptId >> (uint)mip;
-        uint tilePixelSize = 1u << (uint) mip;
+        uint tilePixelSize = 1u << (uint)mip;
         
         //DEBUG_TRACE_PIXEL(tId, ptId, mip, iter);
 #if defined(DEBUG_VIEW_SHOW_TRACE)
@@ -511,23 +511,25 @@ float4 GetReflectColor_HZB(uint3 tId, float3 positionVS, float4 positionSS, floa
 #endif
         
         // Setup tile planes
-        float2 planesUV = ((tileId + 0.5f) * tilePixelSize + tilePixelSize * halfSignDir);
+        float2 planesUV = ((tileId + 0.5f) * tilePixelSize + (tilePixelSize + 1.f) * halfSignDir);
         
         // Calculate nearest intersection
         float2 intersectionSolutions = (planesUV - traceSS.xy) * invReflectDistSS.xy;
         float intersectDist = min(intersectionSolutions.x, intersectionSolutions.y);
-        traceDistance = min(traceDistance + intersectDist, 1.f);
         
         // 1/2 pixel offset for next sample
         if (intersectionSolutions.x < intersectionSolutions.y)
         {
             tileIntersectOffset.x = halfSignDir.x;
+            //intersectDist += invReflectDistSS.x;
         }
         else
         {
             tileIntersectOffset.y = halfSignDir.y;
+            //intersectDist += invReflectDistSS.y;
         }
         //tileIntersectOffset += (intersectionSolutions.x < intersectionSolutions.y) ? float2(halfSignDir.x, 0.f) : float2(0.f, halfSignDir.y);
+        traceDistance = min(traceDistance + intersectDist, 1.f);
         
         // Calculate new trace Z
         float traceZ = GetPerspectiveCorrectDepth_Optimized(invStartPtDepth, invEndPtDepth, traceDistance);
@@ -559,8 +561,13 @@ float4 GetReflectColor_HZB(uint3 tId, float3 positionVS, float4 positionSS, floa
             {
                 return float4(1.f, 0.f, 0.f, 1.f);
             }
+            if (depthDist < traceDistance + 0.001f)
+            {
+                //return float4(1.f, 0.f, 0.f, 1.f);
+                traceDistance = max(initTraceDistance, depthDist);
+            }
             
-            traceDistance = max(initTraceDistance, depthDist);
+            //traceDistance = max(initTraceDistance, depthDist);
             //mip = max(mip - 1, 0);
             mip--;
             //tileIntersectOffset = 0.f;
