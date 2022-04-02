@@ -1,6 +1,6 @@
 #pragma once
 #include "CommonHeader.h"
-#include "Graphics.h"
+#include "GraphicsDevice.h"
 #include "DrawCall.h"
 #include <vector>
 #include "CommonCbuffers.h"
@@ -22,9 +22,9 @@ namespace gfx
 	public:
 		const std::string GetName() const;
 		void EnqueueJob(DrawCall job);
-		virtual void BindSharedResources(Graphics& gfx) const;
-		virtual void UnbindSharedResources(Graphics& gfx) const;
-		virtual void Execute(Graphics& gfx) const;
+		virtual void BindSharedResources(GraphicsDevice& gfx) const;
+		virtual void UnbindSharedResources(GraphicsDevice& gfx) const;
+		virtual void Execute(GraphicsDevice& gfx) const;
 		void Reset();
 	public:
 		RenderPass& ClearBinds();

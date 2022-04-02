@@ -6,7 +6,7 @@
 
 namespace gfx
 {
-	class Graphics;
+	class GraphicsDevice;
 	class MeshRenderer;
 
 	template<typename Type>
@@ -17,9 +17,9 @@ namespace gfx
 	class TransformCbuf : public Bindable
 	{
 	public:
-		TransformCbuf(Graphics& gfx);
-		void BindVS(Graphics& gfx, UINT slot) override;
-		void UpdateTransforms(Graphics& gfx, const Transforms& transforms);
+		TransformCbuf(GraphicsDevice& gfx);
+		void BindVS(GraphicsDevice& gfx, UINT slot) override;
+		void UpdateTransforms(GraphicsDevice& gfx, const Transforms& transforms);
 	private:
 		// Static so can be re-used each drawcall
 		static std::unique_ptr<ConstantBuffer<Transforms>> pVcbuf;

@@ -14,18 +14,19 @@ namespace gfx
 	class DepthStencilTarget;
 	class Log;
 
-	class Graphics
+	class GraphicsDevice
 	{
 	public:
-		Graphics(HWND hWnd, int windowWidth, int windowHeight);
-		Graphics(const Graphics&) = delete; // here because of destructor, but don't want this...
-		Graphics& operator=(const Graphics&) = delete; // here because of destructor, but don't want this...
-		virtual ~Graphics() = default;
+		GraphicsDevice(HWND hWnd, int windowWidth, int windowHeight);
+		GraphicsDevice(const GraphicsDevice&) = delete; // here because of destructor, but don't want this...
+		GraphicsDevice& operator=(const GraphicsDevice&) = delete; // here because of destructor, but don't want this...
+		virtual ~GraphicsDevice() = default;
 	public:
 		void BeginFrame();
 		void EndFrame();
 		void ClearBuffer(float red, float green, float blue);
-		void DrawIndexed(UINT count);
+		void DrawIndexed(UINT indexCount);
+		void DrawIndexedInstanced(UINT indexCount, UINT instanceCount);
 		void SetDepthOnlyRenderTarget();
 		void SetDepthOnlyRenderTarget(const std::shared_ptr<DepthStencilTarget>& pDepthStencil);
 		void SetRenderTarget(ComPtr<ID3D11RenderTargetView> renderTargetView);
@@ -36,7 +37,7 @@ namespace gfx
 		int GetScreenWidth() const;
 		int GetScreenHeight() const;
 	public:
-		ComPtr<ID3D11Device> GetDevice() const;
+		ComPtr<ID3D11Device> GetAdapter() const;
 		ComPtr<ID3D11DeviceContext> GetContext() const;
 		std::unique_ptr<Log>& GetLog();
 		std::shared_ptr<DepthStencilTarget>& GetDepthStencilTarget();

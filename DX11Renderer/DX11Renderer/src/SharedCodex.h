@@ -6,7 +6,7 @@
 
 namespace gfx
 {
-	class Graphics;
+	class GraphicsDevice;
 	class CodexElement;
 
 	class Codex
@@ -16,14 +16,14 @@ namespace gfx
 		/// Return codex type, creating it if needed
 		///
 		template<class T,typename...Params>
-		static std::shared_ptr<T> Resolve( Graphics& gfx, std::string id, Params&&...p )
+		static std::shared_ptr<T> Resolve( GraphicsDevice& gfx, std::string id, Params&&...p )
 		{
 			static_assert( std::is_base_of<CodexElement,T>::value, "Can only resolve classes derived from CodexElement" );
 			return std::move(GetInstance().InternalResolve<T>( gfx, id, std::forward<Params>( p )... ));
 		}
 	private:
 		template<class T,typename...Params>
-		std::shared_ptr<T> InternalResolve( Graphics& gfx, std::string id, Params&&...p )
+		std::shared_ptr<T> InternalResolve( GraphicsDevice& gfx, std::string id, Params&&...p )
 		{
 			const auto i = binds.find( id );
 			if( i == binds.end() )

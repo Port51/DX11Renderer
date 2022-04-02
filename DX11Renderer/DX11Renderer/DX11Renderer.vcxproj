@@ -200,7 +200,7 @@
     <ClCompile Include="src\DirectionalLight.cpp" />
     <ClCompile Include="src\Frustum.cpp" />
     <ClCompile Include="src\FullscreenPass.cpp" />
-    <ClCompile Include="src\Graphics.cpp" />
+    <ClCompile Include="src\GraphicsDevice.cpp" />
     <ClCompile Include="src\ImguiManager.cpp" />
     <ClCompile Include="src\IndexBuffer.cpp" />
     <ClCompile Include="src\InputLayout.cpp" />
@@ -328,7 +328,7 @@
     <ClInclude Include="src\DepthStencilTarget.h" />
     <ClInclude Include="src\Renderer.h" />
     <ClInclude Include="src\FullscreenPass.h" />
-    <ClInclude Include="src\Graphics.h" />
+    <ClInclude Include="src\GraphicsDevice.h" />
     <ClInclude Include="src\ImguiManager.h" />
     <ClInclude Include="src\IndexBuffer.h" />
     <ClInclude Include="src\InputLayout.h" />

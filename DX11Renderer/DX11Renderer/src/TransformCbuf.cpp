@@ -1,13 +1,13 @@
 #include "pch.h"
 #include "TransformCbuf.h"
 #include "MeshRenderer.h"
-#include "Graphics.h"
+#include "GraphicsDevice.h"
 #include "ConstantBuffer.h"
 #include "Transforms.h"
 
 namespace gfx
 {
-	TransformCbuf::TransformCbuf(Graphics& gfx)
+	TransformCbuf::TransformCbuf(GraphicsDevice& gfx)
 	{
 		if (!pVcbuf)
 		{
@@ -15,12 +15,12 @@ namespace gfx
 		}
 	}
 
-	void TransformCbuf::BindVS(Graphics& gfx, UINT slot)
+	void TransformCbuf::BindVS(GraphicsDevice& gfx, UINT slot)
 	{
 		gfx.GetContext()->VSSetConstantBuffers(slot, 1u, pVcbuf->GetD3DBuffer().GetAddressOf());
 	}
 
-	void TransformCbuf::UpdateTransforms(Graphics& gfx, const Transforms& transforms)
+	void TransformCbuf::UpdateTransforms(GraphicsDevice& gfx, const Transforms& transforms)
 	{
 		pVcbuf->Update(gfx, transforms);
 	}

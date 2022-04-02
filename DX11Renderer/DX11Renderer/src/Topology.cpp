@@ -1,20 +1,20 @@
 #include "pch.h"
 #include "Topology.h"
 #include "SharedCodex.h"
-#include "Graphics.h"
+#include "GraphicsDevice.h"
 
 namespace gfx
 {
-	Topology::Topology(Graphics& gfx, D3D11_PRIMITIVE_TOPOLOGY type)
+	Topology::Topology(GraphicsDevice& gfx, D3D11_PRIMITIVE_TOPOLOGY type)
 		: type(type)
 	{}
 
-	void Topology::BindIA(Graphics& gfx, UINT slot)
+	void Topology::BindIA(GraphicsDevice& gfx, UINT slot)
 	{
 		gfx.GetContext()->IASetPrimitiveTopology(type);
 	}
 
-	std::shared_ptr<Topology> Topology::Resolve(Graphics& gfx, D3D11_PRIMITIVE_TOPOLOGY type)
+	std::shared_ptr<Topology> Topology::Resolve(GraphicsDevice& gfx, D3D11_PRIMITIVE_TOPOLOGY type)
 	{
 		return std::move(Codex::Resolve<Topology>(gfx, GenerateUID(type), type));
 	}

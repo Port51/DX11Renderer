@@ -1,10 +1,10 @@
 #include "pch.h"
 #include "DepthStencilTarget.h"
-#include "Graphics.h"
+#include "GraphicsDevice.h"
 
 namespace gfx
 {
-	DepthStencilTarget::DepthStencilTarget(Graphics& gfx, int width, int height)
+	DepthStencilTarget::DepthStencilTarget(GraphicsDevice& gfx, int width, int height)
 	{
 		// Notes on formats:
 		// To create SRV, must use a typeless format for texture
@@ -22,7 +22,7 @@ namespace gfx
 		descDepth.SampleDesc.Quality = 0u;
 		descDepth.Usage = D3D11_USAGE_DEFAULT;
 		descDepth.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_DEPTH_STENCIL;
-		THROW_IF_FAILED(gfx.GetDevice()->CreateTexture2D(&descDepth, nullptr, &pDepthStencil));
+		THROW_IF_FAILED(gfx.GetAdapter()->CreateTexture2D(&descDepth, nullptr, &pDepthStencil));
 		assert(pDepthStencil != NULL && "Depth stencil is null!");
 
 		// Create DS View
@@ -30,7 +30,7 @@ namespace gfx
 		descDSV.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 		descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 		descDSV.Texture2D.MipSlice = 0u;
-		THROW_IF_FAILED(gfx.GetDevice()->CreateDepthStencilView(pDepthStencil.Get(), &descDSV, &pDepthStencilView));
+		THROW_IF_FAILED(gfx.GetAdapter()->CreateDepthStencilView(pDepthStencil.Get(), &descDSV, &pDepthStencilView));
 		assert(pDepthStencilView != NULL && "Depth stencil view is null!");
 
 		// Create SRV
@@ -40,14 +40,14 @@ namespace gfx
 		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 		srvDesc.Texture2D.MostDetailedMip = 0;
 		srvDesc.Texture2D.MipLevels = 1;
-		THROW_IF_FAILED(gfx.GetDevice()->CreateShaderResourceView(pDepthStencil.Get(), &srvDesc, &pShaderResourceView));
+		THROW_IF_FAILED(gfx.GetAdapter()->CreateShaderResourceView(pDepthStencil.Get(), &srvDesc, &pShaderResourceView));
 		assert(pShaderResourceView != NULL && "Depth SRV is null!");
 	}
 
 	DepthStencilTarget::~DepthStencilTarget()
 	{}
 
-	void DepthStencilTarget::Clear(Graphics& gfx)
+	void DepthStencilTarget::Clear(GraphicsDevice& gfx)
 	{
 		gfx.GetContext()->ClearDepthStencilView(pDepthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.f, 0u);
 	}

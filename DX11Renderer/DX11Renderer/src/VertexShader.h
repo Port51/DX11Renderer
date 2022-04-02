@@ -6,16 +6,16 @@
 
 namespace gfx
 {
-	class Graphics;
+	class GraphicsDevice;
 
 	class VertexShader : public Bindable
 	{
 	public:
-		VertexShader(Graphics& gfx, const std::string& path);
-		void BindVS(Graphics& gfx, UINT slot) override;
+		VertexShader(GraphicsDevice& gfx, const std::string& path);
+		void BindVS(GraphicsDevice& gfx, UINT slot) override;
 		ID3DBlob* GetBytecode() const;
 	public:
-		static std::shared_ptr<VertexShader> Resolve(Graphics& gfx, const std::string& path);
+		static std::shared_ptr<VertexShader> Resolve(GraphicsDevice& gfx, const std::string& path);
 		static std::string GenerateUID(const std::string& path);
 	protected:
 		std::string path;

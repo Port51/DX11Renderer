@@ -7,24 +7,24 @@ struct ID3D11Buffer;
 
 namespace gfx
 {
-	class Graphics;
+	class GraphicsDevice;
 	class BaseBufferData;
 
 	class VertexBufferWrapper : public CodexElement
 	{
 	public:
-		VertexBufferWrapper(Graphics& gfx, const BaseBufferData& vertexBuffer);
-		VertexBufferWrapper(Graphics& gfx, const BaseBufferData& vertexBuffer, const BaseBufferData& instanceBuffer);
+		VertexBufferWrapper(GraphicsDevice& gfx, const BaseBufferData& vertexBuffer);
+		VertexBufferWrapper(GraphicsDevice& gfx, const BaseBufferData& vertexBuffer, const BaseBufferData& instanceBuffer);
 	public:
 		ComPtr<ID3D11Buffer> GetVertexBuffer() const;
-		void BindIA(Graphics& gfx, UINT slot);
+		void BindIA(GraphicsDevice& gfx, UINT slot);
 		UINT GetVertexCount() const;
 	protected:
-		void SetupVertexBuffer(Graphics& gfx, const BaseBufferData& data);
-		void SetupInstanceBuffer(Graphics& gfx, const BaseBufferData& data);
+		void SetupVertexBuffer(GraphicsDevice& gfx, const BaseBufferData& data);
+		void SetupInstanceBuffer(GraphicsDevice& gfx, const BaseBufferData& data);
 	public:
-		static std::shared_ptr<VertexBufferWrapper> Resolve(Graphics& gfx, std::string id, const BaseBufferData& vertexBuffer);
-		static std::shared_ptr<VertexBufferWrapper> Resolve(Graphics& gfx, std::string id, const BaseBufferData& vertexBuffer, const BaseBufferData& instanceBuffer);
+		static std::shared_ptr<VertexBufferWrapper> Resolve(GraphicsDevice& gfx, std::string id, const BaseBufferData& vertexBuffer);
+		static std::shared_ptr<VertexBufferWrapper> Resolve(GraphicsDevice& gfx, std::string id, const BaseBufferData& vertexBuffer, const BaseBufferData& instanceBuffer);
 	private:
 		static std::string GenerateUID(const std::string& tag);
 	protected:

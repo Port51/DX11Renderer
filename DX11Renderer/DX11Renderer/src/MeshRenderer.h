@@ -6,7 +6,7 @@
 
 namespace gfx
 {
-	class Graphics;
+	class GraphicsDevice;
 	class VertexBufferWrapper;
 	class IndexBuffer;
 	class Topology;
@@ -20,18 +20,18 @@ namespace gfx
 	class MeshRenderer
 	{
 	public:
-		MeshRenderer(Graphics& gfx, std::string name, std::shared_ptr<Material> pMaterial, std::shared_ptr<IndexBuffer> pIndexBuffer, std::shared_ptr<Topology> pTopologyBuffer);
-		MeshRenderer(Graphics& gfx, std::string name, std::shared_ptr<Material> pMaterial, std::shared_ptr<VertexBufferWrapper> pVertexBuffer, std::shared_ptr<IndexBuffer> pIndexBuffer, std::shared_ptr<Topology> pTopologyBuffer);
+		MeshRenderer(GraphicsDevice& gfx, std::string name, std::shared_ptr<Material> pMaterial, std::shared_ptr<IndexBuffer> pIndexBuffer, std::shared_ptr<Topology> pTopologyBuffer);
+		MeshRenderer(GraphicsDevice& gfx, std::string name, std::shared_ptr<Material> pMaterial, std::shared_ptr<VertexBufferWrapper> pVertexBuffer, std::shared_ptr<IndexBuffer> pIndexBuffer, std::shared_ptr<Topology> pTopologyBuffer);
 		virtual ~MeshRenderer() = default;
 
 	public:
 		dx::XMMATRIX GetTransformXM() const;
 		void SetTransform(dx::XMMATRIX transform);
 		void SubmitDrawCalls(const DrawContext& drawContext) const;
-		virtual void Bind(Graphics& gfx, const DrawContext& drawContext) const;
+		virtual void Bind(GraphicsDevice& gfx, const DrawContext& drawContext) const;
 		UINT GetIndexCount() const;
 		UINT GetVertexCount() const;
-		virtual void IssueDrawCall(Graphics& gfx) const;
+		virtual void IssueDrawCall(GraphicsDevice& gfx) const;
 	protected:
 		std::string name;
 		std::shared_ptr<Material> pMaterial; // keep separate from other bindables for now...

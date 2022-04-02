@@ -8,7 +8,7 @@
 
 namespace gfx
 {
-	class Graphics;
+	class GraphicsDevice;
 	class VertexShader;
 	class PixelShader;
 	class MaterialPass;
@@ -21,12 +21,12 @@ namespace gfx
 	class Material : public Bindable
 	{
 	public:
-		Material(Graphics& gfx, std::string_view assetPath);
-		void Bind(Graphics& gfx, std::string_view passName);
+		Material(GraphicsDevice& gfx, std::string_view assetPath);
+		void Bind(GraphicsDevice& gfx, std::string_view passName);
 		void SubmitDrawCalls(const MeshRenderer& meshRenderer, const DrawContext& drawContext) const;
 	public:
 		const VertexLayout& GetVertexLayout() const;
-		static std::shared_ptr<Bindable> Resolve(Graphics& gfx, const std::string_view assetPath);
+		static std::shared_ptr<Bindable> Resolve(GraphicsDevice& gfx, const std::string_view assetPath);
 	protected:
 		static std::string GenerateUID(const std::string_view assetPath);
 		void AddBindable(std::shared_ptr<Bindable> pBindable);

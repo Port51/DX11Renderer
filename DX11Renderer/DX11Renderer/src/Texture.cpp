@@ -7,28 +7,28 @@
 namespace gfx
 {
 	// Don't initialize texture
-	Texture::Texture(Graphics & gfx)
+	Texture::Texture(GraphicsDevice & gfx)
 		: tag("?")
 	{
 
 	}
 
 	// Create descriptors and pTexture
-	Texture::Texture(Graphics & gfx, D3D11_TEXTURE2D_DESC textureDesc, D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc)
+	Texture::Texture(GraphicsDevice & gfx, D3D11_TEXTURE2D_DESC textureDesc, D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc)
 		: tag("?")
 	{
-		THROW_IF_FAILED(gfx.GetDevice()->CreateTexture2D(
+		THROW_IF_FAILED(gfx.GetAdapter()->CreateTexture2D(
 			&textureDesc, NULL, &pTexture
 		));
 
-		THROW_IF_FAILED(gfx.GetDevice()->CreateShaderResourceView(
+		THROW_IF_FAILED(gfx.GetAdapter()->CreateShaderResourceView(
 			pTexture.Get(), &srvDesc, &pShaderResourceView
 		));
 	}
 
 	// Load image from file and start off with default 2D texture settings
 	// This should be used for 99% of model-related textures
-	Texture::Texture(Graphics& gfx, const std::string& path)
+	Texture::Texture(GraphicsDevice& gfx, const std::string& path)
 		: tag(path)
 	{
 		const Image image(path);
@@ -46,7 +46,7 @@ namespace gfx
 		textureDesc.CPUAccessFlags = 0;
 		textureDesc.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
 
-		THROW_IF_FAILED(gfx.GetDevice()->CreateTexture2D(
+		THROW_IF_FAILED(gfx.GetAdapter()->CreateTexture2D(
 			&textureDesc, nullptr, &pTexture
 		));
 
@@ -61,7 +61,7 @@ namespace gfx
 		srvDesc.Texture2D.MostDetailedMip = 0;
 		srvDesc.Texture2D.MipLevels = -1; // use all mips
 
-		THROW_IF_FAILED(gfx.GetDevice()->CreateShaderResourceView(
+		THROW_IF_FAILED(gfx.GetAdapter()->CreateShaderResourceView(
 			pTexture.Get(), &srvDesc, &pShaderResourceView
 		));
 
@@ -70,7 +70,7 @@ namespace gfx
 
 	// Load image from file and use custom descriptors
 	// Use this in special cases
-	Texture::Texture(Graphics& gfx, const std::string& _path, D3D11_TEXTURE2D_DESC textureDesc, D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc)
+	Texture::Texture(GraphicsDevice& gfx, const std::string& _path, D3D11_TEXTURE2D_DESC textureDesc, D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc)
 		: tag(_path)
 	{
 		// Read some info from image
@@ -83,7 +83,7 @@ namespace gfx
 			// Ensure mips can be generated
 			textureDesc.MiscFlags |= D3D11_RESOURCE_MISC_GENERATE_MIPS;
 
-			THROW_IF_FAILED(gfx.GetDevice()->CreateTexture2D(
+			THROW_IF_FAILED(gfx.GetAdapter()->CreateTexture2D(
 				&textureDesc, nullptr, &pTexture
 			));
 
@@ -100,27 +100,27 @@ namespace gfx
 			sd.pSysMem = image.GetData();
 			sd.SysMemPitch = image.GetPitch(); // distance in bytes between rows - keep in mind padding!
 
-			THROW_IF_FAILED(gfx.GetDevice()->CreateTexture2D(
+			THROW_IF_FAILED(gfx.GetAdapter()->CreateTexture2D(
 				&textureDesc, &sd, &pTexture
 			));
 		}
 
-		THROW_IF_FAILED(gfx.GetDevice()->CreateShaderResourceView(
+		THROW_IF_FAILED(gfx.GetAdapter()->CreateShaderResourceView(
 			pTexture.Get(), &srvDesc, &pShaderResourceView
 		));
 	}
 
-	void Texture::BindCS(Graphics& gfx, UINT slot)
+	void Texture::BindCS(GraphicsDevice& gfx, UINT slot)
 	{
 		gfx.GetContext()->CSSetShaderResources(slot, 1u, pShaderResourceView.GetAddressOf());
 	}
 
-	void Texture::BindVS(Graphics& gfx, UINT slot)
+	void Texture::BindVS(GraphicsDevice& gfx, UINT slot)
 	{
 		gfx.GetContext()->VSSetShaderResources(slot, 1u, pShaderResourceView.GetAddressOf());
 	}
 
-	void Texture::BindPS(Graphics& gfx, UINT slot)
+	void Texture::BindPS(GraphicsDevice& gfx, UINT slot)
 	{
 		gfx.GetContext()->PSSetShaderResources(slot, 1u, pShaderResourceView.GetAddressOf());
 	}
@@ -140,7 +140,7 @@ namespace gfx
 		return pShaderResourceView;
 	}
 
-	std::shared_ptr<Bindable> Texture::Resolve(Graphics& gfx, const std::string& path)
+	std::shared_ptr<Bindable> Texture::Resolve(GraphicsDevice& gfx, const std::string& path)
 	{
 		// Create 2D texture with default settings
 		return std::move(Codex::Resolve<Texture>(gfx, GenerateUID(path), path));

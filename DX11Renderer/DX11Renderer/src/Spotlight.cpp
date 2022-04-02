@@ -9,7 +9,7 @@
 #include "RenderPass.h"
 #include "ShadowPassContext.h"
 #include "ConstantBuffer.h"
-#include "Graphics.h"
+#include "GraphicsDevice.h"
 #include "Frustum.h"
 #include "DrawContext.h"
 #include "Renderer.h"
@@ -18,7 +18,7 @@
 
 namespace gfx
 {
-	Spotlight::Spotlight(Graphics& gfx, UINT index, bool allowUserControl, bool hasShadow, std::shared_ptr<ModelAsset> const& pModelAsset, dx::XMFLOAT3 positionWS, float pan, float tilt, dx::XMFLOAT3 color, float intensity, float attenuationQ, float range)
+	Spotlight::Spotlight(GraphicsDevice& gfx, UINT index, bool allowUserControl, bool hasShadow, std::shared_ptr<ModelAsset> const& pModelAsset, dx::XMFLOAT3 positionWS, float pan, float tilt, dx::XMFLOAT3 color, float intensity, float attenuationQ, float range)
 		: Light(gfx, index, allowUserControl, pModelAsset, positionWS, color, intensity),
 		pan(pan),
 		tilt(tilt),

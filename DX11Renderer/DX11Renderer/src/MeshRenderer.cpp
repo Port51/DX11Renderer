@@ -14,7 +14,7 @@
 
 namespace gfx
 {
-	MeshRenderer::MeshRenderer(Graphics& gfx, std::string name, std::shared_ptr<Material> pMaterial, std::shared_ptr<IndexBuffer> pIndexBuffer, std::shared_ptr<Topology> pTopologyBuffer)
+	MeshRenderer::MeshRenderer(GraphicsDevice& gfx, std::string name, std::shared_ptr<Material> pMaterial, std::shared_ptr<IndexBuffer> pIndexBuffer, std::shared_ptr<Topology> pTopologyBuffer)
 		: pIndexBuffer(std::move(pIndexBuffer)),
 		pTopology(std::move(pTopologyBuffer)),
 		name(name),
@@ -26,7 +26,7 @@ namespace gfx
 		pTransformCbuf = std::make_shared<TransformCbuf>(gfx);
 	}
 
-	MeshRenderer::MeshRenderer(Graphics& gfx, std::string name, std::shared_ptr<Material> pMaterial, std::shared_ptr<VertexBufferWrapper> pVertexBuffer, std::shared_ptr<IndexBuffer> pIndexBuffer, std::shared_ptr<Topology> pTopologyBuffer)
+	MeshRenderer::MeshRenderer(GraphicsDevice& gfx, std::string name, std::shared_ptr<Material> pMaterial, std::shared_ptr<VertexBufferWrapper> pVertexBuffer, std::shared_ptr<IndexBuffer> pIndexBuffer, std::shared_ptr<Topology> pTopologyBuffer)
 		: MeshRenderer(gfx, name, pMaterial, pIndexBuffer, pTopologyBuffer)
 	{
 		pVertexBufferWrapper = std::move(pVertexBuffer);
@@ -47,7 +47,7 @@ namespace gfx
 		pMaterial->SubmitDrawCalls(*this, drawContext);
 	}
 
-	void MeshRenderer::Bind(Graphics& gfx, const DrawContext& drawContext) const
+	void MeshRenderer::Bind(GraphicsDevice& gfx, const DrawContext& drawContext) const
 	{
 		pTopology->BindIA(gfx, 0u);
 		pIndexBuffer->BindIA(gfx, 0u);
@@ -72,7 +72,7 @@ namespace gfx
 		return pVertexBufferWrapper->GetVertexCount();
 	}
 
-	void MeshRenderer::IssueDrawCall(Graphics& gfx) const
+	void MeshRenderer::IssueDrawCall(GraphicsDevice& gfx) const
 	{
 		gfx.DrawIndexed(GetIndexCount());
 	}

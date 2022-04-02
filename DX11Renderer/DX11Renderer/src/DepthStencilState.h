@@ -6,7 +6,7 @@
 
 namespace gfx
 {
-	class Graphics;
+	class GraphicsDevice;
 
 	class DepthStencilState : public Bindable
 	{
@@ -18,10 +18,10 @@ namespace gfx
 			Write,
 			Mask
 		};
-		DepthStencilState(Graphics& gfx, Mode mode);
-		DepthStencilState(Graphics& gfx, D3D11_DEPTH_STENCIL_DESC desc);
-		void BindOM(Graphics& gfx) override;
-		static std::shared_ptr<DepthStencilState> Resolve(Graphics& gfx, Mode mode);
+		DepthStencilState(GraphicsDevice& gfx, Mode mode);
+		DepthStencilState(GraphicsDevice& gfx, D3D11_DEPTH_STENCIL_DESC desc);
+		void BindOM(GraphicsDevice& gfx) override;
+		static std::shared_ptr<DepthStencilState> Resolve(GraphicsDevice& gfx, Mode mode);
 	protected:
 		static std::string GenerateUID(Mode mode);
 	private:

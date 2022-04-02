@@ -5,12 +5,12 @@
 
 namespace gfx
 {
-	InputLayout::InputLayout(Graphics& gfx, VertexLayout _layout, std::string vertexShaderName, ID3DBlob* pVertexShaderBytecode)
+	InputLayout::InputLayout(GraphicsDevice& gfx, VertexLayout _layout, std::string vertexShaderName, ID3DBlob* pVertexShaderBytecode)
 		: layout(std::move(_layout)),
 		vertexShaderName(vertexShaderName)
 	{
 		const auto d3dLayout = layout.GetD3DLayout();
-		THROW_IF_FAILED(gfx.GetDevice()->CreateInputLayout(
+		THROW_IF_FAILED(gfx.GetAdapter()->CreateInputLayout(
 			d3dLayout.data(), (UINT)d3dLayout.size(),
 			pVertexShaderBytecode->GetBufferPointer(),
 			pVertexShaderBytecode->GetBufferSize(),
@@ -18,12 +18,12 @@ namespace gfx
 		));
 	}
 
-	void InputLayout::BindIA(Graphics& gfx, UINT slot)
+	void InputLayout::BindIA(GraphicsDevice& gfx, UINT slot)
 	{
 		gfx.GetContext()->IASetInputLayout(pInputLayout.Get());
 	}
 
-	std::shared_ptr<InputLayout> InputLayout::Resolve(Graphics & gfx, const VertexLayout & layout, std::string vertexShaderName, ID3DBlob * pVertexShaderBytecode)
+	std::shared_ptr<InputLayout> InputLayout::Resolve(GraphicsDevice & gfx, const VertexLayout & layout, std::string vertexShaderName, ID3DBlob * pVertexShaderBytecode)
 	{
 		return std::move(Codex::Resolve<InputLayout>(gfx, GenerateUID(layout, vertexShaderName, pVertexShaderBytecode), layout, vertexShaderName, pVertexShaderBytecode));
 	}

@@ -4,7 +4,7 @@
 
 namespace gfx
 {
-	class Graphics;
+	class GraphicsDevice;
 	class ComputeShader;
 	class RenderPass;
 
@@ -16,7 +16,7 @@ namespace gfx
 	public:
 		ComputeKernel(std::shared_ptr<ComputeShader> pComputeShader);
 	public:
-		void Dispatch(Graphics& gfx, UINT threadCountX, UINT threadCountY, UINT threadCountZ);
+		void Dispatch(GraphicsDevice& gfx, UINT threadCountX, UINT threadCountY, UINT threadCountZ);
 	private:
 		std::shared_ptr<ComputeShader> pComputeShader;
 	};

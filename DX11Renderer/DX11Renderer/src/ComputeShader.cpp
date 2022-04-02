@@ -3,18 +3,18 @@
 #include "SharedCodex.h"
 #include <d3dcompiler.h>
 #include <d3d11shader.h>
-#include "Graphics.h"
+#include "GraphicsDevice.h"
 
 namespace gfx
 {
 	using namespace std::string_literals;
 
-	ComputeShader::ComputeShader(Graphics& gfx, const std::string& path, const std::string& kernelName)
+	ComputeShader::ComputeShader(GraphicsDevice& gfx, const std::string& path, const std::string& kernelName)
 		: path(path), kernelName(kernelName)
 	{
 		std::wstring wide{ path.begin(), path.end() }; // convert to wide for file read <-- won't work for special characters
 		THROW_IF_FAILED(D3DReadFileToBlob(wide.c_str(), &pBytecodeBlob));
-		THROW_IF_FAILED(gfx.GetDevice()->CreateComputeShader(
+		THROW_IF_FAILED(gfx.GetAdapter()->CreateComputeShader(
 			pBytecodeBlob->GetBufferPointer(),
 			pBytecodeBlob->GetBufferSize(),
 			nullptr,
@@ -61,7 +61,7 @@ namespace gfx
 
 	}
 
-	void ComputeShader::Dispatch(Graphics & gfx, UINT threadCountX, UINT threadCountY, UINT threadCountZ) const
+	void ComputeShader::Dispatch(GraphicsDevice & gfx, UINT threadCountX, UINT threadCountY, UINT threadCountZ) const
 	{
 		gfx.GetContext()->CSSetShader(pComputeShader.Get(), nullptr, 0);
 
@@ -70,10 +70,8 @@ namespace gfx
 		UINT threadGroupCountY = (threadCountY + kernelSizeY - 1u) / kernelSizeY;
 		UINT threadGroupCountZ = (threadCountZ + kernelSizeZ - 1u) / kernelSizeZ;
 
-		if (threadGroupCountX > 0u && threadGroupCountY > 0u && threadGroupCountZ > 0u)
-		{
-			gfx.GetContext()->Dispatch(threadGroupCountX, threadGroupCountY, threadGroupCountZ);
-		}
+		assert(threadGroupCountX > 0u && threadGroupCountY > 0u && threadGroupCountZ > 0u && "All thread group sizes must be > 0");
+		gfx.GetContext()->Dispatch(threadGroupCountX, threadGroupCountY, threadGroupCountZ);
 	}
 
 	ComPtr<ID3D11ComputeShader> ComputeShader::GetComputeShader() const
@@ -86,7 +84,7 @@ namespace gfx
 		return pBytecodeBlob.Get();
 	}
 
-	std::shared_ptr<ComputeShader> ComputeShader::Resolve(Graphics& gfx, const std::string& path, const std::string& kernelName)
+	std::shared_ptr<ComputeShader> ComputeShader::Resolve(GraphicsDevice& gfx, const std::string& path, const std::string& kernelName)
 	{
 		return std::move(Codex::Resolve<ComputeShader>(gfx, GenerateUID(path, kernelName), path, kernelName));
 	}

@@ -3,7 +3,7 @@
 
 namespace gfx
 {
-	class Graphics;
+	class GraphicsDevice;
 	class Bindable;
 	class RenderPass;
 
@@ -13,7 +13,7 @@ namespace gfx
 		Binding(std::shared_ptr<Bindable> _pBindable);
 		virtual ~Binding() = default;
 	public:
-		void Bind(Graphics& gfx) const;
+		void Bind(GraphicsDevice& gfx) const;
 		std::shared_ptr<Bindable> GetBindable() const;
 		Binding& SetupIABinding(UINT slot = 0u);
 		Binding& SetupCSBinding(UINT slot);

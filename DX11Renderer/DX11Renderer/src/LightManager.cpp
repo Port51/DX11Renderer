@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "LightManager.h"
 
-#include "Graphics.h"
+#include "GraphicsDevice.h"
 #include "Camera.h"
 #include "StructuredBuffer.h"
 #include "Renderer.h"
@@ -20,7 +20,7 @@
 
 namespace gfx
 {
-	LightManager::LightManager(Graphics & gfx, std::shared_ptr<RendererList> pRendererList)
+	LightManager::LightManager(GraphicsDevice & gfx, std::shared_ptr<RendererList> pRendererList)
 	{
 		const auto pLightModelAsset = ModelImporter::LoadGLTF(gfx, "Assets\\Models\\DefaultSphere.asset");
 
@@ -79,7 +79,7 @@ namespace gfx
 		}
 	}
 
-	void LightManager::CullLights(Graphics & gfx, const std::unique_ptr<Camera>& cam, bool enableShadows)
+	void LightManager::CullLights(GraphicsDevice & gfx, const std::unique_ptr<Camera>& cam, bool enableShadows)
 	{
 		dx::XMFLOAT4 frustumCornersVS;
 		dx::XMStoreFloat4(&frustumCornersVS, cam->GetFrustumCornersVS());

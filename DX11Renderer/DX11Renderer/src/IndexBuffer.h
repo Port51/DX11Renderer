@@ -10,18 +10,18 @@ struct ID3D11Buffer;
 
 namespace gfx
 {
-	class Graphics;
+	class GraphicsDevice;
 
 	class IndexBuffer : public Bindable
 	{
 	public:
-		IndexBuffer(Graphics& gfx, const std::vector<u16>& indices);
-		IndexBuffer(Graphics& gfx, const std::vector<u32>& indices);
+		IndexBuffer(GraphicsDevice& gfx, const std::vector<u16>& indices);
+		IndexBuffer(GraphicsDevice& gfx, const std::vector<u32>& indices);
 	public:
-		void BindIA(Graphics& gfx, UINT slot) override;
+		void BindIA(GraphicsDevice& gfx, UINT slot) override;
 		UINT GetIndexCount() const;
 	public:
-		static std::shared_ptr<IndexBuffer> Resolve(Graphics& gfx, std::string id, const std::vector<u32>& indices);
+		static std::shared_ptr<IndexBuffer> Resolve(GraphicsDevice& gfx, std::string id, const std::vector<u32>& indices);
 	private:
 		static std::string GenerateUID(const std::string& tag);
 	protected:

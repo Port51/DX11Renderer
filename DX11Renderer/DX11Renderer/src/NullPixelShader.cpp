@@ -1,18 +1,18 @@
 #include "pch.h"
 #include "NullPixelShader.h"
 #include "SharedCodex.h"
-#include "Graphics.h"
+#include "GraphicsDevice.h"
 
 namespace gfx
 {
-	NullPixelShader::NullPixelShader(Graphics& gfx)
+	NullPixelShader::NullPixelShader(GraphicsDevice& gfx)
 	{
 	}
-	void NullPixelShader::BindPS(Graphics& gfx, UINT slot)
+	void NullPixelShader::BindPS(GraphicsDevice& gfx, UINT slot)
 	{
 		gfx.GetContext()->PSSetShader(nullptr, nullptr, 0u);
 	}
-	std::shared_ptr<NullPixelShader> NullPixelShader::Resolve(Graphics& gfx)
+	std::shared_ptr<NullPixelShader> NullPixelShader::Resolve(GraphicsDevice& gfx)
 	{
 		return std::move(Codex::Resolve<NullPixelShader>(gfx, GenerateUID()));
 	}

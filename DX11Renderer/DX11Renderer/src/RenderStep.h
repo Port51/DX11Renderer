@@ -5,7 +5,7 @@
 
 namespace gfx
 {
-	class Graphics;
+	class GraphicsDevice;
 	class MeshRenderer;
 	class Renderer;
 	class RenderPass;
@@ -22,7 +22,7 @@ namespace gfx
 		Binding& AddBinding(std::shared_ptr<Bindable> pBindable);
 		Binding& AddBinding(Binding pBinding);
 		void SubmitDrawCalls(const MeshRenderer& meshRenderer, const DrawContext& drawContext) const;
-		void Bind(Graphics& gfx) const;
+		void Bind(GraphicsDevice& gfx) const;
 	private:
 		std::string targetPass;
 		std::vector<Binding> bindings;

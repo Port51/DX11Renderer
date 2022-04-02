@@ -1,7 +1,7 @@
 #pragma once
 #include "DXMathInclude.h"
 #include <type_traits>
-#include "Graphics.h"
+#include "GraphicsDevice.h"
 #include "Colors.h"
 
 namespace gfx

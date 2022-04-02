@@ -29,14 +29,14 @@ namespace gfx
 
 	}
 
-	std::shared_ptr<ModelInstance> ModelAsset::CreateSharedInstance(Graphics& gfx, dx::XMMATRIX transform)
+	std::shared_ptr<ModelInstance> ModelAsset::CreateSharedInstance(GraphicsDevice& gfx, dx::XMMATRIX transform)
 	{
 		// todo: fix alignment bug
 		return nullptr;
 		//return std::make_shared<ModelInstance>(gfx, *this, std::move(transform));
 	}
 
-	std::unique_ptr<ModelInstance> ModelAsset::CreateUniqueInstance(Graphics& gfx, dx::XMMATRIX transform)
+	std::unique_ptr<ModelInstance> ModelAsset::CreateUniqueInstance(GraphicsDevice& gfx, dx::XMMATRIX transform)
 	{
 		// todo: fix alignment bug
 		return nullptr;

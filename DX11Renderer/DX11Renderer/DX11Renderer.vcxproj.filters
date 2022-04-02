@@ -300,9 +300,6 @@
     <ClCompile Include="src\RenderTexture.cpp">
       <Filter>Source\RenderPipeline</Filter>
     </ClCompile>
-    <ClCompile Include="src\Graphics.cpp">
-      <Filter>Source\RenderPipeline</Filter>
-    </ClCompile>
     <ClCompile Include="src\FullscreenPass.cpp">
       <Filter>Source\RenderJobs\Passes</Filter>
     </ClCompile>
@@ -374,6 +371,9 @@
     </ClCompile>
     <ClCompile Include="src\MouseEvent.cpp">
       <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GraphicsDevice.cpp">
+      <Filter>Source\RenderPipeline</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -554,9 +554,6 @@
     <ClInclude Include="src\RenderStep.h">
       <Filter>Headers\RenderJobs</Filter>
     </ClInclude>
-    <ClInclude Include="src\Graphics.h">
-      <Filter>Headers\RenderPipeline</Filter>
-    </ClInclude>
     <ClInclude Include="src\FullscreenPass.h">
       <Filter>Headers\RenderJobs\Passes</Filter>
     </ClInclude>
@@ -661,6 +658,9 @@
     </ClInclude>
     <ClInclude Include="src\MouseEvent.h">
       <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GraphicsDevice.h">
+      <Filter>Headers\RenderPipeline</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

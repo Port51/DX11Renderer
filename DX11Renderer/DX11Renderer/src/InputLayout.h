@@ -9,15 +9,15 @@ struct ID3D11InputLayout;
 
 namespace gfx
 {
-	class Graphics;
+	class GraphicsDevice;
 
 	class InputLayout : public Bindable
 	{
 	public:
-		InputLayout(Graphics& gfx, VertexLayout layout, std::string vertexShaderName, ID3DBlob* pVertexShaderBytecode);
-		void BindIA(Graphics& gfx, UINT slot) override;
+		InputLayout(GraphicsDevice& gfx, VertexLayout layout, std::string vertexShaderName, ID3DBlob* pVertexShaderBytecode);
+		void BindIA(GraphicsDevice& gfx, UINT slot) override;
 	public:
-		static std::shared_ptr<InputLayout> Resolve(Graphics& gfx, const VertexLayout& layout, std::string vertexShaderName, ID3DBlob* pVertexShaderBytecode);
+		static std::shared_ptr<InputLayout> Resolve(GraphicsDevice& gfx, const VertexLayout& layout, std::string vertexShaderName, ID3DBlob* pVertexShaderBytecode);
 		static std::string GenerateUID(const VertexLayout& layout, std::string vertexShaderName, ID3DBlob* pVertexShaderBytecode = nullptr);
 	protected:
 		std::string vertexShaderName;

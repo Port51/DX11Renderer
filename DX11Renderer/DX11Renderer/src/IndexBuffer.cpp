@@ -1,11 +1,11 @@
 #include "pch.h"
 #include "IndexBuffer.h"
 #include "SharedCodex.h"
-#include "Graphics.h"
+#include "GraphicsDevice.h"
 
 namespace gfx
 {
-	IndexBuffer::IndexBuffer(Graphics& gfx, const std::vector<u16>& indices)
+	IndexBuffer::IndexBuffer(GraphicsDevice& gfx, const std::vector<u16>& indices)
 		: count((UINT)indices.size()),
 		format(DXGI_FORMAT_R16_UINT)
 	{
@@ -18,10 +18,10 @@ namespace gfx
 		ibd.StructureByteStride = sizeof(u16);
 		D3D11_SUBRESOURCE_DATA isd = {};
 		isd.pSysMem = indices.data();
-		THROW_IF_FAILED(gfx.GetDevice()->CreateBuffer(&ibd, &isd, &pIndexBuffer));
+		THROW_IF_FAILED(gfx.GetAdapter()->CreateBuffer(&ibd, &isd, &pIndexBuffer));
 	}
 
-	IndexBuffer::IndexBuffer(Graphics& gfx, const std::vector<u32>& indices)
+	IndexBuffer::IndexBuffer(GraphicsDevice& gfx, const std::vector<u32>& indices)
 		: count((UINT)indices.size()),
 		format(DXGI_FORMAT_R32_UINT)
 	{
@@ -34,10 +34,10 @@ namespace gfx
 		ibd.StructureByteStride = sizeof(u32);
 		D3D11_SUBRESOURCE_DATA isd = {};
 		isd.pSysMem = indices.data();
-		THROW_IF_FAILED(gfx.GetDevice()->CreateBuffer(&ibd, &isd, &pIndexBuffer));
+		THROW_IF_FAILED(gfx.GetAdapter()->CreateBuffer(&ibd, &isd, &pIndexBuffer));
 	}
 
-	void IndexBuffer::BindIA(Graphics& gfx, UINT slot)
+	void IndexBuffer::BindIA(GraphicsDevice& gfx, UINT slot)
 	{
 		gfx.GetContext()->IASetIndexBuffer(pIndexBuffer.Get(), format, 0u);
 	}
@@ -47,7 +47,7 @@ namespace gfx
 		return count;
 	}
 
-	std::shared_ptr<IndexBuffer> IndexBuffer::Resolve(Graphics& gfx, std::string id, const std::vector<u32>& indices)
+	std::shared_ptr<IndexBuffer> IndexBuffer::Resolve(GraphicsDevice& gfx, std::string id, const std::vector<u32>& indices)
 	{
 		return std::move(Codex::Resolve<IndexBuffer>(gfx, GenerateUID(id), indices));
 	}

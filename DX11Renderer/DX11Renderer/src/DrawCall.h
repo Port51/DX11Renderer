@@ -5,7 +5,7 @@ namespace gfx
 	class RenderStep;
 	class RenderPass;
 	class MeshRenderer;
-	class Graphics;
+	class GraphicsDevice;
 	struct DrawContext;
 
 	class DrawCall
@@ -14,7 +14,7 @@ namespace gfx
 		DrawCall(const RenderStep* pStep, const MeshRenderer* pRenderer, const DrawContext& drawContext);
 		virtual ~DrawCall() = default;
 	public:
-		void Execute(Graphics& gfx) const;
+		void Execute(GraphicsDevice& gfx) const;
 	private:
 		const MeshRenderer* pRenderer;
 		const RenderStep* pStep;

@@ -15,7 +15,7 @@
 
 namespace gfx
 {
-	ModelInstance::ModelInstance(Graphics& gfx, const ModelAsset& pModelAsset, dx::XMMATRIX transform)
+	ModelInstance::ModelInstance(GraphicsDevice& gfx, const ModelAsset& pModelAsset, dx::XMMATRIX transform)
 		: transform(transform)
 	{
 		pMaterials.reserve(pModelAsset.materialPaths.size());
@@ -29,7 +29,7 @@ namespace gfx
 		UpdateSceneGraph();
 	}
 
-	ModelInstance::ModelInstance(Graphics & gfx, std::shared_ptr<ModelAsset> pModelAsset, dx::XMMATRIX transform)
+	ModelInstance::ModelInstance(GraphicsDevice & gfx, std::shared_ptr<ModelAsset> pModelAsset, dx::XMMATRIX transform)
 		: transform(transform)
 	{
 		pMaterials.reserve(pModelAsset->materialPaths.size());
@@ -65,7 +65,7 @@ namespace gfx
 	}
 
 	static int nextNodeId = 0; // todo: move
-	std::shared_ptr<SceneGraphNode> ModelInstance::CreateModelInstanceNode(Graphics& gfx, std::shared_ptr<ModelAssetNode> const& pSourceNode)
+	std::shared_ptr<SceneGraphNode> ModelInstance::CreateModelInstanceNode(GraphicsDevice& gfx, std::shared_ptr<ModelAssetNode> const& pSourceNode)
 	{
 		gfx.GetLog()->Info("Create ModelInstanceNode " + pSourceNode->name + " w/ " + std::to_string(pSourceNode->pChildNodes.size()) + " children");
 
@@ -88,7 +88,7 @@ namespace gfx
 		return std::move(pNode);
 	}
 
-	std::shared_ptr<MeshRenderer> ModelInstance::CreateMeshRenderer(Graphics& gfx, std::shared_ptr<MeshAsset> const& pMeshAsset)
+	std::shared_ptr<MeshRenderer> ModelInstance::CreateMeshRenderer(GraphicsDevice& gfx, std::shared_ptr<MeshAsset> const& pMeshAsset)
 	{
 		// temporary way of testing instances
 		const bool isInstance = false;

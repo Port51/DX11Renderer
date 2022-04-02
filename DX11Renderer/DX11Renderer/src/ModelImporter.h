@@ -10,7 +10,7 @@ namespace tinygltf
 
 namespace gfx
 {
-	class Graphics;
+	class GraphicsDevice;
 	class ModelAsset;
 
 	class ModelImporter
@@ -26,10 +26,10 @@ namespace gfx
 			std::unordered_map<std::string, int> materialIndicesByName;
 		};
 	public:
-		static std::shared_ptr<ModelAsset> LoadGLTF(Graphics& gfx, const char* assetFilename);
+		static std::shared_ptr<ModelAsset> LoadGLTF(GraphicsDevice& gfx, const char* assetFilename);
 	private:
-		static ModelImportSettings GetImportSettings(Graphics& gfx, const char* assetFilename);
-		static size_t GetAttributeCt(Graphics& gfx, tinygltf::Model& model, int accessorIdx);
-		static std::pair<int, size_t> GetAttributeBufferAccess(Graphics& gfx, tinygltf::Model& model, int accessorIdx, size_t byteCt);
+		static ModelImportSettings GetImportSettings(GraphicsDevice& gfx, const char* assetFilename);
+		static size_t GetAttributeCt(GraphicsDevice& gfx, tinygltf::Model& model, int accessorIdx);
+		static std::pair<int, size_t> GetAttributeBufferAccess(GraphicsDevice& gfx, tinygltf::Model& model, int accessorIdx, size_t byteCt);
 	};
 }

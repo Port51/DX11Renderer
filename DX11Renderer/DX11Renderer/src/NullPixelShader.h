@@ -5,15 +5,15 @@
 
 namespace gfx
 {
-	class Graphics;
+	class GraphicsDevice;
 
 	class NullPixelShader : public Bindable
 	{
 	public:
-		NullPixelShader(Graphics& gfx);
+		NullPixelShader(GraphicsDevice& gfx);
 	public:
-		void BindPS(Graphics& gfx, UINT slot) override;
-		static std::shared_ptr<NullPixelShader> Resolve(Graphics& gfx);
+		void BindPS(GraphicsDevice& gfx, UINT slot) override;
+		static std::shared_ptr<NullPixelShader> Resolve(GraphicsDevice& gfx);
 		static std::string GenerateUID();
 	};
 }

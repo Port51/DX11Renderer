@@ -83,7 +83,7 @@ namespace gfx
 		ImGui_ImplWin32_Init(hWnd);
 
 		// Create graphics
-		pGfx = std::make_unique<Graphics>(hWnd, width, height);
+		pGfx = std::make_unique<GraphicsDevice>(hWnd, width, height);
 	}
 
 	Window::~Window()
@@ -119,7 +119,7 @@ namespace gfx
 		}
 	}
 
-	Graphics& Window::Gfx()
+	GraphicsDevice& Window::Gfx()
 	{
 		return *pGfx;
 	}

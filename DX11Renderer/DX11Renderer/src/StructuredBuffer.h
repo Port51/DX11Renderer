@@ -1,7 +1,7 @@
 #pragma once
 #include "Buffer.h"
 #include "DX11Include.h"
-#include "Graphics.h"
+#include "GraphicsDevice.h"
 
 namespace gfx
 {
@@ -10,7 +10,7 @@ namespace gfx
 	class StructuredBuffer : public Buffer
 	{
 	public:
-		StructuredBuffer(Graphics& gfx, D3D11_USAGE usage, UINT bindFlags, UINT numElements, bool useCounter = false)
+		StructuredBuffer(GraphicsDevice& gfx, D3D11_USAGE usage, UINT bindFlags, UINT numElements, bool useCounter = false)
 			: Buffer(usage, bindFlags, sizeof(T)),
 			useCounter(useCounter)
 		{
@@ -23,18 +23,18 @@ namespace gfx
 			bd.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
 			bd.StructureByteStride = sizeof(T);
 
-			THROW_IF_FAILED(gfx.GetDevice()->CreateBuffer(&bd, nullptr, &pBuffer));
+			THROW_IF_FAILED(gfx.GetAdapter()->CreateBuffer(&bd, nullptr, &pBuffer));
 
 			if (bindFlags & D3D11_BIND_SHADER_RESOURCE)
 			{
-				THROW_IF_FAILED(gfx.GetDevice()->CreateShaderResourceView(pBuffer.Get(), nullptr, &pSRV));
+				THROW_IF_FAILED(gfx.GetAdapter()->CreateShaderResourceView(pBuffer.Get(), nullptr, &pSRV));
 			}
 
 			if (bindFlags & D3D11_BIND_UNORDERED_ACCESS)
 			{
 				if (!useCounter)
 				{
-					THROW_IF_FAILED(gfx.GetDevice()->CreateUnorderedAccessView(pBuffer.Get(), nullptr, &pUAV));
+					THROW_IF_FAILED(gfx.GetAdapter()->CreateUnorderedAccessView(pBuffer.Get(), nullptr, &pUAV));
 				}
 				else
 				{
@@ -44,24 +44,24 @@ namespace gfx
 					uavDesc.Buffer.NumElements = numElements;
 					uavDesc.Buffer.Flags = D3D11_BUFFER_UAV_FLAG_COUNTER;
 					uavDesc.Format = DXGI_FORMAT_UNKNOWN;
-					THROW_IF_FAILED(gfx.GetDevice()->CreateUnorderedAccessView(pBuffer.Get(), &uavDesc, &pUAV));
+					THROW_IF_FAILED(gfx.GetAdapter()->CreateUnorderedAccessView(pBuffer.Get(), &uavDesc, &pUAV));
 				}
 			}
 		}
 
-		void BindCS(Graphics& gfx, UINT slot) override
+		void BindCS(GraphicsDevice& gfx, UINT slot) override
 		{
 			gfx.GetContext()->CSSetShaderResources(slot, 1u, pSRV.GetAddressOf());
 		}
-		void BindVS(Graphics& gfx, UINT slot) override
+		void BindVS(GraphicsDevice& gfx, UINT slot) override
 		{
 			gfx.GetContext()->VSSetShaderResources(slot, 1u, pSRV.GetAddressOf());
 		}
-		void BindPS(Graphics& gfx, UINT slot) override
+		void BindPS(GraphicsDevice& gfx, UINT slot) override
 		{
 			gfx.GetContext()->PSSetShaderResources(slot, 1u, pSRV.GetAddressOf());
 		}
-		void Update(Graphics& gfx, const void* data, UINT dataBytes)
+		void Update(GraphicsDevice& gfx, const void* data, UINT dataBytes)
 		{
 			if (usage == D3D11_USAGE_DYNAMIC) // Can be continuously modified by CPU
 			{
@@ -88,7 +88,7 @@ namespace gfx
 				throw std::runtime_error("Cannot update immutable structured buffer!");
 			}
 		}
-		void Update(Graphics& gfx, const std::vector<T>& data, UINT dataElements)
+		void Update(GraphicsDevice& gfx, const std::vector<T>& data, UINT dataElements)
 		{
 			Update(gfx, data.data(), sizeof(T) * dataElements);
 		}

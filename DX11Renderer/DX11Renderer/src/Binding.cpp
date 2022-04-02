@@ -10,7 +10,7 @@ namespace gfx
 		: pBindable(_pBindable)
 	{}
 
-	void Binding::Bind(Graphics& gfx) const
+	void Binding::Bind(GraphicsDevice& gfx) const
 	{
 		int bindings = 0;
 		if (bindToInputAssemblerStageSlot != -1)

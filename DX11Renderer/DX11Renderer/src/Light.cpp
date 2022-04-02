@@ -3,12 +3,12 @@
 #include "ModelInstance.h"
 #include "ModelAsset.h"
 #include "ConstantBuffer.h"
-#include "Graphics.h"
+#include "GraphicsDevice.h"
 #include "Config.h"
 
 namespace gfx
 {
-	Light::Light(Graphics & gfx, UINT index, bool allowUserControl, std::shared_ptr<ModelAsset> const& pModelAsset, dx::XMFLOAT3 positionWS, dx::XMFLOAT3 color, float intensity)
+	Light::Light(GraphicsDevice & gfx, UINT index, bool allowUserControl, std::shared_ptr<ModelAsset> const& pModelAsset, dx::XMFLOAT3 positionWS, dx::XMFLOAT3 color, float intensity)
 		: index(index),
 		allowUserControl(allowUserControl),
 		positionWS(positionWS),

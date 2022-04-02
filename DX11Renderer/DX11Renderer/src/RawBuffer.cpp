@@ -1,10 +1,10 @@
 #include "pch.h"
 #include "RawBuffer.h"
-#include "Graphics.h"
+#include "GraphicsDevice.h"
 
 namespace gfx
 {
-	RawBuffer::RawBuffer(Graphics& gfx, UINT bytes, D3D11_USAGE usage, UINT bindFlags)
+	RawBuffer::RawBuffer(GraphicsDevice& gfx, UINT bytes, D3D11_USAGE usage, UINT bindFlags)
 		: Buffer(usage, bindFlags, 1u)
 	{
 		// Refs:
@@ -21,7 +21,7 @@ namespace gfx
 		bd.CPUAccessFlags = (usage == D3D11_USAGE_DYNAMIC) ? D3D11_CPU_ACCESS_WRITE : 0;
 		bd.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_ALLOW_RAW_VIEWS;
 
-		THROW_IF_FAILED(gfx.GetDevice()->CreateBuffer(&bd, nullptr, &pBuffer));
+		THROW_IF_FAILED(gfx.GetAdapter()->CreateBuffer(&bd, nullptr, &pBuffer));
 
 		if (bindFlags & D3D11_BIND_SHADER_RESOURCE)
 		{
@@ -29,7 +29,7 @@ namespace gfx
 			srvd.BufferEx.Flags = D3D11_BUFFEREX_SRV_FLAG_RAW;
 			srvd.ViewDimension = D3D11_SRV_DIMENSION_BUFFEREX;
 			
-			THROW_IF_FAILED(gfx.GetDevice()->CreateShaderResourceView(pBuffer.Get(), &srvd, &pSRV));
+			THROW_IF_FAILED(gfx.GetAdapter()->CreateShaderResourceView(pBuffer.Get(), &srvd, &pSRV));
 		}
 
 		if (bindFlags & D3D11_BIND_UNORDERED_ACCESS)
@@ -40,7 +40,7 @@ namespace gfx
 			uavDesc.Buffer.NumElements = bytes;
 			uavDesc.Buffer.Flags = D3D11_BUFFER_UAV_FLAG_RAW;
 			uavDesc.Format = DXGI_FORMAT_R32_TYPELESS;
-			THROW_IF_FAILED(gfx.GetDevice()->CreateUnorderedAccessView(pBuffer.Get(), &uavDesc, &pUAV));
+			THROW_IF_FAILED(gfx.GetAdapter()->CreateUnorderedAccessView(pBuffer.Get(), &uavDesc, &pUAV));
 		}
 	}
 }

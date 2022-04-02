@@ -7,13 +7,13 @@
 
 namespace gfx
 {
-	class Graphics;
+	class GraphicsDevice;
 
 	template<typename T>
 	class ConstantBuffer : public Buffer
 	{
 	public:
-		ConstantBuffer(Graphics& gfx, D3D11_USAGE usage)
+		ConstantBuffer(GraphicsDevice& gfx, D3D11_USAGE usage)
 			: Buffer(usage, D3D11_BIND_CONSTANT_BUFFER, GetCBufferSize(sizeof(T)))
 		{
 			D3D11_BUFFER_DESC bd;
@@ -24,9 +24,9 @@ namespace gfx
 			bd.CPUAccessFlags = (usage == D3D11_USAGE_DYNAMIC) ? D3D11_CPU_ACCESS_WRITE : 0;
 			bd.StructureByteStride = 0u;
 
-			THROW_IF_FAILED(gfx.GetDevice()->CreateBuffer(&bd, nullptr, &pBuffer));
+			THROW_IF_FAILED(gfx.GetAdapter()->CreateBuffer(&bd, nullptr, &pBuffer));
 		}
-		ConstantBuffer(Graphics& gfx, D3D11_USAGE usage, const T& initialData)
+		ConstantBuffer(GraphicsDevice& gfx, D3D11_USAGE usage, const T& initialData)
 			: Buffer(usage, D3D11_BIND_CONSTANT_BUFFER, GetCBufferSize(sizeof(T)))
 		{
 			D3D11_BUFFER_DESC bd;
@@ -40,26 +40,26 @@ namespace gfx
 			D3D11_SUBRESOURCE_DATA sd;
 			ZeroMemory(&sd, sizeof(sd));
 			sd.pSysMem = (void*)&initialData;
-			THROW_IF_FAILED(gfx.GetDevice()->CreateBuffer(&bd, &sd, &pBuffer));
+			THROW_IF_FAILED(gfx.GetAdapter()->CreateBuffer(&bd, &sd, &pBuffer));
 		}
 	public:
-		void BindCS(Graphics& gfx, UINT slot) override
+		void BindCS(GraphicsDevice& gfx, UINT slot) override
 		{
 			gfx.GetContext()->CSSetConstantBuffers(slot, 1u, pBuffer.GetAddressOf());
 		}
-		void BindVS(Graphics& gfx, UINT slot) override
+		void BindVS(GraphicsDevice& gfx, UINT slot) override
 		{
 			gfx.GetContext()->VSSetConstantBuffers(slot, 1u, pBuffer.GetAddressOf());
 		}
-		void BindPS(Graphics& gfx, UINT slot) override
+		void BindPS(GraphicsDevice& gfx, UINT slot) override
 		{
 			gfx.GetContext()->PSSetConstantBuffers(slot, 1u, pBuffer.GetAddressOf());
 		}
-		void Update(Graphics& gfx, const T& data)
+		void Update(GraphicsDevice& gfx, const T& data)
 		{
 			Update(gfx, &data, sizeof(T));
 		}
-		void Update(Graphics& gfx, const void* data, UINT dataSize)
+		void Update(GraphicsDevice& gfx, const void* data, UINT dataSize)
 		{
 			if (usage == D3D11_USAGE_DYNAMIC) // Can be continuously modified by CPU
 			{

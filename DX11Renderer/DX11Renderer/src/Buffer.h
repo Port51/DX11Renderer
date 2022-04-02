@@ -11,7 +11,7 @@ struct ID3D11UnorderedAccessView;
 
 namespace gfx
 {
-	class Graphics;
+	class GraphicsDevice;
 
 	class Buffer : public Bindable
 	{

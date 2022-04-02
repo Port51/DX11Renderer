@@ -6,7 +6,7 @@
 
 namespace gfx
 {
-	class Graphics;
+	class GraphicsDevice;
 	class Material;
 	class VertexBufferWrapper;
 	class IndexBuffer;
@@ -15,9 +15,9 @@ namespace gfx
 	class InstancedMeshRenderer : public MeshRenderer
 	{
 	public:
-		InstancedMeshRenderer(Graphics& gfx, std::string name, std::shared_ptr<Material> pMaterial, std::shared_ptr<VertexBufferWrapper> pVertexBuffer, std::shared_ptr<IndexBuffer> pIndexBuffer, std::shared_ptr<Topology> pTopologyBuffer, UINT instanceCount);
+		InstancedMeshRenderer(GraphicsDevice& gfx, std::string name, std::shared_ptr<Material> pMaterial, std::shared_ptr<VertexBufferWrapper> pVertexBuffer, std::shared_ptr<IndexBuffer> pIndexBuffer, std::shared_ptr<Topology> pTopologyBuffer, UINT instanceCount);
 	public:
-		void IssueDrawCall(Graphics& gfx) const override;
+		void IssueDrawCall(GraphicsDevice& gfx) const override;
 	private:
 		UINT instanceCount;
 	};

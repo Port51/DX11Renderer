@@ -1,10 +1,10 @@
 #include "pch.h"
 #include "DepthStencilState.h"
-#include "Graphics.h"
+#include "GraphicsDevice.h"
 
 namespace gfx
 {
-	DepthStencilState::DepthStencilState(Graphics& gfx, Mode mode)
+	DepthStencilState::DepthStencilState(GraphicsDevice& gfx, Mode mode)
 		: mode(mode)
 	{
 		D3D11_DEPTH_STENCIL_DESC dsDesc = CD3D11_DEPTH_STENCIL_DESC{ CD3D11_DEFAULT{} };
@@ -48,20 +48,20 @@ namespace gfx
 			dsDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP::D3D11_STENCIL_OP_KEEP;
 		}
 
-		gfx.GetDevice()->CreateDepthStencilState(&dsDesc, &pStencil);
+		gfx.GetAdapter()->CreateDepthStencilState(&dsDesc, &pStencil);
 	}
 
-	DepthStencilState::DepthStencilState(Graphics & gfx, D3D11_DEPTH_STENCIL_DESC desc)
+	DepthStencilState::DepthStencilState(GraphicsDevice & gfx, D3D11_DEPTH_STENCIL_DESC desc)
 	{
-		gfx.GetDevice()->CreateDepthStencilState(&desc, &pStencil);
+		gfx.GetAdapter()->CreateDepthStencilState(&desc, &pStencil);
 	}
 
-	void DepthStencilState::BindOM(Graphics& gfx)
+	void DepthStencilState::BindOM(GraphicsDevice& gfx)
 	{
 		gfx.GetContext()->OMSetDepthStencilState(pStencil.Get(), 0x01);
 	}
 
-	std::shared_ptr<DepthStencilState> DepthStencilState::Resolve(Graphics& gfx, Mode mode)
+	std::shared_ptr<DepthStencilState> DepthStencilState::Resolve(GraphicsDevice& gfx, Mode mode)
 	{
 		return std::move(Codex::Resolve<DepthStencilState>(gfx, GenerateUID(mode), mode));
 	}

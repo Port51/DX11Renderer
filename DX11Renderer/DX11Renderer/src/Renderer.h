@@ -7,7 +7,7 @@
 
 namespace gfx
 {
-	class Graphics;
+	class GraphicsDevice;
 	class Camera;
 	class LightManager;
 	class RendererList;
@@ -39,16 +39,16 @@ namespace gfx
 		enum RendererView { Final, TiledLighting, ClusteredLighting, SSRTrace };
 		enum RendererFeature { Shadows, FXAA, HZBSSR, Dither, Tonemapping, COUNT }; // for COUNT to be accurate, don't set these values to anything weird...
 	public:
-		Renderer(Graphics& gfx, std::shared_ptr<LightManager> pLightManager, std::shared_ptr<RendererList> pRendererList);
+		Renderer(GraphicsDevice& gfx, std::shared_ptr<LightManager> pLightManager, std::shared_ptr<RendererList> pRendererList);
 		virtual ~Renderer();
 	public:
 		void AcceptDrawCall(DrawCall job, std::string targetPass);
-		void Execute(Graphics& gfx, const std::unique_ptr<Camera>& cam, float timeElapsed, UINT pixelSelectionX, UINT pixelSelectionY);
-		void DrawImguiControlWindow(Graphics& gfx);
+		void Execute(GraphicsDevice& gfx, const std::unique_ptr<Camera>& cam, float timeElapsed, UINT pixelSelectionX, UINT pixelSelectionY);
+		void DrawImguiControlWindow(GraphicsDevice& gfx);
 		void Reset();
 		bool IsFeatureEnabled(RendererFeature feature) const;
 	private:
-		void SetupRenderPassDependencies(Graphics& gfx);
+		void SetupRenderPassDependencies(GraphicsDevice& gfx);
 		const std::unique_ptr<RenderPass>& GetRenderPass(const std::string name);
 		const std::unique_ptr<RenderPass>& CreateRenderPass(const std::string name);
 		const std::unique_ptr<RenderPass>& CreateRenderPass(const std::string name, std::unique_ptr<RenderPass> pRenderPass);

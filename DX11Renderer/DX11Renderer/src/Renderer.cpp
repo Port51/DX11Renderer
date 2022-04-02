@@ -2,7 +2,7 @@
 #include "Renderer.h"
 #include <array>
 #include "DepthStencilState.h"
-#include "Graphics.h"
+#include "GraphicsDevice.h"
 #include "DrawCall.h"
 #include "RenderPass.h"
 #include "FullscreenPass.h"
@@ -31,7 +31,7 @@
 
 namespace gfx
 {
-	Renderer::Renderer(Graphics& gfx, std::shared_ptr<LightManager> pLightManager, std::shared_ptr<RendererList> pRendererList)
+	Renderer::Renderer(GraphicsDevice& gfx, std::shared_ptr<LightManager> pLightManager, std::shared_ptr<RendererList> pRendererList)
 		: pRendererList(pRendererList), pLightManager(pLightManager)
 	{
 		//
@@ -68,34 +68,34 @@ namespace gfx
 		// Render targets
 		//
 		pNormalRoughReflectivityTarget = std::make_shared<RenderTexture>(gfx);
-		pNormalRoughReflectivityTarget->Init(gfx.GetDevice(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
+		pNormalRoughReflectivityTarget->Init(gfx.GetAdapter(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
 		pHiZBufferTarget = std::make_shared<RenderTexture>(gfx, DXGI_FORMAT_R16G16_UNORM, 8u);
-		pHiZBufferTarget->Init(gfx.GetDevice(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
+		pHiZBufferTarget->Init(gfx.GetAdapter(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
 		pBloomPyramid = std::make_shared<RenderTexture>(gfx, DXGI_FORMAT_R16G16B16A16_FLOAT, 8u);
-		pBloomPyramid->Init(gfx.GetDevice(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
+		pBloomPyramid->Init(gfx.GetAdapter(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
 		pSpecularLighting = std::make_shared<RenderTexture>(gfx);
-		pSpecularLighting->Init(gfx.GetDevice(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
+		pSpecularLighting->Init(gfx.GetAdapter(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
 		pDiffuseLighting = std::make_shared<RenderTexture>(gfx);
-		pDiffuseLighting->Init(gfx.GetDevice(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
+		pDiffuseLighting->Init(gfx.GetAdapter(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
 		pCameraColor0 = std::make_shared<RenderTexture>(gfx);
-		pCameraColor0->Init(gfx.GetDevice(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
+		pCameraColor0->Init(gfx.GetAdapter(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
 		pCameraColor1 = std::make_shared<RenderTexture>(gfx);
-		pCameraColor1->Init(gfx.GetDevice(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
+		pCameraColor1->Init(gfx.GetAdapter(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
 		pDebugTiledLighting = std::make_shared<RenderTexture>(gfx);
-		pDebugTiledLighting->Init(gfx.GetDevice(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
+		pDebugTiledLighting->Init(gfx.GetAdapter(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
 		pDebugClusteredLighting = std::make_shared<RenderTexture>(gfx);
-		pDebugClusteredLighting->Init(gfx.GetDevice(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
+		pDebugClusteredLighting->Init(gfx.GetAdapter(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
 		pDebugSSR = std::make_shared<RenderTexture>(gfx);
-		pDebugSSR->Init(gfx.GetDevice(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
+		pDebugSSR->Init(gfx.GetAdapter(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
 		//
 		// Buffers
@@ -151,7 +151,7 @@ namespace gfx
 
 	}
 
-	void Renderer::SetupRenderPassDependencies(Graphics& gfx)
+	void Renderer::SetupRenderPassDependencies(GraphicsDevice& gfx)
 	{
 		bool cameraOutSlot0 = true;
 
@@ -295,7 +295,7 @@ namespace gfx
 		pRenderPasses[targetPass]->EnqueueJob(job);
 	}
 
-	void Renderer::Execute(Graphics & gfx, const std::unique_ptr<Camera>& cam, float timeElapsed, UINT pixelSelectionX, UINT pixelSelectionY)
+	void Renderer::Execute(GraphicsDevice & gfx, const std::unique_ptr<Camera>& cam, float timeElapsed, UINT pixelSelectionX, UINT pixelSelectionY)
 	{
 		auto context = gfx.GetContext();
 
@@ -633,7 +633,7 @@ namespace gfx
 
 	}
 
-	void Renderer::DrawImguiControlWindow(Graphics& gfx)
+	void Renderer::DrawImguiControlWindow(GraphicsDevice& gfx)
 	{
 		if (ImGui::Begin("Renderer"))
 		{

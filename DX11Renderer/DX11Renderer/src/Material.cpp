@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Material.h"
 #include <typeinfo>
-#include "Graphics.h"
+#include "GraphicsDevice.h"
 #include "VertexShader.h"
 #include "PixelShader.h"
 #include "InputLayout.h"
@@ -30,7 +30,7 @@ namespace gfx
 
 	enum MaterialParseState { None, Properties, Pass };
 
-	Material::Material(Graphics& gfx, std::string_view _materialAssetPath)
+	Material::Material(GraphicsDevice& gfx, std::string_view _materialAssetPath)
 		: materialAssetPath(std::string(_materialAssetPath))
 	{
 		// todo: This is very WIP and should be replaced by something entirely different later
@@ -200,7 +200,7 @@ namespace gfx
 
 	}
 
-	void Material::Bind(Graphics& gfx, std::string_view passName)
+	void Material::Bind(GraphicsDevice& gfx, std::string_view passName)
 	{
 		// Is this needed?
 	}
@@ -222,7 +222,7 @@ namespace gfx
 		return vertexLayout;
 	}
 
-	std::shared_ptr<Bindable> Material::Resolve(Graphics& gfx, const std::string_view assetPath)
+	std::shared_ptr<Bindable> Material::Resolve(GraphicsDevice& gfx, const std::string_view assetPath)
 	{
 		return std::move(Codex::Resolve<Material>(gfx, GenerateUID(assetPath), assetPath));
 	}

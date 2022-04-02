@@ -7,14 +7,14 @@ struct ID3D11RasterizerState;
 
 namespace gfx
 {
-	class Graphics;
+	class GraphicsDevice;
 
 	class RasterizerState : public Bindable
 	{
 	public:
-		RasterizerState(Graphics& gfx, D3D11_CULL_MODE cullMode);
-		void BindRS(Graphics& gfx) override;
-		static std::shared_ptr<RasterizerState> Resolve(Graphics& gfx, D3D11_CULL_MODE cullMode);
+		RasterizerState(GraphicsDevice& gfx, D3D11_CULL_MODE cullMode);
+		void BindRS(GraphicsDevice& gfx) override;
+		static std::shared_ptr<RasterizerState> Resolve(GraphicsDevice& gfx, D3D11_CULL_MODE cullMode);
 		static D3D11_CULL_MODE GetCullModeFromMaterialString(std::string name);
 	protected:
 		static std::string GenerateUID(D3D11_CULL_MODE cullMode);

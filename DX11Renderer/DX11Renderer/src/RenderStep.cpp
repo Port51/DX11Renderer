@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "RenderStep.h"
-#include "Graphics.h"
+#include "GraphicsDevice.h"
 #include "MeshRenderer.h"
 #include "Renderer.h"
 #include "DrawContext.h"
@@ -27,7 +27,7 @@ namespace gfx
 	{
 		drawContext.renderer.AcceptDrawCall(DrawCall(this, &meshRenderer, drawContext), targetPass);
 	}
-	void RenderStep::Bind(Graphics & gfx) const
+	void RenderStep::Bind(GraphicsDevice & gfx) const
 	{
 		for (const auto& b : bindings)
 		{

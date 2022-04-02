@@ -14,7 +14,7 @@ struct ID3D11ShaderResourceView;
 
 namespace gfx
 {
-	class Graphics;
+	class GraphicsDevice;
 	class Camera;
 	class RendererList;
 	class Light;
@@ -41,11 +41,11 @@ namespace gfx
 		const static UINT ClusteredLightingZLevels = 16u;
 		const static UINT MaxLightsPerCluster = 32u;
 	public:
-		LightManager(Graphics& gfx, std::shared_ptr<RendererList> pRendererList);
+		LightManager(GraphicsDevice& gfx, std::shared_ptr<RendererList> pRendererList);
 		virtual ~LightManager() = default;
 	public:
 		void AddLightModelsToList(RendererList& pRendererList);
-		void CullLights(Graphics& gfx, const std::unique_ptr<Camera>& cam, bool enableShadows);
+		void CullLights(GraphicsDevice& gfx, const std::unique_ptr<Camera>& cam, bool enableShadows);
 		std::unique_ptr<DepthStencilTarget>& GetShadowAtlas();
 		std::unique_ptr<ConstantBuffer<LightInputCB>>& GetLightInputCB();
 		void RenderShadows(ShadowPassContext context);

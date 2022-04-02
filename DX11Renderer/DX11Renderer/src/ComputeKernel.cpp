@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "ComputeKernel.h"
 #include "ComputeShader.h"
-#include "Graphics.h"
+#include "GraphicsDevice.h"
 #include "Buffer.h"
 #include "RenderPass.h"
 
@@ -13,7 +13,7 @@ namespace gfx
 
 	}
 
-	void ComputeKernel::Dispatch(Graphics& gfx, UINT threadCountX, UINT threadCountY, UINT threadCountZ)
+	void ComputeKernel::Dispatch(GraphicsDevice& gfx, UINT threadCountX, UINT threadCountY, UINT threadCountZ)
 	{
 		pComputeShader->Dispatch(gfx, threadCountX, threadCountY, threadCountZ);
 	}

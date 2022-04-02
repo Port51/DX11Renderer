@@ -1,11 +1,11 @@
 #include "pch.h"
 #include "RasterizerState.h"
 #include "SharedCodex.h"
-#include "Graphics.h"
+#include "GraphicsDevice.h"
 
 namespace gfx
 {
-	RasterizerState::RasterizerState(Graphics& gfx, D3D11_CULL_MODE cullMode)
+	RasterizerState::RasterizerState(GraphicsDevice& gfx, D3D11_CULL_MODE cullMode)
 		: cullMode(cullMode)
 	{
 		D3D11_RASTERIZER_DESC rasterDesc = CD3D11_RASTERIZER_DESC(CD3D11_DEFAULT{});
@@ -16,15 +16,15 @@ namespace gfx
 			rasterDesc.FrontCounterClockwise = true;
 		}
 
-		THROW_IF_FAILED(gfx.GetDevice()->CreateRasterizerState(&rasterDesc, &pRasterizer));
+		THROW_IF_FAILED(gfx.GetAdapter()->CreateRasterizerState(&rasterDesc, &pRasterizer));
 	}
 
-	void RasterizerState::BindRS(Graphics& gfx)
+	void RasterizerState::BindRS(GraphicsDevice& gfx)
 	{
 		gfx.GetContext()->RSSetState(pRasterizer.Get());
 	}
 
-	std::shared_ptr<RasterizerState> RasterizerState::Resolve(Graphics& gfx, D3D11_CULL_MODE cullMode)
+	std::shared_ptr<RasterizerState> RasterizerState::Resolve(GraphicsDevice& gfx, D3D11_CULL_MODE cullMode)
 	{
 		return std::move(Codex::Resolve<RasterizerState>(gfx, GenerateUID(cullMode), cullMode));
 	}

@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "Graphics.h"
+#include "GraphicsDevice.h"
 #include <sstream>
 #include <d3dcompiler.h>
 #include "DepthStencilTarget.h"
@@ -9,7 +9,7 @@
 
 namespace gfx
 {
-	Graphics::Graphics(HWND hWnd, int windowWidth, int windowHeight)
+	GraphicsDevice::GraphicsDevice(HWND hWnd, int windowWidth, int windowHeight)
 		: screenWidth(windowWidth)
 		, screenHeight(windowHeight)
 		, log(std::make_unique<Log>())
@@ -86,7 +86,7 @@ namespace gfx
 		ImGui_ImplDX11_Init(pDevice.Get(), pContext.Get());
 	}
 
-	void Graphics::BeginFrame()
+	void GraphicsDevice::BeginFrame()
 	{
 		// imgui begin frame
 		if (imguiEnabled)
@@ -97,7 +97,7 @@ namespace gfx
 		}
 	}
 
-	void Graphics::EndFrame()
+	void GraphicsDevice::EndFrame()
 	{
 		if (imguiEnabled)
 		{
@@ -125,61 +125,66 @@ namespace gfx
 		}
 	}
 
-	void Graphics::ClearBuffer(float red, float green, float blue)
+	void GraphicsDevice::ClearBuffer(float red, float green, float blue)
 	{
 		const float color[] = { red, green, blue, 1.0f };
 		pContext->ClearRenderTargetView(pBackBufferView.Get(), color);
 		pContext->ClearDepthStencilView(pDepthStencil->GetView().Get(), D3D11_CLEAR_DEPTH, 1.f, 0u);
 	}
 
-	void Graphics::EnableImgui()
+	void GraphicsDevice::EnableImgui()
 	{
 		imguiEnabled = true;
 	}
 
-	void Graphics::DisableImgui()
+	void GraphicsDevice::DisableImgui()
 	{
 		imguiEnabled = false;
 	}
 
-	bool Graphics::IsImguiEnabled() const
+	bool GraphicsDevice::IsImguiEnabled() const
 	{
 		return imguiEnabled;
 	}
 
-	void Graphics::DrawIndexed(UINT count)
+	void GraphicsDevice::DrawIndexed(UINT indexCount)
 	{
-		pContext->DrawIndexed(count, 0u, 0u);
+		pContext->DrawIndexed(indexCount, 0u, 0u);
 	}
 
-	void Graphics::SetDepthOnlyRenderTarget()
+	void GraphicsDevice::DrawIndexedInstanced(UINT indexCount, UINT instanceCount)
+	{
+		pContext->DrawIndexedInstanced(indexCount, instanceCount, 0u, 0, 0u);
+	}
+
+	void GraphicsDevice::SetDepthOnlyRenderTarget()
 	{
 		pContext->OMSetRenderTargets(0u, nullptr, pDepthStencil->GetView().Get());
 	}
 
-	void Graphics::SetDepthOnlyRenderTarget(const std::shared_ptr<DepthStencilTarget>& _pDepthStencil)
+	void GraphicsDevice::SetDepthOnlyRenderTarget(const std::shared_ptr<DepthStencilTarget>& _pDepthStencil)
 	{
 		pContext->OMSetRenderTargets(0u, nullptr, _pDepthStencil->GetView().Get());
 	}
 
-	void Graphics::SetRenderTarget(ComPtr<ID3D11RenderTargetView> renderTargetView)
+	void GraphicsDevice::SetRenderTarget(ComPtr<ID3D11RenderTargetView> renderTargetView)
 	{
 		pContext->OMSetRenderTargets(1u, renderTargetView.GetAddressOf(), pDepthStencil->GetView().Get());
 		currentRenderTargetCount = 1u;
 	}
 
-	void Graphics::SetRenderTargets(std::vector<ID3D11RenderTargetView*> renderTargetViews)
+	void GraphicsDevice::SetRenderTargets(std::vector<ID3D11RenderTargetView*> renderTargetViews)
 	{
 		pContext->OMSetRenderTargets(renderTargetViews.size(), renderTargetViews.data(), pDepthStencil->GetView().Get());
 		currentRenderTargetCount = renderTargetViews.size();
 	}
 
-	void Graphics::ClearRenderTargets()
+	void GraphicsDevice::ClearRenderTargets()
 	{
 		pContext->OMSetRenderTargets(currentRenderTargetCount, pNullRenderTargetViews.data(), nullptr);
 	}
 
-	void Graphics::SetViewport(int x, int y, int width, int height)
+	void GraphicsDevice::SetViewport(int x, int y, int width, int height)
 	{
 		D3D11_VIEWPORT vp;
 		vp.Width = (FLOAT)width;
@@ -191,7 +196,7 @@ namespace gfx
 		pContext->RSSetViewports(1u, &vp);
 	}
 
-	void Graphics::SetViewport(int width, int height)
+	void GraphicsDevice::SetViewport(int width, int height)
 	{
 		D3D11_VIEWPORT vp;
 		vp.Width = (FLOAT)width;
@@ -203,35 +208,35 @@ namespace gfx
 		pContext->RSSetViewports(1u, &vp);
 	}
 
-	int Graphics::GetScreenWidth() const
+	int GraphicsDevice::GetScreenWidth() const
 	{
 		return screenWidth;
 	}
 
-	int Graphics::GetScreenHeight() const
+	int GraphicsDevice::GetScreenHeight() const
 	{
 		return screenHeight;
 	}
 
-	ComPtr<ID3D11Device> Graphics::GetDevice() const
+	ComPtr<ID3D11Device> GraphicsDevice::GetAdapter() const
 	{
 		return pDevice;
 	}
 
-	ComPtr<ID3D11DeviceContext> Graphics::GetContext() const
+	ComPtr<ID3D11DeviceContext> GraphicsDevice::GetContext() const
 	{
 		return pContext;
 	}
 
-	std::unique_ptr<Log>& Graphics::GetLog()
+	std::unique_ptr<Log>& GraphicsDevice::GetLog()
 	{
 		return log;
 	}
-	std::shared_ptr<DepthStencilTarget>& Graphics::GetDepthStencilTarget()
+	std::shared_ptr<DepthStencilTarget>& GraphicsDevice::GetDepthStencilTarget()
 	{
 		return pDepthStencil;
 	}
-	ComPtr<ID3D11RenderTargetView>& Graphics::GetBackBufferView()
+	ComPtr<ID3D11RenderTargetView>& GraphicsDevice::GetBackBufferView()
 	{
 		return pBackBufferView;
 	}

@@ -8,7 +8,7 @@
 
 namespace gfx
 {
-	class Graphics;
+	class GraphicsDevice;
 	class Material;
 	class MeshRenderer;
 	class SceneGraphNode;
@@ -20,8 +20,8 @@ namespace gfx
 	class ModelInstance
 	{
 	public:
-		ModelInstance(Graphics& gfx, const ModelAsset& pModelAsset, dx::XMMATRIX transform);
-		ModelInstance(Graphics& gfx, std::shared_ptr<ModelAsset> pModelAsset, dx::XMMATRIX transform);
+		ModelInstance(GraphicsDevice& gfx, const ModelAsset& pModelAsset, dx::XMMATRIX transform);
+		ModelInstance(GraphicsDevice& gfx, std::shared_ptr<ModelAsset> pModelAsset, dx::XMMATRIX transform);
 		virtual ~ModelInstance() = default;
 	public:
 		void SubmitDrawCalls(const DrawContext& drawContext) const;
@@ -29,8 +29,8 @@ namespace gfx
 		void UpdateSceneGraph();
 		std::vector<std::shared_ptr<MeshRenderer>> GetMeshRenderers() const;
 	private:
-		std::shared_ptr<MeshRenderer> CreateMeshRenderer(Graphics& gfx, std::shared_ptr<MeshAsset> const& pMeshAsset);
-		std::shared_ptr<SceneGraphNode> CreateModelInstanceNode(Graphics& gfx, std::shared_ptr<ModelAssetNode> const& pSourceNode);
+		std::shared_ptr<MeshRenderer> CreateMeshRenderer(GraphicsDevice& gfx, std::shared_ptr<MeshAsset> const& pMeshAsset);
+		std::shared_ptr<SceneGraphNode> CreateModelInstanceNode(GraphicsDevice& gfx, std::shared_ptr<ModelAssetNode> const& pSourceNode);
 	private:
 		std::vector<std::shared_ptr<Material>> pMaterials;
 		std::shared_ptr<SceneGraphNode> pSceneGraph;

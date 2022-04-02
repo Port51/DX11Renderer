@@ -14,21 +14,21 @@ namespace gfx
 	class RenderTexture : public Texture
 	{
 	public:
-		RenderTexture(Graphics& gfx);
-		RenderTexture(Graphics& gfx, UINT mipCount);
-		RenderTexture(Graphics& gfx, DXGI_FORMAT format, UINT mipCount);
+		RenderTexture(GraphicsDevice& gfx);
+		RenderTexture(GraphicsDevice& gfx, UINT mipCount);
+		RenderTexture(GraphicsDevice& gfx, DXGI_FORMAT format, UINT mipCount);
 
 		virtual void Init(ComPtr<ID3D11Device> pDevice, UINT textureWidth, UINT textureHeight);
 		void Shutdown();
 
 		ComPtr<ID3D11RenderTargetView> GetView() const;
 
-		void BindCS(Graphics& gfx, UINT slot) override;
-		void BindVS(Graphics& gfx, UINT slot) override;
-		void BindPS(Graphics& gfx, UINT slot) override;
-		void BindAsTexture(Graphics& gfx, UINT slot) const;
-		void BindAsTarget(Graphics& gfx) const;
-		void BindAsTarget(Graphics& gfx, ComPtr<ID3D11DepthStencilView> pDepthStencilView) const;
+		void BindCS(GraphicsDevice& gfx, UINT slot) override;
+		void BindVS(GraphicsDevice& gfx, UINT slot) override;
+		void BindPS(GraphicsDevice& gfx, UINT slot) override;
+		void BindAsTexture(GraphicsDevice& gfx, UINT slot) const;
+		void BindAsTarget(GraphicsDevice& gfx) const;
+		void BindAsTarget(GraphicsDevice& gfx, ComPtr<ID3D11DepthStencilView> pDepthStencilView) const;
 		void SetRenderTarget(ID3D11DeviceContext* deviceContext, ComPtr<ID3D11DepthStencilView> depthStencilView);
 		void ClearRenderTarget(ID3D11DeviceContext* deviceContext, float, float, float, float);
 	protected:

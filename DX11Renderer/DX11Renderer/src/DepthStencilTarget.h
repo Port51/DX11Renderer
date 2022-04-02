@@ -8,15 +8,15 @@ struct ID3D11ShaderResourceView;
 
 namespace gfx
 {
-	class Graphics;
+	class GraphicsDevice;
 
 	class DepthStencilTarget
 	{
 	public:
-		DepthStencilTarget(Graphics& gfx, int width, int height);
+		DepthStencilTarget(GraphicsDevice& gfx, int width, int height);
 		virtual ~DepthStencilTarget();
 	public:
-		void Clear(Graphics& gfx);
+		void Clear(GraphicsDevice& gfx);
 		ComPtr<ID3D11DepthStencilView> GetView() const;
 		ComPtr<ID3D11ShaderResourceView> GetSRV() const;
 	private:

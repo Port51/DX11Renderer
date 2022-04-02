@@ -10,7 +10,7 @@
 #include "RenderPass.h"
 #include "ShadowPassContext.h"
 #include "ConstantBuffer.h"
-#include "Graphics.h"
+#include "GraphicsDevice.h"
 #include "LightShadowData.h"
 #include "Frustum.h"
 #include "DrawContext.h"
@@ -21,7 +21,7 @@
 
 namespace gfx
 {
-	DirectionalLight::DirectionalLight(Graphics& gfx, UINT index, bool allowUserControl, bool hasShadow, std::shared_ptr<ModelAsset> const& pModelAsset, float pan, float tilt, dx::XMFLOAT3 color, float intensity, float sphereRad, float range)
+	DirectionalLight::DirectionalLight(GraphicsDevice& gfx, UINT index, bool allowUserControl, bool hasShadow, std::shared_ptr<ModelAsset> const& pModelAsset, float pan, float tilt, dx::XMFLOAT3 color, float intensity, float sphereRad, float range)
 		: Light(gfx, index, allowUserControl, pModelAsset, dx::XMFLOAT3(0.f, 0.f, 0.f), color, intensity),
 		pan(pan),
 		tilt(tilt),
