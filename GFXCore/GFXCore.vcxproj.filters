@@ -1,0 +1,126 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Precompiled">
+      <UniqueIdentifier>{5265bcc0-a02f-42d0-ad3e-a74fa417de87}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Vendors">
+      <UniqueIdentifier>{84ab9796-75d6-406d-8827-5695fbe2f4b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Vendors\Imgui">
+      <UniqueIdentifier>{6e317ca2-8c19-41ad-9ac5-8161bad4a5b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Vendors\Imgui\Source">
+      <UniqueIdentifier>{587e7694-2742-453c-819d-ef73f23e859f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Vendors\Imgui\Headers">
+      <UniqueIdentifier>{24108f6d-ece6-4ac3-bd4d-0c8af6373add}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\BaseWindow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MouseEvent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MouseInput.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\WindowsInclude.h">
+      <Filter>Precompiled</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vendor\imgui\imconfig.h">
+      <Filter>Vendors\Imgui\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vendor\imgui\imgui.h">
+      <Filter>Vendors\Imgui\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vendor\imgui\imgui_impl_dx11.h">
+      <Filter>Vendors\Imgui\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vendor\imgui\imgui_impl_dx12.h">
+      <Filter>Vendors\Imgui\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vendor\imgui\imgui_impl_win32.h">
+      <Filter>Vendors\Imgui\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vendor\imgui\imgui_internal.h">
+      <Filter>Vendors\Imgui\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vendor\imgui\imstb_rectpack.h">
+      <Filter>Vendors\Imgui\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vendor\imgui\imstb_textedit.h">
+      <Filter>Vendors\Imgui\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\vendor\imgui\imstb_truetype.h">
+      <Filter>Vendors\Imgui\Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\InputListener.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CommonCoreHeader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CorePch.h">
+      <Filter>Precompiled</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\MouseEvent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MouseInput.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaseWindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\vendor\imgui\imgui.cpp">
+      <Filter>Vendors\Imgui\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\vendor\imgui\imgui_demo.cpp">
+      <Filter>Vendors\Imgui\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\vendor\imgui\imgui_draw.cpp">
+      <Filter>Vendors\Imgui\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\vendor\imgui\imgui_impl_dx11.cpp">
+      <Filter>Vendors\Imgui\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\vendor\imgui\imgui_impl_dx12.cpp">
+      <Filter>Vendors\Imgui\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\vendor\imgui\imgui_impl_win32.cpp">
+      <Filter>Vendors\Imgui\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\vendor\imgui\imgui_tables.cpp">
+      <Filter>Vendors\Imgui\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\vendor\imgui\imgui_widgets.cpp">
+      <Filter>Vendors\Imgui\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\InputListener.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CommonCoreHeader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CorePch.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

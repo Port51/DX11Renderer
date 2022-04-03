@@ -237,9 +237,6 @@
     <ClCompile Include="src\VertexShader.cpp">
       <Filter>Source\Bindable\Shaders</Filter>
     </ClCompile>
-    <ClCompile Include="src\Window.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="src\ImguiManager.cpp">
       <Filter>Source</Filter>
     </ClCompile>
@@ -375,6 +372,9 @@
     <ClCompile Include="src\GraphicsDevice.cpp">
       <Filter>Source\RenderPipeline</Filter>
     </ClCompile>
+    <ClCompile Include="src\DX11Window.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -484,9 +484,6 @@
     </ClInclude>
     <ClInclude Include="src\VertexShader.h">
       <Filter>Headers\Bindable\Shaders</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Window.h">
-      <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="src\RenderTexture.h">
       <Filter>Headers\RenderPipeline</Filter>
@@ -661,6 +658,9 @@
     </ClInclude>
     <ClInclude Include="src\GraphicsDevice.h">
       <Filter>Headers\RenderPipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="src\DX11Window.h">
+      <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
