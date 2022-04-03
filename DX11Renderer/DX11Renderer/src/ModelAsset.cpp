@@ -24,7 +24,7 @@
 namespace gfx
 {
 	ModelAsset::ModelAsset(std::shared_ptr<ModelAssetNode> _pSceneGraph, std::vector<std::string> _materialPaths)
-		: pSceneGraph(std::move(_pSceneGraph)), materialPaths(std::move(_materialPaths))
+		: m_pSceneGraph(std::move(_pSceneGraph)), m_materialPaths(std::move(_materialPaths))
 	{
 
 	}
@@ -44,21 +44,21 @@ namespace gfx
 	}
 
 	ModelAssetNode::ModelAssetNode(std::string _name, std::shared_ptr<MeshAsset> pMeshAsset, dx::XMFLOAT4X4 _localTransform)
-		: name(_name), pMeshAsset(std::move(pMeshAsset)), localTransform(std::move(_localTransform))
+		: m_name(_name), m_pMeshAsset(std::move(pMeshAsset)), m_localTransform(std::move(_localTransform))
 	{}
 
 	std::shared_ptr<MeshAsset> ModelAssetNode::GetMeshAsset() const
 	{
-		return pMeshAsset;
+		return m_pMeshAsset;
 	}
 
 	dx::XMFLOAT4X4 ModelAssetNode::GetLocalTransform() const
 	{
-		return localTransform;
+		return m_localTransform;
 	}
 
 	void ModelAssetNode::SetChildNodes(std::vector<std::shared_ptr<ModelAssetNode>> _pChildNodes)
 	{
-		pChildNodes = std::move(_pChildNodes);
+		m_pChildNodes = std::move(_pChildNodes);
 	}
 }

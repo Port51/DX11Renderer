@@ -28,25 +28,25 @@ namespace gfx
 
 		LRESULT CALLBACK HandleMsg(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) override;
 	private:
-		void DoFrame();
+		void ExecuteFrame();
 	private:
-		std::unique_ptr<ImguiManager> pImgui; // must be initialized before wnd
-		std::unique_ptr<DX11Window> pWindow;
-		std::unique_ptr<Camera> pCamera;
-		std::shared_ptr<LightManager> pLightManager;
-		std::unique_ptr<Renderer> pRenderer;
-		std::unique_ptr<Timer> pTimer;
+		std::unique_ptr<ImguiManager> m_pImgui; // must be initialized before wnd
+		std::unique_ptr<DX11Window> m_pWindow;
+		std::unique_ptr<Camera> m_pCamera;
+		std::shared_ptr<LightManager> m_pLightManager;
+		std::unique_ptr<Renderer> m_pRenderer;
+		std::unique_ptr<Timer> m_pTimer;
 
-		std::unique_ptr<ModelInstance> pModel0;
-		std::unique_ptr<ModelInstance> pModel1;
-		std::vector<std::unique_ptr<MeshRenderer>> pDrawables;
-		std::shared_ptr<RendererList> pRendererList;
+		std::unique_ptr<ModelInstance> m_pModel0;
+		std::unique_ptr<ModelInstance> m_pModel1;
+		std::vector<std::unique_ptr<MeshRenderer>> m_pDrawables;
+		std::shared_ptr<RendererList> m_pRendererList;
 
-		bool showDemoWindow = true;
-		UINT pixelSelectionX = 450u;
-		UINT pixelSelectionY = 480u;
-		UINT pixelIteration = 0u;
+		bool m_showDemoWindow = true;
+		UINT m_pixelSelectionX = 450u;
+		UINT m_pixelSelectionY = 480u;
+		UINT m_pixelIteration = 0u;
 
-		static constexpr UINT nDrawables = 1;
+		static constexpr UINT m_nDrawables = 1;
 	};
 }

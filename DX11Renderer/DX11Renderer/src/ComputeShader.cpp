@@ -10,23 +10,23 @@ namespace gfx
 	using namespace std::string_literals;
 
 	ComputeShader::ComputeShader(GraphicsDevice& gfx, const std::string& path, const std::string& kernelName)
-		: path(path), kernelName(kernelName)
+		: m_path(path), m_kernelName(kernelName)
 	{
 		std::wstring wide{ path.begin(), path.end() }; // convert to wide for file read <-- won't work for special characters
-		THROW_IF_FAILED(D3DReadFileToBlob(wide.c_str(), &pBytecodeBlob));
+		THROW_IF_FAILED(D3DReadFileToBlob(wide.c_str(), &m_pBytecodeBlob));
 		THROW_IF_FAILED(gfx.GetAdapter()->CreateComputeShader(
-			pBytecodeBlob->GetBufferPointer(),
-			pBytecodeBlob->GetBufferSize(),
+			m_pBytecodeBlob->GetBufferPointer(),
+			m_pBytecodeBlob->GetBufferSize(),
 			nullptr,
-			&pComputeShader
+			&m_pComputeShader
 		));
 
 		// Read info from shader
 		ID3D11ShaderReflection* pReflector = NULL;
-		D3DReflect(pBytecodeBlob->GetBufferPointer(), pBytecodeBlob->GetBufferSize(),
+		D3DReflect(m_pBytecodeBlob->GetBufferPointer(), m_pBytecodeBlob->GetBufferSize(),
 			IID_ID3D11ShaderReflection, (void**)&pReflector);
 
-		pReflector->GetThreadGroupSize(&kernelSizeX, &kernelSizeY, &kernelSizeZ);
+		pReflector->GetThreadGroupSize(&m_kernelSizeX, &m_kernelSizeY, &m_kernelSizeZ);
 
 		/*
 		UINT flags = D3DCOMPILE_ENABLE_STRICTNESS;
@@ -63,12 +63,12 @@ namespace gfx
 
 	void ComputeShader::Dispatch(GraphicsDevice & gfx, UINT threadCountX, UINT threadCountY, UINT threadCountZ) const
 	{
-		gfx.GetContext()->CSSetShader(pComputeShader.Get(), nullptr, 0);
+		gfx.GetContext()->CSSetShader(m_pComputeShader.Get(), nullptr, 0);
 
 		// Determine thread counts by dividing and rounding up
-		UINT threadGroupCountX = (threadCountX + kernelSizeX - 1u) / kernelSizeX;
-		UINT threadGroupCountY = (threadCountY + kernelSizeY - 1u) / kernelSizeY;
-		UINT threadGroupCountZ = (threadCountZ + kernelSizeZ - 1u) / kernelSizeZ;
+		UINT threadGroupCountX = (threadCountX + m_kernelSizeX - 1u) / m_kernelSizeX;
+		UINT threadGroupCountY = (threadCountY + m_kernelSizeY - 1u) / m_kernelSizeY;
+		UINT threadGroupCountZ = (threadCountZ + m_kernelSizeZ - 1u) / m_kernelSizeZ;
 
 		assert(threadGroupCountX > 0u && threadGroupCountY > 0u && threadGroupCountZ > 0u && "All thread group sizes must be > 0");
 		gfx.GetContext()->Dispatch(threadGroupCountX, threadGroupCountY, threadGroupCountZ);
@@ -76,12 +76,12 @@ namespace gfx
 
 	ComPtr<ID3D11ComputeShader> ComputeShader::GetComputeShader() const
 	{
-		return pComputeShader;
+		return m_pComputeShader;
 	}
 
 	ID3DBlob* ComputeShader::GetBytecode() const
 	{
-		return pBytecodeBlob.Get();
+		return m_pBytecodeBlob.Get();
 	}
 
 	std::shared_ptr<ComputeShader> ComputeShader::Resolve(GraphicsDevice& gfx, const std::string& path, const std::string& kernelName)

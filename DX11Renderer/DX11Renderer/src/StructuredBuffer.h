@@ -12,7 +12,7 @@ namespace gfx
 	public:
 		StructuredBuffer(GraphicsDevice& gfx, D3D11_USAGE usage, UINT bindFlags, UINT numElements, bool useCounter = false)
 			: Buffer(usage, bindFlags, sizeof(T)),
-			useCounter(useCounter)
+			m_useCounter(useCounter)
 		{
 			D3D11_BUFFER_DESC bd;
 			ZeroMemory(&bd, sizeof(bd));
@@ -23,18 +23,18 @@ namespace gfx
 			bd.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
 			bd.StructureByteStride = sizeof(T);
 
-			THROW_IF_FAILED(gfx.GetAdapter()->CreateBuffer(&bd, nullptr, &pBuffer));
+			THROW_IF_FAILED(gfx.GetAdapter()->CreateBuffer(&bd, nullptr, &m_pBuffer));
 
 			if (bindFlags & D3D11_BIND_SHADER_RESOURCE)
 			{
-				THROW_IF_FAILED(gfx.GetAdapter()->CreateShaderResourceView(pBuffer.Get(), nullptr, &pSRV));
+				THROW_IF_FAILED(gfx.GetAdapter()->CreateShaderResourceView(m_pBuffer.Get(), nullptr, &m_pSRV));
 			}
 
 			if (bindFlags & D3D11_BIND_UNORDERED_ACCESS)
 			{
 				if (!useCounter)
 				{
-					THROW_IF_FAILED(gfx.GetAdapter()->CreateUnorderedAccessView(pBuffer.Get(), nullptr, &pUAV));
+					THROW_IF_FAILED(gfx.GetAdapter()->CreateUnorderedAccessView(m_pBuffer.Get(), nullptr, &m_pUAV));
 				}
 				else
 				{
@@ -44,44 +44,44 @@ namespace gfx
 					uavDesc.Buffer.NumElements = numElements;
 					uavDesc.Buffer.Flags = D3D11_BUFFER_UAV_FLAG_COUNTER;
 					uavDesc.Format = DXGI_FORMAT_UNKNOWN;
-					THROW_IF_FAILED(gfx.GetAdapter()->CreateUnorderedAccessView(pBuffer.Get(), &uavDesc, &pUAV));
+					THROW_IF_FAILED(gfx.GetAdapter()->CreateUnorderedAccessView(m_pBuffer.Get(), &uavDesc, &m_pUAV));
 				}
 			}
 		}
 
 		void BindCS(GraphicsDevice& gfx, UINT slot) override
 		{
-			gfx.GetContext()->CSSetShaderResources(slot, 1u, pSRV.GetAddressOf());
+			gfx.GetContext()->CSSetShaderResources(slot, 1u, m_pSRV.GetAddressOf());
 		}
 		void BindVS(GraphicsDevice& gfx, UINT slot) override
 		{
-			gfx.GetContext()->VSSetShaderResources(slot, 1u, pSRV.GetAddressOf());
+			gfx.GetContext()->VSSetShaderResources(slot, 1u, m_pSRV.GetAddressOf());
 		}
 		void BindPS(GraphicsDevice& gfx, UINT slot) override
 		{
-			gfx.GetContext()->PSSetShaderResources(slot, 1u, pSRV.GetAddressOf());
+			gfx.GetContext()->PSSetShaderResources(slot, 1u, m_pSRV.GetAddressOf());
 		}
 		void Update(GraphicsDevice& gfx, const void* data, UINT dataBytes)
 		{
-			if (usage == D3D11_USAGE_DYNAMIC) // Can be continuously modified by CPU
+			if (m_usage == D3D11_USAGE_DYNAMIC) // Can be continuously modified by CPU
 			{
 				D3D11_MAPPED_SUBRESOURCE subresource = {};
 				// Map() locks resource and gives ptr to resource
 				THROW_IF_FAILED(gfx.GetContext()->Map(
-					pBuffer.Get(), 0u,
+					m_pBuffer.Get(), 0u,
 					D3D11_MAP_WRITE_DISCARD, 0u,
 					&subresource // msr gets assigned to resource ptr
 				));
 				// Handle write
 				memcpy(subresource.pData, data, dataBytes);
 				// Unlock via Unmap()
-				gfx.GetContext()->Unmap(pBuffer.Get(), 0u);
+				gfx.GetContext()->Unmap(m_pBuffer.Get(), 0u);
 			}
-			else if (usage == D3D11_USAGE_DEFAULT
-				|| usage == D3D11_USAGE_STAGING)
+			else if (m_usage == D3D11_USAGE_DEFAULT
+				|| m_usage == D3D11_USAGE_STAGING)
 			{
 				// Doesn't work for dynamic or immutable
-				gfx.GetContext()->UpdateSubresource(pBuffer.Get(), 0, nullptr, &data, 0, 0);
+				gfx.GetContext()->UpdateSubresource(m_pBuffer.Get(), 0, nullptr, &data, 0, 0);
 			}
 			else
 			{
@@ -93,6 +93,6 @@ namespace gfx
 			Update(gfx, data.data(), sizeof(T) * dataElements);
 		}
 	private:
-		bool useCounter;
+		bool m_useCounter;
 	};
 }

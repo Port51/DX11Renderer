@@ -18,14 +18,14 @@ namespace gfx
 {
 	App::App(int screenWidth, int screenHeight, HINSTANCE hInstance)
 		:
-		pImgui(std::make_unique<ImguiManager>()),
-		pCamera(std::make_unique<Camera>(40.0f, (float)screenWidth / (float)screenHeight, 0.5f, 50.0f)),
-		pTimer(std::make_unique<Timer>()),
-		pRendererList(std::make_shared<RendererList>())
+		m_pImgui(std::make_unique<ImguiManager>()),
+		m_pCamera(std::make_unique<Camera>(40.0f, (float)screenWidth / (float)screenHeight, 0.5f, 50.0f)),
+		m_pTimer(std::make_unique<Timer>()),
+		m_pRendererList(std::make_shared<RendererList>())
 	{
-		pWindow = std::make_unique<DX11Window>(screenWidth, screenHeight, "DX11 Renderer", hInstance, this);
+		m_pWindow = std::make_unique<DX11Window>(screenWidth, screenHeight, "DX11 Renderer", hInstance, this);
 
-		pLightManager = std::make_shared<LightManager>(pWindow->Gfx(), pRendererList);
+		m_pLightManager = std::make_shared<LightManager>(m_pWindow->Gfx(), m_pRendererList);
 
 		std::string fn;
 		dx::XMMATRIX modelTransform;
@@ -75,22 +75,22 @@ namespace gfx
 			break;
 		}
 
-		auto pModelAsset = ModelImporter::LoadGLTF(pWindow->Gfx(), fn.c_str());
+		auto pModelAsset = ModelImporter::LoadGLTF(m_pWindow->Gfx(), fn.c_str());
 		if (pModelAsset)
 		{
-			pWindow->Gfx().GetLog()->Info("Model loaded");
+			m_pWindow->Gfx().GetLog()->Info("Model loaded");
 		}
 		else
 		{
-			pWindow->Gfx().GetLog()->Error("Failed to load model");
+			m_pWindow->Gfx().GetLog()->Error("Failed to load model");
 		}
 
-		pModel0 = std::make_unique<ModelInstance>(pWindow->Gfx(), pModelAsset, modelTransform);
+		m_pModel0 = std::make_unique<ModelInstance>(m_pWindow->Gfx(), pModelAsset, modelTransform);
 
-		pRendererList->AddModelInstance(*pModel0);
-		pLightManager->AddLightModelsToList(*pRendererList);
+		m_pRendererList->AddModelInstance(*m_pModel0);
+		m_pLightManager->AddLightModelsToList(*m_pRendererList);
 
-		pRenderer = std::make_unique<Renderer>(pWindow->Gfx(), pLightManager, pRendererList);
+		m_pRenderer = std::make_unique<Renderer>(m_pWindow->Gfx(), m_pLightManager, m_pRendererList);
 
 		return;
 		/*class Factory
@@ -133,7 +133,7 @@ namespace gfx
 
 	int App::Run()
 	{
-		pWindow->Show();
+		m_pWindow->Show();
 
 		while (true)
 		{
@@ -152,7 +152,7 @@ namespace gfx
 		switch (msg)
 		{
 		case WM_PAINT:
-			DoFrame();
+			ExecuteFrame();
 			return 0;
 
 		case WM_DESTROY:
@@ -163,24 +163,24 @@ namespace gfx
 		return DefWindowProc(hWnd, msg, wParam, lParam);
 	}
 
-	void App::DoFrame()
+	void App::ExecuteFrame()
 	{
 		static float timeElapsed = 0.f;
-		auto dt = pTimer->Mark();
+		auto dt = m_pTimer->Mark();
 		timeElapsed += dt;
 
 		// Process input
 		{
-			auto& mouse = pWindow->GetMouse();
+			auto& mouse = m_pWindow->GetMouse();
 			while (!mouse.EventBufferIsEmpty())
 			{
-				MouseEvent evt = pWindow->GetMouse().ReadEvent();
+				MouseEvent evt = m_pWindow->GetMouse().ReadEvent();
 				switch (evt.GetType())
 				{
 				case MouseEvent::EventType::LeftButtonDown:
 				{
-					pixelSelectionX = mouse.GetMousePosX();
-					pixelSelectionY = mouse.GetMousePosY();
+					m_pixelSelectionX = mouse.GetMousePosX();
+					m_pixelSelectionY = mouse.GetMousePosY();
 				}
 				}
 			}
@@ -188,10 +188,10 @@ namespace gfx
 
 		// Animate lights
 		{
-			UINT ct = pLightManager->GetLightCount();
+			UINT ct = m_pLightManager->GetLightCount();
 			for (UINT i = 0u; i < ct; ++i)
 			{
-				const auto light = pLightManager->GetLight(i);
+				const auto light = m_pLightManager->GetLight(i);
 
 				// Only move lights the user can't control
 				if (!light->AllowUserControl())
@@ -207,20 +207,20 @@ namespace gfx
 			}
 		}
 
-		pWindow->Gfx().BeginFrame();
+		m_pWindow->Gfx().BeginFrame();
 
-		pRenderer->Execute(pWindow->Gfx(), pCamera, timeElapsed, pixelSelectionX, pixelSelectionY);
+		m_pRenderer->Execute(m_pWindow->Gfx(), m_pCamera, timeElapsed, m_pixelSelectionX, m_pixelSelectionY);
 
 		if (true)
 		{
 			// Imgui windows
-			pRenderer->DrawImguiControlWindow(pWindow->Gfx());
-			pCamera->DrawImguiControlWindow();
-			pLightManager->DrawImguiControlWindows();
-			pWindow->Gfx().GetLog()->DrawImguiControlWindow();
+			m_pRenderer->DrawImguiControlWindow(m_pWindow->Gfx());
+			m_pCamera->DrawImguiControlWindow();
+			m_pLightManager->DrawImguiControlWindows();
+			m_pWindow->Gfx().GetLog()->DrawImguiControlWindow();
 		}
 
-		pWindow->Gfx().EndFrame();
-		pRenderer->Reset();
+		m_pWindow->Gfx().EndFrame();
+		m_pRenderer->Reset();
 	}
 }

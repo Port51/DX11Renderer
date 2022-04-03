@@ -63,20 +63,20 @@ namespace gfx
 		bool FrustumSphereIntersection(dx::XMVECTOR lightSphere, dx::XMFLOAT4 frustumCorners, float farClipPlane);
 		bool AABBSphereIntersection(const LightData& lightData, dx::XMVECTOR aabbCenter, dx::XMVECTOR aabbExtents);
 	private:
-		std::vector<std::shared_ptr<Light>> pLights;
-		std::shared_ptr<DirectionalLight> pMainLight;
-		std::vector<LightData> cachedLightData;
-		UINT visibleLightCt;
+		std::vector<std::shared_ptr<Light>> m_pLights;
+		std::shared_ptr<DirectionalLight> m_pMainLight;
+		std::vector<LightData> m_cachedLightData;
+		UINT m_visibleLightCt;
 	private:
-		UINT clusterDimensionX;
-		UINT clusterDimensionY;
-		UINT clusterDimensionZ;
-		std::unique_ptr<StructuredBuffer<LightData>> pLightData;
-		std::unique_ptr<ConstantBuffer<LightInputCB>> pLightInputCB;
-		std::unique_ptr<StructuredBuffer<LightShadowData>> pLightShadowSB;
-		std::shared_ptr<RendererList> pShadowRendererList;
-		std::vector<LightShadowData> cachedShadowData;
-		std::unique_ptr<DepthStencilTarget> pShadowAtlas;
-		std::unique_ptr<StructuredBuffer<int>> pClusteredIndices;
+		UINT m_clusterDimensionX;
+		UINT m_clusterDimensionY;
+		UINT m_clusterDimensionZ;
+		std::unique_ptr<StructuredBuffer<LightData>> m_pLightData;
+		std::unique_ptr<ConstantBuffer<LightInputCB>> m_pLightInputCB;
+		std::unique_ptr<StructuredBuffer<LightShadowData>> m_pLightShadowSB;
+		std::shared_ptr<RendererList> m_pShadowRendererList;
+		std::vector<LightShadowData> m_cachedShadowData;
+		std::unique_ptr<DepthStencilTarget> m_pShadowAtlas;
+		std::unique_ptr<StructuredBuffer<int>> m_pClusteredIndices;
 	};
 }

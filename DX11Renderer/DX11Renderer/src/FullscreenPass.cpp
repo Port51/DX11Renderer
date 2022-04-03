@@ -52,14 +52,14 @@ namespace gfx
 	{
 		RenderPass::Execute(gfx);
 
-		pVertexBufferWrapper->BindIA(gfx, 0u);
-		gfx.GetContext()->PSSetShaderResources(0u, 1u, pInputTexture->GetSRV().GetAddressOf());
+		m_pVertexBufferWrapper->BindIA(gfx, 0u);
+		gfx.GetContext()->PSSetShaderResources(0u, 1u, m_pInputTexture->GetSRV().GetAddressOf());
 		gfx.DrawIndexed(3u);
 	}
 
 	void FullscreenPass::SetInputTarget(std::shared_ptr<Texture> pInput)
 	{
-		pInputTexture = pInput;
+		m_pInputTexture = pInput;
 	}
 
 	void FullscreenPass::SetupFullscreenQuadBindings(GraphicsDevice& gfx, std::string vertexShaderName, std::shared_ptr<VertexShader> vertexShader)
@@ -80,7 +80,7 @@ namespace gfx
 		vbuf.EmplacePadding();
 		vbuf.EmplaceBack(dx::XMFLOAT2{ 2, 0 });
 		vbuf.EmplacePadding();
-		pVertexBufferWrapper = std::make_unique<VertexBufferWrapper>(gfx, std::move(vbuf));
+		m_pVertexBufferWrapper = std::make_unique<VertexBufferWrapper>(gfx, std::move(vbuf));
 
 		std::vector<u32> indices = { 0u, 1u, 2u };
 		AddBinding(IndexBuffer::Resolve(gfx, "$Blit", std::move(indices)))

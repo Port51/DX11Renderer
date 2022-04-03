@@ -7,135 +7,135 @@
 namespace gfx
 {
 	// Statics
-	std::vector<ID3D11Buffer*> RenderPass::pNullBuffers;
-	std::vector<ID3D11ShaderResourceView*> RenderPass::pNullSRVs;
-	std::vector<ID3D11UnorderedAccessView*> RenderPass::pNullUAVs;
-	std::vector<ID3D11SamplerState*> RenderPass::pNullSPLs;
+	std::vector<ID3D11Buffer*> RenderPass::m_pNullBuffers;
+	std::vector<ID3D11ShaderResourceView*> RenderPass::m_pNullSRVs;
+	std::vector<ID3D11UnorderedAccessView*> RenderPass::m_pNullUAVs;
+	std::vector<ID3D11SamplerState*> RenderPass::m_pNullSPLs;
 
 	RenderPass::RenderPass(std::string name)
-		: name(name)
+		: m_name(name)
 	{
-		if (pNullBuffers.size() == 0)
+		if (m_pNullBuffers.size() == 0)
 		{
 			// Init static info
-			pNullBuffers.resize(10u, nullptr);
-			pNullSRVs.resize(10u, nullptr);
-			pNullUAVs.resize(10u, nullptr);
-			pNullSPLs.resize(10u, nullptr);
+			m_pNullBuffers.resize(10u, nullptr);
+			m_pNullSRVs.resize(10u, nullptr);
+			m_pNullUAVs.resize(10u, nullptr);
+			m_pNullSPLs.resize(10u, nullptr);
 		}
 	}
 
 	const std::string RenderPass::GetName() const
 	{
-		return name;
+		return m_name;
 	}
 
 	void RenderPass::EnqueueJob(DrawCall job)
 	{
-		jobs.push_back(job);
+		m_jobs.push_back(job);
 	}
 
 	void RenderPass::BindSharedResources(GraphicsDevice & gfx) const
 	{
-		for (auto& binding : bindings)
+		for (auto& binding : m_bindings)
 		{
 			binding.Bind(gfx);
 		}
 
 		// todo: can optimize by passing one array for each of these
-		for (size_t i = 0; i < pCS_CB_Binds.size(); ++i)
+		for (size_t i = 0; i < m_CS_CB_Binds.size(); ++i)
 		{
-			gfx.GetContext()->CSSetConstantBuffers(pCS_CB_Binds[i].first, 1u, pCS_CB_Binds[i].second.GetAddressOf());
+			gfx.GetContext()->CSSetConstantBuffers(m_CS_CB_Binds[i].first, 1u, m_CS_CB_Binds[i].second.GetAddressOf());
 		}
-		for (size_t i = 0; i < pCS_SRV_Binds.size(); ++i)
+		for (size_t i = 0; i < m_CS_SRV_Binds.size(); ++i)
 		{
-			gfx.GetContext()->CSSetShaderResources(pCS_SRV_Binds[i].first, 1u, pCS_SRV_Binds[i].second.GetAddressOf());
+			gfx.GetContext()->CSSetShaderResources(m_CS_SRV_Binds[i].first, 1u, m_CS_SRV_Binds[i].second.GetAddressOf());
 		}
-		for (size_t i = 0; i < pCS_UAV_Binds.size(); ++i)
+		for (size_t i = 0; i < m_CS_UAV_Binds.size(); ++i)
 		{
-			gfx.GetContext()->CSSetUnorderedAccessViews(pCS_UAV_Binds[i].first, 1u, pCS_UAV_Binds[i].second.GetAddressOf(), nullptr);
+			gfx.GetContext()->CSSetUnorderedAccessViews(m_CS_UAV_Binds[i].first, 1u, m_CS_UAV_Binds[i].second.GetAddressOf(), nullptr);
 		}
-		for (size_t i = 0; i < pCS_SPL_Binds.size(); ++i)
+		for (size_t i = 0; i < m_CS_SPL_Binds.size(); ++i)
 		{
-			gfx.GetContext()->CSSetSamplers(pCS_SPL_Binds[i].first, 1u, pCS_SPL_Binds[i].second.GetAddressOf());
-		}
-
-		for (size_t i = 0; i < pVS_CB_Binds.size(); ++i)
-		{
-			gfx.GetContext()->VSSetConstantBuffers(pVS_CB_Binds[i].first, 1u, pVS_CB_Binds[i].second.GetAddressOf());
-		}
-		for (size_t i = 0; i < pVS_SRV_Binds.size(); ++i)
-		{
-			gfx.GetContext()->VSSetShaderResources(pVS_SRV_Binds[i].first, 1u, pVS_SRV_Binds[i].second.GetAddressOf());
-		}
-		for (size_t i = 0; i < pVS_SPL_Binds.size(); ++i)
-		{
-			gfx.GetContext()->VSSetSamplers(pVS_SPL_Binds[i].first, 1u, pVS_SPL_Binds[i].second.GetAddressOf());
+			gfx.GetContext()->CSSetSamplers(m_CS_SPL_Binds[i].first, 1u, m_CS_SPL_Binds[i].second.GetAddressOf());
 		}
 
-		for (size_t i = 0; i < pPS_CB_Binds.size(); ++i)
+		for (size_t i = 0; i < m_VS_CB_Binds.size(); ++i)
 		{
-			gfx.GetContext()->PSSetConstantBuffers(pPS_CB_Binds[i].first, 1u, pPS_CB_Binds[i].second.GetAddressOf());
+			gfx.GetContext()->VSSetConstantBuffers(m_VS_CB_Binds[i].first, 1u, m_VS_CB_Binds[i].second.GetAddressOf());
 		}
-		for (size_t i = 0; i < pPS_SRV_Binds.size(); ++i)
+		for (size_t i = 0; i < m_VS_SRV_Binds.size(); ++i)
 		{
-			gfx.GetContext()->PSSetShaderResources(pPS_SRV_Binds[i].first, 1u, pPS_SRV_Binds[i].second.GetAddressOf());
+			gfx.GetContext()->VSSetShaderResources(m_VS_SRV_Binds[i].first, 1u, m_VS_SRV_Binds[i].second.GetAddressOf());
 		}
-		for (size_t i = 0; i < pPS_SPL_Binds.size(); ++i)
+		for (size_t i = 0; i < m_VS_SPL_Binds.size(); ++i)
 		{
-			gfx.GetContext()->PSSetSamplers(pPS_SPL_Binds[i].first, 1u, pPS_SPL_Binds[i].second.GetAddressOf());
+			gfx.GetContext()->VSSetSamplers(m_VS_SPL_Binds[i].first, 1u, m_VS_SPL_Binds[i].second.GetAddressOf());
+		}
+
+		for (size_t i = 0; i < m_PS_CB_Binds.size(); ++i)
+		{
+			gfx.GetContext()->PSSetConstantBuffers(m_PS_CB_Binds[i].first, 1u, m_PS_CB_Binds[i].second.GetAddressOf());
+		}
+		for (size_t i = 0; i < m_PS_SRV_Binds.size(); ++i)
+		{
+			gfx.GetContext()->PSSetShaderResources(m_PS_SRV_Binds[i].first, 1u, m_PS_SRV_Binds[i].second.GetAddressOf());
+		}
+		for (size_t i = 0; i < m_PS_SPL_Binds.size(); ++i)
+		{
+			gfx.GetContext()->PSSetSamplers(m_PS_SPL_Binds[i].first, 1u, m_PS_SPL_Binds[i].second.GetAddressOf());
 		}
 	}
 
 	void RenderPass::UnbindSharedResources(GraphicsDevice & gfx) const
 	{
-		if (pCS_CB_Binds.size() > 0)
+		if (m_CS_CB_Binds.size() > 0)
 		{
-			gfx.GetContext()->CSSetConstantBuffers(pCS_CB_Binds[0].first, pCS_CB_Binds.size(), pNullBuffers.data());
+			gfx.GetContext()->CSSetConstantBuffers(m_CS_CB_Binds[0].first, m_CS_CB_Binds.size(), m_pNullBuffers.data());
 		}
-		if (pCS_SRV_Binds.size() > 0)
+		if (m_CS_SRV_Binds.size() > 0)
 		{
-			gfx.GetContext()->CSSetShaderResources(pCS_SRV_Binds[0].first, pCS_SRV_Binds.size(), pNullSRVs.data());
+			gfx.GetContext()->CSSetShaderResources(m_CS_SRV_Binds[0].first, m_CS_SRV_Binds.size(), m_pNullSRVs.data());
 		}
-		if (pCS_UAV_Binds.size() > 0)
+		if (m_CS_UAV_Binds.size() > 0)
 		{
-			gfx.GetContext()->CSSetUnorderedAccessViews(pCS_UAV_Binds[0].first, pCS_UAV_Binds.size(), pNullUAVs.data(), nullptr);
+			gfx.GetContext()->CSSetUnorderedAccessViews(m_CS_UAV_Binds[0].first, m_CS_UAV_Binds.size(), m_pNullUAVs.data(), nullptr);
 		}
-		if (pCS_SPL_Binds.size() > 0)
+		if (m_CS_SPL_Binds.size() > 0)
 		{
-			gfx.GetContext()->CSSetSamplers(pCS_SPL_Binds[0].first, pCS_SPL_Binds.size(), pNullSPLs.data());
-		}
-
-		if (pVS_CB_Binds.size() > 0)
-		{
-			gfx.GetContext()->VSSetConstantBuffers(pVS_CB_Binds[0].first, pVS_CB_Binds.size(), pNullBuffers.data());
-		}
-		if (pVS_SRV_Binds.size() > 0)
-		{
-			gfx.GetContext()->VSSetShaderResources(pVS_SRV_Binds[0].first, pVS_SRV_Binds.size(), pNullSRVs.data());
-		}
-		if (pVS_SPL_Binds.size() > 0)
-		{
-			gfx.GetContext()->VSSetSamplers(pVS_SPL_Binds[0].first, pVS_SPL_Binds.size(), pNullSPLs.data());
+			gfx.GetContext()->CSSetSamplers(m_CS_SPL_Binds[0].first, m_CS_SPL_Binds.size(), m_pNullSPLs.data());
 		}
 
-		if (pPS_CB_Binds.size() > 0)
+		if (m_VS_CB_Binds.size() > 0)
 		{
-			gfx.GetContext()->PSSetConstantBuffers(pPS_CB_Binds[0].first, pPS_CB_Binds.size(), pNullBuffers.data());
+			gfx.GetContext()->VSSetConstantBuffers(m_VS_CB_Binds[0].first, m_VS_CB_Binds.size(), m_pNullBuffers.data());
 		}
-		if (pPS_SRV_Binds.size() > 0)
+		if (m_VS_SRV_Binds.size() > 0)
 		{
-			gfx.GetContext()->PSSetShaderResources(pPS_SRV_Binds[0].first, pPS_SRV_Binds.size(), pNullSRVs.data());
+			gfx.GetContext()->VSSetShaderResources(m_VS_SRV_Binds[0].first, m_VS_SRV_Binds.size(), m_pNullSRVs.data());
 		}
-		if (pPS_SPL_Binds.size() > 0)
+		if (m_VS_SPL_Binds.size() > 0)
 		{
-			gfx.GetContext()->PSSetSamplers(pPS_SPL_Binds[0].first, pPS_SPL_Binds.size(), pNullSPLs.data());
+			gfx.GetContext()->VSSetSamplers(m_VS_SPL_Binds[0].first, m_VS_SPL_Binds.size(), m_pNullSPLs.data());
+		}
+
+		if (m_PS_CB_Binds.size() > 0)
+		{
+			gfx.GetContext()->PSSetConstantBuffers(m_PS_CB_Binds[0].first, m_PS_CB_Binds.size(), m_pNullBuffers.data());
+		}
+		if (m_PS_SRV_Binds.size() > 0)
+		{
+			gfx.GetContext()->PSSetShaderResources(m_PS_SRV_Binds[0].first, m_PS_SRV_Binds.size(), m_pNullSRVs.data());
+		}
+		if (m_PS_SPL_Binds.size() > 0)
+		{
+			gfx.GetContext()->PSSetSamplers(m_PS_SPL_Binds[0].first, m_PS_SPL_Binds.size(), m_pNullSPLs.data());
 		}
 	}
 
 	void RenderPass::Execute(GraphicsDevice & gfx) const
 	{
-		for (const auto& j : jobs)
+		for (const auto& j : m_jobs)
 		{
 			j.Execute(gfx);
 		}
@@ -143,104 +143,104 @@ namespace gfx
 
 	void RenderPass::Reset()
 	{
-		jobs.clear();
+		m_jobs.clear();
 	}
 
 	RenderPass & RenderPass::ClearBinds()
 	{
-		pCS_CB_Binds.clear();
-		pCS_SRV_Binds.clear();
-		pCS_UAV_Binds.clear();
-		pCS_SPL_Binds.clear();
-		pVS_CB_Binds.clear();
-		pVS_SRV_Binds.clear();
-		pVS_SPL_Binds.clear();
-		pPS_CB_Binds.clear();
-		pPS_SRV_Binds.clear();
-		pPS_SPL_Binds.clear();
+		m_CS_CB_Binds.clear();
+		m_CS_SRV_Binds.clear();
+		m_CS_UAV_Binds.clear();
+		m_CS_SPL_Binds.clear();
+		m_VS_CB_Binds.clear();
+		m_VS_SRV_Binds.clear();
+		m_VS_SPL_Binds.clear();
+		m_PS_CB_Binds.clear();
+		m_PS_SRV_Binds.clear();
+		m_PS_SPL_Binds.clear();
 		return *this;
 	}
 
 	RenderPass & RenderPass::CSSetCB(UINT slot, ComPtr<ID3D11Buffer> pResource)
 	{
-		pCS_CB_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11Buffer>>(slot, pResource));
+		m_CS_CB_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11Buffer>>(slot, pResource));
 		return *this;
 	}
 
 	RenderPass & RenderPass::CSSetSRV(UINT slot, ComPtr<ID3D11ShaderResourceView> pResource)
 	{
-		pCS_SRV_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11ShaderResourceView>>(slot, pResource));
+		m_CS_SRV_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11ShaderResourceView>>(slot, pResource));
 		return *this;
 	}
 
 	RenderPass & RenderPass::CSSetUAV(UINT slot, ComPtr<ID3D11UnorderedAccessView> pResource)
 	{
-		pCS_UAV_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11UnorderedAccessView>>(slot, pResource));
+		m_CS_UAV_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11UnorderedAccessView>>(slot, pResource));
 		return *this;
 	}
 
 	RenderPass & RenderPass::CSSetSPL(UINT slot, ComPtr<ID3D11SamplerState> pResource)
 	{
-		pCS_SPL_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11SamplerState>>(slot, pResource));
+		m_CS_SPL_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11SamplerState>>(slot, pResource));
 		return *this;
 	}
 
 	RenderPass & RenderPass::VSSetCB(UINT slot, ComPtr<ID3D11Buffer> pResource)
 	{
-		pVS_CB_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11Buffer>>(slot, pResource));
+		m_VS_CB_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11Buffer>>(slot, pResource));
 		return *this;
 	}
 
 	RenderPass & RenderPass::VSSetSRV(UINT slot, ComPtr<ID3D11ShaderResourceView> pResource)
 	{
-		pVS_SRV_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11ShaderResourceView>>(slot, pResource));
+		m_VS_SRV_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11ShaderResourceView>>(slot, pResource));
 		return *this;
 	}
 
 	RenderPass & RenderPass::VSSetSPL(UINT slot, ComPtr<ID3D11SamplerState> pResource)
 	{
-		pVS_SPL_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11SamplerState>>(slot, pResource));
+		m_VS_SPL_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11SamplerState>>(slot, pResource));
 		return *this;
 	}
 
 	RenderPass & RenderPass::PSSetCB(UINT slot, ComPtr<ID3D11Buffer> pResource)
 	{
-		pPS_CB_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11Buffer>>(slot, pResource));
+		m_PS_CB_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11Buffer>>(slot, pResource));
 		return *this;
 	}
 
 	RenderPass & RenderPass::PSSetSRV(UINT slot, ComPtr<ID3D11ShaderResourceView> pResource)
 	{
-		pPS_SRV_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11ShaderResourceView>>(slot, pResource));
+		m_PS_SRV_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11ShaderResourceView>>(slot, pResource));
 		return *this;
 	}
 
 	RenderPass & RenderPass::PSSetSPL(UINT slot, ComPtr<ID3D11SamplerState> pResource)
 	{
-		pPS_SPL_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11SamplerState>>(slot, pResource));
+		m_PS_SPL_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11SamplerState>>(slot, pResource));
 		return *this;
 	}
 
 	RenderPass & RenderPass::SetCameraColorOut(std::shared_ptr<RenderTexture> pCameraColor)
 	{
-		pCameraColorOut = pCameraColor;
+		m_pCameraColorOut = pCameraColor;
 		return *this;
 	}
 
 	Binding& RenderPass::AddBinding(std::shared_ptr<Bindable> pBindable)
 	{
-		bindings.push_back(Binding(std::move(pBindable)));
-		return bindings[bindings.size() - 1];
+		m_bindings.push_back(Binding(std::move(pBindable)));
+		return m_bindings[m_bindings.size() - 1];
 	}
 
 	Binding& RenderPass::AddBinding(Binding pBinding)
 	{
-		bindings.push_back(std::move(pBinding));
-		return bindings[bindings.size() - 1];
+		m_bindings.push_back(std::move(pBinding));
+		return m_bindings[m_bindings.size() - 1];
 	}
 
 	std::shared_ptr<RenderTexture> RenderPass::GetCameraColorOut() const
 	{
-		return pCameraColorOut;
+		return m_pCameraColorOut;
 	}
 }

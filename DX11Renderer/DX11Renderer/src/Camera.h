@@ -26,16 +26,16 @@ namespace gfx
 	private:
 		void UpdateProjectionMatrix();
 	private:
-		float nearClipPlane;
-		float farClipPlane;
-		float r = 19.9f;// 10.0f;// 13.3f; // dist from origin
-		float theta = -0.383972f;// -0.471225f; // rotate around origin
-		float phi = 0.558505;// 0.209f; // rotate around origin
-		float pitch = 0.f;// 0.061f;
-		float yaw = 0.0f;
-		float roll = 0.0f;
-		float fov = 40.0f;
-		float aspect = 0.75f;
-		dx::XMMATRIX projectionMatrix;
+		float m_nearClipPlane;
+		float m_farClipPlane;
+		float m_radius = 19.9f;// 10.0f;// 13.3f; // dist from origin
+		float m_theta = -0.383972f;// -0.471225f; // rotate around origin
+		float m_phi = 0.558505f;// 0.209f; // rotate around origin
+		float m_pitch = 0.f;// 0.061f;
+		float m_yaw = 0.0f;
+		float m_roll = 0.0f;
+		float m_fov = 40.0f;
+		float m_aspect = 0.75f;
+		dx::XMMATRIX m_projectionMatrix;
 	};
 }

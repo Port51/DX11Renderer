@@ -17,10 +17,10 @@ namespace gfx
 		DX11Window& operator=(const DX11Window&) = delete;
 		~DX11Window() override;
 	public:
-		GraphicsDevice& Gfx();
+		GraphicsDevice& Gfx() const;
 	protected:
 		LRESULT HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
 	private:
-		std::unique_ptr<GraphicsDevice> pGfx;
+		std::unique_ptr<GraphicsDevice> m_pGfx;
 	};
 }

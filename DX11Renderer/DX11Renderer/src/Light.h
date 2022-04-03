@@ -51,14 +51,14 @@ namespace gfx
 		void SetShadowMatrixTile(dx::XMMATRIX& shadowMatrix, int tileX, int tileY);
 		bool AllowUserControl() const;
 	protected:
-		UINT index;
-		bool allowUserControl;
-		dx::XMFLOAT3 positionWS;
-		dx::XMFLOAT3 color;
-		float intensity;
-		std::unique_ptr<ModelInstance> pModel;
-		ShadowSettings shadowSettings;
-		std::unique_ptr<ConstantBuffer<ShadowPassCB>> pShadowPassCB;
-		int shadowAtlasTileIdx;
+		UINT m_index;
+		bool m_allowUserControl;
+		dx::XMFLOAT3 m_positionWS;
+		dx::XMFLOAT3 m_color;
+		float m_intensity;
+		std::unique_ptr<ModelInstance> m_pModel;
+		ShadowSettings m_shadowSettings;
+		std::unique_ptr<ConstantBuffer<ShadowPassCB>> m_pShadowPassCB;
+		int m_shadowAtlasTileIdx;
 	};
 }

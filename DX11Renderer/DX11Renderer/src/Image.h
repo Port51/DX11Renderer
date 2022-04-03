@@ -15,11 +15,11 @@ namespace gfx
 		const UINT GetWidth() const;
 		const UINT GetHeight() const;
 	private:
-		unsigned char* data;
-		int width;
-		int height;
-		int channels;
-		int desiredChannels = 4;
-		UINT pitch;
+		unsigned char* m_data;
+		int m_width;
+		int m_height;
+		int m_channels;
+		int m_desiredChannels = 4;
+		UINT m_pitch;
 	};
 }

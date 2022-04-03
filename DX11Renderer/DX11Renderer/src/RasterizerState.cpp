@@ -6,7 +6,7 @@
 namespace gfx
 {
 	RasterizerState::RasterizerState(GraphicsDevice& gfx, D3D11_CULL_MODE cullMode)
-		: cullMode(cullMode)
+		: m_cullMode(cullMode)
 	{
 		D3D11_RASTERIZER_DESC rasterDesc = CD3D11_RASTERIZER_DESC(CD3D11_DEFAULT{});
 		rasterDesc.CullMode = cullMode;
@@ -16,12 +16,12 @@ namespace gfx
 			rasterDesc.FrontCounterClockwise = true;
 		}
 
-		THROW_IF_FAILED(gfx.GetAdapter()->CreateRasterizerState(&rasterDesc, &pRasterizer));
+		THROW_IF_FAILED(gfx.GetAdapter()->CreateRasterizerState(&rasterDesc, &m_pRasterizer));
 	}
 
 	void RasterizerState::BindRS(GraphicsDevice& gfx)
 	{
-		gfx.GetContext()->RSSetState(pRasterizer.Get());
+		gfx.GetContext()->RSSetState(m_pRasterizer.Get());
 	}
 
 	std::shared_ptr<RasterizerState> RasterizerState::Resolve(GraphicsDevice& gfx, D3D11_CULL_MODE cullMode)

@@ -225,9 +225,6 @@
     <ClCompile Include="src\TransformCbuf.cpp">
       <Filter>Source\Bindable</Filter>
     </ClCompile>
-    <ClCompile Include="src\Vertex.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="src\VertexBufferWrapper.cpp">
       <Filter>Source\Bindable</Filter>
     </ClCompile>
@@ -361,6 +358,9 @@
       <Filter>Source\RenderPipeline</Filter>
     </ClCompile>
     <ClCompile Include="src\DX11Window.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Buffer.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

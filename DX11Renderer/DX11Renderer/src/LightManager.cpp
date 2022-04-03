@@ -24,18 +24,18 @@ namespace gfx
 	{
 		const auto pLightModelAsset = ModelImporter::LoadGLTF(gfx, "Assets\\Models\\DefaultSphere.asset");
 
-		pLightData = std::make_unique<StructuredBuffer<LightData>>(gfx, D3D11_USAGE_DYNAMIC, D3D11_BIND_SHADER_RESOURCE, MaxLightCount);
-		cachedLightData.resize(MaxLightCount);
+		m_pLightData = std::make_unique<StructuredBuffer<LightData>>(gfx, D3D11_USAGE_DYNAMIC, D3D11_BIND_SHADER_RESOURCE, MaxLightCount);
+		m_cachedLightData.resize(MaxLightCount);
 
 		UINT lightIdx = 0u;
-		pLights.emplace_back(std::make_shared<PointLight>(gfx, lightIdx++, true, true, pLightModelAsset, dx::XMFLOAT3(0.f, 2.5f, 0.f), dx::XMFLOAT3(1.f, 1.f, 1.f), 3.f, 3.f, 5.f));
+		m_pLights.emplace_back(std::make_shared<PointLight>(gfx, lightIdx++, true, true, pLightModelAsset, dx::XMFLOAT3(0.f, 2.5f, 0.f), dx::XMFLOAT3(1.f, 1.f, 1.f), 3.f, 3.f, 5.f));
 
 		//pLights.emplace_back(std::make_shared<Spotlight>(gfx, lightIdx++, true, true, pLightModelAsset, dx::XMFLOAT3(8.5f, 1.5f, -2.0f), 0.0f, 0.0f, dx::XMFLOAT3(1.0f, 1.0f, 1.0f), 3.0f, 50.f, 50.f));
 		//pMainLight = std::make_shared<DirectionalLight>(gfx, lightIdx++, true, true, pLightModelAsset, 30.f, 30.f, dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 50.0f, 5.0f);
 		//pLights.emplace_back(pMainLight);
 
-		pLightInputCB = std::make_unique<ConstantBuffer<LightInputCB>>(gfx, D3D11_USAGE_DYNAMIC);
-		pClusteredIndices = std::make_unique<StructuredBuffer<int>>(gfx, D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS, GetClusterCount() * MaxLightsPerCluster);
+		m_pLightInputCB = std::make_unique<ConstantBuffer<LightInputCB>>(gfx, D3D11_USAGE_DYNAMIC);
+		m_pClusteredIndices = std::make_unique<StructuredBuffer<int>>(gfx, D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS, GetClusterCount() * MaxLightsPerCluster);
 
 		// Create grid of lights
 		const bool renderLightGrid = false;
@@ -43,7 +43,7 @@ namespace gfx
 		{
 			for (int y = -3; y <= 3; ++y)
 			{
-				pLights.emplace_back(std::make_shared<PointLight>(gfx, lightIdx++, renderLightGrid, false, pLightModelAsset, dx::XMFLOAT3(x * 2.f, 1.5f, y * 2.f), RandomSaturatedColorRGB(), 3.f, 3.f, 5.f));
+				m_pLights.emplace_back(std::make_shared<PointLight>(gfx, lightIdx++, renderLightGrid, false, pLightModelAsset, dx::XMFLOAT3(x * 2.f, 1.5f, y * 2.f), RandomSaturatedColorRGB(), 3.f, 3.f, 5.f));
 			}
 		}
 
@@ -55,22 +55,22 @@ namespace gfx
 				shadowLightCt++;
 			}
 		}*/
-		pLightShadowSB = std::make_unique<StructuredBuffer<LightShadowData>>(gfx, D3D11_USAGE_DYNAMIC, D3D11_BIND_SHADER_RESOURCE, Config::ShadowAtlasTileCount);
-		cachedShadowData.resize(Config::ShadowAtlasTileCount);
+		m_pLightShadowSB = std::make_unique<StructuredBuffer<LightShadowData>>(gfx, D3D11_USAGE_DYNAMIC, D3D11_BIND_SHADER_RESOURCE, Config::ShadowAtlasTileCount);
+		m_cachedShadowData.resize(Config::ShadowAtlasTileCount);
 
-		pShadowRendererList = std::make_shared<RendererList>(pRendererList);
+		m_pShadowRendererList = std::make_shared<RendererList>(pRendererList);
 
-		pShadowAtlas = std::make_unique<DepthStencilTarget>(gfx, Config::ShadowAtlasResolution, Config::ShadowAtlasResolution);
+		m_pShadowAtlas = std::make_unique<DepthStencilTarget>(gfx, Config::ShadowAtlasResolution, Config::ShadowAtlasResolution);
 
 		// Setup cluster dimensions based on screen size, rounding up
-		clusterDimensionX = ((UINT)gfx.GetScreenWidth() + LightManager::ClusteredLightingClusterPixels - 1u) / LightManager::ClusteredLightingClusterPixels;
-		clusterDimensionY = ((UINT)gfx.GetScreenHeight() + LightManager::ClusteredLightingClusterPixels - 1u) / LightManager::ClusteredLightingClusterPixels;
-		clusterDimensionZ = ClusteredLightingZLevels;
+		m_clusterDimensionX = ((UINT)gfx.GetScreenWidth() + LightManager::ClusteredLightingClusterPixels - 1u) / LightManager::ClusteredLightingClusterPixels;
+		m_clusterDimensionY = ((UINT)gfx.GetScreenHeight() + LightManager::ClusteredLightingClusterPixels - 1u) / LightManager::ClusteredLightingClusterPixels;
+		m_clusterDimensionZ = ClusteredLightingZLevels;
 	}
 
 	void LightManager::AddLightModelsToList(RendererList & pRendererList)
 	{
-		for (const auto& l : pLights)
+		for (const auto& l : m_pLights)
 		{
 			if (l->GetModelInstance() != nullptr)
 			{
@@ -87,20 +87,20 @@ namespace gfx
 		dx::XMVECTOR aabbCenter = dx::XMVectorSet(0.f, 0.f, (cam->GetNearClipPlane() + cam->GetFarClipPlane()) * 0.5f, 0.f);
 		dx::XMVECTOR aabbExtents = dx::XMVectorSet(frustumCornersVS.z * 0.5f, frustumCornersVS.w * -0.5f, cam->GetFarClipPlane() - cam->GetNearClipPlane(), 0.f);
 
-		visibleLightCt = 0u;
+		m_visibleLightCt = 0u;
 		int shadowMapIdx = 0;
-		for (int i = 0; i < pLights.size(); ++i)
+		for (int i = 0; i < m_pLights.size(); ++i)
 		{
-			if (enableShadows && pLights[i]->HasShadow())
+			if (enableShadows && m_pLights[i]->HasShadow())
 			{
-				pLights[i]->SetCurrentShadowIdx(shadowMapIdx);
-				shadowMapIdx += pLights[i]->GetShadowTileCount();
+				m_pLights[i]->SetCurrentShadowIdx(shadowMapIdx);
+				shadowMapIdx += m_pLights[i]->GetShadowTileCount();
 			}
 
-			const auto data = pLights[i]->GetLightData(cam->GetViewMatrix());
+			const auto data = m_pLights[i]->GetLightData(cam->GetViewMatrix());
 
 			bool inFrustum = true;
-			switch (pLights[i]->GetLightType())
+			switch (m_pLights[i]->GetLightType())
 			{
 			case 0:
 				// Point light
@@ -121,77 +121,77 @@ namespace gfx
 
 			if (inFrustum)
 			{
-				cachedLightData[visibleLightCt++] = data;
+				m_cachedLightData[m_visibleLightCt++] = data;
 			}
 		}
 
 		// Update SB
-		pLightData->Update(gfx, cachedLightData, visibleLightCt);
+		m_pLightData->Update(gfx, m_cachedLightData, m_visibleLightCt);
 
 		// Update CB
 		LightInputCB lightInputCB;
 		ZeroMemory(&lightInputCB, sizeof(lightInputCB));
-		lightInputCB.visibleLightCount = visibleLightCt;
+		lightInputCB.visibleLightCount = m_visibleLightCt;
 		lightInputCB.shadowAtlasTexelResolution = dx::XMVectorSet((float)Config::ShadowAtlasResolution, (float)Config::ShadowAtlasResolution, 1.f / (float)Config::ShadowAtlasResolution, 1.f / (float)Config::ShadowAtlasResolution);
 
-		if (pMainLight)
+		if (m_pMainLight)
 		{
-			lightInputCB.shadowCascadeSphere0 = pMainLight->GetShadowCascadeSphereVS(0);
-			lightInputCB.shadowCascadeSphere1 = pMainLight->GetShadowCascadeSphereVS(1);
-			lightInputCB.shadowCascadeSphere2 = pMainLight->GetShadowCascadeSphereVS(2);
-			lightInputCB.shadowCascadeSphere3 = pMainLight->GetShadowCascadeSphereVS(3);
+			lightInputCB.shadowCascadeSphere0 = m_pMainLight->GetShadowCascadeSphereVS(0);
+			lightInputCB.shadowCascadeSphere1 = m_pMainLight->GetShadowCascadeSphereVS(1);
+			lightInputCB.shadowCascadeSphere2 = m_pMainLight->GetShadowCascadeSphereVS(2);
+			lightInputCB.shadowCascadeSphere3 = m_pMainLight->GetShadowCascadeSphereVS(3);
 		}
 
-		pLightInputCB->Update(gfx, lightInputCB);
-		gfx.GetContext()->CSSetConstantBuffers(RenderSlots::CS_LightInputCB, 1u, pLightInputCB->GetD3DBuffer().GetAddressOf());
-		gfx.GetContext()->CSSetConstantBuffers(RenderSlots::PS_LightInputCB, 1u, pLightInputCB->GetD3DBuffer().GetAddressOf());
+		m_pLightInputCB->Update(gfx, lightInputCB);
+		gfx.GetContext()->CSSetConstantBuffers(RenderSlots::CS_LightInputCB, 1u, m_pLightInputCB->GetD3DBuffer().GetAddressOf());
+		gfx.GetContext()->CSSetConstantBuffers(RenderSlots::PS_LightInputCB, 1u, m_pLightInputCB->GetD3DBuffer().GetAddressOf());
 	}
 
 	std::unique_ptr<DepthStencilTarget>& LightManager::GetShadowAtlas()
 	{
-		return pShadowAtlas;
+		return m_pShadowAtlas;
 	}
 
 	std::unique_ptr<ConstantBuffer<LightInputCB>>& LightManager::GetLightInputCB()
 	{
-		return pLightInputCB;
+		return m_pLightInputCB;
 	}
 
 	void LightManager::RenderShadows(ShadowPassContext context)
 	{
-		context.pRendererList = pShadowRendererList;
+		context.pRendererList = m_pShadowRendererList;
 
-		pShadowAtlas->Clear(context.gfx);
-		context.gfx.GetContext()->OMSetRenderTargets(0, nullptr, pShadowAtlas->GetView().Get());
+		m_pShadowAtlas->Clear(context.gfx);
+		context.gfx.GetContext()->OMSetRenderTargets(0, nullptr, m_pShadowAtlas->GetView().Get());
 
 		// todo: cull shadows
-		for (int i = 0; i < pLights.size(); ++i)
+		for (int i = 0; i < m_pLights.size(); ++i)
 		{
-			if (pLights[i]->HasShadow())
+			if (m_pLights[i]->HasShadow())
 			{
-				int shadowMapIdx = pLights[i]->GetCurrentShadowIdx();
-				pLights[i]->RenderShadow(context); //, gfx, cam, pass, pTransformationCB
-				pLights[i]->AppendShadowData(shadowMapIdx, cachedShadowData);
-				shadowMapIdx += pLights[i]->GetShadowTileCount();
+				int shadowMapIdx = m_pLights[i]->GetCurrentShadowIdx();
+				m_pLights[i]->RenderShadow(context); //, gfx, cam, pass, pTransformationCB
+				m_pLights[i]->AppendShadowData(shadowMapIdx, m_cachedShadowData);
+				shadowMapIdx += m_pLights[i]->GetShadowTileCount();
 			}
 		}
 
-		pLightShadowSB->Update(context.gfx, cachedShadowData, (UINT)cachedShadowData.size());
+		m_pLightShadowSB->Update(context.gfx, m_cachedShadowData, (UINT)m_cachedShadowData.size());
 	}
 
 	ComPtr<ID3D11ShaderResourceView> LightManager::GetLightDataSRV() const
 	{
-		return pLightData->GetSRV();
+		return m_pLightData->GetSRV();
 	}
 
 	ComPtr<ID3D11ShaderResourceView> LightManager::GetShadowDataSRV() const
 	{
-		return pLightShadowSB->GetSRV();
+		return m_pLightShadowSB->GetSRV();
 	}
 
 	void LightManager::DrawImguiControlWindows()
 	{
-		for (auto& l : pLights)
+		for (auto& l : m_pLights)
 		{
 			l->DrawImguiControlWindow();
 		}
@@ -199,37 +199,37 @@ namespace gfx
 
 	UINT LightManager::GetLightCount() const
 	{
-		return (UINT)pLights.size();
+		return (UINT)m_pLights.size();
 	}
 
 	std::shared_ptr<Light> LightManager::GetLight(UINT index) const
 	{
-		return pLights[index];
+		return m_pLights[index];
 	}
 
 	UINT LightManager::GetClusterCount() const
 	{
-		return clusterDimensionX * clusterDimensionY * clusterDimensionZ;
+		return m_clusterDimensionX * m_clusterDimensionY * m_clusterDimensionZ;
 	}
 
 	UINT LightManager::GetClusterDimensionX() const
 	{
-		return clusterDimensionX;
+		return m_clusterDimensionX;
 	}
 
 	UINT LightManager::GetClusterDimensionY() const
 	{
-		return clusterDimensionY;
+		return m_clusterDimensionY;
 	}
 
 	UINT LightManager::GetClusterDimensionZ() const
 	{
-		return clusterDimensionZ;
+		return m_clusterDimensionZ;
 	}
 
 	const std::unique_ptr<StructuredBuffer<int>>& LightManager::GetClusteredIndices() const
 	{
-		return pClusteredIndices;
+		return m_pClusteredIndices;
 	}
 
 	bool LightManager::FrustumSphereIntersection(dx::XMVECTOR lightSphere, dx::XMFLOAT4 frustumCorners, float farClipPlane)

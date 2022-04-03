@@ -22,16 +22,16 @@ namespace gfx
 		descDepth.SampleDesc.Quality = 0u;
 		descDepth.Usage = D3D11_USAGE_DEFAULT;
 		descDepth.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_DEPTH_STENCIL;
-		THROW_IF_FAILED(gfx.GetAdapter()->CreateTexture2D(&descDepth, nullptr, &pDepthStencil));
-		assert(pDepthStencil != NULL && "Depth stencil is null!");
+		THROW_IF_FAILED(gfx.GetAdapter()->CreateTexture2D(&descDepth, nullptr, &m_pDepthStencil));
+		assert(m_pDepthStencil != NULL && "Depth stencil is null!");
 
 		// Create DS View
 		D3D11_DEPTH_STENCIL_VIEW_DESC descDSV = {};
 		descDSV.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 		descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 		descDSV.Texture2D.MipSlice = 0u;
-		THROW_IF_FAILED(gfx.GetAdapter()->CreateDepthStencilView(pDepthStencil.Get(), &descDSV, &pDepthStencilView));
-		assert(pDepthStencilView != NULL && "Depth stencil view is null!");
+		THROW_IF_FAILED(gfx.GetAdapter()->CreateDepthStencilView(m_pDepthStencil.Get(), &descDSV, &m_pDepthStencilView));
+		assert(m_pDepthStencilView != NULL && "Depth stencil view is null!");
 
 		// Create SRV
 		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
@@ -40,8 +40,8 @@ namespace gfx
 		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 		srvDesc.Texture2D.MostDetailedMip = 0;
 		srvDesc.Texture2D.MipLevels = 1;
-		THROW_IF_FAILED(gfx.GetAdapter()->CreateShaderResourceView(pDepthStencil.Get(), &srvDesc, &pShaderResourceView));
-		assert(pShaderResourceView != NULL && "Depth SRV is null!");
+		THROW_IF_FAILED(gfx.GetAdapter()->CreateShaderResourceView(m_pDepthStencil.Get(), &srvDesc, &m_pShaderResourceView));
+		assert(m_pShaderResourceView != NULL && "Depth SRV is null!");
 	}
 
 	DepthStencilTarget::~DepthStencilTarget()
@@ -49,16 +49,16 @@ namespace gfx
 
 	void DepthStencilTarget::Clear(GraphicsDevice& gfx)
 	{
-		gfx.GetContext()->ClearDepthStencilView(pDepthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.f, 0u);
+		gfx.GetContext()->ClearDepthStencilView(m_pDepthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.f, 0u);
 	}
 
 	ComPtr<ID3D11DepthStencilView> DepthStencilTarget::GetView() const
 	{
-		return pDepthStencilView;
+		return m_pDepthStencilView;
 	}
 
 	ComPtr<ID3D11ShaderResourceView> DepthStencilTarget::GetSRV() const
 	{
-		return pShaderResourceView;
+		return m_pShaderResourceView;
 	}
 }

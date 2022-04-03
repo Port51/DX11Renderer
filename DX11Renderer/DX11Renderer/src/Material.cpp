@@ -31,18 +31,18 @@ namespace gfx
 	enum MaterialParseState { None, Properties, Pass };
 
 	Material::Material(GraphicsDevice& gfx, std::string_view _materialAssetPath)
-		: materialAssetPath(std::string(_materialAssetPath))
+		: m_materialAssetPath(std::string(_materialAssetPath))
 	{
 		// todo: This is very WIP and should be replaced by something entirely different later
 		// with most of the parsing logic moved to a different class
 
-		vertexLayout
+		m_vertexLayout
 			.AppendVertexDesc<dx::XMFLOAT3>({ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 })
 			.AppendVertexDesc<dx::XMFLOAT3>({ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 })
 			.AppendVertexDesc<dx::XMFLOAT3>({ "TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 })
 			.AppendVertexDesc<dx::XMFLOAT2>({ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 })
 			.AppendInstanceDesc<dx::XMFLOAT3>({ "INSTANCEPOS", 0, DXGI_FORMAT_R32G32B32_FLOAT, 1, 0, D3D11_INPUT_PER_INSTANCE_DATA, 1 }); // last = # instances to draw before moving onto next instance
-		assert(vertexLayout.GetPerVertexStride() % 16 == 0);
+		assert(m_vertexLayout.GetPerVertexStride() % 16 == 0);
 
 		dx::XMFLOAT3 colorProp = { 0.8f, 0.8f, 0.8f };
 		float roughnessProp = 0.75f;
@@ -91,7 +91,7 @@ namespace gfx
 					// End pass
 
 					// If no pixel shader, bind null
-					if (pPixelShader == nullptr)
+					if (m_pPixelShader == nullptr)
 					{
 						pPassStep->AddBinding(NullPixelShader::Resolve(gfx))
 							.SetupPSBinding(0u);
@@ -99,14 +99,14 @@ namespace gfx
 
 					pTechnique->AddStep(std::move(pPassStep));
 					pMaterialPass->AddTechnique(std::move(pTechnique));
-					pPasses.emplace(materialPassName, std::move(pMaterialPass));
+					m_pPasses.emplace(materialPassName, std::move(pMaterialPass));
 
 					// Error check
-					if (pVertexShader == nullptr)
+					if (m_pVertexShader == nullptr)
 						throw std::runtime_error("Material at " + std::string(_materialAssetPath) + " is missing vertex shader!");
 
-					pVertexShader = nullptr;
-					pPixelShader = nullptr;
+					m_pVertexShader = nullptr;
+					m_pPixelShader = nullptr;
 				}
 			}
 			else if (p.key == "Name")
@@ -158,18 +158,18 @@ namespace gfx
 				{
 					// Bind vertex shader and input layout
 					const auto vertexShaderName = p.values[0];
-					pVertexShader = VertexShader::Resolve(gfx, vertexShaderName.c_str());
-					const auto pvsbc = pVertexShader->GetBytecode();
+					m_pVertexShader = VertexShader::Resolve(gfx, vertexShaderName.c_str());
+					const auto pvsbc = m_pVertexShader->GetBytecode();
 
-					pPassStep->AddBinding(pVertexShader)
+					pPassStep->AddBinding(m_pVertexShader)
 						.SetupVSBinding(0u);
-					pPassStep->AddBinding(InputLayout::Resolve(gfx, std::move(vertexLayout), vertexShaderName, pvsbc))
+					pPassStep->AddBinding(InputLayout::Resolve(gfx, std::move(m_vertexLayout), vertexShaderName, pvsbc))
 						.SetupIABinding();
 				}
 				else if (p.key == "PS")
 				{
-					pPixelShader = PixelShader::Resolve(gfx, p.values[0].c_str());
-					pPassStep->AddBinding(pPixelShader)
+					m_pPixelShader = PixelShader::Resolve(gfx, p.values[0].c_str());
+					pPassStep->AddBinding(m_pPixelShader)
 						.SetupPSBinding(0u);
 				}
 				else if (p.key == "Texture")
@@ -210,16 +210,16 @@ namespace gfx
 		// Only submit draw calls for passes contained in draw context
 		for (const auto& passName : drawContext.renderPasses)
 		{
-			if (pPasses.find(passName) != pPasses.end())
+			if (m_pPasses.find(passName) != m_pPasses.end())
 			{
-				pPasses.at(passName)->SubmitDrawCalls(meshRenderer, drawContext);
+				m_pPasses.at(passName)->SubmitDrawCalls(meshRenderer, drawContext);
 			}
 		}
 	}
 
 	const VertexLayout& Material::GetVertexLayout() const
 	{
-		return vertexLayout;
+		return m_vertexLayout;
 	}
 
 	std::shared_ptr<Bindable> Material::Resolve(GraphicsDevice& gfx, const std::string_view assetPath)
@@ -234,6 +234,6 @@ namespace gfx
 
 	void Material::AddBindable(std::shared_ptr<Bindable> pBindable)
 	{
-		pBindables.push_back(pBindable);
+		m_pBindables.push_back(pBindable);
 	}
 }

@@ -8,13 +8,13 @@
 namespace gfx
 {
 	ComputeKernel::ComputeKernel(std::shared_ptr<ComputeShader> pComputeShader)
-		: pComputeShader(pComputeShader)
+		: m_pComputeShader(pComputeShader)
 	{
 
 	}
 
 	void ComputeKernel::Dispatch(GraphicsDevice& gfx, UINT threadCountX, UINT threadCountY, UINT threadCountZ)
 	{
-		pComputeShader->Dispatch(gfx, threadCountX, threadCountY, threadCountZ);
+		m_pComputeShader->Dispatch(gfx, threadCountX, threadCountY, threadCountZ);
 	}
 }

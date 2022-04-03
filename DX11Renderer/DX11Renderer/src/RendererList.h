@@ -34,7 +34,7 @@ namespace gfx
 		static bool SortBackToFront(const std::pair<std::shared_ptr<MeshRenderer>, float>& a, const std::pair<std::shared_ptr<MeshRenderer>, float>& b);
 	private:
 		// Float measures view distance
-		std::shared_ptr<RendererList> pSource;
-		std::vector<std::pair<std::shared_ptr<MeshRenderer>, float>> pRenderers;
+		std::shared_ptr<RendererList> m_pSource;
+		std::vector<std::pair<std::shared_ptr<MeshRenderer>, float>> m_pRenderers;
 	};
 }

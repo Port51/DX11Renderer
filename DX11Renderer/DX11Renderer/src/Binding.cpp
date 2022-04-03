@@ -7,40 +7,40 @@
 namespace gfx
 {
 	Binding::Binding(std::shared_ptr<Bindable> _pBindable)
-		: pBindable(_pBindable)
+		: m_pBindable(_pBindable)
 	{}
 
 	void Binding::Bind(GraphicsDevice& gfx) const
 	{
 		int bindings = 0;
-		if (bindToInputAssemblerStageSlot != -1)
+		if (m_IASlot != -1)
 		{
-			pBindable->BindIA(gfx, bindToInputAssemblerStageSlot);
+			m_pBindable->BindIA(gfx, m_IASlot);
 			bindings++;
 		}
-		if (bindToComputeStageSlot != -1)
+		if (m_CSSlot != -1)
 		{
-			pBindable->BindCS(gfx, bindToComputeStageSlot);
+			m_pBindable->BindCS(gfx, m_CSSlot);
 			bindings++;
 		}
-		if (bindToVertexStageSlot != -1)
+		if (m_VSSlot != -1)
 		{
-			pBindable->BindVS(gfx, bindToVertexStageSlot);
+			m_pBindable->BindVS(gfx, m_VSSlot);
 			bindings++;
 		}
-		if (bindToPixelStageSlot != -1)
+		if (m_PSSlot != -1)
 		{
-			pBindable->BindPS(gfx, bindToPixelStageSlot);
+			m_pBindable->BindPS(gfx, m_PSSlot);
 			bindings++;
 		}
-		if (bindToRasterizerStageSlot)
+		if (m_RSBind)
 		{
-			pBindable->BindRS(gfx);
+			m_pBindable->BindRS(gfx);
 			bindings++;
 		}
-		if (bindToOutputMergerStageSlot)
+		if (m_OMBind)
 		{
-			pBindable->BindOM(gfx);
+			m_pBindable->BindOM(gfx);
 			bindings++;
 		}
 		if (bindings == 0)
@@ -51,42 +51,42 @@ namespace gfx
 
 	std::shared_ptr<Bindable> Binding::GetBindable() const
 	{
-		return pBindable;
+		return m_pBindable;
 	}
 
 	Binding& Binding::SetupIABinding(UINT slot)
 	{
-		bindToInputAssemblerStageSlot = slot;
+		m_IASlot = slot;
 		return *this;
 	}
 
 	Binding& Binding::SetupCSBinding(UINT slot)
 	{
-		bindToComputeStageSlot = slot;
+		m_CSSlot = slot;
 		return *this;
 	}
 
 	Binding& Binding::SetupVSBinding(UINT slot)
 	{
-		bindToVertexStageSlot = slot;
+		m_VSSlot = slot;
 		return *this;
 	}
 
 	Binding& Binding::SetupPSBinding(UINT slot)
 	{
-		bindToPixelStageSlot = slot;
+		m_PSSlot = slot;
 		return *this;
 	}
 
 	Binding& Binding::SetupRSBinding()
 	{
-		bindToRasterizerStageSlot = true;
+		m_RSBind = true;
 		return *this;
 	}
 
 	Binding& Binding::SetupOMBinding()
 	{
-		bindToOutputMergerStageSlot = true;
+		m_OMBind = true;
 		return *this;
 	}
 }

@@ -19,7 +19,7 @@ namespace gfx
 	protected:
 		static std::string GenerateUID(D3D11_CULL_MODE cullMode);
 	protected:
-		ComPtr<ID3D11RasterizerState> pRasterizer;
-		D3D11_CULL_MODE cullMode;
+		ComPtr<ID3D11RasterizerState> m_pRasterizer;
+		D3D11_CULL_MODE m_cullMode;
 	};
 }

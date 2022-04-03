@@ -6,22 +6,22 @@
 namespace gfx
 {
 	SceneGraphNode::SceneGraphNode(int id, const dx::XMMATRIX & _transform, std::shared_ptr<MeshRenderer> pMeshPtr, std::vector<std::shared_ptr<SceneGraphNode>> pChildNodes)
-		: pMeshPtr(pMeshPtr), pChildNodes(std::move(pChildNodes))
+		: m_pMeshPtr(pMeshPtr), m_pChildNodes(std::move(pChildNodes))
 	{
-		dx::XMStoreFloat4x4(&localTransform, _transform);
+		dx::XMStoreFloat4x4(&m_localTransform, _transform);
 	}
 
 	void SceneGraphNode::RebuildTransform(dx::XMMATRIX accumulatedTransform)
 	{
-		const auto worldMatrix = dx::XMLoadFloat4x4(&localTransform) * accumulatedTransform;
-		dx::XMStoreFloat4x4(&accumulatedWorldTransform, worldMatrix);
+		const auto worldMatrix = dx::XMLoadFloat4x4(&m_localTransform) * accumulatedTransform;
+		dx::XMStoreFloat4x4(&m_accumulatedWorldTransform, worldMatrix);
 
-		if (pMeshPtr)
+		if (m_pMeshPtr)
 		{
-			pMeshPtr->SetTransform(worldMatrix);
+			m_pMeshPtr->SetTransform(worldMatrix);
 		}
 
-		for (const auto& pc : pChildNodes)
+		for (const auto& pc : m_pChildNodes)
 		{
 			pc->RebuildTransform(worldMatrix);
 		}
@@ -29,12 +29,12 @@ namespace gfx
 
 	void SceneGraphNode::SubmitDrawCalls(const DrawContext& drawContext) const
 	{
-		if (pMeshPtr)
+		if (m_pMeshPtr)
 		{
-			pMeshPtr->SubmitDrawCalls(drawContext);
+			m_pMeshPtr->SubmitDrawCalls(drawContext);
 		}
 
-		for (const auto& pc : pChildNodes)
+		for (const auto& pc : m_pChildNodes)
 		{
 			pc->SubmitDrawCalls(drawContext);
 		}

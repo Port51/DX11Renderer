@@ -12,13 +12,13 @@ namespace gfx
 {
 	InstancedMeshRenderer::InstancedMeshRenderer(GraphicsDevice & gfx, std::string name, std::shared_ptr<Material> pMaterial, std::shared_ptr<VertexBufferWrapper> _pVertexBuffer, std::shared_ptr<IndexBuffer> pIndexBuffer, std::shared_ptr<Topology> pTopologyBuffer, UINT instanceCount)
 		: MeshRenderer(gfx, name, pMaterial, _pVertexBuffer, pIndexBuffer, pTopologyBuffer),
-		instanceCount(instanceCount)
+		m_instanceCount(instanceCount)
 	{
 
 	}
 
 	void InstancedMeshRenderer::IssueDrawCall(GraphicsDevice& gfx) const
 	{
-		gfx.DrawIndexedInstanced(GetIndexCount(), instanceCount);
+		gfx.DrawIndexedInstanced(GetIndexCount(), m_instanceCount);
 	}
 }

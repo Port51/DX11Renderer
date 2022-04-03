@@ -32,8 +32,8 @@ namespace gfx
 		void SetRenderTarget(ID3D11DeviceContext* deviceContext, ComPtr<ID3D11DepthStencilView> depthStencilView);
 		void ClearRenderTarget(ID3D11DeviceContext* deviceContext, float, float, float, float);
 	protected:
-		ComPtr<ID3D11RenderTargetView> pRenderTargetView;
-		D3D11_VIEWPORT viewport;
-		DXGI_FORMAT format;
+		ComPtr<ID3D11RenderTargetView> m_pRenderTargetView;
+		D3D11_VIEWPORT m_viewport;
+		DXGI_FORMAT m_format;
 	};
 }

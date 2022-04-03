@@ -37,12 +37,12 @@ namespace gfx
 
 	PointLight::PointLight(GraphicsDevice& gfx, UINT index, bool allowUserControl, bool hasShadow, std::shared_ptr<ModelAsset> const& pModelAsset, dx::XMFLOAT3 positionWS, dx::XMFLOAT3 color, float intensity, float attenuationQ, float range)
 		: Light(gfx, index, allowUserControl, pModelAsset, positionWS, color, intensity),
-		attenuationQ(attenuationQ),
-		range(range)
+		m_attenuationQ(attenuationQ),
+		m_range(range)
 	{
-		shadowSettings.hasShadow = hasShadow;
+		m_shadowSettings.hasShadow = hasShadow;
 
-		if (shadowSettings.hasShadow)
+		if (m_shadowSettings.hasShadow)
 		{
 			lightShadowData.resize(6);
 		}
@@ -50,26 +50,26 @@ namespace gfx
 
 	void PointLight::DrawImguiControlWindow()
 	{
-		if (!allowUserControl)
+		if (!m_allowUserControl)
 			return;
 
-		const auto identifier = std::string("Light") + std::to_string(index);
+		const auto identifier = std::string("Light") + std::to_string(m_index);
 		if (ImGui::Begin(identifier.c_str()))
 		{
 			ImGui::Text("Position");
-			ImGui::SliderFloat("X", &positionWS.x, -60.0f, 60.0f, "%.1f");
-			ImGui::SliderFloat("Y", &positionWS.y, -60.0f, 60.0f, "%.1f");
-			ImGui::SliderFloat("Z", &positionWS.z, -60.0f, 60.0f, "%.1f");
+			ImGui::SliderFloat("X", &m_positionWS.x, -60.0f, 60.0f, "%.1f");
+			ImGui::SliderFloat("Y", &m_positionWS.y, -60.0f, 60.0f, "%.1f");
+			ImGui::SliderFloat("Z", &m_positionWS.z, -60.0f, 60.0f, "%.1f");
 
 			ImGui::Text("Intensity/Color");
 			// ImGuiSliderFlags_Logarithmic makes it power of 2?
-			ImGui::SliderFloat("Intensity", &intensity, 0.01f, 5.0f, "%.2f", ImGuiSliderFlags_Logarithmic);
-			ImGui::SliderFloat("Range", &range, 0.05f, 50.0f, "%.2f", ImGuiSliderFlags_Logarithmic);
-			ImGui::SliderFloat("Attenuation Q", &attenuationQ, 1.0f, 100.0f, "%.1f", ImGuiSliderFlags_Logarithmic);
-			ImGui::ColorEdit3("Diffuse Color", &color.x);
+			ImGui::SliderFloat("Intensity", &m_intensity, 0.01f, 5.0f, "%.2f", ImGuiSliderFlags_Logarithmic);
+			ImGui::SliderFloat("Range", &m_range, 0.05f, 50.0f, "%.2f", ImGuiSliderFlags_Logarithmic);
+			ImGui::SliderFloat("Attenuation Q", &m_attenuationQ, 1.0f, 100.0f, "%.1f", ImGuiSliderFlags_Logarithmic);
+			ImGui::ColorEdit3("Diffuse Color", &m_color.x);
 		}
 
-		pModel->SetPositionWS(positionWS);
+		m_pModel->SetPositionWS(m_positionWS);
 		ImGui::End();
 	}
 
@@ -95,12 +95,12 @@ namespace gfx
 
 		// Precalculate sphere radius
 		// (The shader math is the same, but it's easier to tune lights this way)
-		float invSphereRad = attenuationQ / std::sqrtf(range);
+		float invSphereRad = m_attenuationQ / std::sqrtf(m_range);
 
-		const auto posWS_Vector = dx::XMLoadFloat4(&dx::XMFLOAT4(positionWS.x, positionWS.y, positionWS.z, 1.0f));
-		light.positionVS_range = dx::XMVectorSetW(dx::XMVector4Transform(posWS_Vector, viewMatrix), range); // pack range into W
-		light.color_intensity = dx::XMVectorSetW(dx::XMLoadFloat3(&color), intensity);
-		light.directionVS = dx::XMVectorSet(0, 0, 0, (float)shadowAtlasTileIdx);
+		const auto posWS_Vector = dx::XMLoadFloat4(&dx::XMFLOAT4(m_positionWS.x, m_positionWS.y, m_positionWS.z, 1.0f));
+		light.positionVS_range = dx::XMVectorSetW(dx::XMVector4Transform(posWS_Vector, viewMatrix), m_range); // pack range into W
+		light.color_intensity = dx::XMVectorSetW(dx::XMLoadFloat3(&m_color), m_intensity);
+		light.directionVS = dx::XMVectorSet(0, 0, 0, (float)m_shadowAtlasTileIdx);
 		light.data0 = dx::XMVectorSet(0, invSphereRad, 0, 0);
 		return light;
 	}
@@ -114,14 +114,14 @@ namespace gfx
 	{
 		static const float fovTheta = (float)dx::XM_PI / 2.0f;
 		static const float nearPlane = 0.1f;
-		const auto projMatrix = dx::XMMatrixPerspectiveFovLH(fovTheta, 1.0f, nearPlane, range);
+		const auto projMatrix = dx::XMMatrixPerspectiveFovLH(fovTheta, 1.0f, nearPlane, m_range);
 
 		// Render x6 shadow tiles
 		for (UINT i = 0u; i < 6u; ++i)
 		{
 			// Apply look-at and local orientation
 			// +Y = up
-			const auto lightPos = dx::XMLoadFloat3(&positionWS);
+			const auto lightPos = dx::XMLoadFloat3(&m_positionWS);
 			const auto viewMatrix = dx::XMMatrixLookAtLH(lightPos, dx::XMVectorAdd(lightPos, viewDirectionsWS[i * 2u + 0u]), viewDirectionsWS[i * 2u + 1u]);
 
 			static Frustum frustum;
@@ -142,7 +142,7 @@ namespace gfx
 			auto ct = context.pRendererList->GetRendererCount();
 
 			// Calculate tile in shadow atlas
-			int tileIdx = shadowAtlasTileIdx + i;
+			int tileIdx = m_shadowAtlasTileIdx + i;
 			int tileX = (tileIdx % Config::ShadowAtlasTileDimension);
 			int tileY = (tileIdx / Config::ShadowAtlasTileDimension);
 

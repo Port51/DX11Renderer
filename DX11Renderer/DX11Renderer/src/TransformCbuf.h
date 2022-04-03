@@ -22,6 +22,6 @@ namespace gfx
 		void UpdateTransforms(GraphicsDevice& gfx, const Transforms& transforms);
 	private:
 		// Static so can be re-used each drawcall
-		static std::unique_ptr<ConstantBuffer<Transforms>> pVcbuf;
+		static std::unique_ptr<ConstantBuffer<Transforms>> m_pVcbuf;
 	};
 }

@@ -22,7 +22,7 @@ namespace gfx
 	{}
 
 	Sampler::Sampler(GraphicsDevice & gfx, D3D11_FILTER filter, D3D11_TEXTURE_ADDRESS_MODE wrapU, D3D11_TEXTURE_ADDRESS_MODE wrapV, D3D11_TEXTURE_ADDRESS_MODE wrapW)
-		: filter(filter), wrapU(wrapU), wrapV(wrapV), wrapW(wrapW)
+		: m_filter(filter), m_wrapU(wrapU), m_wrapV(wrapV), m_wrapW(wrapW)
 	{
 		D3D11_SAMPLER_DESC samplerDesc = {};
 		samplerDesc.Filter = filter;
@@ -40,32 +40,32 @@ namespace gfx
 		samplerDesc.BorderColor[2] = 1.0f;
 		samplerDesc.BorderColor[3] = 1.0f;
 
-		THROW_IF_FAILED(gfx.GetAdapter()->CreateSamplerState(&samplerDesc, &pSampler));
+		THROW_IF_FAILED(gfx.GetAdapter()->CreateSamplerState(&samplerDesc, &m_pSampler));
 	}
 
 	Sampler::Sampler(GraphicsDevice& gfx, D3D11_SAMPLER_DESC samplerDesc)
 	{
-		THROW_IF_FAILED(gfx.GetAdapter()->CreateSamplerState(&samplerDesc, &pSampler));
+		THROW_IF_FAILED(gfx.GetAdapter()->CreateSamplerState(&samplerDesc, &m_pSampler));
 	}
 
 	void Sampler::BindCS(GraphicsDevice & gfx, UINT slot)
 	{
-		gfx.GetContext()->CSSetSamplers(slot, 1u, pSampler.GetAddressOf());
+		gfx.GetContext()->CSSetSamplers(slot, 1u, m_pSampler.GetAddressOf());
 	}
 
 	void Sampler::BindVS(GraphicsDevice & gfx, UINT slot)
 	{
-		gfx.GetContext()->VSSetSamplers(slot, 1u, pSampler.GetAddressOf());
+		gfx.GetContext()->VSSetSamplers(slot, 1u, m_pSampler.GetAddressOf());
 	}
 
 	void Sampler::BindPS(GraphicsDevice & gfx, UINT slot)
 	{
-		gfx.GetContext()->PSSetSamplers(slot, 1u, pSampler.GetAddressOf());
+		gfx.GetContext()->PSSetSamplers(slot, 1u, m_pSampler.GetAddressOf());
 	}
 
 	ComPtr<ID3D11SamplerState> Sampler::GetD3DSampler() const
 	{
-		return pSampler;
+		return m_pSampler;
 	}
 
 	std::shared_ptr<Bindable> Sampler::Resolve(GraphicsDevice& gfx)

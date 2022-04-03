@@ -6,21 +6,21 @@
 namespace gfx
 {
 	InputLayout::InputLayout(GraphicsDevice& gfx, VertexLayout _layout, std::string vertexShaderName, ID3DBlob* pVertexShaderBytecode)
-		: layout(std::move(_layout)),
-		vertexShaderName(vertexShaderName)
+		: m_layout(std::move(_layout)),
+		m_vertexShaderName(vertexShaderName)
 	{
-		const auto d3dLayout = layout.GetD3DLayout();
+		const auto d3dLayout = m_layout.GetD3DLayout();
 		THROW_IF_FAILED(gfx.GetAdapter()->CreateInputLayout(
 			d3dLayout.data(), (UINT)d3dLayout.size(),
 			pVertexShaderBytecode->GetBufferPointer(),
 			pVertexShaderBytecode->GetBufferSize(),
-			&pInputLayout
+			&m_pInputLayout
 		));
 	}
 
 	void InputLayout::BindIA(GraphicsDevice& gfx, UINT slot)
 	{
-		gfx.GetContext()->IASetInputLayout(pInputLayout.Get());
+		gfx.GetContext()->IASetInputLayout(m_pInputLayout.Get());
 	}
 
 	std::shared_ptr<InputLayout> InputLayout::Resolve(GraphicsDevice & gfx, const VertexLayout & layout, std::string vertexShaderName, ID3DBlob * pVertexShaderBytecode)

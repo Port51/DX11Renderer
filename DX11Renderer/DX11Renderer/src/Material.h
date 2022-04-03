@@ -30,13 +30,12 @@ namespace gfx
 	protected:
 		static std::string GenerateUID(const std::string_view assetPath);
 		void AddBindable(std::shared_ptr<Bindable> pBindable);
-	public:
-		std::shared_ptr<VertexShader> pVertexShader;
-		std::shared_ptr<PixelShader> pPixelShader;
 	private:
-		std::unordered_map<std::string, std::unique_ptr<MaterialPass>> pPasses;
-		std::vector<std::shared_ptr<Bindable>> pBindables;
-		std::string materialAssetPath;
-		VertexLayout vertexLayout;
+		std::shared_ptr<VertexShader> m_pVertexShader;
+		std::shared_ptr<PixelShader> m_pPixelShader;
+		std::unordered_map<std::string, std::unique_ptr<MaterialPass>> m_pPasses;
+		std::vector<std::shared_ptr<Bindable>> m_pBindables;
+		std::string m_materialAssetPath;
+		VertexLayout m_vertexLayout;
 	};
 }

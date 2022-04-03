@@ -10,45 +10,45 @@ namespace gfx
 	{
 	public:
 		StructuredBufferData(const UINT elementCount)
-			: elementCount(elementCount), stride(sizeof(T))
+			: m_elementCount(elementCount), m_stride(sizeof(T))
 		{
-			elements.resize(elementCount);
-			nextInputIdx = 0u;
+			m_elements.resize(elementCount);
+			m_nextInputIdx = 0u;
 		}
 		StructuredBufferData(std::vector<T> _elements)
-			: elementCount(_elements.size()), stride(sizeof(T)), elements(std::move(_elements))
+			: m_elementCount(_elements.size()), m_stride(sizeof(T)), m_elements(std::move(_elements))
 		{
-			nextInputIdx = _elements.size();
+			m_nextInputIdx = _elements.size();
 		}
 		D3D11_SUBRESOURCE_DATA GetSubresourceData() const override
 		{
 			D3D11_SUBRESOURCE_DATA sd = {};
-			sd.pSysMem = elements.data();
+			sd.pSysMem = m_elements.data();
 			sd.SysMemPitch = 0;			// only for 2D/3D textures
 			sd.SysMemSlicePitch = 0;	// only for 3D textures
 			return sd;
 		}
 		UINT GetElementCount() const override
 		{
-			return elementCount;
+			return m_elementCount;
 		}
 		UINT GetSizeInBytes() const override
 		{
-			return elementCount * stride;
+			return m_elementCount * m_stride;
 		}
 		UINT GetStride() const override
 		{
-			return stride;
+			return m_stride;
 		}
 		void EmplaceBack(const T value)
 		{
-			assert(nextInputIdx < elements.size() && "StructuredBufferData out of range!");
-			elements[nextInputIdx++] = std::move(value);
+			assert(m_nextInputIdx < m_elements.size() && "StructuredBufferData out of range!");
+			m_elements[m_nextInputIdx++] = std::move(value);
 		}
 	private:
-		std::vector<T> elements;
-		const UINT stride;
-		const UINT elementCount;
-		UINT nextInputIdx;
+		std::vector<T> m_elements;
+		const UINT m_stride;
+		const UINT m_elementCount;
+		UINT m_nextInputIdx;
 	};
 }

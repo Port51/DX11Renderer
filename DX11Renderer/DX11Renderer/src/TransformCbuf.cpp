@@ -9,22 +9,22 @@ namespace gfx
 {
 	TransformCbuf::TransformCbuf(GraphicsDevice& gfx)
 	{
-		if (!pVcbuf)
+		if (!m_pVcbuf)
 		{
-			pVcbuf = std::make_unique<ConstantBuffer<Transforms>>(gfx, D3D11_USAGE_DYNAMIC);
+			m_pVcbuf = std::make_unique<ConstantBuffer<Transforms>>(gfx, D3D11_USAGE_DYNAMIC);
 		}
 	}
 
 	void TransformCbuf::BindVS(GraphicsDevice& gfx, UINT slot)
 	{
-		gfx.GetContext()->VSSetConstantBuffers(slot, 1u, pVcbuf->GetD3DBuffer().GetAddressOf());
+		gfx.GetContext()->VSSetConstantBuffers(slot, 1u, m_pVcbuf->GetD3DBuffer().GetAddressOf());
 	}
 
 	void TransformCbuf::UpdateTransforms(GraphicsDevice& gfx, const Transforms& transforms)
 	{
-		pVcbuf->Update(gfx, transforms);
+		m_pVcbuf->Update(gfx, transforms);
 	}
 
 	// Because static
-	std::unique_ptr<ConstantBuffer<Transforms>> TransformCbuf::pVcbuf;
+	std::unique_ptr<ConstantBuffer<Transforms>> TransformCbuf::m_pVcbuf;
 }

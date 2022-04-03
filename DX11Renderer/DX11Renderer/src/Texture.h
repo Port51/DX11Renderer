@@ -35,12 +35,12 @@ namespace gfx
 	protected:
 		static std::string GenerateUID(const std::string& tag);
 	protected:
-		std::string tag;
-		TextureDimension dimension;
-		UINT mipCount;
-		UINT slot;
-		ComPtr<ID3D11Texture2D> pTexture;
-		ComPtr<ID3D11ShaderResourceView> pShaderResourceView;
-		std::vector<ComPtr<ID3D11UnorderedAccessView>> pUAV;
+		std::string m_tag;
+		TextureDimension m_dimension;
+		UINT m_mipCount;
+		UINT m_slot;
+		ComPtr<ID3D11Texture2D> m_pTexture;
+		ComPtr<ID3D11ShaderResourceView> m_pShaderResourceView;
+		std::vector<ComPtr<ID3D11UnorderedAccessView>> m_pUAV;
 	};
 }

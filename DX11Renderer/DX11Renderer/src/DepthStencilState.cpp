@@ -5,7 +5,7 @@
 namespace gfx
 {
 	DepthStencilState::DepthStencilState(GraphicsDevice& gfx, Mode mode)
-		: mode(mode)
+		: m_mode(mode)
 	{
 		D3D11_DEPTH_STENCIL_DESC dsDesc = CD3D11_DEPTH_STENCIL_DESC{ CD3D11_DEFAULT{} };
 
@@ -48,17 +48,17 @@ namespace gfx
 			dsDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP::D3D11_STENCIL_OP_KEEP;
 		}
 
-		gfx.GetAdapter()->CreateDepthStencilState(&dsDesc, &pStencil);
+		gfx.GetAdapter()->CreateDepthStencilState(&dsDesc, &m_pStencil);
 	}
 
 	DepthStencilState::DepthStencilState(GraphicsDevice & gfx, D3D11_DEPTH_STENCIL_DESC desc)
 	{
-		gfx.GetAdapter()->CreateDepthStencilState(&desc, &pStencil);
+		gfx.GetAdapter()->CreateDepthStencilState(&desc, &m_pStencil);
 	}
 
 	void DepthStencilState::BindOM(GraphicsDevice& gfx)
 	{
-		gfx.GetContext()->OMSetDepthStencilState(pStencil.Get(), 0x01);
+		gfx.GetContext()->OMSetDepthStencilState(m_pStencil.Get(), 0x01);
 	}
 
 	std::shared_ptr<DepthStencilState> DepthStencilState::Resolve(GraphicsDevice& gfx, Mode mode)

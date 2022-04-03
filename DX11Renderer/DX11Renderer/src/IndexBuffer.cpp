@@ -6,45 +6,45 @@
 namespace gfx
 {
 	IndexBuffer::IndexBuffer(GraphicsDevice& gfx, const std::vector<u16>& indices)
-		: count((UINT)indices.size()),
-		format(DXGI_FORMAT_R16_UINT)
+		: m_count((UINT)indices.size()),
+		m_format(DXGI_FORMAT_R16_UINT)
 	{
 		D3D11_BUFFER_DESC ibd = {};
 		ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
 		ibd.Usage = D3D11_USAGE_DEFAULT;
 		ibd.CPUAccessFlags = 0u;
 		ibd.MiscFlags = 0u;
-		ibd.ByteWidth = UINT(count * sizeof(u16));
+		ibd.ByteWidth = UINT(m_count * sizeof(u16));
 		ibd.StructureByteStride = sizeof(u16);
 		D3D11_SUBRESOURCE_DATA isd = {};
 		isd.pSysMem = indices.data();
-		THROW_IF_FAILED(gfx.GetAdapter()->CreateBuffer(&ibd, &isd, &pIndexBuffer));
+		THROW_IF_FAILED(gfx.GetAdapter()->CreateBuffer(&ibd, &isd, &m_pIndexBuffer));
 	}
 
 	IndexBuffer::IndexBuffer(GraphicsDevice& gfx, const std::vector<u32>& indices)
-		: count((UINT)indices.size()),
-		format(DXGI_FORMAT_R32_UINT)
+		: m_count((UINT)indices.size()),
+		m_format(DXGI_FORMAT_R32_UINT)
 	{
 		D3D11_BUFFER_DESC ibd = {};
 		ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
 		ibd.Usage = D3D11_USAGE_DEFAULT;
 		ibd.CPUAccessFlags = 0u;
 		ibd.MiscFlags = 0u;
-		ibd.ByteWidth = UINT(count * sizeof(u32));
+		ibd.ByteWidth = UINT(m_count * sizeof(u32));
 		ibd.StructureByteStride = sizeof(u32);
 		D3D11_SUBRESOURCE_DATA isd = {};
 		isd.pSysMem = indices.data();
-		THROW_IF_FAILED(gfx.GetAdapter()->CreateBuffer(&ibd, &isd, &pIndexBuffer));
+		THROW_IF_FAILED(gfx.GetAdapter()->CreateBuffer(&ibd, &isd, &m_pIndexBuffer));
 	}
 
 	void IndexBuffer::BindIA(GraphicsDevice& gfx, UINT slot)
 	{
-		gfx.GetContext()->IASetIndexBuffer(pIndexBuffer.Get(), format, 0u);
+		gfx.GetContext()->IASetIndexBuffer(m_pIndexBuffer.Get(), m_format, 0u);
 	}
 
 	UINT IndexBuffer::GetIndexCount() const
 	{
-		return count;
+		return m_count;
 	}
 
 	std::shared_ptr<IndexBuffer> IndexBuffer::Resolve(GraphicsDevice& gfx, std::string id, const std::vector<u32>& indices)

@@ -18,6 +18,6 @@ namespace gfx
 	public:
 		void Dispatch(GraphicsDevice& gfx, UINT threadCountX, UINT threadCountY, UINT threadCountZ);
 	private:
-		std::shared_ptr<ComputeShader> pComputeShader;
+		std::shared_ptr<ComputeShader> m_pComputeShader;
 	};
 }

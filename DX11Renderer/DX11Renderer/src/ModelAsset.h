@@ -20,10 +20,10 @@ namespace gfx
 		dx::XMFLOAT4X4 GetLocalTransform() const;
 		void SetChildNodes(std::vector<std::shared_ptr<ModelAssetNode>> pChildNodes);
 	private:
-		std::string name;
-		std::shared_ptr<MeshAsset> pMeshAsset;
-		dx::XMFLOAT4X4 localTransform;
-		std::vector<std::shared_ptr<ModelAssetNode>> pChildNodes;
+		std::string m_name;
+		std::shared_ptr<MeshAsset> m_pMeshAsset;
+		dx::XMFLOAT4X4 m_localTransform;
+		std::vector<std::shared_ptr<ModelAssetNode>> m_pChildNodes;
 	};
 
 	class ModelAsset : CodexElement
@@ -40,7 +40,7 @@ namespace gfx
 		std::unique_ptr<ModelInstance> CreateUniqueInstance(GraphicsDevice& gfx, dx::XMMATRIX transform);
 
 	private:
-		std::shared_ptr<ModelAssetNode> pSceneGraph;
-		std::vector<std::string> materialPaths;
+		std::shared_ptr<ModelAssetNode> m_pSceneGraph;
+		std::vector<std::string> m_materialPaths;
 	};
 }

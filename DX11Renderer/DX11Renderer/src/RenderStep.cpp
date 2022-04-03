@@ -11,25 +11,25 @@
 namespace gfx
 {
 	RenderStep::RenderStep(std::string _targetPass)
-		: targetPass{ _targetPass }
+		: m_targetPass{ _targetPass }
 	{}
 	Binding & RenderStep::AddBinding(std::shared_ptr<Bindable> pBindable)
 	{
-		bindings.push_back(Binding(std::move(pBindable)));
-		return bindings[bindings.size() - 1];
+		m_bindings.push_back(Binding(std::move(pBindable)));
+		return m_bindings[m_bindings.size() - 1];
 	}
 	Binding & RenderStep::AddBinding(Binding pBinding)
 	{
-		bindings.push_back(std::move(pBinding));
-		return bindings[bindings.size() - 1];
+		m_bindings.push_back(std::move(pBinding));
+		return m_bindings[m_bindings.size() - 1];
 	}
 	void RenderStep::SubmitDrawCalls(const MeshRenderer& meshRenderer, const DrawContext& drawContext) const
 	{
-		drawContext.renderer.AcceptDrawCall(DrawCall(this, &meshRenderer, drawContext), targetPass);
+		drawContext.renderer.AcceptDrawCall(DrawCall(this, &meshRenderer, drawContext), m_targetPass);
 	}
 	void RenderStep::Bind(GraphicsDevice & gfx) const
 	{
-		for (const auto& b : bindings)
+		for (const auto& b : m_bindings)
 		{
 			b.Bind(gfx);
 		}

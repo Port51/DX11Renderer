@@ -6,12 +6,12 @@
 namespace gfx
 {
 	Topology::Topology(GraphicsDevice& gfx, D3D11_PRIMITIVE_TOPOLOGY type)
-		: type(type)
+		: m_type(type)
 	{}
 
 	void Topology::BindIA(GraphicsDevice& gfx, UINT slot)
 	{
-		gfx.GetContext()->IASetPrimitiveTopology(type);
+		gfx.GetContext()->IASetPrimitiveTopology(m_type);
 	}
 
 	std::shared_ptr<Topology> Topology::Resolve(GraphicsDevice& gfx, D3D11_PRIMITIVE_TOPOLOGY type)

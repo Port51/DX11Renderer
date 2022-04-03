@@ -15,7 +15,7 @@ namespace gfx
 
 	void Log::Info(const std::string message)
 	{
-		messages.push_back(LogMessage(LogMessage::LogMessageType::Info, message));
+		m_messages.push_back(LogMessage(LogMessage::LogMessageType::Info, message));
 	}
 
 	void Log::Warning(const char * message)
@@ -25,7 +25,7 @@ namespace gfx
 
 	void Log::Warning(const std::string message)
 	{
-		messages.push_back(LogMessage(LogMessage::LogMessageType::Warning, message));
+		m_messages.push_back(LogMessage(LogMessage::LogMessageType::Warning, message));
 	}
 
 	void Log::Error(const char * message)
@@ -35,7 +35,7 @@ namespace gfx
 
 	void Log::Error(const std::string message)
 	{
-		messages.push_back(LogMessage(LogMessage::LogMessageType::Error, message));
+		m_messages.push_back(LogMessage(LogMessage::LogMessageType::Error, message));
 	}
 
 	void Log::DrawImguiControlWindow()
@@ -50,9 +50,9 @@ namespace gfx
 			}
 
 			ImGui::BeginChild("Scrolling");
-			for (size_t i = 0; i < messages.size(); ++i)
+			for (size_t i = 0; i < m_messages.size(); ++i)
 			{
-				messages[i].DrawImGui();
+				m_messages[i].DrawImGui();
 			}
 
 			ImGui::EndChild();
@@ -62,7 +62,7 @@ namespace gfx
 
 	void Log::Clear()
 	{
-		messages.clear();
+		m_messages.clear();
 	}
 
 	void Log::LogMessage::DrawImGui()

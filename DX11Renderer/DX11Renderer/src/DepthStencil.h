@@ -14,6 +14,6 @@ namespace gfx
 		void BindAsDepthStencil(GraphicsDevice& gfx) const;
 		void Clear(GraphicsDevice& gfx) const;
 	private:
-		ComPtr<ID3D11DepthStencilView> pDepthStencilView;
+		ComPtr<ID3D11DepthStencilView> m_pDepthStencilView;
 	};
 }

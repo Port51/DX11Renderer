@@ -11,26 +11,26 @@ namespace gfx
 	using namespace std::string_literals;
 
 	VertexShader::VertexShader(GraphicsDevice& gfx, const std::string& path)
-		: path(path)
+		: m_path(path)
 	{
 		std::wstring wide{ path.begin(), path.end() }; // convert to wide for file read <-- won't work for special characters
-		THROW_IF_FAILED(D3DReadFileToBlob(wide.c_str(), &pBytecodeBlob));
+		THROW_IF_FAILED(D3DReadFileToBlob(wide.c_str(), &m_pBytecodeBlob));
 		THROW_IF_FAILED(gfx.GetAdapter()->CreateVertexShader(
-			pBytecodeBlob->GetBufferPointer(),
-			pBytecodeBlob->GetBufferSize(),
+			m_pBytecodeBlob->GetBufferPointer(),
+			m_pBytecodeBlob->GetBufferSize(),
 			nullptr,
-			&pVertexShader
+			&m_pVertexShader
 		));
 	}
 
 	void VertexShader::BindVS(GraphicsDevice& gfx, UINT slot)
 	{
-		gfx.GetContext()->VSSetShader(pVertexShader.Get(), nullptr, 0u);
+		gfx.GetContext()->VSSetShader(m_pVertexShader.Get(), nullptr, 0u);
 	}
 
 	ID3DBlob* VertexShader::GetBytecode() const
 	{
-		return pBytecodeBlob.Get();
+		return m_pBytecodeBlob.Get();
 	}
 
 	///

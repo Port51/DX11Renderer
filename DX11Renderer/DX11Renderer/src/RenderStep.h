@@ -24,7 +24,7 @@ namespace gfx
 		void SubmitDrawCalls(const MeshRenderer& meshRenderer, const DrawContext& drawContext) const;
 		void Bind(GraphicsDevice& gfx) const;
 	private:
-		std::string targetPass;
-		std::vector<Binding> bindings;
+		std::string m_targetPass;
+		std::vector<Binding> m_bindings;
 	};
 }

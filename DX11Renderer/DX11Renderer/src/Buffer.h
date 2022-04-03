@@ -16,30 +16,19 @@ namespace gfx
 	class Buffer : public Bindable
 	{
 	public:
-		Buffer(D3D11_USAGE usage, UINT bindFlags, UINT byteWidth)
-			: usage(usage), bindFlags(bindFlags), byteWidth(byteWidth)
-		{}
-		virtual ~Buffer() {}
+		Buffer(D3D11_USAGE usage, UINT bindFlags, UINT byteWidth);
+		virtual ~Buffer();
 
 	public:
-		ComPtr<ID3D11Buffer> GetD3DBuffer()
-		{
-			return pBuffer;
-		}
-		ComPtr<ID3D11ShaderResourceView> GetSRV()
-		{
-			return pSRV;
-		}
-		ComPtr<ID3D11UnorderedAccessView> GetUAV()
-		{
-			return pUAV;
-		}
+		ComPtr<ID3D11Buffer> GetD3DBuffer();
+		ComPtr<ID3D11ShaderResourceView> GetSRV();
+		ComPtr<ID3D11UnorderedAccessView> GetUAV();
 	protected:
-		ComPtr<ID3D11Buffer> pBuffer;
-		ComPtr<ID3D11ShaderResourceView> pSRV;
-		ComPtr<ID3D11UnorderedAccessView> pUAV;
-		UINT bindFlags;
-		D3D11_USAGE usage;
-		UINT byteWidth;
+		ComPtr<ID3D11Buffer> m_pBuffer;
+		ComPtr<ID3D11ShaderResourceView> m_pSRV;
+		ComPtr<ID3D11UnorderedAccessView> m_pUAV;
+		UINT m_bindFlags;
+		D3D11_USAGE m_usage;
+		UINT m_byteWidth;
 	};
 }

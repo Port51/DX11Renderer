@@ -20,8 +20,8 @@ namespace gfx
 		ComPtr<ID3D11DepthStencilView> GetView() const;
 		ComPtr<ID3D11ShaderResourceView> GetSRV() const;
 	private:
-		ComPtr<ID3D11Texture2D> pDepthStencil;
-		ComPtr<ID3D11DepthStencilView> pDepthStencilView;
-		ComPtr<ID3D11ShaderResourceView> pShaderResourceView;
+		ComPtr<ID3D11Texture2D> m_pDepthStencil;
+		ComPtr<ID3D11DepthStencilView> m_pDepthStencilView;
+		ComPtr<ID3D11ShaderResourceView> m_pShaderResourceView;
 	};
 }

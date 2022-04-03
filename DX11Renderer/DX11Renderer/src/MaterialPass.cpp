@@ -16,21 +16,21 @@ namespace gfx
 
 	void MaterialPass::SetRenderPass(std::string _renderPass)
 	{
-		renderPass = _renderPass;
+		m_renderPass = _renderPass;
 	}
 
 	const std::string MaterialPass::GetRenderPass() const
 	{
-		return renderPass;
+		return m_renderPass;
 	}
 
 	void MaterialPass::AddTechnique(std::unique_ptr<Technique> _pTechnique)
 	{
-		pTechnique = std::move(_pTechnique);
+		m_pTechnique = std::move(_pTechnique);
 	}
 
 	void MaterialPass::SubmitDrawCalls(const MeshRenderer& meshRenderer, const DrawContext& drawContext) const
 	{
-		pTechnique->SubmitDrawCalls(meshRenderer, drawContext);
+		m_pTechnique->SubmitDrawCalls(meshRenderer, drawContext);
 	}
 }

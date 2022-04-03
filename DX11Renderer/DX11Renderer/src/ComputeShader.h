@@ -21,12 +21,12 @@ namespace gfx
 	protected:
 		static std::string GenerateUID(const std::string& path, const std::string& kernelName);
 	protected:
-		std::string path;
-		std::string kernelName;
-		UINT kernelSizeX;
-		UINT kernelSizeY;
-		UINT kernelSizeZ;
-		ComPtr<ID3DBlob> pBytecodeBlob;
-		ComPtr<ID3D11ComputeShader> pComputeShader;
+		std::string m_path;
+		std::string m_kernelName;
+		UINT m_kernelSizeX;
+		UINT m_kernelSizeY;
+		UINT m_kernelSizeZ;
+		ComPtr<ID3DBlob> m_pBytecodeBlob;
+		ComPtr<ID3D11ComputeShader> m_pComputeShader;
 	};
 }

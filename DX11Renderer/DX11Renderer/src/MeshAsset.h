@@ -19,19 +19,19 @@ namespace gfx
 
 	public:
 		// Store vertex attributes separately, and combine when making instances based on what attributes are needed
-		std::vector<dx::XMFLOAT3> vertices;
+		std::vector<dx::XMFLOAT3> m_vertices;
 
 		bool hasNormals;
-		std::vector<dx::XMFLOAT3> normals;
+		std::vector<dx::XMFLOAT3> m_normals;
 
 		bool hasTangents;
-		std::vector<dx::XMFLOAT3> tangents;
+		std::vector<dx::XMFLOAT3> m_tangents;
 
-		std::vector<std::vector<dx::XMFLOAT2>> texcoords;
+		std::vector<std::vector<dx::XMFLOAT2>> m_texcoords;
 
-		UINT numFaces;
-		std::vector<u32> indices;
+		UINT m_numFaces;
+		std::vector<u32> m_indices;
 
-		int materialIndex;
+		int m_materialIndex;
 	};
 }

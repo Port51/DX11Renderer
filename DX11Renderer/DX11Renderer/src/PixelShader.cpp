@@ -7,17 +7,17 @@
 namespace gfx
 {
 	PixelShader::PixelShader(GraphicsDevice& gfx, const std::string& path)
-		: path(path)
+		: m_path(path)
 	{
 		ComPtr<ID3DBlob> pBlob;
 		std::wstring wide{ path.begin(), path.end() }; // convert to wide for file read <-- won't work for special characters
 		THROW_IF_FAILED(D3DReadFileToBlob(wide.c_str(), &pBlob));
-		THROW_IF_FAILED(gfx.GetAdapter()->CreatePixelShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pPixelShader));
+		THROW_IF_FAILED(gfx.GetAdapter()->CreatePixelShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &m_pPixelShader));
 	}
 
 	void PixelShader::BindPS(GraphicsDevice& gfx, UINT slot)
 	{
-		gfx.GetContext()->PSSetShader(pPixelShader.Get(), nullptr, 0u);
+		gfx.GetContext()->PSSetShader(m_pPixelShader.Get(), nullptr, 0u);
 	}
 
 	std::shared_ptr<PixelShader> PixelShader::Resolve(GraphicsDevice& gfx, const std::string& path)

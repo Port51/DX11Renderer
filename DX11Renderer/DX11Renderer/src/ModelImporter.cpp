@@ -133,7 +133,7 @@ namespace gfx
 			const auto& mesh = model.meshes[i];
 			pMeshes.emplace_back(std::make_shared<MeshAsset>());
 			const auto& pMeshAsset = pMeshes[i];
-			pMeshAsset->name = settings.name + "|" + mesh.name;
+			pMeshAsset->m_name = settings.name + "|" + mesh.name;
 
 			// Each primitive is a submesh
 			// Require only 1 for now
@@ -166,7 +166,7 @@ namespace gfx
 							const u16* indices = reinterpret_cast<const u16*>(&model.buffers[bufferAccess.first].data[bufferAccess.second]);
 							for (int vi = 0; vi < indicesCt; ++vi)
 							{
-								pMeshAsset->indices.emplace_back((u32)indices[vi]);
+								pMeshAsset->m_indices.emplace_back((u32)indices[vi]);
 							}
 						}
 						else if (accessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_INT)
@@ -175,7 +175,7 @@ namespace gfx
 							const u32* indices = reinterpret_cast<const u32*>(&model.buffers[bufferAccess.first].data[bufferAccess.second]);
 							for (int vi = 0; vi < indicesCt; ++vi)
 							{
-								pMeshAsset->indices.emplace_back((u32)indices[vi]);
+								pMeshAsset->m_indices.emplace_back((u32)indices[vi]);
 							}
 						}
 						else
@@ -187,14 +187,14 @@ namespace gfx
 
 					// Load POSITION
 					{
-						pMeshAsset->vertices.reserve(vertCt);
+						pMeshAsset->m_vertices.reserve(vertCt);
 
 						const int accessorIdx = primitive.attributes.at("POSITION");
 						const auto bufferAccess = GetAttributeBufferAccess(gfx, model, accessorIdx, vertCt * sizeof(float) * 3u);
 						const float* positions = reinterpret_cast<const float*>(&model.buffers[bufferAccess.first].data[bufferAccess.second]);
 						for (int vi = 0; vi < vertCt; ++vi)
 						{
-							pMeshAsset->vertices.emplace_back(dx::XMFLOAT3(positions[vi * 3 + 0], positions[vi * 3 + 1], positions[vi * 3 + 2]));
+							pMeshAsset->m_vertices.emplace_back(dx::XMFLOAT3(positions[vi * 3 + 0], positions[vi * 3 + 1], positions[vi * 3 + 2]));
 						}
 					}
 
@@ -202,14 +202,14 @@ namespace gfx
 					if (primitive.attributes.count("NORMAL"))
 					{
 						pMeshAsset->hasNormals = true;
-						pMeshAsset->normals.reserve(vertCt);
+						pMeshAsset->m_normals.reserve(vertCt);
 
 						const int accessorIdx = primitive.attributes.at("NORMAL");
 						const auto bufferAccess = GetAttributeBufferAccess(gfx, model, accessorIdx, vertCt * sizeof(float) * 3u);
 						const float* normals = reinterpret_cast<const float*>(&model.buffers[bufferAccess.first].data[bufferAccess.second]);
 						for (int vi = 0; vi < vertCt; ++vi)
 						{
-							pMeshAsset->normals.emplace_back(dx::XMFLOAT3(normals[vi * 3 + 0], normals[vi * 3 + 1], normals[vi * 3 + 2]));
+							pMeshAsset->m_normals.emplace_back(dx::XMFLOAT3(normals[vi * 3 + 0], normals[vi * 3 + 1], normals[vi * 3 + 2]));
 						}
 					}
 
@@ -217,14 +217,14 @@ namespace gfx
 					if (primitive.attributes.count("TANGENT"))
 					{
 						pMeshAsset->hasNormals = true;
-						pMeshAsset->normals.reserve(vertCt);
+						pMeshAsset->m_normals.reserve(vertCt);
 
 						const int accessorIdx = primitive.attributes.at("NORMAL");
 						const auto bufferAccess = GetAttributeBufferAccess(gfx, model, accessorIdx, vertCt * sizeof(float) * 3u);
 						const float* normals = reinterpret_cast<const float*>(&model.buffers[bufferAccess.first].data[bufferAccess.second]);
 						for (int vi = 0; vi < vertCt; ++vi)
 						{
-							pMeshAsset->normals.emplace_back(dx::XMFLOAT3(normals[vi * 3 + 0], normals[vi * 3 + 1], normals[vi * 3 + 2]));
+							pMeshAsset->m_normals.emplace_back(dx::XMFLOAT3(normals[vi * 3 + 0], normals[vi * 3 + 1], normals[vi * 3 + 2]));
 						}
 					}
 
@@ -239,7 +239,7 @@ namespace gfx
 						}
 					}
 
-					pMeshAsset->texcoords.reserve(texcoordStrings.size());
+					pMeshAsset->m_texcoords.reserve(texcoordStrings.size());
 
 					// Load TEXCOORD_0
 					for (int ti = 0; ti < texcoordStrings.size(); ++ti)
@@ -255,12 +255,12 @@ namespace gfx
 							texcoordSet.emplace_back(dx::XMFLOAT2(coords[vi * 2 + 0], coords[vi * 2 + 1]));
 						}
 
-						pMeshAsset->texcoords.emplace_back(std::move(texcoordSet));
+						pMeshAsset->m_texcoords.emplace_back(std::move(texcoordSet));
 					}
 
 					// Double check that everything was loaded correctly
-					assert(pMeshAsset->vertices.size() > 0 && "Mesh primitive vertices were incorrectly loaded!");
-					assert(pMeshAsset->indices.size() > 0 && "Mesh primitive indices were incorrectly loaded!");
+					assert(pMeshAsset->m_vertices.size() > 0 && "Mesh primitive vertices were incorrectly loaded!");
+					assert(pMeshAsset->m_indices.size() > 0 && "Mesh primitive indices were incorrectly loaded!");
 				}
 			}
 			else

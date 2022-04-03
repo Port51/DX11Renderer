@@ -30,12 +30,12 @@ namespace gfx
 	private:
 		dx::XMVECTOR GetDirectionWS() const;
 	private:
-		float pan;
-		float tilt;
-		float attenuationQ;
-		float range;
-		float innerAngle = 80.f;
-		float outerAngle = 31.f;
-		LightShadowData lightShadowData;
+		float m_pan;
+		float m_tilt;
+		float m_attenuationQ;
+		float m_range;
+		float m_innerAngle = 80.f;
+		float m_outerAngle = 31.f;
+		LightShadowData m_lightShadowData;
 	};
 }

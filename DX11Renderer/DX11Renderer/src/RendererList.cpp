@@ -8,9 +8,9 @@
 namespace gfx
 {
 	RendererList::RendererList(std::shared_ptr<RendererList> source)
-		: pSource(source)
+		: m_pSource(source)
 	{
-		pRenderers.reserve(pSource->pRenderers.size());
+		m_pRenderers.reserve(m_pSource->m_pRenderers.size());
 	}
 
 	bool RendererList::SortFrontToBack(const std::pair<std::shared_ptr<MeshRenderer>, float>& a, const std::pair<std::shared_ptr<MeshRenderer>, float>& b)
@@ -25,27 +25,27 @@ namespace gfx
 
 	UINT RendererList::GetRendererCount() const
 	{
-		return (UINT)pRenderers.size();
+		return (UINT)m_pRenderers.size();
 	}
 
 	void RendererList::Filter(Frustum frustum, RendererSorting sorting)
 	{
 		// Filter based on source
-		pRenderers.clear();
-		for (const auto& p : pSource->pRenderers)
+		m_pRenderers.clear();
+		for (const auto& p : m_pSource->m_pRenderers)
 		{
 			// todo: frustum cull AABB
 			// todo: get distance
-			pRenderers.emplace_back(std::make_pair(p.first, 0.f));
+			m_pRenderers.emplace_back(std::make_pair(p.first, 0.f));
 		}
 
 		switch (sorting)
 		{
 		case RendererSorting::BackToFront:
-			std::sort(pRenderers.begin(), pRenderers.end(), SortBackToFront);
+			std::sort(m_pRenderers.begin(), m_pRenderers.end(), SortBackToFront);
 			break;
 		case RendererSorting::FrontToBack:
-			std::sort(pRenderers.begin(), pRenderers.end(), SortFrontToBack);
+			std::sort(m_pRenderers.begin(), m_pRenderers.end(), SortFrontToBack);
 			break;
 		default:
 			throw std::runtime_error("Unrecognized sorting method!");
@@ -56,7 +56,7 @@ namespace gfx
 
 	void RendererList::SubmitDrawCalls(const DrawContext& drawContext) const
 	{
-		for (const auto pr : pRenderers)
+		for (const auto pr : m_pRenderers)
 		{
 			pr.first->SubmitDrawCalls(drawContext);
 		}
@@ -73,6 +73,6 @@ namespace gfx
 
 	void RendererList::AddMeshRenderer(const std::shared_ptr<MeshRenderer> pMeshRenderer)
 	{
-		pRenderers.emplace_back(std::make_pair(pMeshRenderer, 0.f));
+		m_pRenderers.emplace_back(std::make_pair(pMeshRenderer, 0.f));
 	}
 }

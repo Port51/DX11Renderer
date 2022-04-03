@@ -8,28 +8,28 @@ namespace gfx
 {
 	// Don't initialize texture
 	Texture::Texture(GraphicsDevice & gfx)
-		: tag("?")
+		: m_tag("?")
 	{
 
 	}
 
 	// Create descriptors and pTexture
 	Texture::Texture(GraphicsDevice & gfx, D3D11_TEXTURE2D_DESC textureDesc, D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc)
-		: tag("?")
+		: m_tag("?")
 	{
 		THROW_IF_FAILED(gfx.GetAdapter()->CreateTexture2D(
-			&textureDesc, NULL, &pTexture
+			&textureDesc, NULL, &m_pTexture
 		));
 
 		THROW_IF_FAILED(gfx.GetAdapter()->CreateShaderResourceView(
-			pTexture.Get(), &srvDesc, &pShaderResourceView
+			m_pTexture.Get(), &srvDesc, &m_pShaderResourceView
 		));
 	}
 
 	// Load image from file and start off with default 2D texture settings
 	// This should be used for 99% of model-related textures
 	Texture::Texture(GraphicsDevice& gfx, const std::string& path)
-		: tag(path)
+		: m_tag(path)
 	{
 		const Image image(path);
 
@@ -47,12 +47,12 @@ namespace gfx
 		textureDesc.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
 
 		THROW_IF_FAILED(gfx.GetAdapter()->CreateTexture2D(
-			&textureDesc, nullptr, &pTexture
+			&textureDesc, nullptr, &m_pTexture
 		));
 
 		// Write image data into top mip level
 		gfx.GetContext()->UpdateSubresource(
-			pTexture.Get(), 0u, nullptr, image.GetData(), image.GetPitch(), 0u
+			m_pTexture.Get(), 0u, nullptr, image.GetData(), image.GetPitch(), 0u
 		);
 
 		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
@@ -62,16 +62,16 @@ namespace gfx
 		srvDesc.Texture2D.MipLevels = -1; // use all mips
 
 		THROW_IF_FAILED(gfx.GetAdapter()->CreateShaderResourceView(
-			pTexture.Get(), &srvDesc, &pShaderResourceView
+			m_pTexture.Get(), &srvDesc, &m_pShaderResourceView
 		));
 
-		gfx.GetContext()->GenerateMips(pShaderResourceView.Get());
+		gfx.GetContext()->GenerateMips(m_pShaderResourceView.Get());
 	}
 
 	// Load image from file and use custom descriptors
 	// Use this in special cases
 	Texture::Texture(GraphicsDevice& gfx, const std::string& _path, D3D11_TEXTURE2D_DESC textureDesc, D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc)
-		: tag(_path)
+		: m_tag(_path)
 	{
 		// Read some info from image
 		const Image image(_path);
@@ -84,15 +84,15 @@ namespace gfx
 			textureDesc.MiscFlags |= D3D11_RESOURCE_MISC_GENERATE_MIPS;
 
 			THROW_IF_FAILED(gfx.GetAdapter()->CreateTexture2D(
-				&textureDesc, nullptr, &pTexture
+				&textureDesc, nullptr, &m_pTexture
 			));
 
 			// Write image data into top mip level
 			gfx.GetContext()->UpdateSubresource(
-				pTexture.Get(), 0u, nullptr, image.GetData(), image.GetPitch(), 0u
+				m_pTexture.Get(), 0u, nullptr, image.GetData(), image.GetPitch(), 0u
 			);
 
-			gfx.GetContext()->GenerateMips(pShaderResourceView.Get());
+			gfx.GetContext()->GenerateMips(m_pShaderResourceView.Get());
 		}
 		else
 		{
@@ -101,43 +101,43 @@ namespace gfx
 			sd.SysMemPitch = image.GetPitch(); // distance in bytes between rows - keep in mind padding!
 
 			THROW_IF_FAILED(gfx.GetAdapter()->CreateTexture2D(
-				&textureDesc, &sd, &pTexture
+				&textureDesc, &sd, &m_pTexture
 			));
 		}
 
 		THROW_IF_FAILED(gfx.GetAdapter()->CreateShaderResourceView(
-			pTexture.Get(), &srvDesc, &pShaderResourceView
+			m_pTexture.Get(), &srvDesc, &m_pShaderResourceView
 		));
 	}
 
 	void Texture::BindCS(GraphicsDevice& gfx, UINT slot)
 	{
-		gfx.GetContext()->CSSetShaderResources(slot, 1u, pShaderResourceView.GetAddressOf());
+		gfx.GetContext()->CSSetShaderResources(slot, 1u, m_pShaderResourceView.GetAddressOf());
 	}
 
 	void Texture::BindVS(GraphicsDevice& gfx, UINT slot)
 	{
-		gfx.GetContext()->VSSetShaderResources(slot, 1u, pShaderResourceView.GetAddressOf());
+		gfx.GetContext()->VSSetShaderResources(slot, 1u, m_pShaderResourceView.GetAddressOf());
 	}
 
 	void Texture::BindPS(GraphicsDevice& gfx, UINT slot)
 	{
-		gfx.GetContext()->PSSetShaderResources(slot, 1u, pShaderResourceView.GetAddressOf());
+		gfx.GetContext()->PSSetShaderResources(slot, 1u, m_pShaderResourceView.GetAddressOf());
 	}
 
 	ComPtr<ID3D11UnorderedAccessView> Texture::GetUAV(UINT mipSlice) const
 	{
-		return pUAV.size() > mipSlice ? pUAV[mipSlice] : nullptr;
+		return m_pUAV.size() > mipSlice ? m_pUAV[mipSlice] : nullptr;
 	}
 
 	Texture::TextureDimension Texture::GetDimension() const
 	{
-		return dimension;
+		return m_dimension;
 	}
 
 	ComPtr<ID3D11ShaderResourceView> Texture::GetSRV() const
 	{
-		return pShaderResourceView;
+		return m_pShaderResourceView;
 	}
 
 	std::shared_ptr<Bindable> Texture::Resolve(GraphicsDevice& gfx, const std::string& path)

@@ -19,6 +19,6 @@ namespace gfx
 	public:
 		void IssueDrawCall(GraphicsDevice& gfx) const override;
 	private:
-		UINT instanceCount;
+		UINT m_instanceCount;
 	};
 }

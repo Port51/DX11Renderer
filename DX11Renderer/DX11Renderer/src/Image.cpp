@@ -8,38 +8,38 @@ namespace gfx
 {
 	Image::Image(const std::string& path)
 	{
-		data = stbi_load(path.c_str(),
-			&width,
-			&height,
-			&channels,
-			desiredChannels);
-		assert(data);
+		m_data = stbi_load(path.c_str(),
+			&m_width,
+			&m_height,
+			&m_channels,
+			m_desiredChannels);
+		assert(m_data);
 
-		pitch = width * 4u;
+		m_pitch = m_width * 4u;
 	}
 
 	Image::~Image()
 	{
-		free(data);
+		free(m_data);
 	}
 
 	const unsigned char * Image::GetData() const
 	{
-		return data;
+		return m_data;
 	}
 
 	const UINT Image::GetPitch() const
 	{
-		return pitch;
+		return m_pitch;
 	}
 
 	const UINT Image::GetWidth() const
 	{
-		return width;
+		return m_width;
 	}
 
 	const UINT Image::GetHeight() const
 	{
-		return height;
+		return m_height;
 	}
 }

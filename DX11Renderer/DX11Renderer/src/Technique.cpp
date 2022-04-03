@@ -8,13 +8,13 @@ namespace gfx
 {
 	Technique::Technique(std::string name)
 		:
-		name(name)
+		m_name(name)
 	{}
 	void Technique::SubmitDrawCalls(const MeshRenderer& meshRenderer, const DrawContext& drawContext) const
 	{
-		if (active)
+		if (m_active)
 		{
-			for (const auto& step : pSteps)
+			for (const auto& step : m_pSteps)
 			{
 				step->SubmitDrawCalls(meshRenderer, drawContext);
 			}
@@ -22,18 +22,18 @@ namespace gfx
 	}
 	void Technique::AddStep(std::unique_ptr<RenderStep> step)
 	{
-		pSteps.push_back(std::move(step));
+		m_pSteps.push_back(std::move(step));
 	}
 	bool Technique::IsActive() const
 	{
-		return active;
+		return m_active;
 	}
 	void Technique::SetActiveState(bool active_in)
 	{
-		active = active_in;
+		m_active = active_in;
 	}
 	const std::string & Technique::GetName() const
 	{
-		return name;
+		return m_name;
 	}
 }

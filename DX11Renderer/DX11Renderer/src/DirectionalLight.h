@@ -32,11 +32,11 @@ namespace gfx
 		dx::XMVECTOR GetDirectionWS() const;
 		ViewProjTransforms GetShadowTransforms(dx::XMVECTOR cascadeSphereCenterWS, float cascadeDistance) const;
 	private:
-		float pan;
-		float tilt;
-		float sphereRad;
-		float range;
-		std::vector<LightShadowData> lightShadowData;
-		std::vector<dx::XMVECTOR> shadowCascadeSpheresVS;
+		float m_pan;
+		float m_tilt;
+		float m_sphereRad;
+		float m_range;
+		std::vector<LightShadowData> m_lightShadowData;
+		std::vector<dx::XMVECTOR> m_shadowCascadeSpheresVS;
 	};
 }

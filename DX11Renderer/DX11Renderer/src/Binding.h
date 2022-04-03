@@ -22,12 +22,12 @@ namespace gfx
 		Binding& SetupRSBinding();
 		Binding& SetupOMBinding();
 	private:
-		std::shared_ptr<Bindable> pBindable;
-		int bindToInputAssemblerStageSlot = -1;
-		int bindToComputeStageSlot = -1;
-		int bindToVertexStageSlot = -1;
-		int bindToPixelStageSlot = -1;
-		bool bindToRasterizerStageSlot = false;
-		bool bindToOutputMergerStageSlot = false;
+		std::shared_ptr<Bindable> m_pBindable;
+		int m_IASlot = -1;
+		int m_CSSlot = -1;
+		int m_VSSlot = -1;
+		int m_PSSlot = -1;
+		bool m_RSBind = false;
+		bool m_OMBind = false;
 	};
 }

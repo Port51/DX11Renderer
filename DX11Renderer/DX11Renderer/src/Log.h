@@ -38,6 +38,6 @@ namespace gfx
 		void DrawImguiControlWindow();
 		void Clear();
 	private:
-		std::vector<LogMessage> messages;
+		std::vector<LogMessage> m_messages;
 	};
 }

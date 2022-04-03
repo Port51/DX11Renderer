@@ -17,6 +17,6 @@ namespace gfx
 		static std::shared_ptr<Topology> Resolve(GraphicsDevice& gfx, D3D11_PRIMITIVE_TOPOLOGY type);
 		static std::string GenerateUID(D3D11_PRIMITIVE_TOPOLOGY type);
 	protected:
-		D3D11_PRIMITIVE_TOPOLOGY type;
+		D3D11_PRIMITIVE_TOPOLOGY m_type;
 	};
 }

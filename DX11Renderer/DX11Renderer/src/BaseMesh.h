@@ -6,6 +6,6 @@ namespace gfx
 	class BaseMesh
 	{
 	public:
-		std::string name;
+		std::string m_name;
 	};
 }

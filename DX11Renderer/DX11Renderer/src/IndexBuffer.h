@@ -25,8 +25,8 @@ namespace gfx
 	private:
 		static std::string GenerateUID(const std::string& tag);
 	protected:
-		UINT count;
-		DXGI_FORMAT format;
-		ComPtr<ID3D11Buffer> pIndexBuffer;
+		UINT m_count;
+		DXGI_FORMAT m_format;
+		ComPtr<ID3D11Buffer> m_pIndexBuffer;
 	};
 }

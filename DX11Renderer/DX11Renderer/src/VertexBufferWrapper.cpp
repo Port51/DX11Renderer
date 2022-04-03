@@ -8,29 +8,29 @@ namespace gfx
 {
 	VertexBufferWrapper::VertexBufferWrapper(GraphicsDevice& gfx, const BaseBufferData& vertexBuffer)
 	{
-		strides.resize(1);
-		offsets.resize(1);
-		pBufferArray.resize(1);
+		m_strides.resize(1);
+		m_offsets.resize(1);
+		m_pBufferArray.resize(1);
 		SetupVertexBuffer(gfx, vertexBuffer);
 	}
 
 	VertexBufferWrapper::VertexBufferWrapper(GraphicsDevice& gfx, const BaseBufferData& vertexBuffer, const BaseBufferData& instanceBuffer)
 	{
-		strides.resize(2);
-		offsets.resize(2);
-		pBufferArray.resize(2);
+		m_strides.resize(2);
+		m_offsets.resize(2);
+		m_pBufferArray.resize(2);
 		SetupVertexBuffer(gfx, vertexBuffer);
 		SetupInstanceBuffer(gfx, instanceBuffer);
 	}
 
 	ComPtr<ID3D11Buffer> VertexBufferWrapper::GetVertexBuffer() const
 	{
-		return pBufferArray[0];
+		return m_pBufferArray[0];
 	}
 
 	void VertexBufferWrapper::BindIA(GraphicsDevice& gfx, UINT slot)
 	{
-		gfx.GetContext()->IASetVertexBuffers(slot, pBufferArray.size(), pBufferArray[0].GetAddressOf(), &strides[0], &offsets[0]);
+		gfx.GetContext()->IASetVertexBuffers(slot, m_pBufferArray.size(), m_pBufferArray[0].GetAddressOf(), &m_strides[0], &m_offsets[0]);
 	}
 
 	void VertexBufferWrapper::SetupVertexBuffer(GraphicsDevice& gfx, const BaseBufferData& data)
@@ -45,15 +45,15 @@ namespace gfx
 		bd.ByteWidth = UINT(data.GetSizeInBytes());
 		bd.StructureByteStride = data.GetStride();
 
-		strides[0] = data.GetStride();
-		offsets[0] = 0;
+		m_strides[0] = data.GetStride();
+		m_offsets[0] = 0;
 
 		assert(data.GetStride() % 16 == 0 && "Vertex buffer stride must be a multiple of 16");
 
 		D3D11_SUBRESOURCE_DATA sd = data.GetSubresourceData();
-		gfx.GetAdapter()->CreateBuffer(&bd, &sd, &pBufferArray[0]);
+		gfx.GetAdapter()->CreateBuffer(&bd, &sd, &m_pBufferArray[0]);
 
-		vertexCount = data.GetElementCount();
+		m_vertexCount = data.GetElementCount();
 	}
 
 	void VertexBufferWrapper::SetupInstanceBuffer(GraphicsDevice& gfx, const BaseBufferData& data)
@@ -68,13 +68,13 @@ namespace gfx
 		bd.MiscFlags = 0u;
 		bd.StructureByteStride = data.GetStride();
 
-		strides[1] = data.GetStride();
-		offsets[1] = 0;
+		m_strides[1] = data.GetStride();
+		m_offsets[1] = 0;
 
 		assert(data.GetStride() % 16 == 0 && "Instance buffer stride must be a multiple of 16");
 
 		D3D11_SUBRESOURCE_DATA sd = data.GetSubresourceData();
-		gfx.GetAdapter()->CreateBuffer(&bd, &sd, &pBufferArray[1]);
+		gfx.GetAdapter()->CreateBuffer(&bd, &sd, &m_pBufferArray[1]);
 	}
 
 	std::shared_ptr<VertexBufferWrapper> VertexBufferWrapper::Resolve(GraphicsDevice & gfx, std::string id, const BaseBufferData & vertexBuffer)
@@ -95,6 +95,6 @@ namespace gfx
 
 	UINT VertexBufferWrapper::GetVertexCount() const
 	{
-		return vertexCount;
+		return m_vertexCount;
 	}
 }

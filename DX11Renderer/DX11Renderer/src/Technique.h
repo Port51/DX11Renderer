@@ -23,8 +23,8 @@ namespace gfx
 		void SetActiveState(bool active_in);
 		const std::string& GetName() const;
 	private:
-		bool active = true;
-		std::vector<std::unique_ptr<RenderStep>> pSteps;
-		std::string name = "Nameless Tech";
+		bool m_active = true;
+		std::vector<std::unique_ptr<RenderStep>> m_pSteps;
+		std::string m_name = "Nameless Tech";
 	};
 }

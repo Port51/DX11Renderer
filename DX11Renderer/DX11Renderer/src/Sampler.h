@@ -30,10 +30,10 @@ namespace gfx
 		static std::shared_ptr<Bindable> Resolve(GraphicsDevice& gfx, D3D11_FILTER filter, D3D11_TEXTURE_ADDRESS_MODE wrapU, D3D11_TEXTURE_ADDRESS_MODE wrapV, D3D11_TEXTURE_ADDRESS_MODE wrapW);
 		static std::string GenerateUID(D3D11_FILTER filter, D3D11_TEXTURE_ADDRESS_MODE wrapU, D3D11_TEXTURE_ADDRESS_MODE wrapV, D3D11_TEXTURE_ADDRESS_MODE wrapW);
 	protected:
-		ComPtr<ID3D11SamplerState> pSampler;
-		D3D11_FILTER filter;
-		D3D11_TEXTURE_ADDRESS_MODE wrapU;
-		D3D11_TEXTURE_ADDRESS_MODE wrapV;
-		D3D11_TEXTURE_ADDRESS_MODE wrapW;
+		ComPtr<ID3D11SamplerState> m_pSampler;
+		D3D11_FILTER m_filter;
+		D3D11_TEXTURE_ADDRESS_MODE m_wrapU;
+		D3D11_TEXTURE_ADDRESS_MODE m_wrapV;
+		D3D11_TEXTURE_ADDRESS_MODE m_wrapW;
 	};
 }

@@ -33,13 +33,13 @@ namespace gfx
 		UINT GetVertexCount() const;
 		virtual void IssueDrawCall(GraphicsDevice& gfx) const;
 	protected:
-		std::string name;
-		std::shared_ptr<Material> pMaterial; // keep separate from other bindables for now...
-		mutable dx::XMFLOAT4X4 transform;
+		std::string m_name;
+		std::shared_ptr<Material> m_pMaterial; // keep separate from other bindables for now...
+		mutable dx::XMFLOAT4X4 m_transform;
 	protected:
-		std::shared_ptr<IndexBuffer> pIndexBuffer;
-		std::shared_ptr<VertexBufferWrapper> pVertexBufferWrapper;
-		std::shared_ptr<Topology> pTopology;
-		std::shared_ptr<TransformCbuf> pTransformCbuf;
+		std::shared_ptr<IndexBuffer> m_pIndexBuffer;
+		std::shared_ptr<VertexBufferWrapper> m_pVertexBufferWrapper;
+		std::shared_ptr<Topology> m_pTopology;
+		std::shared_ptr<TransformCbuf> m_pTransformCbuf;
 	};
 }

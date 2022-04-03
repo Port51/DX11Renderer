@@ -22,17 +22,17 @@ namespace gfx
 
 		// create target view of depth stensil texture
 		THROW_IF_FAILED(gfx.GetAdapter()->CreateDepthStencilView(
-			pDepthStencil.Get(), nullptr, &pDepthStencilView
+			pDepthStencil.Get(), nullptr, &m_pDepthStencilView
 		));
 	}
 
 	void DepthStencil::BindAsDepthStencil(GraphicsDevice& gfx) const
 	{
-		gfx.GetContext()->OMSetRenderTargets(0, nullptr, pDepthStencilView.Get());
+		gfx.GetContext()->OMSetRenderTargets(0, nullptr, m_pDepthStencilView.Get());
 	}
 
 	void DepthStencil::Clear(GraphicsDevice& gfx) const
 	{
-		gfx.GetContext()->ClearDepthStencilView(pDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0u);
+		gfx.GetContext()->ClearDepthStencilView(m_pDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0u);
 	}
 }

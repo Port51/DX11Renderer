@@ -54,57 +54,57 @@ namespace gfx
 		const std::unique_ptr<RenderPass>& CreateRenderPass(const std::string name, std::unique_ptr<RenderPass> pRenderPass);
 
 	private:
-		std::unordered_map<std::string, std::unique_ptr<RenderPass>> pRenderPasses;
+		std::unordered_map<std::string, std::unique_ptr<RenderPass>> m_pRenderPasses;
 
-		std::shared_ptr<Sampler> pSampler_ClampedBilinear;
+		std::shared_ptr<Sampler> m_pClampedBilinearSampler;
 
-		std::shared_ptr<RenderTexture> pNormalRoughReflectivityTarget;
-		std::shared_ptr<RenderTexture> pSpecularLighting;
-		std::shared_ptr<RenderTexture> pDiffuseLighting;
-		std::shared_ptr<RenderTexture> pHiZBufferTarget;
-		std::shared_ptr<RenderTexture> pBloomPyramid;
+		std::shared_ptr<RenderTexture> m_pNormalRoughReflectivityTarget;
+		std::shared_ptr<RenderTexture> m_pSpecularLighting;
+		std::shared_ptr<RenderTexture> m_pDiffuseLighting;
+		std::shared_ptr<RenderTexture> m_pHiZBufferTarget;
+		std::shared_ptr<RenderTexture> m_pBloomPyramid;
 
 		// Debug views
-		std::shared_ptr<RenderTexture> pDebugTiledLighting;
-		std::shared_ptr<RenderTexture> pDebugClusteredLighting;
-		std::shared_ptr<RenderTexture> pDebugSSR;
+		std::shared_ptr<RenderTexture> m_pDebugTiledLighting;
+		std::shared_ptr<RenderTexture> m_pDebugClusteredLighting;
+		std::shared_ptr<RenderTexture> m_pDebugSSR;
 
-		std::shared_ptr<RenderTexture> pCameraColor0;
-		std::shared_ptr<RenderTexture> pCameraColor1;
-		bool pFinalBlitInputIs0;
+		std::shared_ptr<RenderTexture> m_pCameraColor0;
+		std::shared_ptr<RenderTexture> m_pCameraColor1;
+		bool m_pFinalBlitInputIsIndex0;
 
-		std::unique_ptr<ComputeKernel> pHiZDepthCopyKernel;
-		std::unique_ptr<ComputeKernel> pHiZCreateMipKernel;
-		std::unique_ptr<ComputeKernel> pTiledLightingKernel;
-		std::unique_ptr<ComputeKernel> pClusteredLightingKernel;
-		std::unique_ptr<ComputeKernel> pSSRKernel;
-		std::unique_ptr<ComputeKernel> pFXAAKernel;
-		std::unique_ptr<ComputeKernel> pDitherKernel;
-		std::unique_ptr<ComputeKernel> pTonemappingKernel;
+		std::unique_ptr<ComputeKernel> m_pHiZDepthCopyKernel;
+		std::unique_ptr<ComputeKernel> m_pHiZCreateMipKernel;
+		std::unique_ptr<ComputeKernel> m_pTiledLightingKernel;
+		std::unique_ptr<ComputeKernel> m_pClusteredLightingKernel;
+		std::unique_ptr<ComputeKernel> m_pSSRKernel;
+		std::unique_ptr<ComputeKernel> m_pFXAAKernel;
+		std::unique_ptr<ComputeKernel> m_pDitherKernel;
+		std::unique_ptr<ComputeKernel> m_pTonemappingKernel;
 
-		std::unique_ptr<ConstantBuffer<GlobalTransformCB>> pTransformationCB;
-		std::unique_ptr<ConstantBuffer<PerFrameCB>> pPerFrameCB;
-		std::unique_ptr<ConstantBuffer<PerCameraCB>> pPerCameraCB;
-		std::unique_ptr<ConstantBuffer<HiZCreationCB>> pHiZCreationCB;
-		std::unique_ptr<ConstantBuffer<ClusteredLightingCB>> pClusteredLightingCB;
-		std::unique_ptr<ConstantBuffer<FXAA_CB>> pFXAA_CB;
-		std::unique_ptr<ConstantBuffer<SSR_CB>> pSSR_CB;
-		std::unique_ptr<StructuredBuffer<int>> pSSR_DebugData;
-		std::unique_ptr<ConstantBuffer<DitherCB>> pDitherCB;
+		std::unique_ptr<ConstantBuffer<GlobalTransformCB>> m_pTransformationCB;
+		std::unique_ptr<ConstantBuffer<PerFrameCB>> m_pPerFrameCB;
+		std::unique_ptr<ConstantBuffer<PerCameraCB>> m_pPerCameraCB;
+		std::unique_ptr<ConstantBuffer<HiZCreationCB>> m_pHiZCreationCB;
+		std::unique_ptr<ConstantBuffer<ClusteredLightingCB>> m_pClusteredLightingCB;
+		std::unique_ptr<ConstantBuffer<FXAA_CB>> m_pFXAA_CB;
+		std::unique_ptr<ConstantBuffer<SSR_CB>> m_pSSR_CB;
+		std::unique_ptr<StructuredBuffer<int>> m_pSSR_DebugData;
+		std::unique_ptr<ConstantBuffer<DitherCB>> m_pDitherCB;
 
-		std::shared_ptr<Texture> pDitherTexture;
+		std::shared_ptr<Texture> m_pDitherTexture;
 
-		std::shared_ptr<RendererList> pRendererList;
-		std::unique_ptr<RendererList> pVisibleRendererList; // filtered by camera frustum
+		std::shared_ptr<RendererList> m_pRendererList;
+		std::unique_ptr<RendererList> m_pVisibleRendererList; // filtered by camera frustum
 
-		std::shared_ptr<LightManager> pLightManager;
+		std::shared_ptr<LightManager> m_pLightManager;
 
-		std::shared_ptr<Sampler> pShadowSampler;
+		std::shared_ptr<Sampler> m_pShadowSampler;
 
 	private:
-		RendererView viewIdx = RendererView::Final;
-		std::vector<bool> rendererFeatureEnabled;
-		int pixelIteration;
+		RendererView m_viewIdx = RendererView::Final;
+		std::vector<bool> m_rendererFeatureEnabled;
+		int m_pixelIteration;
 
 	public:
 		const std::string PerCameraPassName = std::string("PerCameraPass");

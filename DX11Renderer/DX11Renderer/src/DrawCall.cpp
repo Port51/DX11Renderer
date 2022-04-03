@@ -8,15 +8,15 @@
 namespace gfx
 {
 	DrawCall::DrawCall(const RenderStep* pStep, const MeshRenderer* pRenderer, const DrawContext& _drawContext)
-		: pRenderer(pRenderer),
-		pStep(pStep),
-		drawContext(&_drawContext)
+		: m_pRenderer(pRenderer),
+		m_pStep(pStep),
+		m_pDrawContext(&_drawContext)
 	{}
 
 	void DrawCall::Execute(GraphicsDevice& gfx) const
 	{
-		pRenderer->Bind(gfx, *drawContext);
-		pStep->Bind(gfx);
-		pRenderer->IssueDrawCall(gfx); // calls DrawIndexed() or DrawIndexedInstanced()
+		m_pRenderer->Bind(gfx, *m_pDrawContext);
+		m_pStep->Bind(gfx);
+		m_pRenderer->IssueDrawCall(gfx); // calls DrawIndexed() or DrawIndexedInstanced()
 	}
 }

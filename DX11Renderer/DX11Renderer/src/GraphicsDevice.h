@@ -39,29 +39,29 @@ namespace gfx
 	public:
 		ComPtr<ID3D11Device> GetAdapter() const;
 		ComPtr<ID3D11DeviceContext> GetContext() const;
-		std::unique_ptr<Log>& GetLog();
-		std::shared_ptr<DepthStencilTarget>& GetDepthStencilTarget();
-		ComPtr<ID3D11RenderTargetView>& GetBackBufferView();
+		const std::unique_ptr<Log>& GetLog();
+		const std::shared_ptr<DepthStencilTarget>& GetDepthStencilTarget();
+		const ComPtr<ID3D11RenderTargetView>& GetBackBufferView();
 	public:
 		void EnableImgui();
 		void DisableImgui();
 		bool IsImguiEnabled() const;
 	private:
-		std::unique_ptr<Log> log;
+		std::unique_ptr<Log> m_pLog;
 		// Allocating stuff
-		ComPtr<ID3D11Device> pDevice;
+		ComPtr<ID3D11Device> m_pDevice;
 		// Used for configuring pipeline and executing render commands
-		ComPtr<ID3D11DeviceContext> pContext;
+		ComPtr<ID3D11DeviceContext> m_pContext;
 		// RT view of backbuffer
-		ComPtr<ID3D11RenderTargetView> pBackBufferView;
-		std::shared_ptr<DepthStencilTarget> pDepthStencil;
-		ComPtr<IDXGISwapChain> pSwapChain;
+		ComPtr<ID3D11RenderTargetView> m_pBackBufferView;
+		std::shared_ptr<DepthStencilTarget> m_pDepthStencil;
+		ComPtr<IDXGISwapChain> m_pSwapChain;
 	private:
-		UINT currentRenderTargetCount = 0u;
-		std::vector<ID3D11RenderTargetView*> pNullRenderTargetViews;
+		UINT m_currentRenderTargetCount = 0u;
+		std::vector<ID3D11RenderTargetView*> m_pNullRenderTargetViews;
 	private:
-		bool imguiEnabled = true;
-		int screenWidth;
-		int screenHeight;
+		bool m_imguiEnabled = true;
+		int m_screenWidth;
+		int m_screenHeight;
 	};
 }

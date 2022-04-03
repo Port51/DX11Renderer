@@ -21,7 +21,7 @@ namespace gfx
 	private:
 		void SetupFullscreenQuadBindings(GraphicsDevice& gfx, std::string vertexShaderName, std::shared_ptr<VertexShader> vertexShader);
 	private:
-		std::shared_ptr<Texture> pInputTexture;
-		std::unique_ptr<VertexBufferWrapper> pVertexBufferWrapper;
+		std::shared_ptr<Texture> m_pInputTexture;
+		std::unique_ptr<VertexBufferWrapper> m_pVertexBufferWrapper;
 	};
 }

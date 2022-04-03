@@ -18,8 +18,8 @@ namespace gfx
 		static std::shared_ptr<VertexShader> Resolve(GraphicsDevice& gfx, const std::string& path);
 		static std::string GenerateUID(const std::string& path);
 	protected:
-		std::string path;
-		ComPtr<ID3DBlob> pBytecodeBlob;
-		ComPtr<ID3D11VertexShader> pVertexShader;
+		std::string m_path;
+		ComPtr<ID3DBlob> m_pBytecodeBlob;
+		ComPtr<ID3D11VertexShader> m_pVertexShader;
 	};
 }

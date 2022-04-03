@@ -16,75 +16,75 @@
 namespace gfx
 {
 	ModelInstance::ModelInstance(GraphicsDevice& gfx, const ModelAsset& pModelAsset, dx::XMMATRIX transform)
-		: transform(transform)
+		: m_transform(transform)
 	{
-		pMaterials.reserve(pModelAsset.materialPaths.size());
-		for (const auto& materialPath : pModelAsset.materialPaths)
+		m_pMaterials.reserve(pModelAsset.m_materialPaths.size());
+		for (const auto& materialPath : pModelAsset.m_materialPaths)
 		{
 			std::shared_ptr<Material> pMaterial = std::dynamic_pointer_cast<Material>(Material::Resolve(gfx, materialPath.c_str()));
-			pMaterials.push_back(pMaterial);
+			m_pMaterials.push_back(pMaterial);
 		}
 
-		pSceneGraph = CreateModelInstanceNode(gfx, pModelAsset.pSceneGraph);
+		m_pSceneGraph = CreateModelInstanceNode(gfx, pModelAsset.m_pSceneGraph);
 		UpdateSceneGraph();
 	}
 
 	ModelInstance::ModelInstance(GraphicsDevice & gfx, std::shared_ptr<ModelAsset> pModelAsset, dx::XMMATRIX transform)
-		: transform(transform)
+		: m_transform(transform)
 	{
-		pMaterials.reserve(pModelAsset->materialPaths.size());
-		for (const auto& materialPath : pModelAsset->materialPaths)
+		m_pMaterials.reserve(pModelAsset->m_materialPaths.size());
+		for (const auto& materialPath : pModelAsset->m_materialPaths)
 		{
 			std::shared_ptr<Material> pMaterial = std::dynamic_pointer_cast<Material>(Material::Resolve(gfx, materialPath.c_str()));
-			pMaterials.push_back(pMaterial);
+			m_pMaterials.push_back(pMaterial);
 		}
 
-		pSceneGraph = CreateModelInstanceNode(gfx, pModelAsset->pSceneGraph);
+		m_pSceneGraph = CreateModelInstanceNode(gfx, pModelAsset->m_pSceneGraph);
 		UpdateSceneGraph();
 	}
 
 	void ModelInstance::SubmitDrawCalls(const DrawContext& drawContext) const
 	{
-		pSceneGraph->SubmitDrawCalls(drawContext);
+		m_pSceneGraph->SubmitDrawCalls(drawContext);
 	}
 
 	void ModelInstance::SetPositionWS(dx::XMFLOAT3 positionWS)
 	{
-		transform = dx::XMMatrixTranslation(positionWS.x, positionWS.y, positionWS.z);
+		m_transform = dx::XMMatrixTranslation(positionWS.x, positionWS.y, positionWS.z);
 		UpdateSceneGraph();
 	}
 
 	void ModelInstance::UpdateSceneGraph()
 	{
-		pSceneGraph->RebuildTransform(transform);
+		m_pSceneGraph->RebuildTransform(m_transform);
 	}
 
 	std::vector<std::shared_ptr<MeshRenderer>> ModelInstance::GetMeshRenderers() const
 	{
-		return pMeshes;
+		return m_pMeshes;
 	}
 
 	static int nextNodeId = 0; // todo: move
 	std::shared_ptr<SceneGraphNode> ModelInstance::CreateModelInstanceNode(GraphicsDevice& gfx, std::shared_ptr<ModelAssetNode> const& pSourceNode)
 	{
-		gfx.GetLog()->Info("Create ModelInstanceNode " + pSourceNode->name + " w/ " + std::to_string(pSourceNode->pChildNodes.size()) + " children");
+		gfx.GetLog()->Info("Create ModelInstanceNode " + pSourceNode->m_name + " w/ " + std::to_string(pSourceNode->m_pChildNodes.size()) + " children");
 
 		// Copy mesh if needed
 		auto pMeshRenderer = std::shared_ptr<MeshRenderer>();
-		if (pSourceNode->pMeshAsset)
+		if (pSourceNode->m_pMeshAsset)
 		{
-			pMeshRenderer = CreateMeshRenderer(gfx, pSourceNode->pMeshAsset);
-			pMeshes.emplace_back(pMeshRenderer);
+			pMeshRenderer = CreateMeshRenderer(gfx, pSourceNode->m_pMeshAsset);
+			m_pMeshes.emplace_back(pMeshRenderer);
 		}
 
 		auto pChildNodes = std::vector<std::shared_ptr<SceneGraphNode>>();
-		for (const auto& child : pSourceNode->pChildNodes)
+		for (const auto& child : pSourceNode->m_pChildNodes)
 		{
 			auto pChildNode = CreateModelInstanceNode(gfx, child);
 			pChildNodes.emplace_back(std::move(pChildNode));
 		}
 
-		auto pNode = std::make_shared<SceneGraphNode>(nextNodeId++, dx::XMLoadFloat4x4(&pSourceNode->localTransform), pMeshRenderer, std::move(pChildNodes));
+		auto pNode = std::make_shared<SceneGraphNode>(nextNodeId++, dx::XMLoadFloat4x4(&pSourceNode->m_localTransform), pMeshRenderer, std::move(pChildNodes));
 		return std::move(pNode);
 	}
 
@@ -94,34 +94,34 @@ namespace gfx
 		const bool isInstance = false;
 		const UINT instanceCount = 10u;
 
-		const auto pMaterial = pMaterials[pMeshAsset->materialIndex];
-		RawBufferData vbuf(pMeshAsset->vertices.size(), pMaterial->GetVertexLayout().GetPerVertexStride(), pMaterial->GetVertexLayout().GetPerVertexPadding());
+		const auto pMaterial = m_pMaterials[pMeshAsset->m_materialIndex];
+		RawBufferData vbuf(pMeshAsset->m_vertices.size(), pMaterial->GetVertexLayout().GetPerVertexStride(), pMaterial->GetVertexLayout().GetPerVertexPadding());
 
-		if (pMeshAsset->vertices.size() == 0)
+		if (pMeshAsset->m_vertices.size() == 0)
 		{
-			throw std::runtime_error(std::string("Mesh '") + pMeshAsset->name + std::string("' has 0 vertices!"));
+			throw std::runtime_error(std::string("Mesh '") + pMeshAsset->m_name + std::string("' has 0 vertices!"));
 		}
 
-		for (unsigned int i = 0; i < pMeshAsset->vertices.size(); ++i)
+		for (unsigned int i = 0; i < pMeshAsset->m_vertices.size(); ++i)
 		{
-			dx::XMFLOAT3 normal = (pMeshAsset->hasNormals) ? pMeshAsset->normals[i] : dx::XMFLOAT3(0, 0, 1);
-			dx::XMFLOAT3 tangent = (pMeshAsset->hasTangents) ? pMeshAsset->tangents[i] : dx::XMFLOAT3(0, 0, 1);
-			dx::XMFLOAT2 uv0 = (pMeshAsset->texcoords.size() > 0) ? pMeshAsset->texcoords[0][i] : dx::XMFLOAT2(0, 0);
+			dx::XMFLOAT3 normal = (pMeshAsset->hasNormals) ? pMeshAsset->m_normals[i] : dx::XMFLOAT3(0, 0, 1);
+			dx::XMFLOAT3 tangent = (pMeshAsset->hasTangents) ? pMeshAsset->m_tangents[i] : dx::XMFLOAT3(0, 0, 1);
+			dx::XMFLOAT2 uv0 = (pMeshAsset->m_texcoords.size() > 0) ? pMeshAsset->m_texcoords[0][i] : dx::XMFLOAT2(0, 0);
 
-			vbuf.EmplaceBack<dx::XMFLOAT3>(pMeshAsset->vertices[i]);
+			vbuf.EmplaceBack<dx::XMFLOAT3>(pMeshAsset->m_vertices[i]);
 			vbuf.EmplaceBack<dx::XMFLOAT3>(normal);
 			vbuf.EmplaceBack<dx::XMFLOAT3>(tangent);
 			vbuf.EmplaceBack<dx::XMFLOAT2>(uv0);
 			vbuf.EmplacePadding();
 		}
 
-		if (pMeshAsset->indices.size() == 0)
+		if (pMeshAsset->m_indices.size() == 0)
 		{
-			throw std::runtime_error(std::string("Mesh '") + pMeshAsset->name + std::string("' has 0 indices!"));
+			throw std::runtime_error(std::string("Mesh '") + pMeshAsset->m_name + std::string("' has 0 indices!"));
 		}
-		if (pMeshAsset->indices.size() % 3 != 0)
+		if (pMeshAsset->m_indices.size() % 3 != 0)
 		{
-			throw std::runtime_error(std::string("Mesh '") + pMeshAsset->name + std::string("' has indices which are not a multiple of 3!"));
+			throw std::runtime_error(std::string("Mesh '") + pMeshAsset->m_name + std::string("' has indices which are not a multiple of 3!"));
 		}
 
 		// todo: move instance stuff somewhere else!
@@ -133,13 +133,13 @@ namespace gfx
 
 		// todo: better way to copy this?
 		std::vector<u32> indices;
-		indices.reserve(pMeshAsset->indices.size());
-		for (unsigned int i = 0; i < pMeshAsset->indices.size(); ++i)
+		indices.reserve(pMeshAsset->m_indices.size());
+		for (unsigned int i = 0; i < pMeshAsset->m_indices.size(); ++i)
 		{
-			indices.push_back(pMeshAsset->indices[i]);
+			indices.push_back(pMeshAsset->m_indices[i]);
 		}
 
-		const auto meshTag = "Mesh%" + pMeshAsset->name;
+		const auto meshTag = "Mesh%" + pMeshAsset->m_name;
 
 		std::shared_ptr<VertexBufferWrapper> pVertexBuffer;
 		if (isInstance)
@@ -161,11 +161,11 @@ namespace gfx
 
 		if (isInstance)
 		{
-			return std::make_shared<InstancedMeshRenderer>(gfx, pMeshAsset->name, pMaterial, std::move(pVertexBuffer), std::move(pIndexBuffer), std::move(pTopology), instanceCount);
+			return std::make_shared<InstancedMeshRenderer>(gfx, pMeshAsset->m_name, pMaterial, std::move(pVertexBuffer), std::move(pIndexBuffer), std::move(pTopology), instanceCount);
 		}
 		else
 		{
-			return std::make_shared<MeshRenderer>(gfx, pMeshAsset->name, pMaterial, std::move(pVertexBuffer), std::move(pIndexBuffer), std::move(pTopology));
+			return std::make_shared<MeshRenderer>(gfx, pMeshAsset->m_name, pMaterial, std::move(pVertexBuffer), std::move(pIndexBuffer), std::move(pTopology));
 		}
 	}
 }

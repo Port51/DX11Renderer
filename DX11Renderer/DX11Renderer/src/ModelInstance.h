@@ -32,9 +32,9 @@ namespace gfx
 		std::shared_ptr<MeshRenderer> CreateMeshRenderer(GraphicsDevice& gfx, std::shared_ptr<MeshAsset> const& pMeshAsset);
 		std::shared_ptr<SceneGraphNode> CreateModelInstanceNode(GraphicsDevice& gfx, std::shared_ptr<ModelAssetNode> const& pSourceNode);
 	private:
-		std::vector<std::shared_ptr<Material>> pMaterials;
-		std::shared_ptr<SceneGraphNode> pSceneGraph;
-		std::vector<std::shared_ptr<MeshRenderer>> pMeshes;
-		dx::XMMATRIX transform;
+		std::vector<std::shared_ptr<Material>> m_pMaterials;
+		std::shared_ptr<SceneGraphNode> m_pSceneGraph;
+		std::vector<std::shared_ptr<MeshRenderer>> m_pMeshes;
+		dx::XMMATRIX m_transform;
 	};
 }

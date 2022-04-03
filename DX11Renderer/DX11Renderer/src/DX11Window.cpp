@@ -12,7 +12,7 @@ namespace gfx
 		ImGui_ImplWin32_Init(m_hWnd);
 
 		// Create graphics
-		pGfx = std::make_unique<GraphicsDevice>(m_hWnd, width, height);
+		m_pGfx = std::make_unique<GraphicsDevice>(m_hWnd, width, height);
 	}
 
 	DX11Window::~DX11Window()
@@ -20,9 +20,9 @@ namespace gfx
 		ImGui_ImplWin32_Shutdown();
 	}
 
-	GraphicsDevice & DX11Window::Gfx()
+	GraphicsDevice & DX11Window::Gfx() const
 	{
-		return *pGfx;
+		return *m_pGfx;
 	}
 
 	LRESULT DX11Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)

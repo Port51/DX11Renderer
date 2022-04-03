@@ -18,7 +18,7 @@ namespace gfx
 		static std::shared_ptr<PixelShader> Resolve(GraphicsDevice& gfx, const std::string& path);
 		static std::string GenerateUID(const std::string& path);
 	protected:
-		std::string path;
-		ComPtr<ID3D11PixelShader> pPixelShader;
+		std::string m_path;
+		ComPtr<ID3D11PixelShader> m_pPixelShader;
 	};
 }

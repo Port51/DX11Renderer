@@ -9,15 +9,15 @@
 namespace gfx
 {
 	Light::Light(GraphicsDevice & gfx, UINT index, bool allowUserControl, std::shared_ptr<ModelAsset> const& pModelAsset, dx::XMFLOAT3 positionWS, dx::XMFLOAT3 color, float intensity)
-		: index(index),
-		allowUserControl(allowUserControl),
-		positionWS(positionWS),
-		color(color),
-		intensity(intensity)
+		: m_index(index),
+		m_allowUserControl(allowUserControl),
+		m_positionWS(positionWS),
+		m_color(color),
+		m_intensity(intensity)
 	{
 		if (allowUserControl && pModelAsset != nullptr)
 		{
-			pModel = std::make_unique<ModelInstance>(gfx, pModelAsset, dx::XMMatrixIdentity());
+			m_pModel = std::make_unique<ModelInstance>(gfx, pModelAsset, dx::XMMatrixIdentity());
 		}
 	}
 
@@ -26,32 +26,32 @@ namespace gfx
 
 	int Light::GetCurrentShadowIdx() const
 	{
-		return shadowAtlasTileIdx;
+		return m_shadowAtlasTileIdx;
 	}
 
 	void Light::SetCurrentShadowIdx(int _shadowMapIdx)
 	{
-		shadowAtlasTileIdx = _shadowMapIdx;
+		m_shadowAtlasTileIdx = _shadowMapIdx;
 	}
 
 	dx::XMFLOAT3 Light::GetPositionWS() const
 	{
-		return positionWS;
+		return m_positionWS;
 	}
 
 	void Light::SetPositionWS(dx::XMVECTOR _positionWS)
 	{
-		dx::XMStoreFloat3(&positionWS, _positionWS);
+		dx::XMStoreFloat3(&m_positionWS, _positionWS);
 	}
 
 	bool Light::HasShadow() const
 	{
-		return shadowSettings.hasShadow;
+		return m_shadowSettings.hasShadow;
 	}
 
 	const std::unique_ptr<ModelInstance>& Light::GetModelInstance() const
 	{
-		return pModel;
+		return m_pModel;
 	}
 
 	void Light::SetShadowMatrixTile(dx::XMMATRIX& shadowMatrix, int tileX, int tileY)
@@ -71,6 +71,6 @@ namespace gfx
 	}
 	bool Light::AllowUserControl() const
 	{
-		return allowUserControl;
+		return m_allowUserControl;
 	}
 }

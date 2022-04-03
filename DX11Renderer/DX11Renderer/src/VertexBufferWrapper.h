@@ -28,9 +28,9 @@ namespace gfx
 	private:
 		static std::string GenerateUID(const std::string& tag);
 	protected:
-		UINT vertexCount;
-		std::vector<UINT> strides;
-		std::vector<UINT> offsets;
-		std::vector<ComPtr<ID3D11Buffer>> pBufferArray;
+		UINT m_vertexCount;
+		std::vector<UINT> m_strides;
+		std::vector<UINT> m_offsets;
+		std::vector<ComPtr<ID3D11Buffer>> m_pBufferArray;
 	};
 }

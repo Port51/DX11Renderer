@@ -16,8 +16,8 @@ namespace gfx
 	public:
 		void Execute(GraphicsDevice& gfx) const;
 	private:
-		const MeshRenderer* pRenderer;
-		const RenderStep* pStep;
-		const DrawContext* drawContext;
+		const MeshRenderer* m_pRenderer;
+		const RenderStep* m_pStep;
+		const DrawContext* m_pDrawContext;
 	};
 }

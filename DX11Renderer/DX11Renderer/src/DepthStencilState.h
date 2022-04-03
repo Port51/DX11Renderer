@@ -25,7 +25,7 @@ namespace gfx
 	protected:
 		static std::string GenerateUID(Mode mode);
 	private:
-		Mode mode;
-		ComPtr<ID3D11DepthStencilState> pStencil;
+		Mode m_mode;
+		ComPtr<ID3D11DepthStencilState> m_pStencil;
 	};
 }

@@ -24,10 +24,10 @@ namespace gfx
 		void SubmitDrawCalls(const DrawContext& drawContext) const;
 		void RebuildTransform(dx::XMMATRIX accumulatedTransform);
 	private:
-		int id;
-		std::vector<std::shared_ptr<SceneGraphNode>> pChildNodes;
-		std::shared_ptr<MeshRenderer> pMeshPtr;
-		dx::XMFLOAT4X4 localTransform;
-		dx::XMFLOAT4X4 accumulatedWorldTransform;
+		int m_id;
+		std::vector<std::shared_ptr<SceneGraphNode>> m_pChildNodes;
+		std::shared_ptr<MeshRenderer> m_pMeshPtr;
+		dx::XMFLOAT4X4 m_localTransform;
+		dx::XMFLOAT4X4 m_accumulatedWorldTransform;
 	};
 }

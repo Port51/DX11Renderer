@@ -20,8 +20,8 @@ namespace gfx
 		static std::shared_ptr<InputLayout> Resolve(GraphicsDevice& gfx, const VertexLayout& layout, std::string vertexShaderName, ID3DBlob* pVertexShaderBytecode);
 		static std::string GenerateUID(const VertexLayout& layout, std::string vertexShaderName, ID3DBlob* pVertexShaderBytecode = nullptr);
 	protected:
-		std::string vertexShaderName;
-		VertexLayout layout;
-		ComPtr<ID3D11InputLayout> pInputLayout;
+		std::string m_vertexShaderName;
+		VertexLayout m_layout;
+		ComPtr<ID3D11InputLayout> m_pInputLayout;
 	};
 }

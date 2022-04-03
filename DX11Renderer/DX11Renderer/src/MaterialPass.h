@@ -22,7 +22,7 @@ namespace gfx
 		void AddTechnique(std::unique_ptr<Technique> _pTechnique);
 		void SubmitDrawCalls(const MeshRenderer& meshRenderer, const DrawContext& drawContext) const;
 	private:
-		std::unique_ptr<Technique> pTechnique;
-		std::string renderPass;
+		std::unique_ptr<Technique> m_pTechnique;
+		std::string m_renderPass;
 	};
 }

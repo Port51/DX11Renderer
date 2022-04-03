@@ -23,53 +23,53 @@ namespace gfx
 {
 	DirectionalLight::DirectionalLight(GraphicsDevice& gfx, UINT index, bool allowUserControl, bool hasShadow, std::shared_ptr<ModelAsset> const& pModelAsset, float pan, float tilt, dx::XMFLOAT3 color, float intensity, float sphereRad, float range)
 		: Light(gfx, index, allowUserControl, pModelAsset, dx::XMFLOAT3(0.f, 0.f, 0.f), color, intensity),
-		pan(pan),
-		tilt(tilt),
-		sphereRad(sphereRad),
-		range(range)
+		m_pan(pan),
+		m_tilt(tilt),
+		m_sphereRad(sphereRad),
+		m_range(range)
 	{
-		shadowSettings.hasShadow = hasShadow;
+		m_shadowSettings.hasShadow = hasShadow;
 
-		if (shadowSettings.hasShadow)
+		if (m_shadowSettings.hasShadow)
 		{
-			lightShadowData.resize(Config::ShadowCascades);
-			shadowCascadeSpheresVS.resize(Config::ShadowCascades);
+			m_lightShadowData.resize(Config::ShadowCascades);
+			m_shadowCascadeSpheresVS.resize(Config::ShadowCascades);
 		}
 	}
 
 	void DirectionalLight::DrawImguiControlWindow()
 	{
-		if (!allowUserControl)
+		if (!m_allowUserControl)
 			return;
 
-		const auto identifier = std::string("Light") + std::to_string(index);
+		const auto identifier = std::string("Light") + std::to_string(m_index);
 		if (ImGui::Begin(identifier.c_str()))
 		{
 			ImGui::Text("Position");
-			ImGui::SliderFloat("Pan", &pan, -360.0f, 360.0f, "%.1f");
-			ImGui::SliderFloat("Tilt", &tilt, -180.0f, 180.0f, "%.1f");
+			ImGui::SliderFloat("Pan", &m_pan, -360.0f, 360.0f, "%.1f");
+			ImGui::SliderFloat("Tilt", &m_tilt, -180.0f, 180.0f, "%.1f");
 
 			ImGui::Text("Intensity/Color");
 			// ImGuiSliderFlags_Logarithmic makes it power of 2?
-			ImGui::SliderFloat("Intensity", &intensity, 0.01f, 5.0f, "%.2f", ImGuiSliderFlags_Logarithmic);
-			ImGui::SliderFloat("SphereRad", &sphereRad, 0.05f, 50.0f, "%.2f", ImGuiSliderFlags_Logarithmic);
-			ImGui::SliderFloat("Range", &range, 0.05f, 50.0f, "%.2f", ImGuiSliderFlags_Logarithmic);
-			ImGui::ColorEdit3("Diffuse Color", &color.x);
+			ImGui::SliderFloat("Intensity", &m_intensity, 0.01f, 5.0f, "%.2f", ImGuiSliderFlags_Logarithmic);
+			ImGui::SliderFloat("SphereRad", &m_sphereRad, 0.05f, 50.0f, "%.2f", ImGuiSliderFlags_Logarithmic);
+			ImGui::SliderFloat("Range", &m_range, 0.05f, 50.0f, "%.2f", ImGuiSliderFlags_Logarithmic);
+			ImGui::ColorEdit3("Diffuse Color", &m_color.x);
 		}
 
-		pModel->SetPositionWS(positionWS);
+		m_pModel->SetPositionWS(m_positionWS);
 		ImGui::End();
 	}
 
 	LightData DirectionalLight::GetLightData(dx::XMMATRIX viewMatrix) const
 	{
 		LightData light;
-		const auto posWS_Vector = dx::XMLoadFloat4(&dx::XMFLOAT4(positionWS.x, positionWS.y, positionWS.z, 1.0f));
-		const auto dirWS_Vector = dx::XMVector4Transform(dx::XMVectorSet(0, 0, 1, 0), dx::XMMatrixRotationRollPitchYaw(dx::XMConvertToRadians(tilt), dx::XMConvertToRadians(pan), 0.0f));
-		light.positionVS_range = dx::XMVectorSetW(dx::XMVector4Transform(posWS_Vector, viewMatrix), range); // pack range into W
-		light.color_intensity = dx::XMVectorSetW(dx::XMLoadFloat3(&color), intensity);
-		light.directionVS = dx::XMVectorSetW(dx::XMVector4Transform(dirWS_Vector, viewMatrix), (float)shadowAtlasTileIdx);
-		light.data0 = dx::XMVectorSet(2, 1.f / sphereRad, 0, 0);
+		const auto posWS_Vector = dx::XMLoadFloat4(&dx::XMFLOAT4(m_positionWS.x, m_positionWS.y, m_positionWS.z, 1.0f));
+		const auto dirWS_Vector = dx::XMVector4Transform(dx::XMVectorSet(0, 0, 1, 0), dx::XMMatrixRotationRollPitchYaw(dx::XMConvertToRadians(m_tilt), dx::XMConvertToRadians(m_pan), 0.0f));
+		light.positionVS_range = dx::XMVectorSetW(dx::XMVector4Transform(posWS_Vector, viewMatrix), m_range); // pack range into W
+		light.color_intensity = dx::XMVectorSetW(dx::XMLoadFloat3(&m_color), m_intensity);
+		light.directionVS = dx::XMVectorSetW(dx::XMVector4Transform(dirWS_Vector, viewMatrix), (float)m_shadowAtlasTileIdx);
+		light.data0 = dx::XMVectorSet(2, 1.f / m_sphereRad, 0, 0);
 		return light;
 	}
 
@@ -139,7 +139,7 @@ namespace gfx
 			ViewProjTransforms transforms = GetShadowTransforms(cascadeSphereCenterWS, cascadeDistance);
 
 			// Record shadow sphere in VS
-			shadowCascadeSpheresVS[i] = dx::XMVectorSetW(dx::XMVector4Transform(dx::XMVectorSetW(cascadeSphereCenterWS, 1.f), context.pCamera->GetViewMatrix()), cascadeDistance * cascadeDistance * 0.25f); // 0.25 is because cascadeDistance is a diameter
+			m_shadowCascadeSpheresVS[i] = dx::XMVectorSetW(dx::XMVector4Transform(dx::XMVectorSetW(cascadeSphereCenterWS, 1.f), context.pCamera->GetViewMatrix()), cascadeDistance * cascadeDistance * 0.25f); // 0.25 is because cascadeDistance is a diameter
 
 			static Frustum frustum;
 
@@ -159,7 +159,7 @@ namespace gfx
 			auto ct = context.pRendererList->GetRendererCount();
 
 			// Calculate tile in shadow atlas
-			int tileIdx = shadowAtlasTileIdx + i;
+			int tileIdx = m_shadowAtlasTileIdx + i;
 			int tileX = (tileIdx % Config::ShadowAtlasTileDimension);
 			int tileY = (tileIdx / Config::ShadowAtlasTileDimension);
 
@@ -173,8 +173,8 @@ namespace gfx
 
 			// todo: move elsewhere
 			{
-				lightShadowData[i].shadowMatrix = context.invViewMatrix * transforms.viewMatrix * transforms.projMatrix;
-				dx::XMStoreUInt2(&lightShadowData[i].tile, dx::XMVectorSet((float)tileX, (float)tileY, 0, 0));
+				m_lightShadowData[i].shadowMatrix = context.invViewMatrix * transforms.viewMatrix * transforms.projMatrix;
+				dx::XMStoreUInt2(&m_lightShadowData[i].tile, dx::XMVectorSet((float)tileX, (float)tileY, 0, 0));
 			}
 		}
 	}
@@ -183,7 +183,7 @@ namespace gfx
 	{
 		for (UINT i = 0u; i < (UINT)Config::ShadowCascades; ++i)
 		{
-			shadowData[shadowStartSlot + i] = lightShadowData[i];
+			shadowData[shadowStartSlot + i] = m_lightShadowData[i];
 		}
 	}
 
@@ -194,11 +194,11 @@ namespace gfx
 
 	dx::XMVECTOR DirectionalLight::GetShadowCascadeSphereVS(UINT idx) const
 	{
-		return shadowCascadeSpheresVS[idx];
+		return m_shadowCascadeSpheresVS[idx];
 	}
 
 	dx::XMVECTOR DirectionalLight::GetDirectionWS() const
 	{
-		return dx::XMVector4Transform(dx::XMVectorSet(0, 0, 1, 0), dx::XMMatrixRotationRollPitchYaw(dx::XMConvertToRadians(tilt), dx::XMConvertToRadians(pan), 0.0f));
+		return dx::XMVector4Transform(dx::XMVectorSet(0, 0, 1, 0), dx::XMMatrixRotationRollPitchYaw(dx::XMConvertToRadians(m_tilt), dx::XMConvertToRadians(m_pan), 0.0f));
 	}
 }

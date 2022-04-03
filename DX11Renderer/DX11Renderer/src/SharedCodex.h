@@ -25,12 +25,12 @@ namespace gfx
 		template<class T,typename...Params>
 		std::shared_ptr<T> InternalResolve( GraphicsDevice& gfx, std::string id, Params&&...p )
 		{
-			const auto i = binds.find( id );
-			if( i == binds.end() )
+			const auto i = m_binds.find( id );
+			if( i == m_binds.end() )
 			{
 				// Create CodexElement
 				auto bind = std::make_shared<T>( gfx,std::forward<Params>( p )... );
-				binds[id] = bind;
+				m_binds[id] = bind;
 				return bind;
 			}
 			else
@@ -44,6 +44,6 @@ namespace gfx
 			return codex;
 		}
 	private:
-		std::unordered_map<std::string, std::shared_ptr<class CodexElement>> binds;
+		std::unordered_map<std::string, std::shared_ptr<CodexElement>> m_binds;
 	};
 }

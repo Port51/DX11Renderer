@@ -15,61 +15,61 @@
 namespace gfx
 {
 	MeshRenderer::MeshRenderer(GraphicsDevice& gfx, std::string name, std::shared_ptr<Material> pMaterial, std::shared_ptr<IndexBuffer> pIndexBuffer, std::shared_ptr<Topology> pTopologyBuffer)
-		: pIndexBuffer(std::move(pIndexBuffer)),
-		pTopology(std::move(pTopologyBuffer)),
-		name(name),
-		pMaterial(pMaterial)
+		: m_pIndexBuffer(std::move(pIndexBuffer)),
+		m_pTopology(std::move(pTopologyBuffer)),
+		m_name(name),
+		m_pMaterial(pMaterial)
 	{
 		assert("Material cannot be null" && pMaterial);
 		gfx.GetLog()->Info("Create MeshRenderer " + name);
 
-		pTransformCbuf = std::make_shared<TransformCbuf>(gfx);
+		m_pTransformCbuf = std::make_shared<TransformCbuf>(gfx);
 	}
 
 	MeshRenderer::MeshRenderer(GraphicsDevice& gfx, std::string name, std::shared_ptr<Material> pMaterial, std::shared_ptr<VertexBufferWrapper> pVertexBuffer, std::shared_ptr<IndexBuffer> pIndexBuffer, std::shared_ptr<Topology> pTopologyBuffer)
 		: MeshRenderer(gfx, name, pMaterial, pIndexBuffer, pTopologyBuffer)
 	{
-		pVertexBufferWrapper = std::move(pVertexBuffer);
+		m_pVertexBufferWrapper = std::move(pVertexBuffer);
 	}
 
 	dx::XMMATRIX MeshRenderer::GetTransformXM() const
 	{
-		return dx::XMLoadFloat4x4(&transform);
+		return dx::XMLoadFloat4x4(&m_transform);
 	}
 
 	void MeshRenderer::SetTransform(dx::XMMATRIX _transform)
 	{
-		dx::XMStoreFloat4x4(&transform, _transform);
+		dx::XMStoreFloat4x4(&m_transform, _transform);
 	}
 
 	void MeshRenderer::SubmitDrawCalls(const DrawContext& drawContext) const
 	{
-		pMaterial->SubmitDrawCalls(*this, drawContext);
+		m_pMaterial->SubmitDrawCalls(*this, drawContext);
 	}
 
 	void MeshRenderer::Bind(GraphicsDevice& gfx, const DrawContext& drawContext) const
 	{
-		pTopology->BindIA(gfx, 0u);
-		pIndexBuffer->BindIA(gfx, 0u);
-		pVertexBufferWrapper->BindIA(gfx, 0u);
+		m_pTopology->BindIA(gfx, 0u);
+		m_pIndexBuffer->BindIA(gfx, 0u);
+		m_pVertexBufferWrapper->BindIA(gfx, 0u);
 
 		const auto modelMatrix = GetTransformXM();
 		const auto modelViewMatrix = modelMatrix * drawContext.viewMatrix;
 		const auto modelViewProjectMatrix = modelViewMatrix * drawContext.projMatrix;
 		Transforms transforms{ modelMatrix, modelViewMatrix, modelViewProjectMatrix };
-		pTransformCbuf->UpdateTransforms(gfx, transforms);
+		m_pTransformCbuf->UpdateTransforms(gfx, transforms);
 
-		pTransformCbuf->BindVS(gfx, RenderSlots::VS_TransformCB);
+		m_pTransformCbuf->BindVS(gfx, RenderSlots::VS_TransformCB);
 	}
 
 	UINT MeshRenderer::GetIndexCount() const
 	{
-		return pIndexBuffer->GetIndexCount();
+		return m_pIndexBuffer->GetIndexCount();
 	}
 
 	UINT MeshRenderer::GetVertexCount() const
 	{
-		return pVertexBufferWrapper->GetVertexCount();
+		return m_pVertexBufferWrapper->GetVertexCount();
 	}
 
 	void MeshRenderer::IssueDrawCall(GraphicsDevice& gfx) const
