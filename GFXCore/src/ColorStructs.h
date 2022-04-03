@@ -1,6 +1,7 @@
 #pragma once
+#include "CommonCoreHeader.h"
 
-namespace gfx
+namespace gfxcore
 {
 	struct BGRAColor
 	{

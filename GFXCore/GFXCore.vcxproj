@@ -159,12 +159,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\ColorStructs.h" />
     <ClInclude Include="src\CommonCoreHeader.h" />
     <ClInclude Include="src\BaseWindow.h" />
     <ClInclude Include="src\InputListener.h" />
     <ClInclude Include="src\MouseEvent.h" />
     <ClInclude Include="src\MouseInput.h" />
     <ClInclude Include="src\CorePch.h" />
+    <ClInclude Include="src\TextParser.h" />
     <ClInclude Include="src\Timer.h" />
     <ClInclude Include="src\vendor\imgui\imconfig.h" />
     <ClInclude Include="src\vendor\imgui\imgui.h" />
@@ -189,6 +191,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="src\TextParser.cpp" />
     <ClCompile Include="src\Timer.cpp" />
     <ClCompile Include="src\vendor\imgui\imgui.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>

@@ -228,7 +228,6 @@
     <ClCompile Include="src\ShadowPassContext.cpp" />
     <ClCompile Include="src\Spotlight.cpp" />
     <ClCompile Include="src\Technique.cpp" />
-    <ClCompile Include="src\TextParser.cpp" />
     <ClCompile Include="src\Texture.cpp" />
     <ClCompile Include="src\Topology.cpp" />
     <ClCompile Include="src\TransformCbuf.cpp" />
@@ -314,7 +313,6 @@
     <ClInclude Include="src\StructuredBufferData.h" />
     <ClInclude Include="src\InstancedMeshRenderer.h" />
     <ClInclude Include="src\Binding.h" />
-    <ClInclude Include="src\Colors.h" />
     <ClInclude Include="src\Bindable.h" />
     <ClInclude Include="src\SharedCodex.h" />
     <ClInclude Include="src\Camera.h" />
@@ -338,14 +336,12 @@
     <ClInclude Include="src\NullPixelShader.h" />
     <ClInclude Include="src\RasterizerState.h" />
     <ClInclude Include="src\RenderTexture.h" />
-    <ClInclude Include="src\TextParser.h" />
     <ClInclude Include="src\RenderPass.h" />
     <ClInclude Include="src\ConstantBuffer.h" />
     <ClInclude Include="src\PixelShader.h" />
     <ClInclude Include="src\PointLight.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="src\Sampler.h" />
-    <ClInclude Include="src\SceneGraphNode2.h" />
     <ClInclude Include="src\DepthStencilState.h" />
     <ClInclude Include="src\RenderStep.h" />
     <ClInclude Include="src\Technique.h" />

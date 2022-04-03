@@ -2,7 +2,7 @@
 #include "DXMathInclude.h"
 #include <type_traits>
 #include "GraphicsDevice.h"
-#include "Colors.h"
+#include "ColorStructs.h"
 
 namespace gfx
 {

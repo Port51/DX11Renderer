@@ -1,7 +1,8 @@
-#include "pch.h"
+#include "CorePch.h"
 #include "TextParser.h"
+#include <algorithm>
 
-namespace gfx
+namespace gfxcore
 {
 	TextParser::TextParser(std::string_view filePath)
 		: file(std::string(filePath).c_str())

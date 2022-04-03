@@ -7,7 +7,7 @@
 
 using namespace std::string_literals;
 
-namespace gfx
+namespace gfxcore
 {
 	class TextParser
 	{
