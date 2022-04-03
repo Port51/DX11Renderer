@@ -16,14 +16,15 @@
 
 namespace gfx
 {
-	App::App(int screenWidth, int screenHeight)
+	App::App(int screenWidth, int screenHeight, HINSTANCE hInstance)
 		:
 		pImgui(std::make_unique<ImguiManager>()),
-		pWindow(std::make_unique<Window>(screenWidth, screenHeight, "DX11 Renderer")),
 		pCamera(std::make_unique<Camera>(40.0f, (float)screenWidth / (float)screenHeight, 0.5f, 50.0f)),
 		pTimer(std::make_unique<Timer>()),
 		pRendererList(std::make_shared<RendererList>())
 	{
+		pWindow = std::make_unique<DX11Window>(screenWidth, screenHeight, "DX11 Renderer", hInstance, this);
+
 		pLightManager = std::make_shared<LightManager>(pWindow->Gfx(), pRendererList);
 
 		std::string fn;
@@ -130,18 +131,36 @@ namespace gfx
 	App::~App()
 	{}
 
-	int App::Go()
+	int App::Run()
 	{
+		pWindow->Show();
+
 		while (true)
 		{
 			// process all messages pending, but to not block for new messages
-			if (const auto ecode = Window::ProcessMessages())
+			if (const auto ecode = DX11Window::ProcessMessages())
 			{
 				// if return optional has value, means we're quitting so return exit code
 				return *ecode;
 			}
-			DoFrame();
+			//DoFrame();
 		}
+	}
+
+	LRESULT App::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+	{
+		switch (msg)
+		{
+		case WM_PAINT:
+			DoFrame();
+			return 0;
+
+		case WM_DESTROY:
+			PostQuitMessage(0);
+			return 0;
+		}
+
+		return DefWindowProc(hWnd, msg, wParam, lParam);
 	}
 
 	void App::DoFrame()
@@ -158,10 +177,10 @@ namespace gfx
 				MouseEvent evt = pWindow->GetMouse().ReadEvent();
 				switch (evt.GetType())
 				{
-				case MouseEvent::EventType::LPress:
+				case MouseEvent::EventType::LeftButtonDown:
 				{
-					pixelSelectionX = mouse.GetPosX();
-					pixelSelectionY = mouse.GetPosY();
+					pixelSelectionX = mouse.GetMousePosX();
+					pixelSelectionY = mouse.GetMousePosY();
 				}
 				}
 			}

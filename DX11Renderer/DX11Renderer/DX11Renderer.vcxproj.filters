@@ -363,12 +363,6 @@
     <ClCompile Include="src\SceneGraphNode.cpp">
       <Filter>Source\SceneGraphs</Filter>
     </ClCompile>
-    <ClCompile Include="src\MouseInput.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="src\MouseEvent.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="src\GraphicsDevice.cpp">
       <Filter>Source\RenderPipeline</Filter>
     </ClCompile>
@@ -649,12 +643,6 @@
     </ClInclude>
     <ClInclude Include="src\SceneGraphNode.h">
       <Filter>Headers\SceneGraphs</Filter>
-    </ClInclude>
-    <ClInclude Include="src\MouseInput.h">
-      <Filter>Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="src\MouseEvent.h">
-      <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="src\GraphicsDevice.h">
       <Filter>Headers\RenderPipeline</Filter>

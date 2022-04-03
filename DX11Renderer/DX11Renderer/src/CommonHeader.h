@@ -22,3 +22,7 @@ namespace gfx
 }
 
 #include <memory>
+
+namespace gfxcore
+{ }
+using namespace gfxcore;

@@ -1,5 +1,6 @@
 #pragma once
-#include "Window.h"
+#include "InputListener.h"
+#include "DX11Window.h"
 
 namespace gfx
 {
@@ -9,22 +10,24 @@ namespace gfx
 	class LightManager;
 	class Renderer;
 	class ImguiManager;
-	class Window;
+	class DX11Window;
 	class Camera;
 	class Timer;
 
-	class App
+	class App : public InputListener
 	{
 	public:
-		App(int screenWidth, int screenHeight);
+		App(int screenWidth, int screenHeight, HINSTANCE hInstance);
 		virtual ~App();
 		// master frame / message loop
-		int Go();
+		int Run();
+
+		LRESULT CALLBACK HandleMsg(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) override;
 	private:
 		void DoFrame();
 	private:
 		std::unique_ptr<ImguiManager> pImgui; // must be initialized before wnd
-		std::unique_ptr<Window> pWindow;
+		std::unique_ptr<DX11Window> pWindow;
 		std::unique_ptr<Camera> pCamera;
 		std::shared_ptr<LightManager> pLightManager;
 		std::unique_ptr<Renderer> pRenderer;

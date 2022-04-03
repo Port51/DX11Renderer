@@ -231,6 +231,42 @@ namespace gfxcore
 
 	LRESULT BaseWindow::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	{
+		switch (msg)
+		{
+		/*case WM_CLOSE:
+		{
+			PostQuitMessage(0);
+			// Return to avoid allowing DefWindowProc() to destroy
+			// Use destructor instead (when frame loop receives 0, it will do this)
+			return 0;
+		}*/
+		case WM_MOUSEMOVE:
+		{
+			m_mouse.OnMouseMove((int)LOWORD(lParam), (int)HIWORD(lParam));
+			return 0;
+		}
+		case WM_LBUTTONDOWN:
+		{
+			m_mouse.OnLeftButtonDown((int)LOWORD(lParam), (int)HIWORD(lParam));
+			return 0;
+		}
+		case WM_RBUTTONDOWN:
+		{
+			m_mouse.OnRightButtonDown((int)LOWORD(lParam), (int)HIWORD(lParam));
+			return 0;
+		}
+		case WM_LBUTTONUP:
+		{
+			m_mouse.OnLeftButtonUp((int)LOWORD(lParam), (int)HIWORD(lParam));
+			return 0;
+		}
+		case WM_RBUTTONUP:
+		{
+			m_mouse.OnRightButtonUp((int)LOWORD(lParam), (int)HIWORD(lParam));
+			return 0;
+		}
+		}
+
 		return m_pInputListener->HandleMsg(hWnd, msg, wParam, lParam);
 	}
 
