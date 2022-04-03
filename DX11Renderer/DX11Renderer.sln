@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.28307.1684
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DX11Renderer", "DX11Renderer\DX11Renderer.vcxproj", "{F4D508B3-4040-4AA5-9FF4-DFBEB7E3105F}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GFXCore", "..\GFXCore\GFXCore.vcxproj", "{59ED314F-8A67-4B60-A258-D92EF54566B3}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GFXCore", "GFXCore\GFXCore.vcxproj", "{59ED314F-8A67-4B60-A258-D92EF54566B3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
