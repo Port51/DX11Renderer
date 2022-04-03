@@ -1,7 +1,7 @@
 #pragma once
 #include <chrono>
 
-namespace gfx
+namespace gfxcore
 {
 	class Timer
 	{

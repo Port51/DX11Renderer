@@ -1,9 +1,9 @@
-#include "pch.h"
+#include "CorePch.h"
 #include "Timer.h"
 
 using namespace std::chrono;
 
-namespace gfx
+namespace gfxcore
 {
 	Timer::Timer()
 	{

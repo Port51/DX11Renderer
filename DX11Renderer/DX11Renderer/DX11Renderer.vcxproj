@@ -230,7 +230,6 @@
     <ClCompile Include="src\Technique.cpp" />
     <ClCompile Include="src\TextParser.cpp" />
     <ClCompile Include="src\Texture.cpp" />
-    <ClCompile Include="src\Timer.cpp" />
     <ClCompile Include="src\Topology.cpp" />
     <ClCompile Include="src\TransformCbuf.cpp" />
     <ClCompile Include="src\vendor\imgui\imgui.cpp">
@@ -351,7 +350,6 @@
     <ClInclude Include="src\RenderStep.h" />
     <ClInclude Include="src\Technique.h" />
     <ClInclude Include="src\Texture.h" />
-    <ClInclude Include="src\Timer.h" />
     <ClInclude Include="src\Topology.h" />
     <ClInclude Include="src\TransformCbuf.h" />
     <ClInclude Include="src\Transforms.h" />

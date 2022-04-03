@@ -219,9 +219,6 @@
     <ClCompile Include="src\Texture.cpp">
       <Filter>Source\Bindable</Filter>
     </ClCompile>
-    <ClCompile Include="src\Timer.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="src\Topology.cpp">
       <Filter>Source\Bindable</Filter>
     </ClCompile>
@@ -457,9 +454,6 @@
     </ClInclude>
     <ClInclude Include="src\Texture.h">
       <Filter>Headers\Bindable</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Timer.h">
-      <Filter>Headers</Filter>
     </ClInclude>
     <ClInclude Include="src\Topology.h">
       <Filter>Headers\Bindable</Filter>

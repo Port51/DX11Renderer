@@ -2,6 +2,11 @@
 #include "InputListener.h"
 #include "DX11Window.h"
 
+namespace gfxcore
+{
+	class Timer;
+}
+
 namespace gfx
 {
 	class MeshRenderer;
@@ -12,7 +17,6 @@ namespace gfx
 	class ImguiManager;
 	class DX11Window;
 	class Camera;
-	class Timer;
 
 	class App : public InputListener
 	{
