@@ -450,7 +450,7 @@ namespace gfx
 			DepthStencilState::Resolve(gfx, DepthStencilState::Mode::Gbuffer)->BindOM(gfx);
 			m_pNormalRoughReflectivityTarget->ClearRenderTarget(context.Get(), 1.f, 0.f, 0.f, 1.f);
 
-			gfx.SetRenderTarget(m_pNormalRoughReflectivityTarget->GetView());
+			gfx.SetRenderTarget(m_pNormalRoughReflectivityTarget->GetRenderTargetView());
 			gfx.SetViewport(gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
 			pass->Execute(gfx);
@@ -685,10 +685,9 @@ namespace gfx
 		}
 	}
 
-	const std::unique_ptr<RenderPass>& Renderer::GetRenderPass(const std::string name)
+	const std::unique_ptr<RenderPass>& Renderer::GetRenderPass(const std::string name) const
 	{
-		const std::unique_ptr<RenderPass>& pass = m_pRenderPasses[name];
-		return pass;
+		return m_pRenderPasses.at(name);
 	}
 
 	const std::unique_ptr<RenderPass>& Renderer::CreateRenderPass(const std::string name)

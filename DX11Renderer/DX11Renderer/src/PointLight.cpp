@@ -89,7 +89,7 @@ namespace gfx
 		gfx.GetContext()->PSSetConstantBuffers(0u, 1u, globalLightCbuf.GetD3DBuffer().GetAddressOf());
 	}*/
 
-	LightData PointLight::GetLightData(dx::XMMATRIX viewMatrix) const
+	const LightData PointLight::GetLightData(dx::XMMATRIX viewMatrix) const
 	{
 		LightData light;
 
@@ -105,7 +105,7 @@ namespace gfx
 		return light;
 	}
 
-	UINT PointLight::GetLightType() const
+	const UINT PointLight::GetLightType() const
 	{
 		return 0u;
 	}
@@ -170,7 +170,7 @@ namespace gfx
 		}
 	}
 
-	UINT PointLight::GetShadowTileCount() const
+	const UINT PointLight::GetShadowTileCount() const
 	{
 		return HasShadow() ? 6u : 0u;
 	}

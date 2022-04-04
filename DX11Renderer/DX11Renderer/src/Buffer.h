@@ -20,9 +20,9 @@ namespace gfx
 		virtual ~Buffer();
 
 	public:
-		ComPtr<ID3D11Buffer> GetD3DBuffer();
-		ComPtr<ID3D11ShaderResourceView> GetSRV();
-		ComPtr<ID3D11UnorderedAccessView> GetUAV();
+		const ComPtr<ID3D11Buffer> GetD3DBuffer() const;
+		const ComPtr<ID3D11ShaderResourceView> GetSRV() const;
+		const ComPtr<ID3D11UnorderedAccessView> GetUAV() const;
 	protected:
 		ComPtr<ID3D11Buffer> m_pBuffer;
 		ComPtr<ID3D11ShaderResourceView> m_pSRV;

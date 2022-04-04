@@ -24,7 +24,7 @@ namespace gfx
 		RendererList(std::shared_ptr<RendererList> source);
 		virtual ~RendererList() = default;
 	public:
-		UINT GetRendererCount() const;
+		const UINT GetRendererCount() const;
 		void Filter(Frustum frustum, RendererSorting sorting);
 		void SubmitDrawCalls(const DrawContext& drawContext) const;
 		void AddModelInstance(const ModelInstance& modelInstance);

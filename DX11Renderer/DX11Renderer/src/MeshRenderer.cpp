@@ -32,7 +32,7 @@ namespace gfx
 		m_pVertexBufferWrapper = std::move(pVertexBuffer);
 	}
 
-	dx::XMMATRIX MeshRenderer::GetTransformXM() const
+	const dx::XMMATRIX MeshRenderer::GetTransformXM() const
 	{
 		return dx::XMLoadFloat4x4(&m_transform);
 	}
@@ -62,12 +62,12 @@ namespace gfx
 		m_pTransformCbuf->BindVS(gfx, RenderSlots::VS_TransformCB);
 	}
 
-	UINT MeshRenderer::GetIndexCount() const
+	const UINT MeshRenderer::GetIndexCount() const
 	{
 		return m_pIndexBuffer->GetIndexCount();
 	}
 
-	UINT MeshRenderer::GetVertexCount() const
+	const UINT MeshRenderer::GetVertexCount() const
 	{
 		return m_pVertexBufferWrapper->GetVertexCount();
 	}

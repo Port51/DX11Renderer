@@ -62,7 +62,7 @@ namespace gfx
 		ImGui::End();
 	}
 
-	LightData Spotlight::GetLightData(dx::XMMATRIX viewMatrix) const
+	const LightData Spotlight::GetLightData(dx::XMMATRIX viewMatrix) const
 	{
 		LightData light;
 
@@ -78,7 +78,7 @@ namespace gfx
 		return light;
 	}
 
-	UINT Spotlight::GetLightType() const
+	const UINT Spotlight::GetLightType() const
 	{
 		return 1u;
 	}
@@ -137,12 +137,12 @@ namespace gfx
 		shadowData[shadowStartSlot] = m_lightShadowData;
 	}
 
-	UINT Spotlight::GetShadowTileCount() const
+	const UINT Spotlight::GetShadowTileCount() const
 	{
 		return HasShadow() ? 1u : 0u;
 	}
 
-	dx::XMVECTOR Spotlight::GetDirectionWS() const
+	const dx::XMVECTOR Spotlight::GetDirectionWS() const
 	{
 		return dx::XMVector4Transform(dx::XMVectorSet(0, 0, 1, 0), dx::XMMatrixRotationRollPitchYaw(dx::XMConvertToRadians(m_tilt), dx::XMConvertToRadians(m_pan), 0.0f));
 	}

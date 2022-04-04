@@ -27,7 +27,7 @@ namespace gfx
 		void SubmitDrawCalls(const DrawContext& drawContext) const;
 		void SetPositionWS(dx::XMFLOAT3 positionWS);
 		void UpdateSceneGraph();
-		std::vector<std::shared_ptr<MeshRenderer>> GetMeshRenderers() const;
+		const std::vector<std::shared_ptr<MeshRenderer>> GetMeshRenderers() const;
 	private:
 		std::shared_ptr<MeshRenderer> CreateMeshRenderer(GraphicsDevice& gfx, std::shared_ptr<MeshAsset> const& pMeshAsset);
 		std::shared_ptr<SceneGraphNode> CreateModelInstanceNode(GraphicsDevice& gfx, std::shared_ptr<ModelAssetNode> const& pSourceNode);

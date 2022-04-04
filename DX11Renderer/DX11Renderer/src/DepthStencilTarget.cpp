@@ -47,17 +47,17 @@ namespace gfx
 	DepthStencilTarget::~DepthStencilTarget()
 	{}
 
-	void DepthStencilTarget::Clear(GraphicsDevice& gfx)
+	void DepthStencilTarget::Clear(GraphicsDevice& gfx) const
 	{
 		gfx.GetContext()->ClearDepthStencilView(m_pDepthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.f, 0u);
 	}
 
-	ComPtr<ID3D11DepthStencilView> DepthStencilTarget::GetView() const
+	const ComPtr<ID3D11DepthStencilView> DepthStencilTarget::GetView() const
 	{
 		return m_pDepthStencilView;
 	}
 
-	ComPtr<ID3D11ShaderResourceView> DepthStencilTarget::GetSRV() const
+	const ComPtr<ID3D11ShaderResourceView> DepthStencilTarget::GetSRV() const
 	{
 		return m_pShaderResourceView;
 	}

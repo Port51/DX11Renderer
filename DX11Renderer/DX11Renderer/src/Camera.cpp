@@ -11,14 +11,14 @@ namespace gfx
 		UpdateProjectionMatrix();
 	}
 
-	dx::XMVECTOR Camera::GetPositionWS() const
+	const dx::XMVECTOR Camera::GetPositionWS() const
 	{
 		// LookAt fails if position = target
 		const auto safeRad = dx::XMMax(m_radius, 0.01f);
 		return dx::XMVectorSetW(dx::XMVectorScale(GetForwardWS(), -safeRad), 1.f);
 	}
 
-	dx::XMVECTOR Camera::GetForwardWS() const
+	const dx::XMVECTOR Camera::GetForwardWS() const
 	{
 		return dx::XMVectorSetW(dx::XMVector3Transform(
 			dx::XMVectorSet(0.f, 0.f, 1.f, 0.f),
@@ -26,7 +26,7 @@ namespace gfx
 		), 0.f);
 	}
 
-	dx::XMMATRIX Camera::GetViewMatrix() const
+	const dx::XMMATRIX Camera::GetViewMatrix() const
 	{
 		// Apply look-at and local orientation
 		// +Y = up
@@ -34,7 +34,7 @@ namespace gfx
 			* dx::XMMatrixRotationRollPitchYaw(m_pitch, -m_yaw, m_roll);
 	}
 
-	dx::XMMATRIX Camera::GetProjectionMatrix() const
+	const dx::XMMATRIX Camera::GetProjectionMatrix() const
 	{
 		return m_projectionMatrix;
 	}
@@ -55,7 +55,7 @@ namespace gfx
 	/// XY = distance 1, ZW = far
 	/// Use in shader with NDC to get view dir or reconstruct positionVS
 	/// This assumes a "normal" camera frustum, so don't try this with a planar reflection camera!
-	dx::XMVECTOR Camera::GetFrustumCornersVS() const
+	const dx::XMVECTOR Camera::GetFrustumCornersVS() const
 	{
 		// Reference: http://davidlively.com/programming/graphics/frustum-calculation-and-culling-hopefully-demystified/
 
@@ -68,18 +68,18 @@ namespace gfx
 		return dx::XMVectorSet(halfAngleX, -halfAngleY, halfAngleX * m_farClipPlane, -halfAngleY * m_farClipPlane);
 	}
 
-	Frustum Camera::GetFrustumWS() const
+	const Frustum Camera::GetFrustumWS() const
 	{
 		Frustum frustum;
 		return frustum;
 	}
 
-	float Camera::GetNearClipPlane() const
+	const float Camera::GetNearClipPlane() const
 	{
 		return m_nearClipPlane;
 	}
 
-	float Camera::GetFarClipPlane() const
+	const float Camera::GetFarClipPlane() const
 	{
 		return m_farClipPlane;
 	}

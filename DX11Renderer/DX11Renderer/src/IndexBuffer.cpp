@@ -42,7 +42,7 @@ namespace gfx
 		gfx.GetContext()->IASetIndexBuffer(m_pIndexBuffer.Get(), m_format, 0u);
 	}
 
-	UINT IndexBuffer::GetIndexCount() const
+	const UINT IndexBuffer::GetIndexCount() const
 	{
 		return m_count;
 	}

@@ -42,7 +42,7 @@ namespace gfx
 		Binding& AddBinding(std::shared_ptr<Bindable> pBindable);
 		Binding& AddBinding(Binding pBinding);
 
-		std::shared_ptr<RenderTexture> GetCameraColorOut() const;
+		const std::shared_ptr<RenderTexture> GetCameraColorOut() const;
 	protected:
 		std::vector<Binding> m_bindings;
 	private:

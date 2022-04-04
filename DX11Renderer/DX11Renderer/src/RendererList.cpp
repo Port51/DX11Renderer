@@ -23,7 +23,7 @@ namespace gfx
 		return (a.second > b.second);
 	}
 
-	UINT RendererList::GetRendererCount() const
+	const UINT RendererList::GetRendererCount() const
 	{
 		return (UINT)m_pRenderers.size();
 	}

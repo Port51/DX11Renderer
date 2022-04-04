@@ -123,7 +123,7 @@ namespace gfx
 		return;
 	}
 
-	ComPtr<ID3D11RenderTargetView> RenderTexture::GetView() const
+	const ComPtr<ID3D11RenderTargetView> RenderTexture::GetRenderTargetView() const
 	{
 		return m_pRenderTargetView;
 	}

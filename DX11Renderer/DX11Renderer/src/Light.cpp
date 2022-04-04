@@ -24,7 +24,7 @@ namespace gfx
 	Light::~Light()
 	{}
 
-	int Light::GetCurrentShadowIdx() const
+	const int Light::GetCurrentShadowIdx() const
 	{
 		return m_shadowAtlasTileIdx;
 	}
@@ -44,7 +44,7 @@ namespace gfx
 		dx::XMStoreFloat3(&m_positionWS, _positionWS);
 	}
 
-	bool Light::HasShadow() const
+	const bool Light::HasShadow() const
 	{
 		return m_shadowSettings.hasShadow;
 	}
@@ -69,7 +69,7 @@ namespace gfx
 			* dx::XMMatrixScaling(scale, -scale, 1.f)
 			* dx::XMMatrixTranslation(offsetX, offsetY, 0.f);
 	}
-	bool Light::AllowUserControl() const
+	const bool Light::AllowUserControl() const
 	{
 		return m_allowUserControl;
 	}

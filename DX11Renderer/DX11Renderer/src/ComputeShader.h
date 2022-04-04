@@ -14,15 +14,15 @@ namespace gfx
 		ComputeShader(GraphicsDevice& gfx, const std::string& path, const std::string& kernelName);
 	public:
 		void Dispatch(GraphicsDevice& gfx, UINT threadCountX, UINT threadCountY, UINT threadCountZ) const;
-		ComPtr<ID3D11ComputeShader> GetComputeShader() const;
-		ID3DBlob* GetBytecode() const;
+		const ComPtr<ID3D11ComputeShader> GetComputeShader() const;
+		const ID3DBlob* GetBytecode() const;
 	public:
 		static std::shared_ptr<ComputeShader> Resolve(GraphicsDevice& gfx, const std::string& path, const std::string& kernelName);
 	protected:
 		static std::string GenerateUID(const std::string& path, const std::string& kernelName);
 	protected:
-		std::string m_path;
-		std::string m_kernelName;
+		const std::string m_path;
+		const std::string m_kernelName;
 		UINT m_kernelSizeX;
 		UINT m_kernelSizeY;
 		UINT m_kernelSizeZ;

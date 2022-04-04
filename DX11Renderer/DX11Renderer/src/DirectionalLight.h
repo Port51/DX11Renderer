@@ -22,15 +22,15 @@ namespace gfx
 		DirectionalLight(GraphicsDevice& gfx, UINT index, bool allowUserControl, bool hasShadow, std::shared_ptr<ModelAsset> const& pModelAsset, float pan, float tilt, dx::XMFLOAT3 color, float intensity = 1.f, float sphereRad = 1.f, float range = 2.5f);
 	public:
 		void DrawImguiControlWindow() override;
-		LightData GetLightData(dx::XMMATRIX viewMatrix) const override;
-		UINT GetLightType() const override;
+		const LightData GetLightData(dx::XMMATRIX viewMatrix) const override;
+		const UINT GetLightType() const override;
 		void RenderShadow(ShadowPassContext context) override;
 		void AppendShadowData(UINT shadowStartSlot, std::vector<LightShadowData>& shadowData) const override;
-		UINT GetShadowTileCount() const override;
-		dx::XMVECTOR GetShadowCascadeSphereVS(UINT idx) const;
+		const UINT GetShadowTileCount() const override;
+		const dx::XMVECTOR GetShadowCascadeSphereVS(UINT idx) const;
 	private:
-		dx::XMVECTOR GetDirectionWS() const;
-		ViewProjTransforms GetShadowTransforms(dx::XMVECTOR cascadeSphereCenterWS, float cascadeDistance) const;
+		const dx::XMVECTOR GetDirectionWS() const;
+		const ViewProjTransforms GetShadowTransforms(dx::XMVECTOR cascadeSphereCenterWS, float cascadeDistance) const;
 	private:
 		float m_pan;
 		float m_tilt;

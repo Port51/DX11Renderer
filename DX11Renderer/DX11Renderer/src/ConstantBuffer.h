@@ -26,6 +26,7 @@ namespace gfx
 
 			THROW_IF_FAILED(gfx.GetAdapter()->CreateBuffer(&bd, nullptr, &m_pBuffer));
 		}
+
 		ConstantBuffer(GraphicsDevice& gfx, D3D11_USAGE usage, const T& initialData)
 			: Buffer(usage, D3D11_BIND_CONSTANT_BUFFER, GetCBufferSize(sizeof(T)))
 		{
@@ -42,23 +43,28 @@ namespace gfx
 			sd.pSysMem = (void*)&initialData;
 			THROW_IF_FAILED(gfx.GetAdapter()->CreateBuffer(&bd, &sd, &m_pBuffer));
 		}
+
 	public:
 		void BindCS(GraphicsDevice& gfx, UINT slot) override
 		{
 			gfx.GetContext()->CSSetConstantBuffers(slot, 1u, m_pBuffer.GetAddressOf());
 		}
+
 		void BindVS(GraphicsDevice& gfx, UINT slot) override
 		{
 			gfx.GetContext()->VSSetConstantBuffers(slot, 1u, m_pBuffer.GetAddressOf());
 		}
+
 		void BindPS(GraphicsDevice& gfx, UINT slot) override
 		{
 			gfx.GetContext()->PSSetConstantBuffers(slot, 1u, m_pBuffer.GetAddressOf());
 		}
+
 		void Update(GraphicsDevice& gfx, const T& data)
 		{
 			Update(gfx, &data, sizeof(T));
 		}
+
 		void Update(GraphicsDevice& gfx, const void* data, UINT dataSize)
 		{
 			if (m_usage == D3D11_USAGE_DYNAMIC) // Can be continuously modified by CPU
@@ -86,6 +92,7 @@ namespace gfx
 				throw std::runtime_error("Cannot update immutable constant buffer!");
 			}
 		}
+
 	private:
 		static constexpr UINT GetCBufferSize(UINT buffer_size)
 		{

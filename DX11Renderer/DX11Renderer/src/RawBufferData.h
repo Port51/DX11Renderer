@@ -13,7 +13,8 @@ namespace gfx
 			m_elements.resize(stride * elementCount);
 			m_nextInput = m_elements.data();
 		}
-		D3D11_SUBRESOURCE_DATA GetSubresourceData() const override
+
+		const D3D11_SUBRESOURCE_DATA GetSubresourceData() const override
 		{
 			D3D11_SUBRESOURCE_DATA sd = {};
 			sd.pSysMem = m_elements.data();
@@ -21,18 +22,22 @@ namespace gfx
 			sd.SysMemSlicePitch = 0;	// only for 3D textures
 			return sd;
 		}
-		UINT GetElementCount() const override
+
+		const UINT GetElementCount() const override
 		{
 			return m_elementCount;
 		}
-		UINT GetSizeInBytes() const override
+
+		const UINT GetSizeInBytes() const override
 		{
 			return (UINT)m_elements.size();
 		}
-		UINT GetStride() const override
+
+		const UINT GetStride() const override
 		{
 			return m_stride;
 		}
+
 		template<class T>
 		void EmplaceBack(const T value)
 		{

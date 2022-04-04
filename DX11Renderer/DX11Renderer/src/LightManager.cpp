@@ -179,17 +179,17 @@ namespace gfx
 		m_pLightShadowSB->Update(context.gfx, m_cachedShadowData, (UINT)m_cachedShadowData.size());
 	}
 
-	ComPtr<ID3D11ShaderResourceView> LightManager::GetLightDataSRV() const
+	const ComPtr<ID3D11ShaderResourceView> LightManager::GetLightDataSRV() const
 	{
 		return m_pLightData->GetSRV();
 	}
 
-	ComPtr<ID3D11ShaderResourceView> LightManager::GetShadowDataSRV() const
+	const ComPtr<ID3D11ShaderResourceView> LightManager::GetShadowDataSRV() const
 	{
 		return m_pLightShadowSB->GetSRV();
 	}
 
-	void LightManager::DrawImguiControlWindows()
+	void LightManager::DrawImguiControlWindows() const
 	{
 		for (auto& l : m_pLights)
 		{
@@ -197,32 +197,32 @@ namespace gfx
 		}
 	}
 
-	UINT LightManager::GetLightCount() const
+	const UINT LightManager::GetLightCount() const
 	{
 		return (UINT)m_pLights.size();
 	}
 
-	std::shared_ptr<Light> LightManager::GetLight(UINT index) const
+	const std::shared_ptr<Light> LightManager::GetLight(UINT index) const
 	{
 		return m_pLights[index];
 	}
 
-	UINT LightManager::GetClusterCount() const
+	const UINT LightManager::GetClusterCount() const
 	{
 		return m_clusterDimensionX * m_clusterDimensionY * m_clusterDimensionZ;
 	}
 
-	UINT LightManager::GetClusterDimensionX() const
+	const UINT LightManager::GetClusterDimensionX() const
 	{
 		return m_clusterDimensionX;
 	}
 
-	UINT LightManager::GetClusterDimensionY() const
+	const UINT LightManager::GetClusterDimensionY() const
 	{
 		return m_clusterDimensionY;
 	}
 
-	UINT LightManager::GetClusterDimensionZ() const
+	const UINT LightManager::GetClusterDimensionZ() const
 	{
 		return m_clusterDimensionZ;
 	}

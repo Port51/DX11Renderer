@@ -11,14 +11,14 @@ namespace gfx
 		Camera(float fov, float aspect, float nearClipPlane, float farClipPlane);
 		virtual ~Camera() = default;
 	public:
-		dx::XMVECTOR GetPositionWS() const;
-		dx::XMVECTOR GetForwardWS() const;
-		dx::XMMATRIX GetViewMatrix() const;
-		dx::XMMATRIX GetProjectionMatrix() const;
-		dx::XMVECTOR GetFrustumCornersVS() const;
-		Frustum GetFrustumWS() const;
-		float GetNearClipPlane() const;
-		float GetFarClipPlane() const;
+		const dx::XMVECTOR GetPositionWS() const;
+		const dx::XMVECTOR GetForwardWS() const;
+		const dx::XMMATRIX GetViewMatrix() const;
+		const dx::XMMATRIX GetProjectionMatrix() const;
+		const dx::XMVECTOR GetFrustumCornersVS() const;
+		const Frustum GetFrustumWS() const;
+		const float GetNearClipPlane() const;
+		const float GetFarClipPlane() const;
 		void SetFOV(float fov);
 		void SetAspect(float aspect);
 		void DrawImguiControlWindow();

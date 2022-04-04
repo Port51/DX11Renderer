@@ -63,7 +63,7 @@ namespace gfx
 		gfx.GetContext()->PSSetSamplers(slot, 1u, m_pSampler.GetAddressOf());
 	}
 
-	ComPtr<ID3D11SamplerState> Sampler::GetD3DSampler() const
+	const ComPtr<ID3D11SamplerState> Sampler::GetD3DSampler() const
 	{
 		return m_pSampler;
 	}

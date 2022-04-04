@@ -125,17 +125,17 @@ namespace gfx
 		gfx.GetContext()->PSSetShaderResources(slot, 1u, m_pShaderResourceView.GetAddressOf());
 	}
 
-	ComPtr<ID3D11UnorderedAccessView> Texture::GetUAV(UINT mipSlice) const
+	const ComPtr<ID3D11UnorderedAccessView> Texture::GetUAV(UINT mipSlice) const
 	{
 		return m_pUAV.size() > mipSlice ? m_pUAV[mipSlice] : nullptr;
 	}
 
-	Texture::TextureDimension Texture::GetDimension() const
+	const Texture::TextureDimension Texture::GetDimension() const
 	{
 		return m_dimension;
 	}
 
-	ComPtr<ID3D11ShaderResourceView> Texture::GetSRV() const
+	const ComPtr<ID3D11ShaderResourceView> Texture::GetSRV() const
 	{
 		return m_pShaderResourceView;
 	}

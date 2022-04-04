@@ -19,7 +19,7 @@ namespace gfx
 		IndexBuffer(GraphicsDevice& gfx, const std::vector<u32>& indices);
 	public:
 		void BindIA(GraphicsDevice& gfx, UINT slot) override;
-		UINT GetIndexCount() const;
+		const UINT GetIndexCount() const;
 	public:
 		static std::shared_ptr<IndexBuffer> Resolve(GraphicsDevice& gfx, std::string id, const std::vector<u32>& indices);
 	private:

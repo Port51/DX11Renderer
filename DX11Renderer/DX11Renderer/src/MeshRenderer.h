@@ -25,12 +25,12 @@ namespace gfx
 		virtual ~MeshRenderer() = default;
 
 	public:
-		dx::XMMATRIX GetTransformXM() const;
+		const dx::XMMATRIX GetTransformXM() const;
 		void SetTransform(dx::XMMATRIX transform);
 		void SubmitDrawCalls(const DrawContext& drawContext) const;
 		virtual void Bind(GraphicsDevice& gfx, const DrawContext& drawContext) const;
-		UINT GetIndexCount() const;
-		UINT GetVertexCount() const;
+		const UINT GetIndexCount() const;
+		const UINT GetVertexCount() const;
 		virtual void IssueDrawCall(GraphicsDevice& gfx) const;
 	protected:
 		std::string m_name;

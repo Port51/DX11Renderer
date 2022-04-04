@@ -23,7 +23,7 @@ namespace gfx
 		SetupInstanceBuffer(gfx, instanceBuffer);
 	}
 
-	ComPtr<ID3D11Buffer> VertexBufferWrapper::GetVertexBuffer() const
+	const ComPtr<ID3D11Buffer> VertexBufferWrapper::GetVertexBuffer() const
 	{
 		return m_pBufferArray[0];
 	}
@@ -93,7 +93,7 @@ namespace gfx
 		return typeid(VertexBufferWrapper).name() + "#"s + tag;
 	}
 
-	UINT VertexBufferWrapper::GetVertexCount() const
+	const UINT VertexBufferWrapper::GetVertexCount() const
 	{
 		return m_vertexCount;
 	}

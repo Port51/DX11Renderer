@@ -49,15 +49,15 @@ namespace gfx
 		std::unique_ptr<DepthStencilTarget>& GetShadowAtlas();
 		std::unique_ptr<ConstantBuffer<LightInputCB>>& GetLightInputCB();
 		void RenderShadows(ShadowPassContext context);
-		ComPtr<ID3D11ShaderResourceView> GetLightDataSRV() const;
-		ComPtr<ID3D11ShaderResourceView> GetShadowDataSRV() const;
-		void DrawImguiControlWindows();
-		UINT GetLightCount() const;
-		std::shared_ptr<Light> GetLight(UINT index) const;
-		UINT GetClusterCount() const;
-		UINT GetClusterDimensionX() const;
-		UINT GetClusterDimensionY() const;
-		UINT GetClusterDimensionZ() const;
+		const ComPtr<ID3D11ShaderResourceView> GetLightDataSRV() const;
+		const ComPtr<ID3D11ShaderResourceView> GetShadowDataSRV() const;
+		void DrawImguiControlWindows() const;
+		const UINT GetLightCount() const;
+		const std::shared_ptr<Light> GetLight(UINT index) const;
+		const UINT GetClusterCount() const;
+		const UINT GetClusterDimensionX() const;
+		const UINT GetClusterDimensionY() const;
+		const UINT GetClusterDimensionZ() const;
 		const std::unique_ptr<StructuredBuffer<int>>& GetClusteredIndices() const;
 	private:
 		bool FrustumSphereIntersection(dx::XMVECTOR lightSphere, dx::XMFLOAT4 frustumCorners, float farClipPlane);

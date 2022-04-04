@@ -16,9 +16,9 @@ namespace gfx
 		VertexBufferWrapper(GraphicsDevice& gfx, const BaseBufferData& vertexBuffer);
 		VertexBufferWrapper(GraphicsDevice& gfx, const BaseBufferData& vertexBuffer, const BaseBufferData& instanceBuffer);
 	public:
-		ComPtr<ID3D11Buffer> GetVertexBuffer() const;
+		const ComPtr<ID3D11Buffer> GetVertexBuffer() const;
 		void BindIA(GraphicsDevice& gfx, UINT slot);
-		UINT GetVertexCount() const;
+		const UINT GetVertexCount() const;
 	protected:
 		void SetupVertexBuffer(GraphicsDevice& gfx, const BaseBufferData& data);
 		void SetupInstanceBuffer(GraphicsDevice& gfx, const BaseBufferData& data);

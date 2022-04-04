@@ -208,22 +208,22 @@ namespace gfx
 		m_pContext->RSSetViewports(1u, &vp);
 	}
 
-	int GraphicsDevice::GetScreenWidth() const
+	const int GraphicsDevice::GetScreenWidth() const
 	{
 		return m_screenWidth;
 	}
 
-	int GraphicsDevice::GetScreenHeight() const
+	const int GraphicsDevice::GetScreenHeight() const
 	{
 		return m_screenHeight;
 	}
 
-	ComPtr<ID3D11Device> GraphicsDevice::GetAdapter() const
+	const ComPtr<ID3D11Device> GraphicsDevice::GetAdapter() const
 	{
 		return m_pDevice;
 	}
 
-	ComPtr<ID3D11DeviceContext> GraphicsDevice::GetContext() const
+	const ComPtr<ID3D11DeviceContext> GraphicsDevice::GetContext() const
 	{
 		return m_pContext;
 	}

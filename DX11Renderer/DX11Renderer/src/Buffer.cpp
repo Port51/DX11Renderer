@@ -9,17 +9,17 @@ namespace gfx
 
 	Buffer::~Buffer() {}
 
-	ComPtr<ID3D11Buffer> Buffer::GetD3DBuffer()
+	const ComPtr<ID3D11Buffer> Buffer::GetD3DBuffer() const
 	{
 		return m_pBuffer;
 	}
 
-	ComPtr<ID3D11ShaderResourceView> Buffer::GetSRV()
+	const ComPtr<ID3D11ShaderResourceView> Buffer::GetSRV() const
 	{
 		return m_pSRV;
 	}
 
-	ComPtr<ID3D11UnorderedAccessView> Buffer::GetUAV()
+	const ComPtr<ID3D11UnorderedAccessView> Buffer::GetUAV() const
 	{
 		return m_pUAV;
 	}

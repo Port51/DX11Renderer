@@ -61,7 +61,7 @@ namespace gfx
 		ImGui::End();
 	}
 
-	LightData DirectionalLight::GetLightData(dx::XMMATRIX viewMatrix) const
+	const LightData DirectionalLight::GetLightData(dx::XMMATRIX viewMatrix) const
 	{
 		LightData light;
 		const auto posWS_Vector = dx::XMLoadFloat4(&dx::XMFLOAT4(m_positionWS.x, m_positionWS.y, m_positionWS.z, 1.0f));
@@ -73,12 +73,12 @@ namespace gfx
 		return light;
 	}
 
-	UINT DirectionalLight::GetLightType() const
+	const UINT DirectionalLight::GetLightType() const
 	{
 		return 2u;
 	}
 
-	ViewProjTransforms DirectionalLight::GetShadowTransforms(dx::XMVECTOR cascadeSphereCenterWS, float cascadeDistance) const
+	const ViewProjTransforms DirectionalLight::GetShadowTransforms(dx::XMVECTOR cascadeSphereCenterWS, float cascadeDistance) const
 	{
 		const float nearPlane = 0.5f;
 		const auto cascadeFrustumStartWS = dx::XMVectorSubtract(cascadeSphereCenterWS, dx::XMVectorScale(GetDirectionWS(), cascadeDistance * 0.5f + Config::ShadowCascadeOffset + nearPlane));
@@ -187,17 +187,17 @@ namespace gfx
 		}
 	}
 
-	UINT DirectionalLight::GetShadowTileCount() const
+	const UINT DirectionalLight::GetShadowTileCount() const
 	{
 		return HasShadow() ? Config::ShadowCascades : 0u;
 	}
 
-	dx::XMVECTOR DirectionalLight::GetShadowCascadeSphereVS(UINT idx) const
+	const dx::XMVECTOR DirectionalLight::GetShadowCascadeSphereVS(UINT idx) const
 	{
 		return m_shadowCascadeSpheresVS[idx];
 	}
 
-	dx::XMVECTOR DirectionalLight::GetDirectionWS() const
+	const dx::XMVECTOR DirectionalLight::GetDirectionWS() const
 	{
 		return dx::XMVector4Transform(dx::XMVectorSet(0, 0, 1, 0), dx::XMMatrixRotationRollPitchYaw(dx::XMConvertToRadians(m_tilt), dx::XMConvertToRadians(m_pan), 0.0f));
 	}

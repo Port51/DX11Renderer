@@ -49,7 +49,7 @@ namespace gfx
 		}
 	}
 
-	std::shared_ptr<Bindable> Binding::GetBindable() const
+	const std::shared_ptr<Bindable> Binding::GetBindable() const
 	{
 		return m_pBindable;
 	}

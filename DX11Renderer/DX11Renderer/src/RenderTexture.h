@@ -21,7 +21,7 @@ namespace gfx
 		virtual void Init(ComPtr<ID3D11Device> pDevice, UINT textureWidth, UINT textureHeight);
 		void Shutdown();
 
-		ComPtr<ID3D11RenderTargetView> GetView() const;
+		const ComPtr<ID3D11RenderTargetView> GetRenderTargetView() const;
 
 		void BindCS(GraphicsDevice& gfx, UINT slot) override;
 		void BindVS(GraphicsDevice& gfx, UINT slot) override;

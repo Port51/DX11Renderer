@@ -49,7 +49,7 @@ namespace gfx
 		bool IsFeatureEnabled(RendererFeature feature) const;
 	private:
 		void SetupRenderPassDependencies(GraphicsDevice& gfx);
-		const std::unique_ptr<RenderPass>& GetRenderPass(const std::string name);
+		const std::unique_ptr<RenderPass>& GetRenderPass(const std::string name) const;
 		const std::unique_ptr<RenderPass>& CreateRenderPass(const std::string name);
 		const std::unique_ptr<RenderPass>& CreateRenderPass(const std::string name, std::unique_ptr<RenderPass> pRenderPass);
 

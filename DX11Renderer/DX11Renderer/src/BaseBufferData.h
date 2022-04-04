@@ -7,9 +7,9 @@ namespace gfx
 	class BaseBufferData
 	{
 	public:
-		virtual D3D11_SUBRESOURCE_DATA GetSubresourceData() const = 0;
-		virtual UINT GetElementCount() const = 0;
-		virtual UINT GetSizeInBytes() const = 0;
-		virtual UINT GetStride() const = 0;
+		virtual const D3D11_SUBRESOURCE_DATA GetSubresourceData() const = 0;
+		virtual const UINT GetElementCount() const = 0;
+		virtual const UINT GetSizeInBytes() const = 0;
+		virtual const UINT GetStride() const = 0;
 	};
 }

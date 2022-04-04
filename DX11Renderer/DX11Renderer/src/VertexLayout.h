@@ -14,6 +14,7 @@ namespace gfx
 	public:
 		VertexLayout() {}
 		virtual ~VertexLayout() = default;
+
 	public:
 		template <class T> // T should be the CPU type
 		VertexLayout& AppendVertexDesc(D3D11_INPUT_ELEMENT_DESC desc)
@@ -27,6 +28,7 @@ namespace gfx
 			m_code += desc.SemanticName + std::to_string(desc.SemanticIndex);
 			return *this;
 		}
+
 		template <class T> // T should be the CPU type
 		VertexLayout& AppendInstanceDesc(D3D11_INPUT_ELEMENT_DESC desc)
 		{
@@ -38,27 +40,33 @@ namespace gfx
 			m_code += desc.SemanticName + std::to_string(desc.SemanticIndex);
 			return *this;
 		}
-		UINT GetPerVertexStride() const
+
+		const UINT GetPerVertexStride() const
 		{
 			return m_perVertexStride + m_perVertexPadding;
 		}
-		UINT GetPerInstanceStride() const
+
+		const UINT GetPerInstanceStride() const
 		{
 			return m_perInstanceStride;
 		}
-		UINT GetPerVertexPadding() const
+
+		const UINT GetPerVertexPadding() const
 		{
 			return m_perVertexPadding;
 		}
-		UINT GetElementCount() const
+
+		const UINT GetElementCount() const
 		{
 			return (UINT)m_elements.size();
 		}
-		std::vector<D3D11_INPUT_ELEMENT_DESC> GetD3DLayout() const
+
+		const std::vector<D3D11_INPUT_ELEMENT_DESC> GetD3DLayout() const
 		{
 			return m_elements;
 		}
-		std::string GetCode() const
+
+		const std::string GetCode() const
 		{
 			return m_code;
 		}

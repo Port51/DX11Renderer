@@ -47,12 +47,12 @@ namespace gfx
 		: m_name(_name), m_pMeshAsset(std::move(pMeshAsset)), m_localTransform(std::move(_localTransform))
 	{}
 
-	std::shared_ptr<MeshAsset> ModelAssetNode::GetMeshAsset() const
+	const std::shared_ptr<MeshAsset> ModelAssetNode::GetMeshAsset() const
 	{
 		return m_pMeshAsset;
 	}
 
-	dx::XMFLOAT4X4 ModelAssetNode::GetLocalTransform() const
+	const dx::XMFLOAT4X4 ModelAssetNode::GetLocalTransform() const
 	{
 		return m_localTransform;
 	}

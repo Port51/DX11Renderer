@@ -22,13 +22,13 @@ namespace gfx
 		Spotlight(GraphicsDevice& gfx, UINT index, bool allowUserControl, bool hasShadow, std::shared_ptr<ModelAsset> const& pModelAsset, dx::XMFLOAT3 positionWS, float pan, float tilt, dx::XMFLOAT3 color, float intensity = 1.f, float attenuationQ = 4.f, float range = 2.5f);
 	public:
 		void DrawImguiControlWindow() override;
-		LightData GetLightData(dx::XMMATRIX viewMatrix) const override;
-		UINT GetLightType() const override;
+		const LightData GetLightData(dx::XMMATRIX viewMatrix) const override;
+		const UINT GetLightType() const override;
 		void RenderShadow(ShadowPassContext context) override;
 		void AppendShadowData(UINT shadowStartSlot, std::vector<LightShadowData>& shadowData) const override;
-		UINT GetShadowTileCount() const override;
+		const UINT GetShadowTileCount() const override;
 	private:
-		dx::XMVECTOR GetDirectionWS() const;
+		const dx::XMVECTOR GetDirectionWS() const;
 	private:
 		float m_pan;
 		float m_tilt;

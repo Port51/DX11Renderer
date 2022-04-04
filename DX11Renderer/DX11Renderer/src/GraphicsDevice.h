@@ -34,11 +34,11 @@ namespace gfx
 		void ClearRenderTargets();
 		void SetViewport(int x, int y, int width, int height);
 		void SetViewport(int width, int height);
-		int GetScreenWidth() const;
-		int GetScreenHeight() const;
+		const int GetScreenWidth() const;
+		const int GetScreenHeight() const;
 	public:
-		ComPtr<ID3D11Device> GetAdapter() const;
-		ComPtr<ID3D11DeviceContext> GetContext() const;
+		const ComPtr<ID3D11Device> GetAdapter() const;
+		const ComPtr<ID3D11DeviceContext> GetContext() const;
 		const std::unique_ptr<Log>& GetLog();
 		const std::shared_ptr<DepthStencilTarget>& GetDepthStencilTarget();
 		const ComPtr<ID3D11RenderTargetView>& GetBackBufferView();

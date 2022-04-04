@@ -37,19 +37,19 @@ namespace gfx
 		virtual ~Light();
 	public:
 		virtual void DrawImguiControlWindow() = 0;
-		virtual LightData GetLightData(dx::XMMATRIX viewMatrix) const = 0;
-		virtual UINT GetLightType() const = 0;
+		virtual const LightData GetLightData(dx::XMMATRIX viewMatrix) const = 0;
+		virtual const UINT GetLightType() const = 0;
 		virtual void RenderShadow(ShadowPassContext context) = 0;
-		int GetCurrentShadowIdx() const;
+		const int GetCurrentShadowIdx() const;
 		void SetCurrentShadowIdx(int shadowMapIdx);
 		dx::XMFLOAT3 GetPositionWS() const;
 		void SetPositionWS(dx::XMVECTOR positionWS);
-		bool HasShadow() const;
+		const bool HasShadow() const;
 		virtual void AppendShadowData(UINT shadowStartSlot, std::vector<LightShadowData>& shadowData) const = 0;
-		virtual UINT GetShadowTileCount() const = 0;
+		virtual const UINT GetShadowTileCount() const = 0;
 		const std::unique_ptr<ModelInstance>& GetModelInstance() const;
 		void SetShadowMatrixTile(dx::XMMATRIX& shadowMatrix, int tileX, int tileY);
-		bool AllowUserControl() const;
+		const bool AllowUserControl() const;
 	protected:
 		UINT m_index;
 		bool m_allowUserControl;

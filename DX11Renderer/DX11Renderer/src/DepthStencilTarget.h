@@ -16,9 +16,9 @@ namespace gfx
 		DepthStencilTarget(GraphicsDevice& gfx, int width, int height);
 		virtual ~DepthStencilTarget();
 	public:
-		void Clear(GraphicsDevice& gfx);
-		ComPtr<ID3D11DepthStencilView> GetView() const;
-		ComPtr<ID3D11ShaderResourceView> GetSRV() const;
+		void Clear(GraphicsDevice& gfx) const;
+		const ComPtr<ID3D11DepthStencilView> GetView() const;
+		const ComPtr<ID3D11ShaderResourceView> GetSRV() const;
 	private:
 		ComPtr<ID3D11Texture2D> m_pDepthStencil;
 		ComPtr<ID3D11DepthStencilView> m_pDepthStencilView;
