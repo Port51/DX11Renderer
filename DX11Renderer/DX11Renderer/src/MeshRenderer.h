@@ -2,6 +2,7 @@
 #include "Material.h"
 #include "CommonHeader.h"
 #include "DX11Include.h"
+#include "AABB.h"
 #include <string>
 
 namespace gfx
@@ -19,6 +20,7 @@ namespace gfx
 
 	class MeshRenderer
 	{
+		friend class AABB;
 	public:
 		MeshRenderer(GraphicsDevice& gfx, std::string name, std::shared_ptr<Material> pMaterial, std::shared_ptr<IndexBuffer> pIndexBuffer, std::shared_ptr<Topology> pTopologyBuffer);
 		MeshRenderer(GraphicsDevice& gfx, std::string name, std::shared_ptr<Material> pMaterial, std::shared_ptr<VertexBufferWrapper> pVertexBuffer, std::shared_ptr<IndexBuffer> pIndexBuffer, std::shared_ptr<Topology> pTopologyBuffer);
@@ -31,11 +33,13 @@ namespace gfx
 		virtual void Bind(GraphicsDevice& gfx, const DrawContext& drawContext) const;
 		const UINT GetIndexCount() const;
 		const UINT GetVertexCount() const;
+		const AABB GetAABB() const;
 		virtual void IssueDrawCall(GraphicsDevice& gfx) const;
 	protected:
 		std::string m_name;
 		std::shared_ptr<Material> m_pMaterial; // keep separate from other bindables for now...
 		mutable dx::XMFLOAT4X4 m_transform;
+		AABB m_aabb;
 	protected:
 		std::shared_ptr<IndexBuffer> m_pIndexBuffer;
 		std::shared_ptr<VertexBufferWrapper> m_pVertexBufferWrapper;

@@ -179,6 +179,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\AABB.cpp" />
     <ClCompile Include="src\Buffer.cpp" />
     <ClCompile Include="src\Config.cpp" />
     <ClCompile Include="src\DrawContext.cpp" />
@@ -279,6 +280,7 @@
     <ClCompile Include="src\DX11Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\AABB.h" />
     <ClInclude Include="src\GLTFInclude.h" />
     <ClInclude Include="src\ImguiHelpers.h" />
     <ClInclude Include="src\RawBuffer.h" />

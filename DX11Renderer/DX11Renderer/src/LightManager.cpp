@@ -263,17 +263,16 @@ namespace gfx
 
 	bool LightManager::AABBSphereIntersection(const LightData & lightData, dx::XMVECTOR aabbCenter, dx::XMVECTOR aabbExtents)
 	{
-		dx::XMFLOAT4 positionVS_range;
-		dx::XMStoreFloat4(&positionVS_range, lightData.positionVS_range);
+		float range = dx::XMVectorGetW(lightData.positionVS_range);
 
 		// Formula: float3 displ = max(0, abs(aabbCenter - spherePos) - aabbExtents);
-		dx::XMVECTOR displ = dx::XMVectorAbs(dx::XMVectorSubtract(aabbCenter, dx::XMVectorSet(positionVS_range.x, positionVS_range.y, positionVS_range.z, 0.f)));
+		dx::XMVECTOR displ = dx::XMVectorAbs(dx::XMVectorSubtract(aabbCenter, dx::XMVectorSetW(lightData.positionVS_range, 0.f)));
 		displ = dx::XMVectorSubtract(displ, aabbExtents);
-		displ = dx::XMVectorMax(dx::XMVectorSet(0, 0, 0, 0), displ);
+		displ = dx::XMVectorMax(dx::XMVectorZero(), displ);
 
 		float sdfSqr;
 		dx::XMStoreFloat(&sdfSqr, dx::XMVector3Dot(displ, displ));
 
-		return sdfSqr <= positionVS_range.w * positionVS_range.w;
+		return sdfSqr <= range * range;
 	}
 }

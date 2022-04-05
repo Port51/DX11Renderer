@@ -363,6 +363,9 @@
     <ClCompile Include="src\Buffer.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="src\AABB.cpp">
+      <Filter>Source\Common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -631,6 +634,9 @@
     </ClInclude>
     <ClInclude Include="src\DX11Window.h">
       <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\AABB.h">
+      <Filter>Headers\Common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

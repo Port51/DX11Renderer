@@ -2,6 +2,7 @@
 #include "SceneGraphNode.h"
 #include "MeshRenderer.h"
 #include "DrawContext.h"
+#include <queue>
 
 namespace gfx
 {
@@ -9,6 +10,9 @@ namespace gfx
 		: m_pMeshPtr(pMeshPtr), m_pChildNodes(std::move(pChildNodes))
 	{
 		dx::XMStoreFloat4x4(&m_localTransform, _transform);
+
+		// Decompose translation part of matrix
+		m_localTransformOffset = dx::XMFLOAT3(m_localTransform._14, m_localTransform._24, m_localTransform._34);
 	}
 
 	void SceneGraphNode::RebuildTransform(dx::XMMATRIX accumulatedTransform)
@@ -24,6 +28,73 @@ namespace gfx
 		for (const auto& pc : m_pChildNodes)
 		{
 			pc->RebuildTransform(worldMatrix);
+		}
+	}
+
+	void SceneGraphNode::RebuildAABBHierarchy()
+	{
+		// Rebuilds all nodes in graph, in order of depth (deepest first)
+		std::unordered_map<int, std::vector<std::shared_ptr<SceneGraphNode>>> pNodesByDepth;
+
+		// Create map using breadth-first traversal
+		std::queue<std::pair<int, std::shared_ptr<SceneGraphNode>>> queue;
+		queue.emplace(std::make_pair(0u, this));
+
+		int maxDepth = 0;
+
+		while (!queue.empty())
+		{
+			auto first = queue.front();
+			queue.pop();
+
+			auto node = first.second;
+			auto nodeDepth = first.first;
+			maxDepth = std::max(maxDepth, nodeDepth);
+
+			// Add to map
+			if (pNodesByDepth.find(nodeDepth) == pNodesByDepth.end())
+			{
+				std::vector<std::shared_ptr<SceneGraphNode>> depthVector;
+				depthVector.emplace_back(node);
+				pNodesByDepth.emplace(std::make_pair(nodeDepth, std::move(depthVector)));
+			}
+			else
+			{
+				pNodesByDepth.at(nodeDepth).emplace_back(node);
+			}
+
+			// Add children to queue
+			for (int i = 0, ct = node->m_pChildNodes.size(); i < ct; ++i)
+			{
+				queue.emplace(std::make_pair(nodeDepth + 1, node->m_pChildNodes.at(i)));
+			}
+		}
+
+		// Rebuild deeper nodes first
+		// No need to rebuild parents, as they will be built after all their children have been
+		for (int depth = maxDepth; depth >= 0; --depth)
+		{
+			auto pNodes = pNodesByDepth.at(depth);
+			for (int i = 0, ct = pNodes.size(); i < ct; ++i)
+			{
+				pNodes[i]->RebuildAABB(false);
+			}
+		}
+	}
+
+	void SceneGraphNode::RebuildAABB(bool rebuildParents)
+	{
+		// todo: implement!
+		m_aabb.Clear();
+		if (m_pMeshPtr != nullptr)
+		{
+			m_aabb.ExpandBoundsToFitAABB(m_pMeshPtr->GetAABB());
+		}
+		m_aabb.ExpandBoundsToFitChildNodes(m_pChildNodes);
+
+		if (rebuildParents && m_pParentNode != nullptr)
+		{
+			m_pParentNode->RebuildAABB(true);
 		}
 	}
 

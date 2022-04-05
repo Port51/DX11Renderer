@@ -72,6 +72,11 @@ namespace gfx
 		return m_pVertexBufferWrapper->GetVertexCount();
 	}
 
+	const AABB MeshRenderer::GetAABB() const
+	{
+		return m_aabb;
+	}
+
 	void MeshRenderer::IssueDrawCall(GraphicsDevice& gfx) const
 	{
 		gfx.DrawIndexed(GetIndexCount());

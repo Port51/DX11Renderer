@@ -194,7 +194,8 @@ namespace gfx
 						const float* positions = reinterpret_cast<const float*>(&model.buffers[bufferAccess.first].data[bufferAccess.second]);
 						for (int vi = 0; vi < vertCt; ++vi)
 						{
-							pMeshAsset->m_vertices.emplace_back(dx::XMFLOAT3(positions[vi * 3 + 0], positions[vi * 3 + 1], positions[vi * 3 + 2]));
+							const auto posF3 = dx::XMFLOAT3(positions[vi * 3 + 0], positions[vi * 3 + 1], positions[vi * 3 + 2]);
+							pMeshAsset->m_vertices.emplace_back(posF3);
 						}
 					}
 
@@ -216,15 +217,15 @@ namespace gfx
 					// Load TANGENT
 					if (primitive.attributes.count("TANGENT"))
 					{
-						pMeshAsset->hasNormals = true;
-						pMeshAsset->m_normals.reserve(vertCt);
+						pMeshAsset->hasTangents = true;
+						pMeshAsset->m_tangents.reserve(vertCt);
 
-						const int accessorIdx = primitive.attributes.at("NORMAL");
-						const auto bufferAccess = GetAttributeBufferAccess(gfx, model, accessorIdx, vertCt * sizeof(float) * 3u);
-						const float* normals = reinterpret_cast<const float*>(&model.buffers[bufferAccess.first].data[bufferAccess.second]);
+						const int accessorIdx = primitive.attributes.at("TANGENT");
+						const auto bufferAccess = GetAttributeBufferAccess(gfx, model, accessorIdx, vertCt * sizeof(float) * 4u);
+						const float* tangents = reinterpret_cast<const float*>(&model.buffers[bufferAccess.first].data[bufferAccess.second]);
 						for (int vi = 0; vi < vertCt; ++vi)
 						{
-							pMeshAsset->m_normals.emplace_back(dx::XMFLOAT3(normals[vi * 3 + 0], normals[vi * 3 + 1], normals[vi * 3 + 2]));
+							pMeshAsset->m_tangents.emplace_back(dx::XMFLOAT4(tangents[vi * 4 + 0], tangents[vi * 4 + 1], tangents[vi * 4 + 2], tangents[vi * 4 + 3]));
 						}
 					}
 
@@ -257,6 +258,9 @@ namespace gfx
 
 						pMeshAsset->m_texcoords.emplace_back(std::move(texcoordSet));
 					}
+
+					// Calculate AABB
+					pMeshAsset->m_aabb.SetBoundsByVertices(pMeshAsset->m_vertices);
 
 					// Double check that everything was loaded correctly
 					assert(pMeshAsset->m_vertices.size() > 0 && "Mesh primitive vertices were incorrectly loaded!");

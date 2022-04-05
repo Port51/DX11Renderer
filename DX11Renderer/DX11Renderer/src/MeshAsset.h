@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include "DXMathInclude.h"
+#include "AABB.h"
 #include "BaseMesh.h"
 
 namespace gfx
@@ -25,7 +26,7 @@ namespace gfx
 		std::vector<dx::XMFLOAT3> m_normals;
 
 		bool hasTangents;
-		std::vector<dx::XMFLOAT3> m_tangents;
+		std::vector<dx::XMFLOAT4> m_tangents;
 
 		std::vector<std::vector<dx::XMFLOAT2>> m_texcoords;
 
@@ -33,5 +34,7 @@ namespace gfx
 		std::vector<u32> m_indices;
 
 		int m_materialIndex;
+
+		AABB m_aabb;
 	};
 }

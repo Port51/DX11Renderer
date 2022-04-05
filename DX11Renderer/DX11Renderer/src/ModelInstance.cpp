@@ -26,7 +26,8 @@ namespace gfx
 		}
 
 		m_pSceneGraph = CreateModelInstanceNode(gfx, pModelAsset.m_pSceneGraph);
-		UpdateSceneGraph();
+		m_pSceneGraph->RebuildAABBHierarchy();
+		RebuildSceneGraphTransforms();
 	}
 
 	ModelInstance::ModelInstance(GraphicsDevice & gfx, std::shared_ptr<ModelAsset> pModelAsset, dx::XMMATRIX transform)
@@ -40,7 +41,7 @@ namespace gfx
 		}
 
 		m_pSceneGraph = CreateModelInstanceNode(gfx, pModelAsset->m_pSceneGraph);
-		UpdateSceneGraph();
+		RebuildSceneGraphTransforms();
 	}
 
 	void ModelInstance::SubmitDrawCalls(const DrawContext& drawContext) const
@@ -51,10 +52,10 @@ namespace gfx
 	void ModelInstance::SetPositionWS(dx::XMFLOAT3 positionWS)
 	{
 		m_transform = dx::XMMatrixTranslation(positionWS.x, positionWS.y, positionWS.z);
-		UpdateSceneGraph();
+		RebuildSceneGraphTransforms();
 	}
 
-	void ModelInstance::UpdateSceneGraph()
+	void ModelInstance::RebuildSceneGraphTransforms()
 	{
 		m_pSceneGraph->RebuildTransform(m_transform);
 	}
@@ -85,6 +86,13 @@ namespace gfx
 		}
 
 		auto pNode = std::make_shared<SceneGraphNode>(nextNodeId++, dx::XMLoadFloat4x4(&pSourceNode->m_localTransform), pMeshRenderer, std::move(pChildNodes));
+
+		// After creating, set parent
+		for (const auto& child : pNode->m_pChildNodes)
+		{
+			child->m_pParentNode = pNode;
+		}
+		
 		return std::move(pNode);
 	}
 
@@ -105,12 +113,12 @@ namespace gfx
 		for (unsigned int i = 0; i < pMeshAsset->m_vertices.size(); ++i)
 		{
 			dx::XMFLOAT3 normal = (pMeshAsset->hasNormals) ? pMeshAsset->m_normals[i] : dx::XMFLOAT3(0, 0, 1);
-			dx::XMFLOAT3 tangent = (pMeshAsset->hasTangents) ? pMeshAsset->m_tangents[i] : dx::XMFLOAT3(0, 0, 1);
+			dx::XMFLOAT4 tangent = (pMeshAsset->hasTangents) ? pMeshAsset->m_tangents[i] : dx::XMFLOAT4(0, 0, 1, 0);
 			dx::XMFLOAT2 uv0 = (pMeshAsset->m_texcoords.size() > 0) ? pMeshAsset->m_texcoords[0][i] : dx::XMFLOAT2(0, 0);
 
 			vbuf.EmplaceBack<dx::XMFLOAT3>(pMeshAsset->m_vertices[i]);
 			vbuf.EmplaceBack<dx::XMFLOAT3>(normal);
-			vbuf.EmplaceBack<dx::XMFLOAT3>(tangent);
+			vbuf.EmplaceBack<dx::XMFLOAT4>(tangent);
 			vbuf.EmplaceBack<dx::XMFLOAT2>(uv0);
 			vbuf.EmplacePadding();
 		}

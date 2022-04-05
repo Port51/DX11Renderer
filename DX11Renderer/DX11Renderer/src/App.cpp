@@ -31,7 +31,7 @@ namespace gfx
 		dx::XMMATRIX modelTransform;
 
 		// temporary...
-		int select = 7;
+		int select = 8;
 		switch (select)
 		{
 		case 0:
@@ -143,7 +143,6 @@ namespace gfx
 				// if return optional has value, means we're quitting so return exit code
 				return *ecode;
 			}
-			//DoFrame();
 		}
 	}
 
@@ -211,9 +210,8 @@ namespace gfx
 
 		m_pRenderer->Execute(m_pWindow->Gfx(), m_pCamera, timeElapsed, m_pixelSelectionX, m_pixelSelectionY);
 
-		if (true)
+		// Draw Imgui windows
 		{
-			// Imgui windows
 			m_pRenderer->DrawImguiControlWindow(m_pWindow->Gfx());
 			m_pCamera->DrawImguiControlWindow();
 			m_pLightManager->DrawImguiControlWindows();
