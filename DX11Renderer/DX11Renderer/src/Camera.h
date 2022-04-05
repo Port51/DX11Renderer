@@ -1,9 +1,9 @@
 #pragma once
 #include "GraphicsDevice.h"
+#include "Frustum.h"
 
 namespace gfx
 {
-	struct Frustum;
 
 	class Camera
 	{
@@ -14,17 +14,22 @@ namespace gfx
 		const dx::XMVECTOR GetPositionWS() const;
 		const dx::XMVECTOR GetForwardWS() const;
 		const dx::XMMATRIX GetViewMatrix() const;
+		const dx::XMMATRIX GetViewProjectionMatrix() const;
 		const dx::XMMATRIX GetProjectionMatrix() const;
 		const dx::XMVECTOR GetFrustumCornersVS() const;
-		const Frustum GetFrustumWS() const;
+		const Frustum& GetFrustumWS() const;
+		const Frustum& GetFrustumVS() const;
 		const float GetNearClipPlane() const;
 		const float GetFarClipPlane() const;
 		void SetFOV(float fov);
 		void SetAspect(float aspect);
 		void DrawImguiControlWindow();
 		void Reset();
+		void Update();
 	private:
 		void UpdateProjectionMatrix();
+		void UpdateFrustumVS();
+		void UpdateFrustumWS();
 	private:
 		float m_nearClipPlane;
 		float m_farClipPlane;
@@ -36,6 +41,11 @@ namespace gfx
 		float m_roll = 0.0f;
 		float m_fov = 40.0f;
 		float m_aspect = 0.75f;
+		dx::XMMATRIX m_viewMatrix;
+		dx::XMMATRIX m_viewProjectionMatrix;
 		dx::XMMATRIX m_projectionMatrix;
+		Frustum m_frustumWS;
+		Frustum m_frustumVS;
+		dx::XMVECTOR m_frustumCornersVS;
 	};
 }

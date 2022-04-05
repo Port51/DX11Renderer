@@ -59,8 +59,8 @@ namespace gfx
 		{
 			// Use offset to transform the other AABB into local space of current AABB
 			const auto localTransformOffset = dx::XMLoadFloat3(&pChildNodes[i]->m_localTransformOffset);
-			minCornerWS = dx::XMVectorMin(minCornerWS, dx::XMVectorAdd(pChildNodes[i]->m_aabb.GetMinimumCornerLS(), localTransformOffset));
-			maxCornerWS = dx::XMVectorMin(maxCornerWS, dx::XMVectorAdd(pChildNodes[i]->m_aabb.GetMaximumCornerLS(), localTransformOffset));
+			minCornerWS = dx::XMVectorMin(minCornerWS, dx::XMVectorAdd(pChildNodes[i]->m_boundingVolumeHierarchyAABB.GetMinimumCornerLS(), localTransformOffset));
+			maxCornerWS = dx::XMVectorMin(maxCornerWS, dx::XMVectorAdd(pChildNodes[i]->m_boundingVolumeHierarchyAABB.GetMaximumCornerLS(), localTransformOffset));
 		}
 
 		SetBoundsByMinMaxCorners(minCornerWS, maxCornerWS);
@@ -115,21 +115,36 @@ namespace gfx
 		return dx::XMVectorAdd(GetCenterLS(), GetExtentsLS());
 	}
 
-	const bool AABB::PointIntersects(const dx::XMVECTOR positionWS) const
+	const bool AABB::DoesPointIntersect(const dx::XMVECTOR positionWS) const
 	{
 		// Displacement must be <= extents
 		const auto absDisplWS = dx::XMVectorAbs(dx::XMVectorSubtract(positionWS, GetCenterLS()));
 		return dx::XMVector3LessOrEqual(absDisplWS, GetExtentsLS());
 	}
 
-	const bool AABB::AABBIntersects(const AABB & other) const
+	const bool AABB::DoesSphereIntersect(const dx::XMVECTOR positionAndRadius, const dx::XMVECTOR aabbObjectPosition) const
+	{
+		float range = dx::XMVectorGetW(positionAndRadius);
+
+		// Formula: float3 displ = max(0, abs(aabbCenter - spherePos) - aabbExtents);
+		dx::XMVECTOR displ = dx::XMVectorAbs(dx::XMVectorSubtract(dx::XMVectorAdd(dx::XMLoadFloat3(&m_centerLS), aabbObjectPosition), dx::XMVectorSetW(positionAndRadius, 0.f)));
+		displ = dx::XMVectorSubtract(displ, dx::XMLoadFloat3(&m_extentsLS));
+		displ = dx::XMVectorMax(dx::XMVectorZero(), displ);
+
+		float sdfSqr;
+		dx::XMStoreFloat(&sdfSqr, dx::XMVector3Dot(displ, displ));
+
+		return sdfSqr <= range * range;
+	}
+
+	const bool AABB::DoesAABBIntersect(const AABB & other) const
 	{
 		// Displacement must be <= combined extents
 		const auto absDisplWS = dx::XMVectorAbs(dx::XMVectorSubtract(other.GetCenterLS(), GetCenterLS()));
 		return dx::XMVector3LessOrEqual(absDisplWS, dx::XMVectorAdd(other.GetExtentsLS(), GetExtentsLS()));
 	}
 
-	const bool AABB::FastFrustumIntersects(const Frustum & frustum) const
+	/*const bool AABB::FastFrustumIntersects(const Frustum & frustum) const
 	{
 		// Reference: https://www.gamedev.net/forums/topic/512123-fast--and-correct-frustum---aabb-intersection/
 		const auto minCornerWS = GetMinimumCornerLS();
@@ -222,5 +237,5 @@ namespace gfx
 			}
 		}
 		return result;
-	}
+	}*/
 }

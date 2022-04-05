@@ -26,7 +26,7 @@ namespace gfx
 		}
 
 		m_pSceneGraph = CreateModelInstanceNode(gfx, pModelAsset.m_pSceneGraph);
-		m_pSceneGraph->RebuildAABBHierarchy();
+		m_pSceneGraph->RebuildBoundingVolumeHierarchy();
 		RebuildSceneGraphTransforms();
 	}
 

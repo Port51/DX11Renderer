@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "Camera.h"
 #include "RenderConstants.h"
-#include "Frustum.h"
 
 namespace gfx
 {
@@ -9,6 +8,7 @@ namespace gfx
 		: m_fov(fov), m_aspect(aspect), m_nearClipPlane(nearClipPlane), m_farClipPlane(farClipPlane)
 	{
 		UpdateProjectionMatrix();
+		UpdateFrustumVS();
 	}
 
 	const dx::XMVECTOR Camera::GetPositionWS() const
@@ -28,10 +28,12 @@ namespace gfx
 
 	const dx::XMMATRIX Camera::GetViewMatrix() const
 	{
-		// Apply look-at and local orientation
-		// +Y = up
-		return dx::XMMatrixLookAtLH(GetPositionWS(), dx::XMVectorZero(), dx::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f))
-			* dx::XMMatrixRotationRollPitchYaw(m_pitch, -m_yaw, m_roll);
+		return m_viewMatrix;
+	}
+
+	const dx::XMMATRIX Camera::GetViewProjectionMatrix() const
+	{
+		return m_viewProjectionMatrix;
 	}
 
 	const dx::XMMATRIX Camera::GetProjectionMatrix() const
@@ -43,6 +45,7 @@ namespace gfx
 	{
 		m_fov = _fov;
 		UpdateProjectionMatrix();
+		UpdateFrustumVS();
 	}
 
 	void Camera::SetAspect(float _aspect)
@@ -57,21 +60,17 @@ namespace gfx
 	/// This assumes a "normal" camera frustum, so don't try this with a planar reflection camera!
 	const dx::XMVECTOR Camera::GetFrustumCornersVS() const
 	{
-		// Reference: http://davidlively.com/programming/graphics/frustum-calculation-and-culling-hopefully-demystified/
-
-		// FOV = entire frustum angle
-		float vFov = dx::XMConvertToRadians(m_fov);
-		float halfAngleY = std::tan(vFov * 0.5f);
-		float halfAngleX = halfAngleY * m_aspect;
-
-		// Flip Y
-		return dx::XMVectorSet(halfAngleX, -halfAngleY, halfAngleX * m_farClipPlane, -halfAngleY * m_farClipPlane);
+		return m_frustumCornersVS;
 	}
 
-	const Frustum Camera::GetFrustumWS() const
+	const Frustum& Camera::GetFrustumWS() const
 	{
-		Frustum frustum;
-		return frustum;
+		return m_frustumWS;
+	}
+
+	const Frustum& Camera::GetFrustumVS() const
+	{
+		return m_frustumVS;
 	}
 
 	const float Camera::GetNearClipPlane() const
@@ -87,6 +86,27 @@ namespace gfx
 	void Camera::UpdateProjectionMatrix()
 	{
 		m_projectionMatrix = dx::XMMatrixPerspectiveFovLH(dx::XMConvertToRadians(m_fov), m_aspect, m_nearClipPlane, m_farClipPlane);
+	}
+
+	void Camera::UpdateFrustumVS()
+	{
+		// Reference: http://davidlively.com/programming/graphics/frustum-calculation-and-culling-hopefully-demystified/
+
+		// FOV = entire frustum angle
+		float vFov = dx::XMConvertToRadians(m_fov);
+		float halfAngleY = std::tan(vFov * 0.5f);
+		float halfAngleX = halfAngleY * m_aspect;
+
+		// Flip Y
+		m_frustumCornersVS = dx::XMVectorSet(halfAngleX, -halfAngleY, halfAngleX * m_farClipPlane, -halfAngleY * m_farClipPlane);
+
+		m_frustumVS.UpdatePlanesFromMatrix(GetProjectionMatrix());
+		m_frustumVS.UpdatePlanesFromViewSpaceCorners(m_frustumCornersVS, m_nearClipPlane, m_farClipPlane);
+	}
+
+	void Camera::UpdateFrustumWS()
+	{
+		m_frustumVS.UpdatePlanesFromMatrix(GetViewProjectionMatrix());
 	}
 
 	void Camera::DrawImguiControlWindow()
@@ -127,5 +147,16 @@ namespace gfx
 		m_yaw = 0.0f;
 		m_roll = 0.0f;
 		m_fov = 40.0f;
+	}
+
+	void Camera::Update()
+	{
+		// Update view and viewProj matrices (projection only changes when camera properties change)
+
+		// Apply look-at and local orientation
+		// +Y = up
+		m_viewMatrix = dx::XMMatrixLookAtLH(GetPositionWS(), dx::XMVectorZero(), dx::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f))
+			* dx::XMMatrixRotationRollPitchYaw(m_pitch, -m_yaw, m_roll);
+		m_viewProjectionMatrix = dx::XMMatrixMultiply(GetViewMatrix(), GetProjectionMatrix());
 	}
 }

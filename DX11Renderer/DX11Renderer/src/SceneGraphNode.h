@@ -24,8 +24,10 @@ namespace gfx
 	public:
 		void SubmitDrawCalls(const DrawContext& drawContext) const;
 		void RebuildTransform(dx::XMMATRIX accumulatedTransform);
-		void RebuildAABBHierarchy();
-		void RebuildAABB(bool rebuildParents);
+		// Rebuild entire BVH, starting at this level
+		void RebuildBoundingVolumeHierarchy();
+		// Rebuild current BVH AABB based on children
+		void RebuildBoundingVolume(bool rebuildParents);
 	private:
 		int m_id;
 		std::shared_ptr<SceneGraphNode> m_pParentNode;
@@ -36,6 +38,7 @@ namespace gfx
 		// Local TRS transform
 		dx::XMFLOAT4X4 m_localTransform;
 		dx::XMFLOAT4X4 m_accumulatedWorldTransform;
-		AABB m_aabb;
+		// AABB that encapsulates any meshes at this node level or deeper
+		AABB m_boundingVolumeHierarchyAABB;
 	};
 }

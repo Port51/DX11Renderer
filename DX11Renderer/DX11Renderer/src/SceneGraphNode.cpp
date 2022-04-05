@@ -31,7 +31,7 @@ namespace gfx
 		}
 	}
 
-	void SceneGraphNode::RebuildAABBHierarchy()
+	void SceneGraphNode::RebuildBoundingVolumeHierarchy()
 	{
 		// Rebuilds all nodes in graph, in order of depth (deepest first)
 		std::unordered_map<int, std::vector<std::shared_ptr<SceneGraphNode>>> pNodesByDepth;
@@ -77,24 +77,24 @@ namespace gfx
 			auto pNodes = pNodesByDepth.at(depth);
 			for (int i = 0, ct = pNodes.size(); i < ct; ++i)
 			{
-				pNodes[i]->RebuildAABB(false);
+				pNodes[i]->RebuildBoundingVolume(false);
 			}
 		}
 	}
 
-	void SceneGraphNode::RebuildAABB(bool rebuildParents)
+	void SceneGraphNode::RebuildBoundingVolume(bool rebuildParents)
 	{
 		// todo: implement!
-		m_aabb.Clear();
+		m_boundingVolumeHierarchyAABB.Clear();
 		if (m_pMeshPtr != nullptr)
 		{
-			m_aabb.ExpandBoundsToFitAABB(m_pMeshPtr->GetAABB());
+			m_boundingVolumeHierarchyAABB.ExpandBoundsToFitAABB(m_pMeshPtr->GetAABB());
 		}
-		m_aabb.ExpandBoundsToFitChildNodes(m_pChildNodes);
+		m_boundingVolumeHierarchyAABB.ExpandBoundsToFitChildNodes(m_pChildNodes);
 
 		if (rebuildParents && m_pParentNode != nullptr)
 		{
-			m_pParentNode->RebuildAABB(true);
+			m_pParentNode->RebuildBoundingVolume(true);
 		}
 	}
 

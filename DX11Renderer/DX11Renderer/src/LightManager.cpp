@@ -104,7 +104,7 @@ namespace gfx
 			{
 			case 0:
 				// Point light
-				inFrustum &= FrustumSphereIntersection(data.positionVS_range, frustumCornersVS, cam->GetFarClipPlane());
+				inFrustum &= cam->GetFrustumVS().DoesSphereIntersect(data.positionVS_range);
 				break;
 			case 1:
 				// Spotlight (move sphere to middle and half the size)
@@ -112,7 +112,7 @@ namespace gfx
 				dx::XMStoreFloat4(&positionRange, data.positionVS_range);
 				auto lightSphere = dx::XMVectorAdd(data.positionVS_range, dx::XMVectorScale(data.directionVS, positionRange.w * 0.5f));
 				lightSphere = dx::XMVectorSetW(lightSphere, positionRange.w * 0.5f);
-				inFrustum &= FrustumSphereIntersection(lightSphere, frustumCornersVS, cam->GetFarClipPlane());
+				inFrustum &= cam->GetFrustumVS().DoesSphereIntersect(lightSphere);
 				break;
 			case 2:
 				// Directional
@@ -232,47 +232,4 @@ namespace gfx
 		return m_pClusteredIndices;
 	}
 
-	bool LightManager::FrustumSphereIntersection(dx::XMVECTOR lightSphere, dx::XMFLOAT4 frustumCorners, float farClipPlane)
-	{
-		// Use cross product to turn tile view directions into plane directions
-		// The cross product is done by flipping X or Y with Z
-		// Also, flip y here as it was previously flipped for GPU
-		const auto plane0 = dx::XMVector3Normalize(dx::XMVectorSet(1, 0, -frustumCorners.x, 0));
-		const auto plane1 = dx::XMVector3Normalize(dx::XMVectorSet(0, 1, frustumCorners.y, 0));
-		const auto plane2 = dx::XMVector3Normalize(dx::XMVectorSet(-1, 0, -frustumCorners.x, 0));
-		const auto plane3 = dx::XMVector3Normalize(dx::XMVectorSet(0, -1, frustumCorners.y, 0));
-
-		dx::XMFLOAT4 positionVS_range;
-		dx::XMStoreFloat4(&positionVS_range, lightSphere);
-
-		bool inFrustum = true;
-		float d;
-		dx::XMStoreFloat(&d, dx::XMVector3Dot(lightSphere, plane0));
-		inFrustum &= d <= positionVS_range.w;
-		dx::XMStoreFloat(&d, dx::XMVector3Dot(lightSphere, plane1));
-		inFrustum &= d <= positionVS_range.w;
-		dx::XMStoreFloat(&d, dx::XMVector3Dot(lightSphere, plane2));
-		inFrustum &= d <= positionVS_range.w;
-		dx::XMStoreFloat(&d, dx::XMVector3Dot(lightSphere, plane3));
-		inFrustum &= d <= positionVS_range.w;
-
-		inFrustum &= positionVS_range.z <= farClipPlane + positionVS_range.w;
-
-		return inFrustum;
-	}
-
-	bool LightManager::AABBSphereIntersection(const LightData & lightData, dx::XMVECTOR aabbCenter, dx::XMVECTOR aabbExtents)
-	{
-		float range = dx::XMVectorGetW(lightData.positionVS_range);
-
-		// Formula: float3 displ = max(0, abs(aabbCenter - spherePos) - aabbExtents);
-		dx::XMVECTOR displ = dx::XMVectorAbs(dx::XMVectorSubtract(aabbCenter, dx::XMVectorSetW(lightData.positionVS_range, 0.f)));
-		displ = dx::XMVectorSubtract(displ, aabbExtents);
-		displ = dx::XMVectorMax(dx::XMVectorZero(), displ);
-
-		float sdfSqr;
-		dx::XMStoreFloat(&sdfSqr, dx::XMVector3Dot(displ, displ));
-
-		return sdfSqr <= range * range;
-	}
 }

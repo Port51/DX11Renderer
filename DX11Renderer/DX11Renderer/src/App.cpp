@@ -185,6 +185,11 @@ namespace gfx
 			}
 		}
 
+		// Update cameras
+		{
+			m_pCamera->Update();
+		}
+
 		// Animate lights
 		{
 			UINT ct = m_pLightManager->GetLightCount();

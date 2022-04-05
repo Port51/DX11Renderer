@@ -60,9 +60,6 @@ namespace gfx
 		const UINT GetClusterDimensionZ() const;
 		const std::unique_ptr<StructuredBuffer<int>>& GetClusteredIndices() const;
 	private:
-		bool FrustumSphereIntersection(dx::XMVECTOR lightSphere, dx::XMFLOAT4 frustumCorners, float farClipPlane);
-		bool AABBSphereIntersection(const LightData& lightData, dx::XMVECTOR aabbCenter, dx::XMVECTOR aabbExtents);
-	private:
 		std::vector<std::shared_ptr<Light>> m_pLights;
 		std::shared_ptr<DirectionalLight> m_pMainLight;
 		std::vector<LightData> m_cachedLightData;

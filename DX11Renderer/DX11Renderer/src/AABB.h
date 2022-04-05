@@ -12,6 +12,7 @@ namespace gfx
 
 	class AABB
 	{
+		friend struct Frustum;
 	public:
 		//enum AABBCoordinateSpace { WorldSpace, ObjectSpace };
 	public:
@@ -34,12 +35,13 @@ namespace gfx
 		const dx::XMVECTOR GetMinimumCornerLS() const;
 		const dx::XMVECTOR GetMaximumCornerLS() const;
 	public:
-		const bool PointIntersects(const dx::XMVECTOR positionWS) const;
-		const bool AABBIntersects(const AABB& other) const;
+		const bool DoesPointIntersect(const dx::XMVECTOR positionWS) const;
+		const bool DoesSphereIntersect(const dx::XMVECTOR positionAndRadius, const dx::XMVECTOR aabbObjectPosition) const;
+		const bool DoesAABBIntersect(const AABB& other) const;
 		// Returns true if AABB intersects or is inside frustum
-		const bool FastFrustumIntersects(const Frustum& frustum) const;
+		//const bool FastFrustumIntersects(const Frustum& frustum) const;
 		// Returns 0 if AABB intersects, 1 if AABB is inside frustum, and 2 if AABB is outside frustum
-		const int FrustumIntersects(const Frustum& frustum) const;
+		//const int FrustumIntersects(const Frustum& frustum) const;
 	private:
 		// todo: is it better to store min/max corners as well? this would speed up frustum testing a bit, but double memory.
 
