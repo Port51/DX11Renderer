@@ -4,7 +4,7 @@
 
 namespace gfx
 {
-	DepthStencil::DepthStencil(GraphicsDevice& gfx, UINT width, UINT height)
+	DepthStencil::DepthStencil(const GraphicsDevice& gfx, UINT width, UINT height)
 	{
 		// create depth stensil texture
 		ComPtr<ID3D11Texture2D> pDepthStencil;
@@ -26,12 +26,12 @@ namespace gfx
 		));
 	}
 
-	void DepthStencil::BindAsDepthStencil(GraphicsDevice& gfx) const
+	void DepthStencil::BindAsDepthStencil(const GraphicsDevice& gfx) const
 	{
 		gfx.GetContext()->OMSetRenderTargets(0, nullptr, m_pDepthStencilView.Get());
 	}
 
-	void DepthStencil::Clear(GraphicsDevice& gfx) const
+	void DepthStencil::Clear(const GraphicsDevice& gfx) const
 	{
 		gfx.GetContext()->ClearDepthStencilView(m_pDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0u);
 	}

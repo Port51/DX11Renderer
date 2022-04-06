@@ -22,7 +22,7 @@ namespace gfx
 		Binding& AddBinding(std::shared_ptr<Bindable> pBindable);
 		Binding& AddBinding(Binding pBinding);
 		void SubmitDrawCalls(const MeshRenderer& meshRenderer, const DrawContext& drawContext) const;
-		void Bind(GraphicsDevice& gfx) const;
+		void Bind(const GraphicsDevice& gfx) const;
 	private:
 		std::string m_targetPass;
 		std::vector<Binding> m_bindings;

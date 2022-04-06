@@ -5,7 +5,7 @@
 
 namespace gfx
 {
-	InputLayout::InputLayout(GraphicsDevice& gfx, VertexLayout _layout, std::string vertexShaderName, ID3DBlob* pVertexShaderBytecode)
+	InputLayout::InputLayout(const GraphicsDevice& gfx, VertexLayout _layout, std::string vertexShaderName, ID3DBlob* pVertexShaderBytecode)
 		: m_layout(std::move(_layout)),
 		m_vertexShaderName(vertexShaderName)
 	{
@@ -18,12 +18,12 @@ namespace gfx
 		));
 	}
 
-	void InputLayout::BindIA(GraphicsDevice& gfx, UINT slot)
+	void InputLayout::BindIA(const GraphicsDevice& gfx, UINT slot)
 	{
 		gfx.GetContext()->IASetInputLayout(m_pInputLayout.Get());
 	}
 
-	std::shared_ptr<InputLayout> InputLayout::Resolve(GraphicsDevice & gfx, const VertexLayout & layout, std::string vertexShaderName, ID3DBlob * pVertexShaderBytecode)
+	std::shared_ptr<InputLayout> InputLayout::Resolve(const GraphicsDevice& gfx, const VertexLayout & layout, std::string vertexShaderName, ID3DBlob * pVertexShaderBytecode)
 	{
 		return std::move(Codex::Resolve<InputLayout>(gfx, GenerateUID(layout, vertexShaderName, pVertexShaderBytecode), layout, vertexShaderName, pVertexShaderBytecode));
 	}

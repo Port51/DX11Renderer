@@ -33,7 +33,7 @@ namespace gfx
 
 		};
 	public:
-		Light(GraphicsDevice& gfx, UINT index, bool allowUserControl, std::shared_ptr<ModelAsset> const& pModelAsset, dx::XMFLOAT3 positionWS, dx::XMFLOAT3 color, float intensity);
+		Light(const GraphicsDevice& gfx, UINT index, bool allowUserControl, std::shared_ptr<ModelAsset> const& pModelAsset, dx::XMFLOAT3 positionWS, dx::XMFLOAT3 color, float intensity);
 		virtual ~Light();
 	public:
 		virtual void DrawImguiControlWindow() = 0;

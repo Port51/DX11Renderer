@@ -8,11 +8,11 @@ namespace gfx
 		friend class RenderTexture;
 		friend class GraphicsDevice;
 	public:
-		DepthStencil(GraphicsDevice& gfx, UINT width, UINT height);
+		DepthStencil(const GraphicsDevice& gfx, UINT width, UINT height);
 		virtual ~DepthStencil() = default;
 	public:
-		void BindAsDepthStencil(GraphicsDevice& gfx) const;
-		void Clear(GraphicsDevice& gfx) const;
+		void BindAsDepthStencil(const GraphicsDevice& gfx) const;
+		void Clear(const GraphicsDevice& gfx) const;
 	private:
 		ComPtr<ID3D11DepthStencilView> m_pDepthStencilView;
 	};

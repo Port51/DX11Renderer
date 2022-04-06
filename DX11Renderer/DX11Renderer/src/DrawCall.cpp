@@ -13,7 +13,7 @@ namespace gfx
 		m_pDrawContext(&_drawContext)
 	{}
 
-	void DrawCall::Execute(GraphicsDevice& gfx) const
+	void DrawCall::Execute(const GraphicsDevice& gfx) const
 	{
 		m_pRenderer->Bind(gfx, *m_pDrawContext);
 		m_pStep->Bind(gfx);

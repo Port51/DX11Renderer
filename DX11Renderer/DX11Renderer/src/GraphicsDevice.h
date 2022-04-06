@@ -25,16 +25,16 @@ namespace gfx
 	public:
 		void BeginFrame();
 		void EndFrame();
-		void ClearBuffer(float red, float green, float blue);
+		void ClearBuffer(float red, float green, float blue) const;
 		void DrawIndexed(UINT indexCount) const;
 		void DrawIndexedInstanced(UINT indexCount, UINT instanceCount) const;
 		void SetDepthOnlyRenderTarget() const;
 		void SetDepthOnlyRenderTarget(const std::shared_ptr<DepthStencilTarget>& pDepthStencil) const;
 		void SetRenderTarget(ComPtr<ID3D11RenderTargetView> renderTargetView);
 		void SetRenderTargets(std::vector<ID3D11RenderTargetView*> renderTargetViews);
-		void ClearRenderTargets();
-		void SetViewport(int x, int y, int width, int height);
-		void SetViewport(int width, int height);
+		void ClearRenderTargets() const;
+		void SetViewport(int x, int y, int width, int height) const;
+		void SetViewport(int width, int height) const;
 		const int GetScreenWidth() const;
 		const int GetScreenHeight() const;
 	public:

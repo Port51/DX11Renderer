@@ -27,7 +27,7 @@ namespace gfx
 	{
 		drawContext.renderer.AcceptDrawCall(DrawCall(this, &meshRenderer, drawContext), m_targetPass);
 	}
-	void RenderStep::Bind(GraphicsDevice & gfx) const
+	void RenderStep::Bind(const GraphicsDevice& gfx) const
 	{
 		for (const auto& b : m_bindings)
 		{

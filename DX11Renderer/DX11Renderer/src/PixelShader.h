@@ -12,10 +12,10 @@ namespace gfx
 	class PixelShader : public Bindable
 	{
 	public:
-		PixelShader(GraphicsDevice& gfx, const std::string& path);
-		void BindPS(GraphicsDevice& gfx, UINT slot) override;
+		PixelShader(const GraphicsDevice& gfx, const std::string& path);
+		void BindPS(const GraphicsDevice& gfx, UINT slot) override;
 	public:
-		static std::shared_ptr<PixelShader> Resolve(GraphicsDevice& gfx, const std::string& path);
+		static std::shared_ptr<PixelShader> Resolve(const GraphicsDevice& gfx, const std::string& path);
 		static std::string GenerateUID(const std::string& path);
 	protected:
 		std::string m_path;

@@ -5,14 +5,14 @@
 
 namespace gfx
 {
-	NullPixelShader::NullPixelShader(GraphicsDevice& gfx)
+	NullPixelShader::NullPixelShader(const GraphicsDevice& gfx)
 	{
 	}
-	void NullPixelShader::BindPS(GraphicsDevice& gfx, UINT slot)
+	void NullPixelShader::BindPS(const GraphicsDevice& gfx, UINT slot)
 	{
 		gfx.GetContext()->PSSetShader(nullptr, nullptr, 0u);
 	}
-	std::shared_ptr<NullPixelShader> NullPixelShader::Resolve(GraphicsDevice& gfx)
+	std::shared_ptr<NullPixelShader> NullPixelShader::Resolve(const GraphicsDevice& gfx)
 	{
 		return std::move(Codex::Resolve<NullPixelShader>(gfx, GenerateUID()));
 	}

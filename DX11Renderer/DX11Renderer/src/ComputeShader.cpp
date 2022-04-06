@@ -9,7 +9,7 @@ namespace gfx
 {
 	using namespace std::string_literals;
 
-	ComputeShader::ComputeShader(GraphicsDevice& gfx, const std::string& path, const std::string& kernelName)
+	ComputeShader::ComputeShader(const GraphicsDevice& gfx, const std::string& path, const std::string& kernelName)
 		: m_path(path), m_kernelName(kernelName)
 	{
 		std::wstring wide{ path.begin(), path.end() }; // convert to wide for file read <-- won't work for special characters
@@ -61,7 +61,7 @@ namespace gfx
 
 	}
 
-	void ComputeShader::Dispatch(GraphicsDevice & gfx, UINT threadCountX, UINT threadCountY, UINT threadCountZ) const
+	void ComputeShader::Dispatch(const GraphicsDevice& gfx, UINT threadCountX, UINT threadCountY, UINT threadCountZ) const
 	{
 		gfx.GetContext()->CSSetShader(m_pComputeShader.Get(), nullptr, 0);
 
@@ -84,7 +84,7 @@ namespace gfx
 		return m_pBytecodeBlob.Get();
 	}
 
-	std::shared_ptr<ComputeShader> ComputeShader::Resolve(GraphicsDevice& gfx, const std::string& path, const std::string& kernelName)
+	std::shared_ptr<ComputeShader> ComputeShader::Resolve(const GraphicsDevice& gfx, const std::string& path, const std::string& kernelName)
 	{
 		return std::move(Codex::Resolve<ComputeShader>(gfx, GenerateUID(path, kernelName), path, kernelName));
 	}

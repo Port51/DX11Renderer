@@ -19,19 +19,19 @@ namespace gfx
 	public:
 		enum TextureDimension { TEXTURE1D, TEXTURE2D, TEXTURE3D };
 	public:
-		Texture(GraphicsDevice& gfx);
-		Texture(GraphicsDevice& gfx, const std::string& path);
-		Texture(GraphicsDevice& gfx, const std::string& path, D3D11_TEXTURE2D_DESC textureDesc, D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc);
-		Texture(GraphicsDevice& gfx, D3D11_TEXTURE2D_DESC textureDesc, D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc);
+		Texture(const GraphicsDevice& gfx);
+		Texture(const GraphicsDevice& gfx, const std::string& path);
+		Texture(const GraphicsDevice& gfx, const std::string& path, D3D11_TEXTURE2D_DESC textureDesc, D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc);
+		Texture(const GraphicsDevice& gfx, D3D11_TEXTURE2D_DESC textureDesc, D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc);
 	public:
-		void BindCS(GraphicsDevice& gfx, UINT slot) override;
-		void BindVS(GraphicsDevice& gfx, UINT slot) override;
-		void BindPS(GraphicsDevice& gfx, UINT slot) override;
+		void BindCS(const GraphicsDevice& gfx, UINT slot) override;
+		void BindVS(const GraphicsDevice& gfx, UINT slot) override;
+		void BindPS(const GraphicsDevice& gfx, UINT slot) override;
 		const ComPtr<ID3D11ShaderResourceView> GetSRV() const;
 		const ComPtr<ID3D11UnorderedAccessView> GetUAV(UINT mipSlice = 0u) const;
 		const TextureDimension GetDimension() const;
 	public:
-		static std::shared_ptr<Bindable> Resolve(GraphicsDevice& gfx, const std::string& path);
+		static std::shared_ptr<Bindable> Resolve(const GraphicsDevice& gfx, const std::string& path);
 	protected:
 		static std::string GenerateUID(const std::string& tag);
 	protected:

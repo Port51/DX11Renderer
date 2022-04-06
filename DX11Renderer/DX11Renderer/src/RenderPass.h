@@ -22,9 +22,9 @@ namespace gfx
 	public:
 		const std::string GetName() const;
 		void EnqueueJob(DrawCall job);
-		virtual void BindSharedResources(GraphicsDevice& gfx) const;
-		virtual void UnbindSharedResources(GraphicsDevice& gfx) const;
-		virtual void Execute(GraphicsDevice& gfx) const;
+		virtual void BindSharedResources(const GraphicsDevice& gfx) const;
+		virtual void UnbindSharedResources(const GraphicsDevice& gfx) const;
+		virtual void Execute(const GraphicsDevice& gfx) const;
 		void Reset();
 	public:
 		RenderPass& ClearBinds();

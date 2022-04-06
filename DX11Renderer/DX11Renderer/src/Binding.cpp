@@ -10,7 +10,7 @@ namespace gfx
 		: m_pBindable(_pBindable)
 	{}
 
-	void Binding::Bind(GraphicsDevice& gfx) const
+	void Binding::Bind(const GraphicsDevice& gfx) const
 	{
 		int bindings = 0;
 		if (m_IASlot != -1)

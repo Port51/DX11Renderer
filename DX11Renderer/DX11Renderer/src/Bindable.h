@@ -14,12 +14,12 @@ namespace gfx
 	class Bindable : public CodexElement
 	{
 	public:
-		virtual void BindIA(GraphicsDevice& gfx, UINT slot) {}
-		virtual void BindCS(GraphicsDevice& gfx, UINT slot) {}
-		virtual void BindVS(GraphicsDevice& gfx, UINT slot) {}
-		virtual void BindPS(GraphicsDevice& gfx, UINT slot) {}
-		virtual void BindRS(GraphicsDevice& gfx) {}
-		virtual void BindOM(GraphicsDevice& gfx) {}
+		virtual void BindIA(const GraphicsDevice& gfx, UINT slot) {}
+		virtual void BindCS(const GraphicsDevice& gfx, UINT slot) {}
+		virtual void BindVS(const GraphicsDevice& gfx, UINT slot) {}
+		virtual void BindPS(const GraphicsDevice& gfx, UINT slot) {}
+		virtual void BindRS(const GraphicsDevice& gfx) {}
+		virtual void BindOM(const GraphicsDevice& gfx) {}
 		virtual ~Bindable() = default;
 	};
 }

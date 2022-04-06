@@ -36,8 +36,8 @@ namespace gfx
 		virtual ~ModelAsset() = default;
 
 	public:
-		std::shared_ptr<ModelInstance> CreateSharedInstance(GraphicsDevice& gfx, dx::XMMATRIX transform);
-		std::unique_ptr<ModelInstance> CreateUniqueInstance(GraphicsDevice& gfx, dx::XMMATRIX transform);
+		std::shared_ptr<ModelInstance> CreateSharedInstance(const GraphicsDevice& gfx, dx::XMMATRIX transform);
+		std::unique_ptr<ModelInstance> CreateUniqueInstance(const GraphicsDevice& gfx, dx::XMMATRIX transform);
 
 	private:
 		std::shared_ptr<ModelAssetNode> m_pSceneGraph;

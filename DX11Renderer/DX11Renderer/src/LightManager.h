@@ -41,7 +41,7 @@ namespace gfx
 		const static UINT ClusteredLightingZLevels = 16u;
 		const static UINT MaxLightsPerCluster = 32u;
 	public:
-		LightManager(GraphicsDevice& gfx, std::shared_ptr<RendererList> pRendererList);
+		LightManager(const GraphicsDevice& gfx, std::shared_ptr<RendererList> pRendererList);
 		virtual ~LightManager() = default;
 	public:
 		void AddLightModelsToList(RendererList& pRendererList);

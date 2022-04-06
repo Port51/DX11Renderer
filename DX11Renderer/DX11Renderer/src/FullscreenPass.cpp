@@ -17,7 +17,7 @@
 
 namespace gfx
 {
-	FullscreenPass::FullscreenPass(GraphicsDevice& gfx, std::string name, const char* pixelShader)
+	FullscreenPass::FullscreenPass(const GraphicsDevice& gfx, std::string name, const char* pixelShader)
 		: RenderPass(name)
 	{
 		std::string vertexShaderName("Assets\\Built\\Shaders\\FullscreenVS.cso");
@@ -48,7 +48,7 @@ namespace gfx
 			.SetupPSBinding(0u);
 	}
 
-	void FullscreenPass::Execute(GraphicsDevice& gfx) const
+	void FullscreenPass::Execute(const GraphicsDevice& gfx) const
 	{
 		RenderPass::Execute(gfx);
 
@@ -62,7 +62,7 @@ namespace gfx
 		m_pInputTexture = pInput;
 	}
 
-	void FullscreenPass::SetupFullscreenQuadBindings(GraphicsDevice& gfx, std::string vertexShaderName, std::shared_ptr<VertexShader> vertexShader)
+	void FullscreenPass::SetupFullscreenQuadBindings(const GraphicsDevice& gfx, std::string vertexShaderName, std::shared_ptr<VertexShader> vertexShader)
 	{
 		// Setup fullscreen geometry
 		// Use 1 large triangle instead of 2 for better caching

@@ -5,7 +5,7 @@
 
 namespace gfx
 {
-	RenderTexture::RenderTexture(GraphicsDevice& gfx)
+	RenderTexture::RenderTexture(const GraphicsDevice& gfx)
 		: Texture::Texture(gfx)
 	{
 		m_format = DXGI_FORMAT_R16G16B16A16_FLOAT;
@@ -14,7 +14,7 @@ namespace gfx
 		m_mipCount = 1u;
 	}
 
-	RenderTexture::RenderTexture(GraphicsDevice & gfx, UINT _mipCount)
+	RenderTexture::RenderTexture(const GraphicsDevice& gfx, UINT _mipCount)
 		: Texture::Texture(gfx)
 	{
 		m_format = DXGI_FORMAT_R16G16B16A16_FLOAT;
@@ -23,7 +23,7 @@ namespace gfx
 		m_mipCount = _mipCount;
 	}
 
-	RenderTexture::RenderTexture(GraphicsDevice & gfx, DXGI_FORMAT _format, UINT _mipCount)
+	RenderTexture::RenderTexture(const GraphicsDevice& gfx, DXGI_FORMAT _format, UINT _mipCount)
 		: Texture::Texture(gfx)
 	{
 		m_format = _format;
@@ -128,33 +128,33 @@ namespace gfx
 		return m_pRenderTargetView;
 	}
 
-	void RenderTexture::BindCS(GraphicsDevice& gfx, UINT slot)
+	void RenderTexture::BindCS(const GraphicsDevice& gfx, UINT slot)
 	{
 		gfx.GetContext()->CSSetShaderResources(slot, 1u, m_pShaderResourceView.GetAddressOf());
 	}
 
-	void RenderTexture::BindVS(GraphicsDevice& gfx, UINT slot)
+	void RenderTexture::BindVS(const GraphicsDevice& gfx, UINT slot)
 	{
 		gfx.GetContext()->VSSetShaderResources(slot, 1u, m_pShaderResourceView.GetAddressOf());
 	}
 
-	void RenderTexture::BindPS(GraphicsDevice& gfx, UINT slot)
+	void RenderTexture::BindPS(const GraphicsDevice& gfx, UINT slot)
 	{
 		gfx.GetContext()->PSSetShaderResources(slot, 1u, m_pShaderResourceView.GetAddressOf());
 	}
 
-	void RenderTexture::BindAsTexture(GraphicsDevice& gfx, UINT slot) const
+	void RenderTexture::BindAsTexture(const GraphicsDevice& gfx, UINT slot) const
 	{
 		gfx.GetContext()->PSSetShaderResources(slot, 1, m_pShaderResourceView.GetAddressOf());
 	}
 
-	void RenderTexture::BindAsTarget(GraphicsDevice& gfx) const
+	void RenderTexture::BindAsTarget(const GraphicsDevice& gfx) const
 	{
 		gfx.GetContext()->OMSetRenderTargets(1, m_pRenderTargetView.GetAddressOf(), nullptr);
 		gfx.GetContext()->RSSetViewports(1u, &m_viewport);
 	}
 
-	void RenderTexture::BindAsTarget(GraphicsDevice& gfx, ComPtr<ID3D11DepthStencilView> pDepthStencilView) const
+	void RenderTexture::BindAsTarget(const GraphicsDevice& gfx, ComPtr<ID3D11DepthStencilView> pDepthStencilView) const
 	{
 		gfx.GetContext()->OMSetRenderTargets(1, m_pRenderTargetView.GetAddressOf(), pDepthStencilView.Get());
 		gfx.GetContext()->RSSetViewports(1u, &m_viewport);

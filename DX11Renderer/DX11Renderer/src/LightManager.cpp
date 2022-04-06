@@ -21,7 +21,7 @@
 
 namespace gfx
 {
-	LightManager::LightManager(GraphicsDevice & gfx, std::shared_ptr<RendererList> pRendererList)
+	LightManager::LightManager(const GraphicsDevice& gfx, std::shared_ptr<RendererList> pRendererList)
 	{
 		const auto pLightModelAsset = ModelImporter::LoadGLTF(gfx, "Assets\\Models\\DefaultSphere.asset");
 

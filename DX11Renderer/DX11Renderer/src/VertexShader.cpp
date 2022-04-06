@@ -10,7 +10,7 @@ namespace gfx
 {
 	using namespace std::string_literals;
 
-	VertexShader::VertexShader(GraphicsDevice& gfx, const std::string& path)
+	VertexShader::VertexShader(const GraphicsDevice& gfx, const std::string& path)
 		: m_path(path)
 	{
 		std::wstring wide{ path.begin(), path.end() }; // convert to wide for file read <-- won't work for special characters
@@ -23,7 +23,7 @@ namespace gfx
 		));
 	}
 
-	void VertexShader::BindVS(GraphicsDevice& gfx, UINT slot)
+	void VertexShader::BindVS(const GraphicsDevice& gfx, UINT slot)
 	{
 		gfx.GetContext()->VSSetShader(m_pVertexShader.Get(), nullptr, 0u);
 	}
@@ -36,7 +36,7 @@ namespace gfx
 	///
 	/// If needed, will create bindable and add to bindable codex
 	///
-	std::shared_ptr<VertexShader> VertexShader::Resolve(GraphicsDevice& gfx, const std::string& path)
+	std::shared_ptr<VertexShader> VertexShader::Resolve(const GraphicsDevice& gfx, const std::string& path)
 	{
 		return std::move(Codex::Resolve<VertexShader>(gfx, GenerateUID(path), path));
 	}

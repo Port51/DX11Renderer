@@ -19,7 +19,7 @@ namespace gfx
 	class DirectionalLight : public Light
 	{
 	public:
-		DirectionalLight(GraphicsDevice& gfx, UINT index, bool allowUserControl, bool hasShadow, std::shared_ptr<ModelAsset> const& pModelAsset, float pan, float tilt, dx::XMFLOAT3 color, float intensity = 1.f, float sphereRad = 1.f, float range = 2.5f);
+		DirectionalLight(const GraphicsDevice& gfx, UINT index, bool allowUserControl, bool hasShadow, std::shared_ptr<ModelAsset> const& pModelAsset, float pan, float tilt, dx::XMFLOAT3 color, float intensity = 1.f, float sphereRad = 1.f, float range = 2.5f);
 	public:
 		void DrawImguiControlWindow() override;
 		const LightData GetLightData(dx::XMMATRIX viewMatrix) const override;

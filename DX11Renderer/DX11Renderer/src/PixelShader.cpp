@@ -6,7 +6,7 @@
 
 namespace gfx
 {
-	PixelShader::PixelShader(GraphicsDevice& gfx, const std::string& path)
+	PixelShader::PixelShader(const GraphicsDevice& gfx, const std::string& path)
 		: m_path(path)
 	{
 		ComPtr<ID3DBlob> pBlob;
@@ -15,12 +15,12 @@ namespace gfx
 		THROW_IF_FAILED(gfx.GetAdapter()->CreatePixelShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &m_pPixelShader));
 	}
 
-	void PixelShader::BindPS(GraphicsDevice& gfx, UINT slot)
+	void PixelShader::BindPS(const GraphicsDevice& gfx, UINT slot)
 	{
 		gfx.GetContext()->PSSetShader(m_pPixelShader.Get(), nullptr, 0u);
 	}
 
-	std::shared_ptr<PixelShader> PixelShader::Resolve(GraphicsDevice& gfx, const std::string& path)
+	std::shared_ptr<PixelShader> PixelShader::Resolve(const GraphicsDevice& gfx, const std::string& path)
 	{
 		return std::move(Codex::Resolve<PixelShader>(gfx, GenerateUID(path), path));
 	}

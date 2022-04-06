@@ -13,7 +13,7 @@ namespace gfx
 		Binding(std::shared_ptr<Bindable> _pBindable);
 		virtual ~Binding() = default;
 	public:
-		void Bind(GraphicsDevice& gfx) const;
+		void Bind(const GraphicsDevice& gfx) const;
 		const std::shared_ptr<Bindable> GetBindable() const;
 		Binding& SetupIABinding(UINT slot = 0u);
 		Binding& SetupCSBinding(UINT slot);

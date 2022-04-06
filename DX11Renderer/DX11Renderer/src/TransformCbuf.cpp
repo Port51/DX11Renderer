@@ -7,7 +7,7 @@
 
 namespace gfx
 {
-	TransformCbuf::TransformCbuf(GraphicsDevice& gfx)
+	TransformCbuf::TransformCbuf(const GraphicsDevice& gfx)
 	{
 		if (!m_pVcbuf)
 		{
@@ -15,12 +15,12 @@ namespace gfx
 		}
 	}
 
-	void TransformCbuf::BindVS(GraphicsDevice& gfx, UINT slot)
+	void TransformCbuf::BindVS(const GraphicsDevice& gfx, UINT slot)
 	{
 		gfx.GetContext()->VSSetConstantBuffers(slot, 1u, m_pVcbuf->GetD3DBuffer().GetAddressOf());
 	}
 
-	void TransformCbuf::UpdateTransforms(GraphicsDevice& gfx, const Transforms& transforms)
+	void TransformCbuf::UpdateTransforms(const GraphicsDevice& gfx, const Transforms& transforms)
 	{
 		m_pVcbuf->Update(gfx, transforms);
 	}

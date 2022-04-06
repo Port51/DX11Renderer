@@ -10,7 +10,7 @@
 
 namespace gfx
 {
-	ModelImporter::ModelImportSettings ModelImporter::GetImportSettings(GraphicsDevice& gfx, const char * assetFilename)
+	ModelImporter::ModelImportSettings ModelImporter::GetImportSettings(const GraphicsDevice& gfx, const char * assetFilename)
 	{
 		TextParser parser(assetFilename);
 		TextParser::ParsedKeyValues p;
@@ -54,13 +54,13 @@ namespace gfx
 		return settings;
 	}
 
-	size_t ModelImporter::GetAttributeCt(GraphicsDevice & gfx, tinygltf::Model & model, int accessorIdx)
+	size_t ModelImporter::GetAttributeCt(const GraphicsDevice& gfx, tinygltf::Model & model, int accessorIdx)
 	{
 		const auto accessor = model.accessors[accessorIdx];
 		return accessor.count;
 	}
 
-	std::pair<int, size_t> ModelImporter::GetAttributeBufferAccess(GraphicsDevice & gfx, tinygltf::Model & model, int accessorIdx, size_t byteCt)
+	std::pair<int, size_t> ModelImporter::GetAttributeBufferAccess(const GraphicsDevice& gfx, tinygltf::Model & model, int accessorIdx, size_t byteCt)
 	{
 		// Each attribute owns a segment of data in the buffer
 		// It can be accessed by using the view and accessor offsets
@@ -72,7 +72,7 @@ namespace gfx
 		return std::pair<int, size_t>(view.buffer, (size_t)(view.byteOffset + accessor.byteOffset));
 	}
 
-	std::shared_ptr<ModelAsset> ModelImporter::LoadGLTF(GraphicsDevice& gfx, const char * assetFilename)
+	std::shared_ptr<ModelAsset> ModelImporter::LoadGLTF(const GraphicsDevice& gfx, const char * assetFilename)
 	{
 
 		auto b = alignof(ModelInstance);

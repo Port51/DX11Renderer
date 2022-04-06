@@ -35,7 +35,7 @@ namespace gfx
 		m_jobs.push_back(job);
 	}
 
-	void RenderPass::BindSharedResources(GraphicsDevice & gfx) const
+	void RenderPass::BindSharedResources(const GraphicsDevice& gfx) const
 	{
 		for (auto& binding : m_bindings)
 		{
@@ -87,7 +87,7 @@ namespace gfx
 		}
 	}
 
-	void RenderPass::UnbindSharedResources(GraphicsDevice & gfx) const
+	void RenderPass::UnbindSharedResources(const GraphicsDevice& gfx) const
 	{
 		if (m_CS_CB_Binds.size() > 0)
 		{
@@ -133,7 +133,7 @@ namespace gfx
 		}
 	}
 
-	void RenderPass::Execute(GraphicsDevice & gfx) const
+	void RenderPass::Execute(const GraphicsDevice& gfx) const
 	{
 		for (const auto& j : m_jobs)
 		{

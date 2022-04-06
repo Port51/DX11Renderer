@@ -32,7 +32,7 @@ namespace gfx
 		return (UINT)m_pRenderers.size();
 	}
 
-	void RendererList::Filter(GraphicsDevice& gfx, const Frustum& frustum, RendererSorting sorting)
+	void RendererList::Filter(const GraphicsDevice& gfx, const Frustum& frustum, RendererSorting sorting)
 	{
 		// Frustum culling
 		{

@@ -17,9 +17,9 @@ namespace gfx
 	class TransformCbuf : public Bindable
 	{
 	public:
-		TransformCbuf(GraphicsDevice& gfx);
-		void BindVS(GraphicsDevice& gfx, UINT slot) override;
-		void UpdateTransforms(GraphicsDevice& gfx, const Transforms& transforms);
+		TransformCbuf(const GraphicsDevice& gfx);
+		void BindVS(const GraphicsDevice& gfx, UINT slot) override;
+		void UpdateTransforms(const GraphicsDevice& gfx, const Transforms& transforms);
 	private:
 		// Static so can be re-used each drawcall
 		static std::unique_ptr<ConstantBuffer<Transforms>> m_pVcbuf;

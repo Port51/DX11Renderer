@@ -7,14 +7,14 @@
 namespace gfx
 {
 	// Don't initialize texture
-	Texture::Texture(GraphicsDevice & gfx)
+	Texture::Texture(const GraphicsDevice& gfx)
 		: m_tag("?")
 	{
 
 	}
 
 	// Create descriptors and pTexture
-	Texture::Texture(GraphicsDevice & gfx, D3D11_TEXTURE2D_DESC textureDesc, D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc)
+	Texture::Texture(const GraphicsDevice& gfx, D3D11_TEXTURE2D_DESC textureDesc, D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc)
 		: m_tag("?")
 	{
 		THROW_IF_FAILED(gfx.GetAdapter()->CreateTexture2D(
@@ -28,7 +28,7 @@ namespace gfx
 
 	// Load image from file and start off with default 2D texture settings
 	// This should be used for 99% of model-related textures
-	Texture::Texture(GraphicsDevice& gfx, const std::string& path)
+	Texture::Texture(const GraphicsDevice& gfx, const std::string& path)
 		: m_tag(path)
 	{
 		const Image image(path);
@@ -70,7 +70,7 @@ namespace gfx
 
 	// Load image from file and use custom descriptors
 	// Use this in special cases
-	Texture::Texture(GraphicsDevice& gfx, const std::string& _path, D3D11_TEXTURE2D_DESC textureDesc, D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc)
+	Texture::Texture(const GraphicsDevice& gfx, const std::string& _path, D3D11_TEXTURE2D_DESC textureDesc, D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc)
 		: m_tag(_path)
 	{
 		// Read some info from image
@@ -110,17 +110,17 @@ namespace gfx
 		));
 	}
 
-	void Texture::BindCS(GraphicsDevice& gfx, UINT slot)
+	void Texture::BindCS(const GraphicsDevice& gfx, UINT slot)
 	{
 		gfx.GetContext()->CSSetShaderResources(slot, 1u, m_pShaderResourceView.GetAddressOf());
 	}
 
-	void Texture::BindVS(GraphicsDevice& gfx, UINT slot)
+	void Texture::BindVS(const GraphicsDevice& gfx, UINT slot)
 	{
 		gfx.GetContext()->VSSetShaderResources(slot, 1u, m_pShaderResourceView.GetAddressOf());
 	}
 
-	void Texture::BindPS(GraphicsDevice& gfx, UINT slot)
+	void Texture::BindPS(const GraphicsDevice& gfx, UINT slot)
 	{
 		gfx.GetContext()->PSSetShaderResources(slot, 1u, m_pShaderResourceView.GetAddressOf());
 	}
@@ -140,7 +140,7 @@ namespace gfx
 		return m_pShaderResourceView;
 	}
 
-	std::shared_ptr<Bindable> Texture::Resolve(GraphicsDevice& gfx, const std::string& path)
+	std::shared_ptr<Bindable> Texture::Resolve(const GraphicsDevice& gfx, const std::string& path)
 	{
 		// Create 2D texture with default settings
 		return std::move(Codex::Resolve<Texture>(gfx, GenerateUID(path), path));

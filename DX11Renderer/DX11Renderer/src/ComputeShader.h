@@ -11,13 +11,13 @@ namespace gfx
 	class ComputeShader : public Bindable
 	{
 	public:
-		ComputeShader(GraphicsDevice& gfx, const std::string& path, const std::string& kernelName);
+		ComputeShader(const GraphicsDevice& gfx, const std::string& path, const std::string& kernelName);
 	public:
-		void Dispatch(GraphicsDevice& gfx, UINT threadCountX, UINT threadCountY, UINT threadCountZ) const;
+		void Dispatch(const GraphicsDevice& gfx, UINT threadCountX, UINT threadCountY, UINT threadCountZ) const;
 		const ComPtr<ID3D11ComputeShader> GetComputeShader() const;
 		const ID3DBlob* GetBytecode() const;
 	public:
-		static std::shared_ptr<ComputeShader> Resolve(GraphicsDevice& gfx, const std::string& path, const std::string& kernelName);
+		static std::shared_ptr<ComputeShader> Resolve(const GraphicsDevice& gfx, const std::string& path, const std::string& kernelName);
 	protected:
 		static std::string GenerateUID(const std::string& path, const std::string& kernelName);
 	protected:

@@ -10,10 +10,10 @@ namespace gfx
 	class NullPixelShader : public Bindable
 	{
 	public:
-		NullPixelShader(GraphicsDevice& gfx);
+		NullPixelShader(const GraphicsDevice& gfx);
 	public:
-		void BindPS(GraphicsDevice& gfx, UINT slot) override;
-		static std::shared_ptr<NullPixelShader> Resolve(GraphicsDevice& gfx);
+		void BindPS(const GraphicsDevice& gfx, UINT slot) override;
+		static std::shared_ptr<NullPixelShader> Resolve(const GraphicsDevice& gfx);
 		static std::string GenerateUID();
 	};
 }

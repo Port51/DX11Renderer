@@ -30,7 +30,7 @@ namespace gfx
 
 	enum MaterialParseState { None, Properties, Pass };
 
-	Material::Material(GraphicsDevice& gfx, std::string_view _materialAssetPath)
+	Material::Material(const GraphicsDevice& gfx, std::string_view _materialAssetPath)
 		: m_materialAssetPath(std::string(_materialAssetPath))
 	{
 		// todo: This is very WIP and should be replaced by something entirely different later
@@ -200,7 +200,7 @@ namespace gfx
 
 	}
 
-	void Material::Bind(GraphicsDevice& gfx, std::string_view passName)
+	void Material::Bind(const GraphicsDevice& gfx, std::string_view passName)
 	{
 		// Is this needed?
 	}
@@ -222,7 +222,7 @@ namespace gfx
 		return m_vertexLayout;
 	}
 
-	std::shared_ptr<Bindable> Material::Resolve(GraphicsDevice& gfx, const std::string_view assetPath)
+	std::shared_ptr<Bindable> Material::Resolve(const GraphicsDevice& gfx, const std::string_view assetPath)
 	{
 		return std::move(Codex::Resolve<Material>(gfx, GenerateUID(assetPath), assetPath));
 	}

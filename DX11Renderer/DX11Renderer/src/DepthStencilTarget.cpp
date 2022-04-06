@@ -4,7 +4,7 @@
 
 namespace gfx
 {
-	DepthStencilTarget::DepthStencilTarget(GraphicsDevice& gfx, int width, int height)
+	DepthStencilTarget::DepthStencilTarget(const GraphicsDevice& gfx, int width, int height)
 	{
 		// Notes on formats:
 		// To create SRV, must use a typeless format for texture
@@ -47,7 +47,7 @@ namespace gfx
 	DepthStencilTarget::~DepthStencilTarget()
 	{}
 
-	void DepthStencilTarget::Clear(GraphicsDevice& gfx) const
+	void DepthStencilTarget::Clear(const GraphicsDevice& gfx) const
 	{
 		gfx.GetContext()->ClearDepthStencilView(m_pDepthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.f, 0u);
 	}

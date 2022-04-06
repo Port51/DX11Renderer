@@ -27,7 +27,7 @@ namespace gfx
 		virtual ~RendererList() = default;
 	public:
 		const UINT GetRendererCount() const;
-		void Filter(GraphicsDevice& gfx, const Frustum& frustum, RendererSorting sorting);
+		void Filter(const GraphicsDevice& gfx, const Frustum& frustum, RendererSorting sorting);
 		void SubmitDrawCalls(const DrawContext& drawContext) const;
 		void AddModelInstance(const ModelInstance& modelInstance);
 		void AddSceneGraph(const std::shared_ptr<SceneGraphNode> pSceneGraph);

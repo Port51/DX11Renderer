@@ -32,7 +32,7 @@
 
 namespace gfx
 {
-	Renderer::Renderer(GraphicsDevice& gfx, std::shared_ptr<LightManager> pLightManager, std::shared_ptr<RendererList> pRendererList)
+	Renderer::Renderer(const GraphicsDevice& gfx, std::shared_ptr<LightManager> pLightManager, std::shared_ptr<RendererList> pRendererList)
 		: m_pRendererList(pRendererList), m_pLightManager(pLightManager)
 	{
 		//
@@ -152,7 +152,7 @@ namespace gfx
 
 	}
 
-	void Renderer::SetupRenderPassDependencies(GraphicsDevice& gfx)
+	void Renderer::SetupRenderPassDependencies(const GraphicsDevice& gfx)
 	{
 		bool cameraOutSlot0 = true;
 
@@ -296,7 +296,7 @@ namespace gfx
 		m_pRenderPasses[targetPass]->EnqueueJob(job);
 	}
 
-	void Renderer::Execute(GraphicsDevice & gfx, const std::unique_ptr<Camera>& cam, float timeElapsed, UINT pixelSelectionX, UINT pixelSelectionY)
+	void Renderer::Execute(GraphicsDevice& gfx, const std::unique_ptr<Camera>& cam, float timeElapsed, UINT pixelSelectionX, UINT pixelSelectionY)
 	{
 		auto context = gfx.GetContext();
 
@@ -637,7 +637,7 @@ namespace gfx
 
 	}
 
-	void Renderer::DrawImguiControlWindow(GraphicsDevice& gfx)
+	void Renderer::DrawImguiControlWindow(const GraphicsDevice& gfx)
 	{
 		if (ImGui::Begin("Renderer"))
 		{

@@ -8,7 +8,7 @@
 
 namespace gfx
 {
-	Light::Light(GraphicsDevice & gfx, UINT index, bool allowUserControl, std::shared_ptr<ModelAsset> const& pModelAsset, dx::XMFLOAT3 positionWS, dx::XMFLOAT3 color, float intensity)
+	Light::Light(const GraphicsDevice& gfx, UINT index, bool allowUserControl, std::shared_ptr<ModelAsset> const& pModelAsset, dx::XMFLOAT3 positionWS, dx::XMFLOAT3 color, float intensity)
 		: m_index(index),
 		m_allowUserControl(allowUserControl),
 		m_positionWS(positionWS),

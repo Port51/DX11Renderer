@@ -6,7 +6,7 @@
 
 namespace gfx
 {
-	VertexBufferWrapper::VertexBufferWrapper(GraphicsDevice& gfx, const BaseBufferData& vertexBuffer)
+	VertexBufferWrapper::VertexBufferWrapper(const GraphicsDevice& gfx, const BaseBufferData& vertexBuffer)
 	{
 		m_strides.resize(1);
 		m_offsets.resize(1);
@@ -14,7 +14,7 @@ namespace gfx
 		SetupVertexBuffer(gfx, vertexBuffer);
 	}
 
-	VertexBufferWrapper::VertexBufferWrapper(GraphicsDevice& gfx, const BaseBufferData& vertexBuffer, const BaseBufferData& instanceBuffer)
+	VertexBufferWrapper::VertexBufferWrapper(const GraphicsDevice& gfx, const BaseBufferData& vertexBuffer, const BaseBufferData& instanceBuffer)
 	{
 		m_strides.resize(2);
 		m_offsets.resize(2);
@@ -28,12 +28,12 @@ namespace gfx
 		return m_pBufferArray[0];
 	}
 
-	void VertexBufferWrapper::BindIA(GraphicsDevice& gfx, UINT slot)
+	void VertexBufferWrapper::BindIA(const GraphicsDevice& gfx, UINT slot)
 	{
 		gfx.GetContext()->IASetVertexBuffers(slot, m_pBufferArray.size(), m_pBufferArray[0].GetAddressOf(), &m_strides[0], &m_offsets[0]);
 	}
 
-	void VertexBufferWrapper::SetupVertexBuffer(GraphicsDevice& gfx, const BaseBufferData& data)
+	void VertexBufferWrapper::SetupVertexBuffer(const GraphicsDevice& gfx, const BaseBufferData& data)
 	{
 		D3D11_BUFFER_DESC bd;
 		ZeroMemory(&bd, sizeof(bd));
@@ -56,7 +56,7 @@ namespace gfx
 		m_vertexCount = data.GetElementCount();
 	}
 
-	void VertexBufferWrapper::SetupInstanceBuffer(GraphicsDevice& gfx, const BaseBufferData& data)
+	void VertexBufferWrapper::SetupInstanceBuffer(const GraphicsDevice& gfx, const BaseBufferData& data)
 	{
 		D3D11_BUFFER_DESC bd;
 		ZeroMemory(&bd, sizeof(bd));
@@ -77,12 +77,12 @@ namespace gfx
 		gfx.GetAdapter()->CreateBuffer(&bd, &sd, &m_pBufferArray[1]);
 	}
 
-	std::shared_ptr<VertexBufferWrapper> VertexBufferWrapper::Resolve(GraphicsDevice & gfx, std::string id, const BaseBufferData & vertexBuffer)
+	std::shared_ptr<VertexBufferWrapper> VertexBufferWrapper::Resolve(const GraphicsDevice& gfx, std::string id, const BaseBufferData & vertexBuffer)
 	{
 		return std::move(Codex::Resolve<VertexBufferWrapper>(gfx, GenerateUID(id), vertexBuffer));
 	}
 
-	std::shared_ptr<VertexBufferWrapper> VertexBufferWrapper::Resolve(GraphicsDevice & gfx, std::string id, const BaseBufferData & vertexBuffer, const BaseBufferData & instanceBuffer)
+	std::shared_ptr<VertexBufferWrapper> VertexBufferWrapper::Resolve(const GraphicsDevice& gfx, std::string id, const BaseBufferData & vertexBuffer, const BaseBufferData & instanceBuffer)
 	{
 		return std::move(Codex::Resolve<VertexBufferWrapper>(gfx, GenerateUID(id), vertexBuffer, instanceBuffer));
 	}

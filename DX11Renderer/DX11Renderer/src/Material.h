@@ -21,12 +21,12 @@ namespace gfx
 	class Material : public Bindable
 	{
 	public:
-		Material(GraphicsDevice& gfx, std::string_view assetPath);
-		void Bind(GraphicsDevice& gfx, std::string_view passName);
+		Material(const GraphicsDevice& gfx, std::string_view assetPath);
+		void Bind(const GraphicsDevice& gfx, std::string_view passName);
 		void SubmitDrawCalls(const MeshRenderer& meshRenderer, const DrawContext& drawContext) const;
 	public:
 		const VertexLayout& GetVertexLayout() const;
-		static std::shared_ptr<Bindable> Resolve(GraphicsDevice& gfx, const std::string_view assetPath);
+		static std::shared_ptr<Bindable> Resolve(const GraphicsDevice& gfx, const std::string_view assetPath);
 	protected:
 		static std::string GenerateUID(const std::string_view assetPath);
 		void AddBindable(std::shared_ptr<Bindable> pBindable);

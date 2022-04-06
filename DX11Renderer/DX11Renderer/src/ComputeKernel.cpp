@@ -13,7 +13,7 @@ namespace gfx
 
 	}
 
-	void ComputeKernel::Dispatch(GraphicsDevice& gfx, UINT threadCountX, UINT threadCountY, UINT threadCountZ)
+	void ComputeKernel::Dispatch(const GraphicsDevice& gfx, UINT threadCountX, UINT threadCountY, UINT threadCountZ)
 	{
 		m_pComputeShader->Dispatch(gfx, threadCountX, threadCountY, threadCountZ);
 	}
