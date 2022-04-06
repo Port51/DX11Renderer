@@ -3,7 +3,6 @@
 #include "BaseWindow.h"
 #include "CommonHeader.h"
 #include "WindowsInclude.h"
-#include "GraphicsDevice.h"
 #include "MouseInput.h"
 #include <optional>
 
@@ -17,10 +16,7 @@ namespace gfx
 		DX11Window& operator=(const DX11Window&) = delete;
 		~DX11Window() override;
 	public:
-		GraphicsDevice& Gfx() const;
 	protected:
 		LRESULT HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
-	private:
-		std::unique_ptr<GraphicsDevice> m_pGfx;
 	};
 }

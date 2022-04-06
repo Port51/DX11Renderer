@@ -1,6 +1,7 @@
 #pragma once
 #include "InputListener.h"
 #include "DX11Window.h"
+#include "GraphicsDevice.h"
 
 namespace gfxcore
 {
@@ -27,11 +28,13 @@ namespace gfx
 		int Run();
 
 		LRESULT CALLBACK HandleMsg(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) override;
+		GraphicsDevice& Gfx() const;
 	private:
 		void ExecuteFrame();
 	private:
 		std::unique_ptr<ImguiManager> m_pImgui; // must be initialized before wnd
 		std::unique_ptr<DX11Window> m_pWindow;
+		std::unique_ptr<GraphicsDevice> m_pGfx;
 		std::unique_ptr<Camera> m_pCamera;
 		std::shared_ptr<LightManager> m_pLightManager;
 		std::unique_ptr<Renderer> m_pRenderer;
