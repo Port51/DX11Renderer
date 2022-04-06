@@ -4,6 +4,8 @@
 #include "MeshRenderer.h"
 #include "ModelInstance.h"
 #include "Renderer.h"
+#include "SceneGraphNode.h"
+#include <queue>
 
 namespace gfx
 {
@@ -28,17 +30,47 @@ namespace gfx
 		return (UINT)m_pRenderers.size();
 	}
 
-	void RendererList::Filter(Frustum frustum, RendererSorting sorting)
+	void RendererList::Filter(const Frustum& frustum, RendererSorting sorting)
 	{
-		// Filter based on source
-		m_pRenderers.clear();
-		for (const auto& p : m_pSource->m_pRenderers)
+		// Frustum culling
 		{
-			// todo: frustum cull AABB
-			// todo: get distance
-			m_pRenderers.emplace_back(std::make_pair(p.first, 0.f));
-		}
+			// Use queue to avoid recursion
+			std::queue<std::shared_ptr<SceneGraphNode>> nodeQueue;
+			m_pRenderers.clear();
+			for (const auto& p : m_pSource->m_pSceneGraphs)
+			{
+				nodeQueue.emplace(p);
+			}
 
+			while (!nodeQueue.empty())
+			{
+				const auto& node = nodeQueue.front();
+				nodeQueue.pop();
+
+				// Cull against BVH
+				dx::XMVECTOR nodePositionWS = node->GetPositionWS();
+				bool bvhInFrustum = frustum.DoesAABBIntersect(node->GetBoundingVolume(), nodePositionWS);
+				if (bvhInFrustum)
+				{
+					// Add children
+					for (const auto& child : node->GetChildren())
+					{
+						nodeQueue.emplace(child);
+					}
+
+					// Add renderer, if exists and is in frustum
+					const auto& renderer = node->GetMeshRenderer();
+					if (renderer != nullptr
+						&& frustum.DoesAABBIntersect(renderer->GetAABB(), nodePositionWS))
+					{
+						// todo: get distance
+						m_pRenderers.emplace_back(std::make_pair(renderer, 0.f));
+					}
+				}
+			}
+		}
+		
+		// todo: make sort keys to minimize shader program changes
 		switch (sorting)
 		{
 		case RendererSorting::BackToFront:
@@ -64,15 +96,11 @@ namespace gfx
 
 	void RendererList::AddModelInstance(const ModelInstance & modelInstance)
 	{
-		const auto pModelRenderers = modelInstance.GetMeshRenderers();
-		for (const auto pr : pModelRenderers)
-		{
-			AddMeshRenderer(pr);
-		}
+		m_pSceneGraphs.emplace_back(std::move(modelInstance.GetSceneGraph()));
 	}
 
-	void RendererList::AddMeshRenderer(const std::shared_ptr<MeshRenderer> pMeshRenderer)
+	void RendererList::AddSceneGraph(const std::shared_ptr<SceneGraphNode> pSceneGraph)
 	{
-		m_pRenderers.emplace_back(std::make_pair(pMeshRenderer, 0.f));
+		m_pSceneGraphs.emplace_back(std::move(pSceneGraph));
 	}
 }

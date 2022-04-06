@@ -72,7 +72,7 @@ namespace gfx
 		return m_pVertexBufferWrapper->GetVertexCount();
 	}
 
-	const AABB MeshRenderer::GetAABB() const
+	const AABB& MeshRenderer::GetAABB() const
 	{
 		return m_aabb;
 	}

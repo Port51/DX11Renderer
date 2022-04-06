@@ -28,16 +28,21 @@ namespace gfx
 		void RebuildBoundingVolumeHierarchy();
 		// Rebuild current BVH AABB based on children
 		void RebuildBoundingVolume(bool rebuildParents);
+		const std::vector<std::shared_ptr<SceneGraphNode>>& GetChildren() const;
+		const std::shared_ptr<MeshRenderer>& GetMeshRenderer() const;
+		const AABB& GetBoundingVolume() const;
+		const dx::XMVECTOR GetPositionWS() const;
 	private:
 		int m_id;
 		std::shared_ptr<SceneGraphNode> m_pParentNode;
 		std::vector<std::shared_ptr<SceneGraphNode>> m_pChildNodes;
-		std::shared_ptr<MeshRenderer> m_pMeshPtr;
-		// Translation portion of TRS
-		dx::XMFLOAT3 m_localTransformOffset;
+		std::shared_ptr<MeshRenderer> m_pMeshRenderer;
 		// Local TRS transform
 		dx::XMFLOAT4X4 m_localTransform;
 		dx::XMFLOAT4X4 m_accumulatedWorldTransform;
+		// Translation portions of TRS's
+		dx::XMFLOAT3 m_localTransformOffset;
+		dx::XMFLOAT3 m_accumulatedWorldTransformOffset;
 		// AABB that encapsulates any meshes at this node level or deeper
 		AABB m_boundingVolumeHierarchyAABB;
 	};

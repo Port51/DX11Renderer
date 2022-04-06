@@ -60,6 +60,11 @@ namespace gfx
 		m_pSceneGraph->RebuildTransform(m_transform);
 	}
 
+	const std::shared_ptr<SceneGraphNode> ModelInstance::GetSceneGraph() const
+	{
+		return m_pSceneGraph;
+	}
+
 	const std::vector<std::shared_ptr<MeshRenderer>> ModelInstance::GetMeshRenderers() const
 	{
 		return m_pMeshes;

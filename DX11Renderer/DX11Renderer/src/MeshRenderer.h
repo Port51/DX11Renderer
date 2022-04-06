@@ -33,7 +33,7 @@ namespace gfx
 		virtual void Bind(GraphicsDevice& gfx, const DrawContext& drawContext) const;
 		const UINT GetIndexCount() const;
 		const UINT GetVertexCount() const;
-		const AABB GetAABB() const;
+		const AABB& GetAABB() const;
 		virtual void IssueDrawCall(GraphicsDevice& gfx) const;
 	protected:
 		std::string m_name;

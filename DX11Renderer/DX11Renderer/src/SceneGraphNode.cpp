@@ -7,12 +7,12 @@
 namespace gfx
 {
 	SceneGraphNode::SceneGraphNode(int id, const dx::XMMATRIX & _transform, std::shared_ptr<MeshRenderer> pMeshPtr, std::vector<std::shared_ptr<SceneGraphNode>> pChildNodes)
-		: m_pMeshPtr(pMeshPtr), m_pChildNodes(std::move(pChildNodes))
+		: m_pMeshRenderer(pMeshPtr), m_pChildNodes(std::move(pChildNodes))
 	{
 		dx::XMStoreFloat4x4(&m_localTransform, _transform);
 
 		// Decompose translation part of matrix
-		m_localTransformOffset = dx::XMFLOAT3(m_localTransform._14, m_localTransform._24, m_localTransform._34);
+		m_localTransformOffset = DecomposeMatrixTranslation(m_localTransform);
 	}
 
 	void SceneGraphNode::RebuildTransform(dx::XMMATRIX accumulatedTransform)
@@ -20,9 +20,11 @@ namespace gfx
 		const auto worldMatrix = dx::XMLoadFloat4x4(&m_localTransform) * accumulatedTransform;
 		dx::XMStoreFloat4x4(&m_accumulatedWorldTransform, worldMatrix);
 
-		if (m_pMeshPtr)
+		m_accumulatedWorldTransformOffset = DecomposeMatrixTranslation(m_accumulatedWorldTransform);
+
+		if (m_pMeshRenderer)
 		{
-			m_pMeshPtr->SetTransform(worldMatrix);
+			m_pMeshRenderer->SetTransform(worldMatrix);
 		}
 
 		for (const auto& pc : m_pChildNodes)
@@ -86,9 +88,9 @@ namespace gfx
 	{
 		// todo: implement!
 		m_boundingVolumeHierarchyAABB.Clear();
-		if (m_pMeshPtr != nullptr)
+		if (m_pMeshRenderer != nullptr)
 		{
-			m_boundingVolumeHierarchyAABB.ExpandBoundsToFitAABB(m_pMeshPtr->GetAABB());
+			m_boundingVolumeHierarchyAABB.ExpandBoundsToFitAABB(m_pMeshRenderer->GetAABB());
 		}
 		m_boundingVolumeHierarchyAABB.ExpandBoundsToFitChildNodes(m_pChildNodes);
 
@@ -98,11 +100,31 @@ namespace gfx
 		}
 	}
 
+	const std::vector<std::shared_ptr<SceneGraphNode>>& SceneGraphNode::GetChildren() const
+	{
+		return m_pChildNodes;
+	}
+
+	const std::shared_ptr<MeshRenderer>& SceneGraphNode::GetMeshRenderer() const
+	{
+		return m_pMeshRenderer;
+	}
+
+	const AABB & SceneGraphNode::GetBoundingVolume() const
+	{
+		return m_boundingVolumeHierarchyAABB;
+	}
+
+	const dx::XMVECTOR SceneGraphNode::GetPositionWS() const
+	{
+		return dx::XMLoadFloat3(&m_accumulatedWorldTransformOffset);
+	}
+
 	void SceneGraphNode::SubmitDrawCalls(const DrawContext& drawContext) const
 	{
-		if (m_pMeshPtr)
+		if (m_pMeshRenderer)
 		{
-			m_pMeshPtr->SubmitDrawCalls(drawContext);
+			m_pMeshRenderer->SubmitDrawCalls(drawContext);
 		}
 
 		for (const auto& pc : m_pChildNodes)
