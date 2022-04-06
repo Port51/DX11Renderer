@@ -28,6 +28,7 @@
 #include "Config.h"
 #include "RasterizerState.h"
 #include "Sampler.h"
+#include "RenderStats.h"
 
 namespace gfx
 {
@@ -299,6 +300,7 @@ namespace gfx
 	{
 		auto context = gfx.GetContext();
 
+		gfx.GetRenderStats()->StartFrame();
 		context->ClearState();
 
 		static int frameCt = 0;
@@ -313,7 +315,7 @@ namespace gfx
 			static ShadowPassContext context(gfx, cam, *this, pass, m_pTransformationCB, nullptr);
 			context.Update();
 
-			m_pLightManager->CullLights(gfx, cam, IsFeatureEnabled(RendererFeature::Shadows)); // changes the SRV, which will be bound in per-frame binds
+			m_pLightManager->CullLightsAndShadows(gfx, *cam.get(), IsFeatureEnabled(RendererFeature::Shadows)); // changes the SRV, which will be bound in per-frame binds
 			if (IsFeatureEnabled(RendererFeature::Shadows))
 			{
 				m_pLightManager->RenderShadows(context);
@@ -329,7 +331,7 @@ namespace gfx
 			drawContext.projMatrix = cam->GetProjectionMatrix();
 
 			// todo: filter by render passes too
-			m_pVisibleRendererList->Filter(cam->GetFrustumWS(), RendererList::RendererSorting::BackToFront);
+			m_pVisibleRendererList->Filter(gfx, cam->GetFrustumWS(), RendererList::RendererSorting::BackToFront);
 			m_pVisibleRendererList->SubmitDrawCalls(drawContext);
 		}
 
@@ -630,6 +632,8 @@ namespace gfx
 			pass->Execute(gfx);
 			pass->UnbindSharedResources(gfx);
 		}
+
+		gfx.GetRenderStats()->EndFrame();
 
 	}
 

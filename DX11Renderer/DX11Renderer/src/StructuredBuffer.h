@@ -10,7 +10,7 @@ namespace gfx
 	class StructuredBuffer : public Buffer
 	{
 	public:
-		StructuredBuffer(GraphicsDevice& gfx, D3D11_USAGE usage, UINT bindFlags, UINT numElements, bool useCounter = false)
+		StructuredBuffer(const GraphicsDevice& gfx, D3D11_USAGE usage, UINT bindFlags, UINT numElements, bool useCounter = false)
 			: Buffer(usage, bindFlags, sizeof(T)),
 			m_useCounter(useCounter)
 		{
@@ -49,19 +49,19 @@ namespace gfx
 			}
 		}
 
-		void BindCS(GraphicsDevice& gfx, UINT slot) override
+		void BindCS(const GraphicsDevice& gfx, UINT slot) override
 		{
 			gfx.GetContext()->CSSetShaderResources(slot, 1u, m_pSRV.GetAddressOf());
 		}
-		void BindVS(GraphicsDevice& gfx, UINT slot) override
+		void BindVS(const GraphicsDevice& gfx, UINT slot) override
 		{
 			gfx.GetContext()->VSSetShaderResources(slot, 1u, m_pSRV.GetAddressOf());
 		}
-		void BindPS(GraphicsDevice& gfx, UINT slot) override
+		void BindPS(const GraphicsDevice& gfx, UINT slot) override
 		{
 			gfx.GetContext()->PSSetShaderResources(slot, 1u, m_pSRV.GetAddressOf());
 		}
-		void Update(GraphicsDevice& gfx, const void* data, UINT dataBytes)
+		void Update(const GraphicsDevice& gfx, const void* data, UINT dataBytes)
 		{
 			if (m_usage == D3D11_USAGE_DYNAMIC) // Can be continuously modified by CPU
 			{
@@ -88,7 +88,7 @@ namespace gfx
 				throw std::runtime_error("Cannot update immutable structured buffer!");
 			}
 		}
-		void Update(GraphicsDevice& gfx, const std::vector<T>& data, UINT dataElements)
+		void Update(const GraphicsDevice& gfx, const std::vector<T>& data, UINT dataElements)
 		{
 			Update(gfx, data.data(), sizeof(T) * dataElements);
 		}

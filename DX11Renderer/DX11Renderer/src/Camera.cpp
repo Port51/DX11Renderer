@@ -101,12 +101,12 @@ namespace gfx
 		m_frustumCornersVS = dx::XMVectorSet(halfAngleX, -halfAngleY, halfAngleX * m_farClipPlane, -halfAngleY * m_farClipPlane);
 
 		m_frustumVS.UpdatePlanesFromMatrix(GetProjectionMatrix());
-		m_frustumVS.UpdatePlanesFromViewSpaceCorners(m_frustumCornersVS, m_nearClipPlane, m_farClipPlane);
+		//m_frustumVS.UpdatePlanesFromViewSpaceCorners(m_frustumCornersVS, m_nearClipPlane, m_farClipPlane);
 	}
 
 	void Camera::UpdateFrustumWS()
 	{
-		m_frustumVS.UpdatePlanesFromMatrix(GetViewProjectionMatrix());
+		m_frustumWS.UpdatePlanesFromMatrix(GetViewProjectionMatrix());
 	}
 
 	void Camera::DrawImguiControlWindow()
@@ -158,5 +158,8 @@ namespace gfx
 		m_viewMatrix = dx::XMMatrixLookAtLH(GetPositionWS(), dx::XMVectorZero(), dx::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f))
 			* dx::XMMatrixRotationRollPitchYaw(m_pitch, -m_yaw, m_roll);
 		m_viewProjectionMatrix = dx::XMMatrixMultiply(GetViewMatrix(), GetProjectionMatrix());
+
+		// Need to update this every frame too
+		UpdateFrustumWS();
 	}
 }

@@ -30,6 +30,8 @@ namespace gfx
 		const std::shared_ptr<SceneGraphNode> GetSceneGraph() const;
 		const std::vector<std::shared_ptr<MeshRenderer>> GetMeshRenderers() const;
 	private:
+		void InitializeModel();
+	private:
 		std::shared_ptr<MeshRenderer> CreateMeshRenderer(GraphicsDevice& gfx, std::shared_ptr<MeshAsset> const& pMeshAsset);
 		std::shared_ptr<SceneGraphNode> CreateModelInstanceNode(GraphicsDevice& gfx, std::shared_ptr<ModelAssetNode> const& pSourceNode);
 	private:

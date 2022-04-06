@@ -14,6 +14,7 @@ namespace gfx
 	class Renderer;
 	class InputLayout;
 	class TransformCbuf;
+	class MeshAsset;
 
 	struct DrawContext;
 	struct Transforms;
@@ -22,8 +23,8 @@ namespace gfx
 	{
 		friend class AABB;
 	public:
-		MeshRenderer(GraphicsDevice& gfx, std::string name, std::shared_ptr<Material> pMaterial, std::shared_ptr<IndexBuffer> pIndexBuffer, std::shared_ptr<Topology> pTopologyBuffer);
-		MeshRenderer(GraphicsDevice& gfx, std::string name, std::shared_ptr<Material> pMaterial, std::shared_ptr<VertexBufferWrapper> pVertexBuffer, std::shared_ptr<IndexBuffer> pIndexBuffer, std::shared_ptr<Topology> pTopologyBuffer);
+		MeshRenderer(GraphicsDevice& gfx, std::string name, std::shared_ptr<MeshAsset> const& pMeshAsset, std::shared_ptr<Material> pMaterial, std::shared_ptr<IndexBuffer> pIndexBuffer, std::shared_ptr<Topology> pTopologyBuffer);
+		MeshRenderer(GraphicsDevice& gfx, std::string name, std::shared_ptr<MeshAsset> const& pMeshAsset, std::shared_ptr<Material> pMaterial, std::shared_ptr<VertexBufferWrapper> pVertexBuffer, std::shared_ptr<IndexBuffer> pIndexBuffer, std::shared_ptr<Topology> pTopologyBuffer);
 		virtual ~MeshRenderer() = default;
 
 	public:
@@ -39,8 +40,8 @@ namespace gfx
 		std::string m_name;
 		std::shared_ptr<Material> m_pMaterial; // keep separate from other bindables for now...
 		mutable dx::XMFLOAT4X4 m_transform;
-		AABB m_aabb;
 	protected:
+		std::shared_ptr<MeshAsset> m_pMeshAsset;
 		std::shared_ptr<IndexBuffer> m_pIndexBuffer;
 		std::shared_ptr<VertexBufferWrapper> m_pVertexBufferWrapper;
 		std::shared_ptr<Topology> m_pTopology;

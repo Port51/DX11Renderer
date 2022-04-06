@@ -5,6 +5,7 @@
 #include "DepthStencilTarget.h"
 #include <random>
 #include "DX11Include.h"
+#include "RenderStats.h"
 #include "Config.h"
 
 namespace gfx
@@ -13,6 +14,7 @@ namespace gfx
 		: m_screenWidth(windowWidth)
 		, m_screenHeight(windowHeight)
 		, m_pLog(std::make_unique<Log>())
+		, m_pRenderStats(std::make_unique<RenderStats>())
 	{
 		m_pNullRenderTargetViews.resize(10u, nullptr);
 
@@ -55,7 +57,7 @@ namespace gfx
 			&m_pContext
 		));
 
-		// Verify compute shader is supported
+		// Verify compute shaders are supported
 		if (m_pDevice->GetFeatureLevel() < D3D_FEATURE_LEVEL_11_0)
 		{
 			D3D11_FEATURE_DATA_D3D10_X_HARDWARE_OPTIONS hwopts = { 0 };
@@ -147,22 +149,22 @@ namespace gfx
 		return m_imguiEnabled;
 	}
 
-	void GraphicsDevice::DrawIndexed(UINT indexCount)
+	void GraphicsDevice::DrawIndexed(UINT indexCount) const
 	{
 		m_pContext->DrawIndexed(indexCount, 0u, 0u);
 	}
 
-	void GraphicsDevice::DrawIndexedInstanced(UINT indexCount, UINT instanceCount)
+	void GraphicsDevice::DrawIndexedInstanced(UINT indexCount, UINT instanceCount) const
 	{
 		m_pContext->DrawIndexedInstanced(indexCount, instanceCount, 0u, 0, 0u);
 	}
 
-	void GraphicsDevice::SetDepthOnlyRenderTarget()
+	void GraphicsDevice::SetDepthOnlyRenderTarget() const
 	{
 		m_pContext->OMSetRenderTargets(0u, nullptr, m_pDepthStencil->GetView().Get());
 	}
 
-	void GraphicsDevice::SetDepthOnlyRenderTarget(const std::shared_ptr<DepthStencilTarget>& _pDepthStencil)
+	void GraphicsDevice::SetDepthOnlyRenderTarget(const std::shared_ptr<DepthStencilTarget>& _pDepthStencil) const
 	{
 		m_pContext->OMSetRenderTargets(0u, nullptr, _pDepthStencil->GetView().Get());
 	}
@@ -228,17 +230,22 @@ namespace gfx
 		return m_pContext;
 	}
 
-	const std::unique_ptr<Log>& GraphicsDevice::GetLog()
+	const std::unique_ptr<RenderStats>& GraphicsDevice::GetRenderStats() const
+	{
+		return m_pRenderStats;
+	}
+
+	const std::unique_ptr<Log>& GraphicsDevice::GetLog() const
 	{
 		return m_pLog;
 	}
 
-	const std::shared_ptr<DepthStencilTarget>& GraphicsDevice::GetDepthStencilTarget()
+	const std::shared_ptr<DepthStencilTarget>& GraphicsDevice::GetDepthStencilTarget() const
 	{
 		return m_pDepthStencil;
 	}
 
-	const ComPtr<ID3D11RenderTargetView>& GraphicsDevice::GetBackBufferView()
+	const ComPtr<ID3D11RenderTargetView>& GraphicsDevice::GetBackBufferView() const
 	{
 		return m_pBackBufferView;
 	}

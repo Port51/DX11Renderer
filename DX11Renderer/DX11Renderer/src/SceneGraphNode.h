@@ -43,7 +43,7 @@ namespace gfx
 		// Translation portions of TRS's
 		dx::XMFLOAT3 m_localTransformOffset;
 		dx::XMFLOAT3 m_accumulatedWorldTransformOffset;
-		// AABB that encapsulates any meshes at this node level or deeper
-		AABB m_boundingVolumeHierarchyAABB;
+		// AABB that encapsulates any object meshes at this node level or deeper
+		AABB m_boundingVolumeAABB;
 	};
 }

@@ -11,11 +11,12 @@ namespace gfx
 	class VertexBufferWrapper;
 	class IndexBuffer;
 	class Topology;
+	class MeshAsset;
 
 	class InstancedMeshRenderer : public MeshRenderer
 	{
 	public:
-		InstancedMeshRenderer(GraphicsDevice& gfx, std::string name, std::shared_ptr<Material> pMaterial, std::shared_ptr<VertexBufferWrapper> pVertexBuffer, std::shared_ptr<IndexBuffer> pIndexBuffer, std::shared_ptr<Topology> pTopologyBuffer, UINT instanceCount);
+		InstancedMeshRenderer(GraphicsDevice& gfx, std::string name, std::shared_ptr<MeshAsset> const& pMeshAsset, std::shared_ptr<Material> pMaterial, std::shared_ptr<VertexBufferWrapper> pVertexBuffer, std::shared_ptr<IndexBuffer> pIndexBuffer, std::shared_ptr<Topology> pTopologyBuffer, UINT instanceCount);
 	public:
 		void IssueDrawCall(GraphicsDevice& gfx) const override;
 	private:

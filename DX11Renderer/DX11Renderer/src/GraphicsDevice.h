@@ -12,6 +12,7 @@ struct IDXGISwapChain;
 namespace gfx
 {
 	class DepthStencilTarget;
+	class RenderStats;
 	class Log;
 
 	class GraphicsDevice
@@ -25,10 +26,10 @@ namespace gfx
 		void BeginFrame();
 		void EndFrame();
 		void ClearBuffer(float red, float green, float blue);
-		void DrawIndexed(UINT indexCount);
-		void DrawIndexedInstanced(UINT indexCount, UINT instanceCount);
-		void SetDepthOnlyRenderTarget();
-		void SetDepthOnlyRenderTarget(const std::shared_ptr<DepthStencilTarget>& pDepthStencil);
+		void DrawIndexed(UINT indexCount) const;
+		void DrawIndexedInstanced(UINT indexCount, UINT instanceCount) const;
+		void SetDepthOnlyRenderTarget() const;
+		void SetDepthOnlyRenderTarget(const std::shared_ptr<DepthStencilTarget>& pDepthStencil) const;
 		void SetRenderTarget(ComPtr<ID3D11RenderTargetView> renderTargetView);
 		void SetRenderTargets(std::vector<ID3D11RenderTargetView*> renderTargetViews);
 		void ClearRenderTargets();
@@ -39,14 +40,16 @@ namespace gfx
 	public:
 		const ComPtr<ID3D11Device> GetAdapter() const;
 		const ComPtr<ID3D11DeviceContext> GetContext() const;
-		const std::unique_ptr<Log>& GetLog();
-		const std::shared_ptr<DepthStencilTarget>& GetDepthStencilTarget();
-		const ComPtr<ID3D11RenderTargetView>& GetBackBufferView();
+		const std::unique_ptr<RenderStats>& GetRenderStats() const;
+		const std::unique_ptr<Log>& GetLog() const;
+		const std::shared_ptr<DepthStencilTarget>& GetDepthStencilTarget() const;
+		const ComPtr<ID3D11RenderTargetView>& GetBackBufferView() const;
 	public:
 		void EnableImgui();
 		void DisableImgui();
 		bool IsImguiEnabled() const;
 	private:
+		std::unique_ptr<RenderStats> m_pRenderStats;
 		std::unique_ptr<Log> m_pLog;
 		// Allocating stuff
 		ComPtr<ID3D11Device> m_pDevice;

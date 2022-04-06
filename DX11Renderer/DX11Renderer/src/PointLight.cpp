@@ -125,6 +125,7 @@ namespace gfx
 			const auto viewMatrix = dx::XMMatrixLookAtLH(lightPos, dx::XMVectorAdd(lightPos, viewDirectionsWS[i * 2u + 0u]), viewDirectionsWS[i * 2u + 1u]);
 
 			static Frustum frustum;
+			frustum.UpdatePlanesFromMatrix(viewMatrix * projMatrix);
 
 			// Setup transformation buffer
 			static GlobalTransformCB transformationCB;
@@ -137,7 +138,7 @@ namespace gfx
 			drawContext.projMatrix = projMatrix;
 
 			// This means all shadow draw calls need to be setup on the same thread
-			context.pRendererList->Filter(frustum, RendererList::RendererSorting::FrontToBack);
+			context.pRendererList->Filter(context.gfx, frustum, RendererList::RendererSorting::FrontToBack);
 			context.pRendererList->SubmitDrawCalls(drawContext);
 			auto ct = context.pRendererList->GetRendererCount();
 

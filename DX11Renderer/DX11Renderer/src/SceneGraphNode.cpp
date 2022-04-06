@@ -36,10 +36,10 @@ namespace gfx
 	void SceneGraphNode::RebuildBoundingVolumeHierarchy()
 	{
 		// Rebuilds all nodes in graph, in order of depth (deepest first)
-		std::unordered_map<int, std::vector<std::shared_ptr<SceneGraphNode>>> pNodesByDepth;
+		std::unordered_map<int, std::vector<std::pair<int, SceneGraphNode*>>> pNodesByDepth;
 
 		// Create map using breadth-first traversal
-		std::queue<std::pair<int, std::shared_ptr<SceneGraphNode>>> queue;
+		std::queue<std::pair<int, SceneGraphNode*>> queue;
 		queue.emplace(std::make_pair(0u, this));
 
 		int maxDepth = 0;
@@ -51,24 +51,25 @@ namespace gfx
 
 			auto node = first.second;
 			auto nodeDepth = first.first;
+			auto nodePair = std::make_pair(nodeDepth, node);
 			maxDepth = std::max(maxDepth, nodeDepth);
 
 			// Add to map
 			if (pNodesByDepth.find(nodeDepth) == pNodesByDepth.end())
 			{
-				std::vector<std::shared_ptr<SceneGraphNode>> depthVector;
-				depthVector.emplace_back(node);
+				std::vector<std::pair<int, SceneGraphNode*>> depthVector;
+				depthVector.emplace_back(nodePair);
 				pNodesByDepth.emplace(std::make_pair(nodeDepth, std::move(depthVector)));
 			}
 			else
 			{
-				pNodesByDepth.at(nodeDepth).emplace_back(node);
+				pNodesByDepth.at(nodeDepth).emplace_back(nodePair);
 			}
 
 			// Add children to queue
 			for (int i = 0, ct = node->m_pChildNodes.size(); i < ct; ++i)
 			{
-				queue.emplace(std::make_pair(nodeDepth + 1, node->m_pChildNodes.at(i)));
+				queue.emplace(std::make_pair(nodeDepth + 1, node->m_pChildNodes.at(i).get()));
 			}
 		}
 
@@ -79,20 +80,19 @@ namespace gfx
 			auto pNodes = pNodesByDepth.at(depth);
 			for (int i = 0, ct = pNodes.size(); i < ct; ++i)
 			{
-				pNodes[i]->RebuildBoundingVolume(false);
+				pNodes[i].second->RebuildBoundingVolume(false);
 			}
 		}
 	}
 
 	void SceneGraphNode::RebuildBoundingVolume(bool rebuildParents)
 	{
-		// todo: implement!
-		m_boundingVolumeHierarchyAABB.Clear();
+		m_boundingVolumeAABB.Clear();
 		if (m_pMeshRenderer != nullptr)
 		{
-			m_boundingVolumeHierarchyAABB.ExpandBoundsToFitAABB(m_pMeshRenderer->GetAABB());
+			m_boundingVolumeAABB.ExpandBoundsToFitAABB(m_pMeshRenderer->GetAABB());
 		}
-		m_boundingVolumeHierarchyAABB.ExpandBoundsToFitChildNodes(m_pChildNodes);
+		m_boundingVolumeAABB.ExpandBoundsToFitChildNodes(m_pChildNodes);
 
 		if (rebuildParents && m_pParentNode != nullptr)
 		{
@@ -112,7 +112,7 @@ namespace gfx
 
 	const AABB & SceneGraphNode::GetBoundingVolume() const
 	{
-		return m_boundingVolumeHierarchyAABB;
+		return m_boundingVolumeAABB;
 	}
 
 	const dx::XMVECTOR SceneGraphNode::GetPositionWS() const

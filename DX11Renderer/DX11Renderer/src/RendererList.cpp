@@ -1,4 +1,6 @@
 #include "pch.h"
+#include "GraphicsDevice.h"
+#include "RenderStats.h"
 #include "RendererList.h"
 #include "Frustum.h"
 #include "MeshRenderer.h"
@@ -30,7 +32,7 @@ namespace gfx
 		return (UINT)m_pRenderers.size();
 	}
 
-	void RendererList::Filter(const Frustum& frustum, RendererSorting sorting)
+	void RendererList::Filter(GraphicsDevice& gfx, const Frustum& frustum, RendererSorting sorting)
 	{
 		// Frustum culling
 		{
@@ -65,6 +67,7 @@ namespace gfx
 					{
 						// todo: get distance
 						m_pRenderers.emplace_back(std::make_pair(renderer, 0.f));
+						gfx.GetRenderStats()->AddVisibleRenderers(1u);
 					}
 				}
 			}

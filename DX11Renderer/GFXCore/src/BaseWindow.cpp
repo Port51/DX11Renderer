@@ -66,7 +66,7 @@ namespace gfxcore
 		windowClass.lpfnWndProc = HandleMsgSetup;
 		windowClass.hInstance = hInstance;
 		windowClass.hCursor = LoadCursor(NULL, IDC_ARROW);
-		windowClass.lpszClassName = "DX12CudaSampleClass";
+		windowClass.lpszClassName = "GfxWindowClass";
 
 		if (!RegisterClassEx(&windowClass))
 		{
@@ -99,37 +99,6 @@ namespace gfxcore
 		{
 			throw std::runtime_error("Failed to create window. Error code: " + std::to_string(GetLastError()));
 		}
-
-		// Initialize the sample. OnInit is defined in each child-implementation of DXSample.
-		//pSample->OnInit();
-
-		// Intended rect
-		/*RECT wr;
-		wr.left = 50;
-		wr.right = width + wr.left;
-		wr.top = 50;
-		wr.bottom = height + wr.top;
-
-		// Get larger size so interior region is requested size
-		if (!AdjustWindowRect(&wr, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, FALSE))
-		{
-			throw std::runtime_error("Failed to adjust window rect");
-		}
-
-		// Create window & get hWnd
-		hWnd = CreateWindow(
-			WindowClass::GetName(), SafeLPC(name),
-			WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,
-			CW_USEDEFAULT, CW_USEDEFAULT, wr.right - wr.left, wr.bottom - wr.top,
-			nullptr, nullptr, WindowClass::GetInstance(), this // pass instance as lpParam!
-		);
-		if (hWnd == nullptr)
-		{
-			throw std::runtime_error("Failed to create window");
-		}
-
-		// Show window
-		ShowWindow(hWnd, SW_SHOWDEFAULT);*/
 	}
 
 	BaseWindow::~BaseWindow()

@@ -26,8 +26,7 @@ namespace gfx
 		}
 
 		m_pSceneGraph = CreateModelInstanceNode(gfx, pModelAsset.m_pSceneGraph);
-		m_pSceneGraph->RebuildBoundingVolumeHierarchy();
-		RebuildSceneGraphTransforms();
+		InitializeModel();
 	}
 
 	ModelInstance::ModelInstance(GraphicsDevice & gfx, std::shared_ptr<ModelAsset> pModelAsset, dx::XMMATRIX transform)
@@ -41,6 +40,12 @@ namespace gfx
 		}
 
 		m_pSceneGraph = CreateModelInstanceNode(gfx, pModelAsset->m_pSceneGraph);
+		InitializeModel();
+	}
+
+	void ModelInstance::InitializeModel()
+	{
+		m_pSceneGraph->RebuildBoundingVolumeHierarchy();
 		RebuildSceneGraphTransforms();
 	}
 
@@ -174,11 +179,11 @@ namespace gfx
 
 		if (isInstance)
 		{
-			return std::make_shared<InstancedMeshRenderer>(gfx, pMeshAsset->m_name, pMaterial, std::move(pVertexBuffer), std::move(pIndexBuffer), std::move(pTopology), instanceCount);
+			return std::make_shared<InstancedMeshRenderer>(gfx, pMeshAsset->m_name, pMeshAsset, pMaterial, std::move(pVertexBuffer), std::move(pIndexBuffer), std::move(pTopology), instanceCount);
 		}
 		else
 		{
-			return std::make_shared<MeshRenderer>(gfx, pMeshAsset->m_name, pMaterial, std::move(pVertexBuffer), std::move(pIndexBuffer), std::move(pTopology));
+			return std::make_shared<MeshRenderer>(gfx, pMeshAsset->m_name, pMeshAsset, pMaterial, std::move(pVertexBuffer), std::move(pIndexBuffer), std::move(pTopology));
 		}
 	}
 }

@@ -5,6 +5,7 @@
 #include "Camera.h"
 #include "StructuredBuffer.h"
 #include "Renderer.h"
+#include "RenderStats.h"
 #include "RenderConstants.h"
 #include "PointLight.h"
 #include "Spotlight.h"
@@ -47,6 +48,8 @@ namespace gfx
 			}
 		}
 
+		m_lightVisibility.resize(m_pLights.size());
+
 		/*int shadowLightCt = 0;
 		for (const auto& l : pLights)
 		{
@@ -79,13 +82,13 @@ namespace gfx
 		}
 	}
 
-	void LightManager::CullLights(GraphicsDevice & gfx, const std::unique_ptr<Camera>& cam, bool enableShadows)
+	void LightManager::CullLightsAndShadows(const GraphicsDevice & gfx, const Camera& cam, bool enableShadows)
 	{
 		dx::XMFLOAT4 frustumCornersVS;
-		dx::XMStoreFloat4(&frustumCornersVS, cam->GetFrustumCornersVS());
+		dx::XMStoreFloat4(&frustumCornersVS, cam.GetFrustumCornersVS());
 
-		dx::XMVECTOR aabbCenter = dx::XMVectorSet(0.f, 0.f, (cam->GetNearClipPlane() + cam->GetFarClipPlane()) * 0.5f, 0.f);
-		dx::XMVECTOR aabbExtents = dx::XMVectorSet(frustumCornersVS.z * 0.5f, frustumCornersVS.w * -0.5f, cam->GetFarClipPlane() - cam->GetNearClipPlane(), 0.f);
+		dx::XMVECTOR aabbCenter = dx::XMVectorSet(0.f, 0.f, (cam.GetNearClipPlane() + cam.GetFarClipPlane()) * 0.5f, 0.f);
+		dx::XMVECTOR aabbExtents = dx::XMVectorSet(frustumCornersVS.z * 0.5f, frustumCornersVS.w * -0.5f, cam.GetFarClipPlane() - cam.GetNearClipPlane(), 0.f);
 
 		m_visibleLightCt = 0u;
 		int shadowMapIdx = 0;
@@ -97,14 +100,14 @@ namespace gfx
 				shadowMapIdx += m_pLights[i]->GetShadowTileCount();
 			}
 
-			const auto data = m_pLights[i]->GetLightData(cam->GetViewMatrix());
+			const auto data = m_pLights[i]->GetLightData(cam.GetViewMatrix());
 
 			bool inFrustum = true;
 			switch (m_pLights[i]->GetLightType())
 			{
 			case 0:
 				// Point light
-				inFrustum &= cam->GetFrustumVS().DoesSphereIntersect(data.positionVS_range);
+				inFrustum &= cam.GetFrustumVS().DoesSphereIntersect(data.positionVS_range);
 				break;
 			case 1:
 				// Spotlight (move sphere to middle and half the size)
@@ -112,16 +115,23 @@ namespace gfx
 				dx::XMStoreFloat4(&positionRange, data.positionVS_range);
 				auto lightSphere = dx::XMVectorAdd(data.positionVS_range, dx::XMVectorScale(data.directionVS, positionRange.w * 0.5f));
 				lightSphere = dx::XMVectorSetW(lightSphere, positionRange.w * 0.5f);
-				inFrustum &= cam->GetFrustumVS().DoesSphereIntersect(lightSphere);
+				inFrustum &= cam.GetFrustumVS().DoesSphereIntersect(lightSphere);
 				break;
 			case 2:
-				// Directional
+				// Directional - always render shadows
 				break;
 			}
 
 			if (inFrustum)
 			{
 				m_cachedLightData[m_visibleLightCt++] = data;
+				m_lightVisibility[i] = true;
+				gfx.GetRenderStats()->AddVisibleLights(1u);
+			}
+			else
+			{
+				m_lightVisibility[i] = false;
+				gfx.GetRenderStats()->AddCulledLights(1u);
 			}
 		}
 
@@ -162,17 +172,26 @@ namespace gfx
 		context.pRendererList = m_pShadowRendererList;
 
 		m_pShadowAtlas->Clear(context.gfx);
-		context.gfx.GetContext()->OMSetRenderTargets(0, nullptr, m_pShadowAtlas->GetView().Get());
+		context.gfx.GetContext()->OMSetRenderTargets(0u, nullptr, m_pShadowAtlas->GetView().Get());
 
 		// todo: cull shadows
 		for (int i = 0; i < m_pLights.size(); ++i)
 		{
 			if (m_pLights[i]->HasShadow())
 			{
-				int shadowMapIdx = m_pLights[i]->GetCurrentShadowIdx();
-				m_pLights[i]->RenderShadow(context); //, gfx, cam, pass, pTransformationCB
-				m_pLights[i]->AppendShadowData(shadowMapIdx, m_cachedShadowData);
-				shadowMapIdx += m_pLights[i]->GetShadowTileCount();
+				if (m_lightVisibility[i])
+				{
+					int shadowMapIdx = m_pLights[i]->GetCurrentShadowIdx();
+					m_pLights[i]->RenderShadow(context);
+					m_pLights[i]->AppendShadowData(shadowMapIdx, m_cachedShadowData);
+					shadowMapIdx += m_pLights[i]->GetShadowTileCount();
+
+					context.gfx.GetRenderStats()->AddVisibleShadows(m_pLights[i]->GetShadowTileCount());
+				}
+				else
+				{
+					context.gfx.GetRenderStats()->AddCulledShadows(m_pLights[i]->GetShadowTileCount());
+				}
 			}
 		}
 

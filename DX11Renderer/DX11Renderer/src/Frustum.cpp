@@ -118,29 +118,30 @@ namespace gfx
 		for (int i = 0; i < 6; ++i) {
 			// X axis 
 			if (planes[i].x > 0) {
-				dx::XMVectorSetX(vmin, dx::XMVectorGetX(minCornerWS));
+				vmin = dx::XMVectorSetX(vmin, dx::XMVectorGetX(minCornerWS));
 			}
 			else {
-				dx::XMVectorSetX(vmin, dx::XMVectorGetX(maxCornerWS));
+				vmin = dx::XMVectorSetX(vmin, dx::XMVectorGetX(maxCornerWS));
 			}
 
 			// Y axis 
 			if (planes[i].y > 0) {
-				dx::XMVectorSetY(vmin, dx::XMVectorGetY(minCornerWS));
+				vmin = dx::XMVectorSetY(vmin, dx::XMVectorGetY(minCornerWS));
 			}
 			else {
-				dx::XMVectorSetY(vmin, dx::XMVectorGetY(maxCornerWS));
+				vmin = dx::XMVectorSetY(vmin, dx::XMVectorGetY(maxCornerWS));
 			}
 
 			// Z axis 
 			if (planes[i].z > 0) {
-				dx::XMVectorSetZ(vmin, dx::XMVectorGetZ(minCornerWS));
+				vmin = dx::XMVectorSetZ(vmin, dx::XMVectorGetZ(minCornerWS));
 			}
 			else {
-				dx::XMVectorSetZ(vmin, dx::XMVectorGetZ(maxCornerWS));
+				vmin = dx::XMVectorSetZ(vmin, dx::XMVectorGetZ(maxCornerWS));
 			}
 
-			if (dx::XMVectorGetX(dx::XMVector3Dot(dx::XMLoadFloat4(&planes[i]), vmin)) + planes[i].w > 0.f)
+			float dotMin = dx::XMVectorGetX(dx::XMVector3Dot(dx::XMLoadFloat4(&planes[i]), vmin));
+			if (dotMin - planes[i].w > 0.f)
 			{
 				return false;
 			}
@@ -163,40 +164,42 @@ namespace gfx
 		for (int i = 0; i < 6; ++i) {
 			// X axis 
 			if (planes[i].x > 0) {
-				dx::XMVectorSetX(vmin, dx::XMVectorGetX(minCornerWS));
-				dx::XMVectorSetX(vmax, dx::XMVectorGetX(maxCornerWS));
+				vmin = dx::XMVectorSetX(vmin, dx::XMVectorGetX(minCornerWS));
+				vmax = dx::XMVectorSetX(vmax, dx::XMVectorGetX(maxCornerWS));
 			}
 			else {
-				dx::XMVectorSetX(vmin, dx::XMVectorGetX(maxCornerWS));
-				dx::XMVectorSetX(vmax, dx::XMVectorGetX(minCornerWS));
+				vmin = dx::XMVectorSetX(vmin, dx::XMVectorGetX(maxCornerWS));
+				vmax = dx::XMVectorSetX(vmax, dx::XMVectorGetX(minCornerWS));
 			}
 
 			// Y axis 
 			if (planes[i].y > 0) {
-				dx::XMVectorSetY(vmin, dx::XMVectorGetY(minCornerWS));
-				dx::XMVectorSetY(vmax, dx::XMVectorGetY(maxCornerWS));
+				vmin = dx::XMVectorSetY(vmin, dx::XMVectorGetY(minCornerWS));
+				vmax = dx::XMVectorSetY(vmax, dx::XMVectorGetY(maxCornerWS));
 			}
 			else {
-				dx::XMVectorSetY(vmin, dx::XMVectorGetY(maxCornerWS));
-				dx::XMVectorSetY(vmax, dx::XMVectorGetY(minCornerWS));
+				vmin = dx::XMVectorSetY(vmin, dx::XMVectorGetY(maxCornerWS));
+				vmax = dx::XMVectorSetY(vmax, dx::XMVectorGetY(minCornerWS));
 			}
 
 			// Z axis 
 			if (planes[i].z > 0) {
-				dx::XMVectorSetZ(vmin, dx::XMVectorGetZ(minCornerWS));
-				dx::XMVectorSetZ(vmax, dx::XMVectorGetZ(maxCornerWS));
+				vmin = dx::XMVectorSetZ(vmin, dx::XMVectorGetZ(minCornerWS));
+				vmax = dx::XMVectorSetZ(vmax, dx::XMVectorGetZ(maxCornerWS));
 			}
 			else {
-				dx::XMVectorSetZ(vmin, dx::XMVectorGetZ(maxCornerWS));
-				dx::XMVectorSetZ(vmax, dx::XMVectorGetZ(minCornerWS));
+				vmin = dx::XMVectorSetZ(vmin, dx::XMVectorGetZ(maxCornerWS));
+				vmax = dx::XMVectorSetZ(vmax, dx::XMVectorGetZ(minCornerWS));
 			}
 
-			if (dx::XMVectorGetX(dx::XMVector3Dot(dx::XMLoadFloat4(&planes[i]), vmin)) + planes[i].w > 0.f)
+			float dotMin = dx::XMVectorGetX(dx::XMVector3Dot(dx::XMLoadFloat4(&planes[i]), vmin));
+			float dotMax = dx::XMVectorGetX(dx::XMVector3Dot(dx::XMLoadFloat4(&planes[i]), vmax));
+			if (dotMin - planes[i].w > 0.f)
 			{
 				// Outside frustum
 				return 2;
 			}
-			if (dx::XMVectorGetX(dx::XMVector3Dot(dx::XMLoadFloat4(&planes[i]), vmax)) + planes[i].w >= 0.f)
+			if (dotMax - planes[i].w >= 0.f)
 			{
 				// Intersection
 				result = 0;

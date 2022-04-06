@@ -207,6 +207,7 @@
     <ClCompile Include="src\InstancedMeshRenderer.cpp" />
     <ClCompile Include="src\Light.cpp" />
     <ClCompile Include="src\LightManager.cpp" />
+    <ClCompile Include="src\RenderStats.cpp" />
     <ClCompile Include="src\SceneGraphNode.cpp" />
     <ClCompile Include="src\pch.cpp" />
     <ClCompile Include="src\RenderConstants.cpp" />
@@ -305,6 +306,7 @@
     <ClInclude Include="src\LightData.h" />
     <ClInclude Include="src\LightManager.h" />
     <ClInclude Include="src\LightShadowData.h" />
+    <ClInclude Include="src\RenderStats.h" />
     <ClInclude Include="src\SceneGraphNode.h" />
     <ClInclude Include="src\pch.h" />
     <ClInclude Include="src\RenderConstants.h" />

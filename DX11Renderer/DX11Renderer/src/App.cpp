@@ -13,6 +13,7 @@
 #include "LightManager.h"
 #include "Light.h"
 #include "Renderer.h"
+#include "RenderStats.h"
 
 namespace gfx
 {
@@ -229,6 +230,7 @@ namespace gfx
 			m_pCamera->DrawImguiControlWindow();
 			m_pLightManager->DrawImguiControlWindows();
 			Gfx().GetLog()->DrawImguiControlWindow();
+			Gfx().GetRenderStats()->DrawImguiControlWindow();
 		}
 
 		Gfx().EndFrame();

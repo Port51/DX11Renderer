@@ -59,8 +59,8 @@ namespace gfx
 		{
 			// Use offset to transform the other AABB into local space of current AABB
 			const auto localTransformOffset = dx::XMLoadFloat3(&pChildNodes[i]->m_localTransformOffset);
-			minCornerWS = dx::XMVectorMin(minCornerWS, dx::XMVectorAdd(pChildNodes[i]->m_boundingVolumeHierarchyAABB.GetMinimumCornerLS(), localTransformOffset));
-			maxCornerWS = dx::XMVectorMin(maxCornerWS, dx::XMVectorAdd(pChildNodes[i]->m_boundingVolumeHierarchyAABB.GetMaximumCornerLS(), localTransformOffset));
+			minCornerWS = dx::XMVectorMin(minCornerWS, dx::XMVectorAdd(pChildNodes[i]->m_boundingVolumeAABB.GetMinimumCornerLS(), localTransformOffset));
+			maxCornerWS = dx::XMVectorMin(maxCornerWS, dx::XMVectorAdd(pChildNodes[i]->m_boundingVolumeAABB.GetMaximumCornerLS(), localTransformOffset));
 		}
 
 		SetBoundsByMinMaxCorners(minCornerWS, maxCornerWS);

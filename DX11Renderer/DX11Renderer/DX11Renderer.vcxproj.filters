@@ -366,6 +366,9 @@
     <ClCompile Include="src\AABB.cpp">
       <Filter>Source\Common</Filter>
     </ClCompile>
+    <ClCompile Include="src\RenderStats.cpp">
+      <Filter>Source\RenderPipeline</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -637,6 +640,9 @@
     </ClInclude>
     <ClInclude Include="src\AABB.h">
       <Filter>Headers\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="src\RenderStats.h">
+      <Filter>Headers\RenderPipeline</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -45,7 +45,7 @@ namespace gfx
 		virtual ~LightManager() = default;
 	public:
 		void AddLightModelsToList(RendererList& pRendererList);
-		void CullLights(GraphicsDevice& gfx, const std::unique_ptr<Camera>& cam, bool enableShadows);
+		void CullLightsAndShadows(const GraphicsDevice& gfx, const Camera& cam, bool enableShadows);
 		std::unique_ptr<DepthStencilTarget>& GetShadowAtlas();
 		std::unique_ptr<ConstantBuffer<LightInputCB>>& GetLightInputCB();
 		void RenderShadows(ShadowPassContext context);
@@ -60,6 +60,7 @@ namespace gfx
 		const UINT GetClusterDimensionZ() const;
 		const std::unique_ptr<StructuredBuffer<int>>& GetClusteredIndices() const;
 	private:
+		std::vector<bool> m_lightVisibility;
 		std::vector<std::shared_ptr<Light>> m_pLights;
 		std::shared_ptr<DirectionalLight> m_pMainLight;
 		std::vector<LightData> m_cachedLightData;
