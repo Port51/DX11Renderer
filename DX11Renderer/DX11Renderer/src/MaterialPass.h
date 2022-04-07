@@ -6,6 +6,9 @@ namespace gfx
 	class Technique;
 	class MeshRenderer;
 	class Renderer;
+	class PixelShader;
+	class VertexShader;
+	class VertexLayout;
 
 	struct DrawContext;
 
@@ -17,10 +20,14 @@ namespace gfx
 	public:
 		MaterialPass();
 	public:
+		void SetPixelShader(std::shared_ptr<PixelShader> pPixelShader);
+		void SetVertexShader(std::shared_ptr<VertexShader> pVertexShader);
+		void SetVertexLayout(std::shared_ptr<VertexLayout> pVertexLayout);
+	public:
 		void SetRenderPass(std::string renderPass);
 		const std::string GetRenderPass() const;
 		void AddTechnique(std::unique_ptr<Technique> _pTechnique);
-		void SubmitDrawCalls(const MeshRenderer& meshRenderer, const DrawContext& drawContext) const;
+		void SubmitDrawCommands(const MeshRenderer& meshRenderer, const DrawContext& drawContext) const;
 	private:
 		std::unique_ptr<Technique> m_pTechnique;
 		std::string m_renderPass;

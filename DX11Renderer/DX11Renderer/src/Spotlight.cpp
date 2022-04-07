@@ -87,8 +87,8 @@ namespace gfx
 	{
 		// Apply look-at and local orientation
 		// +Y = up
-		const auto lightPos = dx::XMLoadFloat3(&m_positionWS);
-		const auto viewMatrix = dx::XMMatrixLookAtLH(lightPos, dx::XMVectorAdd(lightPos, GetDirectionWS()), dx::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
+		const auto lightPosWS = dx::XMLoadFloat3(&m_positionWS);
+		const auto viewMatrix = dx::XMMatrixLookAtLH(lightPosWS, dx::XMVectorAdd(lightPosWS, GetDirectionWS()), dx::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
 
 		float fovTheta = dx::XMConvertToRadians(2.0f * m_outerAngle);
 		const float nearPlane = 0.1f;
@@ -108,7 +108,7 @@ namespace gfx
 		drawContext.projMatrix = projMatrix;
 
 		// This means all shadow draw calls need to be setup on the same thread
-		context.pRendererList->Filter(context.gfx, frustum, RendererList::RendererSorting::FrontToBack);
+		context.pRendererList->Filter(context.gfx, frustum, RendererList::RendererSortingType::StateThenFrontToBack, lightPosWS, GetDirectionWS(), m_range);
 		context.pRendererList->SubmitDrawCalls(drawContext);
 		auto ct = context.pRendererList->GetRendererCount();
 

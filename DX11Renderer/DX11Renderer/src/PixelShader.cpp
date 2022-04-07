@@ -6,8 +6,11 @@
 
 namespace gfx
 {
+	u16 PixelShader::m_nextInstanceIdx = 1u; // start from 1, as 0 is reserved for "no pixel shader"
+
 	PixelShader::PixelShader(const GraphicsDevice& gfx, const std::string& path)
-		: m_path(path)
+		: m_instanceIdx(m_nextInstanceIdx++), // overflow is unlikely, but ok here
+		m_path(path)
 	{
 		ComPtr<ID3DBlob> pBlob;
 		std::wstring wide{ path.begin(), path.end() }; // convert to wide for file read <-- won't work for special characters
@@ -18,6 +21,11 @@ namespace gfx
 	void PixelShader::BindPS(const GraphicsDevice& gfx, UINT slot)
 	{
 		gfx.GetContext()->PSSetShader(m_pPixelShader.Get(), nullptr, 0u);
+	}
+
+	const u16 PixelShader::GetInstanceIdx() const
+	{
+		return m_instanceIdx;
 	}
 
 	std::shared_ptr<PixelShader> PixelShader::Resolve(const GraphicsDevice& gfx, const std::string& path)

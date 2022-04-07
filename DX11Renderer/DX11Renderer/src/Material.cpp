@@ -65,8 +65,6 @@ namespace gfx
 		// For unpacking material passes
 		std::string materialPassName;
 		std::unique_ptr<MaterialPass> pMaterialPass;
-		std::unique_ptr<Technique> pTechnique;
-		std::unique_ptr<RenderStep> pPassStep;
 
 		TextParser parser(_materialAssetPath);
 		TextParser::ParsedKeyValues p;
@@ -93,12 +91,9 @@ namespace gfx
 					// If no pixel shader, bind null
 					if (m_pPixelShader == nullptr)
 					{
-						pPassStep->AddBinding(NullPixelShader::Resolve(gfx))
-							.SetupPSBinding(0u);
+						pMaterialPass->SetPixelShader(nullptr);
 					}
 
-					pTechnique->AddStep(std::move(pPassStep));
-					pMaterialPass->AddTechnique(std::move(pTechnique));
 					m_pPasses.emplace(materialPassName, std::move(pMaterialPass));
 
 					// Error check
@@ -114,7 +109,6 @@ namespace gfx
 				if (state == MaterialParseState::Pass)
 				{
 					// Read pass name
-					pPassStep = std::make_unique<RenderStep>(p.values[0]);
 					materialPassName = std::move(p.values[0]);
 					pMaterialPass->SetRenderPass(materialPassName);
 
@@ -161,6 +155,7 @@ namespace gfx
 					m_pVertexShader = VertexShader::Resolve(gfx, vertexShaderName.c_str());
 					const auto pvsbc = m_pVertexShader->GetBytecode();
 
+					pMaterialPass->SetVertexShader(m_pVertexShader);
 					pPassStep->AddBinding(m_pVertexShader)
 						.SetupVSBinding(0u);
 					pPassStep->AddBinding(InputLayout::Resolve(gfx, std::move(m_vertexLayout), vertexShaderName, pvsbc))
@@ -212,9 +207,28 @@ namespace gfx
 		{
 			if (m_pPasses.find(passName) != m_pPasses.end())
 			{
-				m_pPasses.at(passName)->SubmitDrawCalls(meshRenderer, drawContext);
+				m_pPasses.at(passName)->SubmitDrawCall(meshRenderer, drawContext);
 			}
 		}
+	}
+
+	const u64 Material::GetMaterialCode() const
+	{
+		// Create sorting code that minimizes state changes
+		// Cost determines the order:
+		// Shader program > ROP > texture bindings > vertex format > UBO bindings > vert bindings > uniform updates
+
+		// Actually use 48 bits for this, as 16 will be used for depth
+		// 10 bits - pixel shader (1024 possible)
+		// 10 bits - vertex shader (1024 possible)
+		// 2 bits - rasterizer state (4 possible)
+		// 12 bits - texture bindings
+		// 8 bits - vertex layout (256 possible)
+		// 6 bits - UBO bindings (64 possible)
+		auto ps = (m_pPixelShader != nullptr) ? m_pPixelShader->GetInstanceIdx() : 0u;
+		auto vs = (m_pVertexShader != nullptr) ? m_pVertexShader->GetInstanceIdx() : 0u;
+		return ps << 38u
+			+ vs << 28u;
 	}
 
 	const VertexLayout& Material::GetVertexLayout() const

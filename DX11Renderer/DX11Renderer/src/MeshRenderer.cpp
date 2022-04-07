@@ -79,6 +79,11 @@ namespace gfx
 		return m_pMeshAsset->m_aabb;
 	}
 
+	const u64 MeshRenderer::GetMaterialCode() const
+	{
+		return m_pMaterial->GetMaterialCode();
+	}
+
 	void MeshRenderer::IssueDrawCall(const GraphicsDevice& gfx) const
 	{
 		gfx.DrawIndexed(GetIndexCount());

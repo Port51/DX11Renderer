@@ -25,6 +25,8 @@ namespace gfx
 		void Bind(const GraphicsDevice& gfx, std::string_view passName);
 		void SubmitDrawCalls(const MeshRenderer& meshRenderer, const DrawContext& drawContext) const;
 	public:
+		// Packs shaders and uniform data for sorting
+		const u64 GetMaterialCode() const;
 		const VertexLayout& GetVertexLayout() const;
 		static std::shared_ptr<Bindable> Resolve(const GraphicsDevice& gfx, const std::string_view assetPath);
 	protected:

@@ -16,10 +16,13 @@ namespace gfx
 	class RendererList
 	{
 	public:
-		enum RendererSorting
+		enum RendererSortingType
 		{
-			BackToFront,
-			FrontToBack
+			StateThenBackToFront,
+			StateThenFrontToBack,
+			BackToFrontThenState,
+			FrontToBackThenState,
+			State
 		};
 	public:
 		RendererList() {}
@@ -27,17 +30,16 @@ namespace gfx
 		virtual ~RendererList() = default;
 	public:
 		const UINT GetRendererCount() const;
-		void Filter(const GraphicsDevice& gfx, const Frustum& frustum, RendererSorting sorting);
+		void Filter(const GraphicsDevice& gfx, const Frustum& frustum, RendererSortingType sorting, dx::XMVECTOR originWS, dx::XMVECTOR directionWS, float farClipPlane);
 		void SubmitDrawCalls(const DrawContext& drawContext) const;
 		void AddModelInstance(const ModelInstance& modelInstance);
 		void AddSceneGraph(const std::shared_ptr<SceneGraphNode> pSceneGraph);
 	private:
-		static bool SortFrontToBack(const std::pair<std::shared_ptr<MeshRenderer>, float>& a, const std::pair<std::shared_ptr<MeshRenderer>, float>& b);
-		static bool SortBackToFront(const std::pair<std::shared_ptr<MeshRenderer>, float>& a, const std::pair<std::shared_ptr<MeshRenderer>, float>& b);
+		static bool SortByCode(const std::pair<std::shared_ptr<MeshRenderer>, u64>& a, const std::pair<std::shared_ptr<MeshRenderer>, u64>& b);
 	private:
 		// Float measures view distance
 		std::shared_ptr<RendererList> m_pSource;
 		std::vector<std::shared_ptr<SceneGraphNode>> m_pSceneGraphs;
-		std::vector<std::pair<std::shared_ptr<MeshRenderer>, float>> m_pRenderers;
+		std::vector<std::pair<std::shared_ptr<MeshRenderer>, u64>> m_pRenderers;
 	};
 }

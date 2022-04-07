@@ -32,7 +32,7 @@ namespace gfx
 
 	void RenderPass::EnqueueJob(DrawCall job)
 	{
-		m_jobs.push_back(job);
+		m_jobs.push_back(std::move(job));
 	}
 
 	void RenderPass::BindSharedResources(const GraphicsDevice& gfx) const

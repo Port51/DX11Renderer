@@ -331,7 +331,7 @@ namespace gfx
 			drawContext.projMatrix = camera.GetProjectionMatrix();
 
 			// todo: filter by render passes too
-			m_pVisibleRendererList->Filter(gfx, camera.GetFrustumWS(), RendererList::RendererSorting::BackToFront);
+			m_pVisibleRendererList->Filter(gfx, camera.GetFrustumWS(), RendererList::RendererSortingType::StateThenBackToFront, camera.GetPositionWS(), camera.GetForwardWS(), camera.GetFarClipPlane());
 			m_pVisibleRendererList->SubmitDrawCalls(drawContext);
 		}
 

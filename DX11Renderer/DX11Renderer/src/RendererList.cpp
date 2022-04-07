@@ -17,14 +17,9 @@ namespace gfx
 		m_pRenderers.reserve(m_pSource->m_pRenderers.size());
 	}
 
-	bool RendererList::SortFrontToBack(const std::pair<std::shared_ptr<MeshRenderer>, float>& a, const std::pair<std::shared_ptr<MeshRenderer>, float>& b)
+	bool RendererList::SortByCode(const std::pair<std::shared_ptr<MeshRenderer>, u64>& a, const std::pair<std::shared_ptr<MeshRenderer>, u64>& b)
 	{
 		return (a.second < b.second);
-	}
-
-	bool RendererList::SortBackToFront(const std::pair<std::shared_ptr<MeshRenderer>, float>& a, const std::pair<std::shared_ptr<MeshRenderer>, float>& b)
-	{
-		return (a.second > b.second);
 	}
 
 	const UINT RendererList::GetRendererCount() const
@@ -32,8 +27,13 @@ namespace gfx
 		return (UINT)m_pRenderers.size();
 	}
 
-	void RendererList::Filter(const GraphicsDevice& gfx, const Frustum& frustum, RendererSorting sorting)
+	void RendererList::Filter(const GraphicsDevice& gfx, const Frustum& frustum, RendererSortingType sorting, dx::XMVECTOR originWS, dx::XMVECTOR directionWS, float farClipPlane)
 	{
+		const bool testDepth = (sorting != RendererSortingType::State);
+		const bool reverseDepth = (sorting == RendererSortingType::BackToFrontThenState || sorting == RendererSortingType::StateThenBackToFront);
+		const bool sortStateFirst = (sorting == RendererSortingType::StateThenBackToFront || sorting == RendererSortingType::StateThenFrontToBack);
+		const float rcpFarClipPlane = 1.f / farClipPlane;
+
 		// Frustum culling
 		{
 			// Use queue to avoid recursion
@@ -65,28 +65,43 @@ namespace gfx
 					if (renderer != nullptr
 						&& frustum.DoesAABBIntersect(renderer->GetAABB(), nodePositionWS))
 					{
-						// todo: get distance
-						m_pRenderers.emplace_back(std::make_pair(renderer, 0.f));
+						// Then construct sorting code
+
+						u64 code;
+						if (testDepth)
+						{
+							// Combine depth and state
+
+							// Get view depth as that doesn't require an inverse square root (slow)
+							float depth = dx::XMVectorGetX(dx::XMVector3Dot(dx::XMVectorSubtract(renderer->GetAABB().GetCenterWS(nodePositionWS), originWS), directionWS));
+							float depthPercentage = std::min(depth * rcpFarClipPlane, 1.f);
+							if (reverseDepth)
+							{
+								depthPercentage = 1.f - depthPercentage;
+							}
+
+							const u64 depthCode = 65535u * depthPercentage; // use 16 bits for depth
+							const u64 materialCode = renderer->GetMaterialCode();
+
+							code = (sortStateFirst) ?
+								(materialCode << 16u) + depthCode
+								: (depthCode << 48u) + materialCode;
+						}
+						else
+						{
+							// Only sort by state
+							code = renderer->GetMaterialCode();
+						}
+						
+
+						m_pRenderers.emplace_back(std::make_pair(renderer, code));
 						gfx.GetRenderStats().AddVisibleRenderers(1u);
 					}
 				}
 			}
 		}
 		
-		// todo: make sort keys to minimize shader program changes
-		switch (sorting)
-		{
-		case RendererSorting::BackToFront:
-			std::sort(m_pRenderers.begin(), m_pRenderers.end(), SortBackToFront);
-			break;
-		case RendererSorting::FrontToBack:
-			std::sort(m_pRenderers.begin(), m_pRenderers.end(), SortFrontToBack);
-			break;
-		default:
-			throw std::runtime_error("Unrecognized sorting method!");
-			break;
-		}
-
+		std::sort(m_pRenderers.begin(), m_pRenderers.end(), SortByCode);
 	}
 
 	void RendererList::SubmitDrawCalls(const DrawContext& drawContext) const
@@ -97,7 +112,7 @@ namespace gfx
 		}
 	}
 
-	void RendererList::AddModelInstance(const ModelInstance& modelInstance)
+	void RendererList::AddModelInstance(const ModelInstance & modelInstance)
 	{
 		m_pSceneGraphs.emplace_back(std::move(modelInstance.GetSceneGraph()));
 	}

@@ -10,8 +10,11 @@ namespace gfx
 {
 	using namespace std::string_literals;
 
+	u16 VertexShader::m_nextInstanceIdx = 1u; // start from 1, as 0 is reserved for "no vertex shader"
+
 	VertexShader::VertexShader(const GraphicsDevice& gfx, const std::string& path)
-		: m_path(path)
+		: m_instanceIdx(m_nextInstanceIdx++), // overflow is unlikely, but ok here
+		m_path(path)
 	{
 		std::wstring wide{ path.begin(), path.end() }; // convert to wide for file read <-- won't work for special characters
 		THROW_IF_FAILED(D3DReadFileToBlob(wide.c_str(), &m_pBytecodeBlob));
@@ -33,9 +36,11 @@ namespace gfx
 		return m_pBytecodeBlob.Get();
 	}
 
-	///
-	/// If needed, will create bindable and add to bindable codex
-	///
+	const u16 VertexShader::GetInstanceIdx() const
+	{
+		return m_instanceIdx;
+	}
+
 	std::shared_ptr<VertexShader> VertexShader::Resolve(const GraphicsDevice& gfx, const std::string& path)
 	{
 		return std::move(Codex::Resolve<VertexShader>(gfx, GenerateUID(path), path));

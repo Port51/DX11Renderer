@@ -121,8 +121,8 @@ namespace gfx
 		{
 			// Apply look-at and local orientation
 			// +Y = up
-			const auto lightPos = dx::XMLoadFloat3(&m_positionWS);
-			const auto viewMatrix = dx::XMMatrixLookAtLH(lightPos, dx::XMVectorAdd(lightPos, viewDirectionsWS[i * 2u + 0u]), viewDirectionsWS[i * 2u + 1u]);
+			const auto lightPosWS = dx::XMLoadFloat3(&m_positionWS);
+			const auto viewMatrix = dx::XMMatrixLookAtLH(lightPosWS, dx::XMVectorAdd(lightPosWS, viewDirectionsWS[i * 2u + 0u]), viewDirectionsWS[i * 2u + 1u]);
 
 			static Frustum frustum;
 			frustum.UpdatePlanesFromMatrix(viewMatrix * projMatrix);
@@ -138,7 +138,7 @@ namespace gfx
 			drawContext.projMatrix = projMatrix;
 
 			// This means all shadow draw calls need to be setup on the same thread
-			context.pRendererList->Filter(context.gfx, frustum, RendererList::RendererSorting::FrontToBack);
+			context.pRendererList->Filter(context.gfx, frustum, RendererList::RendererSortingType::StateThenFrontToBack, lightPosWS, viewDirectionsWS[i * 2u + 0u], m_range);
 			context.pRendererList->SubmitDrawCalls(drawContext);
 			auto ct = context.pRendererList->GetRendererCount();
 

@@ -29,7 +29,7 @@ namespace gfx
 		m_pTechnique = std::move(_pTechnique);
 	}
 
-	void MaterialPass::SubmitDrawCalls(const MeshRenderer& meshRenderer, const DrawContext& drawContext) const
+	void MaterialPass::SubmitDrawCommands(const MeshRenderer& meshRenderer, const DrawContext& drawContext) const
 	{
 		m_pTechnique->SubmitDrawCalls(meshRenderer, drawContext);
 	}
