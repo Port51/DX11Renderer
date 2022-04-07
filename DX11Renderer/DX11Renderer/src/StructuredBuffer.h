@@ -25,12 +25,12 @@ namespace gfx
 
 			THROW_IF_FAILED(gfx.GetAdapter()->CreateBuffer(&bd, nullptr, &m_pBuffer));
 
-			if (bindFlags & D3D11_BIND_SHADER_RESOURCE)
+			if (bindFlags& D3D11_BIND_SHADER_RESOURCE)
 			{
 				THROW_IF_FAILED(gfx.GetAdapter()->CreateShaderResourceView(m_pBuffer.Get(), nullptr, &m_pSRV));
 			}
 
-			if (bindFlags & D3D11_BIND_UNORDERED_ACCESS)
+			if (bindFlags& D3D11_BIND_UNORDERED_ACCESS)
 			{
 				if (!useCounter)
 				{

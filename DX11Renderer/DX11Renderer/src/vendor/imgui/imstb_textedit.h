@@ -10,7 +10,7 @@
 // This C header file implements the guts of a multi-line text-editing
 // widget; you implement display, word-wrapping, and low-level string
 // insertion/deletion, and stb_textedit will map user inputs into
-// insertions & deletions, plus updates to the cursor position,
+// insertions& deletions, plus updates to the cursor position,
 // selection state, and undo state.
 //
 // It is intended for use in games and other systems that need to build
@@ -864,13 +864,13 @@ retry:
       case STB_TEXTEDIT_K_PGDOWN | STB_TEXTEDIT_K_SHIFT: {
          StbFindState find;
          StbTexteditRow row;
-         int i, j, sel = (key & STB_TEXTEDIT_K_SHIFT) != 0;
-         int is_page = (key & ~STB_TEXTEDIT_K_SHIFT) == STB_TEXTEDIT_K_PGDOWN;
+         int i, j, sel = (key& STB_TEXTEDIT_K_SHIFT) != 0;
+         int is_page = (key& ~STB_TEXTEDIT_K_SHIFT) == STB_TEXTEDIT_K_PGDOWN;
          int row_count = is_page ? state->row_count_per_page : 1;
 
          if (!is_page && state->single_line) {
             // on windows, up&down in single-line behave like left&right
-            key = STB_TEXTEDIT_K_RIGHT | (key & STB_TEXTEDIT_K_SHIFT);
+            key = STB_TEXTEDIT_K_RIGHT | (key& STB_TEXTEDIT_K_SHIFT);
             goto retry;
          }
 
@@ -931,13 +931,13 @@ retry:
       case STB_TEXTEDIT_K_PGUP | STB_TEXTEDIT_K_SHIFT: {
          StbFindState find;
          StbTexteditRow row;
-         int i, j, prev_scan, sel = (key & STB_TEXTEDIT_K_SHIFT) != 0;
-         int is_page = (key & ~STB_TEXTEDIT_K_SHIFT) == STB_TEXTEDIT_K_PGUP;
+         int i, j, prev_scan, sel = (key& STB_TEXTEDIT_K_SHIFT) != 0;
+         int is_page = (key& ~STB_TEXTEDIT_K_SHIFT) == STB_TEXTEDIT_K_PGUP;
          int row_count = is_page ? state->row_count_per_page : 1;
 
          if (!is_page && state->single_line) {
             // on windows, up&down become left&right
-            key = STB_TEXTEDIT_K_LEFT | (key & STB_TEXTEDIT_K_SHIFT);
+            key = STB_TEXTEDIT_K_LEFT | (key& STB_TEXTEDIT_K_SHIFT);
             goto retry;
          }
 
@@ -1145,7 +1145,7 @@ static void stb_textedit_discard_undo(StbUndoState *state)
 }
 
 // discard the oldest entry in the redo list--it's bad if this
-// ever happens, but because undo & redo have to store the actual
+// ever happens, but because undo& redo have to store the actual
 // characters in different cases, the redo character buffer can
 // fill up even though the undo buffer didn't
 static void stb_textedit_discard_redo(StbUndoState *state)

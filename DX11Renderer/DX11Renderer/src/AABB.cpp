@@ -32,7 +32,7 @@ namespace gfx
 		SetBoundsByMinMaxCorners(minCornerOS, maxCornerOS);
 	}
 
-	void AABB::ExpandBoundsToFitAABB(const AABB & other)
+	void AABB::ExpandBoundsToFitAABB(const AABB& other)
 	{
 		// Assume there is no local offset
 		SetBoundsByMinMaxCorners(
@@ -41,7 +41,7 @@ namespace gfx
 		);
 	}
 
-	void AABB::ExpandBoundsToFitAABB(const AABB & other, const dx::XMVECTOR offset)
+	void AABB::ExpandBoundsToFitAABB(const AABB& other, const dx::XMVECTOR offset)
 	{
 		// Use offset to transform the other AABB into local space of current AABB
 		SetBoundsByMinMaxCorners(
@@ -137,14 +137,14 @@ namespace gfx
 		return sdfSqr <= range * range;
 	}
 
-	const bool AABB::DoesAABBIntersect(const AABB & other) const
+	const bool AABB::DoesAABBIntersect(const AABB& other) const
 	{
 		// Displacement must be <= combined extents
 		const auto absDisplWS = dx::XMVectorAbs(dx::XMVectorSubtract(other.GetCenterLS(), GetCenterLS()));
 		return dx::XMVector3LessOrEqual(absDisplWS, dx::XMVectorAdd(other.GetExtentsLS(), GetExtentsLS()));
 	}
 
-	/*const bool AABB::FastFrustumIntersects(const Frustum & frustum) const
+	/*const bool AABB::FastFrustumIntersects(const Frustum& frustum) const
 	{
 		// Reference: https://www.gamedev.net/forums/topic/512123-fast--and-correct-frustum---aabb-intersection/
 		const auto minCornerWS = GetMinimumCornerLS();
@@ -185,7 +185,7 @@ namespace gfx
 	}
 
 	// Return values: 0 = intersection, 1 = inside frustum, 2 = outside frustum
-	const int AABB::FrustumIntersects(const Frustum & frustum) const
+	const int AABB::FrustumIntersects(const Frustum& frustum) const
 	{
 		// Reference: https://www.gamedev.net/forums/topic/512123-fast--and-correct-frustum---aabb-intersection/
 		int result = 1;

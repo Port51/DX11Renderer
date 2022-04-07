@@ -13,12 +13,12 @@ namespace gfx
 	RenderStep::RenderStep(std::string _targetPass)
 		: m_targetPass{ _targetPass }
 	{}
-	Binding & RenderStep::AddBinding(std::shared_ptr<Bindable> pBindable)
+	Binding& RenderStep::AddBinding(std::shared_ptr<Bindable> pBindable)
 	{
 		m_bindings.push_back(Binding(std::move(pBindable)));
 		return m_bindings[m_bindings.size() - 1];
 	}
-	Binding & RenderStep::AddBinding(Binding pBinding)
+	Binding& RenderStep::AddBinding(Binding pBinding)
 	{
 		m_bindings.push_back(std::move(pBinding));
 		return m_bindings[m_bindings.size() - 1];

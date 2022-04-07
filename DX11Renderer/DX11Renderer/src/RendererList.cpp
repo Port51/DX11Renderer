@@ -97,7 +97,7 @@ namespace gfx
 		}
 	}
 
-	void RendererList::AddModelInstance(const ModelInstance & modelInstance)
+	void RendererList::AddModelInstance(const ModelInstance& modelInstance)
 	{
 		m_pSceneGraphs.emplace_back(std::move(modelInstance.GetSceneGraph()));
 	}

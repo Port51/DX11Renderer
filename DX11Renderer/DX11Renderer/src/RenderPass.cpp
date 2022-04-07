@@ -146,7 +146,7 @@ namespace gfx
 		m_jobs.clear();
 	}
 
-	RenderPass & RenderPass::ClearBinds()
+	RenderPass& RenderPass::ClearBinds()
 	{
 		m_CS_CB_Binds.clear();
 		m_CS_SRV_Binds.clear();
@@ -161,67 +161,67 @@ namespace gfx
 		return *this;
 	}
 
-	RenderPass & RenderPass::CSSetCB(UINT slot, ComPtr<ID3D11Buffer> pResource)
+	RenderPass& RenderPass::CSSetCB(UINT slot, ComPtr<ID3D11Buffer> pResource)
 	{
 		m_CS_CB_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11Buffer>>(slot, pResource));
 		return *this;
 	}
 
-	RenderPass & RenderPass::CSSetSRV(UINT slot, ComPtr<ID3D11ShaderResourceView> pResource)
+	RenderPass& RenderPass::CSSetSRV(UINT slot, ComPtr<ID3D11ShaderResourceView> pResource)
 	{
 		m_CS_SRV_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11ShaderResourceView>>(slot, pResource));
 		return *this;
 	}
 
-	RenderPass & RenderPass::CSSetUAV(UINT slot, ComPtr<ID3D11UnorderedAccessView> pResource)
+	RenderPass& RenderPass::CSSetUAV(UINT slot, ComPtr<ID3D11UnorderedAccessView> pResource)
 	{
 		m_CS_UAV_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11UnorderedAccessView>>(slot, pResource));
 		return *this;
 	}
 
-	RenderPass & RenderPass::CSSetSPL(UINT slot, ComPtr<ID3D11SamplerState> pResource)
+	RenderPass& RenderPass::CSSetSPL(UINT slot, ComPtr<ID3D11SamplerState> pResource)
 	{
 		m_CS_SPL_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11SamplerState>>(slot, pResource));
 		return *this;
 	}
 
-	RenderPass & RenderPass::VSSetCB(UINT slot, ComPtr<ID3D11Buffer> pResource)
+	RenderPass& RenderPass::VSSetCB(UINT slot, ComPtr<ID3D11Buffer> pResource)
 	{
 		m_VS_CB_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11Buffer>>(slot, pResource));
 		return *this;
 	}
 
-	RenderPass & RenderPass::VSSetSRV(UINT slot, ComPtr<ID3D11ShaderResourceView> pResource)
+	RenderPass& RenderPass::VSSetSRV(UINT slot, ComPtr<ID3D11ShaderResourceView> pResource)
 	{
 		m_VS_SRV_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11ShaderResourceView>>(slot, pResource));
 		return *this;
 	}
 
-	RenderPass & RenderPass::VSSetSPL(UINT slot, ComPtr<ID3D11SamplerState> pResource)
+	RenderPass& RenderPass::VSSetSPL(UINT slot, ComPtr<ID3D11SamplerState> pResource)
 	{
 		m_VS_SPL_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11SamplerState>>(slot, pResource));
 		return *this;
 	}
 
-	RenderPass & RenderPass::PSSetCB(UINT slot, ComPtr<ID3D11Buffer> pResource)
+	RenderPass& RenderPass::PSSetCB(UINT slot, ComPtr<ID3D11Buffer> pResource)
 	{
 		m_PS_CB_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11Buffer>>(slot, pResource));
 		return *this;
 	}
 
-	RenderPass & RenderPass::PSSetSRV(UINT slot, ComPtr<ID3D11ShaderResourceView> pResource)
+	RenderPass& RenderPass::PSSetSRV(UINT slot, ComPtr<ID3D11ShaderResourceView> pResource)
 	{
 		m_PS_SRV_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11ShaderResourceView>>(slot, pResource));
 		return *this;
 	}
 
-	RenderPass & RenderPass::PSSetSPL(UINT slot, ComPtr<ID3D11SamplerState> pResource)
+	RenderPass& RenderPass::PSSetSPL(UINT slot, ComPtr<ID3D11SamplerState> pResource)
 	{
 		m_PS_SPL_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11SamplerState>>(slot, pResource));
 		return *this;
 	}
 
-	RenderPass & RenderPass::SetCameraColorOut(std::shared_ptr<RenderTexture> pCameraColor)
+	RenderPass& RenderPass::SetCameraColorOut(std::shared_ptr<RenderTexture> pCameraColor)
 	{
 		m_pCameraColorOut = pCameraColor;
 		return *this;

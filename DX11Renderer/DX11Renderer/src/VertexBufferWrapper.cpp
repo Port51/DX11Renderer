@@ -77,17 +77,17 @@ namespace gfx
 		gfx.GetAdapter()->CreateBuffer(&bd, &sd, &m_pBufferArray[1]);
 	}
 
-	std::shared_ptr<VertexBufferWrapper> VertexBufferWrapper::Resolve(const GraphicsDevice& gfx, std::string id, const BaseBufferData & vertexBuffer)
+	std::shared_ptr<VertexBufferWrapper> VertexBufferWrapper::Resolve(const GraphicsDevice& gfx, std::string id, const BaseBufferData& vertexBuffer)
 	{
 		return std::move(Codex::Resolve<VertexBufferWrapper>(gfx, GenerateUID(id), vertexBuffer));
 	}
 
-	std::shared_ptr<VertexBufferWrapper> VertexBufferWrapper::Resolve(const GraphicsDevice& gfx, std::string id, const BaseBufferData & vertexBuffer, const BaseBufferData & instanceBuffer)
+	std::shared_ptr<VertexBufferWrapper> VertexBufferWrapper::Resolve(const GraphicsDevice& gfx, std::string id, const BaseBufferData& vertexBuffer, const BaseBufferData& instanceBuffer)
 	{
 		return std::move(Codex::Resolve<VertexBufferWrapper>(gfx, GenerateUID(id), vertexBuffer, instanceBuffer));
 	}
 
-	std::string VertexBufferWrapper::GenerateUID(const std::string & tag)
+	std::string VertexBufferWrapper::GenerateUID(const std::string& tag)
 	{
 		using namespace std::string_literals;
 		return typeid(VertexBufferWrapper).name() + "#"s + tag;

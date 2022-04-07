@@ -106,7 +106,7 @@ namespace gfx
 	}
 
 	// Fast version that only checks for intersection
-	const bool Frustum::DoesAABBIntersect(const AABB & aabb, const dx::XMVECTOR aabbObjectPosition) const
+	const bool Frustum::DoesAABBIntersect(const AABB& aabb, const dx::XMVECTOR aabbObjectPosition) const
 	{
 		// Reference: http://www.cse.chalmers.se/~uffe/vfc_bbox.pdf
 
@@ -150,7 +150,7 @@ namespace gfx
 	}
 
 	// Slower version that also checks if AABB is entirely inside frustum
-	const bool Frustum::DoesAABBIntersect(const AABB & aabb, const dx::XMVECTOR aabbObjectPosition, IntersectionType & intersectionType) const
+	const bool Frustum::DoesAABBIntersect(const AABB& aabb, const dx::XMVECTOR aabbObjectPosition, IntersectionType& intersectionType) const
 	{
 		// Reference: http://www.cse.chalmers.se/~uffe/vfc_bbox.pdf
 

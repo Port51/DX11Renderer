@@ -9,7 +9,7 @@
 
 namespace gfx
 {
-	ShadowPassContext::ShadowPassContext(GraphicsDevice& gfx, const Camera& cam, Renderer & renderer, RenderPass& renderPass, ConstantBuffer<GlobalTransformCB>& transformationCB, RendererList* pRendererList)
+	ShadowPassContext::ShadowPassContext(GraphicsDevice& gfx, const Camera& cam, Renderer& renderer, RenderPass& renderPass, ConstantBuffer<GlobalTransformCB>& transformationCB, RendererList* pRendererList)
 		: gfx(gfx), camera(cam), renderer(renderer), renderPass(renderPass), transformationCB(transformationCB), pRendererList(pRendererList)
 	{
 		Update();

@@ -54,13 +54,13 @@ namespace gfx
 		return settings;
 	}
 
-	size_t ModelImporter::GetAttributeCt(const GraphicsDevice& gfx, tinygltf::Model & model, int accessorIdx)
+	size_t ModelImporter::GetAttributeCt(const GraphicsDevice& gfx, tinygltf::Model& model, int accessorIdx)
 	{
 		const auto accessor = model.accessors[accessorIdx];
 		return accessor.count;
 	}
 
-	std::pair<int, size_t> ModelImporter::GetAttributeBufferAccess(const GraphicsDevice& gfx, tinygltf::Model & model, int accessorIdx, size_t byteCt)
+	std::pair<int, size_t> ModelImporter::GetAttributeBufferAccess(const GraphicsDevice& gfx, tinygltf::Model& model, int accessorIdx, size_t byteCt)
 	{
 		// Each attribute owns a segment of data in the buffer
 		// It can be accessed by using the view and accessor offsets

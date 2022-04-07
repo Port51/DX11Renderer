@@ -12,6 +12,6 @@ namespace gfx
 	///
 	/// Draws on and off buttons
 	///
-	bool DrawToggleOnOffButton(int id, const char* label, bool isSelected, ImVec2 & size, bool& changed, bool isSameLine = false);
+	bool DrawToggleOnOffButton(int id, const char* label, bool isSelected, ImVec2& size, bool& changed, bool isSameLine = false);
 
 }

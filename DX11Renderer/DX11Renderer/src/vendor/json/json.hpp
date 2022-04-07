@@ -387,7 +387,7 @@ namespace nlohmann
 			using value_type = T;
 			using difference_type = ptrdiff_t;
 			using pointer = T * ;
-			using reference = T & ;
+			using reference = T& ;
 		};
 	}
 }
@@ -1404,7 +1404,7 @@ namespace nlohmann
 				JSON_THROW(type_error::create(302, "type must be array, but is " + std::string(j.type_name())));
 			}
 			std::transform(j.rbegin(), j.rend(),
-				std::front_inserter(l), [](const BasicJsonType & i)
+				std::front_inserter(l), [](const BasicJsonType& i)
 			{
 				return i.template get<T>();
 			});
@@ -1451,7 +1451,7 @@ namespace nlohmann
 
 			arr.reserve(j.size());
 			std::transform(j.begin(), j.end(),
-				std::inserter(arr, end(arr)), [](const BasicJsonType & i)
+				std::inserter(arr, end(arr)), [](const BasicJsonType& i)
 			{
 				// get<BasicJsonType>() returns *this, this won't call a from_json
 				// method when value_type is BasicJsonType
@@ -1467,7 +1467,7 @@ namespace nlohmann
 
 			std::transform(
 				j.begin(), j.end(), std::inserter(arr, end(arr)),
-				[](const BasicJsonType & i)
+				[](const BasicJsonType& i)
 			{
 				// get<BasicJsonType>() returns *this, this won't call a from_json
 				// method when value_type is BasicJsonType
@@ -1511,7 +1511,7 @@ namespace nlohmann
 			std::transform(
 				inner_object->begin(), inner_object->end(),
 				std::inserter(obj, obj.begin()),
-				[](typename BasicJsonType::object_t::value_type const & p)
+				[](typename BasicJsonType::object_t::value_type const& p)
 			{
 				return value_type(p.first, p.second.template get<typename ConstructibleObjectType::mapped_type>());
 			});
@@ -1676,7 +1676,7 @@ namespace nlohmann
 			using difference_type = std::ptrdiff_t;
 			using value_type = iteration_proxy_value;
 			using pointer = value_type * ;
-			using reference = value_type & ;
+			using reference = value_type& ;
 			using iterator_category = std::input_iterator_tag;
 
 		private:
@@ -2236,7 +2236,7 @@ namespace nlohmann
 			{
 				// clear stream flags; we use underlying streambuf I/O, do not
 				// maintain ifstream flags, except eof
-				is.clear(is.rdstate() & std::ios::eofbit);
+				is.clear(is.rdstate()& std::ios::eofbit);
 			}
 
 			explicit input_stream_adapter(std::istream& i)
@@ -2327,23 +2327,23 @@ namespace nlohmann
 					}
 					else if (wc <= 0x7FF)
 					{
-						utf8_bytes[0] = 0xC0 | ((wc >> 6) & 0x1F);
-						utf8_bytes[1] = 0x80 | (wc & 0x3F);
+						utf8_bytes[0] = 0xC0 | ((wc >> 6)& 0x1F);
+						utf8_bytes[1] = 0x80 | (wc& 0x3F);
 						utf8_bytes_filled = 2;
 					}
 					else if (wc <= 0xFFFF)
 					{
-						utf8_bytes[0] = 0xE0 | ((wc >> 12) & 0x0F);
-						utf8_bytes[1] = 0x80 | ((wc >> 6) & 0x3F);
-						utf8_bytes[2] = 0x80 | (wc & 0x3F);
+						utf8_bytes[0] = 0xE0 | ((wc >> 12)& 0x0F);
+						utf8_bytes[1] = 0x80 | ((wc >> 6)& 0x3F);
+						utf8_bytes[2] = 0x80 | (wc& 0x3F);
 						utf8_bytes_filled = 3;
 					}
 					else if (wc <= 0x10FFFF)
 					{
-						utf8_bytes[0] = 0xF0 | ((wc >> 18) & 0x07);
-						utf8_bytes[1] = 0x80 | ((wc >> 12) & 0x3F);
-						utf8_bytes[2] = 0x80 | ((wc >> 6) & 0x3F);
-						utf8_bytes[3] = 0x80 | (wc & 0x3F);
+						utf8_bytes[0] = 0xF0 | ((wc >> 18)& 0x07);
+						utf8_bytes[1] = 0x80 | ((wc >> 12)& 0x3F);
+						utf8_bytes[2] = 0x80 | ((wc >> 6)& 0x3F);
+						utf8_bytes[3] = 0x80 | (wc& 0x3F);
 						utf8_bytes_filled = 4;
 					}
 					else
@@ -2383,14 +2383,14 @@ namespace nlohmann
 					else if (wc <= 0x7FF)
 					{
 						utf8_bytes[0] = 0xC0 | ((wc >> 6));
-						utf8_bytes[1] = 0x80 | (wc & 0x3F);
+						utf8_bytes[1] = 0x80 | (wc& 0x3F);
 						utf8_bytes_filled = 2;
 					}
 					else if (0xD800 > wc or wc >= 0xE000)
 					{
 						utf8_bytes[0] = 0xE0 | ((wc >> 12));
-						utf8_bytes[1] = 0x80 | ((wc >> 6) & 0x3F);
-						utf8_bytes[2] = 0x80 | (wc & 0x3F);
+						utf8_bytes[1] = 0x80 | ((wc >> 6)& 0x3F);
+						utf8_bytes[2] = 0x80 | (wc& 0x3F);
 						utf8_bytes_filled = 3;
 					}
 					else
@@ -2398,11 +2398,11 @@ namespace nlohmann
 						if (current_wchar < str.size())
 						{
 							const auto wc2 = static_cast<int>(str[current_wchar++]);
-							const int charcode = 0x10000 + (((wc & 0x3FF) << 10) | (wc2 & 0x3FF));
+							const int charcode = 0x10000 + (((wc& 0x3FF) << 10) | (wc2& 0x3FF));
 							utf8_bytes[0] = 0xf0 | (charcode >> 18);
-							utf8_bytes[1] = 0x80 | ((charcode >> 12) & 0x3F);
-							utf8_bytes[2] = 0x80 | ((charcode >> 6) & 0x3F);
-							utf8_bytes[3] = 0x80 | (charcode & 0x3F);
+							utf8_bytes[1] = 0x80 | ((charcode >> 12)& 0x3F);
+							utf8_bytes[2] = 0x80 | ((charcode >> 6)& 0x3F);
+							utf8_bytes[3] = 0x80 | (charcode& 0x3F);
 							utf8_bytes_filled = 4;
 						}
 						else
@@ -2955,22 +2955,22 @@ namespace nlohmann
 							{
 								// 2-byte characters: 110xxxxx 10xxxxxx
 								add(0xC0 | (codepoint >> 6));
-								add(0x80 | (codepoint & 0x3F));
+								add(0x80 | (codepoint& 0x3F));
 							}
 							else if (codepoint <= 0xFFFF)
 							{
 								// 3-byte characters: 1110xxxx 10xxxxxx 10xxxxxx
 								add(0xE0 | (codepoint >> 12));
-								add(0x80 | ((codepoint >> 6) & 0x3F));
-								add(0x80 | (codepoint & 0x3F));
+								add(0x80 | ((codepoint >> 6)& 0x3F));
+								add(0x80 | (codepoint& 0x3F));
 							}
 							else
 							{
 								// 4-byte characters: 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
 								add(0xF0 | (codepoint >> 18));
-								add(0x80 | ((codepoint >> 12) & 0x3F));
-								add(0x80 | ((codepoint >> 6) & 0x3F));
-								add(0x80 | (codepoint & 0x3F));
+								add(0x80 | ((codepoint >> 12)& 0x3F));
+								add(0x80 | ((codepoint >> 6)& 0x3F));
+								add(0x80 | (codepoint& 0x3F));
 							}
 
 							break;
@@ -7002,7 +7002,7 @@ namespace nlohmann
 				case 0x95:
 				case 0x96:
 				case 0x97:
-					return get_cbor_array(static_cast<std::size_t>(current & 0x1F));
+					return get_cbor_array(static_cast<std::size_t>(current& 0x1F));
 
 				case 0x98: // array (one-byte uint8_t for n follows)
 				{
@@ -7056,7 +7056,7 @@ namespace nlohmann
 				case 0xB5:
 				case 0xB6:
 				case 0xB7:
-					return get_cbor_object(static_cast<std::size_t>(current & 0x1F));
+					return get_cbor_object(static_cast<std::size_t>(current& 0x1F));
 
 				case 0xB8: // map (one-byte uint8_t for n follows)
 				{
@@ -7121,8 +7121,8 @@ namespace nlohmann
 					const int half = (byte1 << 8) + byte2;
 					const double val = [&half]
 					{
-						const int exp = (half >> 10) & 0x1F;
-						const int mant = half & 0x3FF;
+						const int exp = (half >> 10)& 0x1F;
+						const int mant = half& 0x3FF;
 						assert(0 <= exp and exp <= 32);
 						assert(0 <= mant and mant <= 1024);
 						switch (exp)
@@ -7137,7 +7137,7 @@ namespace nlohmann
 							return std::ldexp(mant + 1024, exp - 25);
 						}
 					}();
-					return sax->number_float((half & 0x8000) != 0
+					return sax->number_float((half& 0x8000) != 0
 						? static_cast<number_float_t>(-val)
 						: static_cast<number_float_t>(val), "");
 				}
@@ -7208,7 +7208,7 @@ namespace nlohmann
 				case 0x76:
 				case 0x77:
 				{
-					return get_string(input_format_t::cbor, current & 0x1F, result);
+					return get_string(input_format_t::cbor, current& 0x1F, result);
 				}
 
 				case 0x78: // UTF-8 string (one-byte uint8_t for n follows)
@@ -7506,7 +7506,7 @@ namespace nlohmann
 				case 0x8D:
 				case 0x8E:
 				case 0x8F:
-					return get_msgpack_object(static_cast<std::size_t>(current & 0x0F));
+					return get_msgpack_object(static_cast<std::size_t>(current& 0x0F));
 
 					// fixarray
 				case 0x90:
@@ -7525,7 +7525,7 @@ namespace nlohmann
 				case 0x9D:
 				case 0x9E:
 				case 0x9F:
-					return get_msgpack_array(static_cast<std::size_t>(current & 0x0F));
+					return get_msgpack_array(static_cast<std::size_t>(current& 0x0F));
 
 					// fixstr
 				case 0xA0:
@@ -7762,7 +7762,7 @@ namespace nlohmann
 				case 0xBE:
 				case 0xBF:
 				{
-					return get_string(input_format_t::msgpack, current & 0x1F, result);
+					return get_string(input_format_t::msgpack, current& 0x1F, result);
 				}
 
 				case 0xD9: // str 8
@@ -8978,7 +8978,7 @@ namespace nlohmann
 					if (N <= 15)
 					{
 						// fixmap
-						write_number(static_cast<uint8_t>(0x80 | (N & 0xF)));
+						write_number(static_cast<uint8_t>(0x80 | (N& 0xF)));
 					}
 					else if (N <= (std::numeric_limits<uint16_t>::max)())
 					{
@@ -9082,7 +9082,7 @@ namespace nlohmann
 						assert(use_count);
 						const CharType first_prefix = ubjson_prefix(j.front());
 						const bool same_prefix = std::all_of(j.begin() + 1, j.end(),
-							[this, first_prefix](const BasicJsonType & v)
+							[this, first_prefix](const BasicJsonType& v)
 						{
 							return ubjson_prefix(v) == first_prefix;
 						});
@@ -9127,7 +9127,7 @@ namespace nlohmann
 						assert(use_count);
 						const CharType first_prefix = ubjson_prefix(j.front());
 						const bool same_prefix = std::all_of(j.begin(), j.end(),
-							[this, first_prefix](const BasicJsonType & v)
+							[this, first_prefix](const BasicJsonType& v)
 						{
 							return ubjson_prefix(v) == first_prefix;
 						});
@@ -9456,7 +9456,7 @@ namespace nlohmann
 			static std::size_t calc_bson_object_size(const typename BasicJsonType::object_t& value)
 			{
 				std::size_t document_size = std::accumulate(value.begin(), value.end(), 0ul,
-					[](size_t result, const typename BasicJsonType::object_t::value_type & el)
+					[](size_t result, const typename BasicJsonType::object_t::value_type& el)
 				{
 					return result += calc_bson_element_size(el.first, el.second);
 				});
@@ -9921,9 +9921,9 @@ namespace nlohmann
 					//
 					//   = p_lo + 2^64 p_hi
 
-					const uint64_t u_lo = x.f & 0xFFFFFFFF;
+					const uint64_t u_lo = x.f& 0xFFFFFFFF;
 					const uint64_t u_hi = x.f >> 32;
-					const uint64_t v_lo = y.f & 0xFFFFFFFF;
+					const uint64_t v_lo = y.f& 0xFFFFFFFF;
 					const uint64_t v_hi = y.f >> 32;
 
 					const uint64_t p0 = u_lo * v_lo;
@@ -9932,9 +9932,9 @@ namespace nlohmann
 					const uint64_t p3 = u_hi * v_hi;
 
 					const uint64_t p0_hi = p0 >> 32;
-					const uint64_t p1_lo = p1 & 0xFFFFFFFF;
+					const uint64_t p1_lo = p1& 0xFFFFFFFF;
 					const uint64_t p1_hi = p1 >> 32;
-					const uint64_t p2_lo = p2 & 0xFFFFFFFF;
+					const uint64_t p2_lo = p2& 0xFFFFFFFF;
 					const uint64_t p2_hi = p2 >> 32;
 
 					uint64_t Q = p0_hi + p1_lo + p2_lo;
@@ -10025,7 +10025,7 @@ namespace nlohmann
 
 				const uint64_t bits = reinterpret_bits<bits_type>(value);
 				const uint64_t E = bits >> (kPrecision - 1);
-				const uint64_t F = bits & (kHiddenBit - 1);
+				const uint64_t F = bits& (kHiddenBit - 1);
 
 				const bool is_denormal = (E == 0);
 				const diyfp v = is_denormal
@@ -10435,7 +10435,7 @@ namespace nlohmann
 				const diyfp one(uint64_t{ 1 } << -M_plus.e, M_plus.e);
 
 				auto p1 = static_cast<uint32_t>(M_plus.f >> -one.e); // p1 = f div 2^-e (Since -e >= 32, p1 fits into a 32-bit int.)
-				uint64_t p2 = M_plus.f & (one.f - 1);                    // p2 = f mod 2^-e
+				uint64_t p2 = M_plus.f& (one.f - 1);                    // p2 = f mod 2^-e
 
 				// 1)
 				//
@@ -10578,7 +10578,7 @@ namespace nlohmann
 					assert(p2 <= UINT64_MAX / 10);
 					p2 *= 10;
 					const uint64_t d = p2 >> -one.e;     // d = (10 * p2) div 2^-e
-					const uint64_t r = p2 & (one.f - 1); // r = (10 * p2) mod 2^-e
+					const uint64_t r = p2& (one.f - 1); // r = (10 * p2) mod 2^-e
 					//
 					//      M+ = buffer * 10^-m + 10^-m * (1/10 * (d * 2^-e + r) * 2^e
 					//         = buffer * 10^-m + 10^-m * (1/10 * (d + r * 2^e))
@@ -11289,7 +11289,7 @@ namespace nlohmann
 								{
 									(std::snprintf)(string_buffer.data() + bytes, 13, "\\u%04x\\u%04x",
 										static_cast<uint16_t>(0xD7C0 + (codepoint >> 10)),
-										static_cast<uint16_t>(0xDC00 + (codepoint & 0x3FF)));
+										static_cast<uint16_t>(0xDC00 + (codepoint& 0x3FF)));
 									bytes += 12;
 								}
 							}
@@ -11614,8 +11614,8 @@ namespace nlohmann
 				const uint8_t type = utf8d[byte];
 
 				codep = (state != UTF8_ACCEPT)
-					? (byte & 0x3fu) | (codep << 6)
-					: static_cast<uint32_t>(0xff >> type) & (byte);
+					? (byte& 0x3fu) | (codep << 6)
+					: static_cast<uint32_t>(0xff >> type)& (byte);
 
 				state = utf8d[256u + state * 16u + type];
 				return state;
@@ -11791,7 +11791,7 @@ namespace nlohmann
 		{
 			return std::accumulate(reference_tokens.begin(), reference_tokens.end(),
 				std::string{},
-				[](const std::string & a, const std::string & b)
+				[](const std::string& a, const std::string& b)
 			{
 				return a + "/" + escape(b);
 			});
@@ -12662,7 +12662,7 @@ namespace nlohmann
 		using value_type = basic_json;
 
 		/// the type of an element reference
-		using reference = value_type & ;
+		using reference = value_type& ;
 		/// the type of an element const reference
 		using const_reference = const value_type&;
 
@@ -15078,7 +15078,7 @@ namespace nlohmann
 			not detail::is_basic_json<ValueType>::value and
 			detail::has_from_json<basic_json_t, ValueType>::value,
 			int> = 0>
-			ValueType & get_to(ValueType& v) const noexcept(noexcept(
+			ValueType& get_to(ValueType& v) const noexcept(noexcept(
 				JSONSerializer<ValueType>::from_json(std::declval<const basic_json_t&>(), v)))
 		{
 			JSONSerializer<ValueType>::from_json(*this, v);
@@ -19816,7 +19816,7 @@ namespace nlohmann
 			// the valid JSON Patch operations
 			enum class patch_operations { add, remove, replace, move, copy, test, invalid };
 
-			const auto get_op = [](const std::string & op)
+			const auto get_op = [](const std::string& op)
 			{
 				if (op == "add")
 				{
@@ -19847,7 +19847,7 @@ namespace nlohmann
 			};
 
 			// wrapper for "add" operation; add value at ptr
-			const auto operation_add = [&result](json_pointer & ptr, basic_json val)
+			const auto operation_add = [&result](json_pointer& ptr, basic_json val)
 			{
 				// adding to the root of the target document means replacing it
 				if (ptr.is_root())
@@ -19911,7 +19911,7 @@ namespace nlohmann
 			};
 
 			// wrapper for "remove" operation; remove value at ptr
-			const auto operation_remove = [&result](json_pointer & ptr)
+			const auto operation_remove = [&result](json_pointer& ptr)
 			{
 				// get reference to parent of JSON pointer ptr
 				const auto last_path = ptr.pop_back();
@@ -19948,8 +19948,8 @@ namespace nlohmann
 			for (const auto& val : json_patch)
 			{
 				// wrapper to get a value for an operation
-				const auto get_value = [&val](const std::string & op,
-					const std::string & member,
+				const auto get_value = [&val](const std::string& op,
+					const std::string& member,
 					bool string_type) -> basic_json &
 				{
 					// find value

@@ -71,7 +71,7 @@ namespace gfx
 		m_clusterDimensionZ = ClusteredLightingZLevels;
 	}
 
-	void LightManager::AddLightModelsToList(RendererList & pRendererList)
+	void LightManager::AddLightModelsToList(RendererList& pRendererList)
 	{
 		for (const auto& l : m_pLights)
 		{
@@ -82,7 +82,7 @@ namespace gfx
 		}
 	}
 
-	void LightManager::CullLightsAndShadows(const GraphicsDevice & gfx, const Camera& cam, bool enableShadows)
+	void LightManager::CullLightsAndShadows(const GraphicsDevice& gfx, const Camera& cam, bool enableShadows)
 	{
 		dx::XMFLOAT4 frustumCornersVS;
 		dx::XMStoreFloat4(&frustumCornersVS, cam.GetFrustumCornersVS());

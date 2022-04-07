@@ -191,7 +191,7 @@ void    ImGui_ImplWin32_Shutdown()
 static bool ImGui_ImplWin32_UpdateMouseCursor()
 {
     ImGuiIO& io = ImGui::GetIO();
-    if (io.ConfigFlags & ImGuiConfigFlags_NoMouseCursorChange)
+    if (io.ConfigFlags& ImGuiConfigFlags_NoMouseCursorChange)
         return false;
 
     ImGuiMouseCursor imgui_cursor = ImGui::GetMouseCursor();
@@ -262,7 +262,7 @@ static void ImGui_ImplWin32_UpdateGamepads()
     ImGuiIO& io = ImGui::GetIO();
     ImGui_ImplWin32_Data* bd = ImGui_ImplWin32_GetBackendData();
     memset(io.NavInputs, 0, sizeof(io.NavInputs));
-    if ((io.ConfigFlags & ImGuiConfigFlags_NavEnableGamepad) == 0)
+    if ((io.ConfigFlags& ImGuiConfigFlags_NavEnableGamepad) == 0)
         return;
 
     // Calling XInputGetState() every frame on disconnected gamepads is unfortunately too slow.
@@ -281,7 +281,7 @@ static void ImGui_ImplWin32_UpdateGamepads()
         const XINPUT_GAMEPAD& gamepad = xinput_state.Gamepad;
         io.BackendFlags |= ImGuiBackendFlags_HasGamepad;
 
-        #define MAP_BUTTON(NAV_NO, BUTTON_ENUM)     { io.NavInputs[NAV_NO] = (gamepad.wButtons & BUTTON_ENUM) ? 1.0f : 0.0f; }
+        #define MAP_BUTTON(NAV_NO, BUTTON_ENUM)     { io.NavInputs[NAV_NO] = (gamepad.wButtons& BUTTON_ENUM) ? 1.0f : 0.0f; }
         #define MAP_ANALOG(NAV_NO, VALUE, V0, V1)   { float vn = (float)(VALUE - V0) / (float)(V1 - V0); if (vn > 1.0f) vn = 1.0f; if (vn > 0.0f && io.NavInputs[NAV_NO] < vn) io.NavInputs[NAV_NO] = vn; }
         MAP_BUTTON(ImGuiNavInput_Activate,      XINPUT_GAMEPAD_A);              // Cross / A
         MAP_BUTTON(ImGuiNavInput_Cancel,        XINPUT_GAMEPAD_B);              // Circle / B
@@ -428,20 +428,20 @@ IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg, WPARA
             io.KeysDown[wParam] = down;
         if (wParam == VK_CONTROL)
         {
-            io.KeysDown[VK_LCONTROL] = ((::GetKeyState(VK_LCONTROL) & 0x8000) != 0);
-            io.KeysDown[VK_RCONTROL] = ((::GetKeyState(VK_RCONTROL) & 0x8000) != 0);
+            io.KeysDown[VK_LCONTROL] = ((::GetKeyState(VK_LCONTROL)& 0x8000) != 0);
+            io.KeysDown[VK_RCONTROL] = ((::GetKeyState(VK_RCONTROL)& 0x8000) != 0);
             io.KeyCtrl = io.KeysDown[VK_LCONTROL] || io.KeysDown[VK_RCONTROL];
         }
         if (wParam == VK_SHIFT)
         {
-            io.KeysDown[VK_LSHIFT] = ((::GetKeyState(VK_LSHIFT) & 0x8000) != 0);
-            io.KeysDown[VK_RSHIFT] = ((::GetKeyState(VK_RSHIFT) & 0x8000) != 0);
+            io.KeysDown[VK_LSHIFT] = ((::GetKeyState(VK_LSHIFT)& 0x8000) != 0);
+            io.KeysDown[VK_RSHIFT] = ((::GetKeyState(VK_RSHIFT)& 0x8000) != 0);
             io.KeyShift            = io.KeysDown[VK_LSHIFT] || io.KeysDown[VK_RSHIFT];
         }
         if (wParam == VK_MENU)
         {
-            io.KeysDown[VK_LMENU] = ((::GetKeyState(VK_LMENU) & 0x8000) != 0);
-            io.KeysDown[VK_RMENU] = ((::GetKeyState(VK_RMENU) & 0x8000) != 0);
+            io.KeysDown[VK_LMENU] = ((::GetKeyState(VK_LMENU)& 0x8000) != 0);
+            io.KeysDown[VK_RMENU] = ((::GetKeyState(VK_RMENU)& 0x8000) != 0);
             io.KeyAlt             = io.KeysDown[VK_LMENU] || io.KeysDown[VK_RMENU];
         }
         return 0;

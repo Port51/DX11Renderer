@@ -166,7 +166,7 @@ namespace gfx
 		return DefWindowProc(hWnd, msg, wParam, lParam);
 	}
 
-	GraphicsDevice & App::Gfx() const
+	GraphicsDevice& App::Gfx() const
 	{
 		return *m_pGfx;
 	}

@@ -3,13 +3,13 @@
 
 namespace gfx
 {
-	DrawContext::DrawContext(Renderer & renderer)
+	DrawContext::DrawContext(Renderer& renderer)
 		: renderer(renderer)
 	{}
-	DrawContext::DrawContext(Renderer & renderer, std::string _renderPass)
+	DrawContext::DrawContext(Renderer& renderer, std::string _renderPass)
 		: renderer(renderer), renderPasses(std::vector<std::string> { _renderPass })
 	{}
-	DrawContext::DrawContext(Renderer & renderer, std::vector<std::string> _renderPasses)
+	DrawContext::DrawContext(Renderer& renderer, std::vector<std::string> _renderPasses)
 		: renderer(renderer), renderPasses(std::move(_renderPasses))
 	{}
 	void DrawContext::SetRenderPasses(std::string _renderPass)

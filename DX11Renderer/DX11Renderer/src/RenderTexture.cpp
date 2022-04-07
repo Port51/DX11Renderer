@@ -79,7 +79,7 @@ namespace gfx
 		// Create the shader resource view.
 		THROW_IF_FAILED(device->CreateShaderResourceView(m_pTexture.Get(), &srvDesc, &m_pShaderResourceView));
 
-		if (rtDesc.BindFlags & D3D11_BIND_UNORDERED_ACCESS)
+		if (rtDesc.BindFlags& D3D11_BIND_UNORDERED_ACCESS)
 		{
 			bool useCounter = false;
 			m_pUAV.resize(m_mipCount);

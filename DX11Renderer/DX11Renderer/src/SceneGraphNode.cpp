@@ -6,7 +6,7 @@
 
 namespace gfx
 {
-	SceneGraphNode::SceneGraphNode(int id, const dx::XMMATRIX & _transform, std::shared_ptr<MeshRenderer> pMeshPtr, std::vector<std::shared_ptr<SceneGraphNode>> pChildNodes)
+	SceneGraphNode::SceneGraphNode(int id, const dx::XMMATRIX& _transform, std::shared_ptr<MeshRenderer> pMeshPtr, std::vector<std::shared_ptr<SceneGraphNode>> pChildNodes)
 		: m_pMeshRenderer(pMeshPtr), m_pChildNodes(std::move(pChildNodes))
 	{
 		dx::XMStoreFloat4x4(&m_localTransform, _transform);
@@ -110,7 +110,7 @@ namespace gfx
 		return m_pMeshRenderer;
 	}
 
-	const AABB & SceneGraphNode::GetBoundingVolume() const
+	const AABB& SceneGraphNode::GetBoundingVolume() const
 	{
 		return m_boundingVolumeAABB;
 	}

@@ -23,12 +23,12 @@ namespace gfx
 		gfx.GetContext()->IASetInputLayout(m_pInputLayout.Get());
 	}
 
-	std::shared_ptr<InputLayout> InputLayout::Resolve(const GraphicsDevice& gfx, const VertexLayout & layout, std::string vertexShaderName, ID3DBlob * pVertexShaderBytecode)
+	std::shared_ptr<InputLayout> InputLayout::Resolve(const GraphicsDevice& gfx, const VertexLayout& layout, std::string vertexShaderName, ID3DBlob * pVertexShaderBytecode)
 	{
 		return std::move(Codex::Resolve<InputLayout>(gfx, GenerateUID(layout, vertexShaderName, pVertexShaderBytecode), layout, vertexShaderName, pVertexShaderBytecode));
 	}
 
-	std::string InputLayout::GenerateUID(const VertexLayout & layout, std::string vertexShaderName, ID3DBlob * pVertexShaderBytecode)
+	std::string InputLayout::GenerateUID(const VertexLayout& layout, std::string vertexShaderName, ID3DBlob * pVertexShaderBytecode)
 	{
 		using namespace std::string_literals;
 		return typeid(InputLayout).name() + "#"s + layout.GetCode() + "|" + vertexShaderName;

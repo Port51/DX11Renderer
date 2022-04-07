@@ -96,7 +96,7 @@ namespace gfx
 	private:
 		static constexpr UINT GetCBufferSize(UINT buffer_size)
 		{
-			return (buffer_size + (64 - 1)) & ~(64 - 1);
+			return (buffer_size + (64 - 1))& ~(64 - 1);
 		}
 	};
 }

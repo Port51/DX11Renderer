@@ -5,7 +5,7 @@
 /// Draws a button that's part of an array where one button can be selected
 /// An int controls which button is selected
 ///
-int gfx::DrawSelectableButtonInArray(int mySelectionIdx, const char * label, int activeSelectionIdx, ImVec2 & size, bool& changed, bool isSameLine)
+int gfx::DrawSelectableButtonInArray(int mySelectionIdx, const char * label, int activeSelectionIdx, ImVec2& size, bool& changed, bool isSameLine)
 {
 	static ImVec4 selectedColor = { 1, 1, 1, 0.5 };
 
@@ -35,7 +35,7 @@ int gfx::DrawSelectableButtonInArray(int mySelectionIdx, const char * label, int
 	return newSelectionIdx;
 }
 
-bool gfx::DrawToggleOnOffButton(int id, const char* label, bool isSelected, ImVec2 & size, bool& changed, bool isSameLine)
+bool gfx::DrawToggleOnOffButton(int id, const char* label, bool isSelected, ImVec2& size, bool& changed, bool isSameLine)
 {
 	static ImVec4 selectedColor = { 1, 1, 1, 0.5 };
 

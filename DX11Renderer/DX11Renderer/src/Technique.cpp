@@ -32,7 +32,7 @@ namespace gfx
 	{
 		m_active = active_in;
 	}
-	const std::string & Technique::GetName() const
+	const std::string& Technique::GetName() const
 	{
 		return m_name;
 	}

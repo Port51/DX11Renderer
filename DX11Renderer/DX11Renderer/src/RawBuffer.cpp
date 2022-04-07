@@ -23,7 +23,7 @@ namespace gfx
 
 		THROW_IF_FAILED(gfx.GetAdapter()->CreateBuffer(&bd, nullptr, &m_pBuffer));
 
-		if (bindFlags & D3D11_BIND_SHADER_RESOURCE)
+		if (bindFlags& D3D11_BIND_SHADER_RESOURCE)
 		{
 			D3D11_SHADER_RESOURCE_VIEW_DESC srvd;
 			srvd.BufferEx.Flags = D3D11_BUFFEREX_SRV_FLAG_RAW;
@@ -32,7 +32,7 @@ namespace gfx
 			THROW_IF_FAILED(gfx.GetAdapter()->CreateShaderResourceView(m_pBuffer.Get(), &srvd, &m_pSRV));
 		}
 
-		if (bindFlags & D3D11_BIND_UNORDERED_ACCESS)
+		if (bindFlags& D3D11_BIND_UNORDERED_ACCESS)
 		{
 			D3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc;
 			uavDesc.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
