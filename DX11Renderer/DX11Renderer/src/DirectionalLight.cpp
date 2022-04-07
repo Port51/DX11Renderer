@@ -96,10 +96,10 @@ namespace gfx
 		return transforms;
 	}
 
-	void DirectionalLight::RenderShadow(ShadowPassContext context)
+	void DirectionalLight::RenderShadow(const ShadowPassContext& context)
 	{
-		const auto cameraPositionWS = context.pCamera->GetPositionWS();
-		const auto cameraForwardWS = context.pCamera->GetForwardWS();
+		const auto cameraPositionWS = context.camera.GetPositionWS();
+		const auto cameraForwardWS = context.camera.GetForwardWS();
 
 		const auto shadowDirWS = GetDirectionWS();
 
@@ -139,7 +139,7 @@ namespace gfx
 			ViewProjTransforms transforms = GetShadowTransforms(cascadeSphereCenterWS, cascadeDistance);
 
 			// Record shadow sphere in VS
-			m_shadowCascadeSpheresVS[i] = dx::XMVectorSetW(dx::XMVector4Transform(dx::XMVectorSetW(cascadeSphereCenterWS, 1.f), context.pCamera->GetViewMatrix()), cascadeDistance * cascadeDistance * 0.25f); // 0.25 is because cascadeDistance is a diameter
+			m_shadowCascadeSpheresVS[i] = dx::XMVectorSetW(dx::XMVector4Transform(dx::XMVectorSetW(cascadeSphereCenterWS, 1.f), context.camera.GetViewMatrix()), cascadeDistance * cascadeDistance * 0.25f); // 0.25 is because cascadeDistance is a diameter
 
 			static Frustum frustum;
 
@@ -147,7 +147,7 @@ namespace gfx
 			static GlobalTransformCB transformationCB;
 			transformationCB.viewMatrix = transforms.viewMatrix;
 			transformationCB.projMatrix = transforms.projMatrix;
-			context.pTransformationCB->Update(context.gfx, transformationCB);
+			context.transformationCB.Update(context.gfx, transformationCB);
 
 			static DrawContext drawContext(context.renderer, context.renderer.ShadowPassName);
 			drawContext.viewMatrix = transforms.viewMatrix;
@@ -167,8 +167,8 @@ namespace gfx
 			{
 				// Render to tile in atlas using viewport
 				context.gfx.SetViewport(tileX * Config::ShadowAtlasTileResolution, tileY * Config::ShadowAtlasTileResolution, Config::ShadowAtlasTileResolution, Config::ShadowAtlasTileResolution);
-				context.pRenderPass->Execute(context.gfx);
-				context.pRenderPass->Reset(); // required to handle multiple shadows at once
+				context.renderPass.Execute(context.gfx);
+				context.renderPass.Reset(); // required to handle multiple shadows at once
 			}
 
 			// todo: move elsewhere

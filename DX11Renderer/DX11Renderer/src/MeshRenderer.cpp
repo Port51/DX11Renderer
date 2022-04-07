@@ -15,7 +15,7 @@
 
 namespace gfx
 {
-	MeshRenderer::MeshRenderer(const GraphicsDevice& gfx, std::string name, std::shared_ptr<MeshAsset> const& pMeshAsset, std::shared_ptr<Material> pMaterial, std::shared_ptr<IndexBuffer> pIndexBuffer, std::shared_ptr<Topology> pTopologyBuffer)
+	MeshRenderer::MeshRenderer(const GraphicsDevice& gfx, std::string name, std::shared_ptr<MeshAsset> pMeshAsset, std::shared_ptr<Material> pMaterial, std::shared_ptr<IndexBuffer> pIndexBuffer, std::shared_ptr<Topology> pTopologyBuffer)
 		: m_pMeshAsset(std::move(pMeshAsset)),
 		m_pIndexBuffer(std::move(pIndexBuffer)),
 		m_pTopology(std::move(pTopologyBuffer)),
@@ -23,12 +23,12 @@ namespace gfx
 		m_pMaterial(pMaterial)
 	{
 		assert("Material cannot be null" && pMaterial != nullptr);
-		gfx.GetLog()->Info("Create MeshRenderer " + name);
+		gfx.GetLog().Info("Create MeshRenderer " + name);
 
 		m_pTransformCbuf = std::make_shared<TransformCbuf>(gfx);
 	}
 
-	MeshRenderer::MeshRenderer(const GraphicsDevice& gfx, std::string name, std::shared_ptr<MeshAsset> const& pMeshAsset, std::shared_ptr<Material> pMaterial, std::shared_ptr<VertexBufferWrapper> pVertexBuffer, std::shared_ptr<IndexBuffer> pIndexBuffer, std::shared_ptr<Topology> pTopologyBuffer)
+	MeshRenderer::MeshRenderer(const GraphicsDevice& gfx, std::string name, std::shared_ptr<MeshAsset> pMeshAsset, std::shared_ptr<Material> pMaterial, std::shared_ptr<VertexBufferWrapper> pVertexBuffer, std::shared_ptr<IndexBuffer> pIndexBuffer, std::shared_ptr<Topology> pTopologyBuffer)
 		: MeshRenderer(gfx, name, pMeshAsset, pMaterial, pIndexBuffer, pTopologyBuffer)
 	{
 		m_pVertexBufferWrapper = std::move(pVertexBuffer);

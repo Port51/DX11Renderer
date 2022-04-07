@@ -156,12 +156,12 @@ namespace gfx
 	{
 		bool cameraOutSlot0 = true;
 
-		GetRenderPass(PerCameraPassName)->
+		GetRenderPass(PerCameraPassName).
 			ClearBinds()
 			.CSSetCB(RenderSlots::CS_PerFrameCB, m_pPerFrameCB->GetD3DBuffer())
 			.CSSetCB(RenderSlots::CS_TransformationCB, m_pTransformationCB->GetD3DBuffer())
 			.CSSetCB(RenderSlots::CS_PerCameraCB, m_pPerCameraCB->GetD3DBuffer())
-			.CSSetCB(RenderSlots::CS_LightInputCB, m_pLightManager->GetLightInputCB()->GetD3DBuffer())
+			.CSSetCB(RenderSlots::CS_LightInputCB, m_pLightManager->GetLightInputCB().GetD3DBuffer())
 			.CSSetSRV(RenderSlots::CS_LightDataSRV, m_pLightManager->GetLightDataSRV())
 			.CSSetSRV(RenderSlots::CS_LightShadowDataSRV, m_pLightManager->GetShadowDataSRV())
 			.VSSetCB(RenderSlots::VS_PerFrameCB, m_pPerFrameCB->GetD3DBuffer())
@@ -170,56 +170,56 @@ namespace gfx
 			.PSSetCB(RenderSlots::PS_PerFrameCB, m_pPerFrameCB->GetD3DBuffer())
 			.PSSetCB(RenderSlots::PS_TransformationCB, m_pTransformationCB->GetD3DBuffer())
 			.PSSetCB(RenderSlots::PS_PerCameraCB, m_pPerCameraCB->GetD3DBuffer())
-			.PSSetCB(RenderSlots::PS_LightInputCB, m_pLightManager->GetLightInputCB()->GetD3DBuffer());
+			.PSSetCB(RenderSlots::PS_LightInputCB, m_pLightManager->GetLightInputCB().GetD3DBuffer());
 
-		GetRenderPass(DepthPrepassName)->
+		GetRenderPass(DepthPrepassName).
 			ClearBinds()
 			.AddBinding(RasterizerState::Resolve(gfx, D3D11_CULL_BACK)).SetupRSBinding();
 
-		GetRenderPass(HiZPassName)->
+		GetRenderPass(HiZPassName).
 			ClearBinds()
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, gfx.GetDepthStencilTarget()->GetSRV())
 			.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, m_pHiZBufferTarget->GetUAV())
 			.CSSetUAV(RenderSlots::CS_FreeUAV + 1u, nullptr)
 			.CSSetCB(RenderSlots::CS_FreeCB + 0u, m_pHiZCreationCB->GetD3DBuffer());
 
-		GetRenderPass(ShadowPassName)->
+		GetRenderPass(ShadowPassName).
 			ClearBinds()
 			.AddBinding(RasterizerState::Resolve(gfx, D3D11_CULL_FRONT)).SetupRSBinding(); // Reduce shadow acne w/ front face culling during shadow pass
 
-		GetRenderPass(GBufferRenderPassName)->
+		GetRenderPass(GBufferRenderPassName).
 			ClearBinds()
 			.AddBinding(RasterizerState::Resolve(gfx, D3D11_CULL_BACK)).SetupRSBinding();
 
-		GetRenderPass(TiledLightingPassName)->
+		GetRenderPass(TiledLightingPassName).
 			ClearBinds()
 			.CSSetSRV(RenderSlots::CS_GbufferNormalRoughSRV, m_pNormalRoughReflectivityTarget->GetSRV())
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, gfx.GetDepthStencilTarget()->GetSRV())
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 1u, m_pHiZBufferTarget->GetSRV())
-			.CSSetSRV(RenderSlots::CS_FreeSRV + 2u, m_pLightManager->GetShadowAtlas()->GetSRV())
+			.CSSetSRV(RenderSlots::CS_FreeSRV + 2u, m_pLightManager->GetShadowAtlas().GetSRV())
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 3u, m_pDitherTexture->GetSRV())
 			.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, m_pSpecularLighting->GetUAV())
 			.CSSetUAV(RenderSlots::CS_FreeUAV + 1u, m_pDiffuseLighting->GetUAV())
 			.CSSetUAV(RenderSlots::CS_FreeUAV + 2u, m_pDebugTiledLighting->GetUAV())
 			.CSSetSPL(RenderSlots::CS_FreeSPL + 0u, m_pShadowSampler->GetD3DSampler());
 
-		GetRenderPass(ClusteredLightingPassName)->
+		GetRenderPass(ClusteredLightingPassName).
 			ClearBinds()
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, gfx.GetDepthStencilTarget()->GetSRV())
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 1u, m_pHiZBufferTarget->GetSRV())
-			.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, m_pLightManager->GetClusteredIndices()->GetUAV())
+			.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, m_pLightManager->GetClusteredIndices().GetUAV())
 			.CSSetUAV(RenderSlots::CS_FreeUAV + 1u, m_pDebugClusteredLighting->GetUAV())
 			.CSSetCB(RenderSlots::CS_FreeCB + 0u, m_pClusteredLightingCB->GetD3DBuffer());
 
-		GetRenderPass(OpaqueRenderPassName)->
+		GetRenderPass(OpaqueRenderPassName).
 			ClearBinds()
 			.PSSetSRV(RenderSlots::PS_FreeSRV + 0u, m_pSpecularLighting->GetSRV())
 			.PSSetSRV(RenderSlots::PS_FreeSRV + 1u, m_pDiffuseLighting->GetSRV())
-			.PSSetSRV(RenderSlots::PS_FreeSRV + 2u, m_pLightManager->GetClusteredIndices()->GetSRV())
+			.PSSetSRV(RenderSlots::PS_FreeSRV + 2u, m_pLightManager->GetClusteredIndices().GetSRV())
 			.PSSetSRV(RenderSlots::PS_FreeSRV + 3u, m_pDitherTexture->GetSRV())
 			.PSSetSRV(RenderSlots::PS_FreeSRV + 4u, m_pLightManager->GetLightDataSRV())
 			.PSSetSRV(RenderSlots::PS_FreeSRV + 5u, m_pLightManager->GetShadowDataSRV())
-			.PSSetSRV(RenderSlots::PS_FreeSRV + 6u, m_pLightManager->GetShadowAtlas()->GetSRV())
+			.PSSetSRV(RenderSlots::PS_FreeSRV + 6u, m_pLightManager->GetShadowAtlas().GetSRV())
 			.PSSetCB(RenderSlots::PS_FreeCB + 0u, m_pClusteredLightingCB->GetD3DBuffer())
 			.PSSetSPL(RenderSlots::PS_FreeSPL + 0u, m_pShadowSampler->GetD3DSampler());
 
@@ -230,7 +230,7 @@ namespace gfx
 			const auto& pColorOut = (cameraOutSlot0) ? m_pCameraColor1 : m_pCameraColor0;
 			cameraOutSlot0 = !cameraOutSlot0;
 
-			GetRenderPass(SSRRenderPassName)->
+			GetRenderPass(SSRRenderPassName).
 				ClearBinds()
 				.CSSetSRV(RenderSlots::CS_GbufferNormalRoughSRV, m_pNormalRoughReflectivityTarget->GetSRV())
 				.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, pColorIn->GetSRV())
@@ -251,7 +251,7 @@ namespace gfx
 			const auto& pColorOut = (cameraOutSlot0) ? m_pCameraColor1 : m_pCameraColor0;
 			cameraOutSlot0 = !cameraOutSlot0;
 
-			GetRenderPass(FXAARenderPassName)->
+			GetRenderPass(FXAARenderPassName).
 				ClearBinds()
 				.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, pColorIn->GetSRV())
 				.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, pColorOut->GetUAV())
@@ -266,7 +266,7 @@ namespace gfx
 			const auto& pColorOut = (cameraOutSlot0) ? m_pCameraColor1 : m_pCameraColor0;
 			cameraOutSlot0 = !cameraOutSlot0;
 
-			GetRenderPass(DitherRenderPassName)->
+			GetRenderPass(DitherRenderPassName).
 				ClearBinds()
 				.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, pColorIn->GetSRV())
 				.CSSetSRV(RenderSlots::CS_FreeSRV + 1u, m_pDitherTexture->GetSRV())
@@ -281,7 +281,7 @@ namespace gfx
 			const auto& pColorOut = (cameraOutSlot0) ? m_pCameraColor1 : m_pCameraColor0;
 			cameraOutSlot0 = !cameraOutSlot0;
 
-			GetRenderPass(TonemappingRenderPassName)->
+			GetRenderPass(TonemappingRenderPassName).
 				ClearBinds()
 				.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, pColorIn->GetSRV())
 				.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, pColorOut->GetUAV());
@@ -296,11 +296,11 @@ namespace gfx
 		m_pRenderPasses[targetPass]->EnqueueJob(job);
 	}
 
-	void Renderer::Execute(GraphicsDevice& gfx, const std::unique_ptr<Camera>& cam, float timeElapsed, UINT pixelSelectionX, UINT pixelSelectionY)
+	void Renderer::Execute(GraphicsDevice& gfx, const Camera& camera, float timeElapsed, UINT pixelSelectionX, UINT pixelSelectionY)
 	{
 		auto context = gfx.GetContext();
 
-		gfx.GetRenderStats()->StartFrame();
+		gfx.GetRenderStats().StartFrame();
 		context->ClearState();
 
 		static int frameCt = 0;
@@ -308,30 +308,30 @@ namespace gfx
 
 		// Shadow + lighting pass
 		{
-			const std::unique_ptr<RenderPass>& pass = GetRenderPass(ShadowPassName);
+			RenderPass& pass = GetRenderPass(ShadowPassName);
 
-			pass->BindSharedResources(gfx);
+			pass.BindSharedResources(gfx);
 
-			static ShadowPassContext context(gfx, cam, *this, pass, m_pTransformationCB, nullptr);
+			static ShadowPassContext context(gfx, camera, *this, pass, *m_pTransformationCB.get(), nullptr);
 			context.Update();
 
-			m_pLightManager->CullLightsAndShadows(gfx, *cam.get(), IsFeatureEnabled(RendererFeature::Shadows)); // changes the SRV, which will be bound in per-frame binds
+			m_pLightManager->CullLightsAndShadows(gfx, camera, IsFeatureEnabled(RendererFeature::Shadows)); // changes the SRV, which will be bound in per-frame binds
 			if (IsFeatureEnabled(RendererFeature::Shadows))
 			{
 				m_pLightManager->RenderShadows(context);
 			}
 
-			pass->UnbindSharedResources(gfx);
+			pass.UnbindSharedResources(gfx);
 		}
 
 		// Submit draw calls
 		{
 			static DrawContext drawContext(*this, std::move(std::vector<std::string> { DepthPrepassName, GBufferRenderPassName, OpaqueRenderPassName }));
-			drawContext.viewMatrix = cam->GetViewMatrix();
-			drawContext.projMatrix = cam->GetProjectionMatrix();
+			drawContext.viewMatrix = camera.GetViewMatrix();
+			drawContext.projMatrix = camera.GetProjectionMatrix();
 
 			// todo: filter by render passes too
-			m_pVisibleRendererList->Filter(gfx, cam->GetFrustumWS(), RendererList::RendererSorting::BackToFront);
+			m_pVisibleRendererList->Filter(gfx, camera.GetFrustumWS(), RendererList::RendererSorting::BackToFront);
 			m_pVisibleRendererList->SubmitDrawCalls(drawContext);
 		}
 
@@ -346,29 +346,29 @@ namespace gfx
 			m_pPerFrameCB->Update(gfx, perFrameCB);
 
 			static GlobalTransformCB transformationCB;
-			transformationCB.viewMatrix = cam->GetViewMatrix();
-			transformationCB.projMatrix = cam->GetProjectionMatrix();
+			transformationCB.viewMatrix = camera.GetViewMatrix();
+			transformationCB.projMatrix = camera.GetProjectionMatrix();
 			transformationCB.viewProjMatrix = transformationCB.projMatrix * transformationCB.viewMatrix;
 			transformationCB.invViewMatrix = dx::XMMatrixInverse(nullptr, transformationCB.viewMatrix);
 			transformationCB.invProjMatrix = dx::XMMatrixInverse(nullptr, transformationCB.projMatrix);
 			transformationCB.invViewProjMatrix = dx::XMMatrixInverse(nullptr, transformationCB.viewProjMatrix);
 			m_pTransformationCB->Update(gfx, transformationCB);
 
-			const float farNearRatio = cam->GetFarClipPlane() / cam->GetNearClipPlane();
+			const float farNearRatio = camera.GetFarClipPlane() / camera.GetNearClipPlane();
 
 			static PerCameraCB perCameraCB;
 			ZeroMemory(&perCameraCB, sizeof(perCameraCB));
-			perCameraCB.projectionParams = dx::XMVectorSet(1.f, cam->GetNearClipPlane(), cam->GetFarClipPlane(), 1.f / cam->GetFarClipPlane());
+			perCameraCB.projectionParams = dx::XMVectorSet(1.f, camera.GetNearClipPlane(), camera.GetFarClipPlane(), 1.f / camera.GetFarClipPlane());
 			perCameraCB.screenParams = dx::XMVectorSet((float)gfx.GetScreenWidth(), (float)gfx.GetScreenHeight(), 1.0f / gfx.GetScreenWidth(), 1.0f / gfx.GetScreenHeight());
-			perCameraCB.zBufferParams = dx::XMVectorSet(1.f - farNearRatio, farNearRatio, 1.f / cam->GetFarClipPlane() - 1.f / cam->GetNearClipPlane(), 1.f / cam->GetNearClipPlane());
+			perCameraCB.zBufferParams = dx::XMVectorSet(1.f - farNearRatio, farNearRatio, 1.f / camera.GetFarClipPlane() - 1.f / camera.GetNearClipPlane(), 1.f / camera.GetNearClipPlane());
 			perCameraCB.orthoParams = dx::XMVectorSet(0.f, 0.f, 0.f, 0.f);
-			perCameraCB.frustumCornerDataVS = cam->GetFrustumCornersVS();
-			perCameraCB.cameraPositionWS = cam->GetPositionWS();
+			perCameraCB.frustumCornerDataVS = camera.GetFrustumCornersVS();
+			perCameraCB.cameraPositionWS = camera.GetPositionWS();
 
 			// todo: move elsewhere, and only calculate when FOV or resolution changes?
 			float fClustersZ = (float)m_pLightManager->GetClusterDimensionZ();
 			float logFarOverNear = std::log2f(farNearRatio);
-			perCameraCB.clusterPrecalc = dx::XMVectorSet(fClustersZ / logFarOverNear, -(fClustersZ * std::log2f(cam->GetNearClipPlane()) / logFarOverNear), 0.f, 0.f);
+			perCameraCB.clusterPrecalc = dx::XMVectorSet(fClustersZ / logFarOverNear, -(fClustersZ * std::log2f(camera.GetNearClipPlane()) / logFarOverNear), 0.f, 0.f);
 
 			// This is used when calculating cluster.xy from NDC
 			// These calculations turn it into a single [MAD] operation
@@ -384,31 +384,31 @@ namespace gfx
 
 		// Per-frame and per-camera binds
 		{
-			const std::unique_ptr<RenderPass>& pass = GetRenderPass(PerCameraPassName);
-			pass->BindSharedResources(gfx);
+			const RenderPass& pass = GetRenderPass(PerCameraPassName);
+			pass.BindSharedResources(gfx);
 		}
 
 		// Early Z pass
 		{
-			const std::unique_ptr<RenderPass>& pass = GetRenderPass(DepthPrepassName);
+			const RenderPass& pass = GetRenderPass(DepthPrepassName);
 
-			pass->BindSharedResources(gfx);
+			pass.BindSharedResources(gfx);
 			DepthStencilState::Resolve(gfx, DepthStencilState::Mode::StencilOff)->BindOM(gfx);
 			gfx.GetDepthStencilTarget()->Clear(gfx);
 
 			gfx.SetDepthOnlyRenderTarget();
 			gfx.SetViewport(gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
-			pass->Execute(gfx);
-			pass->UnbindSharedResources(gfx);
+			pass.Execute(gfx);
+			pass.UnbindSharedResources(gfx);
 		}
 
 		// Hi-Z buffer pass
 		{
-			const std::unique_ptr<RenderPass>& pass = GetRenderPass(HiZPassName);
+			const RenderPass& pass = GetRenderPass(HiZPassName);
 
 			gfx.ClearRenderTargets(); // need in order to access depth
-			pass->BindSharedResources(gfx);
+			pass.BindSharedResources(gfx);
 
 			const UINT screenWidth = (UINT)gfx.GetScreenWidth();
 			const UINT screenHeight = (UINT)gfx.GetScreenHeight();
@@ -434,48 +434,48 @@ namespace gfx
 				m_pHiZCreationCB->Update(gfx, hiZCreationCB);
 
 				// Bind mip slice views as UAVs
-				context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 0u, 2u, pass->m_pNullUAVs.data(), nullptr);
+				context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 0u, 2u, pass.m_pNullUAVs.data(), nullptr);
 				context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 0u, 1u, m_pHiZBufferTarget->GetUAV(mip - 1u).GetAddressOf(), nullptr);
 				context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 1u, 1u, m_pHiZBufferTarget->GetUAV(mip).GetAddressOf(), nullptr);
 
 				m_pHiZCreateMipKernel->Dispatch(gfx, dstWidth, dstHeight, 1u);
 			}
 
-			pass->UnbindSharedResources(gfx);
+			pass.UnbindSharedResources(gfx);
 		}
 
 		// Normal-rough-reflectivity pass
 		{
-			const std::unique_ptr<RenderPass>& pass = GetRenderPass(GBufferRenderPassName);
+			const RenderPass& pass = GetRenderPass(GBufferRenderPassName);
 
-			pass->BindSharedResources(gfx);
+			pass.BindSharedResources(gfx);
 			DepthStencilState::Resolve(gfx, DepthStencilState::Mode::Gbuffer)->BindOM(gfx);
 			m_pNormalRoughReflectivityTarget->ClearRenderTarget(context.Get(), 1.f, 0.f, 0.f, 1.f);
 
 			gfx.SetRenderTarget(m_pNormalRoughReflectivityTarget->GetRenderTargetView());
 			gfx.SetViewport(gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
-			pass->Execute(gfx);
+			pass.Execute(gfx);
 
 			gfx.ClearRenderTargets();
 
-			pass->UnbindSharedResources(gfx);
+			pass.UnbindSharedResources(gfx);
 		}
 
 		// Tiled lighting pass
 		{
-			const std::unique_ptr<RenderPass>& pass = GetRenderPass(TiledLightingPassName);
-			pass->BindSharedResources(gfx);
+			const RenderPass& pass = GetRenderPass(TiledLightingPassName);
+			pass.BindSharedResources(gfx);
 
 			m_pTiledLightingKernel->Dispatch(gfx, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1);
 
-			pass->UnbindSharedResources(gfx);
+			pass.UnbindSharedResources(gfx);
 		}
 
 		// Clustered lighting pass
 		{
-			const std::unique_ptr<RenderPass>& pass = GetRenderPass(ClusteredLightingPassName);
-			pass->BindSharedResources(gfx);
+			const RenderPass& pass = GetRenderPass(ClusteredLightingPassName);
+			pass.BindSharedResources(gfx);
 
 			static ClusteredLightingCB clusteredLightingCB;
 			clusteredLightingCB.groupResolutions = { m_pLightManager->GetClusterDimensionX(), m_pLightManager->GetClusterDimensionY(), m_pLightManager->GetClusterDimensionZ(), 0u };
@@ -483,13 +483,13 @@ namespace gfx
 
 			m_pClusteredLightingKernel->Dispatch(gfx, m_pLightManager->GetClusterDimensionX(), m_pLightManager->GetClusterDimensionY(), m_pLightManager->GetClusterDimensionZ());
 
-			pass->UnbindSharedResources(gfx);
+			pass.UnbindSharedResources(gfx);
 		}
 
 		// Opaque pass
 		{
-			const std::unique_ptr<RenderPass>& pass = GetRenderPass(OpaqueRenderPassName);
-			pass->BindSharedResources(gfx);
+			const RenderPass& pass = GetRenderPass(OpaqueRenderPassName);
+			pass.BindSharedResources(gfx);
 
 			DepthStencilState::Resolve(gfx, DepthStencilState::Mode::Gbuffer)->BindOM(gfx);
 
@@ -497,16 +497,16 @@ namespace gfx
 			m_pCameraColor0->BindAsTarget(gfx, gfx.GetDepthStencilTarget()->GetView());
 			gfx.SetViewport(gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
-			pass->Execute(gfx);
-			pass->UnbindSharedResources(gfx);
+			pass.Execute(gfx);
+			pass.UnbindSharedResources(gfx);
 
 			gfx.ClearRenderTargets();
 		}
 
 		// Blur pyramid
 		{
-			/*const std::unique_ptr<RenderPass>& pass = GetRenderPass(BlurPyramidPassName);
-			pass->BindSharedResources(gfx);
+			/*const RenderPass& pass = GetRenderPass(BlurPyramidPassName);
+			pass.BindSharedResources(gfx);
 
 			UINT screenWidth = (UINT)gfx.GetScreenWidth();
 			UINT screenHeight = (UINT)gfx.GetScreenHeight();
@@ -528,21 +528,21 @@ namespace gfx
 				pHiZCreationCB->Update(gfx, hiZCreationCB);
 
 				// Bind mip slice views as UAVs
-				context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 0u, 2u, pass->pNullUAVs.data(), nullptr);
+				context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 0u, 2u, pass.pNullUAVs.data(), nullptr);
 				context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 0u, 1u, pHiZBufferTarget->GetUAV(mip - 1u).GetAddressOf(), nullptr);
 				context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 1u, 1u, pHiZBufferTarget->GetUAV(mip).GetAddressOf(), nullptr);
 
 				pHiZCreateMipKernel->Dispatch(gfx, dstWidth, dstHeight, 1u);
 			}
 
-			pass->UnbindSharedResources(gfx);*/
+			pass.UnbindSharedResources(gfx);*/
 		}
 
 		// SSR pass
 		if (IsFeatureEnabled(RendererFeature::HZBSSR))
 		{
-			const std::unique_ptr<RenderPass>& pass = GetRenderPass(SSRRenderPassName);
-			pass->BindSharedResources(gfx);
+			const RenderPass& pass = GetRenderPass(SSRRenderPassName);
+			pass.BindSharedResources(gfx);
 
 			static SSR_CB ssrCB;
 			ssrCB.debugViewStep = (frameCt / 20u) % 25u;
@@ -550,14 +550,14 @@ namespace gfx
 
 			m_pSSRKernel->Dispatch(gfx, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1);
 
-			pass->UnbindSharedResources(gfx);
+			pass.UnbindSharedResources(gfx);
 		}
 
 		// FXAA pass
 		if (Config::AAType == Config::AAType::FXAA && IsFeatureEnabled(RendererFeature::FXAA))
 		{
-			const std::unique_ptr<RenderPass>& pass = GetRenderPass(FXAARenderPassName);
-			pass->BindSharedResources(gfx);
+			const RenderPass& pass = GetRenderPass(FXAARenderPassName);
+			pass.BindSharedResources(gfx);
 
 			static FXAA_CB fxaaCB;
 			fxaaCB.minThreshold = 0.1f;
@@ -568,14 +568,14 @@ namespace gfx
 
 			m_pFXAAKernel->Dispatch(gfx, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1);
 
-			pass->UnbindSharedResources(gfx);
+			pass.UnbindSharedResources(gfx);
 		}
 
 		// Dither pass
 		if (m_viewIdx == RendererView::Final && IsFeatureEnabled(RendererFeature::Dither))
 		{
-			const std::unique_ptr<RenderPass>& pass = GetRenderPass(DitherRenderPassName);
-			pass->BindSharedResources(gfx);
+			const RenderPass& pass = GetRenderPass(DitherRenderPassName);
+			pass.BindSharedResources(gfx);
 
 			static DitherCB ditherCB;
 			ditherCB.shadowDither = 0.15f;
@@ -584,56 +584,56 @@ namespace gfx
 
 			m_pDitherKernel->Dispatch(gfx, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1);
 
-			pass->UnbindSharedResources(gfx);
+			pass.UnbindSharedResources(gfx);
 		}
 
 		// Tonemapping pass
 		if (m_viewIdx == RendererView::Final && IsFeatureEnabled(RendererFeature::Tonemapping))
 		{
-			const std::unique_ptr<RenderPass>& pass = GetRenderPass(TonemappingRenderPassName);
-			pass->BindSharedResources(gfx);
+			const RenderPass& pass = GetRenderPass(TonemappingRenderPassName);
+			pass.BindSharedResources(gfx);
 
 			m_pTonemappingKernel->Dispatch(gfx, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1);
 
-			pass->UnbindSharedResources(gfx);
+			pass.UnbindSharedResources(gfx);
 		}
 
 		// Final blit
 		{
-			const std::unique_ptr<RenderPass>& pass = GetRenderPass(FinalBlitRenderPassName);
-			const auto fsPass = static_cast<FullscreenPass*>(pass.get());
+			RenderPass& pass = GetRenderPass(FinalBlitRenderPassName);
+			auto& fsPass = static_cast<FullscreenPass&>(pass);
 
 			// todo: remove this - for now it's needed to clear SRVs
 			context->ClearState();
 
-			pass->BindSharedResources(gfx);
+			pass.BindSharedResources(gfx);
 			DepthStencilState::Resolve(gfx, DepthStencilState::Mode::StencilOff)->BindOM(gfx);
 
 			// Debug view overrides: (do this here so it can be changed dynamically later)
 			switch (m_viewIdx)
 			{
 			case RendererView::Final:
-				fsPass->SetInputTarget(m_pFinalBlitInputIsIndex0 ? m_pCameraColor0 : m_pCameraColor1);
+				fsPass.SetInputTarget(m_pFinalBlitInputIsIndex0 ? m_pCameraColor0 : m_pCameraColor1);
 				break;
 			case RendererView::TiledLighting:
-				fsPass->SetInputTarget(m_pDebugTiledLighting);
+				fsPass.SetInputTarget(m_pDebugTiledLighting);
 				break;
 			case RendererView::ClusteredLighting:
-				fsPass->SetInputTarget(m_pDebugClusteredLighting);
+				fsPass.SetInputTarget(m_pDebugClusteredLighting);
 				break;
 			case RendererView::SSRTrace:
-				fsPass->SetInputTarget(m_pDebugSSR);
+				fsPass.SetInputTarget(m_pDebugSSR);
 				break;
 			}
 
 			gfx.SetViewport(gfx.GetScreenWidth(), gfx.GetScreenHeight());
 			gfx.SetRenderTarget(gfx.GetBackBufferView());
 
-			pass->Execute(gfx);
-			pass->UnbindSharedResources(gfx);
+			pass.Execute(gfx);
+			pass.UnbindSharedResources(gfx);
 		}
 
-		gfx.GetRenderStats()->EndFrame();
+		gfx.GetRenderStats().EndFrame();
 
 	}
 
@@ -689,21 +689,21 @@ namespace gfx
 		}
 	}
 
-	const std::unique_ptr<RenderPass>& Renderer::GetRenderPass(const std::string name) const
+	RenderPass& Renderer::GetRenderPass(const std::string name) const
 	{
-		return m_pRenderPasses.at(name);
+		return *m_pRenderPasses.at(name).get();
 	}
 
-	const std::unique_ptr<RenderPass>& Renderer::CreateRenderPass(const std::string name)
+	const RenderPass& Renderer::CreateRenderPass(const std::string name)
 	{
 		m_pRenderPasses.emplace(name, std::make_unique<RenderPass>(name));
-		return m_pRenderPasses[name];
+		return *m_pRenderPasses[name].get();
 	}
 
-	const std::unique_ptr<RenderPass>& Renderer::CreateRenderPass(const std::string name, std::unique_ptr<RenderPass> pRenderPass)
+	const RenderPass& Renderer::CreateRenderPass(const std::string name, std::unique_ptr<RenderPass> pRenderPass)
 	{
 		m_pRenderPasses.emplace(name, std::move(pRenderPass));
-		return m_pRenderPasses[name];
+		return *m_pRenderPasses[name].get();
 	}
 
 	bool Renderer::IsFeatureEnabled(RendererFeature feature) const

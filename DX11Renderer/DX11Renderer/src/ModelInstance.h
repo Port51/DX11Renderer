@@ -28,7 +28,7 @@ namespace gfx
 		void SetPositionWS(dx::XMFLOAT3 positionWS);
 		void RebuildSceneGraphTransforms();
 		const std::shared_ptr<SceneGraphNode> GetSceneGraph() const;
-		const std::vector<std::shared_ptr<MeshRenderer>> GetMeshRenderers() const;
+		const std::vector<std::shared_ptr<MeshRenderer>>& GetMeshRenderers() const;
 	private:
 		void InitializeModel();
 	private:

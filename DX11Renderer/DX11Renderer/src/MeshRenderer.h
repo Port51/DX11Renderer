@@ -23,8 +23,8 @@ namespace gfx
 	{
 		friend class AABB;
 	public:
-		MeshRenderer(const GraphicsDevice& gfx, std::string name, std::shared_ptr<MeshAsset> const& pMeshAsset, std::shared_ptr<Material> pMaterial, std::shared_ptr<IndexBuffer> pIndexBuffer, std::shared_ptr<Topology> pTopologyBuffer);
-		MeshRenderer(const GraphicsDevice& gfx, std::string name, std::shared_ptr<MeshAsset> const& pMeshAsset, std::shared_ptr<Material> pMaterial, std::shared_ptr<VertexBufferWrapper> pVertexBuffer, std::shared_ptr<IndexBuffer> pIndexBuffer, std::shared_ptr<Topology> pTopologyBuffer);
+		MeshRenderer(const GraphicsDevice& gfx, std::string name, std::shared_ptr<MeshAsset> pMeshAsset, std::shared_ptr<Material> pMaterial, std::shared_ptr<IndexBuffer> pIndexBuffer, std::shared_ptr<Topology> pTopologyBuffer);
+		MeshRenderer(const GraphicsDevice& gfx, std::string name, std::shared_ptr<MeshAsset> pMeshAsset, std::shared_ptr<Material> pMaterial, std::shared_ptr<VertexBufferWrapper> pVertexBuffer, std::shared_ptr<IndexBuffer> pIndexBuffer, std::shared_ptr<Topology> pTopologyBuffer);
 		virtual ~MeshRenderer() = default;
 
 	public:

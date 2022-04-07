@@ -126,12 +126,12 @@ namespace gfx
 			{
 				m_cachedLightData[m_visibleLightCt++] = data;
 				m_lightVisibility[i] = true;
-				gfx.GetRenderStats()->AddVisibleLights(1u);
+				gfx.GetRenderStats().AddVisibleLights(1u);
 			}
 			else
 			{
 				m_lightVisibility[i] = false;
-				gfx.GetRenderStats()->AddCulledLights(1u);
+				gfx.GetRenderStats().AddCulledLights(1u);
 			}
 		}
 
@@ -157,19 +157,19 @@ namespace gfx
 		gfx.GetContext()->CSSetConstantBuffers(RenderSlots::PS_LightInputCB, 1u, m_pLightInputCB->GetD3DBuffer().GetAddressOf());
 	}
 
-	std::unique_ptr<DepthStencilTarget>& LightManager::GetShadowAtlas()
+	DepthStencilTarget& LightManager::GetShadowAtlas()
 	{
-		return m_pShadowAtlas;
+		return *m_pShadowAtlas.get();
 	}
 
-	std::unique_ptr<ConstantBuffer<LightInputCB>>& LightManager::GetLightInputCB()
+	ConstantBuffer<LightInputCB>& LightManager::GetLightInputCB()
 	{
-		return m_pLightInputCB;
+		return *m_pLightInputCB.get();
 	}
 
-	void LightManager::RenderShadows(ShadowPassContext context)
+	void LightManager::RenderShadows(ShadowPassContext& context)
 	{
-		context.pRendererList = m_pShadowRendererList;
+		context.pRendererList = m_pShadowRendererList.get();
 
 		m_pShadowAtlas->Clear(context.gfx);
 		context.gfx.GetContext()->OMSetRenderTargets(0u, nullptr, m_pShadowAtlas->GetView().Get());
@@ -186,11 +186,11 @@ namespace gfx
 					m_pLights[i]->AppendShadowData(shadowMapIdx, m_cachedShadowData);
 					shadowMapIdx += m_pLights[i]->GetShadowTileCount();
 
-					context.gfx.GetRenderStats()->AddVisibleShadows(m_pLights[i]->GetShadowTileCount());
+					context.gfx.GetRenderStats().AddVisibleShadows(m_pLights[i]->GetShadowTileCount());
 				}
 				else
 				{
-					context.gfx.GetRenderStats()->AddCulledShadows(m_pLights[i]->GetShadowTileCount());
+					context.gfx.GetRenderStats().AddCulledShadows(m_pLights[i]->GetShadowTileCount());
 				}
 			}
 		}
@@ -221,9 +221,9 @@ namespace gfx
 		return (UINT)m_pLights.size();
 	}
 
-	const std::shared_ptr<Light> LightManager::GetLight(UINT index) const
+	Light& LightManager::GetLight(UINT index) const
 	{
-		return m_pLights[index];
+		return *m_pLights[index].get();
 	}
 
 	const UINT LightManager::GetClusterCount() const
@@ -246,9 +246,9 @@ namespace gfx
 		return m_clusterDimensionZ;
 	}
 
-	const std::unique_ptr<StructuredBuffer<int>>& LightManager::GetClusteredIndices() const
+	const StructuredBuffer<int>& LightManager::GetClusteredIndices() const
 	{
-		return m_pClusteredIndices;
+		return *m_pClusteredIndices.get();
 	}
 
 }

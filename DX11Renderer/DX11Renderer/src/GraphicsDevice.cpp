@@ -175,7 +175,7 @@ namespace gfx
 		m_currentRenderTargetCount = 1u;
 	}
 
-	void GraphicsDevice::SetRenderTargets(std::vector<ID3D11RenderTargetView*> renderTargetViews)
+	void GraphicsDevice::SetRenderTargets(const std::vector<ID3D11RenderTargetView*>& renderTargetViews)
 	{
 		m_pContext->OMSetRenderTargets(renderTargetViews.size(), renderTargetViews.data(), m_pDepthStencil->GetView().Get());
 		m_currentRenderTargetCount = renderTargetViews.size();
@@ -230,14 +230,14 @@ namespace gfx
 		return m_pContext;
 	}
 
-	const std::unique_ptr<RenderStats>& GraphicsDevice::GetRenderStats() const
+	RenderStats& GraphicsDevice::GetRenderStats() const
 	{
-		return m_pRenderStats;
+		return *m_pRenderStats.get();
 	}
 
-	const std::unique_ptr<Log>& GraphicsDevice::GetLog() const
+	Log& GraphicsDevice::GetLog() const
 	{
-		return m_pLog;
+		return *m_pLog.get();
 	}
 
 	const std::shared_ptr<DepthStencilTarget>& GraphicsDevice::GetDepthStencilTarget() const

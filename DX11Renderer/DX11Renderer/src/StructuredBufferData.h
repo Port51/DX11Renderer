@@ -51,6 +51,7 @@ namespace gfx
 			assert(m_nextInputIdx < m_elements.size() && "StructuredBufferData out of range!");
 			m_elements[m_nextInputIdx++] = std::move(value);
 		}
+
 	private:
 		std::vector<T> m_elements;
 		const UINT m_stride;

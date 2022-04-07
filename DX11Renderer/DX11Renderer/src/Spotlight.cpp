@@ -83,7 +83,7 @@ namespace gfx
 		return 1u;
 	}
 
-	void Spotlight::RenderShadow(ShadowPassContext context)
+	void Spotlight::RenderShadow(const ShadowPassContext& context)
 	{
 		// Apply look-at and local orientation
 		// +Y = up
@@ -101,7 +101,7 @@ namespace gfx
 		static GlobalTransformCB transformationCB;
 		transformationCB.viewMatrix = viewMatrix;
 		transformationCB.projMatrix = projMatrix;
-		context.pTransformationCB->Update(context.gfx, transformationCB);
+		context.transformationCB.Update(context.gfx, transformationCB);
 
 		static DrawContext drawContext(context.renderer, context.renderer.ShadowPassName);
 		drawContext.viewMatrix = viewMatrix;
@@ -120,8 +120,8 @@ namespace gfx
 		{
 			// Render to tile in atlas using viewport
 			context.gfx.SetViewport(tileX * Config::ShadowAtlasTileResolution, tileY * Config::ShadowAtlasTileResolution, Config::ShadowAtlasTileResolution, Config::ShadowAtlasTileResolution);
-			context.pRenderPass->Execute(context.gfx);
-			context.pRenderPass->Reset(); // required to handle multiple shadows at once
+			context.renderPass.Execute(context.gfx);
+			context.renderPass.Reset(); // required to handle multiple shadows at once
 		}
 
 		// todo: move elsewhere

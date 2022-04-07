@@ -46,19 +46,19 @@ namespace gfx
 	public:
 		void AddLightModelsToList(RendererList& pRendererList);
 		void CullLightsAndShadows(const GraphicsDevice& gfx, const Camera& cam, bool enableShadows);
-		std::unique_ptr<DepthStencilTarget>& GetShadowAtlas();
-		std::unique_ptr<ConstantBuffer<LightInputCB>>& GetLightInputCB();
-		void RenderShadows(ShadowPassContext context);
+		DepthStencilTarget& GetShadowAtlas();
+		ConstantBuffer<LightInputCB>& GetLightInputCB();
+		void RenderShadows(ShadowPassContext& context);
 		const ComPtr<ID3D11ShaderResourceView> GetLightDataSRV() const;
 		const ComPtr<ID3D11ShaderResourceView> GetShadowDataSRV() const;
 		void DrawImguiControlWindows() const;
 		const UINT GetLightCount() const;
-		const std::shared_ptr<Light> GetLight(UINT index) const;
+		Light& GetLight(UINT index) const;
 		const UINT GetClusterCount() const;
 		const UINT GetClusterDimensionX() const;
 		const UINT GetClusterDimensionY() const;
 		const UINT GetClusterDimensionZ() const;
-		const std::unique_ptr<StructuredBuffer<int>>& GetClusteredIndices() const;
+		const StructuredBuffer<int>& GetClusteredIndices() const;
 	private:
 		std::vector<bool> m_lightVisibility;
 		std::vector<std::shared_ptr<Light>> m_pLights;

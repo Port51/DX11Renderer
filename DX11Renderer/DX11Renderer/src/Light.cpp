@@ -49,9 +49,9 @@ namespace gfx
 		return m_shadowSettings.hasShadow;
 	}
 
-	const std::unique_ptr<ModelInstance>& Light::GetModelInstance() const
+	ModelInstance* Light::GetModelInstance() const
 	{
-		return m_pModel;
+		return m_pModel.get();
 	}
 
 	void Light::SetShadowMatrixTile(dx::XMMATRIX& shadowMatrix, int tileX, int tileY)

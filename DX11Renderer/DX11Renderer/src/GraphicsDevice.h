@@ -31,7 +31,7 @@ namespace gfx
 		void SetDepthOnlyRenderTarget() const;
 		void SetDepthOnlyRenderTarget(const std::shared_ptr<DepthStencilTarget>& pDepthStencil) const;
 		void SetRenderTarget(ComPtr<ID3D11RenderTargetView> renderTargetView);
-		void SetRenderTargets(std::vector<ID3D11RenderTargetView*> renderTargetViews);
+		void SetRenderTargets(const std::vector<ID3D11RenderTargetView*>& renderTargetViews);
 		void ClearRenderTargets() const;
 		void SetViewport(int x, int y, int width, int height) const;
 		void SetViewport(int width, int height) const;
@@ -40,8 +40,8 @@ namespace gfx
 	public:
 		const ComPtr<ID3D11Device> GetAdapter() const;
 		const ComPtr<ID3D11DeviceContext> GetContext() const;
-		const std::unique_ptr<RenderStats>& GetRenderStats() const;
-		const std::unique_ptr<Log>& GetLog() const;
+		RenderStats& GetRenderStats() const;
+		Log& GetLog() const;
 		const std::shared_ptr<DepthStencilTarget>& GetDepthStencilTarget() const;
 		const ComPtr<ID3D11RenderTargetView>& GetBackBufferView() const;
 	public:

@@ -155,7 +155,7 @@ namespace gfx
 		// Reference: http://www.cse.chalmers.se/~uffe/vfc_bbox.pdf
 
 		// Reference: https://www.gamedev.net/forums/topic/512123-fast--and-correct-frustum---aabb-intersection/
-		int result = 1;
+		intersectionType = IntersectionType::Inside;
 		const auto minCornerWS = dx::XMVectorAdd(aabb.GetMinimumCornerLS(), aabbObjectPosition);
 		const auto maxCornerWS = dx::XMVectorAdd(aabb.GetMaximumCornerLS(), aabbObjectPosition);
 
@@ -197,15 +197,16 @@ namespace gfx
 			if (dotMin - planes[i].w > 0.f)
 			{
 				// Outside frustum
-				return 2;
+				intersectionType = IntersectionType::Outside;
+				return false;
 			}
 			if (dotMax - planes[i].w >= 0.f)
 			{
 				// Intersection
-				result = 0;
+				intersectionType = IntersectionType::Intersect;
 			}
 		}
-		return result;
+		return true;
 	}
 
 	const bool Frustum::DoesSphereIntersect(const dx::XMVECTOR spherePosition, const float sphereRadius) const

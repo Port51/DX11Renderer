@@ -23,7 +23,7 @@ namespace gfx
 		std::string vertexShaderName("Assets\\Built\\Shaders\\FullscreenVS.cso");
 		auto vs = VertexShader::Resolve(gfx, vertexShaderName.c_str());
 
-		SetupFullscreenQuadBindings(gfx, vertexShaderName, vs);
+		SetupFullscreenQuadBindings(gfx, vertexShaderName, *vs.get());
 
 		AddBinding(std::move(vs))
 			.SetupVSBinding(0u);
@@ -62,14 +62,14 @@ namespace gfx
 		m_pInputTexture = pInput;
 	}
 
-	void FullscreenPass::SetupFullscreenQuadBindings(const GraphicsDevice& gfx, std::string vertexShaderName, std::shared_ptr<VertexShader> vertexShader)
+	void FullscreenPass::SetupFullscreenQuadBindings(const GraphicsDevice& gfx, std::string vertexShaderName, const VertexShader& vertexShader)
 	{
 		// Setup fullscreen geometry
 		// Use 1 large triangle instead of 2 for better caching
 		VertexLayout vertexLayout;
 		vertexLayout.AppendVertexDesc<dx::XMFLOAT2>({ "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 });
 
-		const auto pvsbc = vertexShader->GetBytecode();
+		const auto pvsbc = vertexShader.GetBytecode();
 		AddBinding(InputLayout::Resolve(gfx, vertexLayout, vertexShaderName, pvsbc))
 			.SetupIABinding();
 

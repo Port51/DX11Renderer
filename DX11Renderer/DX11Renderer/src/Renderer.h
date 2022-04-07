@@ -43,15 +43,15 @@ namespace gfx
 		virtual ~Renderer();
 	public:
 		void AcceptDrawCall(DrawCall job, std::string targetPass);
-		void Execute(GraphicsDevice& gfx, const std::unique_ptr<Camera>& cam, float timeElapsed, UINT pixelSelectionX, UINT pixelSelectionY);
+		void Execute(GraphicsDevice& gfx, const Camera& cam, float timeElapsed, UINT pixelSelectionX, UINT pixelSelectionY);
 		void DrawImguiControlWindow(const GraphicsDevice& gfx);
 		void Reset();
 		bool IsFeatureEnabled(RendererFeature feature) const;
 	private:
 		void SetupRenderPassDependencies(const GraphicsDevice& gfx);
-		const std::unique_ptr<RenderPass>& GetRenderPass(const std::string name) const;
-		const std::unique_ptr<RenderPass>& CreateRenderPass(const std::string name);
-		const std::unique_ptr<RenderPass>& CreateRenderPass(const std::string name, std::unique_ptr<RenderPass> pRenderPass);
+		RenderPass& GetRenderPass(const std::string name) const;
+		const RenderPass& CreateRenderPass(const std::string name);
+		const RenderPass& CreateRenderPass(const std::string name, std::unique_ptr<RenderPass> pRenderPass);
 
 	private:
 		std::unordered_map<std::string, std::unique_ptr<RenderPass>> m_pRenderPasses;

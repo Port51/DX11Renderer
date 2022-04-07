@@ -6,8 +6,8 @@
 
 namespace gfx
 {
-	Binding::Binding(std::shared_ptr<Bindable> _pBindable)
-		: m_pBindable(_pBindable)
+	Binding::Binding(std::shared_ptr<Bindable> pBindable)
+		: m_pBindable(pBindable)
 	{}
 
 	void Binding::Bind(const GraphicsDevice& gfx) const
@@ -49,9 +49,9 @@ namespace gfx
 		}
 	}
 
-	const std::shared_ptr<Bindable> Binding::GetBindable() const
+	const Bindable& Binding::GetBindable() const
 	{
-		return m_pBindable;
+		return *m_pBindable.get();
 	}
 
 	Binding& Binding::SetupIABinding(UINT slot)

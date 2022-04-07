@@ -18,16 +18,16 @@ namespace gfx
 	class ShadowPassContext
 	{
 	public:
-		ShadowPassContext(GraphicsDevice& gfx, const std::unique_ptr<Camera>& cam, Renderer& renderer, const std::unique_ptr<RenderPass>& pRenderPass, std::unique_ptr<ConstantBuffer<GlobalTransformCB>>& pTransformationCB, std::shared_ptr<RendererList> pRendererList);
+		ShadowPassContext(GraphicsDevice& gfx, const Camera& cam, Renderer& renderer, RenderPass& pRenderPass, ConstantBuffer<GlobalTransformCB>& transformationCB, RendererList* pRendererList);
 		virtual ~ShadowPassContext() = default;
 		void Update();
 	public:
 		GraphicsDevice& gfx;
-		const std::unique_ptr<Camera>& pCamera;
+		const Camera& camera;
 		dx::XMMATRIX invViewMatrix;
 		Renderer& renderer;
-		const std::unique_ptr<RenderPass>& pRenderPass;
-		std::unique_ptr<ConstantBuffer<GlobalTransformCB>>& pTransformationCB;
-		std::shared_ptr<RendererList> pRendererList;
+		RenderPass& renderPass;
+		ConstantBuffer<GlobalTransformCB>& transformationCB;
+		RendererList* pRendererList; // needs to be nullable
 	};
 }

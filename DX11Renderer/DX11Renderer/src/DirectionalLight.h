@@ -24,7 +24,7 @@ namespace gfx
 		void DrawImguiControlWindow() override;
 		const LightData GetLightData(dx::XMMATRIX viewMatrix) const override;
 		const UINT GetLightType() const override;
-		void RenderShadow(ShadowPassContext context) override;
+		void RenderShadow(const ShadowPassContext& context) override;
 		void AppendShadowData(UINT shadowStartSlot, std::vector<LightShadowData>& shadowData) const override;
 		const UINT GetShadowTileCount() const override;
 		const dx::XMVECTOR GetShadowCascadeSphereVS(UINT idx) const;

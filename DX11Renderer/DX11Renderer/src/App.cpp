@@ -82,11 +82,11 @@ namespace gfx
 		auto pModelAsset = ModelImporter::LoadGLTF(Gfx(), fn.c_str());
 		if (pModelAsset)
 		{
-			Gfx().GetLog()->Info("Model loaded");
+			Gfx().GetLog().Info("Model loaded");
 		}
 		else
 		{
-			Gfx().GetLog()->Error("Failed to load model");
+			Gfx().GetLog().Error("Failed to load model");
 		}
 
 		m_pModel0 = std::make_unique<ModelInstance>(Gfx(), pModelAsset, modelTransform);
@@ -204,33 +204,33 @@ namespace gfx
 			UINT ct = m_pLightManager->GetLightCount();
 			for (UINT i = 0u; i < ct; ++i)
 			{
-				const auto light = m_pLightManager->GetLight(i);
+				auto& light = m_pLightManager->GetLight(i);
 
 				// Only move lights the user can't control
-				if (!light->AllowUserControl())
+				if (!light.AllowUserControl())
 				{
-					auto positionWS = dx::XMLoadFloat3(&light->GetPositionWS());
+					auto positionWS = dx::XMLoadFloat3(&light.GetPositionWS());
 					float theta = i * 0.52738f;
 					float speed = 0.5f * dt;
 					auto velWS = dx::XMVectorSet(std::sin(theta) * speed, 0.f, std::cos(theta) * speed, 0.f);
 					positionWS = dx::XMVectorAdd(positionWS, velWS);
 
-					light->SetPositionWS(positionWS);
+					light.SetPositionWS(positionWS);
 				}
 			}
 		}
 
 		Gfx().BeginFrame();
 
-		m_pRenderer->Execute(Gfx(), m_pCamera, timeElapsed, m_pixelSelectionX, m_pixelSelectionY);
+		m_pRenderer->Execute(Gfx(), *m_pCamera.get(), timeElapsed, m_pixelSelectionX, m_pixelSelectionY);
 
 		// Draw Imgui windows
 		{
 			m_pRenderer->DrawImguiControlWindow(Gfx());
 			m_pCamera->DrawImguiControlWindow();
 			m_pLightManager->DrawImguiControlWindows();
-			Gfx().GetLog()->DrawImguiControlWindow();
-			Gfx().GetRenderStats()->DrawImguiControlWindow();
+			Gfx().GetLog().DrawImguiControlWindow();
+			Gfx().GetRenderStats().DrawImguiControlWindow();
 		}
 
 		Gfx().EndFrame();

@@ -67,7 +67,7 @@ namespace gfx
 					{
 						// todo: get distance
 						m_pRenderers.emplace_back(std::make_pair(renderer, 0.f));
-						gfx.GetRenderStats()->AddVisibleRenderers(1u);
+						gfx.GetRenderStats().AddVisibleRenderers(1u);
 					}
 				}
 			}

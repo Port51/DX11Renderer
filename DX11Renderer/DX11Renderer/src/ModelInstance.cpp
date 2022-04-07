@@ -70,7 +70,7 @@ namespace gfx
 		return m_pSceneGraph;
 	}
 
-	const std::vector<std::shared_ptr<MeshRenderer>> ModelInstance::GetMeshRenderers() const
+	const std::vector<std::shared_ptr<MeshRenderer>>& ModelInstance::GetMeshRenderers() const
 	{
 		return m_pMeshes;
 	}
@@ -78,7 +78,7 @@ namespace gfx
 	static int nextNodeId = 0; // todo: move
 	std::shared_ptr<SceneGraphNode> ModelInstance::CreateModelInstanceNode(const GraphicsDevice& gfx, std::shared_ptr<ModelAssetNode> const& pSourceNode)
 	{
-		gfx.GetLog()->Info("Create ModelInstanceNode " + pSourceNode->m_name + " w/ " + std::to_string(pSourceNode->m_pChildNodes.size()) + " children");
+		gfx.GetLog().Info("Create ModelInstanceNode " + pSourceNode->m_name + " w/ " + std::to_string(pSourceNode->m_pChildNodes.size()) + " children");
 
 		// Copy mesh if needed
 		auto pMeshRenderer = std::shared_ptr<MeshRenderer>();

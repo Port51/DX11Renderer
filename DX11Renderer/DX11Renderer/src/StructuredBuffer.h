@@ -53,14 +53,17 @@ namespace gfx
 		{
 			gfx.GetContext()->CSSetShaderResources(slot, 1u, m_pSRV.GetAddressOf());
 		}
+
 		void BindVS(const GraphicsDevice& gfx, UINT slot) override
 		{
 			gfx.GetContext()->VSSetShaderResources(slot, 1u, m_pSRV.GetAddressOf());
 		}
+
 		void BindPS(const GraphicsDevice& gfx, UINT slot) override
 		{
 			gfx.GetContext()->PSSetShaderResources(slot, 1u, m_pSRV.GetAddressOf());
 		}
+
 		void Update(const GraphicsDevice& gfx, const void* data, UINT dataBytes)
 		{
 			if (m_usage == D3D11_USAGE_DYNAMIC) // Can be continuously modified by CPU
@@ -88,6 +91,7 @@ namespace gfx
 				throw std::runtime_error("Cannot update immutable structured buffer!");
 			}
 		}
+
 		void Update(const GraphicsDevice& gfx, const std::vector<T>& data, UINT dataElements)
 		{
 			Update(gfx, data.data(), sizeof(T) * dataElements);

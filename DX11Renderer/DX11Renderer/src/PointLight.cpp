@@ -110,7 +110,7 @@ namespace gfx
 		return 0u;
 	}
 
-	void PointLight::RenderShadow(ShadowPassContext context)
+	void PointLight::RenderShadow(const ShadowPassContext& context)
 	{
 		static const float fovTheta = (float)dx::XM_PI / 2.0f;
 		static const float nearPlane = 0.1f;
@@ -131,7 +131,7 @@ namespace gfx
 			static GlobalTransformCB transformationCB;
 			transformationCB.viewMatrix = viewMatrix;
 			transformationCB.projMatrix = projMatrix;
-			context.pTransformationCB->Update(context.gfx, transformationCB);
+			context.transformationCB.Update(context.gfx, transformationCB);
 
 			static DrawContext drawContext(context.renderer, context.renderer.ShadowPassName);
 			drawContext.viewMatrix = viewMatrix;
@@ -151,8 +151,8 @@ namespace gfx
 			{
 				// Render to tile in atlas using viewport
 				context.gfx.SetViewport(tileX * Config::ShadowAtlasTileResolution, tileY * Config::ShadowAtlasTileResolution, Config::ShadowAtlasTileResolution, Config::ShadowAtlasTileResolution);
-				context.pRenderPass->Execute(context.gfx);
-				context.pRenderPass->Reset(); // required to handle multiple shadows at once
+				context.renderPass.Execute(context.gfx);
+				context.renderPass.Reset(); // required to handle multiple shadows at once
 			}
 
 			// todo: move elsewhere

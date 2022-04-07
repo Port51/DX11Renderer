@@ -7,13 +7,16 @@
 #include "CommonCbuffers.h"
 #include "ConstantBuffer.h"
 
-gfx::ShadowPassContext::ShadowPassContext(GraphicsDevice& gfx, const std::unique_ptr<Camera>& cam, Renderer & renderer, const std::unique_ptr<RenderPass>& pRenderPass, std::unique_ptr<ConstantBuffer<GlobalTransformCB>>& pTransformationCB, std::shared_ptr<RendererList> pRendererList)
-	: gfx(gfx), pCamera(cam), renderer(renderer), pRenderPass(pRenderPass), pTransformationCB(pTransformationCB), pRendererList(pRendererList)
+namespace gfx
 {
-	Update();
-}
+	ShadowPassContext::ShadowPassContext(GraphicsDevice& gfx, const Camera& cam, Renderer & renderer, RenderPass& renderPass, ConstantBuffer<GlobalTransformCB>& transformationCB, RendererList* pRendererList)
+		: gfx(gfx), camera(cam), renderer(renderer), renderPass(renderPass), transformationCB(transformationCB), pRendererList(pRendererList)
+	{
+		Update();
+	}
 
-void gfx::ShadowPassContext::Update()
-{
-	invViewMatrix = dx::XMMatrixInverse(nullptr, pCamera->GetViewMatrix());
+	void ShadowPassContext::Update()
+	{
+		invViewMatrix = dx::XMMatrixInverse(nullptr, camera.GetViewMatrix());
+	}
 }

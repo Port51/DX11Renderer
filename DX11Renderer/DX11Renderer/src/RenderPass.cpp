@@ -239,8 +239,8 @@ namespace gfx
 		return m_bindings[m_bindings.size() - 1];
 	}
 
-	const std::shared_ptr<RenderTexture> RenderPass::GetCameraColorOut() const
+	const RenderTexture& RenderPass::GetCameraColorOut() const
 	{
-		return m_pCameraColorOut;
+		return *m_pCameraColorOut.get();
 	}
 }

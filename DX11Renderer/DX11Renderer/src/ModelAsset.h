@@ -16,7 +16,7 @@ namespace gfx
 	public:
 		ModelAssetNode(std::string name, std::shared_ptr<MeshAsset> pMeshAsset, dx::XMFLOAT4X4 localTransform);
 	public:
-		const std::shared_ptr<MeshAsset> GetMeshAsset() const;
+		MeshAsset* GetMeshAsset() const;
 		const dx::XMFLOAT4X4 GetLocalTransform() const;
 		void SetChildNodes(std::vector<std::shared_ptr<ModelAssetNode>> pChildNodes);
 	private:
