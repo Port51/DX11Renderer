@@ -1,35 +1,42 @@
 #pragma once
+#include "CommonHeader.h"
 #include <string>
 
 namespace gfx
 {
+	class GraphicsDevice;
 	class Technique;
 	class MeshRenderer;
 	class Renderer;
 	class PixelShader;
 	class VertexShader;
 	class VertexLayout;
+	class Binding;
+	class InputLayout;
+	class Bindable;
 
 	struct DrawContext;
 
-	///
-	/// Collection of bindables needed to execute a material pass in a technique
-	///
+	// Collection of bindables needed to execute a material pass in a technique
 	class MaterialPass
 	{
 	public:
 		MaterialPass();
 	public:
 		void SetPixelShader(std::shared_ptr<PixelShader> pPixelShader);
-		void SetVertexShader(std::shared_ptr<VertexShader> pVertexShader);
+		void SetVertexShader(std::shared_ptr<VertexShader> pVertexShader, std::shared_ptr<InputLayout> pInputLayout);
 		void SetVertexLayout(std::shared_ptr<VertexLayout> pVertexLayout);
-	public:
+		Binding& AddBinding(std::shared_ptr<Bindable> pBindable);
+		const u64 GetMaterialCode() const;
 		void SetRenderPass(std::string renderPass);
 		const std::string GetRenderPass() const;
-		void AddTechnique(std::unique_ptr<Technique> _pTechnique);
 		void SubmitDrawCommands(const MeshRenderer& meshRenderer, const DrawContext& drawContext) const;
+		void Bind(const GraphicsDevice& gfx) const;
 	private:
-		std::unique_ptr<Technique> m_pTechnique;
 		std::string m_renderPass;
+		std::shared_ptr<InputLayout> m_pInputLayout;
+		std::shared_ptr<VertexShader> m_pVertexShader;
+		std::shared_ptr<PixelShader> m_pPixelShader;
+		std::vector<Binding> m_bindings;
 	};
 }

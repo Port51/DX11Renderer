@@ -11,8 +11,6 @@
 #include "MaterialPass.h"
 #include "TransformCbuf.h"
 #include "TextParser.h"
-#include "RenderStep.h"
-#include "Technique.h"
 #include "Buffer.h"
 #include "Binding.h"
 #include "ConstantBuffer.h"
@@ -36,13 +34,14 @@ namespace gfx
 		// todo: This is very WIP and should be replaced by something entirely different later
 		// with most of the parsing logic moved to a different class
 
-		m_vertexLayout
+		VertexLayout vertexLayout;
+		vertexLayout
 			.AppendVertexDesc<dx::XMFLOAT3>({ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 })
 			.AppendVertexDesc<dx::XMFLOAT3>({ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 })
 			.AppendVertexDesc<dx::XMFLOAT4>({ "TANGENT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 })
 			.AppendVertexDesc<dx::XMFLOAT2>({ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 })
 			.AppendInstanceDesc<dx::XMFLOAT3>({ "INSTANCEPOS", 0, DXGI_FORMAT_R32G32B32_FLOAT, 1, 0, D3D11_INPUT_PER_INSTANCE_DATA, 1 }); // last = # instances to draw before moving onto next instance
-		assert(m_vertexLayout.GetPerVertexStride() % 16 == 0);
+		assert(vertexLayout.GetPerVertexStride() % 16 == 0);
 
 		dx::XMFLOAT3 colorProp = { 0.8f, 0.8f, 0.8f };
 		float roughnessProp = 0.75f;
@@ -79,29 +78,13 @@ namespace gfx
 			{
 				state = MaterialParseState::Pass;
 				pMaterialPass = std::make_unique<MaterialPass>();
-				pTechnique = std::make_unique<Technique>();
 			}
 			else if (p.key == "}")
 			{
 				// End scope
 				if (state == MaterialParseState::Pass)
 				{
-					// End pass
-
-					// If no pixel shader, bind null
-					if (m_pPixelShader == nullptr)
-					{
-						pMaterialPass->SetPixelShader(nullptr);
-					}
-
 					m_pPasses.emplace(materialPassName, std::move(pMaterialPass));
-
-					// Error check
-					if (m_pVertexShader == nullptr)
-						throw std::runtime_error("Material at " + std::string(_materialAssetPath) + " is missing vertex shader!");
-
-					m_pVertexShader = nullptr;
-					m_pPixelShader = nullptr;
 				}
 			}
 			else if (p.key == "Name")
@@ -114,7 +97,7 @@ namespace gfx
 
 					// Init cbuffer
 					// todo: add to codex using std::string(_materialAssetPath)?
-					pPassStep->AddBinding(std::move(std::make_shared<ConstantBuffer<PSMaterialConstant>>(gfx, D3D11_USAGE_IMMUTABLE, pmc)))
+					pMaterialPass->AddBinding(std::move(std::make_shared<ConstantBuffer<PSMaterialConstant>>(gfx, D3D11_USAGE_IMMUTABLE, pmc)))
 						.SetupPSBinding(RenderSlots::PS_FreeRendererCB + 0u);
 				}
 			}
@@ -152,40 +135,27 @@ namespace gfx
 				{
 					// Bind vertex shader and input layout
 					const auto vertexShaderName = p.values[0];
-					m_pVertexShader = VertexShader::Resolve(gfx, vertexShaderName.c_str());
-					const auto pvsbc = m_pVertexShader->GetBytecode();
+					auto pVertexShader = VertexShader::Resolve(gfx, vertexShaderName.c_str());
+					const auto pvsbc = pVertexShader->GetBytecode();
+					auto pInputLayout = InputLayout::Resolve(gfx, std::move(vertexLayout), vertexShaderName, pvsbc);
 
-					pMaterialPass->SetVertexShader(m_pVertexShader);
-					pPassStep->AddBinding(m_pVertexShader)
-						.SetupVSBinding(0u);
-					pPassStep->AddBinding(InputLayout::Resolve(gfx, std::move(m_vertexLayout), vertexShaderName, pvsbc))
-						.SetupIABinding();
+					pMaterialPass->SetVertexShader(std::move(pVertexShader), std::move(pInputLayout));
 				}
 				else if (p.key == "PS")
 				{
-					m_pPixelShader = PixelShader::Resolve(gfx, p.values[0].c_str());
-					pPassStep->AddBinding(m_pPixelShader)
-						.SetupPSBinding(0u);
+					pMaterialPass->SetPixelShader(PixelShader::Resolve(gfx, p.values[0].c_str()));
 				}
 				else if (p.key == "Texture")
 				{
-					// Format: Texture, PropName, Slot
-					const auto texProp = std::move(std::move(p.values[0]));
-					const auto slotIdx = std::stoi(std::move(p.values[1]));
+					// Format: Slot, TextureName
+					const auto slotIdx = std::stoi(std::move(p.values[0]));
+					const auto texPath = std::move(std::move(p.values[1]));
 
-					const auto iter = pTexturesByPropName.find(texProp);
-					if (iter != pTexturesByPropName.end())
-					{
-						pPassStep->AddBinding(iter->second)
-							.SetupPSBinding(slotIdx);
-					}
-					else
-					{
-						throw std::runtime_error("Material at " + std::string(_materialAssetPath) + " does not have texture property " + texProp + "!");
-					}
+					pMaterialPass->AddBinding(Texture::Resolve(gfx, texPath))
+						.SetupPSBinding(slotIdx);
 
 					const auto pSampler = Sampler::Resolve(gfx);
-					pPassStep->AddBinding(std::move(pSampler))
+					pMaterialPass->AddBinding(std::move(pSampler))
 						.SetupPSBinding(slotIdx);
 				}
 			}
@@ -200,35 +170,16 @@ namespace gfx
 		// Is this needed?
 	}
 
-	void Material::SubmitDrawCalls(const MeshRenderer& meshRenderer, const DrawContext& drawContext) const
+	void Material::SubmitDrawCommands(const MeshRenderer& meshRenderer, const DrawContext& drawContext) const
 	{
 		// Only submit draw calls for passes contained in draw context
 		for (const auto& passName : drawContext.renderPasses)
 		{
 			if (m_pPasses.find(passName) != m_pPasses.end())
 			{
-				m_pPasses.at(passName)->SubmitDrawCall(meshRenderer, drawContext);
+				m_pPasses.at(passName)->SubmitDrawCommands(meshRenderer, drawContext);
 			}
 		}
-	}
-
-	const u64 Material::GetMaterialCode() const
-	{
-		// Create sorting code that minimizes state changes
-		// Cost determines the order:
-		// Shader program > ROP > texture bindings > vertex format > UBO bindings > vert bindings > uniform updates
-
-		// Actually use 48 bits for this, as 16 will be used for depth
-		// 10 bits - pixel shader (1024 possible)
-		// 10 bits - vertex shader (1024 possible)
-		// 2 bits - rasterizer state (4 possible)
-		// 12 bits - texture bindings
-		// 8 bits - vertex layout (256 possible)
-		// 6 bits - UBO bindings (64 possible)
-		auto ps = (m_pPixelShader != nullptr) ? m_pPixelShader->GetInstanceIdx() : 0u;
-		auto vs = (m_pVertexShader != nullptr) ? m_pVertexShader->GetInstanceIdx() : 0u;
-		return ps << 38u
-			+ vs << 28u;
 	}
 
 	const VertexLayout& Material::GetVertexLayout() const

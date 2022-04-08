@@ -44,9 +44,9 @@ namespace gfx
 		dx::XMStoreFloat4x4(&m_transform, _transform);
 	}
 
-	void MeshRenderer::SubmitDrawCalls(const DrawContext& drawContext) const
+	void MeshRenderer::SubmitDrawCommands(const DrawContext& drawContext) const
 	{
-		m_pMaterial->SubmitDrawCalls(*this, drawContext);
+		m_pMaterial->SubmitDrawCommands(*this, drawContext);
 	}
 
 	void MeshRenderer::Bind(const GraphicsDevice& gfx, const DrawContext& drawContext) const

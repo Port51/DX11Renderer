@@ -124,7 +124,7 @@ namespace gfx
 	{
 		if (m_pMeshRenderer)
 		{
-			m_pMeshRenderer->SubmitDrawCalls(drawContext);
+			m_pMeshRenderer->SubmitDrawCommands(drawContext);
 		}
 
 		for (const auto& pc : m_pChildNodes)

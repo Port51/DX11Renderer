@@ -108,7 +108,7 @@ namespace gfx
 	{
 		for (const auto pr : m_pRenderers)
 		{
-			pr.first->SubmitDrawCalls(drawContext);
+			pr.first->SubmitDrawCommands(drawContext);
 		}
 	}
 
