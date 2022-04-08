@@ -79,7 +79,7 @@ namespace gfx
 			break;
 		}
 
-		auto pModelAsset = ModelImporter::LoadGLTF(Gfx(), fn.c_str());
+		/*auto pModelAsset = ModelImporter::LoadGLTF(Gfx(), fn.c_str());
 		if (pModelAsset)
 		{
 			Gfx().GetLog().Info("Model loaded");
@@ -89,10 +89,10 @@ namespace gfx
 			Gfx().GetLog().Error("Failed to load model");
 		}
 
-		m_pModel0 = std::make_unique<ModelInstance>(Gfx(), pModelAsset, modelTransform);
+		m_pModel0 = std::make_unique<ModelInstance>(Gfx(), pModelAsset, modelTransform);*/
 
-		m_pRendererList->AddModelInstance(*m_pModel0);
-		m_pLightManager->AddLightModelsToList(*m_pRendererList);
+		//m_pRendererList->AddModelInstance(*m_pModel0);
+		//m_pLightManager->AddLightModelsToList(*m_pRendererList);
 
 		m_pRenderer = std::make_unique<Renderer>(Gfx(), m_pLightManager, m_pRendererList);
 

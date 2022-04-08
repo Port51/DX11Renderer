@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "MaterialPass.h"
-#include "Technique.h"
 #include "MeshRenderer.h"
 #include "Binding.h"
 #include "DrawContext.h"
@@ -29,10 +28,10 @@ namespace gfx
 		m_pInputLayout = pInputLayout;
 	}
 
-	void MaterialPass::SetVertexLayout(std::shared_ptr<VertexLayout> pVertexLayout)
+	/*void MaterialPass::SetVertexLayout(std::shared_ptr<VertexLayout> pVertexLayout)
 	{
-		m_pVertexShader = pVertexLayout;
-	}
+		m_pVertexLayout = pVertexLayout;
+	}*/
 
 	Binding & MaterialPass::AddBinding(std::shared_ptr<Bindable> pBindable)
 	{
@@ -59,6 +58,16 @@ namespace gfx
 			+ vs << 28u;
 	}
 
+	int MaterialPass::GetPropertySlot() const
+	{
+		return m_propertySlotIdx;
+	}
+
+	void MaterialPass::SetPropertySlot(int slotIdx)
+	{
+		m_propertySlotIdx = slotIdx;
+	}
+
 	void MaterialPass::SetRenderPass(std::string _renderPass)
 	{
 		m_renderPass = _renderPass;
@@ -69,16 +78,20 @@ namespace gfx
 		return m_renderPass;
 	}
 
-	void MaterialPass::SubmitDrawCommands(const MeshRenderer& meshRenderer, const DrawContext& drawContext) const
+	void MaterialPass::SubmitDrawCommands(const MeshRenderer& meshRenderer, const DrawContext& drawContext, const BindingList* const pPropertyBindings) const
 	{
-		drawContext.renderer.AcceptDrawCall(DrawCall(this, &meshRenderer, drawContext), m_renderPass);
+		drawContext.renderer.AcceptDrawCall(DrawCall(this, &meshRenderer, drawContext, pPropertyBindings), m_renderPass);
 	}
 
 	void MaterialPass::Bind(const GraphicsDevice & gfx) const
 	{
 		m_pInputLayout->BindIA(gfx, 0u);
 		m_pVertexShader->BindVS(gfx, 0u);
-		m_pPixelShader->BindPS(gfx, 0u);
+		if (m_pPixelShader != nullptr)
+		{
+			m_pPixelShader->BindPS(gfx, 0u);
+		}
+		
 		for (const auto& b : m_bindings)
 		{
 			b.Bind(gfx);

@@ -180,6 +180,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\AABB.cpp" />
+    <ClCompile Include="src\BindingList.cpp" />
     <ClCompile Include="src\Buffer.cpp" />
     <ClCompile Include="src\Config.cpp" />
     <ClCompile Include="src\DrawContext.cpp" />
@@ -226,11 +227,9 @@
     <ClCompile Include="src\RenderPass.cpp" />
     <ClCompile Include="src\RenderTexture.cpp" />
     <ClCompile Include="src\Sampler.cpp" />
-    <ClCompile Include="src\RenderStep.cpp" />
     <ClCompile Include="src\DepthStencilState.cpp" />
     <ClCompile Include="src\ShadowPassContext.cpp" />
     <ClCompile Include="src\Spotlight.cpp" />
-    <ClCompile Include="src\Technique.cpp" />
     <ClCompile Include="src\Texture.cpp" />
     <ClCompile Include="src\Topology.cpp" />
     <ClCompile Include="src\TransformCbuf.cpp" />
@@ -282,6 +281,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\AABB.h" />
+    <ClInclude Include="src\BindingList.h" />
     <ClInclude Include="src\GLTFInclude.h" />
     <ClInclude Include="src\ImguiHelpers.h" />
     <ClInclude Include="src\RawBuffer.h" />
@@ -347,8 +347,6 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="src\Sampler.h" />
     <ClInclude Include="src\DepthStencilState.h" />
-    <ClInclude Include="src\RenderStep.h" />
-    <ClInclude Include="src\Technique.h" />
     <ClInclude Include="src\Texture.h" />
     <ClInclude Include="src\Topology.h" />
     <ClInclude Include="src\TransformCbuf.h" />

@@ -236,7 +236,11 @@ namespace gfxcore
 		}
 		}
 
-		return m_pInputListener->HandleMsg(hWnd, msg, wParam, lParam);
+		if (m_pInputListener != nullptr)
+		{
+			return m_pInputListener->HandleMsg(hWnd, msg, wParam, lParam);
+		}
+		return DefWindowProc(hWnd, msg, wParam, lParam);
 	}
 
 	const BOOL BaseWindow::IsPointInWindow(const POINTS pt) const

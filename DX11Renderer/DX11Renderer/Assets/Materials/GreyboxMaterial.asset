@@ -1,3 +1,11 @@
+Properties
+{
+	Slot, 0
+	Texture, 0, Assets\\Textures\\face_albedo_256.png
+	Texture, 1, Assets\\Textures\\face_normal_256.png
+	Color, 1.0, 1.0, 1.0, 1.0
+	Roughness, 0.9
+}
 Pass
 {
 	Name, ShadowPass
@@ -16,10 +24,7 @@ Pass
 	Cull, Back
 	VS, Assets\\Built\\Shaders\\PhongVS.cso
 	PS, Assets\\Built\\Shaders\\OpaqueGbuffer.cso
-	Texture, 0, Assets\\Textures\\face_albedo_256.png
-	Texture, 1, Assets\\Textures\\face_normal_256.png
-	Color, 1.0, 1.0, 1.0, 1.0
-	Roughness, 0.9
+	PropertySlot, 0
 }
 Pass
 {
@@ -27,8 +32,5 @@ Pass
 	Cull, Back
 	VS, Assets\\Built\\Shaders\\PhongVS.cso
 	PS, Assets\\Built\\Shaders\\ForwardPS.cso
-	Texture, 0, Assets\\Textures\\face_albedo_256.png
-	Texture, 1, Assets\\Textures\\face_normal_256.png
-	Color, 1.0, 1.0, 1.0, 1.0
-	Roughness, 0.9
+	PropertySlot, 0
 }

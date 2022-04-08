@@ -35,7 +35,6 @@ namespace gfx
 		const UINT GetIndexCount() const;
 		const UINT GetVertexCount() const;
 		const AABB& GetAABB() const;
-		// Packs shaders and uniform data for sorting
 		const u64 GetMaterialCode() const;
 		virtual void IssueDrawCall(const GraphicsDevice& gfx) const;
 	protected:

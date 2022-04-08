@@ -4,17 +4,24 @@
 #include "MeshRenderer.h"
 #include "RenderPass.h"
 #include "DrawContext.h"
+#include "BindingList.h"
 
 namespace gfx
 {
-	DrawCall::DrawCall(const MaterialPass* pMaterialPass, const MeshRenderer* pRenderer, const DrawContext& _drawContext)
+	DrawCall::DrawCall(const MaterialPass* const pMaterialPass, const MeshRenderer* const pRenderer, const DrawContext& _drawContext, const BindingList* const pPropertyBindings)
 		: m_pRenderer(pRenderer),
 		m_pMaterialPass(pMaterialPass),
-		m_pDrawContext(&_drawContext)
+		m_pDrawContext(&_drawContext),
+		m_pPropertyBindings(pPropertyBindings)
 	{}
 
 	void DrawCall::Execute(const GraphicsDevice& gfx) const
 	{
+		if (m_pPropertyBindings != nullptr)
+		{
+			m_pPropertyBindings->Bind(gfx);
+		}
+
 		m_pRenderer->Bind(gfx, *m_pDrawContext);
 		m_pMaterialPass->Bind(gfx);
 		m_pRenderer->IssueDrawCall(gfx); // calls DrawIndexed() or DrawIndexedInstanced()

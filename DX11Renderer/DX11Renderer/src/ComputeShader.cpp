@@ -28,6 +28,8 @@ namespace gfx
 
 		pReflector->GetThreadGroupSize(&m_kernelSizeX, &m_kernelSizeY, &m_kernelSizeZ);
 
+		//delete pReflector;
+
 		/*
 		UINT flags = D3DCOMPILE_ENABLE_STRICTNESS;
 	#if defined( DEBUG ) || defined( _DEBUG )

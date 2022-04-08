@@ -213,9 +213,6 @@
     <ClCompile Include="src\Spotlight.cpp">
       <Filter>Source\Lights</Filter>
     </ClCompile>
-    <ClCompile Include="src\Technique.cpp">
-      <Filter>Source\RenderJobs</Filter>
-    </ClCompile>
     <ClCompile Include="src\Texture.cpp">
       <Filter>Source\Bindable</Filter>
     </ClCompile>
@@ -283,9 +280,6 @@
       <Filter>Source\Drawable</Filter>
     </ClCompile>
     <ClCompile Include="src\RenderPass.cpp">
-      <Filter>Source\RenderJobs</Filter>
-    </ClCompile>
-    <ClCompile Include="src\RenderStep.cpp">
       <Filter>Source\RenderJobs</Filter>
     </ClCompile>
     <ClCompile Include="src\RenderTexture.cpp">
@@ -369,6 +363,9 @@
     <ClCompile Include="src\RenderStats.cpp">
       <Filter>Source\RenderPipeline</Filter>
     </ClCompile>
+    <ClCompile Include="src\BindingList.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -445,9 +442,6 @@
     </ClInclude>
     <ClInclude Include="src\StructuredBufferData.h">
       <Filter>Headers\Bindable\Buffers\Data</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Technique.h">
-      <Filter>Headers\RenderJobs</Filter>
     </ClInclude>
     <ClInclude Include="src\Texture.h">
       <Filter>Headers\Bindable</Filter>
@@ -531,9 +525,6 @@
       <Filter>Headers\Drawable</Filter>
     </ClInclude>
     <ClInclude Include="src\RenderPass.h">
-      <Filter>Headers\RenderJobs</Filter>
-    </ClInclude>
-    <ClInclude Include="src\RenderStep.h">
       <Filter>Headers\RenderJobs</Filter>
     </ClInclude>
     <ClInclude Include="src\FullscreenPass.h">
@@ -643,6 +634,9 @@
     </ClInclude>
     <ClInclude Include="src\RenderStats.h">
       <Filter>Headers\RenderPipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BindingList.h">
+      <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

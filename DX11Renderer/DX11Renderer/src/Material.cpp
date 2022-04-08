@@ -18,6 +18,7 @@
 #include "RenderConstants.h"
 #include "DrawContext.h"
 #include "RasterizerState.h"
+#include "BindingList.h"
 
 #include <fstream>
 #include <sstream>
@@ -34,14 +35,14 @@ namespace gfx
 		// todo: This is very WIP and should be replaced by something entirely different later
 		// with most of the parsing logic moved to a different class
 
-		VertexLayout vertexLayout;
-		vertexLayout
+		// todo: make this depend on material props
+		m_vertexLayout
 			.AppendVertexDesc<dx::XMFLOAT3>({ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 })
 			.AppendVertexDesc<dx::XMFLOAT3>({ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 })
 			.AppendVertexDesc<dx::XMFLOAT4>({ "TANGENT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 })
 			.AppendVertexDesc<dx::XMFLOAT2>({ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 })
 			.AppendInstanceDesc<dx::XMFLOAT3>({ "INSTANCEPOS", 0, DXGI_FORMAT_R32G32B32_FLOAT, 1, 0, D3D11_INPUT_PER_INSTANCE_DATA, 1 }); // last = # instances to draw before moving onto next instance
-		assert(vertexLayout.GetPerVertexStride() % 16 == 0);
+		assert(m_vertexLayout.GetPerVertexStride() % 16 == 0);
 
 		dx::XMFLOAT3 colorProp = { 0.8f, 0.8f, 0.8f };
 		float roughnessProp = 0.75f;
@@ -49,7 +50,8 @@ namespace gfx
 		MaterialParseState state = MaterialParseState::None;
 
 		// For unpacking main properties
-		struct PSMaterialConstant // must be multiple of 16 bytes
+		// Must be multiple of 16 bytes
+		struct PSMaterialConstant
 		{
 			dx::XMFLOAT3 materialColor;
 			float roughness;
@@ -57,13 +59,13 @@ namespace gfx
 			float specularPower = 30.0f;
 			float padding[2];
 		} pmc;
-		std::unordered_map<std::string, std::shared_ptr<Bindable>> pTexturesByPropName;
 
 		//AddBindable(PixelConstantBuffer<PSMaterialConstant>::Resolve(gfx, std::string(assetPath), pmc, 1u));
 
 		// For unpacking material passes
 		std::string materialPassName;
 		std::unique_ptr<MaterialPass> pMaterialPass;
+		std::unique_ptr<BindingList> pPropertySlot;
 
 		TextParser parser(_materialAssetPath);
 		TextParser::ParsedKeyValues p;
@@ -73,6 +75,7 @@ namespace gfx
 			if (p.key == "Properties")
 			{
 				state = MaterialParseState::Properties;
+				pPropertySlot = std::make_unique<BindingList>();
 			}
 			else if (p.key == "Pass")
 			{
@@ -82,8 +85,16 @@ namespace gfx
 			else if (p.key == "}")
 			{
 				// End scope
-				if (state == MaterialParseState::Pass)
+				if (state == MaterialParseState::Properties)
 				{
+					m_pPropertySlots.emplace_back(std::move(pPropertySlot));
+				}
+				else if (state == MaterialParseState::Pass)
+				{
+					// Init cbuffer
+					pMaterialPass->AddBinding(std::move(std::make_shared<ConstantBuffer<PSMaterialConstant>>(gfx, D3D11_USAGE_IMMUTABLE, pmc)))
+						.SetupPSBinding(RenderSlots::PS_FreeRendererCB + 0u);
+
 					m_pPasses.emplace(materialPassName, std::move(pMaterialPass));
 				}
 			}
@@ -94,11 +105,6 @@ namespace gfx
 					// Read pass name
 					materialPassName = std::move(p.values[0]);
 					pMaterialPass->SetRenderPass(materialPassName);
-
-					// Init cbuffer
-					// todo: add to codex using std::string(_materialAssetPath)?
-					pMaterialPass->AddBinding(std::move(std::make_shared<ConstantBuffer<PSMaterialConstant>>(gfx, D3D11_USAGE_IMMUTABLE, pmc)))
-						.SetupPSBinding(RenderSlots::PS_FreeRendererCB + 0u);
 				}
 			}
 			else if (p.key == "Cull")
@@ -112,7 +118,12 @@ namespace gfx
 			}
 			else if (state == MaterialParseState::Properties)
 			{
-				if (p.key == "Color")
+				if (p.key == "Slot")
+				{
+					const auto slotIdx = std::stoi(std::move(p.values[0]));
+
+				}
+				else if (p.key == "Color")
 				{
 					colorProp = { std::stof(std::move(p.values[0])), std::stof(std::move(p.values[1])), std::stof(std::move(p.values[2])) };
 					pmc.materialColor = colorProp;
@@ -124,9 +135,16 @@ namespace gfx
 				}
 				else if (p.key == "Texture")
 				{
-					// Format: Texture, PropName, Path
-					const auto texProp = std::move(p.values[0]);
-					pTexturesByPropName.emplace(texProp, Texture::Resolve(gfx, p.values[1].c_str()));
+					// Format: Slot, TextureName
+					const auto slotIdx = std::stoi(std::move(p.values[0]));
+					const auto texPath = std::move(std::move(p.values[1]));
+
+					pPropertySlot->AddBinding(Texture::Resolve(gfx, texPath))
+						.SetupPSBinding(slotIdx);
+
+					const auto pSampler = Sampler::Resolve(gfx);
+					pPropertySlot->AddBinding(std::move(pSampler))
+						.SetupPSBinding(slotIdx);
 				}
 			}
 			else if (state == MaterialParseState::Pass)
@@ -137,7 +155,7 @@ namespace gfx
 					const auto vertexShaderName = p.values[0];
 					auto pVertexShader = VertexShader::Resolve(gfx, vertexShaderName.c_str());
 					const auto pvsbc = pVertexShader->GetBytecode();
-					auto pInputLayout = InputLayout::Resolve(gfx, std::move(vertexLayout), vertexShaderName, pvsbc);
+					auto pInputLayout = InputLayout::Resolve(gfx, std::move(m_vertexLayout), vertexShaderName, pvsbc);
 
 					pMaterialPass->SetVertexShader(std::move(pVertexShader), std::move(pInputLayout));
 				}
@@ -145,18 +163,11 @@ namespace gfx
 				{
 					pMaterialPass->SetPixelShader(PixelShader::Resolve(gfx, p.values[0].c_str()));
 				}
-				else if (p.key == "Texture")
+				else if (p.key == "PropertySlot")
 				{
-					// Format: Slot, TextureName
+					// Connects to previously defined properties
 					const auto slotIdx = std::stoi(std::move(p.values[0]));
-					const auto texPath = std::move(std::move(p.values[1]));
-
-					pMaterialPass->AddBinding(Texture::Resolve(gfx, texPath))
-						.SetupPSBinding(slotIdx);
-
-					const auto pSampler = Sampler::Resolve(gfx);
-					pMaterialPass->AddBinding(std::move(pSampler))
-						.SetupPSBinding(slotIdx);
+					pMaterialPass->SetPropertySlot(slotIdx);
 				}
 			}
 
@@ -177,9 +188,17 @@ namespace gfx
 		{
 			if (m_pPasses.find(passName) != m_pPasses.end())
 			{
-				m_pPasses.at(passName)->SubmitDrawCommands(meshRenderer, drawContext);
+				const auto& pMaterialPass = m_pPasses.at(passName);
+				const auto propertySlotIdx = pMaterialPass->GetPropertySlot();
+ 				const BindingList* const pPropertySlot = (propertySlotIdx != -1) ? m_pPropertySlots[propertySlotIdx].get() : nullptr;
+				pMaterialPass->SubmitDrawCommands(meshRenderer, drawContext, pPropertySlot);
 			}
 		}
+	}
+
+	const u64 Material::GetMaterialCode() const
+	{
+		return m_materialCode;
 	}
 
 	const VertexLayout& Material::GetVertexLayout() const

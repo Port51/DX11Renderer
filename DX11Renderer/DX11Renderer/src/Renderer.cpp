@@ -299,6 +299,7 @@ namespace gfx
 	void Renderer::Execute(GraphicsDevice& gfx, const Camera& camera, float timeElapsed, UINT pixelSelectionX, UINT pixelSelectionY)
 	{
 		auto context = gfx.GetContext();
+		return;
 
 		gfx.GetRenderStats().StartFrame();
 		context->ClearState();
