@@ -1,6 +1,19 @@
 #include "pch.h"
 #include "App.h"
 
+// Memory leak detection (https://docs.microsoft.com/en-us/visualstudio/debugger/finding-memory-leaks-using-the-crt-library?view=vs-2022)
+#define _CRTDBG_MAP_ALLOC
+#include <cstdlib>
+#include <crtdbg.h>
+
+#ifdef _DEBUG
+	#define DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
+	// Replace _NORMAL_BLOCK with _CLIENT_BLOCK if you want the
+	// allocations to be of _CLIENT_BLOCK type
+#else
+	#define DBG_NEW new
+#endif
+
 /*static uint32_t allocCount = 0;
 static long allocSum = 0;
 void* operator new(size_t size)
@@ -10,13 +23,6 @@ void* operator new(size_t size)
 	return malloc(size);
 }*/
 
-#include "DX11Window.h"
-#include "GraphicsDevice.h"
-#include "Bindable.h"
-#include "Binding.h"
-#include "Buffer.h"
-#include "ComputeShader.h"
-
 int CALLBACK WinMain(
 	HINSTANCE hInstance,
 	HINSTANCE hPrevInstance, // always NULL
@@ -24,26 +30,6 @@ int CALLBACK WinMain(
 	int nCmdShow // how window should be shown (includes minimized)
 )
 {
-	using namespace gfx;
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-	auto m_pWindow = std::make_unique<DX11Window>(400, 300, "DX11 Renderer", hInstance, nullptr);
-	auto m_pGfx = std::make_unique<GraphicsDevice>(m_pWindow->GetHwnd(), 400, 300);
-	while (1)
-	{
-		auto res = std::make_shared<Bindable>();
-		for (int i = 0; i < 10; ++i)
-		{
-			auto test = std::make_unique<ComputeShader>(*m_pGfx, std::string("Assets\\Built\\Shaders\\HiZDepthCopy.cso"), std::string("CSMain"));
-			//auto test = std::make_unique<Buffer>(D3D11_USAGE::D3D11_USAGE_DEFAULT, 0u, 8u);
-			//auto test = App(1600, 900, hInstance);
-		}
-		Sleep(100);
-	}
-
-	return 1;
-
-
 	int returnCode = 0;
 	try
 	{
@@ -59,6 +45,8 @@ int CALLBACK WinMain(
 		MessageBox(nullptr, "Unknown exception occurred", "Unknown Exception", MB_OK | MB_ICONERROR);
 		returnCode = -1;
 	}
+
+	_CrtDumpMemoryLeaks();
 
 	return returnCode;
 }

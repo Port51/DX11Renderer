@@ -23,6 +23,14 @@ namespace gfx
 		SetupInstanceBuffer(gfx, instanceBuffer);
 	}
 
+	void VertexBufferWrapper::Release()
+	{
+		for (int i = 0, ct = m_pBufferArray.size(); i < ct; ++i)
+		{
+			m_pBufferArray[i].Reset();
+		}
+	}
+
 	const ComPtr<ID3D11Buffer> VertexBufferWrapper::GetVertexBuffer() const
 	{
 		return m_pBufferArray[0];

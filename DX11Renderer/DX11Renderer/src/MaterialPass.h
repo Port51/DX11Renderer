@@ -22,6 +22,7 @@ namespace gfx
 	{
 	public:
 		MaterialPass();
+		virtual void Release();
 	public:
 		void SetPixelShader(std::shared_ptr<PixelShader> pPixelShader);
 		void SetVertexShader(std::shared_ptr<VertexShader> pVertexShader, std::shared_ptr<InputLayout> pInputLayout);

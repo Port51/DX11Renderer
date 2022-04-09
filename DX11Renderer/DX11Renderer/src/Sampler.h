@@ -17,6 +17,7 @@ namespace gfx
 		Sampler(const GraphicsDevice& gfx, D3D11_TEXTURE_ADDRESS_MODE wrapU, D3D11_TEXTURE_ADDRESS_MODE wrapV, D3D11_TEXTURE_ADDRESS_MODE wrapW);
 		Sampler(const GraphicsDevice& gfx, D3D11_FILTER filter, D3D11_TEXTURE_ADDRESS_MODE wrapU, D3D11_TEXTURE_ADDRESS_MODE wrapV, D3D11_TEXTURE_ADDRESS_MODE wrapW);
 		Sampler(const GraphicsDevice& gfx, D3D11_SAMPLER_DESC samplerDesc);
+		virtual void Release() override;
 	public:
 		void BindCS(const GraphicsDevice& gfx, UINT slot) override;
 		void BindVS(const GraphicsDevice& gfx, UINT slot) override;

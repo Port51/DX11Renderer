@@ -20,6 +20,7 @@ namespace gfx
 		};
 		DepthStencilState(const GraphicsDevice& gfx, Mode mode);
 		DepthStencilState(const GraphicsDevice& gfx, D3D11_DEPTH_STENCIL_DESC desc);
+		virtual void Release() override;
 		void BindOM(const GraphicsDevice& gfx) override;
 		static std::shared_ptr<DepthStencilState> Resolve(const GraphicsDevice& gfx, Mode mode);
 	protected:

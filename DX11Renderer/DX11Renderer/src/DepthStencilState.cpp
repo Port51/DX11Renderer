@@ -56,6 +56,11 @@ namespace gfx
 		gfx.GetAdapter()->CreateDepthStencilState(&desc, &m_pStencil);
 	}
 
+	void DepthStencilState::Release()
+	{
+		m_pStencil.Reset();
+	}
+
 	void DepthStencilState::BindOM(const GraphicsDevice& gfx)
 	{
 		gfx.GetContext()->OMSetDepthStencilState(m_pStencil.Get(), 0x01);

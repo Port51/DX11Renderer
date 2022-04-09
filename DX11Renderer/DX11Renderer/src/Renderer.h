@@ -41,6 +41,7 @@ namespace gfx
 	public:
 		Renderer(const GraphicsDevice& gfx, std::shared_ptr<LightManager> pLightManager, std::shared_ptr<RendererList> pRendererList);
 		virtual ~Renderer();
+		virtual void Release();
 	public:
 		void AcceptDrawCall(DrawCall job, std::string targetPass);
 		void Execute(GraphicsDevice& gfx, const Camera& cam, float timeElapsed, UINT pixelSelectionX, UINT pixelSelectionY);

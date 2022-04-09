@@ -23,6 +23,7 @@ namespace gfx
 		Texture(const GraphicsDevice& gfx, const std::string& path);
 		Texture(const GraphicsDevice& gfx, const std::string& path, D3D11_TEXTURE2D_DESC textureDesc, D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc);
 		Texture(const GraphicsDevice& gfx, D3D11_TEXTURE2D_DESC textureDesc, D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc);
+		virtual void Release() override;
 	public:
 		void BindCS(const GraphicsDevice& gfx, UINT slot) override;
 		void BindVS(const GraphicsDevice& gfx, UINT slot) override;

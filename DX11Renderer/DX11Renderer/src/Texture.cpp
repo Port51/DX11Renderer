@@ -26,6 +26,16 @@ namespace gfx
 		));
 	}
 
+	void Texture::Release()
+	{
+		for (int i = 0, ct = m_pUAV.size(); i < ct; ++i)
+		{
+			m_pUAV[i].Reset();
+		}
+		m_pShaderResourceView.Reset();
+		m_pTexture.Reset();
+	}
+
 	// Load image from file and start off with default 2D texture settings
 	// This should be used for 99% of model-related textures
 	Texture::Texture(const GraphicsDevice& gfx, const std::string& path)

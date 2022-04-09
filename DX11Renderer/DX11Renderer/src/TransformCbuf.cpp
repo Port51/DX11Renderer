@@ -15,6 +15,11 @@ namespace gfx
 		}
 	}
 
+	void TransformCbuf::Release()
+	{
+		m_pVcbuf->Release();
+	}
+
 	void TransformCbuf::BindVS(const GraphicsDevice& gfx, UINT slot)
 	{
 		gfx.GetContext()->VSSetConstantBuffers(slot, 1u, m_pVcbuf->GetD3DBuffer().GetAddressOf());

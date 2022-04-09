@@ -19,6 +19,11 @@ namespace gfx
 		THROW_IF_FAILED(gfx.GetAdapter()->CreateRasterizerState(&rasterDesc, &m_pRasterizer));
 	}
 
+	void RasterizerState::Release()
+	{
+		m_pRasterizer.Reset();
+	}
+
 	void RasterizerState::BindRS(const GraphicsDevice& gfx)
 	{
 		gfx.GetContext()->RSSetState(m_pRasterizer.Get());

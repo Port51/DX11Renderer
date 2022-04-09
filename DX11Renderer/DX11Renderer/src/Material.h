@@ -23,6 +23,7 @@ namespace gfx
 	{
 	public:
 		Material(const GraphicsDevice& gfx, std::string_view assetPath);
+		virtual void Release() override;
 		void Bind(const GraphicsDevice& gfx, std::string_view passName);
 		void SubmitDrawCommands(const MeshRenderer& meshRenderer, const DrawContext& drawContext) const;
 	public:

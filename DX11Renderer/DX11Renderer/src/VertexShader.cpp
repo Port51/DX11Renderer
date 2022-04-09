@@ -26,6 +26,12 @@ namespace gfx
 		));
 	}
 
+	void VertexShader::Release()
+	{
+		m_pBytecodeBlob.Reset();
+		m_pVertexShader.Reset();
+	}
+
 	void VertexShader::BindVS(const GraphicsDevice& gfx, UINT slot)
 	{
 		gfx.GetContext()->VSSetShader(m_pVertexShader.Get(), nullptr, 0u);

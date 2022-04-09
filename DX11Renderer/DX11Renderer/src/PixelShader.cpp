@@ -18,6 +18,11 @@ namespace gfx
 		THROW_IF_FAILED(gfx.GetAdapter()->CreatePixelShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &m_pPixelShader));
 	}
 
+	void PixelShader::Release()
+	{
+		m_pPixelShader.Reset();
+	}
+
 	void PixelShader::BindPS(const GraphicsDevice& gfx, UINT slot)
 	{
 		gfx.GetContext()->PSSetShader(m_pPixelShader.Get(), nullptr, 0u);

@@ -17,7 +17,8 @@ namespace gfx
 	{
 	public:
 		Buffer(D3D11_USAGE usage, UINT bindFlags, UINT byteWidth);
-		virtual ~Buffer();
+		virtual ~Buffer() override;
+		virtual void Release() override;
 
 	public:
 		const ComPtr<ID3D11Buffer> GetD3DBuffer() const;

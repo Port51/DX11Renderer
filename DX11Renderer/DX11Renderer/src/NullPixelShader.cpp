@@ -8,6 +8,9 @@ namespace gfx
 	NullPixelShader::NullPixelShader(const GraphicsDevice& gfx)
 	{
 	}
+	void NullPixelShader::Release()
+	{
+	}
 	void NullPixelShader::BindPS(const GraphicsDevice& gfx, UINT slot)
 	{
 		gfx.GetContext()->PSSetShader(nullptr, nullptr, 0u);

@@ -11,6 +11,7 @@ namespace gfx
 	{
 	public:
 		NullPixelShader(const GraphicsDevice& gfx);
+		virtual void Release() override;
 	public:
 		void BindPS(const GraphicsDevice& gfx, UINT slot) override;
 		static std::shared_ptr<NullPixelShader> Resolve(const GraphicsDevice& gfx);

@@ -12,6 +12,7 @@ namespace gfx
 	{
 	public:
 		VertexShader(const GraphicsDevice& gfx, const std::string& path);
+		virtual void Release() override;
 		void BindVS(const GraphicsDevice& gfx, UINT slot) override;
 		ID3DBlob* GetBytecode() const;
 		const u16 GetInstanceIdx() const;

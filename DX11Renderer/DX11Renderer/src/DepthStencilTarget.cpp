@@ -45,7 +45,19 @@ namespace gfx
 	}
 
 	DepthStencilTarget::~DepthStencilTarget()
-	{}
+	{
+		Release();
+	}
+
+	void DepthStencilTarget::Release()
+	{
+		m_pDepthStencil.Reset();
+		m_pDepthStencilView.Reset();
+		m_pShaderResourceView.Reset();
+		//SAFE_RELEASE(m_pDepthStencil);
+		//SAFE_RELEASE(m_pDepthStencilView);
+		//SAFE_RELEASE(m_pShaderResourceView);
+	}
 
 	void DepthStencilTarget::Clear(const GraphicsDevice& gfx) const
 	{

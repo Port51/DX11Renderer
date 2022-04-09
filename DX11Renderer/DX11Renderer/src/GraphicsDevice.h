@@ -21,7 +21,7 @@ namespace gfx
 		GraphicsDevice(HWND hWnd, int windowWidth, int windowHeight);
 		GraphicsDevice(const GraphicsDevice&) = delete; // here because of destructor, but don't want this...
 		GraphicsDevice& operator=(const GraphicsDevice&) = delete; // here because of destructor, but don't want this...
-		virtual ~GraphicsDevice() = default;
+		virtual ~GraphicsDevice();
 	public:
 		void BeginFrame();
 		void EndFrame();

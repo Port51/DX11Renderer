@@ -18,6 +18,11 @@ namespace gfx
 		));
 	}
 
+	void InputLayout::Release()
+	{
+		m_pInputLayout.Reset();
+	}
+
 	void InputLayout::BindIA(const GraphicsDevice& gfx, UINT slot)
 	{
 		gfx.GetContext()->IASetInputLayout(m_pInputLayout.Get());

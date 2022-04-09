@@ -43,6 +43,7 @@ namespace gfx
 	public:
 		LightManager(const GraphicsDevice& gfx, std::shared_ptr<RendererList> pRendererList);
 		virtual ~LightManager() = default;
+		void Release();
 	public:
 		void AddLightModelsToList(RendererList& pRendererList);
 		void CullLightsAndShadows(const GraphicsDevice& gfx, const Camera& cam, bool enableShadows);

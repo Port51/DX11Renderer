@@ -17,6 +17,11 @@ namespace gfx
 
 	}
 
+	void MaterialPass::Release()
+	{
+		
+	}
+
 	void MaterialPass::SetPixelShader(std::shared_ptr<PixelShader> pPixelShader)
 	{
 		m_pPixelShader = pPixelShader;
@@ -80,7 +85,7 @@ namespace gfx
 
 	void MaterialPass::SubmitDrawCommands(const MeshRenderer& meshRenderer, const DrawContext& drawContext, const BindingList* const pPropertyBindings) const
 	{
-		drawContext.renderer.AcceptDrawCall(DrawCall(this, &meshRenderer, drawContext, pPropertyBindings), m_renderPass);
+		drawContext.renderer.AcceptDrawCall(std::move(DrawCall(this, &meshRenderer, drawContext, pPropertyBindings)), m_renderPass);
 	}
 
 	void MaterialPass::Bind(const GraphicsDevice & gfx) const

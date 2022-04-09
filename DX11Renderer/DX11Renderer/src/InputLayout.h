@@ -15,6 +15,7 @@ namespace gfx
 	{
 	public:
 		InputLayout(const GraphicsDevice& gfx, VertexLayout layout, std::string vertexShaderName, ID3DBlob* pVertexShaderBytecode);
+		virtual void Release() override;
 		void BindIA(const GraphicsDevice& gfx, UINT slot) override;
 	public:
 		static std::shared_ptr<InputLayout> Resolve(const GraphicsDevice& gfx, const VertexLayout& layout, std::string vertexShaderName, ID3DBlob* pVertexShaderBytecode);

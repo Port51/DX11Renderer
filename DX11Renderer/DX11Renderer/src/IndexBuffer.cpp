@@ -37,6 +37,11 @@ namespace gfx
 		THROW_IF_FAILED(gfx.GetAdapter()->CreateBuffer(&ibd, &isd, &m_pIndexBuffer));
 	}
 
+	void IndexBuffer::Release()
+	{
+		m_pIndexBuffer.Reset();
+	}
+
 	void IndexBuffer::BindIA(const GraphicsDevice& gfx, UINT slot)
 	{
 		gfx.GetContext()->IASetIndexBuffer(m_pIndexBuffer.Get(), m_format, 0u);

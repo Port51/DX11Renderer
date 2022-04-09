@@ -9,6 +9,10 @@ namespace gfx
 		: m_type(type)
 	{}
 
+	void Topology::Release()
+	{
+	}
+
 	void Topology::BindIA(const GraphicsDevice& gfx, UINT slot)
 	{
 		gfx.GetContext()->IASetPrimitiveTopology(m_type);

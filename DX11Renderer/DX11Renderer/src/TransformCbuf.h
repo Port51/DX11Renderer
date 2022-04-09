@@ -18,6 +18,7 @@ namespace gfx
 	{
 	public:
 		TransformCbuf(const GraphicsDevice& gfx);
+		virtual void Release() override;
 		void BindVS(const GraphicsDevice& gfx, UINT slot) override;
 		void UpdateTransforms(const GraphicsDevice& gfx, const Transforms& transforms);
 	private:

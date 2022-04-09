@@ -29,6 +29,11 @@ namespace gfx
 
 	}
 
+	void ModelAsset::Release()
+	{
+		m_pSceneGraph->Release();
+	}
+
 	std::shared_ptr<ModelInstance> ModelAsset::CreateSharedInstance(const GraphicsDevice& gfx, dx::XMMATRIX transform)
 	{
 		// todo: fix alignment bug
@@ -46,6 +51,15 @@ namespace gfx
 	ModelAssetNode::ModelAssetNode(std::string _name, std::shared_ptr<MeshAsset> pMeshAsset, dx::XMFLOAT4X4 _localTransform)
 		: m_name(_name), m_pMeshAsset(std::move(pMeshAsset)), m_localTransform(std::move(_localTransform))
 	{}
+
+	void ModelAssetNode::Release()
+	{
+		m_pMeshAsset.reset();
+		for (int i = 0, ct = m_pChildNodes.size(); i < ct; ++i)
+		{
+			m_pChildNodes[i]->Release();
+		}
+	}
 
 	MeshAsset* ModelAssetNode::GetMeshAsset() const
 	{

@@ -48,6 +48,11 @@ namespace gfx
 		THROW_IF_FAILED(gfx.GetAdapter()->CreateSamplerState(&samplerDesc, &m_pSampler));
 	}
 
+	void Sampler::Release()
+	{
+		m_pSampler.Reset();
+	}
+
 	void Sampler::BindCS(const GraphicsDevice& gfx, UINT slot)
 	{
 		gfx.GetContext()->CSSetSamplers(slot, 1u, m_pSampler.GetAddressOf());

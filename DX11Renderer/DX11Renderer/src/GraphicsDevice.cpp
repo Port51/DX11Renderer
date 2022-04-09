@@ -7,6 +7,9 @@
 #include "DX11Include.h"
 #include "RenderStats.h"
 #include "Config.h"
+#include "SharedCodex.h"
+#include <dxgidebug.h>	// For DXGIGetDebugInterface1
+#include <dxgi1_3.h>	// For DXGIGetDebugInterface1
 
 namespace gfx
 {
@@ -37,7 +40,7 @@ namespace gfx
 
 		UINT swapCreateFlags = 0u;
 #ifndef NDEBUG
-		swapCreateFlags |= D3D11_CREATE_DEVICE_DEBUG; // Debug will print more to Output window
+		swapCreateFlags |= D3D11_CREATE_DEVICE_DEBUG; // Will create ID3D11Debug
 #endif
 
 		// Create device and front/back buffers, and swap chain and rendering context
@@ -86,6 +89,29 @@ namespace gfx
 		SetViewport(windowWidth, windowHeight);
 
 		ImGui_ImplDX11_Init(m_pDevice.Get(), m_pContext.Get());
+	}
+
+	GraphicsDevice::~GraphicsDevice()
+	{
+		Codex::ReleaseAll();
+
+		m_pDepthStencil->Release();
+		m_pBackBufferView.Reset();
+		m_pSwapChain.Reset();
+		m_pContext.Reset();
+		m_pDevice.Reset();
+
+		ImGui_ImplDX11_Shutdown();
+
+#if defined(_DEBUG)
+		{
+			ComPtr<IDXGIDebug1> dxgiDebug;
+			if (SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(&dxgiDebug))))
+			{
+				dxgiDebug->ReportLiveObjects(DXGI_DEBUG_ALL, DXGI_DEBUG_RLO_FLAGS(DXGI_DEBUG_RLO_SUMMARY | DXGI_DEBUG_RLO_IGNORE_INTERNAL));
+			}
+		}
+#endif
 	}
 
 	void GraphicsDevice::BeginFrame()

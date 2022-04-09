@@ -71,6 +71,15 @@ namespace gfx
 		m_clusterDimensionZ = ClusteredLightingZLevels;
 	}
 
+	void LightManager::Release()
+	{
+		m_pLightData->Release();
+		m_pLightInputCB->Release();
+		m_pLightShadowSB->Release();
+		m_pShadowAtlas->Release();
+		m_pClusteredIndices->Release();
+	}
+
 	void LightManager::AddLightModelsToList(RendererList& pRendererList)
 	{
 		for (const auto& l : m_pLights)

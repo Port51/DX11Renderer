@@ -152,6 +152,42 @@ namespace gfx
 
 	}
 
+	void Renderer::Release()
+	{
+		m_pBloomPyramid->Release();
+		m_pCameraColor0->Release();
+		m_pCameraColor1->Release();
+		m_pClampedBilinearSampler->Release();
+		m_pClusteredLightingCB->Release();
+		m_pDebugClusteredLighting->Release();
+		m_pDebugSSR->Release();
+		m_pDebugTiledLighting->Release();
+		m_pDiffuseLighting->Release();
+		m_pDitherCB->Release();
+		//m_pDitherKernel->Release();
+		m_pDitherTexture->Release();
+		//m_pFXAAKernel->Release();
+		m_pFXAA_CB->Release();
+		m_pHiZBufferTarget->Release();
+		//m_pHiZCreateMipKernel->Release();
+		m_pHiZCreationCB->Release();
+		//m_pHiZDepthCopyKernel->Release();
+		m_pLightManager->Release();
+		m_pNormalRoughReflectivityTarget->Release();
+		m_pPerCameraCB->Release();
+		m_pPerFrameCB->Release();
+		//m_pRendererList->Release();
+		m_pShadowSampler->Release();
+		m_pSpecularLighting->Release();
+		//m_pSSRKernel->Release();
+		m_pSSR_CB->Release();
+		m_pSSR_DebugData->Release();
+		//m_pTiledLightingKernel->Release();
+		//m_pTonemappingKernel->Release();
+		m_pTransformationCB->Release();
+		//m_pVisibleRendererList->Release();
+	}
+
 	void Renderer::SetupRenderPassDependencies(const GraphicsDevice& gfx)
 	{
 		bool cameraOutSlot0 = true;
@@ -293,13 +329,12 @@ namespace gfx
 
 	void Renderer::AcceptDrawCall(DrawCall job, std::string targetPass)
 	{
-		m_pRenderPasses[targetPass]->EnqueueJob(job);
+		m_pRenderPasses[targetPass]->EnqueueJob(std::move(job));
 	}
 
 	void Renderer::Execute(GraphicsDevice& gfx, const Camera& camera, float timeElapsed, UINT pixelSelectionX, UINT pixelSelectionY)
 	{
 		auto context = gfx.GetContext();
-		return;
 
 		gfx.GetRenderStats().StartFrame();
 		context->ClearState();

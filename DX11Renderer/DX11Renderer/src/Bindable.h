@@ -21,5 +21,6 @@ namespace gfx
 		virtual void BindRS(const GraphicsDevice& gfx) {}
 		virtual void BindOM(const GraphicsDevice& gfx) {}
 		virtual ~Bindable() = default;
+		virtual void Release() override = 0;
 	};
 }

@@ -21,6 +21,12 @@ namespace gfx
 			static_assert( std::is_base_of<CodexElement,T>::value, "Can only resolve classes derived from CodexElement" );
 			return std::move(GetInstance().InternalResolve<T>( gfx, id, std::forward<Params>( p )... ));
 		}
+
+		static void ReleaseAll()
+		{
+			GetInstance().InternalReleaseAll();
+		}
+
 	private:
 		template<class T,typename...Params>
 		std::shared_ptr<T> InternalResolve(const GraphicsDevice& gfx, std::string id, Params&&...p )
@@ -38,11 +44,21 @@ namespace gfx
 				return std::static_pointer_cast<T>( i->second );
 			}
 		}
+
+		void InternalReleaseAll()
+		{
+			for (std::pair<std::string, std::shared_ptr<CodexElement>> bind : m_binds)
+			{
+				bind.second->Release();
+			}
+		}
+
 		static Codex& GetInstance()
 		{
 			static Codex codex;
 			return codex;
 		}
+
 	private:
 		std::unordered_map<std::string, std::shared_ptr<CodexElement>> m_binds;
 	};

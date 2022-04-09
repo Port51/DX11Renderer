@@ -12,6 +12,7 @@ namespace gfx
 	{
 	public:
 		Topology(const GraphicsDevice& gfx, D3D11_PRIMITIVE_TOPOLOGY type);
+		virtual void Release() override;
 		void BindIA(const GraphicsDevice& gfx, UINT slot) override;
 	public:
 		static std::shared_ptr<Topology> Resolve(const GraphicsDevice& gfx, D3D11_PRIMITIVE_TOPOLOGY type);

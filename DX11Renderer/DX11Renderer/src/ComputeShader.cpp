@@ -63,6 +63,12 @@ namespace gfx
 
 	}
 
+	void ComputeShader::Release()
+	{
+		m_pBytecodeBlob.Reset();
+		m_pComputeShader.Reset();
+	}
+
 	void ComputeShader::Dispatch(const GraphicsDevice& gfx, UINT threadCountX, UINT threadCountY, UINT threadCountZ) const
 	{
 		gfx.GetContext()->CSSetShader(m_pComputeShader.Get(), nullptr, 0);

@@ -12,6 +12,7 @@ namespace gfx
 	{
 	public:
 		ComputeShader(const GraphicsDevice& gfx, const std::string& path, const std::string& kernelName);
+		virtual void Release() override;
 	public:
 		void Dispatch(const GraphicsDevice& gfx, UINT threadCountX, UINT threadCountY, UINT threadCountZ) const;
 		const ComPtr<ID3D11ComputeShader> GetComputeShader() const;

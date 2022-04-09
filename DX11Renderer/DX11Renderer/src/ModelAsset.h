@@ -15,6 +15,7 @@ namespace gfx
 
 	public:
 		ModelAssetNode(std::string name, std::shared_ptr<MeshAsset> pMeshAsset, dx::XMFLOAT4X4 localTransform);
+		void Release();
 	public:
 		MeshAsset* GetMeshAsset() const;
 		const dx::XMFLOAT4X4 GetLocalTransform() const;
@@ -34,6 +35,7 @@ namespace gfx
 	public:
 		ModelAsset(std::shared_ptr<ModelAssetNode> _pSceneGraph, std::vector<std::string> _materialPaths);
 		virtual ~ModelAsset() = default;
+		virtual void Release() override;
 
 	public:
 		std::shared_ptr<ModelInstance> CreateSharedInstance(const GraphicsDevice& gfx, dx::XMMATRIX transform);

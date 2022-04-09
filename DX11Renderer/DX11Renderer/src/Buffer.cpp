@@ -7,7 +7,19 @@ namespace gfx
 		: m_usage(usage), m_bindFlags(bindFlags), m_byteWidth(byteWidth)
 	{}
 
-	Buffer::~Buffer() {}
+	Buffer::~Buffer()
+	{
+		m_pUAV.Reset();
+		m_pSRV.Reset();
+		m_pBuffer.Reset();
+	}
+
+	void Buffer::Release()
+	{
+		m_pSRV.Reset();
+		m_pUAV.Reset();
+		m_pBuffer.Reset();
+	}
 
 	const ComPtr<ID3D11Buffer> Buffer::GetD3DBuffer() const
 	{

@@ -176,6 +176,10 @@ namespace gfx
 
 	}
 
+	void Material::Release()
+	{
+	}
+
 	void Material::Bind(const GraphicsDevice& gfx, std::string_view passName)
 	{
 		// Is this needed?

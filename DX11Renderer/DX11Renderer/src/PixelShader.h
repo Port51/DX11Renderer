@@ -13,6 +13,7 @@ namespace gfx
 	{
 	public:
 		PixelShader(const GraphicsDevice& gfx, const std::string& path);
+		virtual void Release() override;
 		void BindPS(const GraphicsDevice& gfx, UINT slot) override;
 		const u16 GetInstanceIdx() const;
 	public:
