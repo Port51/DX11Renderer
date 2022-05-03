@@ -13,17 +13,12 @@ namespace gfx
 
 	const dx::XMVECTOR Camera::GetPositionWS() const
 	{
-		// LookAt fails if position = target
-		const auto safeRad = dx::XMMax(m_radius, 0.01f);
-		return dx::XMVectorSetW(dx::XMVectorScale(GetForwardWS(), -safeRad), 1.f);
+		return m_positionWS;
 	}
 
 	const dx::XMVECTOR Camera::GetForwardWS() const
 	{
-		return dx::XMVectorSetW(dx::XMVector3Transform(
-			dx::XMVectorSet(0.f, 0.f, 1.f, 0.f),
-			dx::XMMatrixRotationRollPitchYaw(m_phi, -m_theta, 0.0f) // rotate that offset
-		), 0.f);
+		return m_forwardWS;
 	}
 
 	const dx::XMMATRIX Camera::GetViewMatrix() const
@@ -109,6 +104,18 @@ namespace gfx
 		m_frustumWS.UpdatePlanesFromMatrix(GetViewProjectionMatrix());
 	}
 
+	void Camera::UpdateBasisWS()
+	{
+		// LookAt fails if position = target
+		const auto safeRad = dx::XMMax(m_radius, 0.01f);
+		m_positionWS = dx::XMVectorSetW(dx::XMVectorScale(GetForwardWS(), -safeRad), 1.f);
+
+		m_forwardWS = dx::XMVectorSetW(dx::XMVector3Transform(
+			dx::XMVectorSet(0.f, 0.f, 1.f, 0.f),
+			dx::XMMatrixRotationRollPitchYaw(m_phi, -m_theta, 0.0f) // rotate that offset
+		), 0.f);
+	}
+
 	void Camera::DrawImguiControlWindow()
 	{
 		if (ImGui::Begin("Camera"))
@@ -161,5 +168,6 @@ namespace gfx
 
 		// Need to update this every frame too
 		UpdateFrustumWS();
+		UpdateBasisWS();
 	}
 }

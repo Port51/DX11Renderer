@@ -33,29 +33,33 @@ namespace gfx
 	template<typename Type>
 	class StructuredBuffer;
 
+	enum RenderPassType : int;
+
 	class Renderer
 	{
 	public:
 		enum RendererView { Final, TiledLighting, ClusteredLighting, SSRTrace };
 		enum RendererFeature { Shadows, FXAA, HZBSSR, Dither, Tonemapping, COUNT }; // for COUNT to be accurate, don't set these values to anything weird...
+		
 	public:
 		Renderer(const GraphicsDevice& gfx, std::shared_ptr<LightManager> pLightManager, std::shared_ptr<RendererList> pRendererList);
 		virtual ~Renderer();
 		virtual void Release();
 	public:
-		void AcceptDrawCall(DrawCall job, std::string targetPass);
+		void AcceptDrawCall(DrawCall job, RenderPassType targetPass);
 		void Execute(GraphicsDevice& gfx, const Camera& cam, float timeElapsed, UINT pixelSelectionX, UINT pixelSelectionY);
 		void DrawImguiControlWindow(const GraphicsDevice& gfx);
 		void Reset();
 		bool IsFeatureEnabled(RendererFeature feature) const;
 	private:
 		void SetupRenderPassDependencies(const GraphicsDevice& gfx);
-		RenderPass& GetRenderPass(const std::string name) const;
-		const RenderPass& CreateRenderPass(const std::string name);
-		const RenderPass& CreateRenderPass(const std::string name, std::unique_ptr<RenderPass> pRenderPass);
+		RenderPass& GetRenderPass(const RenderPassType pass) const;
+		const RenderPass& CreateRenderPass(const RenderPassType pass);
+		const RenderPass& CreateRenderPass(const RenderPassType pass, std::unique_ptr<RenderPass> pRenderPass);
 
 	private:
-		std::unordered_map<std::string, std::unique_ptr<RenderPass>> m_pRenderPasses;
+		std::unordered_map<RenderPassType, std::unique_ptr<RenderPass>> m_pRenderPasses;
+		std::unordered_map<std::size_t, RenderPassType> m_pRenderPassesByHash;
 
 		std::shared_ptr<Sampler> m_pClampedBilinearSampler;
 
@@ -107,20 +111,5 @@ namespace gfx
 		std::vector<bool> m_rendererFeatureEnabled;
 		int m_pixelIteration;
 
-	public:
-		const std::string PerCameraPassName = std::string("PerCameraPass");
-		const std::string ShadowPassName = std::string("ShadowPass");
-		const std::string DepthPrepassName = std::string("DepthPrepass");
-		const std::string HiZPassName = std::string("HiZPass");
-		const std::string GBufferRenderPassName = std::string("GBuffer");
-		const std::string TiledLightingPassName = std::string("TiledLighting");
-		const std::string ClusteredLightingPassName = std::string("ClusteredLighting");
-		const std::string OpaqueRenderPassName = std::string("Geometry");
-		const std::string BlurPyramidPassName = std::string("BlurPyramid");
-		const std::string SSRRenderPassName = std::string("SSR");
-		const std::string FXAARenderPassName = std::string("FXAA");
-		const std::string DitherRenderPassName = std::string("Dither");
-		const std::string TonemappingRenderPassName = std::string("Tonemapping");
-		const std::string FinalBlitRenderPassName = std::string("FinalBlit");
 	};
 }

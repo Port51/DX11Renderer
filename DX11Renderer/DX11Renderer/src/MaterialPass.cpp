@@ -9,6 +9,7 @@
 #include "InputLayout.h"
 #include "DrawContext.h"
 #include "Renderer.h"
+#include <assert.h>
 
 namespace gfx
 {
@@ -29,6 +30,8 @@ namespace gfx
 
 	void MaterialPass::SetVertexShader(std::shared_ptr<VertexShader> pVertexShader, std::shared_ptr<InputLayout> pInputLayout)
 	{
+		assert(pVertexShader != nullptr);
+		assert(pInputLayout != nullptr);
 		m_pVertexShader = pVertexShader;
 		m_pInputLayout = pInputLayout;
 	}
@@ -40,6 +43,7 @@ namespace gfx
 
 	Binding & MaterialPass::AddBinding(std::shared_ptr<Bindable> pBindable)
 	{
+		assert(pBindable != nullptr);
 		m_bindings.push_back(Binding(std::move(pBindable)));
 		return m_bindings[m_bindings.size() - 1];
 	}
@@ -73,12 +77,13 @@ namespace gfx
 		m_propertySlotIdx = slotIdx;
 	}
 
-	void MaterialPass::SetRenderPass(std::string _renderPass)
+	void MaterialPass::SetRenderPass(RenderPassType _renderPass)
 	{
+		assert(_renderPass != RenderPassType::Undefined);
 		m_renderPass = _renderPass;
 	}
 
-	const std::string MaterialPass::GetRenderPass() const
+	const RenderPassType MaterialPass::GetRenderPass() const
 	{
 		return m_renderPass;
 	}

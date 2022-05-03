@@ -1,5 +1,6 @@
 #pragma once
 #include "CommonHeader.h"
+#include "RenderConstants.h"
 #include "GraphicsDevice.h"
 #include "DrawCall.h"
 #include <vector>
@@ -17,10 +18,10 @@ namespace gfx
 	class RenderPass
 	{
 	public:
-		RenderPass(std::string name);
+		RenderPass(const RenderPassType renderPassType);
 		virtual ~RenderPass() = default;
 	public:
-		const std::string GetName() const;
+		const RenderPassType GetRenderPassType() const;
 		void EnqueueJob(DrawCall job);
 		virtual void BindSharedResources(const GraphicsDevice& gfx) const;
 		virtual void UnbindSharedResources(const GraphicsDevice& gfx) const;
@@ -43,10 +44,11 @@ namespace gfx
 		Binding& AddBinding(Binding pBinding);
 
 		const RenderTexture& GetCameraColorOut() const;
+		static const std::size_t GetHash(std::string passName);
 	protected:
 		std::vector<Binding> m_bindings;
 	private:
-		const std::string m_name;
+		const RenderPassType m_renderPassType;
 		std::vector<DrawCall> m_jobs; // will be replaced by render graph
 
 		// Binds shared by everything in this render pass

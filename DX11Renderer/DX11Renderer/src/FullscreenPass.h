@@ -14,7 +14,7 @@ namespace gfx
 	class FullscreenPass : public RenderPass
 	{
 	public:
-		FullscreenPass(const GraphicsDevice& gfx, std::string name, const char* pixelShader);
+		FullscreenPass(const GraphicsDevice& gfx, const RenderPassType renderPassType, const char* pixelShader);
 	public:
 		void Execute(const GraphicsDevice& gfx) const override;
 		void SetInputTarget(std::shared_ptr<Texture> pInput);

@@ -1,5 +1,6 @@
 #pragma once
 #include "DXMathInclude.h"
+#include "RenderConstants.h"
 #include <vector>
 
 namespace gfx
@@ -10,14 +11,14 @@ namespace gfx
 	{
 	public:
 		DrawContext(Renderer& renderer);
-		DrawContext(Renderer& renderer, std::string _renderPass);
-		DrawContext(Renderer& renderer, std::vector<std::string> _renderPasses);
-		void SetRenderPasses(std::string _renderPass);
-		void SetRenderPasses(std::vector<std::string> _renderPasses);
+		DrawContext(Renderer& renderer, RenderPassType _renderPass);
+		DrawContext(Renderer& renderer, std::vector<RenderPassType> _renderPasses);
+		void SetRenderPasses(RenderPassType _renderPass);
+		void SetRenderPasses(std::vector<RenderPassType> _renderPasses);
 	public:
 		Renderer& renderer;
 		dx::XMMATRIX viewMatrix;
 		dx::XMMATRIX projMatrix;
-		std::vector<std::string> renderPasses;
+		std::vector<RenderPassType> renderPasses;
 	};
 }

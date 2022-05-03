@@ -30,6 +30,7 @@ namespace gfx
 		void UpdateProjectionMatrix();
 		void UpdateFrustumVS();
 		void UpdateFrustumWS();
+		void UpdateBasisWS();
 	private:
 		float m_nearClipPlane;
 		float m_farClipPlane;
@@ -47,5 +48,7 @@ namespace gfx
 		Frustum m_frustumWS;
 		Frustum m_frustumVS;
 		dx::XMVECTOR m_frustumCornersVS;
+		dx::XMVECTOR m_forwardWS;
+		dx::XMVECTOR m_positionWS;
 	};
 }

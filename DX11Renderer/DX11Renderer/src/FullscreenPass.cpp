@@ -17,8 +17,8 @@
 
 namespace gfx
 {
-	FullscreenPass::FullscreenPass(const GraphicsDevice& gfx, std::string name, const char* pixelShader)
-		: RenderPass(name)
+	FullscreenPass::FullscreenPass(const GraphicsDevice& gfx, const RenderPassType renderPassType, const char* pixelShader)
+		: RenderPass(renderPassType)
 	{
 		std::string vertexShaderName("Assets\\Built\\Shaders\\FullscreenVS.cso");
 		auto vs = VertexShader::Resolve(gfx, vertexShaderName.c_str());

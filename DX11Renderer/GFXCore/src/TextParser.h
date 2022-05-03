@@ -17,15 +17,20 @@ namespace gfxcore
 		public:
 			std::string key;
 			std::vector<std::string> values;
+		public:
+			const int ReadInt(int index) const;
+			const int MoveInt(int index) const;
+			const float ReadFloat(int index) const;
+			const float MoveFloat(int index) const;
 		};
 
 		TextParser(std::string_view filePath);
 
 		virtual ~TextParser();
 
-		void Dispose();
+		void Release();
 
-		bool ReadParsedLine(ParsedKeyValues& result);
+		bool ReadParsedLine(ParsedKeyValues& result, char delimiter = ',');
 	private:
 		static bool IsWhitespace(unsigned char c);
 

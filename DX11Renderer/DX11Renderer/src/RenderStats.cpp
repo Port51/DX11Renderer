@@ -35,9 +35,9 @@ namespace gfx
 		if (ImGui::Begin("Render Stats"))
 		{
 			ImGui::Text("CULLING");
-			ImGui::Text((std::string("Renderers visible: ") + std::to_string(m_meshRenderersVisible) + std::string(" / ") + std::to_string(totalRenderers)).c_str());
-			ImGui::Text((std::string("Lights visible: ") + std::to_string(m_lightsVisible) + std::string(" / ") + std::to_string(totalLights)).c_str());
-			ImGui::Text((std::string("Shadowmap passes: ") + std::to_string(m_shadowsVisible) + std::string(" / ") + std::to_string(totalShadows)).c_str());
+			ImGui::Text((std::string("Renderers visible:   ") + std::to_string(m_meshRenderersVisible) + std::string(" / ") + std::to_string(totalRenderers)).c_str());
+			ImGui::Text((std::string("Lights visible:      ") + std::to_string(m_lightsVisible) + std::string(" / ") + std::to_string(totalLights)).c_str());
+			ImGui::Text((std::string("Shadowmap passes:    ") + std::to_string(m_shadowsVisible) + std::string(" / ") + std::to_string(totalShadows)).c_str());
 		}
 		ImGui::End();
 	}

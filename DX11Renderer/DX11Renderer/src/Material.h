@@ -19,6 +19,8 @@ namespace gfx
 
 	struct DrawContext;
 
+	enum RenderPassType : int;
+
 	class Material : public Bindable
 	{
 	public:
@@ -36,7 +38,7 @@ namespace gfx
 	private:
 		// Contains bindings like textures and uniform data, shared across 1+ material passes
 		std::vector<std::unique_ptr<BindingList>> m_pPropertySlots;
-		std::unordered_map<std::string, std::unique_ptr<MaterialPass>> m_pPasses;
+		std::unordered_map<RenderPassType, std::unique_ptr<MaterialPass>> m_pMaterialPassesByType;
 		std::vector<std::shared_ptr<Bindable>> m_pBindables;
 		std::string m_materialAssetPath;
 		u64 m_materialCode;

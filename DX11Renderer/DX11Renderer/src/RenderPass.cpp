@@ -1,4 +1,5 @@
 #include "pch.h"
+#include <functional>
 #include "RenderPass.h"
 #include "Binding.h"
 #include "Bindable.h"
@@ -12,8 +13,8 @@ namespace gfx
 	std::vector<ID3D11UnorderedAccessView*> RenderPass::m_pNullUAVs;
 	std::vector<ID3D11SamplerState*> RenderPass::m_pNullSPLs;
 
-	RenderPass::RenderPass(std::string name)
-		: m_name(name)
+	RenderPass::RenderPass(const RenderPassType renderPassType)
+		: m_renderPassType(renderPassType)
 	{
 		if (m_pNullBuffers.size() == 0)
 		{
@@ -25,9 +26,9 @@ namespace gfx
 		}
 	}
 
-	const std::string RenderPass::GetName() const
+	const RenderPassType RenderPass::GetRenderPassType() const
 	{
-		return m_name;
+		return m_renderPassType;
 	}
 
 	void RenderPass::EnqueueJob(DrawCall job)
@@ -242,5 +243,10 @@ namespace gfx
 	const RenderTexture& RenderPass::GetCameraColorOut() const
 	{
 		return *m_pCameraColorOut.get();
+	}
+
+	const std::size_t RenderPass::GetHash(std::string passName)
+	{
+		return std::hash<std::string>{}(std::move(passName));
 	}
 }

@@ -1,6 +1,7 @@
 #include "pch.h"
-#include "Renderer.h"
 #include <array>
+#include <functional>
+#include "Renderer.h"
 #include "DepthStencilState.h"
 #include "GraphicsDevice.h"
 #include "DrawCall.h"
@@ -29,6 +30,7 @@
 #include "RasterizerState.h"
 #include "Sampler.h"
 #include "RenderStats.h"
+#include "RenderConstants.h"
 
 namespace gfx
 {
@@ -127,22 +129,27 @@ namespace gfx
 		//
 		// Render passes
 		//
-		CreateRenderPass(PerCameraPassName);
-		CreateRenderPass(DepthPrepassName);
-		CreateRenderPass(HiZPassName);
-		CreateRenderPass(ShadowPassName);
-		CreateRenderPass(GBufferRenderPassName);
-		CreateRenderPass(TiledLightingPassName);
-		CreateRenderPass(ClusteredLightingPassName);
-		CreateRenderPass(OpaqueRenderPassName);
-		CreateRenderPass(BlurPyramidPassName);
-		CreateRenderPass(SSRRenderPassName);
-		CreateRenderPass(FXAARenderPassName);
-		CreateRenderPass(DitherRenderPassName);
-		CreateRenderPass(TonemappingRenderPassName);
+		CreateRenderPass(RenderPassType::PerCameraRenderPass);
+		CreateRenderPass(RenderPassType::DepthPrepassRenderPass);
+		CreateRenderPass(RenderPassType::HiZRenderPass);
+		CreateRenderPass(RenderPassType::ShadowRenderPass);
+		CreateRenderPass(RenderPassType::GBufferRenderPass);
+		CreateRenderPass(RenderPassType::TiledLightingRenderPass);
+		CreateRenderPass(RenderPassType::ClusteredLightingRenderPass);
+		CreateRenderPass(RenderPassType::OpaqueRenderPass);
+		CreateRenderPass(RenderPassType::BlurPyramidRenderPass);
+		CreateRenderPass(RenderPassType::SSRRenderPass);
+		CreateRenderPass(RenderPassType::FXAARenderPass);
+		CreateRenderPass(RenderPassType::DitherRenderPass);
+		CreateRenderPass(RenderPassType::TonemappingRenderPass);
 
-		CreateRenderPass(FinalBlitRenderPassName,
-			std::move(std::make_unique<FullscreenPass>(gfx, FinalBlitRenderPassName, "Assets\\Built\\Shaders\\BlitPS.cso")));
+		CreateRenderPass(RenderPassType::FinalBlitRenderPass,
+			std::move(std::make_unique<FullscreenPass>(gfx, RenderPassType::FinalBlitRenderPass, "Assets\\Built\\Shaders\\BlitPS.cso")));
+
+		// Used for mapping from material pass hashes to render passes
+		m_pRenderPassesByHash.emplace(RenderPass::GetHash(std::string("PerCameraPass")), RenderPassType::PerCameraRenderPass);
+		m_pRenderPassesByHash.emplace(RenderPass::GetHash(std::string("ShadowPass")), RenderPassType::ShadowRenderPass);
+		m_pRenderPassesByHash.emplace(RenderPass::GetHash("ShadowPass"), RenderPassType::ShadowRenderPass);
 
 		SetupRenderPassDependencies(gfx);
 	}
@@ -192,7 +199,7 @@ namespace gfx
 	{
 		bool cameraOutSlot0 = true;
 
-		GetRenderPass(PerCameraPassName).
+		GetRenderPass(RenderPassType::PerCameraRenderPass).
 			ClearBinds()
 			.CSSetCB(RenderSlots::CS_PerFrameCB, m_pPerFrameCB->GetD3DBuffer())
 			.CSSetCB(RenderSlots::CS_TransformationCB, m_pTransformationCB->GetD3DBuffer())
@@ -208,26 +215,26 @@ namespace gfx
 			.PSSetCB(RenderSlots::PS_PerCameraCB, m_pPerCameraCB->GetD3DBuffer())
 			.PSSetCB(RenderSlots::PS_LightInputCB, m_pLightManager->GetLightInputCB().GetD3DBuffer());
 
-		GetRenderPass(DepthPrepassName).
+		GetRenderPass(RenderPassType::DepthPrepassRenderPass).
 			ClearBinds()
 			.AddBinding(RasterizerState::Resolve(gfx, D3D11_CULL_BACK)).SetupRSBinding();
 
-		GetRenderPass(HiZPassName).
+		GetRenderPass(RenderPassType::HiZRenderPass).
 			ClearBinds()
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, gfx.GetDepthStencilTarget()->GetSRV())
 			.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, m_pHiZBufferTarget->GetUAV())
 			.CSSetUAV(RenderSlots::CS_FreeUAV + 1u, nullptr)
 			.CSSetCB(RenderSlots::CS_FreeCB + 0u, m_pHiZCreationCB->GetD3DBuffer());
 
-		GetRenderPass(ShadowPassName).
+		GetRenderPass(RenderPassType::ShadowRenderPass).
 			ClearBinds()
 			.AddBinding(RasterizerState::Resolve(gfx, D3D11_CULL_FRONT)).SetupRSBinding(); // Reduce shadow acne w/ front face culling during shadow pass
 
-		GetRenderPass(GBufferRenderPassName).
+		GetRenderPass(RenderPassType::GBufferRenderPass).
 			ClearBinds()
 			.AddBinding(RasterizerState::Resolve(gfx, D3D11_CULL_BACK)).SetupRSBinding();
 
-		GetRenderPass(TiledLightingPassName).
+		GetRenderPass(RenderPassType::TiledLightingRenderPass).
 			ClearBinds()
 			.CSSetSRV(RenderSlots::CS_GbufferNormalRoughSRV, m_pNormalRoughReflectivityTarget->GetSRV())
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, gfx.GetDepthStencilTarget()->GetSRV())
@@ -239,7 +246,7 @@ namespace gfx
 			.CSSetUAV(RenderSlots::CS_FreeUAV + 2u, m_pDebugTiledLighting->GetUAV())
 			.CSSetSPL(RenderSlots::CS_FreeSPL + 0u, m_pShadowSampler->GetD3DSampler());
 
-		GetRenderPass(ClusteredLightingPassName).
+		GetRenderPass(RenderPassType::ClusteredLightingRenderPass).
 			ClearBinds()
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, gfx.GetDepthStencilTarget()->GetSRV())
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 1u, m_pHiZBufferTarget->GetSRV())
@@ -247,7 +254,7 @@ namespace gfx
 			.CSSetUAV(RenderSlots::CS_FreeUAV + 1u, m_pDebugClusteredLighting->GetUAV())
 			.CSSetCB(RenderSlots::CS_FreeCB + 0u, m_pClusteredLightingCB->GetD3DBuffer());
 
-		GetRenderPass(OpaqueRenderPassName).
+		GetRenderPass(RenderPassType::OpaqueRenderPass).
 			ClearBinds()
 			.PSSetSRV(RenderSlots::PS_FreeSRV + 0u, m_pSpecularLighting->GetSRV())
 			.PSSetSRV(RenderSlots::PS_FreeSRV + 1u, m_pDiffuseLighting->GetSRV())
@@ -266,7 +273,7 @@ namespace gfx
 			const auto& pColorOut = (cameraOutSlot0) ? m_pCameraColor1 : m_pCameraColor0;
 			cameraOutSlot0 = !cameraOutSlot0;
 
-			GetRenderPass(SSRRenderPassName).
+			GetRenderPass(RenderPassType::SSRRenderPass).
 				ClearBinds()
 				.CSSetSRV(RenderSlots::CS_GbufferNormalRoughSRV, m_pNormalRoughReflectivityTarget->GetSRV())
 				.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, pColorIn->GetSRV())
@@ -287,7 +294,7 @@ namespace gfx
 			const auto& pColorOut = (cameraOutSlot0) ? m_pCameraColor1 : m_pCameraColor0;
 			cameraOutSlot0 = !cameraOutSlot0;
 
-			GetRenderPass(FXAARenderPassName).
+			GetRenderPass(RenderPassType::FXAARenderPass).
 				ClearBinds()
 				.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, pColorIn->GetSRV())
 				.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, pColorOut->GetUAV())
@@ -302,7 +309,7 @@ namespace gfx
 			const auto& pColorOut = (cameraOutSlot0) ? m_pCameraColor1 : m_pCameraColor0;
 			cameraOutSlot0 = !cameraOutSlot0;
 
-			GetRenderPass(DitherRenderPassName).
+			GetRenderPass(RenderPassType::DitherRenderPass).
 				ClearBinds()
 				.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, pColorIn->GetSRV())
 				.CSSetSRV(RenderSlots::CS_FreeSRV + 1u, m_pDitherTexture->GetSRV())
@@ -317,7 +324,7 @@ namespace gfx
 			const auto& pColorOut = (cameraOutSlot0) ? m_pCameraColor1 : m_pCameraColor0;
 			cameraOutSlot0 = !cameraOutSlot0;
 
-			GetRenderPass(TonemappingRenderPassName).
+			GetRenderPass(RenderPassType::TonemappingRenderPass).
 				ClearBinds()
 				.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, pColorIn->GetSRV())
 				.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, pColorOut->GetUAV());
@@ -327,7 +334,7 @@ namespace gfx
 		m_pFinalBlitInputIsIndex0 = cameraOutSlot0;
 	}
 
-	void Renderer::AcceptDrawCall(DrawCall job, std::string targetPass)
+	void Renderer::AcceptDrawCall(DrawCall job, RenderPassType targetPass)
 	{
 		m_pRenderPasses[targetPass]->EnqueueJob(std::move(job));
 	}
@@ -344,7 +351,7 @@ namespace gfx
 
 		// Shadow + lighting pass
 		{
-			RenderPass& pass = GetRenderPass(ShadowPassName);
+			RenderPass& pass = GetRenderPass(RenderPassType::ShadowRenderPass);
 
 			pass.BindSharedResources(gfx);
 
@@ -362,7 +369,7 @@ namespace gfx
 
 		// Submit draw calls
 		{
-			static DrawContext drawContext(*this, std::move(std::vector<std::string> { DepthPrepassName, GBufferRenderPassName, OpaqueRenderPassName }));
+			static DrawContext drawContext(*this, std::move(std::vector<RenderPassType> { RenderPassType::DepthPrepassRenderPass, RenderPassType::GBufferRenderPass, RenderPassType::OpaqueRenderPass }));
 			drawContext.viewMatrix = camera.GetViewMatrix();
 			drawContext.projMatrix = camera.GetProjectionMatrix();
 
@@ -420,13 +427,13 @@ namespace gfx
 
 		// Per-frame and per-camera binds
 		{
-			const RenderPass& pass = GetRenderPass(PerCameraPassName);
+			const RenderPass& pass = GetRenderPass(RenderPassType::PerCameraRenderPass);
 			pass.BindSharedResources(gfx);
 		}
 
 		// Early Z pass
 		{
-			const RenderPass& pass = GetRenderPass(DepthPrepassName);
+			const RenderPass& pass = GetRenderPass(RenderPassType::DepthPrepassRenderPass);
 
 			pass.BindSharedResources(gfx);
 			DepthStencilState::Resolve(gfx, DepthStencilState::Mode::StencilOff)->BindOM(gfx);
@@ -441,7 +448,7 @@ namespace gfx
 
 		// Hi-Z buffer pass
 		{
-			const RenderPass& pass = GetRenderPass(HiZPassName);
+			const RenderPass& pass = GetRenderPass(RenderPassType::HiZRenderPass);
 
 			gfx.ClearRenderTargets(); // need in order to access depth
 			pass.BindSharedResources(gfx);
@@ -482,7 +489,7 @@ namespace gfx
 
 		// Normal-rough-reflectivity pass
 		{
-			const RenderPass& pass = GetRenderPass(GBufferRenderPassName);
+			const RenderPass& pass = GetRenderPass(RenderPassType::GBufferRenderPass);
 
 			pass.BindSharedResources(gfx);
 			DepthStencilState::Resolve(gfx, DepthStencilState::Mode::Gbuffer)->BindOM(gfx);
@@ -500,7 +507,7 @@ namespace gfx
 
 		// Tiled lighting pass
 		{
-			const RenderPass& pass = GetRenderPass(TiledLightingPassName);
+			const RenderPass& pass = GetRenderPass(RenderPassType::TiledLightingRenderPass);
 			pass.BindSharedResources(gfx);
 
 			m_pTiledLightingKernel->Dispatch(gfx, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1);
@@ -510,7 +517,7 @@ namespace gfx
 
 		// Clustered lighting pass
 		{
-			const RenderPass& pass = GetRenderPass(ClusteredLightingPassName);
+			const RenderPass& pass = GetRenderPass(RenderPassType::ClusteredLightingRenderPass);
 			pass.BindSharedResources(gfx);
 
 			static ClusteredLightingCB clusteredLightingCB;
@@ -524,7 +531,7 @@ namespace gfx
 
 		// Opaque pass
 		{
-			const RenderPass& pass = GetRenderPass(OpaqueRenderPassName);
+			const RenderPass& pass = GetRenderPass(RenderPassType::OpaqueRenderPass);
 			pass.BindSharedResources(gfx);
 
 			DepthStencilState::Resolve(gfx, DepthStencilState::Mode::Gbuffer)->BindOM(gfx);
@@ -577,7 +584,7 @@ namespace gfx
 		// SSR pass
 		if (IsFeatureEnabled(RendererFeature::HZBSSR))
 		{
-			const RenderPass& pass = GetRenderPass(SSRRenderPassName);
+			const RenderPass& pass = GetRenderPass(RenderPassType::SSRRenderPass);
 			pass.BindSharedResources(gfx);
 
 			static SSR_CB ssrCB;
@@ -592,7 +599,7 @@ namespace gfx
 		// FXAA pass
 		if (Config::AAType == Config::AAType::FXAA && IsFeatureEnabled(RendererFeature::FXAA))
 		{
-			const RenderPass& pass = GetRenderPass(FXAARenderPassName);
+			const RenderPass& pass = GetRenderPass(RenderPassType::FXAARenderPass);
 			pass.BindSharedResources(gfx);
 
 			static FXAA_CB fxaaCB;
@@ -610,7 +617,7 @@ namespace gfx
 		// Dither pass
 		if (m_viewIdx == RendererView::Final && IsFeatureEnabled(RendererFeature::Dither))
 		{
-			const RenderPass& pass = GetRenderPass(DitherRenderPassName);
+			const RenderPass& pass = GetRenderPass(RenderPassType::DitherRenderPass);
 			pass.BindSharedResources(gfx);
 
 			static DitherCB ditherCB;
@@ -626,7 +633,7 @@ namespace gfx
 		// Tonemapping pass
 		if (m_viewIdx == RendererView::Final && IsFeatureEnabled(RendererFeature::Tonemapping))
 		{
-			const RenderPass& pass = GetRenderPass(TonemappingRenderPassName);
+			const RenderPass& pass = GetRenderPass(RenderPassType::TonemappingRenderPass);
 			pass.BindSharedResources(gfx);
 
 			m_pTonemappingKernel->Dispatch(gfx, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1);
@@ -636,7 +643,7 @@ namespace gfx
 
 		// Final blit
 		{
-			RenderPass& pass = GetRenderPass(FinalBlitRenderPassName);
+			RenderPass& pass = GetRenderPass(RenderPassType::FinalBlitRenderPass);
 			auto& fsPass = static_cast<FullscreenPass&>(pass);
 
 			// todo: remove this - for now it's needed to clear SRVs
@@ -702,7 +709,7 @@ namespace gfx
 			ImGui::BeginTable("FeatureTable", 2);
 			m_rendererFeatureEnabled[(int)RendererFeature::Shadows] = DrawToggleOnOffButton(0, "Shadows", m_rendererFeatureEnabled[(int)RendererFeature::Shadows], featureButtonSize, changed);
 			m_rendererFeatureEnabled[(int)RendererFeature::FXAA] = DrawToggleOnOffButton(1, "FXAA", m_rendererFeatureEnabled[(int)RendererFeature::FXAA], featureButtonSize, changed);
-			m_rendererFeatureEnabled[(int)RendererFeature::HZBSSR] = DrawToggleOnOffButton(2, "Hi-Z SSR", m_rendererFeatureEnabled[(int)RendererFeature::HZBSSR], featureButtonSize, changed);
+			m_rendererFeatureEnabled[(int)RendererFeature::HZBSSR] = DrawToggleOnOffButton(2, "SSR", m_rendererFeatureEnabled[(int)RendererFeature::HZBSSR], featureButtonSize, changed);
 			m_rendererFeatureEnabled[(int)RendererFeature::Dither] = DrawToggleOnOffButton(3, "Dither", m_rendererFeatureEnabled[(int)RendererFeature::Dither], featureButtonSize, changed);
 			m_rendererFeatureEnabled[(int)RendererFeature::Tonemapping] = DrawToggleOnOffButton(4, "Tonemapping", m_rendererFeatureEnabled[(int)RendererFeature::Tonemapping], featureButtonSize, changed);
 			ImGui::EndTable();
@@ -725,21 +732,21 @@ namespace gfx
 		}
 	}
 
-	RenderPass& Renderer::GetRenderPass(const std::string name) const
+	RenderPass& Renderer::GetRenderPass(const RenderPassType pass) const
 	{
-		return *m_pRenderPasses.at(name).get();
+		return *m_pRenderPasses.at(pass).get();
 	}
 
-	const RenderPass& Renderer::CreateRenderPass(const std::string name)
+	const RenderPass& Renderer::CreateRenderPass(const RenderPassType pass)
 	{
-		m_pRenderPasses.emplace(name, std::make_unique<RenderPass>(name));
-		return *m_pRenderPasses[name].get();
+		m_pRenderPasses.emplace(pass, std::make_unique<RenderPass>(pass));
+		return *m_pRenderPasses[pass].get();
 	}
 
-	const RenderPass& Renderer::CreateRenderPass(const std::string name, std::unique_ptr<RenderPass> pRenderPass)
+	const RenderPass& Renderer::CreateRenderPass(const RenderPassType pass, std::unique_ptr<RenderPass> pRenderPass)
 	{
-		m_pRenderPasses.emplace(name, std::move(pRenderPass));
-		return *m_pRenderPasses[name].get();
+		m_pRenderPasses.emplace(pass, std::move(pRenderPass));
+		return *m_pRenderPasses[pass].get();
 	}
 
 	bool Renderer::IsFeatureEnabled(RendererFeature feature) const

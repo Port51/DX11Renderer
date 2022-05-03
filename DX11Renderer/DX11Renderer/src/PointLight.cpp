@@ -16,6 +16,7 @@
 #include "LightShadowData.h"
 #include "RendererList.h"
 #include "Config.h"
+#include "RenderConstants.h"
 
 namespace gfx
 {
@@ -133,7 +134,7 @@ namespace gfx
 			transformationCB.projMatrix = projMatrix;
 			context.transformationCB.Update(context.gfx, transformationCB);
 
-			static DrawContext drawContext(context.renderer, context.renderer.ShadowPassName);
+			static DrawContext drawContext(context.renderer, RenderPassType::ShadowRenderPass);
 			drawContext.viewMatrix = viewMatrix;
 			drawContext.projMatrix = projMatrix;
 

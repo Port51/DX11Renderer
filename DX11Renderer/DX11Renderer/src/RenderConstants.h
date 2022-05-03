@@ -1,8 +1,29 @@
 #pragma once
 #include "CommonHeader.h"
+#include <unordered_map>
+#include <string>
 
 namespace gfx
 {
+	enum RenderPassType : int
+	{
+		Undefined,
+		PerCameraRenderPass,
+		ShadowRenderPass,
+		DepthPrepassRenderPass,
+		HiZRenderPass,
+		GBufferRenderPass,
+		TiledLightingRenderPass,
+		ClusteredLightingRenderPass,
+		OpaqueRenderPass,
+		BlurPyramidRenderPass,
+		SSRRenderPass,
+		FXAARenderPass,
+		DitherRenderPass,
+		TonemappingRenderPass,
+		FinalBlitRenderPass
+	};
+
 	class RenderSlots
 	{
 	public:
@@ -55,4 +76,17 @@ namespace gfx
 		static const float DEG_TO_RAD;
 		static const float RAD_TO_DEG;
 	};
+
+	class RenderPassConstants
+	{
+	public:
+		static std::string GetRenderPassName(RenderPassType passType);
+		static std::size_t GetRenderPassHash(RenderPassType passType);
+		static RenderPassType GetRenderPassType(std::string passName);
+	private:
+		static std::unordered_map<RenderPassType, std::string> m_renderPassNameByEnum;
+		static std::unordered_map<RenderPassType, std::size_t> m_renderPassHashByEnum;
+		static std::unordered_map<std::size_t, RenderPassType> m_renderPassEnumByHash;
+	};
+
 }

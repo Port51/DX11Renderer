@@ -1,12 +1,12 @@
 Pass
 {
-	Name, DepthPrepass
+	Name, DepthPrepassRenderPass
 	Cull, Back
 	VS, Assets\\Built\\Shaders\\PhongVS.cso
 }
 Pass
 {
-	Name, GBuffer
+	Name, GBufferRenderPass
 	Cull, Back
 	VS, Assets\\Built\\Shaders\\PhongVS.cso
 	PS, Assets\\Built\\Shaders\\SolidColorGbuffer.cso
@@ -14,7 +14,7 @@ Pass
 }
 Pass
 {
-	Name, Geometry
+	Name, OpaqueRenderPass
 	Cull, Back
 	VS, Assets\\Built\\Shaders\\PhongVS.cso
 	PS, Assets\\Built\\Shaders\\SolidColorPS.cso

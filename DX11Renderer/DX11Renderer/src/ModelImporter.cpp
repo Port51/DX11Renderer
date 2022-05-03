@@ -40,7 +40,7 @@ namespace gfx
 				settings.materialIndicesByName[p.values[0]] = (int)settings.materialPaths.size() - 1;
 			}
 		}
-		parser.Dispose();
+		parser.Release();
 
 		if (!hasName)
 		{
