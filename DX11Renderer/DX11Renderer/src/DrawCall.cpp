@@ -5,6 +5,7 @@
 #include "RenderPass.h"
 #include "DrawContext.h"
 #include "BindingList.h"
+#include "RenderState.h"
 
 namespace gfx
 {
@@ -15,7 +16,7 @@ namespace gfx
 		m_pPropertyBindings(pPropertyBindings)
 	{}
 
-	void DrawCall::Execute(const GraphicsDevice& gfx) const
+	void DrawCall::Execute(const GraphicsDevice& gfx, RenderState& renderState) const
 	{
 		if (m_pPropertyBindings != nullptr)
 		{
@@ -23,7 +24,7 @@ namespace gfx
 		}
 
 		m_pRenderer->Bind(gfx, *m_pDrawContext);
-		m_pMaterialPass->Bind(gfx);
+		m_pMaterialPass->Bind(gfx, renderState);
 		m_pRenderer->IssueDrawCall(gfx); // calls DrawIndexed() or DrawIndexedInstanced()
 	}
 }

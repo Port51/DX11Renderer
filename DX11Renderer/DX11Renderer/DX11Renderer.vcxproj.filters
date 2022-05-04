@@ -172,6 +172,9 @@
     <Filter Include="Source\SceneGraphs">
       <UniqueIdentifier>{4a37ee07-81fd-408d-b26e-7c6d4310e2a5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Codex">
+      <UniqueIdentifier>{af840b07-54d1-46ca-b253-645b7812bd5b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp">
@@ -276,9 +279,6 @@
     <ClCompile Include="src\RenderConstants.cpp">
       <Filter>Source\RenderPipeline</Filter>
     </ClCompile>
-    <ClCompile Include="src\RendererList.cpp">
-      <Filter>Source\Drawable</Filter>
-    </ClCompile>
     <ClCompile Include="src\RenderPass.cpp">
       <Filter>Source\RenderJobs</Filter>
     </ClCompile>
@@ -365,6 +365,15 @@
     </ClCompile>
     <ClCompile Include="src\BindingList.cpp">
       <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CodexElement.cpp">
+      <Filter>Source\Codex</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RendererList.cpp">
+      <Filter>Source\RenderJobs</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RenderState.cpp">
+      <Filter>Source\RenderJobs</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -521,9 +530,6 @@
     <ClInclude Include="src\RenderConstants.h">
       <Filter>Headers\RenderPipeline</Filter>
     </ClInclude>
-    <ClInclude Include="src\RendererList.h">
-      <Filter>Headers\Drawable</Filter>
-    </ClInclude>
     <ClInclude Include="src\RenderPass.h">
       <Filter>Headers\RenderJobs</Filter>
     </ClInclude>
@@ -637,6 +643,12 @@
     </ClInclude>
     <ClInclude Include="src\BindingList.h">
       <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\RendererList.h">
+      <Filter>Headers\RenderJobs</Filter>
+    </ClInclude>
+    <ClInclude Include="src\RenderState.h">
+      <Filter>Headers\RenderJobs</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

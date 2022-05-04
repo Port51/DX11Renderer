@@ -49,10 +49,10 @@ namespace gfx
 		RebuildSceneGraphTransforms();
 	}
 
-	void ModelInstance::SubmitDrawCalls(const DrawContext& drawContext) const
+	/*void ModelInstance::SubmitDrawCalls(const DrawContext& drawContext) const
 	{
 		m_pSceneGraph->SubmitDrawCalls(drawContext);
-	}
+	}*/
 
 	void ModelInstance::SetPositionWS(dx::XMFLOAT3 positionWS)
 	{

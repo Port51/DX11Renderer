@@ -14,6 +14,7 @@ namespace gfx
 	class InputLayout;
 	class Bindable;
 	class BindingList;
+	class RenderState;
 
 	struct DrawContext;
 
@@ -36,7 +37,7 @@ namespace gfx
 		void SetRenderPass(RenderPassType renderPass);
 		const RenderPassType GetRenderPass() const;
 		void SubmitDrawCommands(const MeshRenderer& meshRenderer, const DrawContext& drawContext, const BindingList* const pPropertyBindings) const;
-		void Bind(const GraphicsDevice& gfx) const;
+		void Bind(const GraphicsDevice& gfx, RenderState& renderState) const;
 	private:
 		int m_propertySlotIdx = -1;
 		RenderPassType m_renderPass;

@@ -6,6 +6,8 @@ namespace gfx
 	class GraphicsDevice;
 	class MaterialPass;
 	class BindingList;
+	class RenderState;
+
 	struct DrawContext;
 
 	class DrawCall
@@ -14,7 +16,7 @@ namespace gfx
 		DrawCall(const MaterialPass* const pMaterialPass, const MeshRenderer* const pRenderer, const DrawContext& drawContext, const BindingList* const pPropertyBindings);
 		virtual ~DrawCall() = default;
 	public:
-		void Execute(const GraphicsDevice& gfx) const;
+		void Execute(const GraphicsDevice& gfx, RenderState& renderState) const;
 	private:
 		const MeshRenderer* const m_pRenderer;
 		const MaterialPass* const m_pMaterialPass;

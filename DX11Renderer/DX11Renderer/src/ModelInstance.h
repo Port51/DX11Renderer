@@ -24,7 +24,7 @@ namespace gfx
 		ModelInstance(const GraphicsDevice& gfx, std::shared_ptr<ModelAsset> pModelAsset, dx::XMMATRIX transform);
 		virtual ~ModelInstance() = default;
 	public:
-		void SubmitDrawCalls(const DrawContext& drawContext) const;
+		//void SubmitDrawCalls(const DrawContext& drawContext) const;
 		void SetPositionWS(dx::XMFLOAT3 positionWS);
 		void RebuildSceneGraphTransforms();
 		const std::shared_ptr<SceneGraphNode> GetSceneGraph() const;

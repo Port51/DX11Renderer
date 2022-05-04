@@ -19,6 +19,8 @@ namespace gfx
 	using u64 = uint64_t;
 	using f32 = float;
 	using f64 = double;
+
+	using guid64 = uint64_t;
 }
 
 #include <memory>

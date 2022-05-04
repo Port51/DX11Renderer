@@ -120,7 +120,7 @@ namespace gfx
 		return dx::XMLoadFloat3(&m_accumulatedWorldTransformOffset);
 	}
 
-	void SceneGraphNode::SubmitDrawCalls(const DrawContext& drawContext) const
+	/*void SceneGraphNode::SubmitDrawCalls(const DrawContext& drawContext) const
 	{
 		if (m_pMeshRenderer)
 		{
@@ -131,5 +131,5 @@ namespace gfx
 		{
 			pc->SubmitDrawCalls(drawContext);
 		}
-	}
+	}*/
 }

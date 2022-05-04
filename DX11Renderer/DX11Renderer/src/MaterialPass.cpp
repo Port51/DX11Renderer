@@ -9,6 +9,7 @@
 #include "InputLayout.h"
 #include "DrawContext.h"
 #include "Renderer.h"
+#include "RenderState.h"
 #include <assert.h>
 
 namespace gfx
@@ -93,11 +94,19 @@ namespace gfx
 		drawContext.renderer.AcceptDrawCall(std::move(DrawCall(this, &meshRenderer, drawContext, pPropertyBindings)), m_renderPass);
 	}
 
-	void MaterialPass::Bind(const GraphicsDevice & gfx) const
+	void MaterialPass::Bind(const GraphicsDevice & gfx, RenderState& renderState) const
 	{
-		m_pInputLayout->BindIA(gfx, 0u);
-		m_pVertexShader->BindVS(gfx, 0u);
-		if (m_pPixelShader != nullptr)
+		if (renderState.TryUpdateIA(m_pInputLayout->GetGuid()))
+		{
+			m_pInputLayout->BindIA(gfx, 0u);
+		}
+
+		if (renderState.TryUpdateVS(m_pVertexShader->GetGuid()))
+		{
+			m_pVertexShader->BindVS(gfx, 0u);
+		}
+
+		if (m_pPixelShader != nullptr && renderState.TryUpdatePS(m_pPixelShader->GetGuid()))
 		{
 			m_pPixelShader->BindPS(gfx, 0u);
 		}

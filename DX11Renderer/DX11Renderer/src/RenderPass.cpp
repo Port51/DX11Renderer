@@ -4,6 +4,7 @@
 #include "Binding.h"
 #include "Bindable.h"
 #include "RenderTexture.h"
+#include "RenderState.h"
 
 namespace gfx
 {
@@ -136,9 +137,10 @@ namespace gfx
 
 	void RenderPass::Execute(const GraphicsDevice& gfx) const
 	{
+		RenderState renderState;
 		for (const auto& j : m_jobs)
 		{
-			j.Execute(gfx);
+			j.Execute(gfx, renderState);
 		}
 	}
 

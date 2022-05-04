@@ -22,7 +22,7 @@ namespace gfx
 		SceneGraphNode(int id, const dx::XMMATRIX& _transform, std::shared_ptr<MeshRenderer> pMeshPtr, std::vector<std::shared_ptr<SceneGraphNode>> pChildNodes);
 		virtual ~SceneGraphNode() = default;
 	public:
-		void SubmitDrawCalls(const DrawContext& drawContext) const;
+		//void SubmitDrawCalls(const DrawContext& drawContext) const;
 		void RebuildTransform(dx::XMMATRIX accumulatedTransform);
 		// Rebuild entire BVH, starting at this level
 		void RebuildBoundingVolumeHierarchy();

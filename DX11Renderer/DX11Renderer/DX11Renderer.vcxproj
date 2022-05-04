@@ -179,6 +179,8 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\RenderState.cpp" />
+    <ClCompile Include="src\CodexElement.cpp" />
     <ClCompile Include="src\AABB.cpp" />
     <ClCompile Include="src\BindingList.cpp" />
     <ClCompile Include="src\Buffer.cpp" />
@@ -280,6 +282,7 @@
     <ClCompile Include="src\DX11Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\RenderState.h" />
     <ClInclude Include="src\AABB.h" />
     <ClInclude Include="src\BindingList.h" />
     <ClInclude Include="src\GLTFInclude.h" />
