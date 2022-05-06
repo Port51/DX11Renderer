@@ -16,6 +16,7 @@ namespace gfx
 		TiledLightingRenderPass,
 		ClusteredLightingRenderPass,
 		OpaqueRenderPass,
+		CreateDownsampledX2Texture,
 		BlurPyramidRenderPass,
 		SSRRenderPass,
 		FXAARenderPass,

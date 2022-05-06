@@ -76,12 +76,14 @@ namespace gfx
 
 		std::shared_ptr<RenderTexture> m_pCameraColor0;
 		std::shared_ptr<RenderTexture> m_pCameraColor1;
+		std::shared_ptr<RenderTexture> m_pDownsampledColor;
 		bool m_pFinalBlitInputIsIndex0;
 
 		std::unique_ptr<ComputeKernel> m_pHiZDepthCopyKernel;
 		std::unique_ptr<ComputeKernel> m_pHiZCreateMipKernel;
 		std::unique_ptr<ComputeKernel> m_pTiledLightingKernel;
 		std::unique_ptr<ComputeKernel> m_pClusteredLightingKernel;
+		std::unique_ptr<ComputeKernel> m_pBilinearDownsampleKernel;
 		std::unique_ptr<ComputeKernel> m_pSSRKernel;
 		std::unique_ptr<ComputeKernel> m_pFXAAKernel;
 		std::unique_ptr<ComputeKernel> m_pDitherKernel;

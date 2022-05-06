@@ -12,11 +12,11 @@ namespace gfx
 
 	u16 VertexShader::m_nextInstanceIdx = 1u; // start from 1, as 0 is reserved for "no vertex shader"
 
-	VertexShader::VertexShader(const GraphicsDevice& gfx, const std::string& path)
+	VertexShader::VertexShader(const GraphicsDevice& gfx, const char* path)
 		: m_instanceIdx(m_nextInstanceIdx++), // overflow is unlikely, but ok here
 		m_path(path)
 	{
-		std::wstring wide{ path.begin(), path.end() }; // convert to wide for file read <-- won't work for special characters
+		std::wstring wide{ m_path.begin(), m_path.end() }; // convert to wide for file read <-- won't work for special characters
 		THROW_IF_FAILED(D3DReadFileToBlob(wide.c_str(), &m_pBytecodeBlob));
 		THROW_IF_FAILED(gfx.GetAdapter()->CreateVertexShader(
 			m_pBytecodeBlob->GetBufferPointer(),
@@ -47,12 +47,12 @@ namespace gfx
 		return m_instanceIdx;
 	}
 
-	std::shared_ptr<VertexShader> VertexShader::Resolve(const GraphicsDevice& gfx, const std::string& path)
+	std::shared_ptr<VertexShader> VertexShader::Resolve(const GraphicsDevice& gfx, const char* path)
 	{
 		return std::move(Codex::Resolve<VertexShader>(gfx, GenerateUID(path), path));
 	}
 
-	std::string VertexShader::GenerateUID(const std::string& path)
+	std::string VertexShader::GenerateUID(const char* path)
 	{
 		return typeid(VertexShader).name() + "#"s + path;
 	}

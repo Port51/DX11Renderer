@@ -16,7 +16,7 @@ Pass
 {
 	Name, DepthPrepassRenderPass
 	Cull, Back
-	VS, Assets\\Built\\Shaders\\PhongVS.cso
+	VS, Assets\\Built\\Shaders\\DepthOnlyVS.cso
 }
 Pass
 {

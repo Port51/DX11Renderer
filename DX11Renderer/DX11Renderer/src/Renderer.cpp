@@ -91,6 +91,9 @@ namespace gfx
 		m_pCameraColor1 = std::make_shared<RenderTexture>(gfx);
 		m_pCameraColor1->Init(gfx.GetAdapter(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
+		m_pDownsampledColor = std::make_shared<RenderTexture>(gfx);
+		m_pDownsampledColor->Init(gfx.GetAdapter(), gfx.GetScreenWidth() / 2, gfx.GetScreenHeight() / 2);
+
 		m_pDebugTiledLighting = std::make_shared<RenderTexture>(gfx);
 		m_pDebugTiledLighting->Init(gfx.GetAdapter(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
 
@@ -117,14 +120,15 @@ namespace gfx
 		//
 		// Compute shaders
 		//
-		m_pHiZDepthCopyKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, std::string("Assets\\Built\\Shaders\\HiZDepthCopy.cso"), std::string("CSMain")));
-		m_pHiZCreateMipKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, std::string("Assets\\Built\\Shaders\\HiZCreateMip.cso"), std::string("CSMain")));
-		m_pTiledLightingKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, std::string("Assets\\Built\\Shaders\\TiledLightingCompute.cso"), std::string("CSMain")));
-		m_pClusteredLightingKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, std::string("Assets\\Built\\Shaders\\ClusteredLightingCompute.cso"), std::string("CSMain")));
-		m_pSSRKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, std::string("Assets\\Built\\Shaders\\SSR.cso"), std::string("CSMain")));
-		m_pFXAAKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, std::string("Assets\\Built\\Shaders\\FXAA.cso"), std::string("CSMain")));
-		m_pDitherKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, std::string("Assets\\Built\\Shaders\\Dither.cso"), std::string("CSMain")));
-		m_pTonemappingKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, std::string("Assets\\Built\\Shaders\\Tonemapping.cso"), std::string("CSMain")));
+		m_pHiZDepthCopyKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, "Assets\\Built\\Shaders\\HiZDepthCopy.cso"));
+		m_pHiZCreateMipKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, "Assets\\Built\\Shaders\\HiZCreateMip.cso"));
+		m_pTiledLightingKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, "Assets\\Built\\Shaders\\TiledLightingCompute.cso"));
+		m_pClusteredLightingKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, "Assets\\Built\\Shaders\\ClusteredLightingCompute.cso"));
+		m_pBilinearDownsampleKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, "Assets\\Built\\Shaders\\BilinearDownsample.cso"));
+		m_pSSRKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, "Assets\\Built\\Shaders\\SSR.cso"));
+		m_pFXAAKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, "Assets\\Built\\Shaders\\FXAA.cso"));
+		m_pDitherKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, "Assets\\Built\\Shaders\\Dither.cso"));
+		m_pTonemappingKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, "Assets\\Built\\Shaders\\Tonemapping.cso"));
 
 		//
 		// Render passes
@@ -137,6 +141,7 @@ namespace gfx
 		CreateRenderPass(RenderPassType::TiledLightingRenderPass);
 		CreateRenderPass(RenderPassType::ClusteredLightingRenderPass);
 		CreateRenderPass(RenderPassType::OpaqueRenderPass);
+		CreateRenderPass(RenderPassType::CreateDownsampledX2Texture);
 		CreateRenderPass(RenderPassType::BlurPyramidRenderPass);
 		CreateRenderPass(RenderPassType::SSRRenderPass);
 		CreateRenderPass(RenderPassType::FXAARenderPass);
@@ -147,8 +152,8 @@ namespace gfx
 			std::move(std::make_unique<FullscreenPass>(gfx, RenderPassType::FinalBlitRenderPass, "Assets\\Built\\Shaders\\BlitPS.cso")));
 
 		// Used for mapping from material pass hashes to render passes
-		m_pRenderPassesByHash.emplace(RenderPass::GetHash(std::string("PerCameraPass")), RenderPassType::PerCameraRenderPass);
-		m_pRenderPassesByHash.emplace(RenderPass::GetHash(std::string("ShadowPass")), RenderPassType::ShadowRenderPass);
+		m_pRenderPassesByHash.emplace(RenderPass::GetHash("PerCameraPass"), RenderPassType::PerCameraRenderPass);
+		m_pRenderPassesByHash.emplace(RenderPass::GetHash("ShadowPass"), RenderPassType::ShadowRenderPass);
 		m_pRenderPassesByHash.emplace(RenderPass::GetHash("ShadowPass"), RenderPassType::ShadowRenderPass);
 
 		SetupRenderPassDependencies(gfx);
@@ -164,6 +169,7 @@ namespace gfx
 		m_pBloomPyramid->Release();
 		m_pCameraColor0->Release();
 		m_pCameraColor1->Release();
+		m_pDownsampledColor->Release();
 		m_pClampedBilinearSampler->Release();
 		m_pClusteredLightingCB->Release();
 		m_pDebugClusteredLighting->Release();
@@ -265,6 +271,11 @@ namespace gfx
 			.PSSetSRV(RenderSlots::PS_FreeSRV + 6u, m_pLightManager->GetShadowAtlas().GetSRV())
 			.PSSetCB(RenderSlots::PS_FreeCB + 0u, m_pClusteredLightingCB->GetD3DBuffer())
 			.PSSetSPL(RenderSlots::PS_FreeSPL + 0u, m_pShadowSampler->GetD3DSampler());
+
+		GetRenderPass(RenderPassType::CreateDownsampledX2Texture).
+			ClearBinds()
+			.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, m_pCameraColor0->GetSRV())
+			.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, m_pDownsampledColor->GetUAV());
 
 		if (IsFeatureEnabled(RendererFeature::HZBSSR))
 		{
@@ -462,7 +473,7 @@ namespace gfx
 
 			// Copy from depth-stencil
 			context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV, 1u, m_pHiZBufferTarget->GetUAV(0u).GetAddressOf(), nullptr);
-			m_pHiZDepthCopyKernel->Dispatch(gfx, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1);
+			m_pHiZDepthCopyKernel->Dispatch(gfx, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1u);
 
 			// Create other mips
 			for (UINT mip = 1u; mip < 8u; ++mip)
@@ -510,7 +521,7 @@ namespace gfx
 			const RenderPass& pass = GetRenderPass(RenderPassType::TiledLightingRenderPass);
 			pass.BindSharedResources(gfx);
 
-			m_pTiledLightingKernel->Dispatch(gfx, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1);
+			m_pTiledLightingKernel->Dispatch(gfx, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1u);
 
 			pass.UnbindSharedResources(gfx);
 		}
@@ -544,6 +555,22 @@ namespace gfx
 			pass.UnbindSharedResources(gfx);
 
 			gfx.ClearRenderTargets();
+		}
+
+		// todo: Transparent pass
+		{
+
+		}
+
+		// Downsample x2 pass
+		{
+			const RenderPass& pass = GetRenderPass(RenderPassType::CreateDownsampledX2Texture);
+			pass.BindSharedResources(gfx);
+
+			m_pBilinearDownsampleKernel->Dispatch(gfx, gfx.GetScreenWidth() / 2, gfx.GetScreenHeight() / 2, 1u);
+
+			pass.Execute(gfx);
+			pass.UnbindSharedResources(gfx);
 		}
 
 		// Blur pyramid
@@ -591,7 +618,7 @@ namespace gfx
 			ssrCB.debugViewStep = (frameCt / 20u) % 25u;
 			m_pSSR_CB->Update(gfx, ssrCB);
 
-			m_pSSRKernel->Dispatch(gfx, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1);
+			m_pSSRKernel->Dispatch(gfx, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1u);
 
 			pass.UnbindSharedResources(gfx);
 		}
@@ -609,7 +636,7 @@ namespace gfx
 			fxaaCB.padding = 0.f;
 			m_pFXAA_CB->Update(gfx, fxaaCB);
 
-			m_pFXAAKernel->Dispatch(gfx, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1);
+			m_pFXAAKernel->Dispatch(gfx, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1u);
 
 			pass.UnbindSharedResources(gfx);
 		}
@@ -625,7 +652,7 @@ namespace gfx
 			ditherCB.midDither = 0.04f;
 			m_pDitherCB->Update(gfx, ditherCB);
 
-			m_pDitherKernel->Dispatch(gfx, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1);
+			m_pDitherKernel->Dispatch(gfx, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1u);
 
 			pass.UnbindSharedResources(gfx);
 		}
@@ -636,7 +663,7 @@ namespace gfx
 			const RenderPass& pass = GetRenderPass(RenderPassType::TonemappingRenderPass);
 			pass.BindSharedResources(gfx);
 
-			m_pTonemappingKernel->Dispatch(gfx, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1);
+			m_pTonemappingKernel->Dispatch(gfx, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1u);
 
 			pass.UnbindSharedResources(gfx);
 		}
@@ -734,17 +761,20 @@ namespace gfx
 
 	RenderPass& Renderer::GetRenderPass(const RenderPassType pass) const
 	{
+		assert(m_pRenderPasses.find(pass) != m_pRenderPasses.end() && "Requested RenderPass does not exist!");
 		return *m_pRenderPasses.at(pass).get();
 	}
 
 	const RenderPass& Renderer::CreateRenderPass(const RenderPassType pass)
 	{
+		assert(m_pRenderPasses.find(pass) == m_pRenderPasses.end() && "RenderPass cannot be created twice!");
 		m_pRenderPasses.emplace(pass, std::make_unique<RenderPass>(pass));
 		return *m_pRenderPasses[pass].get();
 	}
 
 	const RenderPass& Renderer::CreateRenderPass(const RenderPassType pass, std::unique_ptr<RenderPass> pRenderPass)
 	{
+		assert(m_pRenderPasses.find(pass) == m_pRenderPasses.end() && "RenderPass cannot be created twice!");
 		m_pRenderPasses.emplace(pass, std::move(pRenderPass));
 		return *m_pRenderPasses[pass].get();
 	}

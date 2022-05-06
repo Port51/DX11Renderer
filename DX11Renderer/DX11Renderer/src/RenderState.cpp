@@ -4,7 +4,7 @@
 namespace gfx
 {
 
-	const bool RenderState::TryUpdateIA(guid64 guid)
+	const bool RenderState::IsNewIA(guid64 guid)
 	{
 		if (m_activeIA != guid)
 		{
@@ -14,7 +14,7 @@ namespace gfx
 		return false;
 	}
 
-	const bool RenderState::TryUpdateVS(guid64 guid)
+	const bool RenderState::IsNewVS(guid64 guid)
 	{
 		if (m_activeVS != guid)
 		{
@@ -24,7 +24,7 @@ namespace gfx
 		return false;
 	}
 
-	const bool RenderState::TryUpdateGS(guid64 guid)
+	const bool RenderState::IsNewGS(guid64 guid)
 	{
 		if (m_activeGS != guid)
 		{
@@ -34,7 +34,7 @@ namespace gfx
 		return false;
 	}
 
-	const bool RenderState::TryUpdatePS(guid64 guid)
+	const bool RenderState::IsNewPS(guid64 guid)
 	{
 		if (m_activePS != guid)
 		{
@@ -44,7 +44,7 @@ namespace gfx
 		return false;
 	}
 
-	const bool RenderState::TryUpdateRS(guid64 guid)
+	const bool RenderState::IsNewRS(guid64 guid)
 	{
 		if (m_activeRS != guid)
 		{

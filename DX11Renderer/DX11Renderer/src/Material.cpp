@@ -155,16 +155,16 @@ namespace gfx
 				{
 					// Bind vertex shader and input layout
 					const auto vertexShaderName = std::move(p.values[0]);
-					auto pVertexShader = VertexShader::Resolve(gfx, vertexShaderName);
+					auto pVertexShader = VertexShader::Resolve(gfx, vertexShaderName.c_str());
 					const auto pvsbc = pVertexShader->GetBytecode();
-					auto pInputLayout = InputLayout::Resolve(gfx, std::move(m_vertexLayout), vertexShaderName, pvsbc);
+					auto pInputLayout = InputLayout::Resolve(gfx, std::move(m_vertexLayout), vertexShaderName.c_str(), pvsbc);
 
 					pMaterialPass->SetVertexShader(std::move(pVertexShader), std::move(pInputLayout));
 				}
 				else if (p.key == "PS")
 				{
 					const auto pixelShaderName = std::move(p.values[0]);
-					pMaterialPass->SetPixelShader(PixelShader::Resolve(gfx, std::move(pixelShaderName)));
+					pMaterialPass->SetPixelShader(PixelShader::Resolve(gfx, pixelShaderName.c_str()));
 				}
 				else if (p.key == "PropertySlot")
 				{

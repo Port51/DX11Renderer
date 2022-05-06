@@ -14,12 +14,12 @@ namespace gfx
 	class InputLayout : public Bindable
 	{
 	public:
-		InputLayout(const GraphicsDevice& gfx, VertexLayout layout, std::string vertexShaderName, ID3DBlob* pVertexShaderBytecode);
+		InputLayout(const GraphicsDevice& gfx, VertexLayout layout, const char* vertexShaderName, ID3DBlob* pVertexShaderBytecode);
 		virtual void Release() override;
 		void BindIA(const GraphicsDevice& gfx, UINT slot) override;
 	public:
-		static std::shared_ptr<InputLayout> Resolve(const GraphicsDevice& gfx, const VertexLayout& layout, std::string vertexShaderName, ID3DBlob* pVertexShaderBytecode);
-		static std::string GenerateUID(const VertexLayout& layout, std::string vertexShaderName, ID3DBlob* pVertexShaderBytecode = nullptr);
+		static std::shared_ptr<InputLayout> Resolve(const GraphicsDevice& gfx, const VertexLayout& layout, const char* vertexShaderName, ID3DBlob* pVertexShaderBytecode);
+		static std::string GenerateUID(const VertexLayout& layout, const char* vertexShaderName, ID3DBlob* pVertexShaderBytecode = nullptr);
 	protected:
 		std::string m_vertexShaderName;
 		VertexLayout m_layout;

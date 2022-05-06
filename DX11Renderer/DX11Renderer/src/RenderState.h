@@ -7,11 +7,11 @@ namespace gfx
 	class RenderState
 	{
 	public:
-		const bool TryUpdateIA(guid64 guid);
-		const bool TryUpdateVS(guid64 guid);
-		const bool TryUpdateGS(guid64 guid);
-		const bool TryUpdatePS(guid64 guid);
-		const bool TryUpdateRS(guid64 guid);
+		const bool IsNewIA(guid64 guid);
+		const bool IsNewVS(guid64 guid);
+		const bool IsNewGS(guid64 guid);
+		const bool IsNewPS(guid64 guid);
+		const bool IsNewRS(guid64 guid);
 	private:
 		guid64 m_activeIA = 0u;
 		guid64 m_activeVS = 0u;

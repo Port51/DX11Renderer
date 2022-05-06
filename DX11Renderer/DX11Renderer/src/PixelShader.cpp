@@ -8,12 +8,12 @@ namespace gfx
 {
 	u16 PixelShader::m_nextInstanceIdx = 1u; // start from 1, as 0 is reserved for "no pixel shader"
 
-	PixelShader::PixelShader(const GraphicsDevice& gfx, const std::string& path)
+	PixelShader::PixelShader(const GraphicsDevice& gfx, const char* path)
 		: m_instanceIdx(m_nextInstanceIdx++), // overflow is unlikely, but ok here
 		m_path(path)
 	{
 		ComPtr<ID3DBlob> pBlob;
-		std::wstring wide{ path.begin(), path.end() }; // convert to wide for file read <-- won't work for special characters
+		std::wstring wide{ m_path.begin(), m_path.end() }; // convert to wide for file read <-- won't work for special characters
 		THROW_IF_FAILED(D3DReadFileToBlob(wide.c_str(), &pBlob));
 		THROW_IF_FAILED(gfx.GetAdapter()->CreatePixelShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &m_pPixelShader));
 	}
@@ -33,12 +33,12 @@ namespace gfx
 		return m_instanceIdx;
 	}
 
-	std::shared_ptr<PixelShader> PixelShader::Resolve(const GraphicsDevice& gfx, const std::string& path)
+	std::shared_ptr<PixelShader> PixelShader::Resolve(const GraphicsDevice& gfx, const char* path)
 	{
 		return std::move(Codex::Resolve<PixelShader>(gfx, GenerateUID(path), path));
 	}
 
-	std::string PixelShader::GenerateUID(const std::string& path)
+	std::string PixelShader::GenerateUID(const char* path)
 	{
 		using namespace std::string_literals;
 		return typeid(PixelShader).name() + "#"s + path;

@@ -70,7 +70,7 @@ namespace gfx
 		vertexLayout.AppendVertexDesc<dx::XMFLOAT2>({ "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 });
 
 		const auto pvsbc = vertexShader.GetBytecode();
-		AddBinding(InputLayout::Resolve(gfx, vertexLayout, vertexShaderName, pvsbc))
+		AddBinding(InputLayout::Resolve(gfx, vertexLayout, vertexShaderName.c_str(), pvsbc))
 			.SetupIABinding();
 
 		RawBufferData vbuf(3u, vertexLayout.GetPerVertexStride(), vertexLayout.GetPerVertexPadding());

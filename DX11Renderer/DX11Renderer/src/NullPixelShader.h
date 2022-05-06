@@ -1,5 +1,5 @@
 #pragma once
-#include "Bindable.h"
+#include "Shader.h"
 #include "CommonHeader.h"
 #include <string>
 
@@ -7,7 +7,7 @@ namespace gfx
 {
 	class GraphicsDevice;
 
-	class NullPixelShader : public Bindable
+	class NullPixelShader : public Shader
 	{
 	public:
 		NullPixelShader(const GraphicsDevice& gfx);
