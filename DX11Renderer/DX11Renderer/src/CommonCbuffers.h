@@ -80,7 +80,7 @@ namespace gfx
 		dx::XMVECTORU32 groupResolutions; // groupsX, groupsY, groupsZ, padding
 	};
 
-	struct alignas(16) BlurPyramidCreationCB
+	struct alignas(16) BloomCB
 	{
 		dx::XMVECTORU32 resolutionSrcDst;
 		//dx::XMVECTOR zBufferParams;

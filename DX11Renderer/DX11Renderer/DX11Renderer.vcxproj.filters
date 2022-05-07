@@ -5,12 +5,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Shaders">
-      <UniqueIdentifier>{5494fe3c-109d-4523-ac7c-5486c2016c97}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shaders\Lighting">
-      <UniqueIdentifier>{8b626847-c6f5-4083-89ac-81878a1bf0cc}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Assets">
       <UniqueIdentifier>{89494732-8570-42fc-9e4f-45427f75e556}</UniqueIdentifier>
     </Filter>
@@ -19,9 +13,6 @@
     </Filter>
     <Filter Include="Assets\Models">
       <UniqueIdentifier>{38cbeb08-97d5-4af1-96ed-727e42e8a125}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shaders\Common">
-      <UniqueIdentifier>{02fecf65-cc4c-4752-ba8f-fb548b2821e4}</UniqueIdentifier>
     </Filter>
     <Filter Include="Headers">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
@@ -139,18 +130,6 @@
     <Filter Include="Source\Bindable\Buffers">
       <UniqueIdentifier>{96c1e996-bdfc-45d8-9ca5-9b398d73d020}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Shaders\PostFX">
-      <UniqueIdentifier>{9f40ae4a-1ac6-42a7-bb8d-cf533a7cfbd5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shaders\Util">
-      <UniqueIdentifier>{36214152-9151-4446-a21b-43d6c1af4b3c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shaders\HybridLighting">
-      <UniqueIdentifier>{f7e6cbcc-d824-4f68-b2f3-b5ee5742fbeb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Shaders\DrawPasses">
-      <UniqueIdentifier>{7fdabc25-30fa-47d6-b448-45c088c156ad}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Vendors\tinygltf">
       <UniqueIdentifier>{046f19a8-290d-4be9-ad7b-194827712d0a}</UniqueIdentifier>
     </Filter>
@@ -174,6 +153,33 @@
     </Filter>
     <Filter Include="Source\Codex">
       <UniqueIdentifier>{af840b07-54d1-46ca-b253-645b7812bd5b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Shaders">
+      <UniqueIdentifier>{5494fe3c-109d-4523-ac7c-5486c2016c97}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Shaders\Lighting">
+      <UniqueIdentifier>{8b626847-c6f5-4083-89ac-81878a1bf0cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Shaders\Common">
+      <UniqueIdentifier>{02fecf65-cc4c-4752-ba8f-fb548b2821e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Shaders\PostFX">
+      <UniqueIdentifier>{9f40ae4a-1ac6-42a7-bb8d-cf533a7cfbd5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Shaders\Util">
+      <UniqueIdentifier>{36214152-9151-4446-a21b-43d6c1af4b3c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Shaders\HybridLighting">
+      <UniqueIdentifier>{f7e6cbcc-d824-4f68-b2f3-b5ee5742fbeb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Shaders\DrawPasses">
+      <UniqueIdentifier>{7fdabc25-30fa-47d6-b448-45c088c156ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Math">
+      <UniqueIdentifier>{641f0e28-51cc-4ef4-bc6b-3b0ced68ba46}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headers\Math">
+      <UniqueIdentifier>{e67b39c3-2267-4b1e-9baf-dbcd1a90a990}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -377,6 +383,9 @@
     </ClCompile>
     <ClCompile Include="src\Shader.cpp">
       <Filter>Source\Bindable\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Gaussian.cpp">
+      <Filter>Source\Math</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -656,6 +665,9 @@
     <ClInclude Include="src\Shader.h">
       <Filter>Headers\Bindable\Shaders</Filter>
     </ClInclude>
+    <ClInclude Include="src\Gaussian.h">
+      <Filter>Headers\Math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DX11Renderer.rc">
@@ -699,108 +711,111 @@
       <Filter>Assets\Models</Filter>
     </None>
     <None Include="Assets\Shaders\Lighting\BRDF.hlsli">
-      <Filter>Shaders\Lighting</Filter>
+      <Filter>Assets\Shaders\Lighting</Filter>
     </None>
     <None Include="Assets\Shaders\Lighting\Diffuse.hlsli">
-      <Filter>Shaders\Lighting</Filter>
+      <Filter>Assets\Shaders\Lighting</Filter>
     </None>
     <None Include="Assets\Shaders\Lighting\HybridLightingCommon.hlsli">
-      <Filter>Shaders\HybridLighting</Filter>
+      <Filter>Assets\Shaders\HybridLighting</Filter>
     </None>
     <None Include="Assets\Shaders\Lighting\LightingStructs.hlsli">
-      <Filter>Shaders\HybridLighting</Filter>
+      <Filter>Assets\Shaders\HybridLighting</Filter>
     </None>
     <None Include="Assets\Shaders\Lighting\Lights.hlsli">
-      <Filter>Shaders\Lighting</Filter>
+      <Filter>Assets\Shaders\Lighting</Filter>
     </None>
     <None Include="Assets\Shaders\Lighting\Schlick.hlsli">
-      <Filter>Shaders\Lighting</Filter>
+      <Filter>Assets\Shaders\Lighting</Filter>
     </None>
     <None Include="Assets\Shaders\Lighting\Shadows.hlsli">
-      <Filter>Shaders\Lighting</Filter>
+      <Filter>Assets\Shaders\Lighting</Filter>
     </None>
     <None Include="Assets\Shaders\CbufCommon.hlsli">
-      <Filter>Shaders\Common</Filter>
+      <Filter>Assets\Shaders\Common</Filter>
     </None>
     <None Include="Assets\Shaders\Common.hlsli">
-      <Filter>Shaders\Common</Filter>
+      <Filter>Assets\Shaders\Common</Filter>
     </None>
     <None Include="Assets\Shaders\HiZCommon.hlsli">
-      <Filter>Shaders\PostFX</Filter>
+      <Filter>Assets\Shaders\PostFX</Filter>
     </None>
     <None Include="Assets\Shaders\PhongCommon.hlsli">
-      <Filter>Shaders\DrawPasses</Filter>
+      <Filter>Assets\Shaders\DrawPasses</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Shaders\Lighting\ClusteredLightingCompute.hlsl">
-      <Filter>Shaders\HybridLighting</Filter>
+      <Filter>Assets\Shaders\HybridLighting</Filter>
     </FxCompile>
     <FxCompile Include="Assets\Shaders\Lighting\TiledLightingCompute.hlsl">
-      <Filter>Shaders\HybridLighting</Filter>
+      <Filter>Assets\Shaders\HybridLighting</Filter>
     </FxCompile>
     <FxCompile Include="Assets\Shaders\BilinearDownsample.hlsl">
-      <Filter>Shaders\PostFX</Filter>
+      <Filter>Assets\Shaders\PostFX</Filter>
     </FxCompile>
     <FxCompile Include="Assets\Shaders\BlitPS.hlsl">
-      <Filter>Shaders\Util</Filter>
+      <Filter>Assets\Shaders\Util</Filter>
     </FxCompile>
     <FxCompile Include="Assets\Shaders\BlurPyramidDownscale.hlsl">
-      <Filter>Shaders\PostFX</Filter>
+      <Filter>Assets\Shaders\PostFX</Filter>
     </FxCompile>
     <FxCompile Include="Assets\Shaders\DeferredPS.hlsl">
-      <Filter>Shaders\DrawPasses</Filter>
+      <Filter>Assets\Shaders\DrawPasses</Filter>
     </FxCompile>
     <FxCompile Include="Assets\Shaders\DepthOnlyVS.hlsl" />
     <FxCompile Include="Assets\Shaders\Dither.hlsl">
-      <Filter>Shaders\PostFX</Filter>
+      <Filter>Assets\Shaders\PostFX</Filter>
     </FxCompile>
     <FxCompile Include="Assets\Shaders\ForwardPS.hlsl">
-      <Filter>Shaders\DrawPasses</Filter>
+      <Filter>Assets\Shaders\DrawPasses</Filter>
     </FxCompile>
     <FxCompile Include="Assets\Shaders\FullscreenVS.hlsl">
-      <Filter>Shaders\Util</Filter>
+      <Filter>Assets\Shaders\Util</Filter>
     </FxCompile>
     <FxCompile Include="Assets\Shaders\FXAA.hlsl">
-      <Filter>Shaders\PostFX</Filter>
+      <Filter>Assets\Shaders\PostFX</Filter>
     </FxCompile>
     <FxCompile Include="Assets\Shaders\HiZCreateMip.hlsl">
-      <Filter>Shaders\PostFX</Filter>
+      <Filter>Assets\Shaders\PostFX</Filter>
     </FxCompile>
     <FxCompile Include="Assets\Shaders\OpaqueGbuffer.hlsl">
-      <Filter>Shaders\DrawPasses</Filter>
+      <Filter>Assets\Shaders\DrawPasses</Filter>
     </FxCompile>
     <FxCompile Include="Assets\Shaders\PhongVS.hlsl">
-      <Filter>Shaders\DrawPasses</Filter>
+      <Filter>Assets\Shaders\DrawPasses</Filter>
     </FxCompile>
     <FxCompile Include="Assets\Shaders\ShadowPassPS.hlsl">
-      <Filter>Shaders\DrawPasses</Filter>
+      <Filter>Assets\Shaders\DrawPasses</Filter>
     </FxCompile>
     <FxCompile Include="Assets\Shaders\ShadowPassVS.hlsl">
-      <Filter>Shaders\DrawPasses</Filter>
+      <Filter>Assets\Shaders\DrawPasses</Filter>
     </FxCompile>
     <FxCompile Include="Assets\Shaders\SolidColorGbuffer.hlsl">
-      <Filter>Shaders\DrawPasses</Filter>
+      <Filter>Assets\Shaders\DrawPasses</Filter>
     </FxCompile>
     <FxCompile Include="Assets\Shaders\SolidColorPS.hlsl">
-      <Filter>Shaders\DrawPasses</Filter>
+      <Filter>Assets\Shaders\DrawPasses</Filter>
     </FxCompile>
     <FxCompile Include="Assets\Shaders\SolidPS.hlsl">
-      <Filter>Shaders\DrawPasses</Filter>
+      <Filter>Assets\Shaders\DrawPasses</Filter>
     </FxCompile>
     <FxCompile Include="Assets\Shaders\SolidVS.hlsl">
-      <Filter>Shaders\DrawPasses</Filter>
+      <Filter>Assets\Shaders\DrawPasses</Filter>
     </FxCompile>
     <FxCompile Include="Assets\Shaders\SSR.hlsl">
-      <Filter>Shaders\PostFX</Filter>
+      <Filter>Assets\Shaders\PostFX</Filter>
     </FxCompile>
     <FxCompile Include="Assets\Shaders\Tonemapping.hlsl">
-      <Filter>Shaders\PostFX</Filter>
+      <Filter>Assets\Shaders\PostFX</Filter>
+    </FxCompile>
+    <FxCompile Include="Assets\Shaders\Bloom.hlsl">
+      <Filter>Assets\Shaders\PostFX</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="Assets\Shaders\HiZDepthCopy.hlsl">
-      <Filter>Shaders\PostFX</Filter>
+      <Filter>Assets\Shaders\PostFX</Filter>
     </CopyFileToFolders>
   </ItemGroup>
 </Project>
