@@ -108,13 +108,14 @@ void VerticalGaussian(uint3 gtId : SV_GroupThreadID, uint3 tId : SV_DispatchThre
 [numthreads(16, 16, 1)]
 void Combine(uint3 tId : SV_DispatchThreadID)
 {
-	uint2 resolutionSrc, resolutionDst;
-	InputTexture.GetDimensions(resolutionSrc.x, resolutionSrc.y);
+	uint2 resolutionDst;
 	OutputTexture.GetDimensions(resolutionDst.x, resolutionDst.y);
 	if (tId.x >= (uint)resolutionDst.x || tId.y >= (uint)resolutionDst.y)
 		return;
 
 	uint2 srcId = tId >> 1u;
+
+	// todo: add more settings here
 	//float bloom = InputTexture[srcId.xy].a;
 	//bloom = pow(bloom, 1.f) * 2.f;
 
