@@ -12,6 +12,7 @@ namespace gfx
 	public:
 		StructuredBuffer(const GraphicsDevice& gfx, D3D11_USAGE usage, UINT bindFlags, UINT numElements, bool useCounter = false)
 			: Buffer(usage, bindFlags, sizeof(T)),
+			m_numElements(numElements),
 			m_useCounter(useCounter)
 		{
 			D3D11_BUFFER_DESC bd;
@@ -94,9 +95,11 @@ namespace gfx
 
 		void Update(const GraphicsDevice& gfx, const std::vector<T>& data, UINT dataElements)
 		{
+			assert(dataElements <= m_numElements && "Data elements exceed buffer size!");
 			Update(gfx, data.data(), sizeof(T) * dataElements);
 		}
 	private:
 		bool m_useCounter;
+		UINT m_numElements;
 	};
 }

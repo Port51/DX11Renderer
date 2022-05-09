@@ -387,6 +387,9 @@
     <ClCompile Include="src\Gaussian.cpp">
       <Filter>Source\Math</Filter>
     </ClCompile>
+    <ClCompile Include="src\Bokeh.cpp">
+      <Filter>Source\Math</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -668,6 +671,9 @@
     <ClInclude Include="src\Gaussian.h">
       <Filter>Headers\Math</Filter>
     </ClInclude>
+    <ClInclude Include="src\Bokeh.h">
+      <Filter>Headers\Math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DX11Renderer.rc">
@@ -810,6 +816,9 @@
       <Filter>Assets\Shaders\PostFX</Filter>
     </FxCompile>
     <FxCompile Include="Assets\Shaders\Bloom.hlsl">
+      <Filter>Assets\Shaders\PostFX</Filter>
+    </FxCompile>
+    <FxCompile Include="Assets\Shaders\DepthOfField.hlsl">
       <Filter>Assets\Shaders\PostFX</Filter>
     </FxCompile>
   </ItemGroup>

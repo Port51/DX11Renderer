@@ -179,6 +179,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Bokeh.cpp" />
     <ClCompile Include="src\Gaussian.cpp" />
     <ClCompile Include="src\RenderState.cpp" />
     <ClCompile Include="src\CodexElement.cpp" />
@@ -284,6 +285,7 @@
     <ClCompile Include="src\DX11Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Bokeh.h" />
     <ClInclude Include="src\Gaussian.h" />
     <ClInclude Include="src\RenderState.h" />
     <ClInclude Include="src\AABB.h" />
@@ -643,6 +645,12 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)Assets/Built/Shaders/%(Filename).cso</ObjectFileOutput>
       <FileType>Document</FileType>
+    </FxCompile>
+    <FxCompile Include="Assets\Shaders\DepthOfField.hlsl">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">HorizontalFilter</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)Assets/Built/Shaders/%(Filename).cso</ObjectFileOutput>
     </FxCompile>
     <None Include="Assets\Shaders\Lighting\Schlick.hlsli" />
     <None Include="Assets\Shaders\Lighting\BRDF.hlsli">

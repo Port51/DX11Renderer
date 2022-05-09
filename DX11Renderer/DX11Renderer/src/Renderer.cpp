@@ -32,12 +32,16 @@
 #include "RenderStats.h"
 #include "RenderConstants.h"
 #include "Gaussian.h"
+#include "Bokeh.h"
 
 namespace gfx
 {
 	Renderer::Renderer(const GraphicsDevice& gfx, std::shared_ptr<LightManager> pLightManager, std::shared_ptr<RendererList> pRendererList)
 		: m_pRendererList(pRendererList), m_pLightManager(pLightManager)
 	{
+		UINT screenWidth = (UINT)gfx.GetScreenWidth();
+		UINT screenHeight = (UINT)gfx.GetScreenHeight();
+
 		//
 		// Debug stuff
 		//
@@ -72,53 +76,74 @@ namespace gfx
 		// Render targets
 		//
 		m_pNormalRoughReflectivityTarget = std::make_shared<RenderTexture>(gfx);
-		m_pNormalRoughReflectivityTarget->Init(gfx.GetAdapter(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
+		m_pNormalRoughReflectivityTarget->Init(gfx.GetAdapter(), screenWidth, screenHeight);
 
 		m_pHiZBufferTarget = std::make_shared<RenderTexture>(gfx, DXGI_FORMAT_R16G16_UNORM, 8u);
-		m_pHiZBufferTarget->Init(gfx.GetAdapter(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
+		m_pHiZBufferTarget->Init(gfx.GetAdapter(), screenWidth, screenHeight);
 
 		m_pSpecularLighting = std::make_shared<RenderTexture>(gfx);
-		m_pSpecularLighting->Init(gfx.GetAdapter(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
+		m_pSpecularLighting->Init(gfx.GetAdapter(), screenWidth, screenHeight);
 
 		m_pDiffuseLighting = std::make_shared<RenderTexture>(gfx);
-		m_pDiffuseLighting->Init(gfx.GetAdapter(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
+		m_pDiffuseLighting->Init(gfx.GetAdapter(), screenWidth, screenHeight);
 
 		m_pCameraColor0 = std::make_shared<RenderTexture>(gfx);
-		m_pCameraColor0->Init(gfx.GetAdapter(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
+		m_pCameraColor0->Init(gfx.GetAdapter(), screenWidth, screenHeight);
 
 		m_pCameraColor1 = std::make_shared<RenderTexture>(gfx);
-		m_pCameraColor1->Init(gfx.GetAdapter(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
+		m_pCameraColor1->Init(gfx.GetAdapter(), screenWidth, screenHeight);
+
+		m_pDoFFar0 = std::make_shared<RenderTexture>(gfx);
+		m_pDoFFar0->Init(gfx.GetAdapter(), screenWidth / 2, screenHeight / 2);
+
+		m_pDoFFar1 = std::make_shared<RenderTexture>(gfx);
+		m_pDoFFar1->Init(gfx.GetAdapter(), screenWidth / 2, screenHeight / 2);
+
+		m_pDoFFar2 = std::make_shared<RenderTexture>(gfx);
+		m_pDoFFar2->Init(gfx.GetAdapter(), screenWidth / 2, screenHeight / 2);
+
+		m_pDoFFar3 = std::make_shared<RenderTexture>(gfx);
+		m_pDoFFar3->Init(gfx.GetAdapter(), screenWidth / 2, screenHeight / 2);
+
+		m_pDoFNear0 = std::make_shared<RenderTexture>(gfx);
+		m_pDoFNear0->Init(gfx.GetAdapter(), screenWidth / 2, screenHeight / 2);
+
+		m_pDoFNear1 = std::make_shared<RenderTexture>(gfx);
+		m_pDoFNear1->Init(gfx.GetAdapter(), screenWidth / 2, screenHeight / 2);
 
 		m_pDownsampledColor = std::make_shared<RenderTexture>(gfx);
-		m_pDownsampledColor->Init(gfx.GetAdapter(), gfx.GetScreenWidth() / 2, gfx.GetScreenHeight() / 2);
+		m_pDownsampledColor->Init(gfx.GetAdapter(), screenWidth / 2, screenHeight / 2);
 
 		m_pBloomTarget0 = std::make_shared<RenderTexture>(gfx);
-		m_pBloomTarget0->Init(gfx.GetAdapter(), gfx.GetScreenWidth() / 2, gfx.GetScreenHeight() / 2);
+		m_pBloomTarget0->Init(gfx.GetAdapter(), screenWidth / 2, screenHeight / 2);
 
 		m_pBloomTarget1 = std::make_shared<RenderTexture>(gfx);
-		m_pBloomTarget1->Init(gfx.GetAdapter(), gfx.GetScreenWidth() / 2, gfx.GetScreenHeight() / 2);
+		m_pBloomTarget1->Init(gfx.GetAdapter(), screenWidth / 2, screenHeight / 2);
 
 		m_pDebugTiledLighting = std::make_shared<RenderTexture>(gfx);
-		m_pDebugTiledLighting->Init(gfx.GetAdapter(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
+		m_pDebugTiledLighting->Init(gfx.GetAdapter(), screenWidth, screenHeight);
 
 		m_pDebugClusteredLighting = std::make_shared<RenderTexture>(gfx);
-		m_pDebugClusteredLighting->Init(gfx.GetAdapter(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
+		m_pDebugClusteredLighting->Init(gfx.GetAdapter(), screenWidth, screenHeight);
 
 		m_pDebugSSR = std::make_shared<RenderTexture>(gfx);
-		m_pDebugSSR->Init(gfx.GetAdapter(), gfx.GetScreenWidth(), gfx.GetScreenHeight());
+		m_pDebugSSR->Init(gfx.GetAdapter(), screenWidth, screenHeight);
 
 		//
 		// Buffers
 		//
 		const UINT BloomBlurWidth = 15u;
+		const UINT BokehDiskWidth = 15u;
 
 		m_pPerFrameCB = std::make_unique<ConstantBuffer<PerFrameCB>>(gfx, D3D11_USAGE_DYNAMIC);
 		m_pTransformationCB = std::make_unique<ConstantBuffer<GlobalTransformCB>>(gfx, D3D11_USAGE_DYNAMIC);
 		m_pPerCameraCB = std::make_unique<ConstantBuffer<PerCameraCB>>(gfx, D3D11_USAGE_DYNAMIC);
 		m_pHiZCreationCB = std::make_unique<ConstantBuffer<HiZCreationCB>>(gfx, D3D11_USAGE_DYNAMIC);
 		m_pClusteredLightingCB = std::make_unique<ConstantBuffer<ClusteredLightingCB>>(gfx, D3D11_USAGE_DYNAMIC);
+		m_pDepthOfFieldCB = std::make_unique<ConstantBuffer<DepthOfFieldCB>>(gfx, D3D11_USAGE_DYNAMIC);
 		m_pBloomCB = std::make_unique<ConstantBuffer<BloomCB>>(gfx, D3D11_USAGE_DYNAMIC);
 		m_pBloomGaussianWeights = std::make_unique<StructuredBuffer<f32>>(gfx, D3D11_USAGE_DYNAMIC, D3D11_BIND_SHADER_RESOURCE, BloomBlurWidth * 2u + 1u);
+		m_pBokehDiskWeights = std::make_unique<StructuredBuffer<f32>>(gfx, D3D11_USAGE_DYNAMIC, D3D11_BIND_SHADER_RESOURCE, (BokehDiskWidth * 2u + 1u) * 4u);
 
 		m_pFXAA_CB = std::make_unique<ConstantBuffer<FXAA_CB>>(gfx, D3D11_USAGE_DYNAMIC);
 		m_pSSR_CB = std::make_unique<ConstantBuffer<SSR_CB>>(gfx, D3D11_USAGE_DYNAMIC);
@@ -131,6 +156,11 @@ namespace gfx
 		Gaussian::GetGaussianWeights1D(blurWeights, 5.f);
 		m_pBloomGaussianWeights->Update(gfx, blurWeights, blurWeights.size());
 
+		std::vector<f32> bokehWeights;
+		bokehWeights.resize((BokehDiskWidth * 2u + 1u) * 4u);
+		Bokeh::GetDiskPackedWeights(bokehWeights, -0.886528f, 5.268909f, -1.960518f, 1.558213f);
+		m_pBokehDiskWeights->Update(gfx, bokehWeights, bokehWeights.size());
+
 		//
 		// Compute shaders
 		//
@@ -139,6 +169,9 @@ namespace gfx
 		m_pTiledLightingKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, "Assets\\Built\\Shaders\\TiledLightingCompute.cso"));
 		m_pClusteredLightingKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, "Assets\\Built\\Shaders\\ClusteredLightingCompute.cso"));
 		m_pBilinearDownsampleKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, "Assets\\Built\\Shaders\\BilinearDownsample.cso"));
+		m_pDoFPrefilterKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, "Assets\\Shaders\\DepthOfField.hlsl", "Prefilter"));
+		m_pDoFHorizontalFilterKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, "Assets\\Shaders\\DepthOfField.hlsl", "HorizontalFilter"));
+		m_pDoFVerticalFilterAndCombineKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, "Assets\\Shaders\\DepthOfField.hlsl", "VerticalFilterAndCombine"));
 		m_pBloomPrefilterKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, "Assets\\Shaders\\Bloom.hlsl", "Prefilter"));
 		m_pBloomHorizontalBlurKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, "Assets\\Shaders\\Bloom.hlsl", "HorizontalGaussian"));
 		m_pBloomVerticalBlurKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, "Assets\\Shaders\\Bloom.hlsl", "VerticalGaussian"));
@@ -160,6 +193,10 @@ namespace gfx
 		CreateRenderPass(RenderPassType::ClusteredLightingRenderPass);
 		CreateRenderPass(RenderPassType::OpaqueRenderPass);
 		CreateRenderPass(RenderPassType::CreateDownsampledX2Texture);
+		CreateRenderPass(RenderPassType::DoFPrefilterPass);
+		CreateRenderPass(RenderPassType::DoFFarBlurPass);
+		CreateRenderPass(RenderPassType::DoFNearBlurPass);
+		CreateRenderPass(RenderPassType::DoFCompositePass);
 		CreateRenderPass(RenderPassType::BloomPrefilterPass);
 		CreateRenderPass(RenderPassType::BloomSeparableBlurPass);
 		CreateRenderPass(RenderPassType::BloomCombinePass);
@@ -217,16 +254,6 @@ namespace gfx
 		m_pDebugSSR->Release();
 		m_pDebugTiledLighting->Release();
 		m_pSSR_DebugData->Release();
-
-		//m_pDitherKernel->Release();
-		//m_pFXAAKernel->Release();
-		//m_pHiZCreateMipKernel->Release();
-		//m_pHiZDepthCopyKernel->Release();
-		//m_pRendererList->Release();
-		//m_pSSRKernel->Release();
-		//m_pTiledLightingKernel->Release();
-		//m_pTonemappingKernel->Release();
-		//m_pVisibleRendererList->Release();
 	}
 
 	void Renderer::SetupRenderPassDependencies(const GraphicsDevice& gfx)
@@ -304,6 +331,13 @@ namespace gfx
 			ClearBinds()
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, m_pCameraColor0->GetSRV())
 			.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, m_pDownsampledColor->GetUAV());
+
+		GetRenderPass(RenderPassType::DoFPrefilterPass).
+			ClearBinds()
+			.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, m_pDownsampledColor->GetSRV())
+			.CSSetSRV(RenderSlots::CS_FreeSRV + 2u, m_pHiZBufferTarget->GetSRV())
+			.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, m_pDoFFar0->GetUAV())
+			.CSSetUAV(RenderSlots::CS_FreeUAV + 1u, m_pDoFNear0->GetUAV());
 
 		GetRenderPass(RenderPassType::BloomPrefilterPass).
 			ClearBinds()
@@ -395,6 +429,8 @@ namespace gfx
 	void Renderer::Execute(GraphicsDevice& gfx, const Camera& camera, float timeElapsed, UINT pixelSelectionX, UINT pixelSelectionY)
 	{
 		auto context = gfx.GetContext();
+		UINT screenWidth = (UINT)gfx.GetScreenWidth();
+		UINT screenHeight = (UINT)gfx.GetScreenHeight();
 
 		gfx.GetRenderStats().StartFrame();
 		context->ClearState();
@@ -506,9 +542,6 @@ namespace gfx
 			gfx.ClearRenderTargets(); // need in order to access depth
 			pass.BindSharedResources(gfx);
 
-			const UINT screenWidth = (UINT)gfx.GetScreenWidth();
-			const UINT screenHeight = (UINT)gfx.GetScreenHeight();
-
 			static HiZCreationCB hiZCreationCB;
 			hiZCreationCB.resolutionSrcDst = { screenWidth, screenHeight, screenWidth, screenHeight };
 			m_pHiZCreationCB->Update(gfx, hiZCreationCB);
@@ -615,13 +648,46 @@ namespace gfx
 			pass.UnbindSharedResources(gfx);
 		}
 
+		// DoF prefilter
+		{
+			const RenderPass& pass = GetRenderPass(DoFPrefilterPass);
+			pass.BindSharedResources(gfx);
+
+			m_pDoFPrefilterKernel->Dispatch(gfx, screenWidth >> 1u, screenHeight >> 1u, 1u);
+
+			pass.UnbindSharedResources(gfx);
+		}
+
+		// DoF far blur pass
+		{
+			const RenderPass& pass = GetRenderPass(DoFFarBlurPass);
+			pass.BindSharedResources(gfx);
+
+			static DepthOfFieldCB depthOfFieldCB;
+			depthOfFieldCB.weightOffset = 0u;
+			m_pDepthOfFieldCB->Update(gfx, depthOfFieldCB);
+
+			// Input = CoC
+			// Outputs = real + imag
+			//context->CSSetShaderResources(RenderSlots::CS_FreeSRV + 0u, 1u, m_pDoFFar0->GetSRV().GetAddressOf());
+			context->CSSetShaderResources(RenderSlots::CS_FreeSRV + 3u, 1u, m_pBokehDiskWeights->GetSRV().GetAddressOf());
+			context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 0u, 1u, m_pDoFFar0->GetUAV().GetAddressOf(), nullptr);
+			context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 1u, 1u, m_pDoFFar1->GetUAV().GetAddressOf(), nullptr);
+			context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 2u, 1u, m_pDoFFar2->GetUAV().GetAddressOf(), nullptr);
+			context->CSSetConstantBuffers(RenderSlots::CS_FreeCB + 0u, 1u, m_pDepthOfFieldCB->GetD3DBuffer().GetAddressOf());
+			m_pDoFHorizontalFilterKernel->Dispatch(gfx, screenWidth >> 1u, screenHeight >> 1u, 1u);
+
+			// Inputs = real + imag
+			// Output = combined texture
+			m_pDoFVerticalFilterAndCombineKernel->Dispatch(gfx, screenWidth >> 1u, screenHeight >> 1u, 1u);
+
+			pass.UnbindSharedResources(gfx);
+		}
+
 		// Bloom prefilter
 		{
 			const RenderPass& pass = GetRenderPass(BloomPrefilterPass);
 			pass.BindSharedResources(gfx);
-
-			UINT screenWidth = (UINT)gfx.GetScreenWidth();
-			UINT screenHeight = (UINT)gfx.GetScreenHeight();
 
 			static BloomCB bloomCB;
 			bloomCB.resolutionSrcDst = { screenWidth, screenHeight, screenWidth, screenHeight };
@@ -636,9 +702,6 @@ namespace gfx
 		{
 			const RenderPass& pass = GetRenderPass(BloomSeparableBlurPass);
 			pass.BindSharedResources(gfx);
-
-			UINT screenWidth = (UINT)gfx.GetScreenWidth();
-			UINT screenHeight = (UINT)gfx.GetScreenHeight();
 
 			static BloomCB bloomCB;
 			bloomCB.resolutionSrcDst = { screenWidth, screenHeight, screenWidth, screenHeight };
@@ -664,9 +727,6 @@ namespace gfx
 		{
 			const RenderPass& pass = GetRenderPass(BloomCombinePass);
 			pass.BindSharedResources(gfx);
-
-			UINT screenWidth = (UINT)gfx.GetScreenWidth();
-			UINT screenHeight = (UINT)gfx.GetScreenHeight();
 
 			static BloomCB bloomCB;
 			bloomCB.resolutionSrcDst = { screenWidth, screenHeight, screenWidth, screenHeight };
