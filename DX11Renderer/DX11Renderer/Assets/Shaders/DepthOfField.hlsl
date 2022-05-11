@@ -25,22 +25,26 @@ Texture2D<float2> HiZBuffer : register(t5);
 StructuredBuffer<float> DiskWeights : register(t6); // packed into (C0 real, C0 imaginary, C1 real, C1 imaginary)
 RWTexture2D<float4> UAVTex0 : register(u0);
 RWTexture2D<float4> UAVTex1 : register(u1);
+RWTexture2D<float4> UAVTex2 : register(u2);
 
 // Separable gaussian blur with groupshared cache
-#define DiscWidth 15u
+#define DiscWidth 31u
 #define DiscKernelSize (DiscWidth * 2 + 1)
-groupshared float4 discCache[64 + 2 * DiscWidth];
+groupshared float4 discCache0[64 + 2 * DiscWidth];
+groupshared float4 discCache1[64 + 2 * DiscWidth];
 
 cbuffer DOF_CB : register(b4)
 {
 	uint _WeightOffset;
-	float3 padding;
+	float _VerticalPassAddFactor; // if 0, will overwrite. if 1, will add.
+	float _CombineRealFactor;
+	float _CombineImaginaryFactor;
 };
 
 float CalculateCoC(float linearDepth)
 {
 	// todo: settings!
-	return (linearDepth - 18.5f) * 2.f;
+	return (linearDepth - 16.5f) * 0.1f;
 }
 
 float GetRealWeight(uint x)
@@ -75,73 +79,34 @@ void Prefilter(uint3 tId : SV_DispatchThreadID)
 	// Premultiply RGB by CoC, and store CoC in alpha channel
 	UAVTex0[tId.xy] = float4(SRVTex0[tId.xy].rgb * cocFar, cocFar);
 	UAVTex1[tId.xy] = float4(SRVTex0[tId.xy].rgb * cocNear, cocNear);
+
+	// Debug output (makes a single pixel white)
+	//UAVTex0[tId.xy] = all(tId.xy == 200u);
+	//UAVTex1[tId.xy] = all(tId.xy == 200u);
 }
 
-// Input: UAVTex0 (intentional!)
+// Input: SRVTex0
 // Outputs: UAVTex0, UAVTex1
 [numthreads(64, 1, 1)]
 void HorizontalFilter(uint3 gtId : SV_GroupThreadID, uint3 tId : SV_DispatchThreadID)
-{
-	uint2 resolution;
-	UAVTex0.GetDimensions(resolution.x, resolution.y);
-	uint2 clampedId = min(tId.xy, (uint2)resolution.xy);
-
-	// Cache within group bounds
-	discCache[gtId.x + DiscWidth] = UAVTex0[clampedId.xy];
-
-	// Extra samples for data outside group bounds
-	if (gtId.x < DiscWidth)
-	{
-		int srcX = max(0, clampedId.x - DiscWidth);
-		discCache[gtId.x] = UAVTex0[uint2(srcX, clampedId.y)];
-	}
-	else if (gtId.x >= 64u - DiscWidth)
-	{
-		int srcX = min(resolution.x - 1u, clampedId.x + DiscWidth);
-		discCache[gtId.x + 2u * DiscWidth] = UAVTex0[uint2(srcX, clampedId.y)];
-	}
-
-	GroupMemoryBarrierWithGroupSync();
-
-	if (tId.x >= (uint) resolution.x || tId.y >= (uint) resolution.y)
-		return;
-
-	// Apply blur
-	float4 real = 0.0;
-	float4 imaginary = 0.0;
-	[unroll(DiscKernelSize)]
-	for (uint i = 0; i < DiscKernelSize; ++i)
-	{
-		real += discCache[i + gtId.x] * GetRealWeight(i);
-		imaginary += discCache[i + gtId.x] * GetImaginaryWeight(i);
-	}
-
-	UAVTex0[tId.xy] = saturate(real);
-	UAVTex1[tId.xy] = saturate(imaginary);
-}
-
-// Input: UAVTex0 (intentional!)
-// Outputs: UAVTex0, UAVTex1
-[numthreads(1, 64, 1)]
-void VerticalFilterAndCombine(uint3 gtId : SV_GroupThreadID, uint3 tId : SV_DispatchThreadID)
 {
 	uint2 resolution;
 	SRVTex0.GetDimensions(resolution.x, resolution.y);
 	uint2 clampedId = min(tId.xy, (uint2)resolution.xy);
 
 	// Cache within group bounds
-	discCache[gtId.y + DiscWidth] = SRVTex0[clampedId.xy];
+	discCache0[gtId.x + DiscWidth] = SRVTex0[clampedId.xy];
 
 	// Extra samples for data outside group bounds
-	if (gtId.y < DiscWidth)
+	if (gtId.x < DiscWidth)
 	{
-		int srcY = max(0, clampedId.y - DiscWidth);
-		discCache[gtId.y] = SRVTex0[uint2(clampedId.x, srcY)];
+		int srcX = max(0, clampedId.x - DiscWidth);
+		discCache0[gtId.x] = SRVTex0[uint2(srcX, clampedId.y)];
 	}
-	else if (gtId.y >= 64u - DiscWidth)
+	else if (gtId.x >= 64u - DiscWidth)
 	{
-		int srcY = min(resolution.y - 1u, clampedId.y + DiscWidth);
-		discCache[gtId.y + 2u * DiscWidth] = SRVTex0[uint2(clampedId.x, srcY)];
+		int srcX = min(resolution.x - 1u, clampedId.x + DiscWidth);
+		discCache0[gtId.x + 2u * DiscWidth] = SRVTex0[uint2(srcX, clampedId.y)];
 	}
 
 	GroupMemoryBarrierWithGroupSync();
@@ -149,30 +114,98 @@ void VerticalFilterAndCombine(uint3 gtId : SV_GroupThreadID, uint3 tId : SV_Disp
 	if (tId.x >= (uint) resolution.x || tId.y >= (uint) resolution.y)
 		return;
 
-	// Apply blur
-	float4 real = 0.0;
-	float4 imaginary = 0.0;
+	// Sum of complex numbers is done component-wise
+	// P + Q = (Pr + Qr) + (Pi + Qi)i
+	float4 Sr = 0.0;
+	float4 Si = 0.0;
 	[unroll(DiscKernelSize)]
 	for (uint i = 0; i < DiscKernelSize; ++i)
 	{
-		real += discCache[i + gtId.y] * GetRealWeight(i);
-		imaginary += discCache[i + gtId.y] * GetImaginaryWeight(i);
+		// Multiplication of real with complex number
+		Sr += discCache0[i + gtId.x] * GetRealWeight(i);
+		Si += discCache0[i + gtId.x] * GetImaginaryWeight(i);
 	}
 
-	UAVTex0[tId.xy] = real;
-	UAVTex1[tId.xy] = imaginary;
+	UAVTex0[tId.xy] = Sr;
+	UAVTex1[tId.xy] = Si;
 }
 
+// Input: UAVTex0, UAVTex1
+// Outputs: UAVTex2 (combined)
+[numthreads(1, 64, 1)]
+void VerticalFilterAndCombine(uint3 gtId : SV_GroupThreadID, uint3 tId : SV_DispatchThreadID)
+{
+	uint2 resolution;
+	UAVTex0.GetDimensions(resolution.x, resolution.y);
+	uint2 clampedId = min(tId.xy, (uint2)resolution.xy);
+
+	// Cache within group bounds
+	discCache0[gtId.y + DiscWidth] = UAVTex0[clampedId.xy];
+	discCache1[gtId.y + DiscWidth] = UAVTex1[clampedId.xy];
+
+	// Extra samples for data outside group bounds
+	if (gtId.y < DiscWidth)
+	{
+		int srcY = max(0, clampedId.y - DiscWidth);
+		discCache0[gtId.y] = UAVTex0[uint2(clampedId.x, srcY)];
+		discCache1[gtId.y] = UAVTex1[uint2(clampedId.x, srcY)];
+	}
+	else if (gtId.y >= 64u - DiscWidth)
+	{
+		int srcY = min(resolution.y - 1u, clampedId.y + DiscWidth);
+		discCache0[gtId.y + 2u * DiscWidth] = UAVTex0[uint2(clampedId.x, srcY)];
+		discCache1[gtId.y + 2u * DiscWidth] = UAVTex1[uint2(clampedId.x, srcY)];
+	}
+
+	GroupMemoryBarrierWithGroupSync();
+
+	if (tId.x >= (uint) resolution.x || tId.y >= (uint) resolution.y)
+		return;
+
+	// Sum of complex numbers is done component-wise
+	// P + Q = (Pr + Qr) + (Pi + Qi)i
+	float4 Sr = 0.0;
+	float4 Si = 0.0;
+	[unroll(DiscKernelSize)]
+	for (uint i = 0; i < DiscKernelSize; ++i)
+	{
+		// Multiplication of complex numbers
+		// P * Q = PrQr - PiQi + [PrQi + PrSi]i
+
+		float4 Pr = discCache0[i + gtId.y];
+		float4 Pi = discCache1[i + gtId.y];
+		float4 Qr = GetRealWeight(i);
+		float4 Qi = GetImaginaryWeight(i);
+
+		Sr += (Pr * Qr - Pi * Qi);
+		Si += (Pr * Qi + Qr * Pi);
+	}
+
+	// Allows for adding or overwriting
+	UAVTex2[tId.xy] = UAVTex2[tId.xy] * _VerticalPassAddFactor + (Sr * _CombineRealFactor + Si * _CombineImaginaryFactor);
+
+	// Debug views
+	//UAVTex2[tId.xy] = Sr;
+	//UAVTex2[tId.xy] = Si;
+}
+
+// Blends near and far CoC with camera color
+// Input: UAVTex0, SRVTex0, SRVTex1
+// Outputs: UAVTex0 (combined)
 [numthreads(16, 16, 1)]
-void Combine(uint3 tId : SV_DispatchThreadID)
+void Composite(uint3 tId : SV_DispatchThreadID)
 {
 	uint2 resolutionDst;
 	UAVTex0.GetDimensions(resolutionDst.x, resolutionDst.y);
 	if (tId.x >= (uint)resolutionDst.x || tId.y >= (uint)resolutionDst.y)
 		return;
 
-	uint2 srcId = tId >> 1u;
+	uint2 dofId = tId >> 1u;
 
-	// SRVTex0 = far Coc
-	// SRVTex1 = near Coc
+	float4 src = UAVTex0[tId.xy];
+	float4 farCoC = saturate(SRVTex0[dofId.xy]);
+	float4 nearCoC = saturate(SRVTex0[dofId.xy]);
+
+	float3 color = lerp(lerp(src, farCoC.rgb, farCoC.a), nearCoC.rgb, nearCoC.a);
+	UAVTex0[tId.xy] = float4(color, src.a);
 }

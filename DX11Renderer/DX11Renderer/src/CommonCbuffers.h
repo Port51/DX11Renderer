@@ -83,9 +83,9 @@ namespace gfx
 	struct alignas(16) DepthOfFieldCB
 	{
 		u32 weightOffset;
-		float padding0;
-		float padding1;
-		float padding2;
+		float verticalPassAddFactor; // if 0, will overwrite. if 1, will add.
+		float combineRealFactor;
+		float combineImaginaryFactor;
 	};
 
 	struct alignas(16) BloomCB

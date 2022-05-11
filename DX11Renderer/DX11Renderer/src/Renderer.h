@@ -86,6 +86,7 @@ namespace gfx
 		std::shared_ptr<RenderTexture> m_pDoFFar3;
 		std::shared_ptr<RenderTexture> m_pDoFNear0;
 		std::shared_ptr<RenderTexture> m_pDoFNear1;
+		std::shared_ptr<RenderTexture> m_pDoFNear2;
 		bool m_pFinalBlitInputIsIndex0;
 
 		std::unique_ptr<ComputeKernel> m_pHiZDepthCopyKernel;
@@ -96,6 +97,7 @@ namespace gfx
 		std::unique_ptr<ComputeKernel> m_pDoFPrefilterKernel;
 		std::unique_ptr<ComputeKernel> m_pDoFHorizontalFilterKernel;
 		std::unique_ptr<ComputeKernel> m_pDoFVerticalFilterAndCombineKernel;
+		std::unique_ptr<ComputeKernel> m_pDoFCompositeKernel;
 		std::unique_ptr<ComputeKernel> m_pBloomPrefilterKernel;
 		std::unique_ptr<ComputeKernel> m_pBloomHorizontalBlurKernel;
 		std::unique_ptr<ComputeKernel> m_pBloomVerticalBlurKernel;
@@ -133,5 +135,8 @@ namespace gfx
 		std::vector<bool> m_rendererFeatureEnabled;
 		int m_pixelIteration;
 
+		const UINT BloomBlurWidth = 15u;
+		const UINT BokehDiskWidth = 31u;
+		const UINT BokehDiskComponentElements = BokehDiskWidth * 2u + 1u;
 	};
 }

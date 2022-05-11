@@ -393,3 +393,5 @@ FodyWeavers.xsd
 .idea/
 *.sln.iml
 *.cso
+
+Media/
