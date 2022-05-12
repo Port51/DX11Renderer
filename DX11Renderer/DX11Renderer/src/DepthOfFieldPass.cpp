@@ -85,7 +85,14 @@ namespace gfx
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 3u, m_pBokehDiskWeights->GetSRV())
 			.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, m_pDoFFar1->GetUAV())
 			.CSSetUAV(RenderSlots::CS_FreeUAV + 1u, m_pDoFFar2->GetUAV())
-			.CSSetUAV(RenderSlots::CS_FreeUAV + 1u, m_pDoFFar3->GetUAV());
+			.CSSetUAV(RenderSlots::CS_FreeUAV + 2u, m_pDoFFar3->GetUAV());
+
+		GetSubPass(RenderPassType::DoFNearBlurSubpass).
+			ClearBinds()
+			.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, m_pDoFNear0->GetSRV())
+			.CSSetSRV(RenderSlots::CS_FreeSRV + 3u, m_pBokehDiskWeights->GetSRV())
+			.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, m_pDoFNear1->GetUAV())
+			.CSSetUAV(RenderSlots::CS_FreeUAV + 1u, m_pDoFNear2->GetUAV());
 
 		GetSubPass(RenderPassType::DoFCompositeSubpass).
 			ClearBinds()
@@ -100,6 +107,8 @@ namespace gfx
 		auto context = gfx.GetContext();
 		UINT screenWidth = (UINT)gfx.GetScreenWidth();
 		UINT screenHeight = (UINT)gfx.GetScreenHeight();
+
+		static DepthOfFieldCB depthOfFieldCB;
 
 		// DoF prefilter
 		{
@@ -116,8 +125,6 @@ namespace gfx
 			const RenderPass& pass = GetSubPass(DoFFarBlurSubpass);
 			pass.BindSharedResources(gfx);
 
-			static DepthOfFieldCB depthOfFieldCB;
-
 			// Component #0
 			{
 				depthOfFieldCB.weightOffset = BokehDiskComponentElements * 2u;
@@ -129,12 +136,6 @@ namespace gfx
 
 				// Input = CoC
 				// Outputs = real + imag
-				context->CSSetShaderResources(RenderSlots::CS_FreeSRV + 0u, 1u, m_pDoFFar0->GetSRV().GetAddressOf());
-				context->CSSetShaderResources(RenderSlots::CS_FreeSRV + 3u, 1u, m_pBokehDiskWeights->GetSRV().GetAddressOf());
-				context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 0u, 1u, m_pDoFFar1->GetUAV().GetAddressOf(), nullptr);
-				context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 1u, 1u, m_pDoFFar2->GetUAV().GetAddressOf(), nullptr);
-				context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 2u, 1u, m_pDoFFar3->GetUAV().GetAddressOf(), nullptr);
-				context->CSSetConstantBuffers(RenderSlots::CS_FreeCB + 0u, 1u, m_pDepthOfFieldCB->GetD3DBuffer().GetAddressOf());
 				m_pDoFHorizontalFilterKernel->Dispatch(gfx, screenWidth >> 1u, screenHeight >> 1u, 1u);
 
 				// Inputs = real + imag
@@ -169,20 +170,15 @@ namespace gfx
 			const RenderPass& pass = GetSubPass(DoFNearBlurSubpass);
 			pass.BindSharedResources(gfx);
 
-			static DepthOfFieldCB depthOfFieldCB;
 			depthOfFieldCB.weightOffset = 0u;
 			depthOfFieldCB.verticalPassAddFactor = 0.f;
 			depthOfFieldCB.combineRealFactor = 0.767583f;
 			depthOfFieldCB.combineImaginaryFactor = 1.862321f;
 			m_pDepthOfFieldCB->Update(gfx, depthOfFieldCB);
+			context->CSSetConstantBuffers(RenderSlots::CS_FreeCB + 0u, 1u, m_pDepthOfFieldCB->GetD3DBuffer().GetAddressOf());
 
 			// Input = CoC
 			// Outputs = real + imag
-			context->CSSetShaderResources(RenderSlots::CS_FreeSRV + 0u, 1u, m_pDoFNear0->GetSRV().GetAddressOf());
-			context->CSSetShaderResources(RenderSlots::CS_FreeSRV + 3u, 1u, m_pBokehDiskWeights->GetSRV().GetAddressOf());
-			context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 0u, 1u, m_pDoFNear1->GetUAV().GetAddressOf(), nullptr);
-			context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 1u, 1u, m_pDoFNear2->GetUAV().GetAddressOf(), nullptr);
-			context->CSSetConstantBuffers(RenderSlots::CS_FreeCB + 0u, 1u, m_pDepthOfFieldCB->GetD3DBuffer().GetAddressOf());
 			m_pDoFHorizontalFilterKernel->Dispatch(gfx, screenWidth >> 1u, screenHeight >> 1u, 1u);
 
 			// Inputs = real + imag
