@@ -251,4 +251,24 @@ namespace gfx
 	{
 		return std::hash<std::string>{}(std::move(passName));
 	}
+
+	RenderPass& RenderPass::GetSubPass(const RenderPassType pass) const
+	{
+		assert(m_pSubPasses.find(pass) != m_pSubPasses.end() && "Requested RenderPass does not exist!");
+		return *m_pSubPasses.at(pass).get();
+	}
+
+	const RenderPass& RenderPass::CreateSubPass(const RenderPassType pass)
+	{
+		assert(m_pSubPasses.find(pass) == m_pSubPasses.end() && "RenderPass cannot be created twice!");
+		m_pSubPasses.emplace(pass, std::make_unique<RenderPass>(pass));
+		return *m_pSubPasses[pass].get();
+	}
+
+	const RenderPass& RenderPass::CreateSubPass(const RenderPassType pass, std::unique_ptr<RenderPass> pRenderPass)
+	{
+		assert(m_pSubPasses.find(pass) == m_pSubPasses.end() && "RenderPass cannot be created twice!");
+		m_pSubPasses.emplace(pass, std::move(pRenderPass));
+		return *m_pSubPasses[pass].get();
+	}
 }

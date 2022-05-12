@@ -390,6 +390,9 @@
     <ClCompile Include="src\Bokeh.cpp">
       <Filter>Source\Math</Filter>
     </ClCompile>
+    <ClCompile Include="src\DepthOfFieldPass.cpp">
+      <Filter>Source\RenderJobs\Passes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -673,6 +676,9 @@
     </ClInclude>
     <ClInclude Include="src\Bokeh.h">
       <Filter>Headers\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\DepthOfFieldPass.h">
+      <Filter>Headers\RenderJobs\Passes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

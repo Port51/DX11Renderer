@@ -179,6 +179,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\DepthOfFieldPass.cpp" />
     <ClCompile Include="src\Bokeh.cpp" />
     <ClCompile Include="src\Gaussian.cpp" />
     <ClCompile Include="src\RenderState.cpp" />
@@ -285,6 +286,7 @@
     <ClCompile Include="src\DX11Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\DepthOfFieldPass.h" />
     <ClInclude Include="src\Bokeh.h" />
     <ClInclude Include="src\Gaussian.h" />
     <ClInclude Include="src\RenderState.h" />

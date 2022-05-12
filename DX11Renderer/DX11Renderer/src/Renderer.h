@@ -80,13 +80,6 @@ namespace gfx
 		std::shared_ptr<RenderTexture> m_pCameraColor0;
 		std::shared_ptr<RenderTexture> m_pCameraColor1;
 		std::shared_ptr<RenderTexture> m_pDownsampledColor;
-		std::shared_ptr<RenderTexture> m_pDoFFar0;
-		std::shared_ptr<RenderTexture> m_pDoFFar1;
-		std::shared_ptr<RenderTexture> m_pDoFFar2;
-		std::shared_ptr<RenderTexture> m_pDoFFar3;
-		std::shared_ptr<RenderTexture> m_pDoFNear0;
-		std::shared_ptr<RenderTexture> m_pDoFNear1;
-		std::shared_ptr<RenderTexture> m_pDoFNear2;
 		bool m_pFinalBlitInputIsIndex0;
 
 		std::unique_ptr<ComputeKernel> m_pHiZDepthCopyKernel;
@@ -94,10 +87,6 @@ namespace gfx
 		std::unique_ptr<ComputeKernel> m_pTiledLightingKernel;
 		std::unique_ptr<ComputeKernel> m_pClusteredLightingKernel;
 		std::unique_ptr<ComputeKernel> m_pBilinearDownsampleKernel;
-		std::unique_ptr<ComputeKernel> m_pDoFPrefilterKernel;
-		std::unique_ptr<ComputeKernel> m_pDoFHorizontalFilterKernel;
-		std::unique_ptr<ComputeKernel> m_pDoFVerticalFilterAndCombineKernel;
-		std::unique_ptr<ComputeKernel> m_pDoFCompositeKernel;
 		std::unique_ptr<ComputeKernel> m_pBloomPrefilterKernel;
 		std::unique_ptr<ComputeKernel> m_pBloomHorizontalBlurKernel;
 		std::unique_ptr<ComputeKernel> m_pBloomVerticalBlurKernel;
@@ -112,8 +101,6 @@ namespace gfx
 		std::unique_ptr<ConstantBuffer<PerCameraCB>> m_pPerCameraCB;
 		std::unique_ptr<ConstantBuffer<HiZCreationCB>> m_pHiZCreationCB;
 		std::unique_ptr<ConstantBuffer<ClusteredLightingCB>> m_pClusteredLightingCB;
-		std::unique_ptr<StructuredBuffer<float>> m_pBokehDiskWeights;
-		std::unique_ptr<ConstantBuffer<DepthOfFieldCB>> m_pDepthOfFieldCB;
 		std::unique_ptr<ConstantBuffer<BloomCB>> m_pBloomCB;
 		std::unique_ptr<StructuredBuffer<float>> m_pBloomGaussianWeights;
 		std::unique_ptr<ConstantBuffer<FXAA_CB>> m_pFXAA_CB;
@@ -136,7 +123,5 @@ namespace gfx
 		int m_pixelIteration;
 
 		const UINT BloomBlurWidth = 15u;
-		const UINT BokehDiskWidth = 31u;
-		const UINT BokehDiskComponentElements = BokehDiskWidth * 2u + 1u;
 	};
 }

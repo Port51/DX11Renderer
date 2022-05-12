@@ -46,8 +46,11 @@ namespace gfx
 		const RenderTexture& GetCameraColorOut() const;
 		static const std::size_t GetHash(std::string passName);
 	protected:
+		RenderPass& GetSubPass(const RenderPassType pass) const;
+		const RenderPass& CreateSubPass(const RenderPassType pass);
+		const RenderPass& CreateSubPass(const RenderPassType pass, std::unique_ptr<RenderPass> pRenderPass);
+	protected:
 		std::vector<Binding> m_bindings;
-	private:
 		const RenderPassType m_renderPassType;
 		std::vector<DrawCall> m_jobs; // will be replaced by render graph
 
@@ -64,6 +67,7 @@ namespace gfx
 		std::vector<std::pair<UINT, ComPtr<ID3D11SamplerState>>> m_PS_SPL_Binds;
 
 		std::shared_ptr<RenderTexture> m_pCameraColorOut;
+		std::unordered_map<RenderPassType, std::unique_ptr<RenderPass>> m_pSubPasses;
 
 	public:
 		static std::vector<ID3D11Buffer*> m_pNullBuffers;

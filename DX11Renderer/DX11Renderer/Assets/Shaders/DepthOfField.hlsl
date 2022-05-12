@@ -39,12 +39,15 @@ cbuffer DOF_CB : register(b4)
 	float _VerticalPassAddFactor; // if 0, will overwrite. if 1, will add.
 	float _CombineRealFactor;
 	float _CombineImaginaryFactor;
+	float _FocusDistance;
+	float _FocusScale; // (focalLength in meters)^2 / (aperature * (max(focusDist, focalLength in m) - focalLength) * film_width * 2)
+	float2 _Padding;
 };
 
 float CalculateCoC(float linearDepth)
 {
-	// todo: settings!
-	return (linearDepth - 16.5f) * 0.1f;
+	return (linearDepth - 17.5f) * 80.f / max(linearDepth, 0.00001f);
+	//return (linearDepth - _FocusDistance) * _FocusScale / max(linearDepth, 0.00001f);
 }
 
 float GetRealWeight(uint x)
@@ -204,7 +207,7 @@ void Composite(uint3 tId : SV_DispatchThreadID)
 
 	float4 src = UAVTex0[tId.xy];
 	float4 farCoC = saturate(SRVTex0[dofId.xy]);
-	float4 nearCoC = saturate(SRVTex0[dofId.xy]);
+	float4 nearCoC = saturate(SRVTex1[dofId.xy]);
 
 	float3 color = lerp(lerp(src, farCoC.rgb, farCoC.a), nearCoC.rgb, nearCoC.a);
 	UAVTex0[tId.xy] = float4(color, src.a);
