@@ -112,12 +112,14 @@ namespace gfx
 
 	void DepthOfFieldPass::DrawImguiControls(const GraphicsDevice & gfx)
 	{
-		ImGui::SliderFloat("Focus Distance", &m_focusDistance, 1.0f, 100.0f, "%.2f", ImGuiSliderFlags_Logarithmic);
-		ImGui::SliderFloat("Focus Width", &m_focusWidth, 0.01f, 100.0f, "%.2f", ImGuiSliderFlags_Logarithmic);
-		ImGui::SliderFloat("Near Intensity", &m_nearIntensity, 0.0f, 1.0f, "%.2f", ImGuiSliderFlags_None);
-		ImGui::SliderFloat("Near Fade Width", &m_nearFadeWidth, 0.01f, 50.0f, "%.2f", ImGuiSliderFlags_Logarithmic);
-		ImGui::SliderFloat("Far Intensity", &m_farIntensity, 0.0f, 1.0f, "%.2f", ImGuiSliderFlags_None);
-		ImGui::SliderFloat("Far Fade Width", &m_farFadeWidth, 0.01f, 50.0f, "%.2f", ImGuiSliderFlags_Logarithmic);
+		int guiId = 12390;
+		const int indent = 50;
+		DrawSliderFloat(guiId++, indent, "Focus Distance", &m_focusDistance, 1.0f, 100.0f, "%.2f", ImGuiSliderFlags_Logarithmic);
+		DrawSliderFloat(guiId++, indent, "Focus Width", &m_focusWidth, 0.01f, 100.0f, "%.2f", ImGuiSliderFlags_Logarithmic);
+		DrawSliderFloat(guiId++, indent, "Far Fade Width", &m_farFadeWidth, 0.01f, 50.0f, "%.2f", ImGuiSliderFlags_Logarithmic);
+		DrawSliderFloat(guiId++, indent, "Near Fade Width", &m_nearFadeWidth, 0.01f, 50.0f, "%.2f", ImGuiSliderFlags_Logarithmic);
+		DrawSliderFloat(guiId++, indent, "Far Intensity", &m_farIntensity, 0.0f, 1.0f, "%.2f", ImGuiSliderFlags_None);
+		DrawSliderFloat(guiId++, indent, "Near Intensity", &m_nearIntensity, 0.0f, 1.0f, "%.2f", ImGuiSliderFlags_None);
 	}
 
 	void DepthOfFieldPass::Execute(const GraphicsDevice & gfx) const

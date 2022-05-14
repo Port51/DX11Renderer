@@ -14,4 +14,9 @@ namespace gfx
 	///
 	bool DrawToggleOnOffButton(int id, const char* label, bool isSelected, ImVec2& size, bool& changed, bool isSameLine = false);
 
+	///
+	/// Draws slider float, with label to the left
+	///
+	bool DrawSliderFloat(int id, int indent, const char* label, float* v, float v_min, float v_max, const char* format, ImGuiSliderFlags flags);
+
 }

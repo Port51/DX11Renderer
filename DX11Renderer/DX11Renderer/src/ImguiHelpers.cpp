@@ -90,3 +90,21 @@ bool gfx::DrawToggleOnOffButton(int id, const char* label, bool isSelected, ImVe
 	
 	return returnValue;
 }
+
+bool gfx::DrawSliderFloat(int id, int indent, const char* label, float* v, float v_min, float v_max, const char* format, ImGuiSliderFlags flags)
+{
+	ImGui::PushID(id + 3048);
+
+	ImGui::TableNextRow();
+	ImGui::TableSetColumnIndex(0);
+	ImGui::SetCursorPosX(indent);
+	ImGui::Text(label);
+	ImGui::SetCursorPosX(indent + 500);
+
+	ImGui::TableSetColumnIndex(1);
+	bool returnValue = ImGui::SliderFloat("", v, v_min, v_max, format, flags);
+
+	ImGui::PopID();
+	return returnValue;
+}
+
