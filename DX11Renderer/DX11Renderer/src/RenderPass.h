@@ -27,6 +27,7 @@ namespace gfx
 		virtual void UnbindSharedResources(const GraphicsDevice& gfx) const;
 		virtual void Execute(const GraphicsDevice& gfx) const;
 		void Reset();
+		virtual void DrawImguiControls(const GraphicsDevice& gfx);
 	public:
 		RenderPass& ClearBinds();
 		RenderPass& CSSetCB(UINT slot, ComPtr<ID3D11Buffer> pResource);

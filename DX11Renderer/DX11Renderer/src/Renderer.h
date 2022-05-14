@@ -41,7 +41,7 @@ namespace gfx
 	{
 	public:
 		enum RendererView { Final, TiledLighting, ClusteredLighting, SSRTrace };
-		enum RendererFeature { Shadows, FXAA, HZBSSR, Dither, Tonemapping, COUNT }; // for COUNT to be accurate, don't set these values to anything weird...
+		enum RendererFeature { Shadows, DepthOfField, Bloom, FXAA, HZBSSR, Dither, Tonemapping, COUNT }; // for COUNT to be accurate, don't set these values to anything weird...
 		
 	public:
 		Renderer(const GraphicsDevice& gfx, std::shared_ptr<LightManager> pLightManager, std::shared_ptr<RendererList> pRendererList);

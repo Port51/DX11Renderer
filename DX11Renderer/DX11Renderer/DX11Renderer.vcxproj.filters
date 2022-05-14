@@ -175,11 +175,11 @@
     <Filter Include="Assets\Shaders\DrawPasses">
       <UniqueIdentifier>{7fdabc25-30fa-47d6-b448-45c088c156ad}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Math">
-      <UniqueIdentifier>{641f0e28-51cc-4ef4-bc6b-3b0ced68ba46}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Headers\Math">
       <UniqueIdentifier>{e67b39c3-2267-4b1e-9baf-dbcd1a90a990}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Lights\Math">
+      <UniqueIdentifier>{641f0e28-51cc-4ef4-bc6b-3b0ced68ba46}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -385,10 +385,10 @@
       <Filter>Source\Bindable\Shaders</Filter>
     </ClCompile>
     <ClCompile Include="src\Gaussian.cpp">
-      <Filter>Source\Math</Filter>
+      <Filter>Source\Lights\Math</Filter>
     </ClCompile>
     <ClCompile Include="src\Bokeh.cpp">
-      <Filter>Source\Math</Filter>
+      <Filter>Source\Lights\Math</Filter>
     </ClCompile>
     <ClCompile Include="src\DepthOfFieldPass.cpp">
       <Filter>Source\RenderJobs\Passes</Filter>

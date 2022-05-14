@@ -149,6 +149,10 @@ namespace gfx
 		m_jobs.clear();
 	}
 
+	void RenderPass::DrawImguiControls(const GraphicsDevice & gfx)
+	{
+	}
+
 	RenderPass& RenderPass::ClearBinds()
 	{
 		m_CS_CB_Binds.clear();

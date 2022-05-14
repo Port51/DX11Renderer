@@ -39,16 +39,14 @@ cbuffer DOF_CB : register(b4)
 	float _VerticalPassAddFactor; // if 0, will overwrite. if 1, will add.
 	float _CombineRealFactor;
 	float _CombineImaginaryFactor;
-	float _FocusDistance;
-	float _FocusScale; // (focalLength in meters)^2 / (aperature * (max(focusDist, focalLength in m) - focalLength) * film_width * 2)
+	float _NearCoCScale;
+	float _NearCoCBias;
+	float _NearCoCIntensity;
+	float _FarCoCScale;
+	float _FarCoCBias;
+	float _FarCoCIntensity;
 	float2 _Padding;
 };
-
-float CalculateCoC(float linearDepth)
-{
-	return (linearDepth - 17.5f) * 80.f / max(linearDepth, 0.00001f);
-	//return (linearDepth - _FocusDistance) * _FocusScale / max(linearDepth, 0.00001f);
-}
 
 float GetRealWeight(uint x)
 {
@@ -76,12 +74,14 @@ void Prefilter(uint3 tId : SV_DispatchThreadID)
 	float hzbNear = HiZBuffer.Load(int3(tId.xy >> 1u, 2u)).r;
 	hzbNear = HZB_LINEAR(hzbNear, _ZBufferParams);
 
-	float cocFar = saturate(CalculateCoC(hzbFar));
-	float cocNear = saturate(CalculateCoC(hzbNear) * -1.f);
+	// Apply SCurve as mid-intensity blur can look weird
+	float cocFar = SCurve(saturate(hzbFar * _FarCoCScale + _FarCoCBias)) * _FarCoCIntensity;
+	float cocNear = SCurve(saturate(hzbNear * _NearCoCScale + _NearCoCBias)) * _NearCoCIntensity;
 	
 	// Premultiply RGB by CoC, and store CoC in alpha channel
-	UAVTex0[tId.xy] = float4(SRVTex0[tId.xy].rgb * cocFar, cocFar);
-	UAVTex1[tId.xy] = float4(SRVTex0[tId.xy].rgb * cocNear, cocNear);
+	float3 origColor = SRVTex0[tId.xy].rgb;
+	UAVTex0[tId.xy] = float4(origColor * cocFar, cocFar);
+	UAVTex1[tId.xy] = float4(origColor * cocNear, cocNear);
 
 	// Debug output (makes a single pixel white)
 	//UAVTex0[tId.xy] = all(tId.xy == 200u);
@@ -210,5 +210,5 @@ void Composite(uint3 tId : SV_DispatchThreadID)
 	float4 nearCoC = saturate(SRVTex1[dofId.xy]);
 
 	float3 color = lerp(lerp(src, farCoC.rgb, farCoC.a), nearCoC.rgb, nearCoC.a);
-	UAVTex0[tId.xy] = float4(color, src.a);
+	UAVTex0[tId.xy] = float4(max(color, 0.f), src.a);
 }

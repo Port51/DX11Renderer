@@ -120,5 +120,5 @@ void Combine(uint3 tId : SV_DispatchThreadID)
 	//bloom = pow(bloom, 1.f) * 2.f;
 
 	float4 bloomRGBA = float4(InputTexture[srcId.xy].rgb, 0.f);
-	//OutputTexture[tId.xy] += bloomRGBA;
+	OutputTexture[tId.xy] += bloomRGBA;
 }

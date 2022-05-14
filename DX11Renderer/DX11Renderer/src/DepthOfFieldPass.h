@@ -25,8 +25,15 @@ namespace gfx
 	public:
 		void Execute(const GraphicsDevice& gfx) const override;
 		void SetOutputTarget(std::shared_ptr<Texture> pTarget);
-		void SetupRenderPassDependencies(const GraphicsDevice& gfx, const RenderTexture* const pDownsampledColor, const RenderTexture* const pHiZBufferTarget, const RenderTexture* const pCameraColor);
+		void SetupRenderPassDependencies(const GraphicsDevice& gfx, const RenderTexture& pDownsampledColor, const RenderTexture& pHiZBufferTarget, const RenderTexture& pCameraColor);
+		void DrawImguiControls(const GraphicsDevice& gfx) override;
 	private:
+		float m_focusDistance = 17.5f;
+		float m_focusWidth = 1.f;
+		float m_nearFadeWidth = 5.f;
+		float m_nearIntensity = 1.0f;
+		float m_farFadeWidth = 10.f;
+		float m_farIntensity = 1.0f;
 
 		std::unique_ptr<ComputeKernel> m_pDoFPrefilterKernel;
 		std::unique_ptr<ComputeKernel> m_pDoFHorizontalFilterKernel;

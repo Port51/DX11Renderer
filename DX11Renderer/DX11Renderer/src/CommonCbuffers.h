@@ -86,6 +86,14 @@ namespace gfx
 		float verticalPassAddFactor; // if 0, will overwrite. if 1, will add.
 		float combineRealFactor;
 		float combineImaginaryFactor;
+		float nearCoCScale;
+		float nearCoCBias;
+		float nearCoCIntensity;
+		float farCoCScale;
+		float farCoCBias;
+		float farCoCIntensity;
+		float padding0;
+		float padding1;
 	};
 
 	struct alignas(16) BloomCB

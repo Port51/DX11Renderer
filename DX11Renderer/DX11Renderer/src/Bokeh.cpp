@@ -3,36 +3,8 @@
 
 namespace gfx
 {
-	void Bokeh::GetDiskPackedWeights(std::vector<float>& weights, const float a0, const float b0, const float a1, const float b1, const float a2, const float b2)
-	{
-		const UINT componentWidth = weights.size() / 6u;
-		const UINT width = (componentWidth - 1u) / 2u;
 
-		const std::vector<float> params{ a0, b0, a1, b1, a2, b2 };
-
-		for (UINT i = 0u; i < 6u; ++i)
-		{
-			const UINT offset = componentWidth * i;
-			const UINT paramIdx = (i >> 1u) << 1u;
-			const float a = params[paramIdx + 0u];
-			const float b = params[paramIdx + 1u];
-			const bool isReal = (i % 2u == 0u);
-
-			// Set center width first
-			weights[offset + width] = isReal ? GetDiskRealWeight1D(0.f, a, b) : GetDiskImaginaryWeight1D(0.f, a, b);
-
-			for (UINT x = 1u; x <= width; ++x)
-			{
-				const float scaledX = x / 13.f;
-				const float weight = isReal ? GetDiskRealWeight1D((float)scaledX, a, b) : GetDiskImaginaryWeight1D((float)scaledX, a, b);
-				weights[offset + width + x] = weight;
-				weights[offset + width - x] = weight;
-			}
-		}
-		
-	}
-
-	void Bokeh::GetDiskRealWeights1D(std::vector<float>& weights, UINT componentIdx, UINT elements, const float a, const float b, const float xScale, const bool normalize)
+	void Bokeh::GetDiskRealWeights1D(std::vector<float>& weights, const UINT componentIdx, const UINT elements, const float a, const float b, const float xScale, const bool normalize)
 	{
 		const UINT width = (elements - 1u) / 2u;
 		const UINT startIdx = componentIdx * elements;
@@ -52,7 +24,7 @@ namespace gfx
 
 		if (normalize)
 		{
-			const float normalizeFactor = 1.f / sum;
+			const float normalizeFactor = 1.f / std::sqrt(sum);
 			for (UINT i = startIdx; i < startIdx + elements; ++i)
 			{
 				weights[i] *= normalizeFactor;
@@ -66,7 +38,7 @@ namespace gfx
 		return std::exp(-a * x * x) * std::cos(b * x * x);
 	}
 
-	void Bokeh::GetDiskImaginaryWeights1D(std::vector<float>& weights, UINT componentIdx, UINT elements, const float a, const float b, const float xScale, const bool normalize)
+	void Bokeh::GetDiskImaginaryWeights1D(std::vector<float>& weights, const UINT componentIdx, const UINT elements, const float a, const float b, const float xScale, const bool normalize)
 	{
 		const UINT width = (elements - 1u) / 2u;
 		const UINT startIdx = componentIdx * elements;
@@ -91,6 +63,41 @@ namespace gfx
 			{
 				weights[i] *= normalizeFactor;
 			}
+		}
+	}
+
+	const float Bokeh::GetDiskAccumulation(const std::vector<float>& weights, const UINT startComponentIdx, const UINT componentCount, const UINT elementsPerComponent, const float combineRealFactor, const float combineImaginaryFactor)
+	{
+		float accu = 1.f;
+		for (UINT cIdx = startComponentIdx; cIdx < startComponentIdx + componentCount; ++cIdx)
+		{
+			// Calculate complex sum
+			float sumR = 0.f;
+			float sumI = 0.f;
+			for (UINT x = 0u; x < elementsPerComponent; ++x)
+			{
+				for (UINT y = 0u; y < elementsPerComponent; ++y)
+				{
+					// Complex mult: P * Q = PrQr - PiQi + [PrQi + QrPi]i
+					// Note that each complex element uses 2 floats
+					const float xReal = weights[elementsPerComponent * 2u * cIdx + x];
+					const float xImag = weights[elementsPerComponent * 2u * cIdx + elementsPerComponent + x];
+					const float yReal = weights[elementsPerComponent * 2u * cIdx + y];
+					const float yImag = weights[elementsPerComponent * 2u * cIdx + elementsPerComponent + y];
+					sumR += (xReal * yReal - xImag * yImag);
+					sumI += (xReal * yImag + xImag * yReal);
+				}
+			}
+			accu = accu * (sumR * combineRealFactor + sumI * combineImaginaryFactor); // todo: add weights
+		}
+		return accu;
+	}
+
+	const void Bokeh::ApplyScaleToDisk(std::vector<float>& weights, const UINT startComponentIdx, const UINT componentCount, const UINT elementsPerComponent, const float scaleFactor)
+	{
+		for (UINT i = startComponentIdx * elementsPerComponent * 2u; i < (startComponentIdx + componentCount) * elementsPerComponent * 2u; ++i)
+		{
+			weights[i] *= scaleFactor;
 		}
 	}
 

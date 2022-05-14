@@ -47,6 +47,7 @@ namespace gfx
 		//
 		m_rendererFeatureEnabled.resize(RendererFeature::COUNT, true); // enable all features by default
 		m_rendererFeatureEnabled[RendererFeature::HZBSSR] = false;
+		m_rendererFeatureEnabled[RendererFeature::Bloom] = false;
 
 		//
 		// Components
@@ -298,7 +299,7 @@ namespace gfx
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, m_pCameraColor0->GetSRV())
 			.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, m_pDownsampledColor->GetUAV());
 
-		static_cast<DepthOfFieldPass&>(GetRenderPass(RenderPassType::DoFPass)).SetupRenderPassDependencies(gfx, m_pDownsampledColor.get(), m_pHiZBufferTarget.get(), m_pCameraColor0.get());
+		static_cast<DepthOfFieldPass&>(GetRenderPass(RenderPassType::DoFPass)).SetupRenderPassDependencies(gfx, *m_pDownsampledColor, *m_pHiZBufferTarget, *m_pCameraColor0);
 
 		GetRenderPass(RenderPassType::BloomPrefilterSubpass).
 			ClearBinds()
@@ -609,59 +610,65 @@ namespace gfx
 			pass.UnbindSharedResources(gfx);
 		}
 
-		GetRenderPass(DoFPass).Execute(gfx);
-
-		// Bloom prefilter
+		if (m_viewIdx == RendererView::Final && IsFeatureEnabled(RendererFeature::DepthOfField))
 		{
-			const RenderPass& pass = GetRenderPass(BloomPrefilterSubpass);
-			pass.BindSharedResources(gfx);
-
-			static BloomCB bloomCB;
-			bloomCB.resolutionSrcDst = { screenWidth, screenHeight, screenWidth, screenHeight };
-			m_pBloomCB->Update(gfx, bloomCB);
-
-			m_pBloomPrefilterKernel->Dispatch(gfx, screenWidth >> 1u, screenHeight >> 1u, 1u);
-
-			pass.UnbindSharedResources(gfx);
+			GetRenderPass(DoFPass).Execute(gfx);
 		}
 
-		// Bloom blur (x2 sub-passes)
+		if (m_viewIdx == RendererView::Final && IsFeatureEnabled(RendererFeature::Bloom))
 		{
-			const RenderPass& pass = GetRenderPass(BloomSeparableBlurSubpass);
-			pass.BindSharedResources(gfx);
+			// Bloom prefilter
+			{
+				const RenderPass& pass = GetRenderPass(BloomPrefilterSubpass);
+				pass.BindSharedResources(gfx);
 
-			static BloomCB bloomCB;
-			bloomCB.resolutionSrcDst = { screenWidth, screenHeight, screenWidth, screenHeight };
-			m_pBloomCB->Update(gfx, bloomCB);
+				static BloomCB bloomCB;
+				bloomCB.resolutionSrcDst = { screenWidth, screenHeight, screenWidth, screenHeight };
+				m_pBloomCB->Update(gfx, bloomCB);
 
-			context->CSSetShaderResources(RenderSlots::CS_FreeSRV + 0u, 1u, m_pBloomTarget0->GetSRV().GetAddressOf());
-			context->CSSetShaderResources(RenderSlots::CS_FreeSRV + 1u, 1u, m_pBloomGaussianWeights->GetSRV().GetAddressOf());
-			context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 0u, 1u, m_pBloomTarget1->GetUAV().GetAddressOf(), nullptr);
-			m_pBloomHorizontalBlurKernel->Dispatch(gfx, screenWidth >> 1u, screenHeight >> 1u, 1u);
-			context->CSSetShaderResources(RenderSlots::CS_FreeSRV + 0u, 1u, pass.m_pNullSRVs.data());
-			context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 0u, 1u, pass.m_pNullUAVs.data(), nullptr);
+				m_pBloomPrefilterKernel->Dispatch(gfx, screenWidth >> 1u, screenHeight >> 1u, 1u);
 
-			context->CSSetShaderResources(RenderSlots::CS_FreeSRV + 0u, 1u, m_pBloomTarget1->GetSRV().GetAddressOf());
-			context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 0u, 1u, m_pBloomTarget0->GetUAV().GetAddressOf(), nullptr);
-			m_pBloomVerticalBlurKernel->Dispatch(gfx, screenWidth >> 1u, screenHeight >> 1u, 1u);
-			context->CSSetShaderResources(RenderSlots::CS_FreeSRV + 0u, 1u, pass.m_pNullSRVs.data());
-			context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 0u, 1u, pass.m_pNullUAVs.data(), nullptr);
+				pass.UnbindSharedResources(gfx);
+			}
 
-			pass.UnbindSharedResources(gfx);
-		}
+			// Bloom blur (x2 sub-passes)
+			{
+				const RenderPass& pass = GetRenderPass(BloomSeparableBlurSubpass);
+				pass.BindSharedResources(gfx);
 
-		// Bloom combine
-		{
-			const RenderPass& pass = GetRenderPass(BloomCombineSubpass);
-			pass.BindSharedResources(gfx);
+				static BloomCB bloomCB;
+				bloomCB.resolutionSrcDst = { screenWidth, screenHeight, screenWidth, screenHeight };
+				m_pBloomCB->Update(gfx, bloomCB);
 
-			static BloomCB bloomCB;
-			bloomCB.resolutionSrcDst = { screenWidth, screenHeight, screenWidth, screenHeight };
-			m_pBloomCB->Update(gfx, bloomCB);
+				context->CSSetShaderResources(RenderSlots::CS_FreeSRV + 0u, 1u, m_pBloomTarget0->GetSRV().GetAddressOf());
+				context->CSSetShaderResources(RenderSlots::CS_FreeSRV + 1u, 1u, m_pBloomGaussianWeights->GetSRV().GetAddressOf());
+				context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 0u, 1u, m_pBloomTarget1->GetUAV().GetAddressOf(), nullptr);
+				m_pBloomHorizontalBlurKernel->Dispatch(gfx, screenWidth >> 1u, screenHeight >> 1u, 1u);
+				context->CSSetShaderResources(RenderSlots::CS_FreeSRV + 0u, 1u, pass.m_pNullSRVs.data());
+				context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 0u, 1u, pass.m_pNullUAVs.data(), nullptr);
 
-			m_pBloomCombineKernel->Dispatch(gfx, screenWidth, screenHeight, 1u);
+				context->CSSetShaderResources(RenderSlots::CS_FreeSRV + 0u, 1u, m_pBloomTarget1->GetSRV().GetAddressOf());
+				context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 0u, 1u, m_pBloomTarget0->GetUAV().GetAddressOf(), nullptr);
+				m_pBloomVerticalBlurKernel->Dispatch(gfx, screenWidth >> 1u, screenHeight >> 1u, 1u);
+				context->CSSetShaderResources(RenderSlots::CS_FreeSRV + 0u, 1u, pass.m_pNullSRVs.data());
+				context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 0u, 1u, pass.m_pNullUAVs.data(), nullptr);
 
-			pass.UnbindSharedResources(gfx);
+				pass.UnbindSharedResources(gfx);
+			}
+
+			// Bloom combine
+			{
+				const RenderPass& pass = GetRenderPass(BloomCombineSubpass);
+				pass.BindSharedResources(gfx);
+
+				static BloomCB bloomCB;
+				bloomCB.resolutionSrcDst = { screenWidth, screenHeight, screenWidth, screenHeight };
+				m_pBloomCB->Update(gfx, bloomCB);
+
+				m_pBloomCombineKernel->Dispatch(gfx, screenWidth, screenHeight, 1u);
+
+				pass.UnbindSharedResources(gfx);
+			}
 		}
 
 		// SSR pass
@@ -794,11 +801,18 @@ namespace gfx
 
 			//static ImGuiTableFlags flags = ImGuiTableFlags_PreciseWidths;
 			ImGui::BeginTable("FeatureTable", 2);
-			m_rendererFeatureEnabled[(int)RendererFeature::Shadows] = DrawToggleOnOffButton(0, "Shadows", m_rendererFeatureEnabled[(int)RendererFeature::Shadows], featureButtonSize, changed);
-			m_rendererFeatureEnabled[(int)RendererFeature::FXAA] = DrawToggleOnOffButton(1, "FXAA", m_rendererFeatureEnabled[(int)RendererFeature::FXAA], featureButtonSize, changed);
-			m_rendererFeatureEnabled[(int)RendererFeature::HZBSSR] = DrawToggleOnOffButton(2, "SSR", m_rendererFeatureEnabled[(int)RendererFeature::HZBSSR], featureButtonSize, changed);
-			m_rendererFeatureEnabled[(int)RendererFeature::Dither] = DrawToggleOnOffButton(3, "Dither", m_rendererFeatureEnabled[(int)RendererFeature::Dither], featureButtonSize, changed);
-			m_rendererFeatureEnabled[(int)RendererFeature::Tonemapping] = DrawToggleOnOffButton(4, "Tonemapping", m_rendererFeatureEnabled[(int)RendererFeature::Tonemapping], featureButtonSize, changed);
+			int buttonId = 0;
+			m_rendererFeatureEnabled[(int)RendererFeature::Shadows]			= DrawToggleOnOffButton(buttonId++, "Shadows", m_rendererFeatureEnabled[(int)RendererFeature::Shadows], featureButtonSize, changed);
+			m_rendererFeatureEnabled[(int)RendererFeature::DepthOfField]	= DrawToggleOnOffButton(buttonId++, "Depth of Field", m_rendererFeatureEnabled[(int)RendererFeature::DepthOfField], featureButtonSize, changed);
+			if (IsFeatureEnabled(RendererFeature::DepthOfField))
+			{
+				GetRenderPass(DoFPass).DrawImguiControls(gfx);
+			}
+			m_rendererFeatureEnabled[(int)RendererFeature::Bloom]			= DrawToggleOnOffButton(buttonId++, "Bloom", m_rendererFeatureEnabled[(int)RendererFeature::Bloom], featureButtonSize, changed);
+			m_rendererFeatureEnabled[(int)RendererFeature::FXAA]			= DrawToggleOnOffButton(buttonId++, "FXAA", m_rendererFeatureEnabled[(int)RendererFeature::FXAA], featureButtonSize, changed);
+			m_rendererFeatureEnabled[(int)RendererFeature::HZBSSR]			= DrawToggleOnOffButton(buttonId++, "SSR", m_rendererFeatureEnabled[(int)RendererFeature::HZBSSR], featureButtonSize, changed);
+			m_rendererFeatureEnabled[(int)RendererFeature::Dither]			= DrawToggleOnOffButton(buttonId++, "Dither", m_rendererFeatureEnabled[(int)RendererFeature::Dither], featureButtonSize, changed);
+			m_rendererFeatureEnabled[(int)RendererFeature::Tonemapping]		= DrawToggleOnOffButton(buttonId++, "Tonemapping", m_rendererFeatureEnabled[(int)RendererFeature::Tonemapping], featureButtonSize, changed);
 			ImGui::EndTable();
 			
 			if (changed)
