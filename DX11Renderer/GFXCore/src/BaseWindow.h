@@ -41,7 +41,7 @@ namespace gfxcore
 		};
 
 	public:
-		BaseWindow(int width, int height, const char* name, HINSTANCE const hInstance, InputListener* const pInputListener);
+		BaseWindow(UINT width, UINT height, const char* name, HINSTANCE const hInstance, InputListener* const pInputListener);
 		virtual ~BaseWindow();
 		BaseWindow(const BaseWindow&) = delete;
 		BaseWindow& operator=(const BaseWindow&) = delete;
@@ -61,8 +61,8 @@ namespace gfxcore
 	protected:
 		InputListener* m_pInputListener;
 		MouseInput m_mouse;
-		int m_width;
-		int m_height;
+		UINT m_width;
+		UINT m_height;
 		HWND m_hWnd;
 	};
 }

@@ -18,7 +18,7 @@ namespace gfx
 	class GraphicsDevice
 	{
 	public:
-		GraphicsDevice(HWND hWnd, int windowWidth, int windowHeight);
+		GraphicsDevice(HWND hWnd, UINT windowWidth, UINT windowHeight);
 		GraphicsDevice(const GraphicsDevice&) = delete; // here because of destructor, but don't want this...
 		GraphicsDevice& operator=(const GraphicsDevice&) = delete; // here because of destructor, but don't want this...
 		virtual ~GraphicsDevice();
@@ -35,8 +35,8 @@ namespace gfx
 		void ClearRenderTargets() const;
 		void SetViewport(int x, int y, int width, int height) const;
 		void SetViewport(int width, int height) const;
-		const int GetScreenWidth() const;
-		const int GetScreenHeight() const;
+		const UINT GetScreenWidth() const;
+		const UINT GetScreenHeight() const;
 	public:
 		const ComPtr<ID3D11Device> GetAdapter() const;
 		const ComPtr<ID3D11DeviceContext> GetContext() const;
@@ -64,7 +64,7 @@ namespace gfx
 		std::vector<ID3D11RenderTargetView*> m_pNullRenderTargetViews;
 	private:
 		bool m_imguiEnabled = true;
-		int m_screenWidth;
-		int m_screenHeight;
+		UINT m_screenWidth;
+		UINT m_screenHeight;
 	};
 }

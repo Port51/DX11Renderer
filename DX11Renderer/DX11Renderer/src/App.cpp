@@ -17,7 +17,7 @@
 
 namespace gfx
 {
-	App::App(int screenWidth, int screenHeight, HINSTANCE hInstance)
+	App::App(UINT screenWidth, UINT screenHeight, HINSTANCE hInstance)
 		:
 		m_pImgui(std::make_unique<ImguiManager>()),
 		m_pCamera(std::make_unique<Camera>(40.0f, (float)screenWidth / (float)screenHeight, 0.5f, 50.0f)),

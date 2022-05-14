@@ -13,7 +13,7 @@
 
 namespace gfx
 {
-	GraphicsDevice::GraphicsDevice(HWND hWnd, int windowWidth, int windowHeight)
+	GraphicsDevice::GraphicsDevice(HWND hWnd, UINT windowWidth, UINT windowHeight)
 		: m_screenWidth(windowWidth)
 		, m_screenHeight(windowHeight)
 		, m_pLog(std::make_unique<Log>())
@@ -236,12 +236,12 @@ namespace gfx
 		m_pContext->RSSetViewports(1u, &vp);
 	}
 
-	const int GraphicsDevice::GetScreenWidth() const
+	const UINT GraphicsDevice::GetScreenWidth() const
 	{
 		return m_screenWidth;
 	}
 
-	const int GraphicsDevice::GetScreenHeight() const
+	const UINT GraphicsDevice::GetScreenHeight() const
 	{
 		return m_screenHeight;
 	}

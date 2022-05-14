@@ -55,7 +55,7 @@ namespace gfxcore
 
 
 	// Window Stuff
-	BaseWindow::BaseWindow(int width, int height, const char* name, HINSTANCE const hInstance, InputListener* const pInputListener)
+	BaseWindow::BaseWindow(UINT width, UINT height, const char* name, HINSTANCE const hInstance, InputListener* const pInputListener)
 		: m_width(width), m_height(height), m_pInputListener(pInputListener)
 	{
 
@@ -245,6 +245,6 @@ namespace gfxcore
 
 	const BOOL BaseWindow::IsPointInWindow(const POINTS pt) const
 	{
-		return (pt.x >= 0 && pt.x < m_width && pt.y >= 0 && pt.y < m_height);
+		return (pt.x >= 0 && (UINT)pt.x < m_width && pt.y >= 0 && (UINT)pt.y < m_height);
 	}
 }

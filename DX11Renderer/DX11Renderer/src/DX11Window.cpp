@@ -5,7 +5,7 @@
 
 namespace gfx
 {
-	DX11Window::DX11Window(int width, int height, const char * name, HINSTANCE hInstance, InputListener* pInputListener)
+	DX11Window::DX11Window(UINT width, UINT height, const char * name, HINSTANCE hInstance, InputListener* pInputListener)
 		: BaseWindow(width, height, name, hInstance, pInputListener)
 	{
 		// Init ImGui

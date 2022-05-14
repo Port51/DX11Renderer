@@ -22,7 +22,7 @@ namespace gfx
 	class App : public InputListener
 	{
 	public:
-		App(int screenWidth, int screenHeight, HINSTANCE hInstance);
+		App(UINT screenWidth, UINT screenHeight, HINSTANCE hInstance);
 		virtual ~App();
 		// master frame / message loop
 		int Run();
