@@ -66,8 +66,8 @@ namespace gfx
 		m_pShadowAtlas = std::make_unique<DepthStencilTarget>(gfx, Config::ShadowAtlasResolution, Config::ShadowAtlasResolution);
 
 		// Setup cluster dimensions based on screen size, rounding up
-		m_clusterDimensionX = ((UINT)gfx.GetScreenWidth() + LightManager::ClusteredLightingClusterPixels - 1u) / LightManager::ClusteredLightingClusterPixels;
-		m_clusterDimensionY = ((UINT)gfx.GetScreenHeight() + LightManager::ClusteredLightingClusterPixels - 1u) / LightManager::ClusteredLightingClusterPixels;
+		m_clusterDimensionX = (gfx.GetScreenWidth() + LightManager::ClusteredLightingClusterPixels - 1u) / LightManager::ClusteredLightingClusterPixels;
+		m_clusterDimensionY = (gfx.GetScreenHeight() + LightManager::ClusteredLightingClusterPixels - 1u) / LightManager::ClusteredLightingClusterPixels;
 		m_clusterDimensionZ = ClusteredLightingZLevels;
 	}
 

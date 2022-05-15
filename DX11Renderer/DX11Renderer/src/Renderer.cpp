@@ -39,15 +39,15 @@ namespace gfx
 	Renderer::Renderer(const GraphicsDevice& gfx, std::shared_ptr<LightManager> pLightManager, std::shared_ptr<RendererList> pRendererList)
 		: m_pRendererList(pRendererList), m_pLightManager(pLightManager)
 	{
-		UINT screenWidth = (UINT)gfx.GetScreenWidth();
-		UINT screenHeight = (UINT)gfx.GetScreenHeight();
+		UINT screenWidth = gfx.GetScreenWidth();
+		UINT screenHeight = gfx.GetScreenHeight();
 
 		//
 		// Debug stuff
 		//
 		m_rendererFeatureEnabled.resize(RendererFeature::COUNT, true); // enable all features by default
 		m_rendererFeatureEnabled[RendererFeature::HZBSSR] = false;
-		m_rendererFeatureEnabled[RendererFeature::Bloom] = false;
+		//m_rendererFeatureEnabled[RendererFeature::Bloom] = false;
 
 		//
 		// Components
@@ -391,8 +391,8 @@ namespace gfx
 	void Renderer::Execute(GraphicsDevice& gfx, const Camera& camera, float timeElapsed, UINT pixelSelectionX, UINT pixelSelectionY)
 	{
 		auto context = gfx.GetContext();
-		UINT screenWidth = (UINT)gfx.GetScreenWidth();
-		UINT screenHeight = (UINT)gfx.GetScreenHeight();
+		UINT screenWidth = gfx.GetScreenWidth();
+		UINT screenHeight = gfx.GetScreenHeight();
 
 		gfx.GetRenderStats().StartFrame();
 		context->ClearState();

@@ -18,8 +18,8 @@ namespace gfx
 	DepthOfFieldPass::DepthOfFieldPass(const GraphicsDevice & gfx)
 		: RenderPass(RenderPassType::DoFPass)
 	{
-		UINT dofTextureWidth = (UINT)gfx.GetScreenWidth() >> 1u;
-		UINT dofTextureHeight = (UINT)gfx.GetScreenHeight() >> 1u;
+		UINT dofTextureWidth = gfx.GetScreenWidth() >> 1u;
+		UINT dofTextureHeight = gfx.GetScreenHeight() >> 1u;
 
 		CreateSubPass(RenderPassType::DoFPrefilterSubpass);
 		CreateSubPass(RenderPassType::DoFFarBlurSubpass);
@@ -38,13 +38,13 @@ namespace gfx
 		// Using functions and settings from http://yehar.com/blog/?p=1495
 		std::vector<f32> bokehWeights;
 		bokehWeights.resize(BokehDiskComponentElements * 6u);
-		const float bokehXScale = 2.5f / (float)BokehDiskWidth; // scale blur radius
-		Bokeh::GetDiskRealWeights1D(bokehWeights, 0u, BokehDiskComponentElements, 0.862325f, 1.624835f, bokehXScale, true);
-		Bokeh::GetDiskImaginaryWeights1D(bokehWeights, 1u, BokehDiskComponentElements, 0.862325f, 1.624835f, bokehXScale, true);
-		Bokeh::GetDiskRealWeights1D(bokehWeights, 2u, BokehDiskComponentElements, 0.886528f, 5.268909f, bokehXScale, true);
-		Bokeh::GetDiskImaginaryWeights1D(bokehWeights, 3u, BokehDiskComponentElements, 0.886528f, 5.268909f, bokehXScale, true);
-		Bokeh::GetDiskRealWeights1D(bokehWeights, 4u, BokehDiskComponentElements, 1.960518f, 1.558213f, bokehXScale, true);
-		Bokeh::GetDiskImaginaryWeights1D(bokehWeights, 5u, BokehDiskComponentElements, 1.960518f, 1.558213f, bokehXScale, true);
+		const float bokehXScale = 1.f / (float)BokehDiskWidth; // scale blur radius
+		Bokeh::GetDiskRealWeights1D(bokehWeights, 0u, BokehDiskComponentElements, 0.862325f, 1.624835f, bokehXScale, false);
+		Bokeh::GetDiskImaginaryWeights1D(bokehWeights, 1u, BokehDiskComponentElements, 0.862325f, 1.624835f, bokehXScale, false);
+		Bokeh::GetDiskRealWeights1D(bokehWeights, 2u, BokehDiskComponentElements, 0.886528f, 5.268909f, bokehXScale, false);
+		Bokeh::GetDiskImaginaryWeights1D(bokehWeights, 3u, BokehDiskComponentElements, 0.886528f, 5.268909f, bokehXScale, false);
+		Bokeh::GetDiskRealWeights1D(bokehWeights, 4u, BokehDiskComponentElements, 1.960518f, 1.558213f, bokehXScale, false);
+		Bokeh::GetDiskImaginaryWeights1D(bokehWeights, 5u, BokehDiskComponentElements, 1.960518f, 1.558213f, bokehXScale, false);
 
 		const float accuNear = Bokeh::GetDiskAccumulation(bokehWeights, 0u, 1u, BokehDiskComponentElements, 0.767583f, 1.862321f);
 		Bokeh::ApplyScaleToDisk(bokehWeights, 0u, 1u, BokehDiskComponentElements, 1.f / std::sqrt(accuNear));
@@ -125,8 +125,10 @@ namespace gfx
 	void DepthOfFieldPass::Execute(const GraphicsDevice & gfx) const
 	{
 		auto context = gfx.GetContext();
-		UINT screenWidth = (UINT)gfx.GetScreenWidth();
-		UINT screenHeight = (UINT)gfx.GetScreenHeight();
+		UINT screenWidth = gfx.GetScreenWidth();
+		UINT screenHeight = gfx.GetScreenHeight();
+		UINT dofTextureWidth = screenWidth >> 1u;
+		UINT dofTextureHeight = screenHeight >> 1u;
 
 		static DepthOfFieldCB depthOfFieldCB;
 
@@ -149,7 +151,7 @@ namespace gfx
 			m_pDepthOfFieldCB->Update(gfx, depthOfFieldCB);
 			context->CSSetConstantBuffers(RenderSlots::CS_FreeCB + 0u, 1u, m_pDepthOfFieldCB->GetD3DBuffer().GetAddressOf());
 
-			m_pDoFPrefilterKernel->Dispatch(gfx, screenWidth >> 1u, screenHeight >> 1u, 1u);
+			m_pDoFPrefilterKernel->Dispatch(gfx, dofTextureWidth, dofTextureHeight, 1u);
 
 			pass.UnbindSharedResources(gfx);
 		}
@@ -170,11 +172,11 @@ namespace gfx
 
 				// Input = CoC
 				// Outputs = real + imag
-				m_pDoFHorizontalFilterKernel->Dispatch(gfx, screenWidth >> 1u, screenHeight >> 1u, 1u);
+				m_pDoFHorizontalFilterKernel->Dispatch(gfx, dofTextureWidth, dofTextureHeight, 1u);
 
 				// Inputs = real + imag
 				// Output = combined texture
-				m_pDoFVerticalFilterAndCombineKernel->Dispatch(gfx, screenWidth >> 1u, screenHeight >> 1u, 1u);
+				m_pDoFVerticalFilterAndCombineKernel->Dispatch(gfx, dofTextureWidth, dofTextureHeight, 1u);
 			}
 
 			// Component #1
@@ -189,11 +191,11 @@ namespace gfx
 
 				// Input = CoC
 				// Outputs = real + imag
-				m_pDoFHorizontalFilterKernel->Dispatch(gfx, screenWidth >> 1u, screenHeight >> 1u, 1u);
+				m_pDoFHorizontalFilterKernel->Dispatch(gfx, dofTextureWidth, dofTextureHeight, 1u);
 
 				// Inputs = real + imag
 				// Output = combined texture
-				m_pDoFVerticalFilterAndCombineKernel->Dispatch(gfx, screenWidth >> 1u, screenHeight >> 1u, 1u);
+				m_pDoFVerticalFilterAndCombineKernel->Dispatch(gfx, dofTextureWidth, dofTextureHeight, 1u);
 			}
 
 			pass.UnbindSharedResources(gfx);
@@ -213,13 +215,13 @@ namespace gfx
 
 			// Input = CoC
 			// Outputs = real + imag
-			m_pDoFHorizontalFilterKernel->Dispatch(gfx, screenWidth >> 1u, screenHeight >> 1u, 1u);
+			m_pDoFHorizontalFilterKernel->Dispatch(gfx, dofTextureWidth, dofTextureHeight, 1u);
 
 			// Inputs = real + imag
 			// Output = combined texture
 			context->CSSetShaderResources(RenderSlots::CS_FreeSRV + 0u, 1u, m_pNullSRVs.data());
 			context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 2u, 1u, m_pDoFNear0->GetUAV().GetAddressOf(), nullptr);
-			m_pDoFVerticalFilterAndCombineKernel->Dispatch(gfx, screenWidth >> 1u, screenHeight >> 1u, 1u);
+			m_pDoFVerticalFilterAndCombineKernel->Dispatch(gfx, dofTextureWidth, dofTextureHeight, 1u);
 			context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 2u, 1u, m_pNullUAVs.data(), nullptr);
 
 			pass.UnbindSharedResources(gfx);
