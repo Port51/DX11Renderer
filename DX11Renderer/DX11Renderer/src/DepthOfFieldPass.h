@@ -10,6 +10,7 @@ namespace gfx
 	class VertexShader;
 	class ComputeKernel;
 	class RenderTexture;
+	class Sampler;
 
 	struct DepthOfFieldCB;
 
@@ -68,6 +69,8 @@ namespace gfx
 		std::shared_ptr<RenderTexture> m_pDoFNear0;
 		std::shared_ptr<RenderTexture> m_pDoFNear1;
 		std::shared_ptr<RenderTexture> m_pDoFNear2;
+
+		std::unique_ptr<Sampler> m_pClampedMaxSampler;
 
 		const UINT BokehDiskWidth = 31u;
 		const UINT BokehDiskComponentElements = BokehDiskWidth * 2u + 1u;

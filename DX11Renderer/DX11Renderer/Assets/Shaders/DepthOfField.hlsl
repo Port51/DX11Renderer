@@ -27,6 +27,8 @@ RWTexture2D<float4> UAVTex0 : register(u0);
 RWTexture2D<float4> UAVTex1 : register(u1);
 RWTexture2D<float4> UAVTex2 : register(u2);
 
+SamplerState BilinearSampler : register(s0);
+
 // Separable disk blur with groupshared cache
 #define DiscWidth 31u
 #define DiscKernelSize (DiscWidth * 2 + 1)
@@ -99,6 +101,7 @@ void HorizontalFilter(uint3 gtId : SV_GroupThreadID, uint3 tId : SV_DispatchThre
 
 	// Cache within group bounds
 	discCache0[gtId.x + DiscWidth] = SRVTex0[clampedId.xy];
+	//CameraColorIn.SampleLevel(BilinearSampler, uv, 0.f)
 
 	// Extra samples for data outside group bounds
 	if (gtId.x < DiscWidth)
@@ -224,6 +227,7 @@ void VerticalHexFilter(uint3 gtId : SV_GroupThreadID, uint3 tId : SV_DispatchThr
 {
 	uint2 resolution;
 	SRVTex0.GetDimensions(resolution.x, resolution.y);
+	float2 invResolution = 1.f / (float2)resolution;
 	uint2 clampedId = min(tId.xy, (uint2)resolution.xy);
 
 	// Cache within group bounds
@@ -265,6 +269,7 @@ void DiagonalHexFilter(uint3 tId : SV_DispatchThreadID)
 {
 	uint2 resolution;
 	SRVTex0.GetDimensions(resolution.x, resolution.y);
+	float2 invResolution = 1.f / (float2)resolution;
 
 	if (tId.x >= (uint) resolution.x || tId.y >= (uint) resolution.y)
 		return;
@@ -283,6 +288,7 @@ void DiagonalHexFilter(uint3 tId : SV_DispatchThreadID)
 		if (all(samplePt >= 0) && all(samplePt < resolution))
 		{
 			float4 color = SRVTex0[samplePt];
+			color = SRVTex0.SampleLevel(BilinearSampler, samplePt * invResolution, 0.f);
 			color *= color.a;
 			blurColor += color;
 			blurAccu += color.a;
@@ -299,6 +305,8 @@ void RhomboidHexFilter(uint3 tId : SV_DispatchThreadID)
 {
 	uint2 resolution;
 	SRVTex0.GetDimensions(resolution.x, resolution.y);
+	float2 invResolution = 1.f / (float2)resolution;
+	float2 uv = tId.xy * invResolution;
 
 	if (tId.x >= (uint) resolution.x || tId.y >= (uint) resolution.y)
 		return;
@@ -309,10 +317,7 @@ void RhomboidHexFilter(uint3 tId : SV_DispatchThreadID)
 
 	// Sample horizontal blur, with 30 degree rotation
 	float theta0 = -3.14159 / 6.0;
-	float2 filterDir0 = float2(cos(theta0), sin(theta0)); // Scale direction by CoC
-	//filterDir0.yx = filterDir0.xy;
-	//filterDir0.y = -filterDir0.y;
-	//filterDir0 = 1;
+	float2 filterDir0 = float2(cos(theta0), sin(theta0)) * invResolution; // Scale direction by CoC
 
 	float4 finalColor = 0.0;
 	
@@ -321,19 +326,17 @@ void RhomboidHexFilter(uint3 tId : SV_DispatchThreadID)
 	[unroll(HexWidth)]
 	for (uint i = 0; i < HexWidth; ++i)
 	{
-		// todo: instead, calculate width to sample based on closeness to edge of screen
-		int2 samplePt = tId.xy + filterDir0 * i;
-		if (all(samplePt >= 0) && all(samplePt < resolution))
+		float2 sampleUV0 = uv + filterDir0 * ((float)i + 0.5f);
 		{
-			float4 color = saturate(UAVTex0[samplePt]);
+			float4 color = saturate(SRVTex0.SampleLevel(BilinearSampler, sampleUV0, 0.f));
 			color *= color.a;
 			blurColor += color;
 			blurAccu += color.a;
 		}
-		samplePt = tId.xy + filterDir0 * float2(-1,1) * i;
-		if (all(samplePt >= 0) && all(samplePt < resolution))
+
+		float2 sampleUV1 = uv + float2(-filterDir0.x, filterDir0.y) * ((float)i + 0.5f);
 		{
-			float4 color = saturate(UAVTex0[samplePt]);
+			float4 color = saturate(SRVTex0.SampleLevel(BilinearSampler, sampleUV1, 0.f));
 			color *= color.a;
 			blurColor += color;
 			blurAccu += color.a;
@@ -343,9 +346,7 @@ void RhomboidHexFilter(uint3 tId : SV_DispatchThreadID)
 
 	// Sample diagonal blur, with 150 degree rotation
 	float theta1 = 3.14159 * -5.0 / 6.0;
-	float2 filterDir1 = float2(cos(theta1), sin(theta1)); // Scale direction by CoC
-	//filterDir1.yx = filterDir1.xy;
-	//filterDir1.y = -filterDir1.y;
+	float2 filterDir1 = float2(cos(theta1), sin(theta1)) * invResolution; // Scale direction by CoC
 
 	blurColor = 0.0;
 	blurAccu = 0.0;
@@ -353,14 +354,11 @@ void RhomboidHexFilter(uint3 tId : SV_DispatchThreadID)
 	for (uint i = 0; i < HexWidth; ++i)
 	{
 		// todo: instead, calculate width to sample based on closeness to edge of screen
-		int2 samplePt = tId.xy + filterDir1 * i;
-		if (all(samplePt >= 0) && all(samplePt < resolution))
-		{
-			float4 color = saturate(UAVTex1[samplePt]);
-			color *= color.a;
-			blurColor += color;
-			blurAccu += color.a;
-		}
+		float2 sampleUV = uv + filterDir1 * ((float)i + 0.5f);
+		float4 color = saturate(SRVTex1.SampleLevel(BilinearSampler, sampleUV, 0.f));
+		color *= color.a;
+		blurColor += color;
+		blurAccu += color.a;
 	}
 	finalColor.g += blurColor.g;// / max(blurAccu, 0.001);
 

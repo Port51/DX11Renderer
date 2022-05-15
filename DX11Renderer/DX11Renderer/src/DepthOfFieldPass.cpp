@@ -11,6 +11,7 @@
 #include "ConstantBuffer.h"
 #include "StructuredBuffer.h"
 #include "CommonCbuffers.h"
+#include "Sampler.h"
 
 namespace gfx
 {
@@ -83,6 +84,8 @@ namespace gfx
 
 		m_pDoFNear2 = std::make_shared<RenderTexture>(gfx, DXGI_FORMAT_R16G16B16A16_FLOAT);
 		m_pDoFNear2->Init(gfx.GetAdapter(), dofTextureWidth, dofTextureHeight);
+
+		m_pClampedMaxSampler = std::make_unique<Sampler>(gfx, D3D11_FILTER_MAXIMUM_MIN_MAG_MIP_LINEAR, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP);
 	}
 
 	void DepthOfFieldPass::SetupRenderPassDependencies(const GraphicsDevice & gfx, const RenderTexture& pDownsampledColor, const RenderTexture& pHiZBufferTarget, const RenderTexture& pCameraColor)
@@ -279,6 +282,9 @@ namespace gfx
 			const RenderPass& pass = GetSubPass(DoFFarBlurSubpass);
 			pass.BindSharedResources(gfx);
 
+			// todo: move to shared
+			context->CSSetSamplers(0u, 1u, m_pClampedMaxSampler->GetD3DSampler().GetAddressOf());
+
 			// Input = CoC
 			// Outputs = vert blur
 			m_pVerticalHexFilterKernel->Dispatch(gfx, dofTextureWidth, dofTextureHeight, 1u);
@@ -286,6 +292,10 @@ namespace gfx
 			// Inputs = CoC
 			// Output = diagonal blur
 			m_pDiagonalHexFilterKernel->Dispatch(gfx, dofTextureWidth, dofTextureHeight, 1u);
+
+			context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 0u, 2u, m_pNullUAVs.data(), nullptr);
+			context->CSSetShaderResources(RenderSlots::CS_FreeSRV + 0u, 1u, m_pDoFFar1->GetSRV().GetAddressOf());
+			context->CSSetShaderResources(RenderSlots::CS_FreeSRV + 1u, 1u, m_pDoFFar2->GetSRV().GetAddressOf());
 
 			// Inputs = vert, diag
 			// Output = composite
