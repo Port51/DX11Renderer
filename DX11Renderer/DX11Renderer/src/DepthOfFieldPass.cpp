@@ -28,9 +28,14 @@ namespace gfx
 
 		const char* computeShaderPath = "Assets\\Shaders\\DepthOfField.hlsl";
 		m_pDoFPrefilterKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, computeShaderPath, "Prefilter"));
+
 		m_pDoFHorizontalFilterKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, computeShaderPath, "HorizontalFilter"));
 		m_pDoFVerticalFilterAndCombineKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, computeShaderPath, "VerticalFilterAndCombine"));
 		m_pDoFCompositeKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, computeShaderPath, "Composite"));
+
+		m_pVerticalHexFilterKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, computeShaderPath, "VerticalHexFilter"));
+		m_pDiagonalHexFilterKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, computeShaderPath, "DiagonalHexFilter"));
+		m_pRhomboidHexFilterKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, computeShaderPath, "RhomboidHexFilter"));
 
 		m_pBokehDiskWeights = std::make_unique<StructuredBuffer<f32>>(gfx, D3D11_USAGE_DYNAMIC, D3D11_BIND_SHADER_RESOURCE, BokehDiskComponentElements * 6u);
 
@@ -164,7 +169,7 @@ namespace gfx
 			ExecuteDiskBokeh(gfx);
 			break;
 		case DepthOfFieldBokehType::HexBokeh:
-			ExecuteDiskBokeh(gfx);
+			ExecuteHexBokeh(gfx);
 			break;
 		default:
 			throw std::runtime_error("Unrecognized bokeh type " + m_bokehType);
@@ -263,6 +268,31 @@ namespace gfx
 
 	void DepthOfFieldPass::ExecuteHexBokeh(const GraphicsDevice & gfx) const
 	{
+		auto context = gfx.GetContext();
+		UINT screenWidth = gfx.GetScreenWidth();
+		UINT screenHeight = gfx.GetScreenHeight();
+		UINT dofTextureWidth = screenWidth >> 1u;
+		UINT dofTextureHeight = screenHeight >> 1u;
+
+		// DoF far blur pass
+		{
+			const RenderPass& pass = GetSubPass(DoFFarBlurSubpass);
+			pass.BindSharedResources(gfx);
+
+			// Input = CoC
+			// Outputs = vert blur
+			m_pVerticalHexFilterKernel->Dispatch(gfx, dofTextureWidth, dofTextureHeight, 1u);
+
+			// Inputs = CoC
+			// Output = diagonal blur
+			m_pDiagonalHexFilterKernel->Dispatch(gfx, dofTextureWidth, dofTextureHeight, 1u);
+
+			// Inputs = vert, diag
+			// Output = composite
+			m_pRhomboidHexFilterKernel->Dispatch(gfx, dofTextureWidth, dofTextureHeight, 1u);
+
+			pass.UnbindSharedResources(gfx);
+		}
 	}
 
 	void DepthOfFieldPass::SetOutputTarget(std::shared_ptr<Texture> pTarget)

@@ -42,10 +42,20 @@ namespace gfx
 		float m_farFadeWidth = 10.f;
 		float m_farIntensity = 1.0f;
 
+		// Shared
 		std::unique_ptr<ComputeKernel> m_pDoFPrefilterKernel;
+
+		// Disk bokeh
 		std::unique_ptr<ComputeKernel> m_pDoFHorizontalFilterKernel;
 		std::unique_ptr<ComputeKernel> m_pDoFVerticalFilterAndCombineKernel;
 		std::unique_ptr<ComputeKernel> m_pDoFCompositeKernel;
+
+		// Hex bokeh
+		std::unique_ptr<ComputeKernel> m_pVerticalHexFilterKernel;
+		std::unique_ptr<ComputeKernel> m_pDiagonalHexFilterKernel;
+		std::unique_ptr<ComputeKernel> m_pRhomboidHexFilterKernel;
+		//std::unique_ptr<ComputeKernel> m_pDoFVerticalFilterAndCombineKernel;
+		//std::unique_ptr<ComputeKernel> m_pDoFCompositeKernel;
 
 		std::unique_ptr<StructuredBuffer<float>> m_pBokehDiskWeights;
 		std::unique_ptr<ConstantBuffer<DepthOfFieldCB>> m_pDepthOfFieldCB;

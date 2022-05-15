@@ -27,7 +27,7 @@ RWTexture2D<float4> UAVTex0 : register(u0);
 RWTexture2D<float4> UAVTex1 : register(u1);
 RWTexture2D<float4> UAVTex2 : register(u2);
 
-// Separable gaussian blur with groupshared cache
+// Separable disk blur with groupshared cache
 #define DiscWidth 31u
 #define DiscKernelSize (DiscWidth * 2 + 1)
 groupshared float4 discCache0[64 + 2 * DiscWidth];
@@ -84,8 +84,8 @@ void Prefilter(uint3 tId : SV_DispatchThreadID)
 	UAVTex1[tId.xy] = float4(origColor * cocNear, cocNear);
 
 	// Debug output (makes a single pixel white)
-	//UAVTex0[tId.xy] = all(tId.xy == 200u);
-	//UAVTex1[tId.xy] = all(tId.xy == 200u);
+	UAVTex0[tId.xy] = all(tId.xy == 200u);
+	UAVTex1[tId.xy] = all(tId.xy == 200u);
 }
 
 // Input: SRVTex0
@@ -212,3 +212,158 @@ void Composite(uint3 tId : SV_DispatchThreadID)
 	float3 color = lerp(lerp(src, farCoC.rgb, farCoC.a), nearCoC.rgb, nearCoC.a);
 	UAVTex0[tId.xy] = float4(max(color, 0.f), src.a);
 }
+
+// Separable hex blur with groupshared cache
+#define HexWidth 31u
+groupshared float4 hexCache[64 + HexWidth];
+
+// Input: SRVTex0
+// Outputs: UAVTex0
+[numthreads(1, 64, 1)]
+void VerticalHexFilter(uint3 gtId : SV_GroupThreadID, uint3 tId : SV_DispatchThreadID)
+{
+	uint2 resolution;
+	SRVTex0.GetDimensions(resolution.x, resolution.y);
+	uint2 clampedId = min(tId.xy, (uint2)resolution.xy);
+
+	// Cache within group bounds
+	hexCache[gtId.y] = SRVTex0[clampedId.xy];
+
+	// Extra samples for data outside group bounds
+	if (gtId.y >= 64u - DiscWidth)
+	{
+		int srcY = min(resolution.y - 1u, clampedId.y + HexWidth);
+		hexCache[gtId.y + HexWidth] = SRVTex0[uint2(clampedId.x, srcY)];
+	}
+
+	GroupMemoryBarrierWithGroupSync();
+
+	if (tId.x >= (uint) resolution.x || tId.y >= (uint) resolution.y)
+		return;
+
+	// Sum of complex numbers is done component-wise
+	// P + Q = (Pr + Qr) + (Pi + Qi)i
+	float4 blurColor = 0.0;
+	float blurAccu = 0.0;
+	[unroll(HexWidth)]
+	for (uint i = 0; i < HexWidth; ++i)
+	{
+		// Multiplication of real with complex number
+		float4 color = hexCache[i + gtId.y];
+		color *= color.a;
+		blurColor += color;
+		blurAccu += color.a;
+	}
+
+	UAVTex0[tId.xy] = blurColor / blurAccu;
+}
+
+// Input: SRVTex0
+// Outputs: UAVTex1
+[numthreads(16, 16, 1)]
+void DiagonalHexFilter(uint3 tId : SV_DispatchThreadID)
+{
+	uint2 resolution;
+	SRVTex0.GetDimensions(resolution.x, resolution.y);
+
+	if (tId.x >= (uint) resolution.x || tId.y >= (uint) resolution.y)
+		return;
+
+	// todo: precalculate!
+	float theta = -3.14159 / 6.0;
+	float2 filterDir = float2(cos(theta), sin(theta));
+	
+	float4 blurColor = 0.0;
+	float blurAccu = 0.0;
+	[unroll(HexWidth)]
+	for (uint i = 0; i < HexWidth; ++i)
+	{
+		// todo: instead, calculate width to sample based on closeness to edge of screen
+		int2 samplePt = tId.xy + filterDir * i;
+		if (all(samplePt >= 0) && all(samplePt < resolution))
+		{
+			float4 color = SRVTex0[samplePt];
+			color *= color.a;
+			blurColor += color;
+			blurAccu += color.a;
+		}
+	}
+
+	UAVTex1[tId.xy] = blurColor / blurAccu;
+}
+
+// Input: UAVTex0, UAVTex1
+// Outputs: UAVTex2
+[numthreads(16, 16, 1)]
+void RhomboidHexFilter(uint3 tId : SV_DispatchThreadID)
+{
+	uint2 resolution;
+	SRVTex0.GetDimensions(resolution.x, resolution.y);
+
+	if (tId.x >= (uint) resolution.x || tId.y >= (uint) resolution.y)
+		return;
+
+	// Determine blur radius
+	float coc0 = saturate(UAVTex0[tId.xy].a);
+	float coc1 = saturate(UAVTex1[tId.xy].a);
+
+	// Sample horizontal blur, with 30 degree rotation
+	float theta0 = -3.14159 / 6.0;
+	float2 filterDir0 = float2(cos(theta0), sin(theta0)); // Scale direction by CoC
+	//filterDir0.yx = filterDir0.xy;
+	//filterDir0.y = -filterDir0.y;
+	//filterDir0 = 1;
+
+	float4 finalColor = 0.0;
+	
+	float4 blurColor = 0.0;
+	float blurAccu = 0.0;
+	[unroll(HexWidth)]
+	for (uint i = 0; i < HexWidth; ++i)
+	{
+		// todo: instead, calculate width to sample based on closeness to edge of screen
+		int2 samplePt = tId.xy + filterDir0 * i;
+		if (all(samplePt >= 0) && all(samplePt < resolution))
+		{
+			float4 color = saturate(UAVTex0[samplePt]);
+			color *= color.a;
+			blurColor += color;
+			blurAccu += color.a;
+		}
+		samplePt = tId.xy + filterDir0 * float2(-1,1) * i;
+		if (all(samplePt >= 0) && all(samplePt < resolution))
+		{
+			float4 color = saturate(UAVTex0[samplePt]);
+			color *= color.a;
+			blurColor += color;
+			blurAccu += color.a;
+		}
+	}
+	finalColor.r += blurColor.r;// / max(blurAccu, 0.001);
+
+	// Sample diagonal blur, with 150 degree rotation
+	float theta1 = 3.14159 * -5.0 / 6.0;
+	float2 filterDir1 = float2(cos(theta1), sin(theta1)); // Scale direction by CoC
+	//filterDir1.yx = filterDir1.xy;
+	//filterDir1.y = -filterDir1.y;
+
+	blurColor = 0.0;
+	blurAccu = 0.0;
+	[unroll(HexWidth)]
+	for (uint i = 0; i < HexWidth; ++i)
+	{
+		// todo: instead, calculate width to sample based on closeness to edge of screen
+		int2 samplePt = tId.xy + filterDir1 * i;
+		if (all(samplePt >= 0) && all(samplePt < resolution))
+		{
+			float4 color = saturate(UAVTex1[samplePt]);
+			color *= color.a;
+			blurColor += color;
+			blurAccu += color.a;
+		}
+	}
+	finalColor.g += blurColor.g;// / max(blurAccu, 0.001);
+
+	UAVTex2[tId.xy] = finalColor;// *0.5;
+}
+

@@ -649,7 +649,7 @@
       <FileType>Document</FileType>
     </FxCompile>
     <FxCompile Include="Assets\Shaders\DepthOfField.hlsl">
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">HorizontalFilter</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">VerticalHexFilter</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)Assets/Built/Shaders/%(Filename).cso</ObjectFileOutput>
