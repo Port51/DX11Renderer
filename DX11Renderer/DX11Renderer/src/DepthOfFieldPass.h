@@ -21,13 +21,20 @@ namespace gfx
 	class DepthOfFieldPass : public RenderPass
 	{
 	public:
-		DepthOfFieldPass(const GraphicsDevice& gfx);
+		enum DepthOfFieldBokehType { DiskBokeh, HexBokeh };
 	public:
-		void Execute(const GraphicsDevice& gfx) const override;
+		DepthOfFieldPass(const GraphicsDevice& gfx, const DepthOfFieldBokehType bokehType);
+	public:
 		void SetOutputTarget(std::shared_ptr<Texture> pTarget);
 		void SetupRenderPassDependencies(const GraphicsDevice& gfx, const RenderTexture& pDownsampledColor, const RenderTexture& pHiZBufferTarget, const RenderTexture& pCameraColor);
 		void DrawImguiControls(const GraphicsDevice& gfx) override;
+		void Execute(const GraphicsDevice& gfx) const override;
 	private:
+		void ExecuteDiskBokeh(const GraphicsDevice& gfx) const;
+		void ExecuteHexBokeh(const GraphicsDevice& gfx) const;
+	private:
+		DepthOfFieldBokehType m_bokehType;
+
 		float m_focusDistance = 17.5f;
 		float m_focusWidth = 1.f;
 		float m_nearFadeWidth = 5.f;
@@ -42,6 +49,7 @@ namespace gfx
 
 		std::unique_ptr<StructuredBuffer<float>> m_pBokehDiskWeights;
 		std::unique_ptr<ConstantBuffer<DepthOfFieldCB>> m_pDepthOfFieldCB;
+		std::unique_ptr<DepthOfFieldCB> m_depthOfFieldCB;
 
 		std::shared_ptr<RenderTexture> m_pDoFFar0;
 		std::shared_ptr<RenderTexture> m_pDoFFar1;

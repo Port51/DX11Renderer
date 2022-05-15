@@ -163,7 +163,7 @@ namespace gfx
 		CreateRenderPass(RenderPassType::ClusteredLightingRenderPass);
 		CreateRenderPass(RenderPassType::OpaqueRenderPass);
 		CreateRenderPass(RenderPassType::CreateDownsampledX2Texture);
-		CreateRenderPass(RenderPassType::DoFPass, std::move(std::make_unique<DepthOfFieldPass>(gfx)));
+		CreateRenderPass(RenderPassType::DoFPass, std::move(std::make_unique<DepthOfFieldPass>(gfx, DepthOfFieldPass::DepthOfFieldBokehType::DiskBokeh)));
 		CreateRenderPass(RenderPassType::BloomPrefilterSubpass);
 		CreateRenderPass(RenderPassType::BloomSeparableBlurSubpass);
 		CreateRenderPass(RenderPassType::BloomCombineSubpass);

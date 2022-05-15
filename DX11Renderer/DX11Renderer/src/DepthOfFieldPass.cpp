@@ -15,8 +15,8 @@
 namespace gfx
 {
 
-	DepthOfFieldPass::DepthOfFieldPass(const GraphicsDevice & gfx)
-		: RenderPass(RenderPassType::DoFPass)
+	DepthOfFieldPass::DepthOfFieldPass(const GraphicsDevice & gfx, DepthOfFieldBokehType bokehType)
+		: RenderPass(RenderPassType::DoFPass), m_bokehType(bokehType)
 	{
 		UINT dofTextureWidth = gfx.GetScreenWidth() >> 1u;
 		UINT dofTextureHeight = gfx.GetScreenHeight() >> 1u;
@@ -52,6 +52,8 @@ namespace gfx
 		const float accuFar1 = Bokeh::GetDiskAccumulation(bokehWeights, 1u, 1u, BokehDiskComponentElements, 0.513282f, 4.561110f);
 		const float farScale = 1.f / std::pow(accuFar0 + accuFar1, 0.5f);
 		Bokeh::ApplyScaleToDisk(bokehWeights, 1u, 2u, BokehDiskComponentElements, farScale);
+
+		m_depthOfFieldCB = std::make_unique<DepthOfFieldCB>();
 
 		m_pDepthOfFieldCB = std::make_unique<ConstantBuffer<DepthOfFieldCB>>(gfx, D3D11_USAGE_DYNAMIC);
 		m_pBokehDiskWeights->Update(gfx, bokehWeights, bokehWeights.size());
@@ -130,31 +132,52 @@ namespace gfx
 		UINT dofTextureWidth = screenWidth >> 1u;
 		UINT dofTextureHeight = screenHeight >> 1u;
 
-		static DepthOfFieldCB depthOfFieldCB;
+		// Run same prefilter pass for all bokehs
 
 		// Precalculate CoC factors
 		const float limitedNearFadeWidth = std::max(0.01f, m_nearFadeWidth);
-		depthOfFieldCB.nearCoCScale = -1.f / limitedNearFadeWidth;
-		depthOfFieldCB.nearCoCBias = (m_focusDistance - m_focusWidth) / limitedNearFadeWidth;
-		depthOfFieldCB.nearCoCIntensity = m_nearIntensity;
-		
+		m_depthOfFieldCB->nearCoCScale = -1.f / limitedNearFadeWidth;
+		m_depthOfFieldCB->nearCoCBias = (m_focusDistance - m_focusWidth) / limitedNearFadeWidth;
+		m_depthOfFieldCB->nearCoCIntensity = m_nearIntensity;
+
 		const float limitedFarFadeWidth = std::max(0.01f, m_farFadeWidth);
-		depthOfFieldCB.farCoCScale = 1.f / limitedFarFadeWidth;
-		depthOfFieldCB.farCoCBias = -(m_focusDistance + m_focusWidth) / limitedFarFadeWidth;
-		depthOfFieldCB.farCoCIntensity = m_farIntensity;
+		m_depthOfFieldCB->farCoCScale = 1.f / limitedFarFadeWidth;
+		m_depthOfFieldCB->farCoCBias = -(m_focusDistance + m_focusWidth) / limitedFarFadeWidth;
+		m_depthOfFieldCB->farCoCIntensity = m_farIntensity;
 
 		// DoF prefilter
 		{
 			const RenderPass& pass = GetSubPass(DoFPrefilterSubpass);
 			pass.BindSharedResources(gfx);
 
-			m_pDepthOfFieldCB->Update(gfx, depthOfFieldCB);
+			m_pDepthOfFieldCB->Update(gfx, *m_depthOfFieldCB);
 			context->CSSetConstantBuffers(RenderSlots::CS_FreeCB + 0u, 1u, m_pDepthOfFieldCB->GetD3DBuffer().GetAddressOf());
 
 			m_pDoFPrefilterKernel->Dispatch(gfx, dofTextureWidth, dofTextureHeight, 1u);
 
 			pass.UnbindSharedResources(gfx);
 		}
+
+		switch (m_bokehType)
+		{
+		case DepthOfFieldBokehType::DiskBokeh:
+			ExecuteDiskBokeh(gfx);
+			break;
+		case DepthOfFieldBokehType::HexBokeh:
+			ExecuteDiskBokeh(gfx);
+			break;
+		default:
+			throw std::runtime_error("Unrecognized bokeh type " + m_bokehType);
+		}
+	}
+
+	void DepthOfFieldPass::ExecuteDiskBokeh(const GraphicsDevice & gfx) const
+	{
+		auto context = gfx.GetContext();
+		UINT screenWidth = gfx.GetScreenWidth();
+		UINT screenHeight = gfx.GetScreenHeight();
+		UINT dofTextureWidth = screenWidth >> 1u;
+		UINT dofTextureHeight = screenHeight >> 1u;
 
 		// DoF far blur pass
 		{
@@ -163,11 +186,11 @@ namespace gfx
 
 			// Component #0
 			{
-				depthOfFieldCB.weightOffset = BokehDiskComponentElements * 2u;
-				depthOfFieldCB.verticalPassAddFactor = 0.f;
-				depthOfFieldCB.combineRealFactor = 0.411259f;
-				depthOfFieldCB.combineImaginaryFactor = -0.548794f;
-				m_pDepthOfFieldCB->Update(gfx, depthOfFieldCB);
+				m_depthOfFieldCB->weightOffset = BokehDiskComponentElements * 2u;
+				m_depthOfFieldCB->verticalPassAddFactor = 0.f;
+				m_depthOfFieldCB->combineRealFactor = 0.411259f;
+				m_depthOfFieldCB->combineImaginaryFactor = -0.548794f;
+				m_pDepthOfFieldCB->Update(gfx, *m_depthOfFieldCB);
 				context->CSSetConstantBuffers(RenderSlots::CS_FreeCB + 0u, 1u, m_pDepthOfFieldCB->GetD3DBuffer().GetAddressOf());
 
 				// Input = CoC
@@ -182,11 +205,11 @@ namespace gfx
 			// Component #1
 			// todo: don't set these again!
 			{
-				depthOfFieldCB.weightOffset = BokehDiskComponentElements * 4u;
-				depthOfFieldCB.verticalPassAddFactor = 1.f;
-				depthOfFieldCB.combineRealFactor = 0.513282f;
-				depthOfFieldCB.combineImaginaryFactor = 4.561110f;
-				m_pDepthOfFieldCB->Update(gfx, depthOfFieldCB);
+				m_depthOfFieldCB->weightOffset = BokehDiskComponentElements * 4u;
+				m_depthOfFieldCB->verticalPassAddFactor = 1.f;
+				m_depthOfFieldCB->combineRealFactor = 0.513282f;
+				m_depthOfFieldCB->combineImaginaryFactor = 4.561110f;
+				m_pDepthOfFieldCB->Update(gfx, *m_depthOfFieldCB);
 				context->CSSetConstantBuffers(RenderSlots::CS_FreeCB + 0u, 1u, m_pDepthOfFieldCB->GetD3DBuffer().GetAddressOf());
 
 				// Input = CoC
@@ -206,11 +229,11 @@ namespace gfx
 			const RenderPass& pass = GetSubPass(DoFNearBlurSubpass);
 			pass.BindSharedResources(gfx);
 
-			depthOfFieldCB.weightOffset = 0u;
-			depthOfFieldCB.verticalPassAddFactor = 0.f;
-			depthOfFieldCB.combineRealFactor = 0.767583f;
-			depthOfFieldCB.combineImaginaryFactor = 1.862321f;
-			m_pDepthOfFieldCB->Update(gfx, depthOfFieldCB);
+			m_depthOfFieldCB->weightOffset = 0u;
+			m_depthOfFieldCB->verticalPassAddFactor = 0.f;
+			m_depthOfFieldCB->combineRealFactor = 0.767583f;
+			m_depthOfFieldCB->combineImaginaryFactor = 1.862321f;
+			m_pDepthOfFieldCB->Update(gfx, *m_depthOfFieldCB);
 			context->CSSetConstantBuffers(RenderSlots::CS_FreeCB + 0u, 1u, m_pDepthOfFieldCB->GetD3DBuffer().GetAddressOf());
 
 			// Input = CoC
@@ -236,6 +259,10 @@ namespace gfx
 
 			pass.UnbindSharedResources(gfx);
 		}
+	}
+
+	void DepthOfFieldPass::ExecuteHexBokeh(const GraphicsDevice & gfx) const
+	{
 	}
 
 	void DepthOfFieldPass::SetOutputTarget(std::shared_ptr<Texture> pTarget)
