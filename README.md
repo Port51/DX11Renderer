@@ -2,17 +2,17 @@
 
 I was mainly inspired by the Rise of the Tomb Raider renderer, shown here: https://www.elopezr.com/the-rendering-of-rise-of-the-tomb-raider/
 
-Main features:
+## Features:
 * Core
     *	Tiled deferred lighting
     *	Clustered forward lighting
     *	Dynamic shadow atlas
         *	Supports 1 cascaded directional light
-        *	Spot and point lights are only limited by atlas size
+        *	Number of spot and point lights is only limited by atlas size
     *	PCF shadow filtering
 * Post effects
     *	Bloom w/ separable gaussian filter
-    *	Depth of field w/ separable disc filters
+    *	Depth of field w/ separable disk filter
     *	SSR methods:
         * 3D raymarch (for testing)
         * Nonconservative DDA
@@ -50,13 +50,13 @@ As an optimization, I checked the Hi-Z buffer for each cluster. If the maximum d
 
 ## Dynamic Shadow Atlas
 
-(todo)
+Each frame, lights are culled against the camera frustum. Shadowed lights in view are then assigned a section of the shadow atlas to render to.
 
 ## Bloom
 
-(todo: finish)
+(todo: pictures!)
 
-Instead of multiple up and down-sampling passes, I used a compute shader and calculated a separable gaussian blur in 2 passes (horizontal and vertical).
+For the blur, instead of multiple up and down-sampling passes, I used a compute shader and calculated a separable gaussian blur in 2 passes (horizontal and vertical). Each pass caches texture samples in groupshared memory to reduce the cost of texture accesses.
 
 ## Depth of Field
 
