@@ -32,7 +32,7 @@
 #include "Sampler.h"
 #include "RenderStats.h"
 #include "RenderConstants.h"
-#include "Gaussian.h"
+#include "BloomPass.h"
 
 namespace gfx
 {
@@ -97,12 +97,6 @@ namespace gfx
 		m_pDownsampledColor = std::make_shared<RenderTexture>(gfx);
 		m_pDownsampledColor->Init(gfx.GetAdapter(), screenWidth / 2, screenHeight / 2);
 
-		m_pBloomTarget0 = std::make_shared<RenderTexture>(gfx);
-		m_pBloomTarget0->Init(gfx.GetAdapter(), screenWidth / 2, screenHeight / 2);
-
-		m_pBloomTarget1 = std::make_shared<RenderTexture>(gfx);
-		m_pBloomTarget1->Init(gfx.GetAdapter(), screenWidth / 2, screenHeight / 2);
-
 		m_pDebugTiledLighting = std::make_shared<RenderTexture>(gfx);
 		m_pDebugTiledLighting->Init(gfx.GetAdapter(), screenWidth, screenHeight);
 
@@ -120,19 +114,11 @@ namespace gfx
 		m_pPerCameraCB = std::make_unique<ConstantBuffer<PerCameraCB>>(gfx, D3D11_USAGE_DYNAMIC);
 		m_pHiZCreationCB = std::make_unique<ConstantBuffer<HiZCreationCB>>(gfx, D3D11_USAGE_DYNAMIC);
 		m_pClusteredLightingCB = std::make_unique<ConstantBuffer<ClusteredLightingCB>>(gfx, D3D11_USAGE_DYNAMIC);
-		m_pBloomCB = std::make_unique<ConstantBuffer<BloomCB>>(gfx, D3D11_USAGE_DYNAMIC);
-		m_pBloomGaussianWeights = std::make_unique<StructuredBuffer<f32>>(gfx, D3D11_USAGE_DYNAMIC, D3D11_BIND_SHADER_RESOURCE, BloomBlurWidth * 2u + 1u);
 
 		m_pFXAA_CB = std::make_unique<ConstantBuffer<FXAA_CB>>(gfx, D3D11_USAGE_DYNAMIC);
 		m_pSSR_CB = std::make_unique<ConstantBuffer<SSR_CB>>(gfx, D3D11_USAGE_DYNAMIC);
 		m_pSSR_DebugData = std::make_unique<StructuredBuffer<int>>(gfx, D3D11_USAGE_DEFAULT, D3D11_BIND_UNORDERED_ACCESS, 10u);
 		m_pDitherCB = std::make_unique<ConstantBuffer<DitherCB>>(gfx, D3D11_USAGE_DYNAMIC);
-
-		// todo: make this a setting that can be changed
-		std::vector<f32> blurWeights;
-		blurWeights.resize(BloomBlurWidth * 2u + 1u);
-		Gaussian::GetGaussianWeights1D(blurWeights, 5.f);
-		m_pBloomGaussianWeights->Update(gfx, blurWeights, blurWeights.size());
 
 		//
 		// Compute shaders
@@ -142,10 +128,6 @@ namespace gfx
 		m_pTiledLightingKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, "Assets\\Built\\Shaders\\TiledLightingCompute.cso"));
 		m_pClusteredLightingKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, "Assets\\Built\\Shaders\\ClusteredLightingCompute.cso"));
 		m_pBilinearDownsampleKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, "Assets\\Built\\Shaders\\BilinearDownsample.cso"));
-		m_pBloomPrefilterKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, "Assets\\Shaders\\Bloom.hlsl", "Prefilter"));
-		m_pBloomHorizontalBlurKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, "Assets\\Shaders\\Bloom.hlsl", "HorizontalGaussian"));
-		m_pBloomVerticalBlurKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, "Assets\\Shaders\\Bloom.hlsl", "VerticalGaussian"));
-		m_pBloomCombineKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, "Assets\\Shaders\\Bloom.hlsl", "Combine"));
 		m_pSSRKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, "Assets\\Built\\Shaders\\SSR.cso"));
 		m_pFXAAKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, "Assets\\Built\\Shaders\\FXAA.cso"));
 		m_pDitherKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, "Assets\\Built\\Shaders\\Dither.cso"));
@@ -163,10 +145,8 @@ namespace gfx
 		CreateRenderPass(RenderPassType::ClusteredLightingRenderPass);
 		CreateRenderPass(RenderPassType::OpaqueRenderPass);
 		CreateRenderPass(RenderPassType::CreateDownsampledX2Texture);
-		CreateRenderPass(RenderPassType::DoFPass, std::move(std::make_unique<DepthOfFieldPass>(gfx, DepthOfFieldPass::DepthOfFieldBokehType::HexBokeh)));
-		CreateRenderPass(RenderPassType::BloomPrefilterSubpass);
-		CreateRenderPass(RenderPassType::BloomSeparableBlurSubpass);
-		CreateRenderPass(RenderPassType::BloomCombineSubpass);
+		CreateRenderPass(RenderPassType::DoFPass, std::move(std::make_unique<DepthOfFieldPass>(gfx, DepthOfFieldPass::DepthOfFieldBokehType::DiskBokeh)));
+		CreateRenderPass(RenderPassType::BloomRenderPass, std::move(std::make_unique<BloomPass>(gfx)));
 		CreateRenderPass(RenderPassType::SSRRenderPass);
 		CreateRenderPass(RenderPassType::FXAARenderPass);
 		CreateRenderPass(RenderPassType::DitherRenderPass);
@@ -174,11 +154,6 @@ namespace gfx
 
 		CreateRenderPass(RenderPassType::FinalBlitRenderPass,
 			std::move(std::make_unique<FullscreenPass>(gfx, RenderPassType::FinalBlitRenderPass, "Assets\\Built\\Shaders\\BlitPS.cso")));
-
-		// Used for mapping from material pass hashes to render passes
-		m_pRenderPassesByHash.emplace(RenderPass::GetHash("PerCameraPass"), RenderPassType::PerCameraRenderPass);
-		m_pRenderPassesByHash.emplace(RenderPass::GetHash("ShadowPass"), RenderPassType::ShadowRenderPass);
-		m_pRenderPassesByHash.emplace(RenderPass::GetHash("ShadowPass"), RenderPassType::ShadowRenderPass);
 
 		SetupRenderPassDependencies(gfx);
 	}
@@ -199,8 +174,6 @@ namespace gfx
 		m_pDiffuseLighting->Release();
 		m_pSpecularLighting->Release();
 		m_pDownsampledColor->Release();
-		m_pBloomTarget0->Release();
-		m_pBloomTarget1->Release();
 		m_pDitherTexture->Release();
 
 		m_pClampedBilinearSampler->Release();
@@ -212,8 +185,6 @@ namespace gfx
 		m_pHiZCreationCB->Release();
 		m_pPerCameraCB->Release();
 		m_pPerFrameCB->Release();
-		m_pBloomCB->Release();
-		m_pBloomGaussianWeights->Release();
 		m_pSSR_CB->Release();
 		m_pTransformationCB->Release();
 
@@ -301,19 +272,7 @@ namespace gfx
 
 		static_cast<DepthOfFieldPass&>(GetRenderPass(RenderPassType::DoFPass)).SetupRenderPassDependencies(gfx, *m_pDownsampledColor, *m_pHiZBufferTarget, *m_pCameraColor0);
 
-		GetRenderPass(RenderPassType::BloomPrefilterSubpass).
-			ClearBinds()
-			.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, m_pDownsampledColor->GetSRV())
-			.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, m_pBloomTarget0->GetUAV());
-
-		GetRenderPass(RenderPassType::BloomSeparableBlurSubpass).
-			ClearBinds()
-			.CSSetSRV(RenderSlots::CS_FreeSRV + 1u, m_pBloomGaussianWeights->GetSRV());
-
-		GetRenderPass(RenderPassType::BloomCombineSubpass).
-			ClearBinds()
-			.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, m_pBloomTarget0->GetSRV())
-			.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, m_pCameraColor0->GetUAV());
+		static_cast<BloomPass&>(GetRenderPass(RenderPassType::BloomRenderPass)).SetupRenderPassDependencies(gfx, *m_pDownsampledColor, *m_pCameraColor0);
 
 		if (IsFeatureEnabled(RendererFeature::HZBSSR))
 		{
@@ -393,6 +352,8 @@ namespace gfx
 		auto context = gfx.GetContext();
 		UINT screenWidth = gfx.GetScreenWidth();
 		UINT screenHeight = gfx.GetScreenHeight();
+		UINT halfScreenWidth = gfx.GetScreenWidth() >> 1u;
+		UINT halfScreenHeight = gfx.GetScreenHeight() >> 1u;
 
 		gfx.GetRenderStats().StartFrame();
 		context->ClearState();
@@ -617,58 +578,7 @@ namespace gfx
 
 		if (m_viewIdx == RendererView::Final && IsFeatureEnabled(RendererFeature::Bloom))
 		{
-			// Bloom prefilter
-			{
-				const RenderPass& pass = GetRenderPass(BloomPrefilterSubpass);
-				pass.BindSharedResources(gfx);
-
-				static BloomCB bloomCB;
-				bloomCB.resolutionSrcDst = { screenWidth, screenHeight, screenWidth, screenHeight };
-				m_pBloomCB->Update(gfx, bloomCB);
-
-				m_pBloomPrefilterKernel->Dispatch(gfx, screenWidth >> 1u, screenHeight >> 1u, 1u);
-
-				pass.UnbindSharedResources(gfx);
-			}
-
-			// Bloom blur (x2 sub-passes)
-			{
-				const RenderPass& pass = GetRenderPass(BloomSeparableBlurSubpass);
-				pass.BindSharedResources(gfx);
-
-				static BloomCB bloomCB;
-				bloomCB.resolutionSrcDst = { screenWidth, screenHeight, screenWidth, screenHeight };
-				m_pBloomCB->Update(gfx, bloomCB);
-
-				context->CSSetShaderResources(RenderSlots::CS_FreeSRV + 0u, 1u, m_pBloomTarget0->GetSRV().GetAddressOf());
-				context->CSSetShaderResources(RenderSlots::CS_FreeSRV + 1u, 1u, m_pBloomGaussianWeights->GetSRV().GetAddressOf());
-				context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 0u, 1u, m_pBloomTarget1->GetUAV().GetAddressOf(), nullptr);
-				m_pBloomHorizontalBlurKernel->Dispatch(gfx, screenWidth >> 1u, screenHeight >> 1u, 1u);
-				context->CSSetShaderResources(RenderSlots::CS_FreeSRV + 0u, 1u, pass.m_pNullSRVs.data());
-				context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 0u, 1u, pass.m_pNullUAVs.data(), nullptr);
-
-				context->CSSetShaderResources(RenderSlots::CS_FreeSRV + 0u, 1u, m_pBloomTarget1->GetSRV().GetAddressOf());
-				context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 0u, 1u, m_pBloomTarget0->GetUAV().GetAddressOf(), nullptr);
-				m_pBloomVerticalBlurKernel->Dispatch(gfx, screenWidth >> 1u, screenHeight >> 1u, 1u);
-				context->CSSetShaderResources(RenderSlots::CS_FreeSRV + 0u, 1u, pass.m_pNullSRVs.data());
-				context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 0u, 1u, pass.m_pNullUAVs.data(), nullptr);
-
-				pass.UnbindSharedResources(gfx);
-			}
-
-			// Bloom combine
-			{
-				const RenderPass& pass = GetRenderPass(BloomCombineSubpass);
-				pass.BindSharedResources(gfx);
-
-				static BloomCB bloomCB;
-				bloomCB.resolutionSrcDst = { screenWidth, screenHeight, screenWidth, screenHeight };
-				m_pBloomCB->Update(gfx, bloomCB);
-
-				m_pBloomCombineKernel->Dispatch(gfx, screenWidth, screenHeight, 1u);
-
-				pass.UnbindSharedResources(gfx);
-			}
+			GetRenderPass(BloomRenderPass).Execute(gfx);
 		}
 
 		// SSR pass
@@ -842,7 +752,7 @@ namespace gfx
 	const RenderPass& Renderer::CreateRenderPass(const RenderPassType pass)
 	{
 		assert(m_pRenderPasses.find(pass) == m_pRenderPasses.end() && "RenderPass cannot be created twice!");
-		m_pRenderPasses.emplace(pass, std::make_unique<RenderPass>(pass));
+		m_pRenderPasses.emplace(pass, std::move(std::make_unique<RenderPass>(pass)));
 		return *m_pRenderPasses[pass].get();
 	}
 

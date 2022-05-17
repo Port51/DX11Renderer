@@ -22,6 +22,7 @@ namespace gfx
 		DoFFarBlurSubpass,
 		DoFNearBlurSubpass,
 		DoFCompositeSubpass,
+		BloomRenderPass,
 		BloomPrefilterSubpass,
 		BloomSeparableBlurSubpass,
 		BloomCombineSubpass,

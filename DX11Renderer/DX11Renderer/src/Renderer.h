@@ -61,7 +61,6 @@ namespace gfx
 
 	private:
 		std::unordered_map<RenderPassType, std::unique_ptr<RenderPass>> m_pRenderPasses;
-		std::unordered_map<std::size_t, RenderPassType> m_pRenderPassesByHash;
 
 		std::shared_ptr<Sampler> m_pClampedBilinearSampler;
 
@@ -69,8 +68,6 @@ namespace gfx
 		std::shared_ptr<RenderTexture> m_pSpecularLighting;
 		std::shared_ptr<RenderTexture> m_pDiffuseLighting;
 		std::shared_ptr<RenderTexture> m_pHiZBufferTarget;
-		std::shared_ptr<RenderTexture> m_pBloomTarget0;
-		std::shared_ptr<RenderTexture> m_pBloomTarget1;
 
 		// Debug views
 		std::shared_ptr<RenderTexture> m_pDebugTiledLighting;
@@ -87,10 +84,6 @@ namespace gfx
 		std::unique_ptr<ComputeKernel> m_pTiledLightingKernel;
 		std::unique_ptr<ComputeKernel> m_pClusteredLightingKernel;
 		std::unique_ptr<ComputeKernel> m_pBilinearDownsampleKernel;
-		std::unique_ptr<ComputeKernel> m_pBloomPrefilterKernel;
-		std::unique_ptr<ComputeKernel> m_pBloomHorizontalBlurKernel;
-		std::unique_ptr<ComputeKernel> m_pBloomVerticalBlurKernel;
-		std::unique_ptr<ComputeKernel> m_pBloomCombineKernel;
 		std::unique_ptr<ComputeKernel> m_pSSRKernel;
 		std::unique_ptr<ComputeKernel> m_pFXAAKernel;
 		std::unique_ptr<ComputeKernel> m_pDitherKernel;
@@ -101,8 +94,6 @@ namespace gfx
 		std::unique_ptr<ConstantBuffer<PerCameraCB>> m_pPerCameraCB;
 		std::unique_ptr<ConstantBuffer<HiZCreationCB>> m_pHiZCreationCB;
 		std::unique_ptr<ConstantBuffer<ClusteredLightingCB>> m_pClusteredLightingCB;
-		std::unique_ptr<ConstantBuffer<BloomCB>> m_pBloomCB;
-		std::unique_ptr<StructuredBuffer<float>> m_pBloomGaussianWeights;
 		std::unique_ptr<ConstantBuffer<FXAA_CB>> m_pFXAA_CB;
 		std::unique_ptr<ConstantBuffer<SSR_CB>> m_pSSR_CB;
 		std::unique_ptr<StructuredBuffer<int>> m_pSSR_DebugData;
@@ -121,7 +112,5 @@ namespace gfx
 		RendererView m_viewIdx = RendererView::Final;
 		std::vector<bool> m_rendererFeatureEnabled;
 		int m_pixelIteration;
-
-		const UINT BloomBlurWidth = 15u;
 	};
 }

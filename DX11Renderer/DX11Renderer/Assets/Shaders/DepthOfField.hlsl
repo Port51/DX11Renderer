@@ -86,8 +86,8 @@ void Prefilter(uint3 tId : SV_DispatchThreadID)
 	UAVTex1[tId.xy] = float4(origColor * cocNear, cocNear);
 
 	// Debug output (makes a single pixel white)
-	UAVTex0[tId.xy] = all(tId.xy == 200u);
-	UAVTex1[tId.xy] = all(tId.xy == 200u);
+	//UAVTex0[tId.xy] = all(tId.xy == 200u);
+	//UAVTex1[tId.xy] = all(tId.xy == 200u);
 }
 
 // Input: SRVTex0
@@ -274,9 +274,11 @@ void DiagonalHexFilter(uint3 tId : SV_DispatchThreadID)
 	if (tId.x >= (uint) resolution.x || tId.y >= (uint) resolution.y)
 		return;
 
+	const float coc = SRVTex0[tId.xy].a;
+
 	// todo: precalculate!
-	float theta = -3.14159 / 6.0;
-	float2 filterDir = float2(cos(theta), sin(theta));
+	const float theta = -3.14159 / 6.0;
+	const float2 filterDir = float2(cos(theta), sin(theta)) * coc;
 	
 	float4 blurColor = 0.0;
 	float blurAccu = 0.0;
@@ -317,7 +319,7 @@ void RhomboidHexFilter(uint3 tId : SV_DispatchThreadID)
 
 	// Sample horizontal blur, with 30 degree rotation
 	float theta0 = -3.14159 / 6.0;
-	float2 filterDir0 = float2(cos(theta0), sin(theta0)) * invResolution; // Scale direction by CoC
+	float2 filterDir0 = float2(cos(theta0), sin(theta0)) * coc0 * invResolution; // Scale direction by CoC
 
 	float4 finalColor = 0.0;
 	
@@ -342,11 +344,11 @@ void RhomboidHexFilter(uint3 tId : SV_DispatchThreadID)
 			blurAccu += color.a;
 		}
 	}
-	finalColor.r += blurColor.r;// / max(blurAccu, 0.001);
+	finalColor += blurColor / max(blurAccu, 0.001);
 
 	// Sample diagonal blur, with 150 degree rotation
 	float theta1 = 3.14159 * -5.0 / 6.0;
-	float2 filterDir1 = float2(cos(theta1), sin(theta1)) * invResolution; // Scale direction by CoC
+	float2 filterDir1 = float2(cos(theta1), sin(theta1)) * coc0 * invResolution; // Scale direction by CoC
 
 	blurColor = 0.0;
 	blurAccu = 0.0;
@@ -360,7 +362,7 @@ void RhomboidHexFilter(uint3 tId : SV_DispatchThreadID)
 		blurColor += color;
 		blurAccu += color.a;
 	}
-	finalColor.g += blurColor.g;// / max(blurAccu, 0.001);
+	finalColor += blurColor / max(blurAccu, 0.001);
 
 	UAVTex2[tId.xy] = finalColor;// *0.5;
 }

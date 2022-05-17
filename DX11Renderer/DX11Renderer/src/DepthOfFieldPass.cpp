@@ -85,6 +85,10 @@ namespace gfx
 		m_pDoFNear2 = std::make_shared<RenderTexture>(gfx, DXGI_FORMAT_R16G16B16A16_FLOAT);
 		m_pDoFNear2->Init(gfx.GetAdapter(), dofTextureWidth, dofTextureHeight);
 
+		// Only used for hex bokehs
+		m_pDoFNear3 = std::make_shared<RenderTexture>(gfx, DXGI_FORMAT_R16G16B16A16_FLOAT);
+		m_pDoFNear3->Init(gfx.GetAdapter(), dofTextureWidth, dofTextureHeight);
+
 		m_pClampedMaxSampler = std::make_unique<Sampler>(gfx, D3D11_FILTER_MAXIMUM_MIN_MAG_MIP_LINEAR, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP);
 	}
 
@@ -300,6 +304,49 @@ namespace gfx
 			// Inputs = vert, diag
 			// Output = composite
 			m_pRhomboidHexFilterKernel->Dispatch(gfx, dofTextureWidth, dofTextureHeight, 1u);
+
+			pass.UnbindSharedResources(gfx);
+		}
+
+		// DoF near blur pass
+		{
+			const RenderPass& pass = GetSubPass(DoFNearBlurSubpass);
+			pass.BindSharedResources(gfx);
+
+			// todo: move to shared
+			context->CSSetSamplers(0u, 1u, m_pClampedMaxSampler->GetD3DSampler().GetAddressOf());
+
+			// Input = CoC
+			// Outputs = vert blur
+			m_pVerticalHexFilterKernel->Dispatch(gfx, dofTextureWidth, dofTextureHeight, 1u);
+
+			// Inputs = CoC
+			// Output = diagonal blur
+			m_pDiagonalHexFilterKernel->Dispatch(gfx, dofTextureWidth, dofTextureHeight, 1u);
+
+			context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 0u, 2u, m_pNullUAVs.data(), nullptr);
+			context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 2u, 1u, m_pDoFNear3->GetUAV().GetAddressOf(), nullptr);
+			context->CSSetShaderResources(RenderSlots::CS_FreeSRV + 0u, 1u, m_pDoFNear1->GetSRV().GetAddressOf());
+			context->CSSetShaderResources(RenderSlots::CS_FreeSRV + 1u, 1u, m_pDoFNear2->GetSRV().GetAddressOf());
+
+			// Inputs = vert, diag
+			// Output = composite
+			m_pRhomboidHexFilterKernel->Dispatch(gfx, dofTextureWidth, dofTextureHeight, 1u);
+
+			context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 0u, 3u, m_pNullUAVs.data(), nullptr);
+
+			pass.UnbindSharedResources(gfx);
+		}
+
+		// DoF composite pass
+		{
+			const RenderPass& pass = GetSubPass(DoFCompositeSubpass);
+			pass.BindSharedResources(gfx);
+
+			context->CSSetShaderResources(RenderSlots::CS_FreeSRV + 0u, 1u, m_pDoFFar3->GetSRV().GetAddressOf());
+			context->CSSetShaderResources(RenderSlots::CS_FreeSRV + 1u, 1u, m_pDoFNear3->GetSRV().GetAddressOf());
+
+			m_pDoFCompositeKernel->Dispatch(gfx, screenWidth, screenHeight, 1u);
 
 			pass.UnbindSharedResources(gfx);
 		}

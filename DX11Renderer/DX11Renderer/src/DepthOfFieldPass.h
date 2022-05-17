@@ -69,6 +69,7 @@ namespace gfx
 		std::shared_ptr<RenderTexture> m_pDoFNear0;
 		std::shared_ptr<RenderTexture> m_pDoFNear1;
 		std::shared_ptr<RenderTexture> m_pDoFNear2;
+		std::shared_ptr<RenderTexture> m_pDoFNear3;
 
 		std::unique_ptr<Sampler> m_pClampedMaxSampler;
 
