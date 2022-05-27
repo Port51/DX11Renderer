@@ -10,7 +10,7 @@ namespace gfx
 	class StructuredBuffer : public Buffer
 	{
 	public:
-		StructuredBuffer(const GraphicsDevice& gfx, D3D11_USAGE usage, UINT bindFlags, UINT numElements, bool useCounter = false)
+		StructuredBuffer(const GraphicsDevice& gfx, D3D11_USAGE usage, UINT bindFlags, UINT numElements, const void* initialData, bool useCounter = false)
 			: Buffer(usage, bindFlags, sizeof(T)),
 			m_numElements(numElements),
 			m_useCounter(useCounter)
@@ -24,14 +24,26 @@ namespace gfx
 			bd.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
 			bd.StructureByteStride = sizeof(T);
 
-			THROW_IF_FAILED(gfx.GetAdapter()->CreateBuffer(&bd, nullptr, &m_pBuffer));
+			if (initialData != nullptr)
+			{
+				D3D11_SUBRESOURCE_DATA srd;
+				srd.pSysMem = initialData;
+				srd.SysMemPitch = 0u;
+				srd.SysMemSlicePitch = 0u;
 
-			if (bindFlags& D3D11_BIND_SHADER_RESOURCE)
+				THROW_IF_FAILED(gfx.GetAdapter()->CreateBuffer(&bd, &srd, &m_pBuffer));
+			}
+			else
+			{
+				THROW_IF_FAILED(gfx.GetAdapter()->CreateBuffer(&bd, nullptr, &m_pBuffer));
+			}
+
+			if (bindFlags & D3D11_BIND_SHADER_RESOURCE)
 			{
 				THROW_IF_FAILED(gfx.GetAdapter()->CreateShaderResourceView(m_pBuffer.Get(), nullptr, &m_pSRV));
 			}
 
-			if (bindFlags& D3D11_BIND_UNORDERED_ACCESS)
+			if (bindFlags & D3D11_BIND_UNORDERED_ACCESS)
 			{
 				if (!useCounter)
 				{
@@ -49,6 +61,10 @@ namespace gfx
 				}
 			}
 		}
+
+		StructuredBuffer(const GraphicsDevice& gfx, D3D11_USAGE usage, UINT bindFlags, UINT numElements, bool useCounter = false)
+			: StructuredBuffer(gfx, usage, bindFlags, numElements, nullptr, useCounter)
+		{}
 
 		void BindCS(const GraphicsDevice& gfx, UINT slot) override
 		{

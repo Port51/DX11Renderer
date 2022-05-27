@@ -18,6 +18,7 @@ namespace gfx
 	class ImguiManager;
 	class DX11Window;
 	class Camera;
+	class RandomGenerator;
 
 	class App : public InputListener
 	{
@@ -39,6 +40,7 @@ namespace gfx
 		std::shared_ptr<LightManager> m_pLightManager;
 		std::unique_ptr<Renderer> m_pRenderer;
 		std::unique_ptr<Timer> m_pTimer;
+		std::unique_ptr<RandomGenerator> m_pRandomGenerator;
 
 		std::unique_ptr<ModelInstance> m_pModel0;
 		std::unique_ptr<ModelInstance> m_pModel1;

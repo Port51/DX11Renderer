@@ -82,6 +82,11 @@ float3 GetNormalVSFromGBuffer(float4 gbufferTex)
     return normalVS;
 }
 
+float2 GetPositionNDCFromVS(float3 positionVS)
+{
+	return positionVS.xz * _InverseFrustumCornerDataVS.xy / positionVS.z;
+}
+
 uint2 GetPixelCoordFromNDC(float3 positionNDC)
 {
     return floor((positionNDC.xy * 0.5f + 0.5f) * _ScreenParams.xy);

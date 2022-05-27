@@ -21,6 +21,12 @@ namespace gfx
 
 	class BloomPass : public RenderPass
 	{
+	private:
+		enum BloomSubpass : UINT {
+			PrefilterSubpass,
+			SeparableBlurSubpass,
+			CombineSubpass,
+		};
 	public:
 		BloomPass(const GraphicsDevice& gfx);
 

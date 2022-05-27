@@ -8,6 +8,7 @@
 #include "RenderStats.h"
 #include "Config.h"
 #include "SharedCodex.h"
+#include "RandomGenerator.h"
 #include <dxgidebug.h>	// For DXGIGetDebugInterface1
 #include <dxgi1_3.h>	// For DXGIGetDebugInterface1
 

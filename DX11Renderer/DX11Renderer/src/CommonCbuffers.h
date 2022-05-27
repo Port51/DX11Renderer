@@ -64,6 +64,7 @@ namespace gfx
 		dx::XMVECTOR orthoParams;
 
 		dx::XMVECTOR frustumCornerDataVS;
+		dx::XMVECTOR inverseFrustumCornerDataVS;
 		dx::XMVECTOR cameraPositionWS;
 		dx::XMVECTOR clusterPrecalc;
 		dx::XMVECTOR clusterXYRemap;

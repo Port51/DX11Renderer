@@ -58,6 +58,11 @@ namespace gfx
 		return m_frustumCornersVS;
 	}
 
+	const dx::XMVECTOR Camera::GetInverseFrustumCornersVS() const
+	{
+		return m_inverseFrustumCornersVS;
+	}
+
 	const Frustum& Camera::GetFrustumWS() const
 	{
 		return m_frustumWS;
@@ -94,6 +99,7 @@ namespace gfx
 
 		// Flip Y
 		m_frustumCornersVS = dx::XMVectorSet(halfAngleX, -halfAngleY, halfAngleX * m_farClipPlane, -halfAngleY * m_farClipPlane);
+		m_inverseFrustumCornersVS = dx::XMVectorSet(1.f / halfAngleX, -1.f / halfAngleY, 1.f / (halfAngleX * m_farClipPlane), -1.f / (halfAngleY * m_farClipPlane));
 
 		m_frustumVS.UpdatePlanesFromMatrix(GetProjectionMatrix());
 		//m_frustumVS.UpdatePlanesFromViewSpaceCorners(m_frustumCornersVS, m_nearClipPlane, m_farClipPlane);

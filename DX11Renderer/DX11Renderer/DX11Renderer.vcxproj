@@ -179,6 +179,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\RandomGenerator.cpp" />
     <ClCompile Include="src\BloomPass.cpp" />
     <ClCompile Include="src\DepthOfFieldPass.cpp" />
     <ClCompile Include="src\Bokeh.cpp" />
@@ -285,8 +286,10 @@
     <ClCompile Include="src\VertexBufferWrapper.cpp" />
     <ClCompile Include="src\VertexShader.cpp" />
     <ClCompile Include="src\DX11Window.cpp" />
+    <ClCompile Include="src\SSAOPass.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\RandomGenerator.h" />
     <ClInclude Include="src\BloomPass.h" />
     <ClInclude Include="src\DepthOfFieldPass.h" />
     <ClInclude Include="src\Bokeh.h" />
@@ -383,6 +386,7 @@
     <ClInclude Include="src\VertexShader.h" />
     <ClInclude Include="src\DX11Window.h" />
     <ClInclude Include="src\WindowsInclude.h" />
+    <ClInclude Include="src\SSAOPass.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DX11Renderer.rc" />
@@ -654,6 +658,12 @@
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">VerticalHexFilter</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)Assets/Built/Shaders/%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="Assets\Shaders\SSAO.hlsl">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CSMain</EntryPointName>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)Assets/Built/Shaders/%(Filename).cso</ObjectFileOutput>
     </FxCompile>
     <None Include="Assets\Shaders\Lighting\Schlick.hlsli" />

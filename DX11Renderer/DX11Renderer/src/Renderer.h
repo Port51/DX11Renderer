@@ -18,6 +18,7 @@ namespace gfx
 	class ComputeKernel;
 	class Sampler;
 	class Texture;
+	class RandomGenerator;
 
 	struct GlobalTransformCB;
 	struct PerFrameCB;
@@ -41,10 +42,10 @@ namespace gfx
 	{
 	public:
 		enum RendererView { Final, TiledLighting, ClusteredLighting, SSRTrace };
-		enum RendererFeature { Shadows, DepthOfField, Bloom, FXAA, HZBSSR, Dither, Tonemapping, COUNT }; // for COUNT to be accurate, don't set these values to anything weird...
+		enum RendererFeature { Shadows, DepthOfField, Bloom, FXAA, SSAO, HZBSSR, Dither, Tonemapping, COUNT }; // for COUNT to be accurate, don't set these values to anything weird...
 		
 	public:
-		Renderer(const GraphicsDevice& gfx, std::shared_ptr<LightManager> pLightManager, std::shared_ptr<RendererList> pRendererList);
+		Renderer(const GraphicsDevice& gfx, RandomGenerator& rng, std::shared_ptr<LightManager> pLightManager, std::shared_ptr<RendererList> pRendererList);
 		virtual ~Renderer();
 		virtual void Release();
 	public:

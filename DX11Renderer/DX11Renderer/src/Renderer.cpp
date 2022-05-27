@@ -33,10 +33,12 @@
 #include "RenderStats.h"
 #include "RenderConstants.h"
 #include "BloomPass.h"
+#include "SSAOPass.h"
+#include "RandomGenerator.h"
 
 namespace gfx
 {
-	Renderer::Renderer(const GraphicsDevice& gfx, std::shared_ptr<LightManager> pLightManager, std::shared_ptr<RendererList> pRendererList)
+	Renderer::Renderer(const GraphicsDevice& gfx, RandomGenerator& rng, std::shared_ptr<LightManager> pLightManager, std::shared_ptr<RendererList> pRendererList)
 		: m_pRendererList(pRendererList), m_pLightManager(pLightManager)
 	{
 		UINT screenWidth = gfx.GetScreenWidth();
@@ -145,8 +147,9 @@ namespace gfx
 		CreateRenderPass(RenderPassType::ClusteredLightingRenderPass);
 		CreateRenderPass(RenderPassType::OpaqueRenderPass);
 		CreateRenderPass(RenderPassType::CreateDownsampledX2Texture);
-		CreateRenderPass(RenderPassType::DoFPass, std::move(std::make_unique<DepthOfFieldPass>(gfx, DepthOfFieldPass::DepthOfFieldBokehType::DiskBokeh)));
+		CreateRenderPass(RenderPassType::DepthOfFieldRenderPass, std::move(std::make_unique<DepthOfFieldPass>(gfx, DepthOfFieldPass::DepthOfFieldBokehType::DiskBokeh)));
 		CreateRenderPass(RenderPassType::BloomRenderPass, std::move(std::make_unique<BloomPass>(gfx)));
+		CreateRenderPass(RenderPassType::SSAORenderPass, std::move(std::make_unique<SSAOPass>(gfx, rng)));
 		CreateRenderPass(RenderPassType::SSRRenderPass);
 		CreateRenderPass(RenderPassType::FXAARenderPass);
 		CreateRenderPass(RenderPassType::DitherRenderPass);
@@ -270,9 +273,25 @@ namespace gfx
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, m_pCameraColor0->GetSRV())
 			.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, m_pDownsampledColor->GetUAV());
 
-		static_cast<DepthOfFieldPass&>(GetRenderPass(RenderPassType::DoFPass)).SetupRenderPassDependencies(gfx, *m_pDownsampledColor, *m_pHiZBufferTarget, *m_pCameraColor0);
+		static_cast<DepthOfFieldPass&>(GetRenderPass(RenderPassType::DepthOfFieldRenderPass)).SetupRenderPassDependencies(gfx, *m_pDownsampledColor, *m_pHiZBufferTarget, *m_pCameraColor0);
 
 		static_cast<BloomPass&>(GetRenderPass(RenderPassType::BloomRenderPass)).SetupRenderPassDependencies(gfx, *m_pDownsampledColor, *m_pCameraColor0);
+
+		if (IsFeatureEnabled(RendererFeature::SSAO))
+		{
+			// Assign inputs and outputs
+			const auto& pColorIn = (cameraOutSlot0) ? m_pCameraColor0 : m_pCameraColor1;
+			const auto& pColorOut = (cameraOutSlot0) ? m_pCameraColor1 : m_pCameraColor0;
+			cameraOutSlot0 = !cameraOutSlot0;
+
+			GetRenderPass(RenderPassType::SSAORenderPass).
+				ClearBinds()
+				.CSSetSRV(RenderSlots::CS_GbufferNormalRoughSRV, m_pNormalRoughReflectivityTarget->GetSRV())
+				.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, pColorIn->GetSRV())
+				.CSSetSRV(RenderSlots::CS_FreeSRV + 1u, gfx.GetDepthStencilTarget()->GetSRV())
+				.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, pColorOut->GetUAV())
+				.CSSetSPL(RenderSlots::CS_FreeSPL + 0u, m_pClampedBilinearSampler->GetD3DSampler());
+		}
 
 		if (IsFeatureEnabled(RendererFeature::HZBSSR))
 		{
@@ -418,6 +437,7 @@ namespace gfx
 			perCameraCB.zBufferParams = dx::XMVectorSet(1.f - farNearRatio, farNearRatio, 1.f / camera.GetFarClipPlane() - 1.f / camera.GetNearClipPlane(), 1.f / camera.GetNearClipPlane());
 			perCameraCB.orthoParams = dx::XMVectorSet(0.f, 0.f, 0.f, 0.f);
 			perCameraCB.frustumCornerDataVS = camera.GetFrustumCornersVS();
+			perCameraCB.inverseFrustumCornerDataVS = camera.GetInverseFrustumCornersVS();
 			perCameraCB.cameraPositionWS = camera.GetPositionWS();
 
 			// todo: move elsewhere, and only calculate when FOV or resolution changes?
@@ -573,12 +593,17 @@ namespace gfx
 
 		if (m_viewIdx == RendererView::Final && IsFeatureEnabled(RendererFeature::DepthOfField))
 		{
-			GetRenderPass(DoFPass).Execute(gfx);
+			GetRenderPass(DepthOfFieldRenderPass).Execute(gfx);
 		}
 
 		if (m_viewIdx == RendererView::Final && IsFeatureEnabled(RendererFeature::Bloom))
 		{
 			GetRenderPass(BloomRenderPass).Execute(gfx);
+		}
+
+		if (IsFeatureEnabled(RendererFeature::SSAO))
+		{
+			GetRenderPass(SSAORenderPass).Execute(gfx);
 		}
 
 		// SSR pass
@@ -716,10 +741,11 @@ namespace gfx
 			m_rendererFeatureEnabled[(int)RendererFeature::DepthOfField]	= DrawToggleOnOffButton(buttonId++, "Depth of Field", m_rendererFeatureEnabled[(int)RendererFeature::DepthOfField], featureButtonSize, changed);
 			if (IsFeatureEnabled(RendererFeature::DepthOfField))
 			{
-				GetRenderPass(DoFPass).DrawImguiControls(gfx);
+				GetRenderPass(DepthOfFieldRenderPass).DrawImguiControls(gfx);
 			}
 			m_rendererFeatureEnabled[(int)RendererFeature::Bloom]			= DrawToggleOnOffButton(buttonId++, "Bloom", m_rendererFeatureEnabled[(int)RendererFeature::Bloom], featureButtonSize, changed);
 			m_rendererFeatureEnabled[(int)RendererFeature::FXAA]			= DrawToggleOnOffButton(buttonId++, "FXAA", m_rendererFeatureEnabled[(int)RendererFeature::FXAA], featureButtonSize, changed);
+			m_rendererFeatureEnabled[(int)RendererFeature::SSAO]			= DrawToggleOnOffButton(buttonId++, "SSAO", m_rendererFeatureEnabled[(int)RendererFeature::SSAO], featureButtonSize, changed);
 			m_rendererFeatureEnabled[(int)RendererFeature::HZBSSR]			= DrawToggleOnOffButton(buttonId++, "SSR", m_rendererFeatureEnabled[(int)RendererFeature::HZBSSR], featureButtonSize, changed);
 			m_rendererFeatureEnabled[(int)RendererFeature::Dither]			= DrawToggleOnOffButton(buttonId++, "Dither", m_rendererFeatureEnabled[(int)RendererFeature::Dither], featureButtonSize, changed);
 			m_rendererFeatureEnabled[(int)RendererFeature::Tonemapping]		= DrawToggleOnOffButton(buttonId++, "Tonemapping", m_rendererFeatureEnabled[(int)RendererFeature::Tonemapping], featureButtonSize, changed);

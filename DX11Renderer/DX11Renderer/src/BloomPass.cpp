@@ -19,9 +19,9 @@ namespace gfx
 		UINT bloomTextureWidth = gfx.GetScreenWidth() >> 1u;
 		UINT bloomTextureHeight = gfx.GetScreenHeight() >> 1u;
 
-		CreateSubPass(RenderPassType::BloomPrefilterSubpass);
-		CreateSubPass(RenderPassType::BloomSeparableBlurSubpass);
-		CreateSubPass(RenderPassType::BloomCombineSubpass);
+		CreateSubPass(BloomSubpass::PrefilterSubpass);
+		CreateSubPass(BloomSubpass::SeparableBlurSubpass);
+		CreateSubPass(BloomSubpass::CombineSubpass);
 
 		m_pBloomTarget0 = std::make_shared<RenderTexture>(gfx);
 		m_pBloomTarget0->Init(gfx.GetAdapter(), bloomTextureWidth, bloomTextureHeight);
@@ -47,16 +47,16 @@ namespace gfx
 
 	void BloomPass::SetupRenderPassDependencies(const GraphicsDevice & gfx, const RenderTexture & pDownsampledColor, const RenderTexture & pCameraColor)
 	{
-		GetSubPass(RenderPassType::BloomPrefilterSubpass).
+		GetSubPass(BloomSubpass::PrefilterSubpass).
 			ClearBinds()
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, pDownsampledColor.GetSRV())
 			.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, m_pBloomTarget0->GetUAV());
 
-		GetSubPass(RenderPassType::BloomSeparableBlurSubpass).
+		GetSubPass(BloomSubpass::SeparableBlurSubpass).
 			ClearBinds()
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 1u, m_pBloomGaussianWeights->GetSRV());
 
-		GetSubPass(RenderPassType::BloomCombineSubpass).
+		GetSubPass(BloomSubpass::CombineSubpass).
 			ClearBinds()
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, m_pBloomTarget0->GetSRV())
 			.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, pCameraColor.GetUAV());
@@ -72,7 +72,7 @@ namespace gfx
 
 		// Bloom prefilter
 		{
-			const RenderPass& pass = GetSubPass(BloomPrefilterSubpass);
+			const RenderPass& pass = GetSubPass(BloomSubpass::PrefilterSubpass);
 			pass.BindSharedResources(gfx);
 
 			static BloomCB bloomCB;
@@ -86,7 +86,7 @@ namespace gfx
 
 		// Bloom blur (x2 sub-passes)
 		{
-			const RenderPass& pass = GetSubPass(BloomSeparableBlurSubpass);
+			const RenderPass& pass = GetSubPass(BloomSubpass::SeparableBlurSubpass);
 			pass.BindSharedResources(gfx);
 
 			static BloomCB bloomCB;
@@ -111,7 +111,7 @@ namespace gfx
 
 		// Bloom combine
 		{
-			const RenderPass& pass = GetSubPass(BloomCombineSubpass);
+			const RenderPass& pass = GetSubPass(BloomSubpass::CombineSubpass);
 			pass.BindSharedResources(gfx);
 
 			static BloomCB bloomCB;

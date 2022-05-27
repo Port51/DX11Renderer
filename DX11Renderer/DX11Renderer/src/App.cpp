@@ -14,6 +14,7 @@
 #include "Light.h"
 #include "Renderer.h"
 #include "RenderStats.h"
+#include "RandomGenerator.h"
 
 namespace gfx
 {
@@ -22,7 +23,8 @@ namespace gfx
 		m_pImgui(std::make_unique<ImguiManager>()),
 		m_pCamera(std::make_unique<Camera>(40.0f, (float)screenWidth / (float)screenHeight, 0.5f, 50.0f)),
 		m_pTimer(std::make_unique<Timer>()),
-		m_pRendererList(std::make_shared<RendererList>())
+		m_pRendererList(std::make_shared<RendererList>()),
+		m_pRandomGenerator(std::make_unique<RandomGenerator>())
 	{
 		m_pWindow = std::make_unique<DX11Window>(screenWidth, screenHeight, "DX11 Renderer", hInstance, this);
 
@@ -94,7 +96,7 @@ namespace gfx
 		m_pRendererList->AddModelInstance(*m_pModel0);
 		m_pLightManager->AddLightModelsToList(*m_pRendererList);
 
-		m_pRenderer = std::make_unique<Renderer>(Gfx(), m_pLightManager, m_pRendererList);
+		m_pRenderer = std::make_unique<Renderer>(Gfx(), *m_pRandomGenerator, m_pLightManager, m_pRendererList);
 
 		return;
 		/*class Factory

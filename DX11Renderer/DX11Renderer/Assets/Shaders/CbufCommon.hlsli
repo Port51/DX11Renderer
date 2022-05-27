@@ -52,6 +52,7 @@ cbuffer PerCameraCB : register(b2)
     float4 _OrthoParams;
     
     float4 _FrustumCornerDataVS;
+    float4 _InverseFrustumCornerDataVS;
     
     float4 _CameraPositionWS;
     

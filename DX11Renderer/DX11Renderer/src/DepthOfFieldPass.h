@@ -23,6 +23,13 @@ namespace gfx
 	{
 	public:
 		enum DepthOfFieldBokehType { DiskBokeh, HexBokeh };
+	private:
+		enum DepthOfFieldSubpass : UINT {
+			PrefilterSubpass,
+			FarBlurSubpass,
+			NearBlurSubpass,
+			CompositeSubpass,
+		};
 	public:
 		DepthOfFieldPass(const GraphicsDevice& gfx, const DepthOfFieldBokehType bokehType);
 	public:
