@@ -402,6 +402,9 @@
     <ClCompile Include="src\RandomGenerator.cpp">
       <Filter>Source\Util</Filter>
     </ClCompile>
+    <ClCompile Include="src\ExceptionHandling.cpp">
+      <Filter>Precompiled</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
