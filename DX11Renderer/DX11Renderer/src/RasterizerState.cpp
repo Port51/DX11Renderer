@@ -50,7 +50,7 @@ namespace gfx
 		}
 		else
 		{
-			throw std::runtime_error("Unhandled rasterizer state " + name);
+			THROW("Unhandled rasterizer state " + name);
 			return D3D11_CULL_BACK;
 		}
 	}

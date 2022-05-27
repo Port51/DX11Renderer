@@ -68,7 +68,7 @@ namespace gfx
 			(void)m_pDevice->CheckFeatureSupport(D3D11_FEATURE_D3D10_X_HARDWARE_OPTIONS, &hwopts, sizeof(hwopts));
 			if (!hwopts.ComputeShaders_Plus_RawAndStructuredBuffers_Via_Shader_4_x)
 			{
-				throw std::runtime_error("DirectCompute is not supported by this device");
+				THROW("DirectCompute is not supported by this device");
 			}
 		}
 

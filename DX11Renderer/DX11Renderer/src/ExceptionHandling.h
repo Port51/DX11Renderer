@@ -9,7 +9,8 @@ namespace gfx
 	class GfxException : public std::exception
 	{
 	public:
-		GfxException(size_t line, const char* file, HRESULT hr, const char* msg = "");
+		GfxException(size_t line, const char* file, HRESULT hr);
+		GfxException(size_t line, const char* file, std::string msg = "");
 		GfxException(size_t line, const char* file, const char* msg = "");
 		const char* what() const override;
 	private:

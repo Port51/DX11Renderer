@@ -52,8 +52,7 @@ namespace gfx
 			{
 				if (errorBlob)
 				{
-					auto err = std::string((char*)errorBlob->GetBufferPointer());
-					throw std::runtime_error(std::string((char*)errorBlob->GetBufferPointer()));
+					THROW((char*)errorBlob->GetBufferPointer());
 					OutputDebugStringA((char*)errorBlob->GetBufferPointer());
 					errorBlob->Release();
 				}

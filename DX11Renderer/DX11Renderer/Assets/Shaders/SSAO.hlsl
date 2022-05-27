@@ -19,7 +19,7 @@ float3x3 GetTBN(float3 normalVS, float3 randomVec)
 }
 
 [numthreads(16, 16, 1)]
-void CSMain(uint3 tId : SV_DispatchThreadID)
+void OcclusionPass(uint3 tId : SV_DispatchThreadID)
 {
 	/*uint2 resolution;
 	NormalRoughReflectivityRT.GetDimensions(resolution.x, resolution.y);

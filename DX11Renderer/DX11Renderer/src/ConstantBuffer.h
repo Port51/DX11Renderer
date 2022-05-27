@@ -89,7 +89,7 @@ namespace gfx
 			}
 			else
 			{
-				throw std::runtime_error("Cannot update immutable constant buffer!");
+				THROW("Cannot update immutable constant buffer!");
 			}
 		}
 

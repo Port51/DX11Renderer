@@ -36,7 +36,11 @@ namespace gfx
 		void Execute(const GraphicsDevice& gfx) const override;
 
 	private:
-		std::unique_ptr<ComputeKernel> m_pSSAOKernel;
+		std::unique_ptr<ComputeKernel> m_pOcclusionKernel;
+		std::unique_ptr<ComputeKernel> m_pHorizontalBlurKernel;
+		std::unique_ptr<ComputeKernel> m_pVerticalBlurKernel;
 		std::unique_ptr<StructuredBuffer<dx::XMVECTOR>> m_pSampleOffsetSB;
+
+		const size_t SampleOffsetCount = 64u;
 	};
 }

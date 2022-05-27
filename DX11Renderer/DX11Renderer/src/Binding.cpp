@@ -45,7 +45,7 @@ namespace gfx
 		}
 		if (bindings == 0)
 		{
-			throw std::runtime_error("Binding object has no binds setup! Please call something like 'SetupVSBinding()'.");
+			THROW("Binding object has no binds setup! Please call something like 'SetupVSBinding()'.");
 		}
 	}
 

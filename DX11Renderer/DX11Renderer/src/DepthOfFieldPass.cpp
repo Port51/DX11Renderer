@@ -179,7 +179,7 @@ namespace gfx
 			ExecuteHexBokeh(gfx);
 			break;
 		default:
-			throw std::runtime_error("Unrecognized bokeh type " + m_bokehType);
+			THROW("Unrecognized bokeh type " + m_bokehType);
 		}
 	}
 

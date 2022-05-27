@@ -4,11 +4,11 @@
 namespace gfx
 {
 
-	GfxException::GfxException(size_t line, const char * file, HRESULT hr, const char * msg)
+	GfxException::GfxException(size_t line, const char * file, HRESULT hr)
 		: m_line(line), m_file(file)
 	{
 		std::ostringstream ss;
-		ss << "[Error]\t " << std::string(msg) << std::endl;
+		ss << "[Error]\t ";
 		ss << "[File]\t " << file << std::endl;
 		ss << "[Line]\t " << line << std::endl;
 		ss << "[Code]\t " << HrToStringCode(hr) << " (" << std::to_string(hr) << ")" << std::endl;
@@ -16,15 +16,19 @@ namespace gfx
 		m_msg = ss.str();
 	}
 
-	GfxException::GfxException(size_t line, const char * file, const char * msg)
+	GfxException::GfxException(size_t line, const char * file, std::string msg)
 		: m_line(line), m_file(file)
 	{
 		std::ostringstream ss;
-		ss << "[Error]\t " << std::string(msg) << std::endl;
+		ss << "[Error]\t " << msg << std::endl;
 		ss << "[File]\t " << file << std::endl;
 		ss << "[Line]\t " << line << std::endl;
 		m_msg = ss.str();
 	}
+
+	GfxException::GfxException(size_t line, const char * file, const char * msg)
+		: GfxException(line, file, std::string(msg))
+	{}
 
 	const char* GfxException::what() const
 	{

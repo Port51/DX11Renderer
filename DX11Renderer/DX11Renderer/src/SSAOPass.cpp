@@ -21,12 +21,14 @@ namespace gfx
 		CreateSubPass(SSAOSubpass::HorizontalBlurSubpass);
 		CreateSubPass(SSAOSubpass::VerticalBlurSubpass);
 
-		m_pSSAOKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, "Assets\\Built\\Shaders\\SSAO.cso"));
+		m_pOcclusionKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, "Assets\\Shaders\\SSAO.hlsl", "OcclusionPass"));
+		m_pHorizontalBlurKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, "Assets\\Shaders\\SSAO.hlsl", "HorizontalBlurPass"));
+		m_pVerticalBlurKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, "Assets\\Shaders\\SSAO.hlsl", "VerticalBlurPass"));
 
 		// Create random sample directions
 		std::vector<dx::XMVECTOR> sampleOffsets;
-		sampleOffsets.reserve(64);
-		for (int i = 0; i < 64; ++i)
+		sampleOffsets.reserve(SampleOffsetCount);
+		for (int i = 0; i < SampleOffsetCount; ++i)
 		{
 			// Get random hemisphere direction
 			sampleOffsets.emplace_back(dx::XMVector3Normalize(dx::XMVectorSet(
@@ -36,7 +38,7 @@ namespace gfx
 				1.f
 			)));
 		}
-		m_pSampleOffsetSB = std::make_unique<StructuredBuffer<dx::XMVECTOR>>(gfx, D3D11_USAGE::D3D11_USAGE_IMMUTABLE, D3D11_BIND_SHADER_RESOURCE, 64u, sampleOffsets.data(), false);
+		m_pSampleOffsetSB = std::make_unique<StructuredBuffer<dx::XMVECTOR>>(gfx, D3D11_USAGE::D3D11_USAGE_IMMUTABLE, D3D11_BIND_SHADER_RESOURCE, SampleOffsetCount, sampleOffsets.data(), false);
 	}
 
 	void SSAOPass::SetupRenderPassDependencies(const GraphicsDevice & gfx, const RenderTexture & pGbuffer, const RenderTexture & pCameraColor)
@@ -49,12 +51,35 @@ namespace gfx
 
 	void SSAOPass::Execute(const GraphicsDevice & gfx) const
 	{
-		/*const RenderPass& pass = GetSubPass(RenderPassType::SSAORenderPass);
-		pass.BindSharedResources(gfx);
+		// Render occlusion
+		{
+			const RenderPass& pass = GetSubPass(SSAOSubpass::OcclusionSubpass);
+			pass.BindSharedResources(gfx);
 
-		m_pSSAOKernel->Dispatch(gfx, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1u);
+			m_pOcclusionKernel->Dispatch(gfx, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1u);
 
-		pass.UnbindSharedResources(gfx);*/
+			pass.UnbindSharedResources(gfx);
+		}
+
+		// Horizontal blur
+		{
+			const RenderPass& pass = GetSubPass(SSAOSubpass::HorizontalBlurSubpass);
+			pass.BindSharedResources(gfx);
+
+			m_pHorizontalBlurKernel->Dispatch(gfx, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1u);
+
+			pass.UnbindSharedResources(gfx);
+		}
+
+		// Vertical blur
+		{
+			const RenderPass& pass = GetSubPass(SSAOSubpass::VerticalBlurSubpass);
+			pass.BindSharedResources(gfx);
+
+			m_pVerticalBlurKernel->Dispatch(gfx, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1u);
+
+			pass.UnbindSharedResources(gfx);
+		}
 	}
 
 }

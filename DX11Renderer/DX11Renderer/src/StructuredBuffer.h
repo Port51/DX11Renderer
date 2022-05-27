@@ -105,7 +105,7 @@ namespace gfx
 			}
 			else
 			{
-				throw std::runtime_error("Cannot update immutable structured buffer!");
+				THROW("Cannot update immutable structured buffer!");
 			}
 		}
 

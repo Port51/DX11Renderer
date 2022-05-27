@@ -44,11 +44,11 @@ namespace gfx
 
 		if (!hasName)
 		{
-			throw std::runtime_error("Model asset '" + std::string(assetFilename) + "' does not have a name property!");
+			THROW("Model asset '" + std::string(assetFilename) + "' does not have a name property!");
 		}
 		if (!hasPath)
 		{
-			throw std::runtime_error("Model asset '" + std::string(assetFilename) + "' does not have a GLTF path!");
+			THROW("Model asset '" + std::string(assetFilename) + "' does not have a GLTF path!");
 		}
 
 		return settings;
@@ -96,23 +96,23 @@ namespace gfx
 
 		if (!warn.empty())
 		{
-			throw std::runtime_error("glTF warning: '" + warn + "'");
+			THROW("glTF warning: '" + warn + "'");
 		}
 
 		if (!err.empty())
 		{
-			throw std::runtime_error("glTF error: '" + err + "'");
+			THROW("glTF error: '" + err + "'");
 		}
 
 		if (!ret)
 		{
-			throw std::runtime_error("Could not parse glTF for filename '" + settings.gltfPath + "'");
+			THROW("Could not parse glTF for filename '" + settings.gltfPath + "'");
 			return nullptr;
 		}
 
 		if (model.scenes.size() <= model.defaultScene || model.defaultScene < 0)
 		{
-			throw std::runtime_error("No default scene for filename '" + settings.gltfPath + "'");
+			THROW("No default scene for filename '" + settings.gltfPath + "'");
 			return nullptr;
 		}
 
@@ -180,7 +180,7 @@ namespace gfx
 						}
 						else
 						{
-							throw std::runtime_error("Mesh had unrecognized componentType for indices: " + std::to_string(accessor.componentType));
+							THROW("Mesh had unrecognized componentType for indices: " + std::to_string(accessor.componentType));
 							return nullptr;
 						}
 					}
@@ -269,7 +269,7 @@ namespace gfx
 			}
 			else
 			{
-				throw std::runtime_error("Mesh had " + std::to_string(mesh.primitives.size()) + " primitives!");
+			THROW("Mesh had " + std::to_string(mesh.primitives.size()) + " primitives!");
 				return nullptr;
 			}
 		}

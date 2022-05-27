@@ -117,7 +117,7 @@ namespace gfx
 
 		if (pMeshAsset->m_vertices.size() == 0)
 		{
-			throw std::runtime_error(std::string("Mesh '") + pMeshAsset->m_name + std::string("' has 0 vertices!"));
+			THROW(std::string("Mesh '") + pMeshAsset->m_name + std::string("' has 0 vertices!"));
 		}
 
 		for (unsigned int i = 0; i < pMeshAsset->m_vertices.size(); ++i)
@@ -135,11 +135,11 @@ namespace gfx
 
 		if (pMeshAsset->m_indices.size() == 0)
 		{
-			throw std::runtime_error(std::string("Mesh '") + pMeshAsset->m_name + std::string("' has 0 indices!"));
+			THROW(std::string("Mesh '") + pMeshAsset->m_name + std::string("' has 0 indices!"));
 		}
 		if (pMeshAsset->m_indices.size() % 3 != 0)
 		{
-			throw std::runtime_error(std::string("Mesh '") + pMeshAsset->m_name + std::string("' has indices which are not a multiple of 3!"));
+			THROW(std::string("Mesh '") + pMeshAsset->m_name + std::string("' has indices which are not a multiple of 3!"));
 		}
 
 		// todo: move instance stuff somewhere else!
