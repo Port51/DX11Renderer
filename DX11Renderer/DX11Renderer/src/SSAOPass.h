@@ -38,6 +38,8 @@ namespace gfx
 		const RenderTexture& GetOcclusionTexture() const;
 
 	private:
+		std::unique_ptr<StructuredBuffer<float>> m_pGaussianBlurWeights;
+
 		std::unique_ptr<ComputeKernel> m_pOcclusionKernel;
 		std::unique_ptr<ComputeKernel> m_pHorizontalBlurKernel;
 		std::unique_ptr<ComputeKernel> m_pVerticalBlurKernel;
@@ -48,5 +50,6 @@ namespace gfx
 		std::shared_ptr<RenderTexture> m_pOcclusionTexture1;
 
 		const size_t SampleOffsetCount = 64u;
+		const size_t BlurWidth = 15u;
 	};
 }

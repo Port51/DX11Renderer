@@ -49,6 +49,14 @@ namespace gfx
 			)));
 		}
 		m_pSampleOffsetSB = std::make_unique<StructuredBuffer<dx::XMVECTOR>>(gfx, D3D11_USAGE::D3D11_USAGE_IMMUTABLE, D3D11_BIND_SHADER_RESOURCE, SampleOffsetCount, sampleOffsets.data(), false);
+
+		m_pGaussianBlurWeights = std::make_unique<StructuredBuffer<f32>>(gfx, D3D11_USAGE_DYNAMIC, D3D11_BIND_SHADER_RESOURCE, BlurWidth * 2u + 1u);
+
+		// todo: make this a setting that can be changed
+		std::vector<f32> blurWeights;
+		blurWeights.resize(BlurWidth * 2u + 1u);
+		Gaussian::GetGaussianWeights1D(blurWeights, 5.f);
+		m_pGaussianBlurWeights->Update(gfx, blurWeights, blurWeights.size());
 	}
 
 	void SSAOPass::SetupRenderPassDependencies(const GraphicsDevice & gfx, const RenderTexture & pGbuffer, const RenderTexture& hiZBuffer, const Texture& noiseTexture)
@@ -63,12 +71,16 @@ namespace gfx
 
 		GetSubPass(SSAOSubpass::HorizontalBlurSubpass).
 			ClearBinds()
+			.CSSetSRV(RenderSlots::CS_FreeSRV + 1u, hiZBuffer.GetSRV())
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 4u, m_pOcclusionTexture0->GetSRV())
+			.CSSetSRV(RenderSlots::CS_FreeSRV + 5u, m_pGaussianBlurWeights->GetSRV())
 			.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, m_pOcclusionTexture1->GetUAV());
 
 		GetSubPass(SSAOSubpass::VerticalBlurSubpass).
 			ClearBinds()
+			.CSSetSRV(RenderSlots::CS_FreeSRV + 1u, hiZBuffer.GetSRV())
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 4u, m_pOcclusionTexture1->GetSRV())
+			.CSSetSRV(RenderSlots::CS_FreeSRV + 5u, m_pGaussianBlurWeights->GetSRV())
 			.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, m_pOcclusionTexture0->GetUAV());
 	}
 

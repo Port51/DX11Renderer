@@ -10,6 +10,7 @@ Texture2D<float2> HZB : register(t4);
 StructuredBuffer<float4> SampleOffsets : register(t5);
 Texture2D<float4> NoiseTex : register(t6);
 Texture2D<float> OcclusionIn : register(t7);
+StructuredBuffer<float> BlurWeights : register(t8);
 RWTexture2D<float> OcclusionOut : register(u0);
 SamplerState BilinearSampler : register(s0);
 
@@ -69,14 +70,117 @@ void OcclusionPass(uint3 tId : SV_DispatchThreadID)
 	//OcclusionOut[tId.xy] = debugValue;
 }
 
-[numthreads(16, 16, 1)]
-void HorizontalBlurPass(uint3 tId : SV_DispatchThreadID)
+// Depth-aware gaussian blur
+// todo: move to shared gaussian shader
+
+#define BlurWidth 15u
+#define BlurKernelSize (BlurWidth * 2 + 1)
+groupshared float2 blurCache[64 + 2 * BlurWidth];
+
+// Return unweighted sample with depth
+float2 GetOcclusionDepthSample(uint2 sampleId)
 {
-	OcclusionOut[tId.xy] = OcclusionIn[tId.xy];
+	float sampleOcclusion = OcclusionIn[sampleId.xy].r;
+	float linearSampleDepth = HZB_LINEAR(HZB[sampleId.xy].x, _ZBufferParams);
+
+	return float2(sampleOcclusion, linearSampleDepth);
 }
 
-[numthreads(16, 16, 1)]
-void VerticalBlurPass(uint3 tId : SV_DispatchThreadID)
+[numthreads(64, 1, 1)]
+void HorizontalBlurPass(uint3 gtId : SV_GroupThreadID, uint3 tId : SV_DispatchThreadID)
 {
-	OcclusionOut[tId.xy] = OcclusionIn[tId.xy];
+	uint2 resolution;
+	OcclusionIn.GetDimensions(resolution.x, resolution.y);
+	uint2 clampedId = min(tId.xy, (uint2)resolution.xy);
+
+	// Cache within group bounds
+	blurCache[gtId.x + BlurWidth] = GetOcclusionDepthSample(clampedId.xy);
+
+	// Extra samples for data outside group bounds
+	if (gtId.x < BlurWidth)
+	{
+		int srcX = max(0, clampedId.x - BlurWidth);
+		blurCache[gtId.x] = GetOcclusionDepthSample(uint2(srcX, clampedId.y));
+	}
+	else if (gtId.x >= 64u - BlurWidth)
+	{
+		int srcX = min(resolution.x - 1u, clampedId.x + BlurWidth);
+		blurCache[gtId.x + 2u * BlurWidth] = GetOcclusionDepthSample(uint2(srcX, clampedId.y));
+	}
+
+	GroupMemoryBarrierWithGroupSync();
+
+	if (tId.x >= (uint) resolution.x || tId.y >= (uint) resolution.y)
+		return;
+
+	// todo: make into settings
+	float _RadiusVS = 0.125;
+	float _BiasVS = 0.001;
+
+	const float linearDepth = HZB_LINEAR(HZB[tId.xy].x, _ZBufferParams);
+
+	// Apply blur
+	float occlusion = 0.0;
+	[unroll(BlurKernelSize)]
+	for (uint i = 0; i < BlurKernelSize; ++i) // 0-31
+	{
+		float sampleOcclusion = blurCache[i + gtId.x].x;
+		float sampleDepth = blurCache[i + gtId.x].y;
+
+		float depthOffset = abs(sampleDepth - linearDepth);
+		float rangeOffset = SCurve(saturate(1.f - depthOffset / _RadiusVS));
+
+		occlusion += sampleOcclusion * BlurWeights[i] * rangeOffset;
+	}
+
+	OcclusionOut[tId.xy] = occlusion;
+}
+
+[numthreads(1, 64, 1)]
+void VerticalBlurPass(uint3 gtId : SV_GroupThreadID, uint3 tId : SV_DispatchThreadID)
+{
+	uint2 resolution;
+	OcclusionIn.GetDimensions(resolution.x, resolution.y);
+	uint2 clampedId = min(tId.xy, (uint2)resolution.xy);
+
+	// Cache within group bounds
+	blurCache[gtId.y + BlurWidth] = GetOcclusionDepthSample(clampedId.xy);
+
+	// Extra samples for data outside group bounds
+	if (gtId.y < BlurWidth)
+	{
+		int srcY = max(0, clampedId.y - BlurWidth);
+		blurCache[gtId.y] = GetOcclusionDepthSample(uint2(clampedId.x, srcY));
+	}
+	else if (gtId.y >= 64u - BlurWidth)
+	{
+		int srcY = min(resolution.y - 1u, clampedId.y + BlurWidth);
+		blurCache[gtId.y + 2u * BlurWidth] = GetOcclusionDepthSample(uint2(clampedId.x, srcY));
+	}
+
+	GroupMemoryBarrierWithGroupSync();
+
+	if (tId.x >= (uint) resolution.x || tId.y >= (uint) resolution.y)
+		return;
+
+	// todo: make into settings
+	float _RadiusVS = 0.125;
+	float _BiasVS = 0.001;
+
+	const float linearDepth = HZB_LINEAR(HZB[tId.xy].x, _ZBufferParams);
+
+	// Apply blur
+	float occlusion = 0.0;
+	[unroll(BlurKernelSize)]
+	for (uint i = 0; i < BlurKernelSize; ++i)
+	{
+		float sampleOcclusion = blurCache[i + gtId.y].x;
+		float sampleDepth = blurCache[i + gtId.y].y;
+
+		float depthOffset = abs(sampleDepth - linearDepth);
+		float rangeOffset = SCurve(saturate(1 - depthOffset / _RadiusVS));
+		occlusion += sampleOcclusion * BlurWeights[i] * rangeOffset;
+	}
+
+	OcclusionOut[tId.xy] = occlusion;
 }
