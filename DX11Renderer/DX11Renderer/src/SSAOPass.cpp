@@ -96,6 +96,8 @@ namespace gfx
 		{
 			m_pSettings->radiusVS = m_radiusVS;
 			m_pSettings->biasVS = m_biasVS;
+			m_pSettings->intensity = m_intensity;
+			m_pSettings->sharpness = m_sharpness;
 			m_pSettingsCB->Update(gfx, *m_pSettings);
 		}
 
@@ -136,6 +138,8 @@ namespace gfx
 		const int indent = 50;
 		DrawSliderFloat(guiId++, indent, "Radius", &m_radiusVS, 0.001f, 0.25f, "%.3f", ImGuiSliderFlags_None);
 		DrawSliderFloat(guiId++, indent, "Bias", &m_biasVS, 0.001f, 0.005f, "%.3f", ImGuiSliderFlags_None);
+		DrawSliderFloat(guiId++, indent, "Intensity", &m_intensity, 0.0f, 5.0f, "%.3f", ImGuiSliderFlags_None);
+		DrawSliderFloat(guiId++, indent, "Sharpness", &m_sharpness, 0.3f, 2.0f, "%.3f", ImGuiSliderFlags_None);
 	}
 
 	const RenderTexture & SSAOPass::GetOcclusionTexture() const

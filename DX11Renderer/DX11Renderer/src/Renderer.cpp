@@ -260,6 +260,12 @@ namespace gfx
 			.CSSetUAV(RenderSlots::CS_FreeUAV + 2u, m_pDebugTiledLighting->GetUAV())
 			.CSSetSPL(RenderSlots::CS_FreeSPL + 0u, m_pShadowSampler->GetD3DSampler());
 
+		if (IsFeatureEnabled(RendererFeature::SSAO))
+		{
+			GetRenderPass(RenderPassType::TiledLightingRenderPass)
+				.CSSetSRV(RenderSlots::CS_FreeSRV + 4u, static_cast<SSAOPass&>(GetRenderPass(RenderPassType::SSAORenderPass)).GetOcclusionTexture().GetSRV());
+		}
+
 		GetRenderPass(RenderPassType::ClusteredLightingRenderPass).
 			ClearBinds()
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, gfx.GetDepthStencilTarget()->GetSRV())
@@ -533,6 +539,11 @@ namespace gfx
 			pass.UnbindSharedResources(gfx);
 		}
 
+		if (IsFeatureEnabled(RendererFeature::SSAO))
+		{
+			GetRenderPass(SSAORenderPass).Execute(gfx);
+		}
+
 		// Tiled lighting pass
 		{
 			const RenderPass& pass = GetRenderPass(RenderPassType::TiledLightingRenderPass);
@@ -598,11 +609,6 @@ namespace gfx
 		if (m_viewIdx == RendererView::Final && IsFeatureEnabled(RendererFeature::Bloom))
 		{
 			GetRenderPass(BloomRenderPass).Execute(gfx);
-		}
-
-		if (IsFeatureEnabled(RendererFeature::SSAO))
-		{
-			GetRenderPass(SSAORenderPass).Execute(gfx);
 		}
 
 		// SSR pass
@@ -684,8 +690,8 @@ namespace gfx
 				//fsPass.SetInputTarget(m_pDownsampledColor);
 				//fsPass.SetInputTarget(m_pDoFFar3);
 				//fsPass.SetInputTarget(m_pDoFNear0);
-				fsPass.SetInputTarget(static_cast<SSAOPass&>(GetRenderPass(SSAORenderPass)).GetOcclusionTexture().GetSRV());
-				//fsPass.SetInputTarget(m_pFinalBlitInputIsIndex0 ? m_pCameraColor0 : m_pCameraColor1);
+				//fsPass.SetInputTarget(static_cast<SSAOPass&>(GetRenderPass(SSAORenderPass)).GetOcclusionTexture().GetSRV());
+				fsPass.SetInputTarget(m_pFinalBlitInputIsIndex0 ? m_pCameraColor0->GetSRV() : m_pCameraColor1->GetSRV());
 				break;
 			case RendererView::TiledLighting:
 				fsPass.SetInputTarget(m_pDebugTiledLighting->GetSRV());

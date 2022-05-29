@@ -85,8 +85,8 @@ namespace gfx
 	{
 		float radiusVS;
 		float biasVS;
-		float padding0;
-		float padding1;
+		float intensity;
+		float sharpness;
 	};
 
 	struct alignas(16) DepthOfFieldCB

@@ -9,7 +9,8 @@ cbuffer SSAO_CB : register(b4)
 {
 float _RadiusVS;
 float _BiasVS;
-float2 _Padding;
+float _Intensity;
+float _Sharpness;
 };
 
 Texture2D<float4> NormalRoughReflectivityRT : register(t3);
@@ -177,5 +178,7 @@ void VerticalBlurPass(uint3 gtId : SV_GroupThreadID, uint3 tId : SV_DispatchThre
 		occlusion += sampleOcclusion * BlurWeights[i] * rangeOffset;
 	}
 
-	OcclusionOut[tId.xy] = occlusion;
+	// Apply final processing
+	occlusion = saturate(pow(occlusion, _Sharpness) * _Intensity);
+	OcclusionOut[tId.xy] = 1.f - occlusion;
 }

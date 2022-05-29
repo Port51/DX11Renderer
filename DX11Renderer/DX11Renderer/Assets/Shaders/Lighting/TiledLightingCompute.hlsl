@@ -42,6 +42,7 @@ Texture2D<float> DepthRT : register(t3);
 Texture2D<float2> HiZBuffer : register(t4);
 Texture2D<float> ShadowAtlas : register(t5);
 Texture2D<float> DitherTex : register(t6);
+Texture2D<float> OcclusionTex : register(t7);
 
 SamplerComparisonState ShadowAtlasSampler : register(s4);
 
@@ -293,8 +294,8 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
         //specularLight += brdf.specularLight * lightColorInput;
     }
     
-    diffuseLight *= isGeometry;
-    specularLight *= isGeometry;
+    diffuseLight *= isGeometry * OcclusionTex[tId.xy];
+    specularLight *= isGeometry * OcclusionTex[tId.xy];
     
     float3 debugColor = debugValue;
 #if defined(DEBUG_VIEW_LIGHT_COUNTS)

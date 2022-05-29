@@ -54,6 +54,8 @@ namespace gfx
 
 		float m_radiusVS = 0.125f;
 		float m_biasVS = 0.001f;
+		float m_intensity = 1.f;
+		float m_sharpness = 1.f;
 
 		const size_t SampleOffsetCount = 64u;
 		const size_t BlurWidth = 15u;
