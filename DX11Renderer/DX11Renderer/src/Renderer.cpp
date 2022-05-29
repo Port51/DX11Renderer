@@ -444,6 +444,7 @@ namespace gfx
 			perCameraCB.frustumCornerDataVS = camera.GetFrustumCornersVS();
 			perCameraCB.inverseFrustumCornerDataVS = camera.GetInverseFrustumCornersVS();
 			perCameraCB.cameraPositionWS = camera.GetPositionWS();
+			perCameraCB.useOcclusion = IsFeatureEnabled(RendererFeature::SSAO) ? 1u : 0u;
 
 			// todo: move elsewhere, and only calculate when FOV or resolution changes?
 			float fClustersZ = (float)m_pLightManager->GetClusterDimensionZ();
@@ -740,7 +741,6 @@ namespace gfx
 			// Toggle features
 			ImGui::Text("Features:");
 
-			//static ImGuiTableFlags flags = ImGuiTableFlags_PreciseWidths;
 			ImGui::BeginTable("FeatureTable", 2);
 			int buttonId = 0;
 			m_rendererFeatureEnabled[(int)RendererFeature::Shadows]			= DrawToggleOnOffButton(buttonId++, "Shadows", m_rendererFeatureEnabled[(int)RendererFeature::Shadows], featureButtonSize, changed);
@@ -752,7 +752,7 @@ namespace gfx
 			m_rendererFeatureEnabled[(int)RendererFeature::Bloom]			= DrawToggleOnOffButton(buttonId++, "Bloom", m_rendererFeatureEnabled[(int)RendererFeature::Bloom], featureButtonSize, changed);
 			m_rendererFeatureEnabled[(int)RendererFeature::FXAA]			= DrawToggleOnOffButton(buttonId++, "FXAA", m_rendererFeatureEnabled[(int)RendererFeature::FXAA], featureButtonSize, changed);
 			m_rendererFeatureEnabled[(int)RendererFeature::SSAO]			= DrawToggleOnOffButton(buttonId++, "SSAO", m_rendererFeatureEnabled[(int)RendererFeature::SSAO], featureButtonSize, changed);
-			if (IsFeatureEnabled(RendererFeature::DepthOfField))
+			if (IsFeatureEnabled(RendererFeature::SSAO))
 			{
 				GetRenderPass(SSAORenderPass).DrawImguiControls(gfx);
 			}

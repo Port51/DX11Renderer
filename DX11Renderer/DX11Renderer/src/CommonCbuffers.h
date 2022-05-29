@@ -68,6 +68,10 @@ namespace gfx
 		dx::XMVECTOR cameraPositionWS;
 		dx::XMVECTOR clusterPrecalc;
 		dx::XMVECTOR clusterXYRemap;
+		u32 useOcclusion;
+		float padding0;
+		float padding1;
+		float padding2;
 	};
 
 	struct alignas(16) HiZCreationCB
@@ -121,10 +125,10 @@ namespace gfx
 
 	struct alignas(16) SSR_CB
 	{
-		UINT debugViewStep;
-		UINT padding0;
-		UINT padding1;
-		UINT padding2;
+		u32 debugViewStep;
+		u32 padding0;
+		u32 padding1;
+		u32 padding2;
 	};
 
 	struct alignas(16) DitherCB

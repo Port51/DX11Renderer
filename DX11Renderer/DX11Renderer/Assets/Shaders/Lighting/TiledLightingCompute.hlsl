@@ -294,8 +294,13 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
         //specularLight += brdf.specularLight * lightColorInput;
     }
     
-    diffuseLight *= isGeometry * OcclusionTex[tId.xy];
-    specularLight *= isGeometry * OcclusionTex[tId.xy];
+    diffuseLight *= isGeometry;
+    specularLight *= isGeometry;
+	if (_UseOcclusion)
+	{
+		diffuseLight *= OcclusionTex[tId.xy];
+		specularLight *= OcclusionTex[tId.xy];
+	}
     
     float3 debugColor = debugValue;
 #if defined(DEBUG_VIEW_LIGHT_COUNTS)
