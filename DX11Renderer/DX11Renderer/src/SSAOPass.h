@@ -14,7 +14,7 @@ namespace gfx
 	class Sampler;
 	class RandomGenerator;
 
-	struct DepthOfFieldCB;
+	struct SSAO_CB;
 
 	template<typename Type>
 	class ConstantBuffer;
@@ -35,9 +35,12 @@ namespace gfx
 	public:
 		void SetupRenderPassDependencies(const GraphicsDevice& gfx, const RenderTexture & pGbuffer, const RenderTexture& hiZBuffer, const Texture& noiseTexture);
 		void Execute(const GraphicsDevice& gfx) const override;
+		void DrawImguiControls(const GraphicsDevice& gfx) override;
 		const RenderTexture& GetOcclusionTexture() const;
 
 	private:
+		std::unique_ptr<ConstantBuffer<SSAO_CB>> m_pSettingsCB;
+		std::unique_ptr<SSAO_CB> m_pSettings;
 		std::unique_ptr<StructuredBuffer<float>> m_pGaussianBlurWeights;
 
 		std::unique_ptr<ComputeKernel> m_pOcclusionKernel;
@@ -48,6 +51,9 @@ namespace gfx
 		// Use x2 occlusion textures because of separable blur
 		std::shared_ptr<RenderTexture> m_pOcclusionTexture0;
 		std::shared_ptr<RenderTexture> m_pOcclusionTexture1;
+
+		float m_radiusVS = 0.125f;
+		float m_biasVS = 0.001f;
 
 		const size_t SampleOffsetCount = 64u;
 		const size_t BlurWidth = 15u;

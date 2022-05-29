@@ -57,6 +57,9 @@ namespace gfx
 		blurWeights.resize(BlurWidth * 2u + 1u);
 		Gaussian::GetGaussianWeights1D(blurWeights, 5.f);
 		m_pGaussianBlurWeights->Update(gfx, blurWeights, blurWeights.size());
+
+		m_pSettings = std::make_unique<SSAO_CB>();
+		m_pSettingsCB = std::make_unique<ConstantBuffer<SSAO_CB>>(gfx, D3D11_USAGE_DYNAMIC);
 	}
 
 	void SSAOPass::SetupRenderPassDependencies(const GraphicsDevice & gfx, const RenderTexture & pGbuffer, const RenderTexture& hiZBuffer, const Texture& noiseTexture)
@@ -67,25 +70,35 @@ namespace gfx
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 1u, hiZBuffer.GetSRV())
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 2u, m_pSampleOffsetSB->GetSRV())
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 3u, noiseTexture.GetSRV())
-			.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, m_pOcclusionTexture0->GetUAV());
+			.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, m_pOcclusionTexture0->GetUAV())
+			.CSSetCB(RenderSlots::CS_FreeCB + 0u, m_pSettingsCB->GetD3DBuffer());
 
 		GetSubPass(SSAOSubpass::HorizontalBlurSubpass).
 			ClearBinds()
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 1u, hiZBuffer.GetSRV())
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 4u, m_pOcclusionTexture0->GetSRV())
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 5u, m_pGaussianBlurWeights->GetSRV())
-			.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, m_pOcclusionTexture1->GetUAV());
+			.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, m_pOcclusionTexture1->GetUAV())
+			.CSSetCB(RenderSlots::CS_FreeCB + 0u, m_pSettingsCB->GetD3DBuffer());
 
 		GetSubPass(SSAOSubpass::VerticalBlurSubpass).
 			ClearBinds()
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 1u, hiZBuffer.GetSRV())
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 4u, m_pOcclusionTexture1->GetSRV())
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 5u, m_pGaussianBlurWeights->GetSRV())
-			.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, m_pOcclusionTexture0->GetUAV());
+			.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, m_pOcclusionTexture0->GetUAV())
+			.CSSetCB(RenderSlots::CS_FreeCB + 0u, m_pSettingsCB->GetD3DBuffer());
 	}
 
 	void SSAOPass::Execute(const GraphicsDevice & gfx) const
 	{
+		// Update settings
+		{
+			m_pSettings->radiusVS = m_radiusVS;
+			m_pSettings->biasVS = m_biasVS;
+			m_pSettingsCB->Update(gfx, *m_pSettings);
+		}
+
 		// Render occlusion
 		{
 			const RenderPass& pass = GetSubPass(SSAOSubpass::OcclusionSubpass);
@@ -115,6 +128,14 @@ namespace gfx
 
 			pass.UnbindSharedResources(gfx);
 		}
+	}
+
+	void SSAOPass::DrawImguiControls(const GraphicsDevice & gfx)
+	{
+		int guiId = 17390;
+		const int indent = 50;
+		DrawSliderFloat(guiId++, indent, "Radius", &m_radiusVS, 0.001f, 0.25f, "%.3f", ImGuiSliderFlags_None);
+		DrawSliderFloat(guiId++, indent, "Bias", &m_biasVS, 0.001f, 0.005f, "%.3f", ImGuiSliderFlags_None);
 	}
 
 	const RenderTexture & SSAOPass::GetOcclusionTexture() const

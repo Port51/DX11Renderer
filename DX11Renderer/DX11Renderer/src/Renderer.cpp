@@ -746,6 +746,10 @@ namespace gfx
 			m_rendererFeatureEnabled[(int)RendererFeature::Bloom]			= DrawToggleOnOffButton(buttonId++, "Bloom", m_rendererFeatureEnabled[(int)RendererFeature::Bloom], featureButtonSize, changed);
 			m_rendererFeatureEnabled[(int)RendererFeature::FXAA]			= DrawToggleOnOffButton(buttonId++, "FXAA", m_rendererFeatureEnabled[(int)RendererFeature::FXAA], featureButtonSize, changed);
 			m_rendererFeatureEnabled[(int)RendererFeature::SSAO]			= DrawToggleOnOffButton(buttonId++, "SSAO", m_rendererFeatureEnabled[(int)RendererFeature::SSAO], featureButtonSize, changed);
+			if (IsFeatureEnabled(RendererFeature::DepthOfField))
+			{
+				GetRenderPass(SSAORenderPass).DrawImguiControls(gfx);
+			}
 			m_rendererFeatureEnabled[(int)RendererFeature::HZBSSR]			= DrawToggleOnOffButton(buttonId++, "SSR", m_rendererFeatureEnabled[(int)RendererFeature::HZBSSR], featureButtonSize, changed);
 			m_rendererFeatureEnabled[(int)RendererFeature::Dither]			= DrawToggleOnOffButton(buttonId++, "Dither", m_rendererFeatureEnabled[(int)RendererFeature::Dither], featureButtonSize, changed);
 			m_rendererFeatureEnabled[(int)RendererFeature::Tonemapping]		= DrawToggleOnOffButton(buttonId++, "Tonemapping", m_rendererFeatureEnabled[(int)RendererFeature::Tonemapping], featureButtonSize, changed);

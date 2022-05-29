@@ -81,6 +81,14 @@ namespace gfx
 		dx::XMVECTORU32 groupResolutions; // groupsX, groupsY, groupsZ, padding
 	};
 
+	struct alignas(16) SSAO_CB
+	{
+		float radiusVS;
+		float biasVS;
+		float padding0;
+		float padding1;
+	};
+
 	struct alignas(16) DepthOfFieldCB
 	{
 		u32 weightOffset;

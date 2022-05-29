@@ -5,6 +5,13 @@
 #include "./Common.hlsli"
 #include "./HiZCommon.hlsli"
 
+cbuffer SSAO_CB : register(b4)
+{
+float _RadiusVS;
+float _BiasVS;
+float2 _Padding;
+};
+
 Texture2D<float4> NormalRoughReflectivityRT : register(t3);
 Texture2D<float2> HZB : register(t4);
 StructuredBuffer<float4> SampleOffsets : register(t5);
@@ -41,10 +48,6 @@ void OcclusionPass(uint3 tId : SV_DispatchThreadID)
 	// Construct TBN
 	float3 randomVec = normalize(NoiseTex.SampleLevel(PointWrapSampler, tId.xy / 32.f, 0.f).xyz * 2.f - 1.f);
 	float3x3 TBN = GetTBN(normalVS, randomVec);
-
-	// todo: make into settings
-	float _RadiusVS = 0.125;
-	float _BiasVS = 0.001;
 
 	float occlusion = 0.0;
 	float debugValue = 0.0;
@@ -113,10 +116,6 @@ void HorizontalBlurPass(uint3 gtId : SV_GroupThreadID, uint3 tId : SV_DispatchTh
 	if (tId.x >= (uint) resolution.x || tId.y >= (uint) resolution.y)
 		return;
 
-	// todo: make into settings
-	float _RadiusVS = 0.125;
-	float _BiasVS = 0.001;
-
 	const float linearDepth = HZB_LINEAR(HZB[tId.xy].x, _ZBufferParams);
 
 	// Apply blur
@@ -162,10 +161,6 @@ void VerticalBlurPass(uint3 gtId : SV_GroupThreadID, uint3 tId : SV_DispatchThre
 
 	if (tId.x >= (uint) resolution.x || tId.y >= (uint) resolution.y)
 		return;
-
-	// todo: make into settings
-	float _RadiusVS = 0.125;
-	float _BiasVS = 0.001;
 
 	const float linearDepth = HZB_LINEAR(HZB[tId.xy].x, _ZBufferParams);
 
