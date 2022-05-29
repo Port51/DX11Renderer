@@ -16,11 +16,11 @@ namespace gfx
 		FullscreenPass(const GraphicsDevice& gfx, const RenderPassType renderPassType, const char* pixelShader);
 	public:
 		void Execute(const GraphicsDevice& gfx) const override;
-		void SetInputTarget(std::shared_ptr<Texture> pInput);
+		void SetInputTarget(ComPtr<ID3D11ShaderResourceView> pInput);
 	private:
 		void SetupFullscreenQuadBindings(const GraphicsDevice& gfx, const char* vertexShaderName, const VertexShader& vertexShader);
 	private:
-		std::shared_ptr<Texture> m_pInputTexture;
+		ComPtr<ID3D11ShaderResourceView> m_pInputTexture;
 		std::unique_ptr<VertexBufferWrapper> m_pVertexBufferWrapper;
 	};
 }

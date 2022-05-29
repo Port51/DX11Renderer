@@ -27,7 +27,6 @@
 
 Texture2D<float4> CameraColorIn : register(t3);
 RWTexture2D<float4> CameraColorOut : register(u0);
-SamplerState BilinearSampler : register(s0);
 
 cbuffer FXAA_CB : register(b4)
 {
@@ -79,7 +78,7 @@ void CSMain(uint3 tId : SV_DispatchThreadID)
     if (lRange < lMaxScaledClamped)
     {
         // Early out
-        CameraColorOut[id] = CameraColorIn.SampleLevel(BilinearSampler, uv, 0.f);
+        CameraColorOut[id] = CameraColorIn.SampleLevel(BilinearWrapSampler, uv, 0.f);
         return;
     }
     
@@ -88,15 +87,15 @@ void CSMain(uint3 tId : SV_DispatchThreadID)
         gradient0 - gradient1
     );
     float2 dir1 = normalize(dir);
-    float4 sN1 = CameraColorIn.SampleLevel(BilinearSampler, uv - dir1 * _ScreenParams.zw, 0.f);
-    float4 sP1 = CameraColorIn.SampleLevel(BilinearSampler, uv + dir1 * _ScreenParams.zw, 0.f);
+    float4 sN1 = CameraColorIn.SampleLevel(BilinearWrapSampler, uv - dir1 * _ScreenParams.zw, 0.f);
+    float4 sP1 = CameraColorIn.SampleLevel(BilinearWrapSampler, uv + dir1 * _ScreenParams.zw, 0.f);
     
     const float _EdgeSharpness = 0.5f;
     float dirAbsMinTimesC = min(abs(dir1.x), abs(dir1.y)) * _EdgeSharpness;
     float2 dir2 = clamp(dir1.xy / dirAbsMinTimesC, -2.f, 2.f);
     
-    float4 sN2 = CameraColorIn.SampleLevel(BilinearSampler, uv - dir2 * _ScreenParams.zw, 0.f);
-    float4 sP2 = CameraColorIn.SampleLevel(BilinearSampler, uv + dir2 * _ScreenParams.zw, 0.f);
+    float4 sN2 = CameraColorIn.SampleLevel(BilinearWrapSampler, uv - dir2 * _ScreenParams.zw, 0.f);
+    float4 sP2 = CameraColorIn.SampleLevel(BilinearWrapSampler, uv + dir2 * _ScreenParams.zw, 0.f);
     
     float4 s1 = sN1 + sP1;
     float4 s2 = ((sN2 + sP2) * 0.25f) + (s1 * 0.25f);

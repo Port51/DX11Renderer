@@ -53,11 +53,11 @@ namespace gfx
 		RenderPass::Execute(gfx);
 
 		m_pVertexBufferWrapper->BindIA(gfx, 0u);
-		gfx.GetContext()->PSSetShaderResources(0u, 1u, m_pInputTexture->GetSRV().GetAddressOf());
+		gfx.GetContext()->PSSetShaderResources(0u, 1u, m_pInputTexture.GetAddressOf());
 		gfx.DrawIndexed(3u);
 	}
 
-	void FullscreenPass::SetInputTarget(std::shared_ptr<Texture> pInput)
+	void FullscreenPass::SetInputTarget(ComPtr<ID3D11ShaderResourceView> pInput)
 	{
 		m_pInputTexture = std::move(pInput);
 	}

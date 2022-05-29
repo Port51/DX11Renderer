@@ -16,6 +16,7 @@ namespace gfx
 	public:
 		RenderTexture(const GraphicsDevice& gfx);
 		RenderTexture(const GraphicsDevice& gfx, UINT mipCount);
+		RenderTexture(const GraphicsDevice& gfx, DXGI_FORMAT format);
 		RenderTexture(const GraphicsDevice& gfx, DXGI_FORMAT format, UINT mipCount);
 
 		virtual void Init(ComPtr<ID3D11Device> pDevice, UINT textureWidth, UINT textureHeight);

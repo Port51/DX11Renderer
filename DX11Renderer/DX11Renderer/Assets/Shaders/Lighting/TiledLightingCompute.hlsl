@@ -43,7 +43,7 @@ Texture2D<float2> HiZBuffer : register(t4);
 Texture2D<float> ShadowAtlas : register(t5);
 Texture2D<float> DitherTex : register(t6);
 
-SamplerComparisonState ShadowAtlasSampler : register(s0);
+SamplerComparisonState ShadowAtlasSampler : register(s4);
 
 #include "./../Lighting/Shadows.hlsli"
 

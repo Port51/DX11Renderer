@@ -19,8 +19,8 @@ namespace gfx
 	DepthOfFieldPass::DepthOfFieldPass(const GraphicsDevice & gfx, DepthOfFieldBokehType bokehType)
 		: RenderPass(RenderPassType::DepthOfFieldRenderPass), m_bokehType(bokehType)
 	{
-		UINT dofTextureWidth = gfx.GetScreenWidth() >> 1u;
-		UINT dofTextureHeight = gfx.GetScreenHeight() >> 1u;
+		const UINT dofTextureWidth = gfx.GetScreenWidth() >> 1u;
+		const UINT dofTextureHeight = gfx.GetScreenHeight() >> 1u;
 
 		CreateSubPass(DepthOfFieldSubpass::PrefilterSubpass);
 		CreateSubPass(DepthOfFieldSubpass::FarBlurSubpass);
@@ -139,10 +139,10 @@ namespace gfx
 	void DepthOfFieldPass::Execute(const GraphicsDevice & gfx) const
 	{
 		auto context = gfx.GetContext();
-		UINT screenWidth = gfx.GetScreenWidth();
-		UINT screenHeight = gfx.GetScreenHeight();
-		UINT dofTextureWidth = screenWidth >> 1u;
-		UINT dofTextureHeight = screenHeight >> 1u;
+		const UINT screenWidth = gfx.GetScreenWidth();
+		const UINT screenHeight = gfx.GetScreenHeight();
+		const UINT dofTextureWidth = screenWidth >> 1u;
+		const UINT dofTextureHeight = screenHeight >> 1u;
 
 		// Run same prefilter pass for all bokehs
 

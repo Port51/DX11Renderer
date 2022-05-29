@@ -50,7 +50,7 @@ namespace gfx
 		virtual void Release();
 	public:
 		void AcceptDrawCall(DrawCall job, RenderPassType targetPass);
-		void Execute(GraphicsDevice& gfx, const Camera& cam, float timeElapsed, UINT pixelSelectionX, UINT pixelSelectionY);
+		void Execute(GraphicsDevice& gfx, const Camera& cam, const float timeElapsed, const UINT pixelSelectionX, const UINT pixelSelectionY);
 		void DrawImguiControlWindow(const GraphicsDevice& gfx);
 		void Reset();
 		bool IsFeatureEnabled(RendererFeature feature) const;
@@ -63,7 +63,10 @@ namespace gfx
 	private:
 		std::unordered_map<RenderPassType, std::unique_ptr<RenderPass>> m_pRenderPasses;
 
-		std::shared_ptr<Sampler> m_pClampedBilinearSampler;
+		std::shared_ptr<Sampler> m_pPointWrapSampler;
+		std::shared_ptr<Sampler> m_pPointClampSampler;
+		std::shared_ptr<Sampler> m_pBilinearWrapSampler;
+		std::shared_ptr<Sampler> m_pBilinearClampSampler;
 
 		std::shared_ptr<RenderTexture> m_pNormalRoughReflectivityTarget;
 		std::shared_ptr<RenderTexture> m_pSpecularLighting;
@@ -101,6 +104,7 @@ namespace gfx
 		std::unique_ptr<ConstantBuffer<DitherCB>> m_pDitherCB;
 
 		std::shared_ptr<Texture> m_pDitherTexture;
+		std::shared_ptr<Texture> m_pRGBNoiseTexture;
 
 		std::shared_ptr<RendererList> m_pRendererList;
 		std::unique_ptr<RendererList> m_pVisibleRendererList; // filtered by camera frustum

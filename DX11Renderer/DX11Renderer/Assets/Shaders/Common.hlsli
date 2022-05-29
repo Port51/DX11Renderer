@@ -3,6 +3,12 @@
 
 #include "./CbufCommon.hlsli"
 
+// todo: move elsewhere?
+SamplerState PointWrapSampler : register(s0);
+SamplerState PointClampSampler : register(s1);
+SamplerState BilinearWrapSampler : register(s2);
+SamplerState BilinearClampSampler : register(s3);
+
 // Z buffer to linear depth.
 // Does NOT correctly handle oblique view frustums.
 // Does NOT work with orthographic projection.
@@ -84,7 +90,13 @@ float3 GetNormalVSFromGBuffer(float4 gbufferTex)
 
 float2 GetPositionNDCFromVS(float3 positionVS)
 {
-	return positionVS.xz * _InverseFrustumCornerDataVS.xy / positionVS.z;
+	return positionVS.xy * _InverseFrustumCornerDataVS.xy / positionVS.z;
+}
+
+float2 GetScreenUVFromVS(float3 positionVS)
+{
+	// Use half-pixel offset to sample center of pixel
+	return (positionVS.xy * _InverseFrustumCornerDataVS.xy / positionVS.z) * 0.5f + 0.5f + _ScreenParams.zw * 0.5f;
 }
 
 uint2 GetPixelCoordFromNDC(float3 positionNDC)

@@ -41,7 +41,11 @@ namespace gfx
 		static const UINT CS_LightShadowDataSRV = 1u;
 		static const UINT CS_GbufferNormalRoughSRV = 2u;
 		static const UINT CS_FreeSRV = 3u; // 1st available general-purpose slot
-		static const UINT CS_FreeSPL = 0u; // 1st available general-purpose slot
+		static const UINT CS_PointWrapSampler = 0u;
+		static const UINT CS_PointClampSampler = 1u;
+		static const UINT CS_BilinearClampSampler = 2u;
+		static const UINT CS_BilinearWrapSampler = 3u;
+		static const UINT CS_FreeSPL = 4u; // 1st available general-purpose slot
 
 		static const UINT CS_FreeUAV = 0u; // 1st available general-purpose slot
 

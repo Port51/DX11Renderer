@@ -16,8 +16,8 @@ namespace gfx
 	BloomPass::BloomPass(const GraphicsDevice & gfx)
 		: RenderPass(RenderPassType::BloomRenderPass)
 	{
-		UINT bloomTextureWidth = gfx.GetScreenWidth() >> 1u;
-		UINT bloomTextureHeight = gfx.GetScreenHeight() >> 1u;
+		const UINT bloomTextureWidth = gfx.GetScreenWidth() >> 1u;
+		const UINT bloomTextureHeight = gfx.GetScreenHeight() >> 1u;
 
 		CreateSubPass(BloomSubpass::PrefilterSubpass);
 		CreateSubPass(BloomSubpass::SeparableBlurSubpass);
@@ -65,10 +65,10 @@ namespace gfx
 	void BloomPass::Execute(const GraphicsDevice & gfx) const
 	{
 		auto context = gfx.GetContext();
-		UINT screenWidth = gfx.GetScreenWidth();
-		UINT screenHeight = gfx.GetScreenHeight();
-		UINT bloomTextureWidth = screenWidth >> 1u;
-		UINT bloomTextureHeight = screenHeight >> 1u;
+		const UINT screenWidth = gfx.GetScreenWidth();
+		const UINT screenHeight = gfx.GetScreenHeight();
+		const UINT bloomTextureWidth = screenWidth >> 1u;
+		const UINT bloomTextureHeight = screenHeight >> 1u;
 
 		// Bloom prefilter
 		{

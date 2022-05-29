@@ -60,7 +60,12 @@ namespace gfx
 		// Texture assets and samplers
 		//
 		m_pDitherTexture = std::dynamic_pointer_cast<Texture>(Texture::Resolve(gfx, "Assets\\Textures\\Dither8x8.png"));
-		m_pClampedBilinearSampler = std::make_shared<Sampler>(gfx, D3D11_FILTER_MIN_MAG_MIP_LINEAR, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP);
+		m_pRGBNoiseTexture = std::dynamic_pointer_cast<Texture>(Texture::Resolve(gfx, "Assets\\Textures\\RGBNoise32x32.png"));
+
+		m_pPointWrapSampler = std::make_shared<Sampler>(gfx, D3D11_FILTER_MIN_MAG_MIP_POINT, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP);
+		m_pPointClampSampler = std::make_shared<Sampler>(gfx, D3D11_FILTER_MIN_MAG_MIP_POINT, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP);
+		m_pBilinearWrapSampler = std::make_shared<Sampler>(gfx, D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP);
+		m_pBilinearClampSampler = std::make_shared<Sampler>(gfx, D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP);
 		
 		D3D11_SAMPLER_DESC shadowSamplerDesc = {};
 		shadowSamplerDesc.Filter = D3D11_FILTER_COMPARISON_MIN_MAG_LINEAR_MIP_POINT;
@@ -97,7 +102,7 @@ namespace gfx
 		m_pCameraColor1->Init(gfx.GetAdapter(), screenWidth, screenHeight);
 
 		m_pDownsampledColor = std::make_shared<RenderTexture>(gfx);
-		m_pDownsampledColor->Init(gfx.GetAdapter(), screenWidth / 2, screenHeight / 2);
+		m_pDownsampledColor->Init(gfx.GetAdapter(), screenWidth >> 1u, screenHeight >> 1u);
 
 		m_pDebugTiledLighting = std::make_shared<RenderTexture>(gfx);
 		m_pDebugTiledLighting->Init(gfx.GetAdapter(), screenWidth, screenHeight);
@@ -179,7 +184,10 @@ namespace gfx
 		m_pDownsampledColor->Release();
 		m_pDitherTexture->Release();
 
-		m_pClampedBilinearSampler->Release();
+		m_pPointWrapSampler->Release();
+		m_pPointClampSampler->Release();
+		m_pBilinearWrapSampler->Release();
+		m_pBilinearClampSampler->Release();
 		m_pShadowSampler->Release();
 
 		m_pClusteredLightingCB->Release();
@@ -215,7 +223,11 @@ namespace gfx
 			.PSSetCB(RenderSlots::PS_PerFrameCB, m_pPerFrameCB->GetD3DBuffer())
 			.PSSetCB(RenderSlots::PS_TransformationCB, m_pTransformationCB->GetD3DBuffer())
 			.PSSetCB(RenderSlots::PS_PerCameraCB, m_pPerCameraCB->GetD3DBuffer())
-			.PSSetCB(RenderSlots::PS_LightInputCB, m_pLightManager->GetLightInputCB().GetD3DBuffer());
+			.PSSetCB(RenderSlots::PS_LightInputCB, m_pLightManager->GetLightInputCB().GetD3DBuffer())
+			.CSSetSPL(RenderSlots::CS_PointWrapSampler, m_pPointWrapSampler->GetD3DSampler())
+			.CSSetSPL(RenderSlots::CS_PointClampSampler, m_pPointClampSampler->GetD3DSampler())
+			.CSSetSPL(RenderSlots::CS_BilinearWrapSampler, m_pBilinearWrapSampler->GetD3DSampler())
+			.CSSetSPL(RenderSlots::CS_BilinearClampSampler, m_pBilinearClampSampler->GetD3DSampler());
 
 		GetRenderPass(RenderPassType::DepthPrepassRenderPass).
 			ClearBinds()
@@ -279,18 +291,7 @@ namespace gfx
 
 		if (IsFeatureEnabled(RendererFeature::SSAO))
 		{
-			// Assign inputs and outputs
-			const auto& pColorIn = (cameraOutSlot0) ? m_pCameraColor0 : m_pCameraColor1;
-			const auto& pColorOut = (cameraOutSlot0) ? m_pCameraColor1 : m_pCameraColor0;
-			cameraOutSlot0 = !cameraOutSlot0;
-
-			GetRenderPass(RenderPassType::SSAORenderPass).
-				ClearBinds()
-				.CSSetSRV(RenderSlots::CS_GbufferNormalRoughSRV, m_pNormalRoughReflectivityTarget->GetSRV())
-				.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, pColorIn->GetSRV())
-				.CSSetSRV(RenderSlots::CS_FreeSRV + 1u, gfx.GetDepthStencilTarget()->GetSRV())
-				.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, pColorOut->GetUAV())
-				.CSSetSPL(RenderSlots::CS_FreeSPL + 0u, m_pClampedBilinearSampler->GetD3DSampler());
+			static_cast<SSAOPass&>(GetRenderPass(RenderPassType::SSAORenderPass)).SetupRenderPassDependencies(gfx, *m_pNormalRoughReflectivityTarget, *m_pHiZBufferTarget, *m_pRGBNoiseTexture);
 		}
 
 		if (IsFeatureEnabled(RendererFeature::HZBSSR))
@@ -310,8 +311,7 @@ namespace gfx
 				.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, pColorOut->GetUAV())
 				.CSSetUAV(RenderSlots::CS_FreeUAV + 1u, m_pSSR_DebugData->GetUAV())
 				.CSSetUAV(RenderSlots::CS_FreeUAV + 2u, m_pDebugSSR->GetUAV())
-				.CSSetCB(RenderSlots::CS_FreeCB + 0u, m_pSSR_CB->GetD3DBuffer())
-				.CSSetSPL(RenderSlots::CS_FreeSPL + 0u, m_pClampedBilinearSampler->GetD3DSampler());
+				.CSSetCB(RenderSlots::CS_FreeCB + 0u, m_pSSR_CB->GetD3DBuffer());
 		}
 		
 		if (IsFeatureEnabled(RendererFeature::FXAA))
@@ -325,8 +325,7 @@ namespace gfx
 				ClearBinds()
 				.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, pColorIn->GetSRV())
 				.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, pColorOut->GetUAV())
-				.CSSetCB(RenderSlots::CS_FreeCB + 0u, m_pFXAA_CB->GetD3DBuffer())
-				.CSSetSPL(RenderSlots::CS_FreeSPL + 0u, m_pClampedBilinearSampler->GetD3DSampler());
+				.CSSetCB(RenderSlots::CS_FreeCB + 0u, m_pFXAA_CB->GetD3DBuffer());
 		}
 
 		if (IsFeatureEnabled(RendererFeature::Dither))
@@ -366,7 +365,7 @@ namespace gfx
 		m_pRenderPasses[targetPass]->EnqueueJob(std::move(job));
 	}
 
-	void Renderer::Execute(GraphicsDevice& gfx, const Camera& camera, float timeElapsed, UINT pixelSelectionX, UINT pixelSelectionY)
+	void Renderer::Execute(GraphicsDevice& gfx, const Camera& camera, const float timeElapsed, const UINT pixelSelectionX, const UINT pixelSelectionY)
 	{
 		auto context = gfx.GetContext();
 		UINT screenWidth = gfx.GetScreenWidth();
@@ -685,16 +684,17 @@ namespace gfx
 				//fsPass.SetInputTarget(m_pDownsampledColor);
 				//fsPass.SetInputTarget(m_pDoFFar3);
 				//fsPass.SetInputTarget(m_pDoFNear0);
-				fsPass.SetInputTarget(m_pFinalBlitInputIsIndex0 ? m_pCameraColor0 : m_pCameraColor1);
+				fsPass.SetInputTarget(static_cast<SSAOPass&>(GetRenderPass(SSAORenderPass)).GetOcclusionTexture().GetSRV());
+				//fsPass.SetInputTarget(m_pFinalBlitInputIsIndex0 ? m_pCameraColor0 : m_pCameraColor1);
 				break;
 			case RendererView::TiledLighting:
-				fsPass.SetInputTarget(m_pDebugTiledLighting);
+				fsPass.SetInputTarget(m_pDebugTiledLighting->GetSRV());
 				break;
 			case RendererView::ClusteredLighting:
-				fsPass.SetInputTarget(m_pDebugClusteredLighting);
+				fsPass.SetInputTarget(m_pDebugClusteredLighting->GetSRV());
 				break;
 			case RendererView::SSRTrace:
-				fsPass.SetInputTarget(m_pDebugSSR);
+				fsPass.SetInputTarget(m_pDebugSSR->GetSRV());
 				break;
 			}
 

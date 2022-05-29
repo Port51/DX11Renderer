@@ -13,6 +13,13 @@ namespace gfx
 
 	}
 
+	// Don't initialize texture
+	Texture::Texture(const GraphicsDevice& gfx, UINT mipCount)
+		: m_tag("?"), m_mipCount(mipCount)
+	{
+
+	}
+
 	// Create descriptors and pTexture
 	Texture::Texture(const GraphicsDevice& gfx, D3D11_TEXTURE2D_DESC textureDesc, D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc)
 		: m_tag("?")

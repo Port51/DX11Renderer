@@ -6,29 +6,24 @@
 namespace gfx
 {
 	RenderTexture::RenderTexture(const GraphicsDevice& gfx)
-		: Texture::Texture(gfx)
-	{
-		m_format = DXGI_FORMAT_R16G16B16A16_FLOAT;
-		//format = DXGI_FORMAT_R16G16B16A16_UNORM;
-		//format = DXGI_FORMAT_R8G8B8A8_UNORM;
-		m_mipCount = 1u;
-	}
+		: Texture::Texture(gfx, 1u)
+		, m_format(DXGI_FORMAT_R16G16B16A16_FLOAT)
+	{}
 
 	RenderTexture::RenderTexture(const GraphicsDevice& gfx, UINT _mipCount)
-		: Texture::Texture(gfx)
-	{
-		m_format = DXGI_FORMAT_R16G16B16A16_FLOAT;
-		//format = DXGI_FORMAT_R16G16B16A16_UNORM;
-		//format = DXGI_FORMAT_R8G8B8A8_UNORM;
-		m_mipCount = _mipCount;
-	}
+		: Texture::Texture(gfx, _mipCount)
+		, m_format(DXGI_FORMAT_R16G16B16A16_FLOAT)
+	{}
+
+	RenderTexture::RenderTexture(const GraphicsDevice& gfx, DXGI_FORMAT _format)
+		: Texture::Texture(gfx, 1u)
+		, m_format(_format)
+	{}
 
 	RenderTexture::RenderTexture(const GraphicsDevice& gfx, DXGI_FORMAT _format, UINT _mipCount)
-		: Texture::Texture(gfx)
-	{
-		m_format = _format;
-		m_mipCount = _mipCount;
-	}
+		: Texture::Texture(gfx, _mipCount)
+		, m_format(_format)
+	{}
 
 	void RenderTexture::Init(ComPtr<ID3D11Device> device, UINT textureWidth, UINT textureHeight)
 	{
