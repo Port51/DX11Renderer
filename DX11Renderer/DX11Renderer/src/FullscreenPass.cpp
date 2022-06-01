@@ -48,11 +48,11 @@ namespace gfx
 			.SetupPSBinding(0u);
 	}
 
-	void FullscreenPass::Execute(const GraphicsDevice& gfx) const
+	void FullscreenPass::Execute(const GraphicsDevice& gfx, RenderState& renderState) const
 	{
-		RenderPass::Execute(gfx);
+		RenderPass::Execute(gfx, renderState);
 
-		m_pVertexBufferWrapper->BindIA(gfx, 0u);
+		m_pVertexBufferWrapper->BindIA(gfx, renderState, 0u);
 		gfx.GetContext()->PSSetShaderResources(0u, 1u, m_pInputTexture.GetAddressOf());
 		gfx.DrawIndexed(3u);
 	}

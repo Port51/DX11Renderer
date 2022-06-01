@@ -42,9 +42,18 @@ namespace gfx
 		m_pIndexBuffer.Reset();
 	}
 
-	void IndexBuffer::BindIA(const GraphicsDevice& gfx, UINT slot)
+	void IndexBuffer::BindIA(const GraphicsDevice& gfx, RenderState& renderState, UINT slot)
 	{
-		gfx.GetContext()->IASetIndexBuffer(m_pIndexBuffer.Get(), m_format, 0u);
+		if (renderState.IsNewBinding(GetGuid(), RenderBindingType::IA_IndexBuffer, slot))
+		{
+			gfx.GetContext()->IASetIndexBuffer(m_pIndexBuffer.Get(), m_format, 0u);
+		}
+	}
+
+	void IndexBuffer::UnbindIA(const GraphicsDevice & gfx, RenderState & renderState, UINT slot)
+	{
+		renderState.ClearBinding(RenderBindingType::IA_IndexBuffer, slot);
+		gfx.GetContext()->IASetIndexBuffer(nullptr, m_format, 0u);
 	}
 
 	const UINT IndexBuffer::GetIndexCount() const

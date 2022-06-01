@@ -23,9 +23,18 @@ namespace gfx
 		m_pInputLayout.Reset();
 	}
 
-	void InputLayout::BindIA(const GraphicsDevice& gfx, UINT slot)
+	void InputLayout::BindIA(const GraphicsDevice& gfx, RenderState& renderState, UINT slot)
 	{
-		gfx.GetContext()->IASetInputLayout(m_pInputLayout.Get());
+		if (renderState.IsNewBinding(GetGuid(), RenderBindingType::IA_InputLayout, slot))
+		{
+			gfx.GetContext()->IASetInputLayout(m_pInputLayout.Get());
+		}
+	}
+
+	void InputLayout::UnbindIA(const GraphicsDevice & gfx, RenderState & renderState, UINT slot)
+	{
+		renderState.ClearBinding(RenderBindingType::IA_InputLayout, slot);
+		gfx.GetContext()->IASetInputLayout(nullptr);
 	}
 
 	std::shared_ptr<InputLayout> InputLayout::Resolve(const GraphicsDevice& gfx, const VertexLayout& layout, const char* vertexShaderName, ID3DBlob * pVertexShaderBytecode)

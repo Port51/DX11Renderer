@@ -22,6 +22,8 @@
 #include <wrl.h>
 #include <stdlib.h>     // srand, rand
 
+#include "RenderState.h"
+
 #include "Log.h"
 
 // Exceptions

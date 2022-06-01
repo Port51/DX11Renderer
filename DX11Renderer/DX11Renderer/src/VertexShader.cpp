@@ -32,9 +32,18 @@ namespace gfx
 		m_pVertexShader.Reset();
 	}
 
-	void VertexShader::BindVS(const GraphicsDevice& gfx, UINT slot)
+	void VertexShader::BindVS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot)
 	{
-		gfx.GetContext()->VSSetShader(m_pVertexShader.Get(), nullptr, 0u);
+		if (renderState.IsNewBinding(GetGuid(), RenderBindingType::VS_Shader, 0u))
+		{
+			gfx.GetContext()->VSSetShader(m_pVertexShader.Get(), nullptr, 0u);
+		}
+	}
+
+	void VertexShader::UnbindVS(const GraphicsDevice & gfx, RenderState & renderState, UINT slot)
+	{
+		renderState.ClearBinding(RenderBindingType::VS_Shader, 0u);
+		gfx.GetContext()->VSSetShader(nullptr, nullptr, 0u);
 	}
 
 	ID3DBlob* VertexShader::GetBytecode() const

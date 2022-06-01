@@ -4,27 +4,14 @@
 #include "Binding.h"
 #include "Bindable.h"
 #include "RenderTexture.h"
-#include "RenderState.h"
 
 namespace gfx
 {
-	// Statics
-	std::vector<ID3D11Buffer*> RenderPass::m_pNullBuffers;
-	std::vector<ID3D11ShaderResourceView*> RenderPass::m_pNullSRVs;
-	std::vector<ID3D11UnorderedAccessView*> RenderPass::m_pNullUAVs;
-	std::vector<ID3D11SamplerState*> RenderPass::m_pNullSPLs;
 
 	RenderPass::RenderPass(const RenderPassType renderPassType)
 		: m_renderPassType(renderPassType)
 	{
-		if (m_pNullBuffers.size() == 0)
-		{
-			// Init static info
-			m_pNullBuffers.resize(10u, nullptr);
-			m_pNullSRVs.resize(10u, nullptr);
-			m_pNullUAVs.resize(10u, nullptr);
-			m_pNullSPLs.resize(10u, nullptr);
-		}
+
 	}
 
 	const RenderPassType RenderPass::GetRenderPassType() const
@@ -37,11 +24,11 @@ namespace gfx
 		m_jobs.push_back(std::move(job));
 	}
 
-	void RenderPass::BindSharedResources(const GraphicsDevice& gfx) const
+	void RenderPass::BindSharedResources(const GraphicsDevice& gfx, RenderState& renderState) const
 	{
 		for (auto& binding : m_bindings)
 		{
-			binding.Bind(gfx);
+			binding.Bind(gfx, renderState);
 		}
 
 		// todo: can optimize by passing one array for each of these
@@ -89,55 +76,59 @@ namespace gfx
 		}
 	}
 
-	void RenderPass::UnbindSharedResources(const GraphicsDevice& gfx) const
+	void RenderPass::UnbindSharedResources(const GraphicsDevice& gfx, RenderState& renderState) const
 	{
+		for (auto& binding : m_bindings)
+		{
+			binding.Unbind(gfx, renderState);
+		}
+
 		if (m_CS_CB_Binds.size() > 0)
 		{
-			gfx.GetContext()->CSSetConstantBuffers(m_CS_CB_Binds[0].first, m_CS_CB_Binds.size(), m_pNullBuffers.data());
+			gfx.GetContext()->CSSetConstantBuffers(m_CS_CB_Binds[0].first, m_CS_CB_Binds.size(), RenderConstants::NullBufferArray.data());
 		}
 		if (m_CS_SRV_Binds.size() > 0)
 		{
-			gfx.GetContext()->CSSetShaderResources(m_CS_SRV_Binds[0].first, m_CS_SRV_Binds.size(), m_pNullSRVs.data());
+			gfx.GetContext()->CSSetShaderResources(m_CS_SRV_Binds[0].first, m_CS_SRV_Binds.size(), RenderConstants::NullSRVArray.data());
 		}
 		if (m_CS_UAV_Binds.size() > 0)
 		{
-			gfx.GetContext()->CSSetUnorderedAccessViews(m_CS_UAV_Binds[0].first, m_CS_UAV_Binds.size(), m_pNullUAVs.data(), nullptr);
+			gfx.GetContext()->CSSetUnorderedAccessViews(m_CS_UAV_Binds[0].first, m_CS_UAV_Binds.size(), RenderConstants::NullUAVArray.data(), nullptr);
 		}
 		if (m_CS_SPL_Binds.size() > 0)
 		{
-			gfx.GetContext()->CSSetSamplers(m_CS_SPL_Binds[0].first, m_CS_SPL_Binds.size(), m_pNullSPLs.data());
+			gfx.GetContext()->CSSetSamplers(m_CS_SPL_Binds[0].first, m_CS_SPL_Binds.size(), RenderConstants::NullSamplerArray.data());
 		}
 
 		if (m_VS_CB_Binds.size() > 0)
 		{
-			gfx.GetContext()->VSSetConstantBuffers(m_VS_CB_Binds[0].first, m_VS_CB_Binds.size(), m_pNullBuffers.data());
+			gfx.GetContext()->VSSetConstantBuffers(m_VS_CB_Binds[0].first, m_VS_CB_Binds.size(), RenderConstants::NullBufferArray.data());
 		}
 		if (m_VS_SRV_Binds.size() > 0)
 		{
-			gfx.GetContext()->VSSetShaderResources(m_VS_SRV_Binds[0].first, m_VS_SRV_Binds.size(), m_pNullSRVs.data());
+			gfx.GetContext()->VSSetShaderResources(m_VS_SRV_Binds[0].first, m_VS_SRV_Binds.size(), RenderConstants::NullSRVArray.data());
 		}
 		if (m_VS_SPL_Binds.size() > 0)
 		{
-			gfx.GetContext()->VSSetSamplers(m_VS_SPL_Binds[0].first, m_VS_SPL_Binds.size(), m_pNullSPLs.data());
+			gfx.GetContext()->VSSetSamplers(m_VS_SPL_Binds[0].first, m_VS_SPL_Binds.size(), RenderConstants::NullSamplerArray.data());
 		}
 
 		if (m_PS_CB_Binds.size() > 0)
 		{
-			gfx.GetContext()->PSSetConstantBuffers(m_PS_CB_Binds[0].first, m_PS_CB_Binds.size(), m_pNullBuffers.data());
+			gfx.GetContext()->PSSetConstantBuffers(m_PS_CB_Binds[0].first, m_PS_CB_Binds.size(), RenderConstants::NullBufferArray.data());
 		}
 		if (m_PS_SRV_Binds.size() > 0)
 		{
-			gfx.GetContext()->PSSetShaderResources(m_PS_SRV_Binds[0].first, m_PS_SRV_Binds.size(), m_pNullSRVs.data());
+			gfx.GetContext()->PSSetShaderResources(m_PS_SRV_Binds[0].first, m_PS_SRV_Binds.size(), RenderConstants::NullSRVArray.data());
 		}
 		if (m_PS_SPL_Binds.size() > 0)
 		{
-			gfx.GetContext()->PSSetSamplers(m_PS_SPL_Binds[0].first, m_PS_SPL_Binds.size(), m_pNullSPLs.data());
+			gfx.GetContext()->PSSetSamplers(m_PS_SPL_Binds[0].first, m_PS_SPL_Binds.size(), RenderConstants::NullSamplerArray.data());
 		}
 	}
 
-	void RenderPass::Execute(const GraphicsDevice& gfx) const
+	void RenderPass::Execute(const GraphicsDevice& gfx, RenderState& renderState) const
 	{
-		RenderState renderState;
 		for (const auto& j : m_jobs)
 		{
 			j.Execute(gfx, renderState);

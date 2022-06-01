@@ -19,7 +19,8 @@ namespace gfx
 	public:
 		TransformCbuf(const GraphicsDevice& gfx);
 		virtual void Release() override;
-		void BindVS(const GraphicsDevice& gfx, UINT slot) override;
+		void BindVS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot) override;
+		void UnbindVS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot) override;
 		void UpdateTransforms(const GraphicsDevice& gfx, const Transforms& transforms);
 	private:
 		// Static so can be re-used each drawcall

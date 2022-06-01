@@ -123,19 +123,46 @@ namespace gfx
 		return m_pRenderTargetView;
 	}
 
-	void RenderTexture::BindCS(const GraphicsDevice& gfx, UINT slot)
+	void RenderTexture::BindCS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot)
 	{
-		gfx.GetContext()->CSSetShaderResources(slot, 1u, m_pShaderResourceView.GetAddressOf());
+		if (renderState.IsNewBinding(GetGuid(), RenderBindingType::CS_SRV, slot))
+		{
+			gfx.GetContext()->CSSetShaderResources(slot, 1u, m_pShaderResourceView.GetAddressOf());
+		}
 	}
 
-	void RenderTexture::BindVS(const GraphicsDevice& gfx, UINT slot)
+	void RenderTexture::UnbindCS(const GraphicsDevice & gfx, RenderState & renderState, UINT slot)
 	{
-		gfx.GetContext()->VSSetShaderResources(slot, 1u, m_pShaderResourceView.GetAddressOf());
+		renderState.ClearBinding(RenderBindingType::CS_SRV, slot);
+		gfx.GetContext()->CSSetShaderResources(slot, 1u, nullptr);
 	}
 
-	void RenderTexture::BindPS(const GraphicsDevice& gfx, UINT slot)
+	void RenderTexture::BindVS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot)
 	{
-		gfx.GetContext()->PSSetShaderResources(slot, 1u, m_pShaderResourceView.GetAddressOf());
+		if (renderState.IsNewBinding(GetGuid(), RenderBindingType::VS_SRV, slot))
+		{
+			gfx.GetContext()->VSSetShaderResources(slot, 1u, m_pShaderResourceView.GetAddressOf());
+		}
+	}
+
+	void RenderTexture::UnbindVS(const GraphicsDevice & gfx, RenderState & renderState, UINT slot)
+	{
+		renderState.ClearBinding(RenderBindingType::VS_SRV, slot);
+		gfx.GetContext()->VSSetShaderResources(slot, 1u, nullptr);
+	}
+
+	void RenderTexture::BindPS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot)
+	{
+		if (renderState.IsNewBinding(GetGuid(), RenderBindingType::PS_SRV, slot))
+		{
+			gfx.GetContext()->PSSetShaderResources(slot, 1u, m_pShaderResourceView.GetAddressOf());
+		}
+	}
+
+	void RenderTexture::UnbindPS(const GraphicsDevice & gfx, RenderState & renderState, UINT slot)
+	{
+		renderState.ClearBinding(RenderBindingType::PS_SRV, slot);
+		gfx.GetContext()->PSSetShaderResources(slot, 1u, nullptr);
 	}
 
 	void RenderTexture::BindAsTexture(const GraphicsDevice& gfx, UINT slot) const

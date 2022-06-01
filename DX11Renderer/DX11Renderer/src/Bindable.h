@@ -14,12 +14,18 @@ namespace gfx
 	class Bindable : public CodexElement
 	{
 	public:
-		virtual void BindIA(const GraphicsDevice& gfx, UINT slot) {}
-		virtual void BindCS(const GraphicsDevice& gfx, UINT slot) {}
-		virtual void BindVS(const GraphicsDevice& gfx, UINT slot) {}
-		virtual void BindPS(const GraphicsDevice& gfx, UINT slot) {}
-		virtual void BindRS(const GraphicsDevice& gfx) {}
-		virtual void BindOM(const GraphicsDevice& gfx) {}
+		virtual void BindIA(const GraphicsDevice& gfx, RenderState& renderState, UINT slot);
+		virtual void BindCS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot);
+		virtual void BindVS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot);
+		virtual void BindPS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot);
+		virtual void BindRS(const GraphicsDevice& gfx, RenderState& renderState);
+		virtual void BindOM(const GraphicsDevice& gfx, RenderState& renderState);
+		virtual void UnbindIA(const GraphicsDevice& gfx, RenderState& renderState, UINT slot);
+		virtual void UnbindCS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot);
+		virtual void UnbindVS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot);
+		virtual void UnbindPS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot);
+		virtual void UnbindRS(const GraphicsDevice& gfx, RenderState& renderState);
+		virtual void UnbindOM(const GraphicsDevice& gfx, RenderState& renderState);
 		virtual ~Bindable() = default;
 		virtual void Release() override = 0;
 	};

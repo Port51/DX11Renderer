@@ -36,9 +36,19 @@ namespace gfx
 		return m_pBufferArray[0];
 	}
 
-	void VertexBufferWrapper::BindIA(const GraphicsDevice& gfx, UINT slot)
+	void VertexBufferWrapper::BindIA(const GraphicsDevice& gfx, RenderState& renderState, UINT slot)
 	{
-		gfx.GetContext()->IASetVertexBuffers(slot, m_pBufferArray.size(), m_pBufferArray[0].GetAddressOf(), &m_strides[0], &m_offsets[0]);
+		if (renderState.IsNewBinding(GetGuid(), RenderBindingType::IA_VertexBuffer, slot))
+		{
+			gfx.GetContext()->IASetVertexBuffers(slot, m_pBufferArray.size(), m_pBufferArray[0].GetAddressOf(), &m_strides[0], &m_offsets[0]);
+		}
+	}
+
+	void VertexBufferWrapper::UnbindIA(const GraphicsDevice & gfx, RenderState & renderState, UINT slot)
+	{
+		// todo: bind null array
+		renderState.ClearBinding(RenderBindingType::IA_VertexBuffer, slot);
+		//gfx.GetContext()->IASetVertexBuffers(slot, m_pBufferArray.size(), m_pBufferArray[0].GetAddressOf(), &m_strides[0], &m_offsets[0]);
 	}
 
 	void VertexBufferWrapper::SetupVertexBuffer(const GraphicsDevice& gfx, const BaseBufferData& data)

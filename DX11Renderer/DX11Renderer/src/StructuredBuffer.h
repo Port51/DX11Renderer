@@ -66,19 +66,40 @@ namespace gfx
 			: StructuredBuffer(gfx, usage, bindFlags, numElements, nullptr, useCounter)
 		{}
 
-		void BindCS(const GraphicsDevice& gfx, UINT slot) override
+		void BindCS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot) override
 		{
-			gfx.GetContext()->CSSetShaderResources(slot, 1u, m_pSRV.GetAddressOf());
+			if (renderState.IsNewBinding(GetGuid(), RenderBindingType::CS_SRV, slot))
+			{
+				gfx.GetContext()->CSSetShaderResources(slot, 1u, m_pSRV.GetAddressOf());
+			}
 		}
 
-		void BindVS(const GraphicsDevice& gfx, UINT slot) override
+		void BindVS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot) override
 		{
-			gfx.GetContext()->VSSetShaderResources(slot, 1u, m_pSRV.GetAddressOf());
+			if (renderState.IsNewBinding(GetGuid(), RenderBindingType::VS_SRV, slot))
+			{
+				gfx.GetContext()->VSSetShaderResources(slot, 1u, m_pSRV.GetAddressOf());
+			}
 		}
 
-		void BindPS(const GraphicsDevice& gfx, UINT slot) override
+		void UnbindVS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot) override
 		{
-			gfx.GetContext()->PSSetShaderResources(slot, 1u, m_pSRV.GetAddressOf());
+			renderState.ClearBinding(RenderBindingType::VS_SRV, slot);
+			gfx.GetContext()->VSSetShaderResources(slot, 1u, RenderConstants::NullSRVArray.data());
+		}
+
+		void BindPS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot) override
+		{
+			if (renderState.IsNewBinding(GetGuid(), RenderBindingType::PS_SRV, slot))
+			{
+				gfx.GetContext()->PSSetShaderResources(slot, 1u, m_pSRV.GetAddressOf());
+			}
+		}
+
+		void UnbindPS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot) override
+		{
+			renderState.ClearBinding(RenderBindingType::PS_SRV, slot);
+			gfx.GetContext()->PSSetShaderResources(slot, 1u, RenderConstants::NullSRVArray.data());
 		}
 
 		void Update(const GraphicsDevice& gfx, const void* data, UINT dataBytes)

@@ -45,19 +45,46 @@ namespace gfx
 		}
 
 	public:
-		void BindCS(const GraphicsDevice& gfx, UINT slot) override
+		void BindCS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot) override
 		{
-			gfx.GetContext()->CSSetConstantBuffers(slot, 1u, m_pBuffer.GetAddressOf());
+			if (renderState.IsNewBinding(GetGuid(), RenderBindingType::CS_CB, slot))
+			{
+				gfx.GetContext()->CSSetConstantBuffers(slot, 1u, m_pBuffer.GetAddressOf());
+			}
 		}
 
-		void BindVS(const GraphicsDevice& gfx, UINT slot) override
+		void UnbindCS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot) override
 		{
-			gfx.GetContext()->VSSetConstantBuffers(slot, 1u, m_pBuffer.GetAddressOf());
+			renderState.ClearBinding(RenderBindingType::CS_CB, slot);
+			gfx.GetContext()->CSSetConstantBuffers(slot, 1u, RenderConstants::NullBufferArray.data());
 		}
 
-		void BindPS(const GraphicsDevice& gfx, UINT slot) override
+		void BindVS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot) override
 		{
-			gfx.GetContext()->PSSetConstantBuffers(slot, 1u, m_pBuffer.GetAddressOf());
+			if (renderState.IsNewBinding(GetGuid(), RenderBindingType::VS_CB, slot))
+			{
+				gfx.GetContext()->VSSetConstantBuffers(slot, 1u, m_pBuffer.GetAddressOf());
+			}
+		}
+
+		void UnbindVS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot) override
+		{
+			renderState.ClearBinding(RenderBindingType::VS_CB, slot);
+			gfx.GetContext()->VSSetConstantBuffers(slot, 1u, RenderConstants::NullBufferArray.data());
+		}
+
+		void BindPS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot) override
+		{
+			if (renderState.IsNewBinding(GetGuid(), RenderBindingType::PS_CB, slot))
+			{
+				gfx.GetContext()->PSSetConstantBuffers(slot, 1u, m_pBuffer.GetAddressOf());
+			}
+		}
+
+		void UnbindPS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot) override
+		{
+			renderState.ClearBinding(RenderBindingType::PS_CB, slot);
+			gfx.GetContext()->PSSetConstantBuffers(slot, 1u, RenderConstants::NullBufferArray.data());
 		}
 
 		void Update(const GraphicsDevice& gfx, const T& data)

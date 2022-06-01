@@ -32,7 +32,7 @@ namespace gfx
 
 	public:
 		void SetupRenderPassDependencies(const GraphicsDevice& gfx, const RenderTexture& pDownsampledColor, const RenderTexture& pCameraColor);
-		void Execute(const GraphicsDevice& gfx) const override;
+		void Execute(const GraphicsDevice& gfx, RenderState& renderState) const override;
 
 	private:
 		std::unique_ptr<ConstantBuffer<BloomCB>> m_pBloomCB;

@@ -49,11 +49,11 @@ namespace gfx
 		m_pMaterial->SubmitDrawCommands(*this, drawContext);
 	}
 
-	void MeshRenderer::Bind(const GraphicsDevice& gfx, const DrawContext& drawContext) const
+	void MeshRenderer::Bind(const GraphicsDevice& gfx, RenderState& renderState, const DrawContext& drawContext) const
 	{
-		m_pTopology->BindIA(gfx, 0u);
-		m_pIndexBuffer->BindIA(gfx, 0u);
-		m_pVertexBufferWrapper->BindIA(gfx, 0u);
+		m_pTopology->BindIA(gfx, renderState, 0u);
+		m_pIndexBuffer->BindIA(gfx, renderState, 0u);
+		m_pVertexBufferWrapper->BindIA(gfx, renderState, 0u);
 
 		const auto modelMatrix = GetTransformXM();
 		const auto modelViewMatrix = modelMatrix * drawContext.viewMatrix;
@@ -61,7 +61,7 @@ namespace gfx
 		Transforms transforms{ modelMatrix, modelViewMatrix, modelViewProjectMatrix };
 		m_pTransformCbuf->UpdateTransforms(gfx, transforms);
 
-		m_pTransformCbuf->BindVS(gfx, RenderSlots::VS_TransformCB);
+		m_pTransformCbuf->BindVS(gfx, renderState, RenderSlots::VS_TransformCB);
 	}
 
 	const UINT MeshRenderer::GetIndexCount() const

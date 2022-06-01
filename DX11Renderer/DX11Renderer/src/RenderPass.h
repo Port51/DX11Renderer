@@ -23,9 +23,9 @@ namespace gfx
 	public:
 		const RenderPassType GetRenderPassType() const;
 		void EnqueueJob(DrawCall job);
-		virtual void BindSharedResources(const GraphicsDevice& gfx) const;
-		virtual void UnbindSharedResources(const GraphicsDevice& gfx) const;
-		virtual void Execute(const GraphicsDevice& gfx) const;
+		virtual void BindSharedResources(const GraphicsDevice& gfx, RenderState& renderState) const;
+		virtual void UnbindSharedResources(const GraphicsDevice& gfx, RenderState& renderState) const;
+		virtual void Execute(const GraphicsDevice& gfx, RenderState& renderState) const;
 		void Reset();
 		virtual void DrawImguiControls(const GraphicsDevice& gfx);
 	public:
@@ -69,11 +69,5 @@ namespace gfx
 
 		std::shared_ptr<RenderTexture> m_pCameraColorOut;
 		std::unordered_map<UINT, std::unique_ptr<RenderPass>> m_pSubPasses;
-
-	public:
-		static std::vector<ID3D11Buffer*> m_pNullBuffers;
-		static std::vector<ID3D11ShaderResourceView*> m_pNullSRVs;
-		static std::vector<ID3D11UnorderedAccessView*> m_pNullUAVs;
-		static std::vector<ID3D11SamplerState*> m_pNullSPLs;
 	};
 }

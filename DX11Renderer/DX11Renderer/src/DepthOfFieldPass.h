@@ -36,10 +36,10 @@ namespace gfx
 		void SetOutputTarget(std::shared_ptr<Texture> pTarget);
 		void SetupRenderPassDependencies(const GraphicsDevice& gfx, const RenderTexture& pDownsampledColor, const RenderTexture& pHiZBufferTarget, const RenderTexture& pCameraColor);
 		void DrawImguiControls(const GraphicsDevice& gfx) override;
-		void Execute(const GraphicsDevice& gfx) const override;
+		void Execute(const GraphicsDevice& gfx, RenderState& renderState) const override;
 	private:
-		void ExecuteDiskBokeh(const GraphicsDevice& gfx) const;
-		void ExecuteHexBokeh(const GraphicsDevice& gfx) const;
+		void ExecuteDiskBokeh(const GraphicsDevice& gfx, RenderState& renderState) const;
+		void ExecuteHexBokeh(const GraphicsDevice& gfx, RenderState& renderState) const;
 	private:
 		DepthOfFieldBokehType m_bokehType;
 

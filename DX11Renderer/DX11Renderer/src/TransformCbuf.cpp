@@ -20,9 +20,18 @@ namespace gfx
 		m_pVcbuf->Release();
 	}
 
-	void TransformCbuf::BindVS(const GraphicsDevice& gfx, UINT slot)
+	void TransformCbuf::BindVS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot)
 	{
-		gfx.GetContext()->VSSetConstantBuffers(slot, 1u, m_pVcbuf->GetD3DBuffer().GetAddressOf());
+		if (renderState.IsNewBinding(GetGuid(), RenderBindingType::VS_CB, slot))
+		{
+			gfx.GetContext()->VSSetConstantBuffers(slot, 1u, m_pVcbuf->GetD3DBuffer().GetAddressOf());
+		}
+	}
+
+	void TransformCbuf::UnbindVS(const GraphicsDevice & gfx, RenderState & renderState, UINT slot)
+	{
+		renderState.ClearBinding(RenderBindingType::VS_CB, slot);
+		gfx.GetContext()->VSSetConstantBuffers(slot, 1u, nullptr);
 	}
 
 	void TransformCbuf::UpdateTransforms(const GraphicsDevice& gfx, const Transforms& transforms)

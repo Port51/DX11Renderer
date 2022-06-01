@@ -2,6 +2,7 @@
 #include "BindingList.h"
 #include "Binding.h"
 #include "GraphicsDevice.h"
+#include "renderState.h"
 
 namespace gfx
 {
@@ -21,11 +22,11 @@ namespace gfx
 		return m_bindings[m_bindings.size() - 1];
 	}
 
-	void BindingList::Bind(const GraphicsDevice& gfx) const
+	void BindingList::Bind(const GraphicsDevice& gfx, RenderState& renderState) const
 	{
 		for (int i = 0, ct = m_bindings.size(); i < ct; ++i)
 		{
-			m_bindings[i].Bind(gfx);
+			m_bindings[i].Bind(gfx, renderState);
 		}
 	}
 }

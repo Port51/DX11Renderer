@@ -111,7 +111,7 @@ namespace gfx
 		return 0u;
 	}
 
-	void PointLight::RenderShadow(const ShadowPassContext& context)
+	void PointLight::RenderShadow(const ShadowPassContext& context, RenderState& renderState)
 	{
 		static const float fovTheta = (float)dx::XM_PI / 2.0f;
 		static const float nearPlane = 0.1f;
@@ -152,7 +152,7 @@ namespace gfx
 			{
 				// Render to tile in atlas using viewport
 				context.gfx.SetViewport(tileX * Config::ShadowAtlasTileResolution, tileY * Config::ShadowAtlasTileResolution, Config::ShadowAtlasTileResolution, Config::ShadowAtlasTileResolution);
-				context.renderPass.Execute(context.gfx);
+				context.renderPass.Execute(context.gfx, renderState);
 				context.renderPass.Reset(); // required to handle multiple shadows at once
 			}
 

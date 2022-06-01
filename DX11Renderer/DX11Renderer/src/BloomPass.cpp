@@ -62,7 +62,7 @@ namespace gfx
 			.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, pCameraColor.GetUAV());
 	}
 
-	void BloomPass::Execute(const GraphicsDevice & gfx) const
+	void BloomPass::Execute(const GraphicsDevice & gfx, RenderState& renderState) const
 	{
 		auto context = gfx.GetContext();
 		const UINT screenWidth = gfx.GetScreenWidth();
@@ -73,7 +73,7 @@ namespace gfx
 		// Bloom prefilter
 		{
 			const RenderPass& pass = GetSubPass(BloomSubpass::PrefilterSubpass);
-			pass.BindSharedResources(gfx);
+			pass.BindSharedResources(gfx, renderState);
 
 			static BloomCB bloomCB;
 			bloomCB.resolutionSrcDst = { screenWidth, screenHeight, screenWidth, screenHeight };
@@ -81,13 +81,13 @@ namespace gfx
 
 			m_pBloomPrefilterKernel->Dispatch(gfx, bloomTextureWidth, bloomTextureHeight, 1u);
 
-			pass.UnbindSharedResources(gfx);
+			pass.UnbindSharedResources(gfx, renderState);
 		}
 
 		// Bloom blur (x2 sub-passes)
 		{
 			const RenderPass& pass = GetSubPass(BloomSubpass::SeparableBlurSubpass);
-			pass.BindSharedResources(gfx);
+			pass.BindSharedResources(gfx, renderState);
 
 			static BloomCB bloomCB;
 			bloomCB.resolutionSrcDst = { screenWidth, screenHeight, screenWidth, screenHeight };
@@ -97,22 +97,22 @@ namespace gfx
 			context->CSSetShaderResources(RenderSlots::CS_FreeSRV + 1u, 1u, m_pBloomGaussianWeights->GetSRV().GetAddressOf());
 			context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 0u, 1u, m_pBloomTarget1->GetUAV().GetAddressOf(), nullptr);
 			m_pBloomHorizontalBlurKernel->Dispatch(gfx, bloomTextureWidth, bloomTextureHeight, 1u);
-			context->CSSetShaderResources(RenderSlots::CS_FreeSRV + 0u, 1u, pass.m_pNullSRVs.data());
-			context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 0u, 1u, pass.m_pNullUAVs.data(), nullptr);
+			context->CSSetShaderResources(RenderSlots::CS_FreeSRV + 0u, 1u, RenderConstants::NullSRVArray.data());
+			context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 0u, 1u, RenderConstants::NullUAVArray.data(), nullptr);
 
 			context->CSSetShaderResources(RenderSlots::CS_FreeSRV + 0u, 1u, m_pBloomTarget1->GetSRV().GetAddressOf());
 			context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 0u, 1u, m_pBloomTarget0->GetUAV().GetAddressOf(), nullptr);
 			m_pBloomVerticalBlurKernel->Dispatch(gfx, bloomTextureWidth, bloomTextureHeight, 1u);
-			context->CSSetShaderResources(RenderSlots::CS_FreeSRV + 0u, 1u, pass.m_pNullSRVs.data());
-			context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 0u, 1u, pass.m_pNullUAVs.data(), nullptr);
+			context->CSSetShaderResources(RenderSlots::CS_FreeSRV + 0u, 1u, RenderConstants::NullSRVArray.data());
+			context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 0u, 1u, RenderConstants::NullUAVArray.data(), nullptr);
 
-			pass.UnbindSharedResources(gfx);
+			pass.UnbindSharedResources(gfx, renderState);
 		}
 
 		// Bloom combine
 		{
 			const RenderPass& pass = GetSubPass(BloomSubpass::CombineSubpass);
-			pass.BindSharedResources(gfx);
+			pass.BindSharedResources(gfx, renderState);
 
 			static BloomCB bloomCB;
 			bloomCB.resolutionSrcDst = { screenWidth, screenHeight, screenWidth, screenHeight };
@@ -120,7 +120,7 @@ namespace gfx
 
 			m_pBloomCombineKernel->Dispatch(gfx, screenWidth, screenHeight, 1u);
 
-			pass.UnbindSharedResources(gfx);
+			pass.UnbindSharedResources(gfx, renderState);
 		}
 	}
 

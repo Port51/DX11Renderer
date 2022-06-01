@@ -10,6 +10,10 @@ namespace gfx
 	const float RenderConstants::INV_PI_2 = 0.15915494307f;
 	const float RenderConstants::DEG_TO_RAD = 0.01745329252f;
 	const float RenderConstants::RAD_TO_DEG = 57.2957795056f;
+	const std::vector<ID3D11Buffer*> RenderConstants::NullBufferArray(256, nullptr);
+	const std::vector<ID3D11ShaderResourceView*> RenderConstants::NullSRVArray(256, nullptr);
+	const std::vector<ID3D11UnorderedAccessView*> RenderConstants::NullUAVArray(256, nullptr);
+	const std::vector<ID3D11SamplerState*> RenderConstants::NullSamplerArray(256, nullptr);
 
 	std::unordered_map<RenderPassType, std::string> RenderPassConstants::m_renderPassNameByEnum
 	{

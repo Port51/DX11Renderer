@@ -378,9 +378,6 @@
     <ClCompile Include="src\RendererList.cpp">
       <Filter>Source\RenderJobs</Filter>
     </ClCompile>
-    <ClCompile Include="src\RenderState.cpp">
-      <Filter>Source\RenderJobs</Filter>
-    </ClCompile>
     <ClCompile Include="src\Shader.cpp">
       <Filter>Source\Bindable\Shaders</Filter>
     </ClCompile>
@@ -403,6 +400,9 @@
       <Filter>Source\Util</Filter>
     </ClCompile>
     <ClCompile Include="src\ExceptionHandling.cpp">
+      <Filter>Precompiled</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RenderState.cpp">
       <Filter>Precompiled</Filter>
     </ClCompile>
   </ItemGroup>
@@ -677,9 +677,6 @@
     <ClInclude Include="src\RendererList.h">
       <Filter>Headers\RenderJobs</Filter>
     </ClInclude>
-    <ClInclude Include="src\RenderState.h">
-      <Filter>Headers\RenderJobs</Filter>
-    </ClInclude>
     <ClInclude Include="src\Shader.h">
       <Filter>Headers\Bindable\Shaders</Filter>
     </ClInclude>
@@ -700,6 +697,9 @@
     </ClInclude>
     <ClInclude Include="src\RandomGenerator.h">
       <Filter>Headers\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\RenderState.h">
+      <Filter>Precompiled</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

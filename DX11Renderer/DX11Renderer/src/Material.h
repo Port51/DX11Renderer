@@ -16,7 +16,6 @@ namespace gfx
 	class Renderer;
 	class VertexLayout;
 	class BindingList;
-	class RenderState;
 
 	struct DrawContext;
 

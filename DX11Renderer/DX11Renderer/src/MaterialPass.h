@@ -14,7 +14,6 @@ namespace gfx
 	class InputLayout;
 	class Bindable;
 	class BindingList;
-	class RenderState;
 
 	struct DrawContext;
 

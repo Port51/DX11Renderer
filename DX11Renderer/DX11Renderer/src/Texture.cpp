@@ -127,19 +127,46 @@ namespace gfx
 		));
 	}
 
-	void Texture::BindCS(const GraphicsDevice& gfx, UINT slot)
+	void Texture::BindCS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot)
 	{
-		gfx.GetContext()->CSSetShaderResources(slot, 1u, m_pShaderResourceView.GetAddressOf());
+		if (renderState.IsNewBinding(GetGuid(), RenderBindingType::CS_SRV, slot))
+		{
+			gfx.GetContext()->CSSetShaderResources(slot, 1u, m_pShaderResourceView.GetAddressOf());
+		}
 	}
 
-	void Texture::BindVS(const GraphicsDevice& gfx, UINT slot)
+	void Texture::UnbindCS(const GraphicsDevice & gfx, RenderState & renderState, UINT slot)
 	{
-		gfx.GetContext()->VSSetShaderResources(slot, 1u, m_pShaderResourceView.GetAddressOf());
+		renderState.ClearBinding(RenderBindingType::CS_SRV, slot);
+		gfx.GetContext()->CSSetShaderResources(slot, 1u, nullptr);
 	}
 
-	void Texture::BindPS(const GraphicsDevice& gfx, UINT slot)
+	void Texture::BindVS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot)
 	{
-		gfx.GetContext()->PSSetShaderResources(slot, 1u, m_pShaderResourceView.GetAddressOf());
+		if (renderState.IsNewBinding(GetGuid(), RenderBindingType::VS_SRV, slot))
+		{
+			gfx.GetContext()->VSSetShaderResources(slot, 1u, m_pShaderResourceView.GetAddressOf());
+		}
+	}
+
+	void Texture::UnbindVS(const GraphicsDevice & gfx, RenderState & renderState, UINT slot)
+	{
+		renderState.ClearBinding(RenderBindingType::VS_SRV, slot);
+		gfx.GetContext()->VSSetShaderResources(slot, 1u, nullptr);
+	}
+
+	void Texture::BindPS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot)
+	{
+		if (renderState.IsNewBinding(GetGuid(), RenderBindingType::PS_SRV, slot))
+		{
+			gfx.GetContext()->PSSetShaderResources(slot, 1u, m_pShaderResourceView.GetAddressOf());
+		}
+	}
+
+	void Texture::UnbindPS(const GraphicsDevice & gfx, RenderState & renderState, UINT slot)
+	{
+		renderState.ClearBinding(RenderBindingType::PS_SRV, slot);
+		gfx.GetContext()->PSSetShaderResources(slot, 1u, nullptr);
 	}
 
 	const ComPtr<ID3D11UnorderedAccessView> Texture::GetUAV(UINT mipSlice) const

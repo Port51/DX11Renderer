@@ -21,6 +21,9 @@ namespace gfx
 	using f64 = double;
 
 	using guid64 = uint64_t;
+	using slotUINT = uint8_t;
+
+	const guid64 NullGuid64 = 0u;
 }
 
 #include <memory>

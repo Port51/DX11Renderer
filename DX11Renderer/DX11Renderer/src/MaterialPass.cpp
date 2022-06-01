@@ -9,7 +9,6 @@
 #include "InputLayout.h"
 #include "DrawContext.h"
 #include "Renderer.h"
-#include "RenderState.h"
 #include <assert.h>
 
 namespace gfx
@@ -96,22 +95,15 @@ namespace gfx
 
 	void MaterialPass::Bind(const GraphicsDevice & gfx, RenderState& renderState) const
 	{
-		// Only update bindings when needed
-		if (renderState.IsNewIA(m_pInputLayout->GetGuid()))
+		m_pInputLayout->BindIA(gfx, renderState, 0u);
+		m_pVertexShader->BindVS(gfx, renderState, 0u);
+		if (m_pPixelShader != nullptr)
 		{
-			m_pInputLayout->BindIA(gfx, 0u);
-		}
-		if (renderState.IsNewVS(m_pVertexShader->GetGuid()))
-		{
-			m_pVertexShader->BindVS(gfx, 0u);
-		}
-		if (m_pPixelShader != nullptr && renderState.IsNewPS(m_pPixelShader->GetGuid()))
-		{
-			m_pPixelShader->BindPS(gfx, 0u);
+			m_pPixelShader->BindPS(gfx, renderState, 0u);
 		}
 		for (const auto& b : m_bindings)
 		{
-			b.Bind(gfx);
+			b.Bind(gfx, renderState);
 		}
 	}
 

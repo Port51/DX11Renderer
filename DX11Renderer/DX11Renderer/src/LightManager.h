@@ -49,7 +49,7 @@ namespace gfx
 		void CullLightsAndShadows(const GraphicsDevice& gfx, const Camera& cam, bool enableShadows);
 		DepthStencilTarget& GetShadowAtlas();
 		ConstantBuffer<LightInputCB>& GetLightInputCB();
-		void RenderShadows(ShadowPassContext& context);
+		void RenderShadows(ShadowPassContext& context, RenderState& renderState);
 		const ComPtr<ID3D11ShaderResourceView> GetLightDataSRV() const;
 		const ComPtr<ID3D11ShaderResourceView> GetShadowDataSRV() const;
 		void DrawImguiControlWindows() const;

@@ -381,15 +381,16 @@ namespace gfx
 
 		gfx.GetRenderStats().StartFrame();
 		context->ClearState();
+		RenderState renderState;
 
 		static int frameCt = 0;
 		frameCt++;
 
-		// Shadow + lighting pass
+		// Shadow + lighting culling pass
 		{
 			RenderPass& pass = GetRenderPass(RenderPassType::ShadowRenderPass);
 
-			pass.BindSharedResources(gfx);
+			pass.BindSharedResources(gfx, renderState);
 
 			static ShadowPassContext context(gfx, camera, *this, pass, *m_pTransformationCB.get(), nullptr);
 			context.Update();
@@ -397,10 +398,10 @@ namespace gfx
 			m_pLightManager->CullLightsAndShadows(gfx, camera, IsFeatureEnabled(RendererFeature::Shadows)); // changes the SRV, which will be bound in per-frame binds
 			if (IsFeatureEnabled(RendererFeature::Shadows))
 			{
-				m_pLightManager->RenderShadows(context);
+				m_pLightManager->RenderShadows(context, renderState);
 			}
 
-			pass.UnbindSharedResources(gfx);
+			pass.UnbindSharedResources(gfx, renderState);
 		}
 
 		// Submit draw calls
@@ -438,7 +439,7 @@ namespace gfx
 			static PerCameraCB perCameraCB;
 			ZeroMemory(&perCameraCB, sizeof(perCameraCB));
 			perCameraCB.projectionParams = dx::XMVectorSet(1.f, camera.GetNearClipPlane(), camera.GetFarClipPlane(), 1.f / camera.GetFarClipPlane());
-			perCameraCB.screenParams = dx::XMVectorSet((float)gfx.GetScreenWidth(), (float)gfx.GetScreenHeight(), 1.0f / gfx.GetScreenWidth(), 1.0f / gfx.GetScreenHeight());
+			perCameraCB.screenParams = dx::XMVectorSet(screenWidth, screenHeight, 1.f / screenWidth, 1.f / screenHeight);
 			perCameraCB.zBufferParams = dx::XMVectorSet(1.f - farNearRatio, farNearRatio, 1.f / camera.GetFarClipPlane() - 1.f / camera.GetNearClipPlane(), 1.f / camera.GetNearClipPlane());
 			perCameraCB.orthoParams = dx::XMVectorSet(0.f, 0.f, 0.f, 0.f);
 			perCameraCB.frustumCornerDataVS = camera.GetFrustumCornersVS();
@@ -455,8 +456,8 @@ namespace gfx
 			// These calculations turn it into a single [MAD] operation
 			const float invClusterDim = 1.f / 16.f;
 			perCameraCB.clusterXYRemap = dx::XMVectorSet(
-				gfx.GetScreenWidth() * 0.5f * invClusterDim,
-				gfx.GetScreenHeight() * 0.5f * invClusterDim,
+				screenWidth * 0.5f * invClusterDim,
+				screenHeight * 0.5f * invClusterDim,
 				0.f,
 				0.f
 			);
@@ -466,22 +467,22 @@ namespace gfx
 		// Per-frame and per-camera binds
 		{
 			const RenderPass& pass = GetRenderPass(RenderPassType::PerCameraRenderPass);
-			pass.BindSharedResources(gfx);
+			pass.BindSharedResources(gfx, renderState);
 		}
 
 		// Early Z pass
 		{
 			const RenderPass& pass = GetRenderPass(RenderPassType::DepthPrepassRenderPass);
 
-			pass.BindSharedResources(gfx);
-			DepthStencilState::Resolve(gfx, DepthStencilState::Mode::StencilOff)->BindOM(gfx);
+			pass.BindSharedResources(gfx, renderState);
+			DepthStencilState::Resolve(gfx, DepthStencilState::Mode::StencilOff)->BindOM(gfx, renderState);
 			gfx.GetDepthStencilTarget()->Clear(gfx);
 
 			gfx.SetDepthOnlyRenderTarget();
-			gfx.SetViewport(gfx.GetScreenWidth(), gfx.GetScreenHeight());
+			gfx.SetViewport(screenWidth, screenHeight);
 
-			pass.Execute(gfx);
-			pass.UnbindSharedResources(gfx);
+			pass.Execute(gfx, renderState);
+			pass.UnbindSharedResources(gfx, renderState);
 		}
 
 		// Hi-Z buffer pass
@@ -489,7 +490,7 @@ namespace gfx
 			const RenderPass& pass = GetRenderPass(RenderPassType::HiZRenderPass);
 
 			gfx.ClearRenderTargets(); // need in order to access depth
-			pass.BindSharedResources(gfx);
+			pass.BindSharedResources(gfx, renderState);
 
 			static HiZCreationCB hiZCreationCB;
 			hiZCreationCB.resolutionSrcDst = { screenWidth, screenHeight, screenWidth, screenHeight };
@@ -497,7 +498,7 @@ namespace gfx
 
 			// Copy from depth-stencil
 			context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV, 1u, m_pHiZBufferTarget->GetUAV(0u).GetAddressOf(), nullptr);
-			m_pHiZDepthCopyKernel->Dispatch(gfx, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1u);
+			m_pHiZDepthCopyKernel->Dispatch(gfx, screenWidth, screenHeight, 1u);
 
 			// Create other mips
 			for (UINT mip = 1u; mip < 8u; ++mip)
@@ -512,53 +513,53 @@ namespace gfx
 				m_pHiZCreationCB->Update(gfx, hiZCreationCB);
 
 				// Bind mip slice views as UAVs
-				context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 0u, 2u, pass.m_pNullUAVs.data(), nullptr);
+				context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 0u, 2u, RenderConstants::NullUAVArray.data(), nullptr);
 				context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 0u, 1u, m_pHiZBufferTarget->GetUAV(mip - 1u).GetAddressOf(), nullptr);
 				context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 1u, 1u, m_pHiZBufferTarget->GetUAV(mip).GetAddressOf(), nullptr);
 
 				m_pHiZCreateMipKernel->Dispatch(gfx, dstWidth, dstHeight, 1u);
 			}
 
-			pass.UnbindSharedResources(gfx);
+			pass.UnbindSharedResources(gfx, renderState);
 		}
 
 		// Normal-rough-reflectivity pass
 		{
 			const RenderPass& pass = GetRenderPass(RenderPassType::GBufferRenderPass);
 
-			pass.BindSharedResources(gfx);
-			DepthStencilState::Resolve(gfx, DepthStencilState::Mode::Gbuffer)->BindOM(gfx);
+			pass.BindSharedResources(gfx, renderState);
+			DepthStencilState::Resolve(gfx, DepthStencilState::Mode::Gbuffer)->BindOM(gfx, renderState);
 			m_pNormalRoughReflectivityTarget->ClearRenderTarget(context.Get(), 1.f, 0.f, 0.f, 1.f);
 
 			gfx.SetRenderTarget(m_pNormalRoughReflectivityTarget->GetRenderTargetView());
-			gfx.SetViewport(gfx.GetScreenWidth(), gfx.GetScreenHeight());
+			gfx.SetViewport(screenWidth, screenHeight);
 
-			pass.Execute(gfx);
+			pass.Execute(gfx, renderState);
 
 			gfx.ClearRenderTargets();
 
-			pass.UnbindSharedResources(gfx);
+			pass.UnbindSharedResources(gfx, renderState);
 		}
 
 		if (IsFeatureEnabled(RendererFeature::SSAO))
 		{
-			GetRenderPass(SSAORenderPass).Execute(gfx);
+			GetRenderPass(SSAORenderPass).Execute(gfx, renderState);
 		}
 
 		// Tiled lighting pass
 		{
 			const RenderPass& pass = GetRenderPass(RenderPassType::TiledLightingRenderPass);
-			pass.BindSharedResources(gfx);
+			pass.BindSharedResources(gfx, renderState);
 
-			m_pTiledLightingKernel->Dispatch(gfx, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1u);
+			m_pTiledLightingKernel->Dispatch(gfx, screenWidth, screenHeight, 1u);
 
-			pass.UnbindSharedResources(gfx);
+			pass.UnbindSharedResources(gfx, renderState);
 		}
 
 		// Clustered lighting pass
 		{
 			const RenderPass& pass = GetRenderPass(RenderPassType::ClusteredLightingRenderPass);
-			pass.BindSharedResources(gfx);
+			pass.BindSharedResources(gfx, renderState);
 
 			static ClusteredLightingCB clusteredLightingCB;
 			clusteredLightingCB.groupResolutions = { m_pLightManager->GetClusterDimensionX(), m_pLightManager->GetClusterDimensionY(), m_pLightManager->GetClusterDimensionZ(), 0u };
@@ -566,22 +567,22 @@ namespace gfx
 
 			m_pClusteredLightingKernel->Dispatch(gfx, m_pLightManager->GetClusterDimensionX(), m_pLightManager->GetClusterDimensionY(), m_pLightManager->GetClusterDimensionZ());
 
-			pass.UnbindSharedResources(gfx);
+			pass.UnbindSharedResources(gfx, renderState);
 		}
 
 		// Opaque pass
 		{
 			const RenderPass& pass = GetRenderPass(RenderPassType::OpaqueRenderPass);
-			pass.BindSharedResources(gfx);
+			pass.BindSharedResources(gfx, renderState);
 
-			DepthStencilState::Resolve(gfx, DepthStencilState::Mode::Gbuffer)->BindOM(gfx);
+			DepthStencilState::Resolve(gfx, DepthStencilState::Mode::Gbuffer)->BindOM(gfx, renderState);
 
 			m_pCameraColor0->ClearRenderTarget(context.Get(), 0.f, 0.f, 0.f, 0.f);
 			m_pCameraColor0->BindAsTarget(gfx, gfx.GetDepthStencilTarget()->GetView());
-			gfx.SetViewport(gfx.GetScreenWidth(), gfx.GetScreenHeight());
+			gfx.SetViewport(screenWidth, screenHeight);
 
-			pass.Execute(gfx);
-			pass.UnbindSharedResources(gfx);
+			pass.Execute(gfx, renderState);
+			pass.UnbindSharedResources(gfx, renderState);
 
 			gfx.ClearRenderTargets();
 		}
@@ -594,44 +595,44 @@ namespace gfx
 		// Downsample x2 pass
 		{
 			const RenderPass& pass = GetRenderPass(RenderPassType::CreateDownsampledX2Texture);
-			pass.BindSharedResources(gfx);
+			pass.BindSharedResources(gfx, renderState);
 
-			m_pBilinearDownsampleKernel->Dispatch(gfx, gfx.GetScreenWidth() / 2, gfx.GetScreenHeight() / 2, 1u);
+			m_pBilinearDownsampleKernel->Dispatch(gfx, screenWidth >> 1u, screenHeight >> 1u, 1u);
 
-			pass.Execute(gfx);
-			pass.UnbindSharedResources(gfx);
+			pass.Execute(gfx, renderState);
+			pass.UnbindSharedResources(gfx, renderState);
 		}
 
 		if (m_viewIdx == RendererView::Final && IsFeatureEnabled(RendererFeature::DepthOfField))
 		{
-			GetRenderPass(DepthOfFieldRenderPass).Execute(gfx);
+			GetRenderPass(DepthOfFieldRenderPass).Execute(gfx, renderState);
 		}
 
 		if (m_viewIdx == RendererView::Final && IsFeatureEnabled(RendererFeature::Bloom))
 		{
-			GetRenderPass(BloomRenderPass).Execute(gfx);
+			GetRenderPass(BloomRenderPass).Execute(gfx, renderState);
 		}
 
 		// SSR pass
 		if (IsFeatureEnabled(RendererFeature::HZBSSR))
 		{
 			const RenderPass& pass = GetRenderPass(RenderPassType::SSRRenderPass);
-			pass.BindSharedResources(gfx);
+			pass.BindSharedResources(gfx, renderState);
 
 			static SSR_CB ssrCB;
 			ssrCB.debugViewStep = (frameCt / 20u) % 25u;
 			m_pSSR_CB->Update(gfx, ssrCB);
 
-			m_pSSRKernel->Dispatch(gfx, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1u);
+			m_pSSRKernel->Dispatch(gfx, screenWidth, screenHeight, 1u);
 
-			pass.UnbindSharedResources(gfx);
+			pass.UnbindSharedResources(gfx, renderState);
 		}
 
 		// FXAA pass
 		if (Config::AAType == Config::AAType::FXAA && IsFeatureEnabled(RendererFeature::FXAA))
 		{
 			const RenderPass& pass = GetRenderPass(RenderPassType::FXAARenderPass);
-			pass.BindSharedResources(gfx);
+			pass.BindSharedResources(gfx, renderState);
 
 			static FXAA_CB fxaaCB;
 			fxaaCB.minThreshold = 0.1f;
@@ -640,36 +641,36 @@ namespace gfx
 			fxaaCB.padding = 0.f;
 			m_pFXAA_CB->Update(gfx, fxaaCB);
 
-			m_pFXAAKernel->Dispatch(gfx, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1u);
+			m_pFXAAKernel->Dispatch(gfx, screenWidth, screenHeight, 1u);
 
-			pass.UnbindSharedResources(gfx);
+			pass.UnbindSharedResources(gfx, renderState);
 		}
 
 		// Dither pass
 		if (m_viewIdx == RendererView::Final && IsFeatureEnabled(RendererFeature::Dither))
 		{
 			const RenderPass& pass = GetRenderPass(RenderPassType::DitherRenderPass);
-			pass.BindSharedResources(gfx);
+			pass.BindSharedResources(gfx, renderState);
 
 			static DitherCB ditherCB;
 			ditherCB.shadowDither = 0.15f;
 			ditherCB.midDither = 0.04f;
 			m_pDitherCB->Update(gfx, ditherCB);
 
-			m_pDitherKernel->Dispatch(gfx, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1u);
+			m_pDitherKernel->Dispatch(gfx, screenWidth, screenHeight, 1u);
 
-			pass.UnbindSharedResources(gfx);
+			pass.UnbindSharedResources(gfx, renderState);
 		}
 
 		// Tonemapping pass
 		if (m_viewIdx == RendererView::Final && IsFeatureEnabled(RendererFeature::Tonemapping))
 		{
 			const RenderPass& pass = GetRenderPass(RenderPassType::TonemappingRenderPass);
-			pass.BindSharedResources(gfx);
+			pass.BindSharedResources(gfx, renderState);
 
-			m_pTonemappingKernel->Dispatch(gfx, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1u);
+			m_pTonemappingKernel->Dispatch(gfx, screenWidth, screenHeight, 1u);
 
-			pass.UnbindSharedResources(gfx);
+			pass.UnbindSharedResources(gfx, renderState);
 		}
 
 		// Final blit
@@ -678,10 +679,10 @@ namespace gfx
 			auto& fsPass = static_cast<FullscreenPass&>(pass);
 
 			// todo: remove this - for now it's needed to clear SRVs
-			context->ClearState();
+			//context->ClearState();
 
-			pass.BindSharedResources(gfx);
-			DepthStencilState::Resolve(gfx, DepthStencilState::Mode::StencilOff)->BindOM(gfx);
+			pass.BindSharedResources(gfx, renderState);
+			DepthStencilState::Resolve(gfx, DepthStencilState::Mode::StencilOff)->BindOM(gfx, renderState);
 
 			// Debug view overrides: (do this here so it can be changed dynamically later)
 			switch (m_viewIdx)
@@ -705,11 +706,11 @@ namespace gfx
 				break;
 			}
 
-			gfx.SetViewport(gfx.GetScreenWidth(), gfx.GetScreenHeight());
+			gfx.SetViewport(screenWidth, screenHeight);
 			gfx.SetRenderTarget(gfx.GetBackBufferView());
 
-			pass.Execute(gfx);
-			pass.UnbindSharedResources(gfx);
+			pass.Execute(gfx, renderState);
+			pass.UnbindSharedResources(gfx, renderState);
 		}
 
 		gfx.GetRenderStats().EndFrame();

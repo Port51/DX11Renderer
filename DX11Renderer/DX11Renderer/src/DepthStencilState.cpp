@@ -61,9 +61,18 @@ namespace gfx
 		m_pStencil.Reset();
 	}
 
-	void DepthStencilState::BindOM(const GraphicsDevice& gfx)
+	void DepthStencilState::BindOM(const GraphicsDevice& gfx, RenderState& renderState)
 	{
-		gfx.GetContext()->OMSetDepthStencilState(m_pStencil.Get(), 0x01);
+		if (renderState.IsNewBinding(GetGuid(), RenderBindingType::OM_DepthStencilState, 0u))
+		{
+			gfx.GetContext()->OMSetDepthStencilState(m_pStencil.Get(), 0x01);
+		}
+	}
+
+	void DepthStencilState::UnbindOM(const GraphicsDevice & gfx, RenderState & renderState)
+	{
+		renderState.ClearBinding(RenderBindingType::OM_DepthStencilState, 0u);
+		gfx.GetContext()->OMSetDepthStencilState(nullptr, 0x01);
 	}
 
 	std::shared_ptr<DepthStencilState> DepthStencilState::Resolve(const GraphicsDevice& gfx, Mode mode)

@@ -39,7 +39,7 @@ namespace gfx
 		virtual void DrawImguiControlWindow() = 0;
 		virtual const LightData GetLightData(dx::XMMATRIX viewMatrix) const = 0;
 		virtual const UINT GetLightType() const = 0;
-		virtual void RenderShadow(const ShadowPassContext& context) = 0;
+		virtual void RenderShadow(const ShadowPassContext& context, RenderState& renderState) = 0;
 		const int GetCurrentShadowIdx() const;
 		void SetCurrentShadowIdx(int shadowMapIdx);
 		dx::XMFLOAT3 GetPositionWS() const;

@@ -3,6 +3,8 @@
 #include <unordered_map>
 #include <string>
 
+struct ID3D11BUFFER;
+
 namespace gfx
 {
 	enum RenderPassType : int
@@ -26,6 +28,21 @@ namespace gfx
 		DitherRenderPass,
 		TonemappingRenderPass,
 		FinalBlitRenderPass
+	};
+
+	class RenderBindingType
+	{
+	public:
+		enum RenderBindingTypeEnum : u8
+		{
+			IA_InputLayout, IA_VertexBuffer, IA_IndexBuffer, IA_Topology,
+			CS_SRV, CS_UAV, CS_CB, CS_Shader, CS_Sampler,
+			VS_SRV, VS_UAV, VS_CB, VS_Shader, VS_Sampler,
+			GS_SRV, GS_UAV, GS_CB, GS_Shader, GS_Sampler,
+			RS_State,
+			PS_SRV, PS_UAV, PS_CB, PS_Shader, PS_Sampler,
+			OM_DepthStencilState,
+		};
 	};
 
 	class RenderSlots
@@ -83,6 +100,10 @@ namespace gfx
 		static const float INV_PI_2;
 		static const float DEG_TO_RAD;
 		static const float RAD_TO_DEG;
+		static const std::vector<ID3D11Buffer*> NullBufferArray;
+		static const std::vector<ID3D11ShaderResourceView*> NullSRVArray;
+		static const std::vector<ID3D11UnorderedAccessView*> NullUAVArray;
+		static const std::vector<ID3D11SamplerState*> NullSamplerArray;
 	};
 
 	class RenderPassConstants

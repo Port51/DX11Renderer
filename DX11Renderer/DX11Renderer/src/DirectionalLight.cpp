@@ -97,7 +97,7 @@ namespace gfx
 		return transforms;
 	}
 
-	void DirectionalLight::RenderShadow(const ShadowPassContext& context)
+	void DirectionalLight::RenderShadow(const ShadowPassContext& context, RenderState& renderState)
 	{
 		const auto cameraPositionWS = context.camera.GetPositionWS();
 		const auto cameraForwardWS = context.camera.GetForwardWS();
@@ -168,7 +168,7 @@ namespace gfx
 			{
 				// Render to tile in atlas using viewport
 				context.gfx.SetViewport(tileX * Config::ShadowAtlasTileResolution, tileY * Config::ShadowAtlasTileResolution, Config::ShadowAtlasTileResolution, Config::ShadowAtlasTileResolution);
-				context.renderPass.Execute(context.gfx);
+				context.renderPass.Execute(context.gfx, renderState);
 				context.renderPass.Reset(); // required to handle multiple shadows at once
 			}
 

@@ -24,9 +24,18 @@ namespace gfx
 		m_pRasterizer.Reset();
 	}
 
-	void RasterizerState::BindRS(const GraphicsDevice& gfx)
+	void RasterizerState::BindRS(const GraphicsDevice& gfx, RenderState& renderState)
 	{
-		gfx.GetContext()->RSSetState(m_pRasterizer.Get());
+		if (renderState.IsNewBinding(GetGuid(), RenderBindingType::RS_State, 0u))
+		{
+			gfx.GetContext()->RSSetState(m_pRasterizer.Get());
+		}
+	}
+
+	void RasterizerState::UnbindRS(const GraphicsDevice & gfx, RenderState & renderState)
+	{
+		renderState.ClearBinding(RenderBindingType::RS_State, 0u);
+		gfx.GetContext()->RSSetState(nullptr);
 	}
 
 	std::shared_ptr<RasterizerState> RasterizerState::Resolve(const GraphicsDevice& gfx, D3D11_CULL_MODE cullMode)

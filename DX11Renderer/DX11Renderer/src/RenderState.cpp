@@ -3,55 +3,30 @@
 
 namespace gfx
 {
-
-	const bool RenderState::IsNewIA(guid64 guid)
+	RenderState::RenderState()
 	{
-		if (m_activeIA != guid)
+	}
+
+	const bool RenderState::IsNewBinding(const guid64 guid, const RenderBindingType::RenderBindingTypeEnum bindingType, const slotUINT slot)
+	{
+		const u16 key = GetKey(bindingType, slot);
+		if (m_activeBindings.find(key) == m_activeBindings.end() || m_activeBindings.at(key) != guid)
 		{
-			m_activeIA = guid;
+			m_activeBindings[key] = guid;
 			return true;
 		}
 		return false;
 	}
 
-	const bool RenderState::IsNewVS(guid64 guid)
+	const void RenderState::ClearBinding(const RenderBindingType::RenderBindingTypeEnum bindingType, const slotUINT slot)
 	{
-		if (m_activeVS != guid)
-		{
-			m_activeVS = guid;
-			return true;
-		}
-		return false;
+		const u16 key = GetKey(bindingType, slot);
+		m_activeBindings[key] = NullGuid64;
 	}
 
-	const bool RenderState::IsNewGS(guid64 guid)
+	const u16 RenderState::GetKey(const RenderBindingType::RenderBindingTypeEnum bindingType, const slotUINT slot) const
 	{
-		if (m_activeGS != guid)
-		{
-			m_activeGS = guid;
-			return true;
-		}
-		return false;
-	}
-
-	const bool RenderState::IsNewPS(guid64 guid)
-	{
-		if (m_activePS != guid)
-		{
-			m_activePS = guid;
-			return true;
-		}
-		return false;
-	}
-
-	const bool RenderState::IsNewRS(guid64 guid)
-	{
-		if (m_activeRS != guid)
-		{
-			m_activeRS = guid;
-			return true;
-		}
-		return false;
+		return ((u16)bindingType) << 8u + (u16)slot;
 	}
 
 }

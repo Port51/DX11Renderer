@@ -14,7 +14,8 @@ namespace gfx
 	public:
 		PixelShader(const GraphicsDevice& gfx, const char* path);
 		virtual void Release() override;
-		void BindPS(const GraphicsDevice& gfx, UINT slot) override;
+		void BindPS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot) override;
+		void UnbindPS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot) override;
 		const u16 GetInstanceIdx() const;
 	public:
 		static std::shared_ptr<PixelShader> Resolve(const GraphicsDevice& gfx, const char* path);

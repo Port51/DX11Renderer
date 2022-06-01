@@ -19,7 +19,8 @@ namespace gfx
 		IndexBuffer(const GraphicsDevice& gfx, const std::vector<u32>& indices);
 		virtual void Release() override;
 	public:
-		void BindIA(const GraphicsDevice& gfx, UINT slot) override;
+		void BindIA(const GraphicsDevice& gfx, RenderState& renderState, UINT slot) override;
+		void UnbindIA(const GraphicsDevice& gfx, RenderState& renderState, UINT slot) override;
 		const UINT GetIndexCount() const;
 	public:
 		static std::shared_ptr<IndexBuffer> Resolve(const GraphicsDevice& gfx, std::string id, const std::vector<u32>& indices);

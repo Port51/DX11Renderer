@@ -176,7 +176,7 @@ namespace gfx
 		return *m_pLightInputCB.get();
 	}
 
-	void LightManager::RenderShadows(ShadowPassContext& context)
+	void LightManager::RenderShadows(ShadowPassContext& context, RenderState& renderState)
 	{
 		context.pRendererList = m_pShadowRendererList.get();
 
@@ -191,7 +191,7 @@ namespace gfx
 				if (m_lightVisibility[i])
 				{
 					int shadowMapIdx = m_pLights[i]->GetCurrentShadowIdx();
-					m_pLights[i]->RenderShadow(context);
+					m_pLights[i]->RenderShadow(context, renderState);
 					m_pLights[i]->AppendShadowData(shadowMapIdx, m_cachedShadowData);
 					shadowMapIdx += m_pLights[i]->GetShadowTileCount();
 

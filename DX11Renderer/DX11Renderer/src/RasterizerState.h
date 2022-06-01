@@ -14,7 +14,8 @@ namespace gfx
 	public:
 		RasterizerState(const GraphicsDevice& gfx, D3D11_CULL_MODE cullMode);
 		virtual void Release() override;
-		void BindRS(const GraphicsDevice& gfx) override;
+		void BindRS(const GraphicsDevice& gfx, RenderState& renderState) override;
+		void UnbindRS(const GraphicsDevice& gfx, RenderState& renderState) override;
 		static std::shared_ptr<RasterizerState> Resolve(const GraphicsDevice& gfx, D3D11_CULL_MODE cullMode);
 		static D3D11_CULL_MODE GetCullModeFromMaterialString(std::string name);
 	protected:

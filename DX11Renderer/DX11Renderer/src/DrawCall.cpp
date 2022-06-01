@@ -5,7 +5,6 @@
 #include "RenderPass.h"
 #include "DrawContext.h"
 #include "BindingList.h"
-#include "RenderState.h"
 
 namespace gfx
 {
@@ -20,10 +19,10 @@ namespace gfx
 	{
 		if (m_pPropertyBindings != nullptr)
 		{
-			m_pPropertyBindings->Bind(gfx);
+			m_pPropertyBindings->Bind(gfx, renderState);
 		}
 
-		m_pRenderer->Bind(gfx, *m_pDrawContext);
+		m_pRenderer->Bind(gfx, renderState, *m_pDrawContext);
 		m_pMaterialPass->Bind(gfx, renderState);
 		m_pRenderer->IssueDrawCall(gfx); // calls DrawIndexed() or DrawIndexedInstanced()
 	}

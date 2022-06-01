@@ -19,9 +19,12 @@ namespace gfx
 		Sampler(const GraphicsDevice& gfx, D3D11_SAMPLER_DESC samplerDesc);
 		virtual void Release() override;
 	public:
-		void BindCS(const GraphicsDevice& gfx, UINT slot) override;
-		void BindVS(const GraphicsDevice& gfx, UINT slot) override;
-		void BindPS(const GraphicsDevice& gfx, UINT slot) override;
+		void BindCS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot) override;
+		void UnbindCS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot) override;
+		void BindVS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot) override;
+		void UnbindVS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot) override;
+		void BindPS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot) override;
+		void UnbindPS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot) override;
 		const ComPtr<ID3D11SamplerState> GetD3DSampler() const;
 	public:
 		static std::shared_ptr<Bindable> Resolve(const GraphicsDevice& gfx);

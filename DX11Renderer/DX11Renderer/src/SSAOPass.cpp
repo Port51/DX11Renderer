@@ -90,7 +90,7 @@ namespace gfx
 			.CSSetCB(RenderSlots::CS_FreeCB + 0u, m_pSettingsCB->GetD3DBuffer());
 	}
 
-	void SSAOPass::Execute(const GraphicsDevice & gfx) const
+	void SSAOPass::Execute(const GraphicsDevice & gfx, RenderState& renderState) const
 	{
 		// Update settings
 		{
@@ -104,31 +104,31 @@ namespace gfx
 		// Render occlusion
 		{
 			const RenderPass& pass = GetSubPass(SSAOSubpass::OcclusionSubpass);
-			pass.BindSharedResources(gfx);
+			pass.BindSharedResources(gfx, renderState);
 
 			m_pOcclusionKernel->Dispatch(gfx, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1u);
 
-			pass.UnbindSharedResources(gfx);
+			pass.UnbindSharedResources(gfx, renderState);
 		}
 
 		// Horizontal blur
 		{
 			const RenderPass& pass = GetSubPass(SSAOSubpass::HorizontalBlurSubpass);
-			pass.BindSharedResources(gfx);
+			pass.BindSharedResources(gfx, renderState);
 
 			m_pHorizontalBlurKernel->Dispatch(gfx, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1u);
 
-			pass.UnbindSharedResources(gfx);
+			pass.UnbindSharedResources(gfx, renderState);
 		}
 
 		// Vertical blur
 		{
 			const RenderPass& pass = GetSubPass(SSAOSubpass::VerticalBlurSubpass);
-			pass.BindSharedResources(gfx);
+			pass.BindSharedResources(gfx, renderState);
 
 			m_pVerticalBlurKernel->Dispatch(gfx, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1u);
 
-			pass.UnbindSharedResources(gfx);
+			pass.UnbindSharedResources(gfx, renderState);
 		}
 	}
 

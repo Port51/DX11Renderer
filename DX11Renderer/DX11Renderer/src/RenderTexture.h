@@ -11,6 +11,7 @@ struct ID3D11Texture2D;
 
 namespace gfx
 {
+
 	class RenderTexture : public Texture
 	{
 	public:
@@ -24,9 +25,12 @@ namespace gfx
 
 		const ComPtr<ID3D11RenderTargetView> GetRenderTargetView() const;
 
-		void BindCS(const GraphicsDevice& gfx, UINT slot) override;
-		void BindVS(const GraphicsDevice& gfx, UINT slot) override;
-		void BindPS(const GraphicsDevice& gfx, UINT slot) override;
+		void BindCS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot) override;
+		void UnbindCS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot) override;
+		void BindVS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot) override;
+		void UnbindVS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot) override;
+		void BindPS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot) override;
+		void UnbindPS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot) override;
 		void BindAsTexture(const GraphicsDevice& gfx, UINT slot) const;
 		void BindAsTarget(const GraphicsDevice& gfx) const;
 		void BindAsTarget(const GraphicsDevice& gfx, ComPtr<ID3D11DepthStencilView> pDepthStencilView) const;

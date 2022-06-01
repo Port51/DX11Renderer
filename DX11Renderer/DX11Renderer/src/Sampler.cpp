@@ -53,19 +53,46 @@ namespace gfx
 		m_pSampler.Reset();
 	}
 
-	void Sampler::BindCS(const GraphicsDevice& gfx, UINT slot)
+	void Sampler::BindCS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot)
 	{
-		gfx.GetContext()->CSSetSamplers(slot, 1u, m_pSampler.GetAddressOf());
+		if (renderState.IsNewBinding(GetGuid(), RenderBindingType::CS_Sampler, slot))
+		{
+			gfx.GetContext()->CSSetSamplers(slot, 1u, m_pSampler.GetAddressOf());
+		}
 	}
 
-	void Sampler::BindVS(const GraphicsDevice& gfx, UINT slot)
+	void Sampler::UnbindCS(const GraphicsDevice & gfx, RenderState & renderState, UINT slot)
 	{
-		gfx.GetContext()->VSSetSamplers(slot, 1u, m_pSampler.GetAddressOf());
+		renderState.ClearBinding(RenderBindingType::CS_Sampler, slot);
+		gfx.GetContext()->CSSetSamplers(slot, 1u, nullptr);
 	}
 
-	void Sampler::BindPS(const GraphicsDevice& gfx, UINT slot)
+	void Sampler::BindVS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot)
 	{
-		gfx.GetContext()->PSSetSamplers(slot, 1u, m_pSampler.GetAddressOf());
+		if (renderState.IsNewBinding(GetGuid(), RenderBindingType::VS_Sampler, slot))
+		{
+			gfx.GetContext()->VSSetSamplers(slot, 1u, m_pSampler.GetAddressOf());
+		}
+	}
+
+	void Sampler::UnbindVS(const GraphicsDevice & gfx, RenderState & renderState, UINT slot)
+	{
+		renderState.ClearBinding(RenderBindingType::VS_Sampler, slot);
+		gfx.GetContext()->VSSetSamplers(slot, 1u, nullptr);
+	}
+
+	void Sampler::BindPS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot)
+	{
+		if (renderState.IsNewBinding(GetGuid(), RenderBindingType::PS_Sampler, slot))
+		{
+			gfx.GetContext()->PSSetSamplers(slot, 1u, m_pSampler.GetAddressOf());
+		}
+	}
+
+	void Sampler::UnbindPS(const GraphicsDevice & gfx, RenderState & renderState, UINT slot)
+	{
+		renderState.ClearBinding(RenderBindingType::PS_Sampler, slot);
+		gfx.GetContext()->PSSetSamplers(slot, 1u, RenderConstants::NullSamplerArray.data());
 	}
 
 	const ComPtr<ID3D11SamplerState> Sampler::GetD3DSampler() const

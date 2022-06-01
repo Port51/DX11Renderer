@@ -23,9 +23,18 @@ namespace gfx
 		m_pPixelShader.Reset();
 	}
 
-	void PixelShader::BindPS(const GraphicsDevice& gfx, UINT slot)
+	void PixelShader::BindPS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot)
 	{
-		gfx.GetContext()->PSSetShader(m_pPixelShader.Get(), nullptr, 0u);
+		if (renderState.IsNewBinding(GetGuid(), RenderBindingType::PS_Shader, 0u))
+		{
+			gfx.GetContext()->PSSetShader(m_pPixelShader.Get(), nullptr, 0u);
+		}
+	}
+
+	void PixelShader::UnbindPS(const GraphicsDevice & gfx, RenderState & renderState, UINT slot)
+	{
+		renderState.ClearBinding(RenderBindingType::PS_Shader, 0u);
+		gfx.GetContext()->PSSetShader(nullptr, nullptr, 0u);
 	}
 
 	const u16 PixelShader::GetInstanceIdx() const

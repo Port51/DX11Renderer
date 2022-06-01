@@ -13,9 +13,18 @@ namespace gfx
 	{
 	}
 
-	void Topology::BindIA(const GraphicsDevice& gfx, UINT slot)
+	void Topology::BindIA(const GraphicsDevice& gfx, RenderState& renderState, UINT slot)
 	{
-		gfx.GetContext()->IASetPrimitiveTopology(m_type);
+		if (renderState.IsNewBinding(m_type, RenderBindingType::IA_Topology, 0u))
+		{
+			gfx.GetContext()->IASetPrimitiveTopology(m_type);
+		}
+	}
+
+	void Topology::UnbindIA(const GraphicsDevice & gfx, RenderState & renderState, UINT slot)
+	{
+		renderState.ClearBinding(RenderBindingType::IA_Topology, 0u);
+		gfx.GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_UNDEFINED);
 	}
 
 	std::shared_ptr<Topology> Topology::Resolve(const GraphicsDevice& gfx, D3D11_PRIMITIVE_TOPOLOGY type)

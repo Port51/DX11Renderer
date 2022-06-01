@@ -26,9 +26,12 @@ namespace gfx
 		Texture(const GraphicsDevice& gfx, D3D11_TEXTURE2D_DESC textureDesc, D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc);
 		virtual void Release() override;
 	public:
-		void BindCS(const GraphicsDevice& gfx, UINT slot) override;
-		void BindVS(const GraphicsDevice& gfx, UINT slot) override;
-		void BindPS(const GraphicsDevice& gfx, UINT slot) override;
+		void BindCS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot) override;
+		void UnbindCS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot) override;
+		void BindVS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot) override;
+		void UnbindVS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot) override;
+		void BindPS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot) override;
+		void UnbindPS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot) override;
 		const ComPtr<ID3D11ShaderResourceView> GetSRV() const;
 		const ComPtr<ID3D11UnorderedAccessView> GetUAV(UINT mipSlice = 0u) const;
 		const TextureDimension GetDimension() const;

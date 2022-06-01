@@ -136,7 +136,7 @@ namespace gfx
 		DrawSliderFloat(guiId++, indent, "Near Intensity", &m_nearIntensity, 0.0f, 1.0f, "%.2f", ImGuiSliderFlags_None);
 	}
 
-	void DepthOfFieldPass::Execute(const GraphicsDevice & gfx) const
+	void DepthOfFieldPass::Execute(const GraphicsDevice & gfx, RenderState& renderState) const
 	{
 		auto context = gfx.GetContext();
 		const UINT screenWidth = gfx.GetScreenWidth();
@@ -160,30 +160,30 @@ namespace gfx
 		// DoF prefilter
 		{
 			const RenderPass& pass = GetSubPass(DepthOfFieldSubpass::PrefilterSubpass);
-			pass.BindSharedResources(gfx);
+			pass.BindSharedResources(gfx, renderState);
 
 			m_pDepthOfFieldCB->Update(gfx, *m_depthOfFieldCB);
 			context->CSSetConstantBuffers(RenderSlots::CS_FreeCB + 0u, 1u, m_pDepthOfFieldCB->GetD3DBuffer().GetAddressOf());
 
 			m_pDoFPrefilterKernel->Dispatch(gfx, dofTextureWidth, dofTextureHeight, 1u);
 
-			pass.UnbindSharedResources(gfx);
+			pass.UnbindSharedResources(gfx, renderState);
 		}
 
 		switch (m_bokehType)
 		{
 		case DepthOfFieldBokehType::DiskBokeh:
-			ExecuteDiskBokeh(gfx);
+			ExecuteDiskBokeh(gfx, renderState);
 			break;
 		case DepthOfFieldBokehType::HexBokeh:
-			ExecuteHexBokeh(gfx);
+			ExecuteHexBokeh(gfx, renderState);
 			break;
 		default:
 			THROW("Unrecognized bokeh type " + m_bokehType);
 		}
 	}
 
-	void DepthOfFieldPass::ExecuteDiskBokeh(const GraphicsDevice & gfx) const
+	void DepthOfFieldPass::ExecuteDiskBokeh(const GraphicsDevice & gfx, RenderState& renderState) const
 	{
 		auto context = gfx.GetContext();
 		UINT screenWidth = gfx.GetScreenWidth();
@@ -194,7 +194,7 @@ namespace gfx
 		// DoF far blur pass
 		{
 			const RenderPass& pass = GetSubPass(DepthOfFieldSubpass::FarBlurSubpass);
-			pass.BindSharedResources(gfx);
+			pass.BindSharedResources(gfx, renderState);
 
 			// Component #0
 			{
@@ -233,13 +233,13 @@ namespace gfx
 				m_pDoFVerticalFilterAndCombineKernel->Dispatch(gfx, dofTextureWidth, dofTextureHeight, 1u);
 			}
 
-			pass.UnbindSharedResources(gfx);
+			pass.UnbindSharedResources(gfx, renderState);
 		}
 
 		// DoF near blur pass
 		{
 			const RenderPass& pass = GetSubPass(DepthOfFieldSubpass::NearBlurSubpass);
-			pass.BindSharedResources(gfx);
+			pass.BindSharedResources(gfx, renderState);
 
 			m_depthOfFieldCB->weightOffset = 0u;
 			m_depthOfFieldCB->verticalPassAddFactor = 0.f;
@@ -254,26 +254,26 @@ namespace gfx
 
 			// Inputs = real + imag
 			// Output = combined texture
-			context->CSSetShaderResources(RenderSlots::CS_FreeSRV + 0u, 1u, m_pNullSRVs.data());
+			context->CSSetShaderResources(RenderSlots::CS_FreeSRV + 0u, 1u, RenderConstants::NullSRVArray.data());
 			context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 2u, 1u, m_pDoFNear0->GetUAV().GetAddressOf(), nullptr);
 			m_pDoFVerticalFilterAndCombineKernel->Dispatch(gfx, dofTextureWidth, dofTextureHeight, 1u);
-			context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 2u, 1u, m_pNullUAVs.data(), nullptr);
+			context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 2u, 1u, RenderConstants::NullUAVArray.data(), nullptr);
 
-			pass.UnbindSharedResources(gfx);
+			pass.UnbindSharedResources(gfx, renderState);
 		}
 
 		// DoF composite pass
 		{
 			const RenderPass& pass = GetSubPass(DepthOfFieldSubpass::CompositeSubpass);
-			pass.BindSharedResources(gfx);
+			pass.BindSharedResources(gfx, renderState);
 
 			m_pDoFCompositeKernel->Dispatch(gfx, screenWidth, screenHeight, 1u);
 
-			pass.UnbindSharedResources(gfx);
+			pass.UnbindSharedResources(gfx, renderState);
 		}
 	}
 
-	void DepthOfFieldPass::ExecuteHexBokeh(const GraphicsDevice & gfx) const
+	void DepthOfFieldPass::ExecuteHexBokeh(const GraphicsDevice & gfx, RenderState& renderState) const
 	{
 		auto context = gfx.GetContext();
 		UINT screenWidth = gfx.GetScreenWidth();
@@ -284,7 +284,7 @@ namespace gfx
 		// DoF far blur pass
 		{
 			const RenderPass& pass = GetSubPass(DepthOfFieldSubpass::FarBlurSubpass);
-			pass.BindSharedResources(gfx);
+			pass.BindSharedResources(gfx, renderState);
 
 			// todo: move to shared
 			context->CSSetSamplers(0u, 1u, m_pClampedMaxSampler->GetD3DSampler().GetAddressOf());
@@ -297,7 +297,7 @@ namespace gfx
 			// Output = diagonal blur
 			m_pDiagonalHexFilterKernel->Dispatch(gfx, dofTextureWidth, dofTextureHeight, 1u);
 
-			context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 0u, 2u, m_pNullUAVs.data(), nullptr);
+			context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 0u, 2u, RenderConstants::NullUAVArray.data(), nullptr);
 			context->CSSetShaderResources(RenderSlots::CS_FreeSRV + 0u, 1u, m_pDoFFar1->GetSRV().GetAddressOf());
 			context->CSSetShaderResources(RenderSlots::CS_FreeSRV + 1u, 1u, m_pDoFFar2->GetSRV().GetAddressOf());
 
@@ -305,13 +305,13 @@ namespace gfx
 			// Output = composite
 			m_pRhomboidHexFilterKernel->Dispatch(gfx, dofTextureWidth, dofTextureHeight, 1u);
 
-			pass.UnbindSharedResources(gfx);
+			pass.UnbindSharedResources(gfx, renderState);
 		}
 
 		// DoF near blur pass
 		{
 			const RenderPass& pass = GetSubPass(DepthOfFieldSubpass::NearBlurSubpass);
-			pass.BindSharedResources(gfx);
+			pass.BindSharedResources(gfx, renderState);
 
 			// todo: move to shared
 			context->CSSetSamplers(0u, 1u, m_pClampedMaxSampler->GetD3DSampler().GetAddressOf());
@@ -324,7 +324,7 @@ namespace gfx
 			// Output = diagonal blur
 			m_pDiagonalHexFilterKernel->Dispatch(gfx, dofTextureWidth, dofTextureHeight, 1u);
 
-			context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 0u, 2u, m_pNullUAVs.data(), nullptr);
+			context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 0u, 2u, RenderConstants::NullUAVArray.data(), nullptr);
 			context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 2u, 1u, m_pDoFNear3->GetUAV().GetAddressOf(), nullptr);
 			context->CSSetShaderResources(RenderSlots::CS_FreeSRV + 0u, 1u, m_pDoFNear1->GetSRV().GetAddressOf());
 			context->CSSetShaderResources(RenderSlots::CS_FreeSRV + 1u, 1u, m_pDoFNear2->GetSRV().GetAddressOf());
@@ -333,22 +333,22 @@ namespace gfx
 			// Output = composite
 			m_pRhomboidHexFilterKernel->Dispatch(gfx, dofTextureWidth, dofTextureHeight, 1u);
 
-			context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 0u, 3u, m_pNullUAVs.data(), nullptr);
+			context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 0u, 3u, RenderConstants::NullUAVArray.data(), nullptr);
 
-			pass.UnbindSharedResources(gfx);
+			pass.UnbindSharedResources(gfx, renderState);
 		}
 
 		// DoF composite pass
 		{
 			const RenderPass& pass = GetSubPass(DepthOfFieldSubpass::CompositeSubpass);
-			pass.BindSharedResources(gfx);
+			pass.BindSharedResources(gfx, renderState);
 
 			context->CSSetShaderResources(RenderSlots::CS_FreeSRV + 0u, 1u, m_pDoFFar3->GetSRV().GetAddressOf());
 			context->CSSetShaderResources(RenderSlots::CS_FreeSRV + 1u, 1u, m_pDoFNear3->GetSRV().GetAddressOf());
 
 			m_pDoFCompositeKernel->Dispatch(gfx, screenWidth, screenHeight, 1u);
 
-			pass.UnbindSharedResources(gfx);
+			pass.UnbindSharedResources(gfx, renderState);
 		}
 	}
 

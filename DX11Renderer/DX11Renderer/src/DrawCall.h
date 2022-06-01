@@ -6,7 +6,6 @@ namespace gfx
 	class GraphicsDevice;
 	class MaterialPass;
 	class BindingList;
-	class RenderState;
 
 	struct DrawContext;
 

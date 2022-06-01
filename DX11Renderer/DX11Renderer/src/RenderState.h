@@ -1,4 +1,7 @@
+#pragma once
 #include "CommonHeader.h"
+#include "RenderConstants.h"
+#include <unordered_map>
 
 namespace gfx
 {
@@ -7,17 +10,18 @@ namespace gfx
 	class RenderState
 	{
 	public:
-		const bool IsNewIA(guid64 guid);
-		const bool IsNewVS(guid64 guid);
-		const bool IsNewGS(guid64 guid);
-		const bool IsNewPS(guid64 guid);
-		const bool IsNewRS(guid64 guid);
+		RenderState();
+	public:
+		// Returns TRUE if this is a new binding, and stores that binding
+		// Use this to tell whether to actually bind a resource or not
+		const bool IsNewBinding(const guid64 guid, const RenderBindingType::RenderBindingTypeEnum bindingType, const slotUINT slot);
+		const void ClearBinding(const RenderBindingType::RenderBindingTypeEnum bindingType, const slotUINT slot);
 	private:
-		guid64 m_activeIA = 0u;
-		guid64 m_activeVS = 0u;
-		guid64 m_activeGS = 0u;
-		guid64 m_activePS = 0u;
-		guid64 m_activeRS = 0u;
+		const u16 GetKey(const RenderBindingType::RenderBindingTypeEnum bindingType, const slotUINT slot) const;
+	private:
+		// Bindings are stored according to bits: [ 8 bit binding identifier, 8 bit slot ]
+		// The binding identifier represents things like "CS SRV", "Index Buffer", etc.
+		std::unordered_map<u16, guid64> m_activeBindings;
 	};
 
 }

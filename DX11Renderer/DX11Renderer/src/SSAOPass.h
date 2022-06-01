@@ -34,7 +34,7 @@ namespace gfx
 
 	public:
 		void SetupRenderPassDependencies(const GraphicsDevice& gfx, const RenderTexture & pGbuffer, const RenderTexture& hiZBuffer, const Texture& noiseTexture);
-		void Execute(const GraphicsDevice& gfx) const override;
+		void Execute(const GraphicsDevice& gfx, RenderState& renderState) const override;
 		void DrawImguiControls(const GraphicsDevice& gfx) override;
 		const RenderTexture& GetOcclusionTexture() const;
 
