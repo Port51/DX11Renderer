@@ -19,18 +19,18 @@ namespace gfx
 	class DirectionalLight : public Light
 	{
 	public:
-		DirectionalLight(const GraphicsDevice& gfx, UINT index, bool allowUserControl, bool hasShadow, std::shared_ptr<ModelAsset> const& pModelAsset, float pan, float tilt, dx::XMFLOAT3 color, float intensity = 1.f, float sphereRad = 1.f, float range = 2.5f);
+		DirectionalLight(const GraphicsDevice& gfx, const UINT index, const bool allowUserControl, const bool hasShadow, std::shared_ptr<ModelAsset> const& pModelAsset, const float pan, const float tilt, const dx::XMFLOAT3 color, const float intensity = 1.f, const float sphereRad = 1.f, const float range = 2.5f);
 	public:
 		void DrawImguiControlWindow() override;
-		const LightData GetLightData(dx::XMMATRIX viewMatrix) const override;
+		const LightData GetLightData(const dx::XMMATRIX viewMatrix) const override;
 		const UINT GetLightType() const override;
 		void RenderShadow(const ShadowPassContext& context, RenderState& renderState) override;
-		void AppendShadowData(UINT shadowStartSlot, std::vector<LightShadowData>& shadowData) const override;
+		void AppendShadowData(const UINT shadowStartSlot, std::vector<LightShadowData>& shadowData) const override;
 		const UINT GetShadowTileCount() const override;
-		const dx::XMVECTOR GetShadowCascadeSphereVS(UINT idx) const;
+		const dx::XMVECTOR GetShadowCascadeSphereVS(const UINT idx) const;
 	private:
 		const dx::XMVECTOR GetDirectionWS() const;
-		const ViewProjTransforms GetShadowTransforms(dx::XMVECTOR cascadeSphereCenterWS, float cascadeDistance) const;
+		const ViewProjTransforms GetShadowTransforms(dx::XMVECTOR cascadeSphereCenterWS, const float cascadeDistance) const;
 	private:
 		float m_pan;
 		float m_tilt;

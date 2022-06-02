@@ -41,7 +41,7 @@ namespace gfxcore
 		};
 
 	public:
-		BaseWindow(UINT width, UINT height, const char* name, HINSTANCE const hInstance, InputListener* const pInputListener);
+		BaseWindow(const UINT width, const UINT height, const char* name, HINSTANCE const hInstance, InputListener* const pInputListener);
 		virtual ~BaseWindow();
 		BaseWindow(const BaseWindow&) = delete;
 		BaseWindow& operator=(const BaseWindow&) = delete;
@@ -52,11 +52,11 @@ namespace gfxcore
 		MouseInput& GetMouse();
 		HWND GetHwnd();
 	private:
-		static LRESULT CALLBACK HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-		static LRESULT CALLBACK HandleMsgAdapter(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+		static LRESULT CALLBACK HandleMsgSetup(const HWND hWnd, const UINT msg, const WPARAM wParam, const LPARAM lParam);
+		static LRESULT CALLBACK HandleMsgAdapter(const HWND hWnd, const UINT msg, const WPARAM wParam, const LPARAM lParam);
 	protected:
 		// Instance handle method
-		virtual LRESULT HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+		virtual LRESULT HandleMsg(const HWND hWnd, const UINT msg, const WPARAM wParam, const LPARAM lParam);
 		const BOOL IsPointInWindow(const POINTS pt) const;
 	protected:
 		InputListener* m_pInputListener;

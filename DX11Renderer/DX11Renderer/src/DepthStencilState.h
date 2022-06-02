@@ -18,16 +18,16 @@ namespace gfx
 			Write,
 			Mask
 		};
-		DepthStencilState(const GraphicsDevice& gfx, Mode mode);
-		DepthStencilState(const GraphicsDevice& gfx, D3D11_DEPTH_STENCIL_DESC desc);
+		DepthStencilState(const GraphicsDevice& gfx, const Mode mode);
+		DepthStencilState(const GraphicsDevice& gfx, const D3D11_DEPTH_STENCIL_DESC desc);
 		virtual void Release() override;
 		void BindOM(const GraphicsDevice& gfx, RenderState& renderState) override;
 		void UnbindOM(const GraphicsDevice& gfx, RenderState& renderState) override;
-		static std::shared_ptr<DepthStencilState> Resolve(const GraphicsDevice& gfx, Mode mode);
+		static std::shared_ptr<DepthStencilState> Resolve(const GraphicsDevice& gfx, const Mode mode);
 	protected:
-		static std::string GenerateUID(Mode mode);
+		static std::string GenerateUID(const Mode mode);
 	private:
-		Mode m_mode;
+		const Mode m_mode;
 		ComPtr<ID3D11DepthStencilState> m_pStencil;
 	};
 }

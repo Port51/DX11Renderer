@@ -3,7 +3,7 @@
 
 namespace gfx
 {
-	Buffer::Buffer(D3D11_USAGE usage, UINT bindFlags, UINT byteWidth)
+	Buffer::Buffer(const D3D11_USAGE usage, const UINT bindFlags, const UINT byteWidth)
 		: m_usage(usage), m_bindFlags(bindFlags), m_byteWidth(byteWidth)
 	{}
 

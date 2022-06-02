@@ -740,9 +740,6 @@
     <None Include="Assets\Models\CascadeTestScene.asset">
       <Filter>Assets\Models</Filter>
     </None>
-    <None Include="Assets\Models\SimpleCastle.asset">
-      <Filter>Assets\Models</Filter>
-    </None>
     <None Include="Assets\Shaders\Lighting\BRDF.hlsli">
       <Filter>Assets\Shaders\Lighting</Filter>
     </None>
@@ -775,6 +772,9 @@
     </None>
     <None Include="Assets\Shaders\PhongCommon.hlsli">
       <Filter>Assets\Shaders\DrawPasses</Filter>
+    </None>
+    <None Include="Assets\Models\FullCastle.asset">
+      <Filter>Assets\Models</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

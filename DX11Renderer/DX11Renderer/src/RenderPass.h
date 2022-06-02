@@ -30,22 +30,22 @@ namespace gfx
 		virtual void DrawImguiControls(const GraphicsDevice& gfx);
 	public:
 		RenderPass& ClearBinds();
-		RenderPass& CSSetCB(UINT slot, ComPtr<ID3D11Buffer> pResource);
-		RenderPass& CSSetSRV(UINT slot, ComPtr<ID3D11ShaderResourceView> pResource);
-		RenderPass& CSSetUAV(UINT slot, ComPtr<ID3D11UnorderedAccessView> pResource);
-		RenderPass& CSSetSPL(UINT slot, ComPtr<ID3D11SamplerState> pResource);
-		RenderPass& VSSetCB(UINT slot, ComPtr<ID3D11Buffer> pResource);
-		RenderPass& VSSetSRV(UINT slot, ComPtr<ID3D11ShaderResourceView> pResource);
-		RenderPass& VSSetSPL(UINT slot, ComPtr<ID3D11SamplerState> pResource);
-		RenderPass& PSSetCB(UINT slot, ComPtr<ID3D11Buffer> pResource);
-		RenderPass& PSSetSRV(UINT slot, ComPtr<ID3D11ShaderResourceView> pResource);
-		RenderPass& PSSetSPL(UINT slot, ComPtr<ID3D11SamplerState> pResource);
+		RenderPass& CSSetCB(const slotUINT slot, ComPtr<ID3D11Buffer> pResource);
+		RenderPass& CSSetSRV(const slotUINT slot, ComPtr<ID3D11ShaderResourceView> pResource);
+		RenderPass& CSSetUAV(const slotUINT slot, ComPtr<ID3D11UnorderedAccessView> pResource);
+		RenderPass& CSSetSPL(const slotUINT slot, ComPtr<ID3D11SamplerState> pResource);
+		RenderPass& VSSetCB(const slotUINT slot, ComPtr<ID3D11Buffer> pResource);
+		RenderPass& VSSetSRV(const slotUINT slot, ComPtr<ID3D11ShaderResourceView> pResource);
+		RenderPass& VSSetSPL(const slotUINT slot, ComPtr<ID3D11SamplerState> pResource);
+		RenderPass& PSSetCB(const slotUINT slot, ComPtr<ID3D11Buffer> pResource);
+		RenderPass& PSSetSRV(const slotUINT slot, ComPtr<ID3D11ShaderResourceView> pResource);
+		RenderPass& PSSetSPL(const slotUINT slot, ComPtr<ID3D11SamplerState> pResource);
 		RenderPass& SetCameraColorOut(std::shared_ptr<RenderTexture> pCameraColor);
 		Binding& AddBinding(std::shared_ptr<Bindable> pBindable);
 		Binding& AddBinding(Binding pBinding);
 
 		const RenderTexture& GetCameraColorOut() const;
-		static const std::size_t GetHash(std::string passName);
+		static const std::size_t GetHash(const std::string passName);
 	protected:
 		RenderPass& GetSubPass(const UINT pass) const;
 		const RenderPass& CreateSubPass(const UINT pass);

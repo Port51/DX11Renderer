@@ -16,13 +16,13 @@ namespace gfx
 				Info
 			};
 		public:
-			LogMessage(LogMessageType type, std::string message)
+			LogMessage(const LogMessageType type, const std::string message)
 				: type(type), message(message)
 			{}
 			void DrawImGui();
 		private:
-			LogMessageType type;
-			std::string message;
+			const LogMessageType type;
+			const std::string message;
 		};
 
 	public:

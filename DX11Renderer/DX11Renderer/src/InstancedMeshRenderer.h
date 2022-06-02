@@ -16,7 +16,7 @@ namespace gfx
 	class InstancedMeshRenderer : public MeshRenderer
 	{
 	public:
-		InstancedMeshRenderer(const GraphicsDevice& gfx, std::string name, std::shared_ptr<MeshAsset> pMeshAsset, std::shared_ptr<Material> pMaterial, std::shared_ptr<VertexBufferWrapper> pVertexBuffer, std::shared_ptr<IndexBuffer> pIndexBuffer, std::shared_ptr<Topology> pTopologyBuffer, UINT instanceCount);
+		InstancedMeshRenderer(const GraphicsDevice& gfx, const std::string name, std::shared_ptr<MeshAsset> pMeshAsset, std::shared_ptr<Material> pMaterial, std::shared_ptr<VertexBufferWrapper> pVertexBuffer, std::shared_ptr<IndexBuffer> pIndexBuffer, std::shared_ptr<Topology> pTopologyBuffer, const UINT instanceCount);
 	public:
 		void IssueDrawCall(const GraphicsDevice& gfx) const override;
 	private:

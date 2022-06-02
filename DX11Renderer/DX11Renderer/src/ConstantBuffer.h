@@ -13,7 +13,7 @@ namespace gfx
 	class ConstantBuffer : public Buffer
 	{
 	public:
-		ConstantBuffer(const GraphicsDevice& gfx, D3D11_USAGE usage)
+		ConstantBuffer(const GraphicsDevice& gfx, const D3D11_USAGE usage)
 			: Buffer(usage, D3D11_BIND_CONSTANT_BUFFER, GetCBufferSize(sizeof(T)))
 		{
 			D3D11_BUFFER_DESC bd;
@@ -27,7 +27,7 @@ namespace gfx
 			THROW_IF_FAILED(gfx.GetAdapter()->CreateBuffer(&bd, nullptr, &m_pBuffer));
 		}
 
-		ConstantBuffer(const GraphicsDevice& gfx, D3D11_USAGE usage, const T& initialData)
+		ConstantBuffer(const GraphicsDevice& gfx, const D3D11_USAGE usage, const T& initialData)
 			: Buffer(usage, D3D11_BIND_CONSTANT_BUFFER, GetCBufferSize(sizeof(T)))
 		{
 			D3D11_BUFFER_DESC bd;
@@ -45,7 +45,7 @@ namespace gfx
 		}
 
 	public:
-		void BindCS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot) override
+		void BindCS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override
 		{
 			if (renderState.IsNewBinding(GetGuid(), RenderBindingType::CS_CB, slot))
 			{
@@ -53,13 +53,13 @@ namespace gfx
 			}
 		}
 
-		void UnbindCS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot) override
+		void UnbindCS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override
 		{
 			renderState.ClearBinding(RenderBindingType::CS_CB, slot);
 			gfx.GetContext()->CSSetConstantBuffers(slot, 1u, RenderConstants::NullBufferArray.data());
 		}
 
-		void BindVS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot) override
+		void BindVS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override
 		{
 			if (renderState.IsNewBinding(GetGuid(), RenderBindingType::VS_CB, slot))
 			{
@@ -67,13 +67,13 @@ namespace gfx
 			}
 		}
 
-		void UnbindVS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot) override
+		void UnbindVS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override
 		{
 			renderState.ClearBinding(RenderBindingType::VS_CB, slot);
 			gfx.GetContext()->VSSetConstantBuffers(slot, 1u, RenderConstants::NullBufferArray.data());
 		}
 
-		void BindPS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot) override
+		void BindPS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override
 		{
 			if (renderState.IsNewBinding(GetGuid(), RenderBindingType::PS_CB, slot))
 			{
@@ -81,7 +81,7 @@ namespace gfx
 			}
 		}
 
-		void UnbindPS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot) override
+		void UnbindPS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override
 		{
 			renderState.ClearBinding(RenderBindingType::PS_CB, slot);
 			gfx.GetContext()->PSSetConstantBuffers(slot, 1u, RenderConstants::NullBufferArray.data());
@@ -92,7 +92,7 @@ namespace gfx
 			Update(gfx, &data, sizeof(T));
 		}
 
-		void Update(const GraphicsDevice& gfx, const void* data, UINT dataSize)
+		void Update(const GraphicsDevice& gfx, const void* data, const UINT dataSize)
 		{
 			if (m_usage == D3D11_USAGE_DYNAMIC) // Can be continuously modified by CPU
 			{
@@ -121,7 +121,7 @@ namespace gfx
 		}
 
 	private:
-		static constexpr UINT GetCBufferSize(UINT buffer_size)
+		static constexpr UINT GetCBufferSize(const UINT buffer_size)
 		{
 			return (buffer_size + (64 - 1))& ~(64 - 1);
 		}

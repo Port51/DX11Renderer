@@ -3,22 +3,22 @@
 
 namespace gfx
 {
-	void Bindable::BindIA(const GraphicsDevice & gfx, RenderState & renderState, UINT slot)
+	void Bindable::BindIA(const GraphicsDevice & gfx, RenderState & renderState, const slotUINT slot)
 	{
 		THROW("BindIA() not implemented on type derived from Bindable");
 	}
 
-	void Bindable::BindCS(const GraphicsDevice & gfx, RenderState & renderState, UINT slot)
+	void Bindable::BindCS(const GraphicsDevice & gfx, RenderState & renderState, const slotUINT slot)
 	{
 		THROW("BindCS() not implemented on type derived from Bindable");
 	}
 
-	void Bindable::BindVS(const GraphicsDevice & gfx, RenderState & renderState, UINT slot)
+	void Bindable::BindVS(const GraphicsDevice & gfx, RenderState & renderState, const slotUINT slot)
 	{
 		THROW("BindVS() not implemented on type derived from Bindable");
 	}
 
-	void Bindable::BindPS(const GraphicsDevice & gfx, RenderState & renderState, UINT slot)
+	void Bindable::BindPS(const GraphicsDevice & gfx, RenderState & renderState, const slotUINT slot)
 	{
 		THROW("BindPS() not implemented on type derived from Bindable");
 	}
@@ -33,22 +33,22 @@ namespace gfx
 		THROW("BindOM() not implemented on type derived from Bindable");
 	}
 
-	void Bindable::UnbindIA(const GraphicsDevice & gfx, RenderState & renderState, UINT slot)
+	void Bindable::UnbindIA(const GraphicsDevice & gfx, RenderState & renderState, const slotUINT slot)
 	{
 		THROW("UnbindIA() not implemented on type derived from Bindable");
 	}
 
-	void Bindable::UnbindCS(const GraphicsDevice & gfx, RenderState & renderState, UINT slot)
+	void Bindable::UnbindCS(const GraphicsDevice & gfx, RenderState & renderState, const slotUINT slot)
 	{
 		THROW("UnbindCS() not implemented on type derived from Bindable");
 	}
 
-	void Bindable::UnbindVS(const GraphicsDevice & gfx, RenderState & renderState, UINT slot)
+	void Bindable::UnbindVS(const GraphicsDevice & gfx, RenderState & renderState, const slotUINT slot)
 	{
 		THROW("UnbindVS() not implemented on type derived from Bindable");
 	}
 
-	void Bindable::UnbindPS(const GraphicsDevice & gfx, RenderState & renderState, UINT slot)
+	void Bindable::UnbindPS(const GraphicsDevice & gfx, RenderState & renderState, const slotUINT slot)
 	{
 		THROW("UnbindPS() not implemented on type derived from Bindable");
 	}

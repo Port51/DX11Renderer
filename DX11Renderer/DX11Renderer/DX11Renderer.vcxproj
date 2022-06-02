@@ -404,7 +404,7 @@
     <None Include="Assets\Materials\HairMaterial.asset" />
     <None Include="Assets\Models\DefaultQuad.asset" />
     <None Include="Assets\Models\ShadowTestScene.asset" />
-    <None Include="Assets\Models\SimpleCastle.asset" />
+    <None Include="Assets\Models\FullCastle.asset" />
     <None Include="Assets\Shaders\Common.hlsli">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>

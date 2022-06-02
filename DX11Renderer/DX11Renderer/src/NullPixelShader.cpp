@@ -11,14 +11,14 @@ namespace gfx
 	void NullPixelShader::Release()
 	{
 	}
-	void NullPixelShader::BindPS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot)
+	void NullPixelShader::BindPS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot)
 	{
 		if (renderState.IsNewBinding(GetGuid(), RenderBindingType::PS_Shader, 0u))
 		{
 			gfx.GetContext()->PSSetShader(nullptr, nullptr, 0u);
 		}
 	}
-	void NullPixelShader::UnbindPS(const GraphicsDevice & gfx, RenderState & renderState, UINT slot)
+	void NullPixelShader::UnbindPS(const GraphicsDevice & gfx, RenderState & renderState, const slotUINT slot)
 	{
 		renderState.ClearBinding(RenderBindingType::PS_Shader, 0u);
 		gfx.GetContext()->PSSetShader(nullptr, nullptr, 0u);

@@ -33,22 +33,22 @@ namespace gfx
 
 		};
 	public:
-		Light(const GraphicsDevice& gfx, UINT index, bool allowUserControl, std::shared_ptr<ModelAsset> const& pModelAsset, dx::XMFLOAT3 positionWS, dx::XMFLOAT3 color, float intensity);
+		Light(const GraphicsDevice& gfx, const UINT index, const bool allowUserControl, std::shared_ptr<ModelAsset> const& pModelAsset, const dx::XMFLOAT3 positionWS, const dx::XMFLOAT3 color, const float intensity);
 		virtual ~Light();
 	public:
 		virtual void DrawImguiControlWindow() = 0;
-		virtual const LightData GetLightData(dx::XMMATRIX viewMatrix) const = 0;
+		virtual const LightData GetLightData(const dx::XMMATRIX viewMatrix) const = 0;
 		virtual const UINT GetLightType() const = 0;
 		virtual void RenderShadow(const ShadowPassContext& context, RenderState& renderState) = 0;
 		const int GetCurrentShadowIdx() const;
-		void SetCurrentShadowIdx(int shadowMapIdx);
+		void SetCurrentShadowIdx(const int shadowMapIdx);
 		dx::XMFLOAT3 GetPositionWS() const;
-		void SetPositionWS(dx::XMVECTOR positionWS);
+		void SetPositionWS(const dx::XMVECTOR positionWS);
 		const bool HasShadow() const;
-		virtual void AppendShadowData(UINT shadowStartSlot, std::vector<LightShadowData>& shadowData) const = 0;
+		virtual void AppendShadowData(const UINT shadowStartSlot, std::vector<LightShadowData>& shadowData) const = 0;
 		virtual const UINT GetShadowTileCount() const = 0;
 		ModelInstance* GetModelInstance() const;
-		void SetShadowMatrixTile(dx::XMMATRIX& shadowMatrix, int tileX, int tileY);
+		void SetShadowMatrixTile(dx::XMMATRIX& shadowMatrix, const int tileX, const int tileY);
 		const bool AllowUserControl() const;
 	protected:
 		UINT m_index;

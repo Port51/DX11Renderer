@@ -366,7 +366,7 @@ namespace gfx
 		m_pFinalBlitInputIsIndex0 = cameraOutSlot0;
 	}
 
-	void Renderer::AcceptDrawCall(DrawCall job, RenderPassType targetPass)
+	void Renderer::AcceptDrawCall(DrawCall job, const RenderPassType targetPass)
 	{
 		m_pRenderPasses[targetPass]->EnqueueJob(std::move(job));
 	}
@@ -374,10 +374,10 @@ namespace gfx
 	void Renderer::Execute(GraphicsDevice& gfx, const Camera& camera, const float timeElapsed, const UINT pixelSelectionX, const UINT pixelSelectionY)
 	{
 		auto context = gfx.GetContext();
-		UINT screenWidth = gfx.GetScreenWidth();
-		UINT screenHeight = gfx.GetScreenHeight();
-		UINT halfScreenWidth = gfx.GetScreenWidth() >> 1u;
-		UINT halfScreenHeight = gfx.GetScreenHeight() >> 1u;
+		const UINT screenWidth = gfx.GetScreenWidth();
+		const UINT screenHeight = gfx.GetScreenHeight();
+		const UINT halfScreenWidth = gfx.GetScreenWidth() >> 1u;
+		const UINT halfScreenHeight = gfx.GetScreenHeight() >> 1u;
 
 		gfx.GetRenderStats().StartFrame();
 		context->ClearState();
@@ -721,8 +721,8 @@ namespace gfx
 	{
 		if (ImGui::Begin("Renderer"))
 		{
-			static ImVec2 buttonSize = { 110, 25 };
-			static ImVec2 featureButtonSize = { 70, 18 };
+			static const ImVec2 buttonSize = { 110, 25 };
+			static const ImVec2 featureButtonSize = { 70, 18 };
 
 			bool changed = false;
 

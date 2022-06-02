@@ -15,7 +15,7 @@ namespace gfx
 		ComputeShader(const GraphicsDevice& gfx, const char* path, const std::string& kernelName);
 		virtual void Release() override;
 	public:
-		void Dispatch(const GraphicsDevice& gfx, UINT threadCountX, UINT threadCountY, UINT threadCountZ) const;
+		void Dispatch(const GraphicsDevice& gfx, const UINT threadCountX, const UINT threadCountY, const UINT threadCountZ) const;
 		const ComPtr<ID3D11ComputeShader> GetComputeShader() const;
 		const ID3DBlob* GetBytecode() const;
 	public:

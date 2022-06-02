@@ -11,13 +11,13 @@ namespace gfx
 	class Topology : public Bindable
 	{
 	public:
-		Topology(const GraphicsDevice& gfx, D3D11_PRIMITIVE_TOPOLOGY type);
+		Topology(const GraphicsDevice& gfx, const D3D11_PRIMITIVE_TOPOLOGY type);
 		virtual void Release() override;
-		void BindIA(const GraphicsDevice& gfx, RenderState& renderState, UINT slot) override;
-		void UnbindIA(const GraphicsDevice& gfx, RenderState& renderState, UINT slot) override;
+		void BindIA(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override;
+		void UnbindIA(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override;
 	public:
-		static std::shared_ptr<Topology> Resolve(const GraphicsDevice& gfx, D3D11_PRIMITIVE_TOPOLOGY type);
-		static std::string GenerateUID(D3D11_PRIMITIVE_TOPOLOGY type);
+		static std::shared_ptr<Topology> Resolve(const GraphicsDevice& gfx, const D3D11_PRIMITIVE_TOPOLOGY type);
+		static std::string GenerateUID(const D3D11_PRIMITIVE_TOPOLOGY type);
 	protected:
 		D3D11_PRIMITIVE_TOPOLOGY m_type;
 	};

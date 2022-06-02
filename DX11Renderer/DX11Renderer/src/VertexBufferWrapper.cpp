@@ -25,7 +25,7 @@ namespace gfx
 
 	void VertexBufferWrapper::Release()
 	{
-		for (int i = 0, ct = m_pBufferArray.size(); i < ct; ++i)
+		for (size_t i = 0, ct = m_pBufferArray.size(); i < ct; ++i)
 		{
 			m_pBufferArray[i].Reset();
 		}
@@ -36,7 +36,7 @@ namespace gfx
 		return m_pBufferArray[0];
 	}
 
-	void VertexBufferWrapper::BindIA(const GraphicsDevice& gfx, RenderState& renderState, UINT slot)
+	void VertexBufferWrapper::BindIA(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot)
 	{
 		if (renderState.IsNewBinding(GetGuid(), RenderBindingType::IA_VertexBuffer, slot))
 		{
@@ -44,7 +44,7 @@ namespace gfx
 		}
 	}
 
-	void VertexBufferWrapper::UnbindIA(const GraphicsDevice & gfx, RenderState & renderState, UINT slot)
+	void VertexBufferWrapper::UnbindIA(const GraphicsDevice & gfx, RenderState & renderState, const slotUINT slot)
 	{
 		// todo: bind null array
 		renderState.ClearBinding(RenderBindingType::IA_VertexBuffer, slot);
@@ -95,12 +95,12 @@ namespace gfx
 		gfx.GetAdapter()->CreateBuffer(&bd, &sd, &m_pBufferArray[1]);
 	}
 
-	std::shared_ptr<VertexBufferWrapper> VertexBufferWrapper::Resolve(const GraphicsDevice& gfx, std::string id, const BaseBufferData& vertexBuffer)
+	std::shared_ptr<VertexBufferWrapper> VertexBufferWrapper::Resolve(const GraphicsDevice& gfx, const std::string id, const BaseBufferData& vertexBuffer)
 	{
 		return std::move(Codex::Resolve<VertexBufferWrapper>(gfx, GenerateUID(id), vertexBuffer));
 	}
 
-	std::shared_ptr<VertexBufferWrapper> VertexBufferWrapper::Resolve(const GraphicsDevice& gfx, std::string id, const BaseBufferData& vertexBuffer, const BaseBufferData& instanceBuffer)
+	std::shared_ptr<VertexBufferWrapper> VertexBufferWrapper::Resolve(const GraphicsDevice& gfx, const std::string id, const BaseBufferData& vertexBuffer, const BaseBufferData& instanceBuffer)
 	{
 		return std::move(Codex::Resolve<VertexBufferWrapper>(gfx, GenerateUID(id), vertexBuffer, instanceBuffer));
 	}

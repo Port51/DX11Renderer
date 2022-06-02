@@ -8,7 +8,7 @@ namespace gfx
 	class Camera
 	{
 	public:
-		Camera(float fov, float aspect, float nearClipPlane, float farClipPlane);
+		Camera(const float fov, const float aspect, const float nearClipPlane, const float farClipPlane);
 		virtual ~Camera() = default;
 	public:
 		const dx::XMVECTOR GetPositionWS() const;
@@ -22,8 +22,8 @@ namespace gfx
 		const Frustum& GetFrustumVS() const;
 		const float GetNearClipPlane() const;
 		const float GetFarClipPlane() const;
-		void SetFOV(float fov);
-		void SetAspect(float aspect);
+		void SetFOV(const float fov);
+		void SetAspect(const float aspect);
 		void DrawImguiControlWindow();
 		void Reset();
 		void Update();

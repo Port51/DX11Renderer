@@ -55,7 +55,7 @@ namespace gfxcore
 
 
 	// Window Stuff
-	BaseWindow::BaseWindow(UINT width, UINT height, const char* name, HINSTANCE const hInstance, InputListener* const pInputListener)
+	BaseWindow::BaseWindow(const UINT width, const UINT height, const char* name, HINSTANCE const hInstance, InputListener* const pInputListener)
 		: m_width(width), m_height(height), m_pInputListener(pInputListener)
 	{
 
@@ -151,7 +151,7 @@ namespace gfxcore
 
 	// Setup message handler
 	// note: WINAPI == CALLBACK
-	LRESULT WINAPI BaseWindow::HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+	LRESULT WINAPI BaseWindow::HandleMsgSetup(const HWND hWnd, const UINT msg, const WPARAM wParam, const LPARAM lParam)
 	{
 		// note: don't add any exception checks here
 		// because due to how this is tied with Win32,
@@ -185,7 +185,7 @@ namespace gfxcore
 
 	// Main message handler - routes to instance's HandleMsg()
 	// note: WINAPI == CALLBACK
-	LRESULT WINAPI BaseWindow::HandleMsgAdapter(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+	LRESULT WINAPI BaseWindow::HandleMsgAdapter(const HWND hWnd, const UINT msg, const WPARAM wParam, const LPARAM lParam)
 	{
 		// note: don't add any exception checks here
 		// because due to how this is tied with Win32,
@@ -198,7 +198,7 @@ namespace gfxcore
 		return pWindow->HandleMsg(hWnd, msg, wParam, lParam);
 	}
 
-	LRESULT BaseWindow::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+	LRESULT BaseWindow::HandleMsg(const HWND hWnd, const UINT msg, const WPARAM wParam, const LPARAM lParam)
 	{
 		switch (msg)
 		{

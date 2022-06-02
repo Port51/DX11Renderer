@@ -15,8 +15,16 @@
 
 namespace gfx
 {
-	ModelInstance::ModelInstance(const GraphicsDevice& gfx, const ModelAsset& pModelAsset, dx::XMMATRIX transform)
-		: m_transform(transform)
+	ModelInstance::ModelInstance(const GraphicsDevice& gfx, const ModelAsset& pModelAsset, const dx::XMMATRIX transform)
+		: ModelInstance(gfx, pModelAsset, transform, dx::XMVectorSet(1.f, 1.f, 1.f, 1.f))
+	{}
+
+	ModelInstance::ModelInstance(const GraphicsDevice& gfx, std::shared_ptr<ModelAsset> const& pModelAsset, const dx::XMMATRIX transform)
+		: ModelInstance(gfx, pModelAsset, transform, dx::XMVectorSet(1.f, 1.f, 1.f, 1.f))
+	{}
+
+	ModelInstance::ModelInstance(const GraphicsDevice& gfx, const ModelAsset& pModelAsset, const dx::XMMATRIX transform, const dx::XMVECTOR scale)
+		: m_transform(transform), m_scale(scale)
 	{
 		m_pMaterials.reserve(pModelAsset.m_materialPaths.size());
 		for (const auto& materialPath : pModelAsset.m_materialPaths)
@@ -29,8 +37,8 @@ namespace gfx
 		InitializeModel();
 	}
 
-	ModelInstance::ModelInstance(const GraphicsDevice& gfx, std::shared_ptr<ModelAsset> pModelAsset, dx::XMMATRIX transform)
-		: m_transform(transform)
+	ModelInstance::ModelInstance(const GraphicsDevice& gfx, std::shared_ptr<ModelAsset> const& pModelAsset, const dx::XMMATRIX transform, const dx::XMVECTOR scale)
+		: m_transform(transform), m_scale(scale)
 	{
 		m_pMaterials.reserve(pModelAsset->m_materialPaths.size());
 		for (const auto& materialPath : pModelAsset->m_materialPaths)
@@ -54,9 +62,10 @@ namespace gfx
 		m_pSceneGraph->SubmitDrawCalls(drawContext);
 	}*/
 
-	void ModelInstance::SetPositionWS(dx::XMFLOAT3 positionWS)
+	void ModelInstance::SetPositionWS(const dx::XMFLOAT3 positionWS)
 	{
-		m_transform = dx::XMMatrixTranslation(positionWS.x, positionWS.y, positionWS.z);
+		m_transform = dx::XMMatrixScalingFromVector(m_scale)
+			* dx::XMMatrixTranslation(positionWS.x, positionWS.y, positionWS.z);
 		RebuildSceneGraphTransforms();
 	}
 
@@ -122,9 +131,9 @@ namespace gfx
 
 		for (unsigned int i = 0; i < pMeshAsset->m_vertices.size(); ++i)
 		{
-			dx::XMFLOAT3 normal = (pMeshAsset->hasNormals) ? pMeshAsset->m_normals[i] : dx::XMFLOAT3(0, 0, 1);
-			dx::XMFLOAT4 tangent = (pMeshAsset->hasTangents) ? pMeshAsset->m_tangents[i] : dx::XMFLOAT4(0, 0, 1, 0);
-			dx::XMFLOAT2 uv0 = (pMeshAsset->m_texcoords.size() > 0) ? pMeshAsset->m_texcoords[0][i] : dx::XMFLOAT2(0, 0);
+			const dx::XMFLOAT3 normal = (pMeshAsset->hasNormals) ? pMeshAsset->m_normals[i] : dx::XMFLOAT3(0, 0, 1);
+			const dx::XMFLOAT4 tangent = (pMeshAsset->hasTangents) ? pMeshAsset->m_tangents[i] : dx::XMFLOAT4(0, 0, 1, 0);
+			const dx::XMFLOAT2 uv0 = (pMeshAsset->m_texcoords.size() > 0) ? pMeshAsset->m_texcoords[0][i] : dx::XMFLOAT2(0, 0);
 
 			vbuf.EmplaceBack<dx::XMFLOAT3>(pMeshAsset->m_vertices[i]);
 			vbuf.EmplaceBack<dx::XMFLOAT3>(normal);
@@ -163,7 +172,7 @@ namespace gfx
 		if (isInstance)
 		{
 			StructuredBufferData<InstanceData> instanceBuf(instanceCount);
-			for (int i = 0; i < instanceCount; ++i)
+			for (size_t i = 0; i < instanceCount; ++i)
 			{
 				instanceBuf.EmplaceBack(InstanceData{ dx::XMFLOAT3(i, 0, 0), (UINT)i });
 			}

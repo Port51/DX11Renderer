@@ -5,7 +5,7 @@
 
 namespace gfx
 {
-	Topology::Topology(const GraphicsDevice& gfx, D3D11_PRIMITIVE_TOPOLOGY type)
+	Topology::Topology(const GraphicsDevice& gfx, const D3D11_PRIMITIVE_TOPOLOGY type)
 		: m_type(type)
 	{}
 
@@ -13,7 +13,7 @@ namespace gfx
 	{
 	}
 
-	void Topology::BindIA(const GraphicsDevice& gfx, RenderState& renderState, UINT slot)
+	void Topology::BindIA(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot)
 	{
 		if (renderState.IsNewBinding(m_type, RenderBindingType::IA_Topology, 0u))
 		{
@@ -21,18 +21,18 @@ namespace gfx
 		}
 	}
 
-	void Topology::UnbindIA(const GraphicsDevice & gfx, RenderState & renderState, UINT slot)
+	void Topology::UnbindIA(const GraphicsDevice & gfx, RenderState & renderState, const slotUINT slot)
 	{
 		renderState.ClearBinding(RenderBindingType::IA_Topology, 0u);
 		gfx.GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_UNDEFINED);
 	}
 
-	std::shared_ptr<Topology> Topology::Resolve(const GraphicsDevice& gfx, D3D11_PRIMITIVE_TOPOLOGY type)
+	std::shared_ptr<Topology> Topology::Resolve(const GraphicsDevice& gfx, const D3D11_PRIMITIVE_TOPOLOGY type)
 	{
 		return std::move(Codex::Resolve<Topology>(gfx, GenerateUID(type), type));
 	}
 
-	std::string Topology::GenerateUID(D3D11_PRIMITIVE_TOPOLOGY type)
+	std::string Topology::GenerateUID(const D3D11_PRIMITIVE_TOPOLOGY type)
 	{
 		using namespace std::string_literals;
 		return typeid(Topology).name() + "#"s + std::to_string(type);

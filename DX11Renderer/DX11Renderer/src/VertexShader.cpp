@@ -32,7 +32,7 @@ namespace gfx
 		m_pVertexShader.Reset();
 	}
 
-	void VertexShader::BindVS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot)
+	void VertexShader::BindVS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot)
 	{
 		if (renderState.IsNewBinding(GetGuid(), RenderBindingType::VS_Shader, 0u))
 		{
@@ -40,7 +40,7 @@ namespace gfx
 		}
 	}
 
-	void VertexShader::UnbindVS(const GraphicsDevice & gfx, RenderState & renderState, UINT slot)
+	void VertexShader::UnbindVS(const GraphicsDevice & gfx, RenderState & renderState, const slotUINT slot)
 	{
 		renderState.ClearBinding(RenderBindingType::VS_Shader, 0u);
 		gfx.GetContext()->VSSetShader(nullptr, nullptr, 0u);

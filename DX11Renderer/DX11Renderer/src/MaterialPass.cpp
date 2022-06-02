@@ -72,12 +72,12 @@ namespace gfx
 		return m_propertySlotIdx;
 	}
 
-	void MaterialPass::SetPropertySlot(int slotIdx)
+	void MaterialPass::SetPropertySlot(const int slotIdx)
 	{
 		m_propertySlotIdx = slotIdx;
 	}
 
-	void MaterialPass::SetRenderPass(RenderPassType _renderPass)
+	void MaterialPass::SetRenderPass(const RenderPassType _renderPass)
 	{
 		assert(_renderPass != RenderPassType::Undefined);
 		m_renderPass = _renderPass;

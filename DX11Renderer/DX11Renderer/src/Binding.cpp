@@ -98,25 +98,25 @@ namespace gfx
 		return *m_pBindable.get();
 	}
 
-	Binding& Binding::SetupIABinding(UINT slot)
+	Binding& Binding::SetupIABinding(const slotUINT slot)
 	{
 		m_IASlot = slot;
 		return *this;
 	}
 
-	Binding& Binding::SetupCSBinding(UINT slot)
+	Binding& Binding::SetupCSBinding(const slotUINT slot)
 	{
 		m_CSSlot = slot;
 		return *this;
 	}
 
-	Binding& Binding::SetupVSBinding(UINT slot)
+	Binding& Binding::SetupVSBinding(const slotUINT slot)
 	{
 		m_VSSlot = slot;
 		return *this;
 	}
 
-	Binding& Binding::SetupPSBinding(UINT slot)
+	Binding& Binding::SetupPSBinding(const slotUINT slot)
 	{
 		m_PSSlot = slot;
 		return *this;

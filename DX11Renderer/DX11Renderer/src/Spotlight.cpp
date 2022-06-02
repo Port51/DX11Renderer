@@ -19,7 +19,7 @@
 
 namespace gfx
 {
-	Spotlight::Spotlight(const GraphicsDevice& gfx, UINT index, bool allowUserControl, bool hasShadow, std::shared_ptr<ModelAsset> const& pModelAsset, dx::XMFLOAT3 positionWS, float pan, float tilt, dx::XMFLOAT3 color, float intensity, float attenuationQ, float range)
+	Spotlight::Spotlight(const GraphicsDevice& gfx, const UINT index, const bool allowUserControl, const bool hasShadow, std::shared_ptr<ModelAsset> const& pModelAsset, const dx::XMFLOAT3 positionWS, const float pan, const float tilt, const dx::XMFLOAT3 color, const float intensity, const float attenuationQ, const float range)
 		: Light(gfx, index, allowUserControl, pModelAsset, positionWS, color, intensity),
 		m_pan(pan),
 		m_tilt(tilt),
@@ -63,7 +63,7 @@ namespace gfx
 		ImGui::End();
 	}
 
-	const LightData Spotlight::GetLightData(dx::XMMATRIX viewMatrix) const
+	const LightData Spotlight::GetLightData(const dx::XMMATRIX viewMatrix) const
 	{
 		LightData light;
 
@@ -134,7 +134,7 @@ namespace gfx
 
 	}
 
-	void Spotlight::AppendShadowData(UINT shadowStartSlot, std::vector<LightShadowData>& shadowData) const
+	void Spotlight::AppendShadowData(const UINT shadowStartSlot, std::vector<LightShadowData>& shadowData) const
 	{
 		shadowData[shadowStartSlot] = m_lightShadowData;
 	}

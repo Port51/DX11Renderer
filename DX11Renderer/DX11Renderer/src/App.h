@@ -23,12 +23,12 @@ namespace gfx
 	class App : public InputListener
 	{
 	public:
-		App(UINT screenWidth, UINT screenHeight, HINSTANCE hInstance);
+		App(const UINT screenWidth, const UINT screenHeight, HINSTANCE hInstance);
 		virtual ~App();
 		// master frame / message loop
 		int Run();
 
-		LRESULT CALLBACK HandleMsg(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) override;
+		LRESULT CALLBACK HandleMsg(const HWND hWnd, const UINT message, const WPARAM wParam, const LPARAM lParam) override;
 		GraphicsDevice& Gfx() const;
 	private:
 		void ExecuteFrame();

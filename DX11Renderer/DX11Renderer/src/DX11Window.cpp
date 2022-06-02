@@ -5,7 +5,7 @@
 
 namespace gfx
 {
-	DX11Window::DX11Window(UINT width, UINT height, const char * name, HINSTANCE hInstance, InputListener* pInputListener)
+	DX11Window::DX11Window(const UINT width, const UINT height, const char * name, HINSTANCE hInstance, InputListener* pInputListener)
 		: BaseWindow(width, height, name, hInstance, pInputListener)
 	{
 		// Init ImGui
@@ -17,7 +17,7 @@ namespace gfx
 		ImGui_ImplWin32_Shutdown();
 	}
 
-	LRESULT DX11Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+	LRESULT DX11Window::HandleMsg(const HWND hWnd, const UINT msg, const WPARAM wParam, const LPARAM lParam)
 	{
 		// Imgui
 		if (ImGui_ImplWin32_WndProcHandler(hWnd, msg, wParam, lParam))

@@ -10,6 +10,6 @@ namespace gfx
 	class RawBuffer : public Buffer
 	{
 	public:
-		RawBuffer(const GraphicsDevice& gfx, UINT bytes, D3D11_USAGE usage, UINT bindFlags);
+		RawBuffer(const GraphicsDevice& gfx, const UINT bytes, const D3D11_USAGE usage, const UINT bindFlags);
 	};
 }

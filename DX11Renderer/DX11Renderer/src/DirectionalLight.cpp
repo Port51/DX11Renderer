@@ -22,7 +22,7 @@
 
 namespace gfx
 {
-	DirectionalLight::DirectionalLight(const GraphicsDevice& gfx, UINT index, bool allowUserControl, bool hasShadow, std::shared_ptr<ModelAsset> const& pModelAsset, float pan, float tilt, dx::XMFLOAT3 color, float intensity, float sphereRad, float range)
+	DirectionalLight::DirectionalLight(const GraphicsDevice& gfx, const UINT index, const bool allowUserControl, const bool hasShadow, std::shared_ptr<ModelAsset> const& pModelAsset, const float pan, const float tilt, const dx::XMFLOAT3 color, const float intensity, const float sphereRad, const float range)
 		: Light(gfx, index, allowUserControl, pModelAsset, dx::XMFLOAT3(0.f, 0.f, 0.f), color, intensity),
 		m_pan(pan),
 		m_tilt(tilt),
@@ -62,7 +62,7 @@ namespace gfx
 		ImGui::End();
 	}
 
-	const LightData DirectionalLight::GetLightData(dx::XMMATRIX viewMatrix) const
+	const LightData DirectionalLight::GetLightData(const dx::XMMATRIX viewMatrix) const
 	{
 		LightData light;
 		const auto posWS_Vector = dx::XMLoadFloat4(&dx::XMFLOAT4(m_positionWS.x, m_positionWS.y, m_positionWS.z, 1.0f));
@@ -79,7 +79,7 @@ namespace gfx
 		return 2u;
 	}
 
-	const ViewProjTransforms DirectionalLight::GetShadowTransforms(dx::XMVECTOR cascadeSphereCenterWS, float cascadeDistance) const
+	const ViewProjTransforms DirectionalLight::GetShadowTransforms(dx::XMVECTOR cascadeSphereCenterWS, const float cascadeDistance) const
 	{
 		const float nearPlane = 0.5f;
 		const auto cascadeFrustumStartWS = dx::XMVectorSubtract(cascadeSphereCenterWS, dx::XMVectorScale(GetDirectionWS(), cascadeDistance * 0.5f + Config::ShadowCascadeOffset + nearPlane));
@@ -180,7 +180,7 @@ namespace gfx
 		}
 	}
 
-	void DirectionalLight::AppendShadowData(UINT shadowStartSlot, std::vector<LightShadowData>& shadowData) const
+	void DirectionalLight::AppendShadowData(const UINT shadowStartSlot, std::vector<LightShadowData>& shadowData) const
 	{
 		for (UINT i = 0u; i < (UINT)Config::ShadowCascades; ++i)
 		{
@@ -193,7 +193,7 @@ namespace gfx
 		return HasShadow() ? Config::ShadowCascades : 0u;
 	}
 
-	const dx::XMVECTOR DirectionalLight::GetShadowCascadeSphereVS(UINT idx) const
+	const dx::XMVECTOR DirectionalLight::GetShadowCascadeSphereVS(const UINT idx) const
 	{
 		return m_shadowCascadeSpheresVS[idx];
 	}

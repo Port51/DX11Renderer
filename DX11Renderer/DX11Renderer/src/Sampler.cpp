@@ -9,19 +9,19 @@ namespace gfx
 		: Sampler(gfx, D3D11_FILTER_ANISOTROPIC, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP)
 	{}
 
-	Sampler::Sampler(const GraphicsDevice& gfx, D3D11_TEXTURE_ADDRESS_MODE wrapU)
+	Sampler::Sampler(const GraphicsDevice& gfx, const D3D11_TEXTURE_ADDRESS_MODE wrapU)
 		: Sampler(gfx, D3D11_FILTER_ANISOTROPIC, wrapU, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP)
 	{}
 
-	Sampler::Sampler(const GraphicsDevice& gfx, D3D11_TEXTURE_ADDRESS_MODE wrapU, D3D11_TEXTURE_ADDRESS_MODE wrapV)
+	Sampler::Sampler(const GraphicsDevice& gfx, const D3D11_TEXTURE_ADDRESS_MODE wrapU, const D3D11_TEXTURE_ADDRESS_MODE wrapV)
 		: Sampler(gfx, D3D11_FILTER_ANISOTROPIC, wrapU, wrapV, D3D11_TEXTURE_ADDRESS_WRAP)
 	{}
 
-	Sampler::Sampler(const GraphicsDevice& gfx, D3D11_TEXTURE_ADDRESS_MODE wrapU, D3D11_TEXTURE_ADDRESS_MODE wrapV, D3D11_TEXTURE_ADDRESS_MODE wrapW)
+	Sampler::Sampler(const GraphicsDevice& gfx, const D3D11_TEXTURE_ADDRESS_MODE wrapU, const D3D11_TEXTURE_ADDRESS_MODE wrapV, const D3D11_TEXTURE_ADDRESS_MODE wrapW)
 		: Sampler(gfx, D3D11_FILTER_ANISOTROPIC, wrapU, wrapV, D3D11_TEXTURE_ADDRESS_WRAP)
 	{}
 
-	Sampler::Sampler(const GraphicsDevice& gfx, D3D11_FILTER filter, D3D11_TEXTURE_ADDRESS_MODE wrapU, D3D11_TEXTURE_ADDRESS_MODE wrapV, D3D11_TEXTURE_ADDRESS_MODE wrapW)
+	Sampler::Sampler(const GraphicsDevice& gfx, const D3D11_FILTER filter, const D3D11_TEXTURE_ADDRESS_MODE wrapU, const D3D11_TEXTURE_ADDRESS_MODE wrapV, const D3D11_TEXTURE_ADDRESS_MODE wrapW)
 		: m_filter(filter), m_wrapU(wrapU), m_wrapV(wrapV), m_wrapW(wrapW)
 	{
 		D3D11_SAMPLER_DESC samplerDesc = {};
@@ -43,7 +43,8 @@ namespace gfx
 		THROW_IF_FAILED(gfx.GetAdapter()->CreateSamplerState(&samplerDesc, &m_pSampler));
 	}
 
-	Sampler::Sampler(const GraphicsDevice& gfx, D3D11_SAMPLER_DESC samplerDesc)
+	Sampler::Sampler(const GraphicsDevice& gfx, const D3D11_SAMPLER_DESC samplerDesc)
+		: m_filter(samplerDesc.Filter), m_wrapU(samplerDesc.AddressU), m_wrapV(samplerDesc.AddressV), m_wrapW(samplerDesc.AddressW)
 	{
 		THROW_IF_FAILED(gfx.GetAdapter()->CreateSamplerState(&samplerDesc, &m_pSampler));
 	}
@@ -53,7 +54,7 @@ namespace gfx
 		m_pSampler.Reset();
 	}
 
-	void Sampler::BindCS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot)
+	void Sampler::BindCS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot)
 	{
 		if (renderState.IsNewBinding(GetGuid(), RenderBindingType::CS_Sampler, slot))
 		{
@@ -61,13 +62,13 @@ namespace gfx
 		}
 	}
 
-	void Sampler::UnbindCS(const GraphicsDevice & gfx, RenderState & renderState, UINT slot)
+	void Sampler::UnbindCS(const GraphicsDevice & gfx, RenderState & renderState, const slotUINT slot)
 	{
 		renderState.ClearBinding(RenderBindingType::CS_Sampler, slot);
 		gfx.GetContext()->CSSetSamplers(slot, 1u, nullptr);
 	}
 
-	void Sampler::BindVS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot)
+	void Sampler::BindVS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot)
 	{
 		if (renderState.IsNewBinding(GetGuid(), RenderBindingType::VS_Sampler, slot))
 		{
@@ -75,13 +76,13 @@ namespace gfx
 		}
 	}
 
-	void Sampler::UnbindVS(const GraphicsDevice & gfx, RenderState & renderState, UINT slot)
+	void Sampler::UnbindVS(const GraphicsDevice & gfx, RenderState & renderState, const slotUINT slot)
 	{
 		renderState.ClearBinding(RenderBindingType::VS_Sampler, slot);
 		gfx.GetContext()->VSSetSamplers(slot, 1u, nullptr);
 	}
 
-	void Sampler::BindPS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot)
+	void Sampler::BindPS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot)
 	{
 		if (renderState.IsNewBinding(GetGuid(), RenderBindingType::PS_Sampler, slot))
 		{
@@ -89,7 +90,7 @@ namespace gfx
 		}
 	}
 
-	void Sampler::UnbindPS(const GraphicsDevice & gfx, RenderState & renderState, UINT slot)
+	void Sampler::UnbindPS(const GraphicsDevice & gfx, RenderState & renderState, const slotUINT slot)
 	{
 		renderState.ClearBinding(RenderBindingType::PS_Sampler, slot);
 		gfx.GetContext()->PSSetSamplers(slot, 1u, RenderConstants::NullSamplerArray.data());
@@ -105,27 +106,27 @@ namespace gfx
 		return std::move(Resolve(gfx, D3D11_FILTER_ANISOTROPIC, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP));
 	}
 
-	std::shared_ptr<Bindable> Sampler::Resolve(const GraphicsDevice& gfx, D3D11_TEXTURE_ADDRESS_MODE wrapU)
+	std::shared_ptr<Bindable> Sampler::Resolve(const GraphicsDevice& gfx, const D3D11_TEXTURE_ADDRESS_MODE wrapU)
 	{
 		return std::move(Resolve(gfx, D3D11_FILTER_ANISOTROPIC, wrapU, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP));
 	}
 
-	std::shared_ptr<Bindable> Sampler::Resolve(const GraphicsDevice& gfx, D3D11_TEXTURE_ADDRESS_MODE wrapU, D3D11_TEXTURE_ADDRESS_MODE wrapV)
+	std::shared_ptr<Bindable> Sampler::Resolve(const GraphicsDevice& gfx, const D3D11_TEXTURE_ADDRESS_MODE wrapU, const D3D11_TEXTURE_ADDRESS_MODE wrapV)
 	{
 		return std::move(Resolve(gfx, D3D11_FILTER_ANISOTROPIC, wrapU, wrapV, D3D11_TEXTURE_ADDRESS_WRAP));
 	}
 
-	std::shared_ptr<Bindable> Sampler::Resolve(const GraphicsDevice& gfx, D3D11_TEXTURE_ADDRESS_MODE wrapU, D3D11_TEXTURE_ADDRESS_MODE wrapV, D3D11_TEXTURE_ADDRESS_MODE wrapW)
+	std::shared_ptr<Bindable> Sampler::Resolve(const GraphicsDevice& gfx, const D3D11_TEXTURE_ADDRESS_MODE wrapU, const D3D11_TEXTURE_ADDRESS_MODE wrapV, const D3D11_TEXTURE_ADDRESS_MODE wrapW)
 	{
 		return std::move(Resolve(gfx, D3D11_FILTER_ANISOTROPIC, wrapU, wrapV, D3D11_TEXTURE_ADDRESS_WRAP));
 	}
 
-	std::shared_ptr<Bindable> Sampler::Resolve(const GraphicsDevice& gfx, D3D11_FILTER filter, D3D11_TEXTURE_ADDRESS_MODE wrapU, D3D11_TEXTURE_ADDRESS_MODE wrapV, D3D11_TEXTURE_ADDRESS_MODE wrapW)
+	std::shared_ptr<Bindable> Sampler::Resolve(const GraphicsDevice& gfx, const D3D11_FILTER filter, const D3D11_TEXTURE_ADDRESS_MODE wrapU, const D3D11_TEXTURE_ADDRESS_MODE wrapV, const D3D11_TEXTURE_ADDRESS_MODE wrapW)
 	{
 		return std::move(Codex::Resolve<Sampler>(gfx, GenerateUID(filter, wrapU, wrapV, wrapW), wrapU, wrapV, wrapW));
 	}
 
-	std::string Sampler::GenerateUID(D3D11_FILTER filter, D3D11_TEXTURE_ADDRESS_MODE wrapU, D3D11_TEXTURE_ADDRESS_MODE wrapV, D3D11_TEXTURE_ADDRESS_MODE wrapW)
+	std::string Sampler::GenerateUID(const D3D11_FILTER filter, const D3D11_TEXTURE_ADDRESS_MODE wrapU, const D3D11_TEXTURE_ADDRESS_MODE wrapV, const D3D11_TEXTURE_ADDRESS_MODE wrapW)
 	{
 		return std::string(typeid(Sampler).name()) + "|"
 			+ std::to_string(static_cast<uint32_t>(filter))

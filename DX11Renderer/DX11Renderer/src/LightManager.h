@@ -46,7 +46,7 @@ namespace gfx
 		void Release();
 	public:
 		void AddLightModelsToList(RendererList& pRendererList);
-		void CullLightsAndShadows(const GraphicsDevice& gfx, const Camera& cam, bool enableShadows);
+		void CullLightsAndShadows(const GraphicsDevice& gfx, const Camera& cam, const bool enableShadows);
 		DepthStencilTarget& GetShadowAtlas();
 		ConstantBuffer<LightInputCB>& GetLightInputCB();
 		void RenderShadows(ShadowPassContext& context, RenderState& renderState);
@@ -54,7 +54,7 @@ namespace gfx
 		const ComPtr<ID3D11ShaderResourceView> GetShadowDataSRV() const;
 		void DrawImguiControlWindows() const;
 		const UINT GetLightCount() const;
-		Light& GetLight(UINT index) const;
+		Light& GetLight(const UINT index) const;
 		const UINT GetClusterCount() const;
 		const UINT GetClusterDimensionX() const;
 		const UINT GetClusterDimensionY() const;

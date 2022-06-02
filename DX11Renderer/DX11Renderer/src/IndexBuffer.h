@@ -19,11 +19,11 @@ namespace gfx
 		IndexBuffer(const GraphicsDevice& gfx, const std::vector<u32>& indices);
 		virtual void Release() override;
 	public:
-		void BindIA(const GraphicsDevice& gfx, RenderState& renderState, UINT slot) override;
-		void UnbindIA(const GraphicsDevice& gfx, RenderState& renderState, UINT slot) override;
+		void BindIA(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override;
+		void UnbindIA(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override;
 		const UINT GetIndexCount() const;
 	public:
-		static std::shared_ptr<IndexBuffer> Resolve(const GraphicsDevice& gfx, std::string id, const std::vector<u32>& indices);
+		static std::shared_ptr<IndexBuffer> Resolve(const GraphicsDevice& gfx, const std::string id, const std::vector<u32>& indices);
 	private:
 		static std::string GenerateUID(const std::string& tag);
 	protected:

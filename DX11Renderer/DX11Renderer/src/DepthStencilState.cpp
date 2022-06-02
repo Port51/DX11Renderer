@@ -4,7 +4,7 @@
 
 namespace gfx
 {
-	DepthStencilState::DepthStencilState(const GraphicsDevice& gfx, Mode mode)
+	DepthStencilState::DepthStencilState(const GraphicsDevice& gfx, const Mode mode)
 		: m_mode(mode)
 	{
 		D3D11_DEPTH_STENCIL_DESC dsDesc = CD3D11_DEPTH_STENCIL_DESC{ CD3D11_DEFAULT{} };
@@ -51,7 +51,8 @@ namespace gfx
 		gfx.GetAdapter()->CreateDepthStencilState(&dsDesc, &m_pStencil);
 	}
 
-	DepthStencilState::DepthStencilState(const GraphicsDevice& gfx, D3D11_DEPTH_STENCIL_DESC desc)
+	DepthStencilState::DepthStencilState(const GraphicsDevice& gfx, const D3D11_DEPTH_STENCIL_DESC desc)
+		: m_mode(Mode::StencilOff)
 	{
 		gfx.GetAdapter()->CreateDepthStencilState(&desc, &m_pStencil);
 	}
@@ -75,12 +76,12 @@ namespace gfx
 		gfx.GetContext()->OMSetDepthStencilState(nullptr, 0x01);
 	}
 
-	std::shared_ptr<DepthStencilState> DepthStencilState::Resolve(const GraphicsDevice& gfx, Mode mode)
+	std::shared_ptr<DepthStencilState> DepthStencilState::Resolve(const GraphicsDevice& gfx, const Mode mode)
 	{
 		return std::move(Codex::Resolve<DepthStencilState>(gfx, GenerateUID(mode), mode));
 	}
 
-	std::string DepthStencilState::GenerateUID(Mode mode)
+	std::string DepthStencilState::GenerateUID(const Mode mode)
 	{
 		using namespace std::string_literals;
 		const auto modeName = [mode]() {

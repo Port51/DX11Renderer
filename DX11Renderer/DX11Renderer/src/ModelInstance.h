@@ -20,12 +20,14 @@ namespace gfx
 	class ModelInstance
 	{
 	public:
-		ModelInstance(const GraphicsDevice& gfx, const ModelAsset& pModelAsset, dx::XMMATRIX transform);
-		ModelInstance(const GraphicsDevice& gfx, std::shared_ptr<ModelAsset> pModelAsset, dx::XMMATRIX transform);
+		ModelInstance(const GraphicsDevice& gfx, const ModelAsset& pModelAsset, const dx::XMMATRIX transform);
+		ModelInstance(const GraphicsDevice& gfx, std::shared_ptr<ModelAsset> const& pModelAsset, const dx::XMMATRIX transform);
+		ModelInstance(const GraphicsDevice& gfx, const ModelAsset& pModelAsset, const dx::XMMATRIX transform, const dx::XMVECTOR scale);
+		ModelInstance(const GraphicsDevice& gfx, std::shared_ptr<ModelAsset> const& pModelAsset, const dx::XMMATRIX transform, const dx::XMVECTOR scale);
 		virtual ~ModelInstance() = default;
 	public:
 		//void SubmitDrawCalls(const DrawContext& drawContext) const;
-		void SetPositionWS(dx::XMFLOAT3 positionWS);
+		void SetPositionWS(const dx::XMFLOAT3 positionWS);
 		void RebuildSceneGraphTransforms();
 		const std::shared_ptr<SceneGraphNode> GetSceneGraph() const;
 		const std::vector<std::shared_ptr<MeshRenderer>>& GetMeshRenderers() const;
@@ -39,5 +41,6 @@ namespace gfx
 		std::shared_ptr<SceneGraphNode> m_pSceneGraph;
 		std::vector<std::shared_ptr<MeshRenderer>> m_pMeshes;
 		dx::XMMATRIX m_transform;
+		dx::XMVECTOR m_scale;
 	};
 }

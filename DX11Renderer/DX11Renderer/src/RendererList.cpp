@@ -27,7 +27,7 @@ namespace gfx
 		return (UINT)m_pRenderers.size();
 	}
 
-	void RendererList::Filter(const GraphicsDevice& gfx, const Frustum& frustum, RendererSortingType sorting, dx::XMVECTOR originWS, dx::XMVECTOR directionWS, float farClipPlane)
+	void RendererList::Filter(const GraphicsDevice& gfx, const Frustum& frustum, const RendererSortingType sorting, const dx::XMVECTOR originWS, const dx::XMVECTOR directionWS, const float farClipPlane)
 	{
 		const bool testDepth = (sorting != RendererSortingType::State);
 		const bool reverseDepth = (sorting == RendererSortingType::BackToFrontThenState || sorting == RendererSortingType::StateThenBackToFront);

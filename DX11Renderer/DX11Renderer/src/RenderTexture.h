@@ -16,22 +16,22 @@ namespace gfx
 	{
 	public:
 		RenderTexture(const GraphicsDevice& gfx);
-		RenderTexture(const GraphicsDevice& gfx, UINT mipCount);
-		RenderTexture(const GraphicsDevice& gfx, DXGI_FORMAT format);
-		RenderTexture(const GraphicsDevice& gfx, DXGI_FORMAT format, UINT mipCount);
+		RenderTexture(const GraphicsDevice& gfx, const UINT mipCount);
+		RenderTexture(const GraphicsDevice& gfx, const DXGI_FORMAT format);
+		RenderTexture(const GraphicsDevice& gfx, const DXGI_FORMAT format, const UINT mipCount);
 
-		virtual void Init(ComPtr<ID3D11Device> pDevice, UINT textureWidth, UINT textureHeight);
+		virtual void Init(ComPtr<ID3D11Device> pDevice, const UINT textureWidth, const UINT textureHeight);
 		void Shutdown();
 
 		const ComPtr<ID3D11RenderTargetView> GetRenderTargetView() const;
 
-		void BindCS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot) override;
-		void UnbindCS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot) override;
-		void BindVS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot) override;
-		void UnbindVS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot) override;
-		void BindPS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot) override;
-		void UnbindPS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot) override;
-		void BindAsTexture(const GraphicsDevice& gfx, UINT slot) const;
+		void BindCS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override;
+		void UnbindCS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override;
+		void BindVS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override;
+		void UnbindVS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override;
+		void BindPS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override;
+		void UnbindPS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override;
+		void BindAsTexture(const GraphicsDevice& gfx, const slotUINT slot) const;
 		void BindAsTarget(const GraphicsDevice& gfx) const;
 		void BindAsTarget(const GraphicsDevice& gfx, ComPtr<ID3D11DepthStencilView> pDepthStencilView) const;
 		void SetRenderTarget(ID3D11DeviceContext* deviceContext, ComPtr<ID3D11DepthStencilView> depthStencilView);

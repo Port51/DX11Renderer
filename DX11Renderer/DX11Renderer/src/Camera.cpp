@@ -4,7 +4,7 @@
 
 namespace gfx
 {
-	Camera::Camera(float fov, float aspect, float nearClipPlane, float farClipPlane)
+	Camera::Camera(const float fov, const float aspect, const float nearClipPlane, const float farClipPlane)
 		: m_fov(fov), m_aspect(aspect), m_nearClipPlane(nearClipPlane), m_farClipPlane(farClipPlane)
 	{
 		UpdateProjectionMatrix();
@@ -36,14 +36,14 @@ namespace gfx
 		return m_projectionMatrix;
 	}
 
-	void Camera::SetFOV(float _fov)
+	void Camera::SetFOV(const float _fov)
 	{
 		m_fov = _fov;
 		UpdateProjectionMatrix();
 		UpdateFrustumVS();
 	}
 
-	void Camera::SetAspect(float _aspect)
+	void Camera::SetAspect(const float _aspect)
 	{
 		m_aspect = _aspect;
 		UpdateProjectionMatrix();

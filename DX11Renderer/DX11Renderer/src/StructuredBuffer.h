@@ -10,7 +10,7 @@ namespace gfx
 	class StructuredBuffer : public Buffer
 	{
 	public:
-		StructuredBuffer(const GraphicsDevice& gfx, D3D11_USAGE usage, UINT bindFlags, UINT numElements, const void* initialData, bool useCounter = false)
+		StructuredBuffer(const GraphicsDevice& gfx, const D3D11_USAGE usage, const UINT bindFlags, const UINT numElements, const void* initialData, const bool useCounter = false)
 			: Buffer(usage, bindFlags, sizeof(T)),
 			m_numElements(numElements),
 			m_useCounter(useCounter)
@@ -62,11 +62,11 @@ namespace gfx
 			}
 		}
 
-		StructuredBuffer(const GraphicsDevice& gfx, D3D11_USAGE usage, UINT bindFlags, UINT numElements, bool useCounter = false)
+		StructuredBuffer(const GraphicsDevice& gfx, const D3D11_USAGE usage, const UINT bindFlags, const UINT numElements, const bool useCounter = false)
 			: StructuredBuffer(gfx, usage, bindFlags, numElements, nullptr, useCounter)
 		{}
 
-		void BindCS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot) override
+		void BindCS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override
 		{
 			if (renderState.IsNewBinding(GetGuid(), RenderBindingType::CS_SRV, slot))
 			{
@@ -74,7 +74,7 @@ namespace gfx
 			}
 		}
 
-		void BindVS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot) override
+		void BindVS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override
 		{
 			if (renderState.IsNewBinding(GetGuid(), RenderBindingType::VS_SRV, slot))
 			{
@@ -82,13 +82,13 @@ namespace gfx
 			}
 		}
 
-		void UnbindVS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot) override
+		void UnbindVS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override
 		{
 			renderState.ClearBinding(RenderBindingType::VS_SRV, slot);
 			gfx.GetContext()->VSSetShaderResources(slot, 1u, RenderConstants::NullSRVArray.data());
 		}
 
-		void BindPS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot) override
+		void BindPS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override
 		{
 			if (renderState.IsNewBinding(GetGuid(), RenderBindingType::PS_SRV, slot))
 			{
@@ -96,13 +96,13 @@ namespace gfx
 			}
 		}
 
-		void UnbindPS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot) override
+		void UnbindPS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override
 		{
 			renderState.ClearBinding(RenderBindingType::PS_SRV, slot);
 			gfx.GetContext()->PSSetShaderResources(slot, 1u, RenderConstants::NullSRVArray.data());
 		}
 
-		void Update(const GraphicsDevice& gfx, const void* data, UINT dataBytes)
+		void Update(const GraphicsDevice& gfx, const void* data, const UINT dataBytes)
 		{
 			if (m_usage == D3D11_USAGE_DYNAMIC) // Can be continuously modified by CPU
 			{
@@ -130,7 +130,7 @@ namespace gfx
 			}
 		}
 
-		void Update(const GraphicsDevice& gfx, const std::vector<T>& data, UINT dataElements)
+		void Update(const GraphicsDevice& gfx, const std::vector<T>& data, const UINT dataElements)
 		{
 			assert(dataElements <= m_numElements && "Data elements exceed buffer size!");
 			Update(gfx, data.data(), sizeof(T) * dataElements);

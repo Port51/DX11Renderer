@@ -55,7 +55,7 @@ namespace gfx
 	void ModelAssetNode::Release()
 	{
 		m_pMeshAsset.reset();
-		for (int i = 0, ct = m_pChildNodes.size(); i < ct; ++i)
+		for (size_t i = 0, ct = m_pChildNodes.size(); i < ct; ++i)
 		{
 			m_pChildNodes[i]->Release();
 		}

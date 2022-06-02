@@ -32,8 +32,8 @@ namespace gfx
 		Binding& AddBinding(std::shared_ptr<Bindable> pBindable);
 		const u64 GetMaterialCode() const;
 		int GetPropertySlot() const;
-		void SetPropertySlot(int slotIdx);
-		void SetRenderPass(RenderPassType renderPass);
+		void SetPropertySlot(const int slotIdx);
+		void SetRenderPass(const RenderPassType renderPass);
 		const RenderPassType GetRenderPass() const;
 		void SubmitDrawCommands(const MeshRenderer& meshRenderer, const DrawContext& drawContext, const BindingList* const pPropertyBindings) const;
 		void Bind(const GraphicsDevice& gfx, RenderState& renderState) const;

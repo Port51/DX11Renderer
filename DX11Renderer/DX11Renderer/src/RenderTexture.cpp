@@ -10,22 +10,22 @@ namespace gfx
 		, m_format(DXGI_FORMAT_R16G16B16A16_FLOAT)
 	{}
 
-	RenderTexture::RenderTexture(const GraphicsDevice& gfx, UINT _mipCount)
+	RenderTexture::RenderTexture(const GraphicsDevice& gfx, const UINT _mipCount)
 		: Texture::Texture(gfx, _mipCount)
 		, m_format(DXGI_FORMAT_R16G16B16A16_FLOAT)
 	{}
 
-	RenderTexture::RenderTexture(const GraphicsDevice& gfx, DXGI_FORMAT _format)
+	RenderTexture::RenderTexture(const GraphicsDevice& gfx, const DXGI_FORMAT _format)
 		: Texture::Texture(gfx, 1u)
 		, m_format(_format)
 	{}
 
-	RenderTexture::RenderTexture(const GraphicsDevice& gfx, DXGI_FORMAT _format, UINT _mipCount)
+	RenderTexture::RenderTexture(const GraphicsDevice& gfx, const DXGI_FORMAT _format, const UINT _mipCount)
 		: Texture::Texture(gfx, _mipCount)
 		, m_format(_format)
 	{}
 
-	void RenderTexture::Init(ComPtr<ID3D11Device> device, UINT textureWidth, UINT textureHeight)
+	void RenderTexture::Init(ComPtr<ID3D11Device> device, const UINT textureWidth, const UINT textureHeight)
 	{
 		m_viewport.Width = (FLOAT)textureWidth;
 		m_viewport.Height = (FLOAT)textureHeight;
@@ -123,7 +123,7 @@ namespace gfx
 		return m_pRenderTargetView;
 	}
 
-	void RenderTexture::BindCS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot)
+	void RenderTexture::BindCS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot)
 	{
 		if (renderState.IsNewBinding(GetGuid(), RenderBindingType::CS_SRV, slot))
 		{
@@ -131,13 +131,13 @@ namespace gfx
 		}
 	}
 
-	void RenderTexture::UnbindCS(const GraphicsDevice & gfx, RenderState & renderState, UINT slot)
+	void RenderTexture::UnbindCS(const GraphicsDevice & gfx, RenderState & renderState, const slotUINT slot)
 	{
 		renderState.ClearBinding(RenderBindingType::CS_SRV, slot);
 		gfx.GetContext()->CSSetShaderResources(slot, 1u, nullptr);
 	}
 
-	void RenderTexture::BindVS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot)
+	void RenderTexture::BindVS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot)
 	{
 		if (renderState.IsNewBinding(GetGuid(), RenderBindingType::VS_SRV, slot))
 		{
@@ -145,13 +145,13 @@ namespace gfx
 		}
 	}
 
-	void RenderTexture::UnbindVS(const GraphicsDevice & gfx, RenderState & renderState, UINT slot)
+	void RenderTexture::UnbindVS(const GraphicsDevice & gfx, RenderState & renderState, const slotUINT slot)
 	{
 		renderState.ClearBinding(RenderBindingType::VS_SRV, slot);
 		gfx.GetContext()->VSSetShaderResources(slot, 1u, nullptr);
 	}
 
-	void RenderTexture::BindPS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot)
+	void RenderTexture::BindPS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot)
 	{
 		if (renderState.IsNewBinding(GetGuid(), RenderBindingType::PS_SRV, slot))
 		{
@@ -159,13 +159,13 @@ namespace gfx
 		}
 	}
 
-	void RenderTexture::UnbindPS(const GraphicsDevice & gfx, RenderState & renderState, UINT slot)
+	void RenderTexture::UnbindPS(const GraphicsDevice & gfx, RenderState & renderState, const slotUINT slot)
 	{
 		renderState.ClearBinding(RenderBindingType::PS_SRV, slot);
 		gfx.GetContext()->PSSetShaderResources(slot, 1u, nullptr);
 	}
 
-	void RenderTexture::BindAsTexture(const GraphicsDevice& gfx, UINT slot) const
+	void RenderTexture::BindAsTexture(const GraphicsDevice& gfx, const slotUINT slot) const
 	{
 		gfx.GetContext()->PSSetShaderResources(slot, 1, m_pShaderResourceView.GetAddressOf());
 	}

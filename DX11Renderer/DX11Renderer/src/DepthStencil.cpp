@@ -4,7 +4,7 @@
 
 namespace gfx
 {
-	DepthStencil::DepthStencil(const GraphicsDevice& gfx, UINT width, UINT height)
+	DepthStencil::DepthStencil(const GraphicsDevice& gfx, const UINT width, const UINT height)
 	{
 		// create depth stensil texture
 		ComPtr<ID3D11Texture2D> pDepthStencil;

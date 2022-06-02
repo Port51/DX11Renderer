@@ -14,7 +14,7 @@
 
 namespace gfx
 {
-	GraphicsDevice::GraphicsDevice(HWND hWnd, UINT windowWidth, UINT windowHeight)
+	GraphicsDevice::GraphicsDevice(const HWND hWnd, const UINT windowWidth, const UINT windowHeight)
 		: m_screenWidth(windowWidth)
 		, m_screenHeight(windowHeight)
 		, m_pLog(std::make_unique<Log>())
@@ -154,7 +154,7 @@ namespace gfx
 		}
 	}
 
-	void GraphicsDevice::ClearBuffer(float red, float green, float blue) const
+	void GraphicsDevice::ClearBuffer(const float red, const float green, const float blue) const
 	{
 		const float color[] = { red, green, blue, 1.0f };
 		m_pContext->ClearRenderTargetView(m_pBackBufferView.Get(), color);
@@ -176,12 +176,12 @@ namespace gfx
 		return m_imguiEnabled;
 	}
 
-	void GraphicsDevice::DrawIndexed(UINT indexCount) const
+	void GraphicsDevice::DrawIndexed(const UINT indexCount) const
 	{
 		m_pContext->DrawIndexed(indexCount, 0u, 0u);
 	}
 
-	void GraphicsDevice::DrawIndexedInstanced(UINT indexCount, UINT instanceCount) const
+	void GraphicsDevice::DrawIndexedInstanced(const UINT indexCount, const UINT instanceCount) const
 	{
 		m_pContext->DrawIndexedInstanced(indexCount, instanceCount, 0u, 0, 0u);
 	}
@@ -213,7 +213,7 @@ namespace gfx
 		m_pContext->OMSetRenderTargets(m_currentRenderTargetCount, m_pNullRenderTargetViews.data(), nullptr);
 	}
 
-	void GraphicsDevice::SetViewport(int x, int y, int width, int height) const
+	void GraphicsDevice::SetViewport(const int x, const int y, const int width, const int height) const
 	{
 		D3D11_VIEWPORT vp;
 		vp.Width = (FLOAT)width;
@@ -225,7 +225,7 @@ namespace gfx
 		m_pContext->RSSetViewports(1u, &vp);
 	}
 
-	void GraphicsDevice::SetViewport(int width, int height) const
+	void GraphicsDevice::SetViewport(const int width, const int height) const
 	{
 		D3D11_VIEWPORT vp;
 		vp.Width = (FLOAT)width;

@@ -22,7 +22,7 @@ namespace gfx
 		dx::XMVECTOR minCornerOS = dx::g_XMInfinity;
 		dx::XMVECTOR maxCornerOS = dx::g_XMNegInfinity;
 
-		for (int vi = 0; vi < vertices.size(); ++vi)
+		for (size_t vi = 0; vi < vertices.size(); ++vi)
 		{
 			const auto posV3 = dx::XMLoadFloat3(&vertices[vi]);
 			minCornerOS = dx::XMVectorMin(minCornerOS, posV3);
@@ -55,7 +55,7 @@ namespace gfx
 		// It's faster to determine min/max corners from all AABBs first
 		auto minCornerWS = GetMinimumCornerLS();
 		auto maxCornerWS = GetMaximumCornerLS();
-		for (int i = 0, ct = pChildNodes.size(); i < ct; ++i)
+		for (size_t i = 0, ct = pChildNodes.size(); i < ct; ++i)
 		{
 			// Use offset to transform the other AABB into local space of current AABB
 			const auto localTransformOffset = dx::XMLoadFloat3(&pChildNodes[i]->m_localTransformOffset);
@@ -151,7 +151,7 @@ namespace gfx
 		const auto maxCornerWS = GetMaximumCornerLS();
 
 		dx::XMVECTOR vmin = dx::XMVectorZero();
-		for (int i = 0; i < 6; ++i) {
+		for (size_t i = 0; i < 6; ++i) {
 			// X axis 
 			if (frustum.planes[i].x > 0) {
 				dx::XMVectorSetX(vmin, dx::XMVectorGetX(minCornerWS));
@@ -194,7 +194,7 @@ namespace gfx
 
 		dx::XMVECTOR vmin = dx::XMVectorZero();
 		dx::XMVECTOR vmax = dx::XMVectorZero();
-		for (int i = 0; i < 6; ++i) {
+		for (size_t i = 0; i < 6; ++i) {
 			// X axis 
 			if (frustum.planes[i].x > 0) {
 				dx::XMVectorSetX(vmin, dx::XMVectorGetX(minCornerWS));

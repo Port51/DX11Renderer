@@ -16,10 +16,10 @@ namespace gfx
 		void Bind(const GraphicsDevice& gfx, RenderState& renderState) const;
 		void Unbind(const GraphicsDevice& gfx, RenderState& renderState) const;
 		const Bindable& GetBindable() const;
-		Binding& SetupIABinding(UINT slot = 0u);
-		Binding& SetupCSBinding(UINT slot);
-		Binding& SetupVSBinding(UINT slot);
-		Binding& SetupPSBinding(UINT slot);
+		Binding& SetupIABinding(const slotUINT slot = 0u);
+		Binding& SetupCSBinding(const slotUINT slot);
+		Binding& SetupVSBinding(const slotUINT slot);
+		Binding& SetupPSBinding(const slotUINT slot);
 		Binding& SetupRSBinding();
 		Binding& SetupOMBinding();
 	private:

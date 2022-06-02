@@ -4,7 +4,7 @@
 
 namespace gfx
 {
-	RawBuffer::RawBuffer(const GraphicsDevice& gfx, UINT bytes, D3D11_USAGE usage, UINT bindFlags)
+	RawBuffer::RawBuffer(const GraphicsDevice& gfx, const UINT bytes, const D3D11_USAGE usage, const UINT bindFlags)
 		: Buffer(usage, bindFlags, 1u)
 	{
 		// Refs:

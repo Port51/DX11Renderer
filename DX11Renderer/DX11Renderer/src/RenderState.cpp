@@ -26,7 +26,7 @@ namespace gfx
 
 	const u16 RenderState::GetKey(const RenderBindingType::RenderBindingTypeEnum bindingType, const slotUINT slot) const
 	{
-		return ((u16)bindingType) << 8u + (u16)slot;
+		return (((u16)bindingType) << 8u) + (u16)slot;
 	}
 
 }

@@ -115,7 +115,7 @@ namespace gfx
 		const auto maxCornerWS = dx::XMVectorAdd(aabb.GetMaximumCornerLS(), aabbObjectPosition);
 
 		dx::XMVECTOR vmin = dx::XMVectorZero();
-		for (int i = 0; i < 6; ++i) {
+		for (size_t i = 0; i < 6; ++i) {
 			// X axis 
 			if (planes[i].x > 0) {
 				vmin = dx::XMVectorSetX(vmin, dx::XMVectorGetX(minCornerWS));
@@ -161,7 +161,7 @@ namespace gfx
 
 		dx::XMVECTOR vmin = dx::XMVectorZero();
 		dx::XMVECTOR vmax = dx::XMVectorZero();
-		for (int i = 0; i < 6; ++i) {
+		for (size_t i = 0; i < 6; ++i) {
 			// X axis 
 			if (planes[i].x > 0) {
 				vmin = dx::XMVectorSetX(vmin, dx::XMVectorGetX(minCornerWS));
@@ -211,7 +211,7 @@ namespace gfx
 
 	const bool Frustum::DoesSphereIntersect(const dx::XMVECTOR spherePosition, const float sphereRadius) const
 	{
-		for (int i = 0; i < PlaneCt; ++i)
+		for (size_t i = 0; i < PlaneCt; ++i)
 		{
 			// planes[i].w test is included in dot product
 			float dot = dx::XMVectorGetX(dx::XMVector4Dot(dx::XMVectorSetW(spherePosition, 1.f), dx::XMLoadFloat4(&planes[i])));

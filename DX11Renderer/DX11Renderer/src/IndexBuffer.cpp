@@ -42,7 +42,7 @@ namespace gfx
 		m_pIndexBuffer.Reset();
 	}
 
-	void IndexBuffer::BindIA(const GraphicsDevice& gfx, RenderState& renderState, UINT slot)
+	void IndexBuffer::BindIA(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot)
 	{
 		if (renderState.IsNewBinding(GetGuid(), RenderBindingType::IA_IndexBuffer, slot))
 		{
@@ -50,7 +50,7 @@ namespace gfx
 		}
 	}
 
-	void IndexBuffer::UnbindIA(const GraphicsDevice & gfx, RenderState & renderState, UINT slot)
+	void IndexBuffer::UnbindIA(const GraphicsDevice & gfx, RenderState & renderState, const slotUINT slot)
 	{
 		renderState.ClearBinding(RenderBindingType::IA_IndexBuffer, slot);
 		gfx.GetContext()->IASetIndexBuffer(nullptr, m_format, 0u);
@@ -61,7 +61,7 @@ namespace gfx
 		return m_count;
 	}
 
-	std::shared_ptr<IndexBuffer> IndexBuffer::Resolve(const GraphicsDevice& gfx, std::string id, const std::vector<u32>& indices)
+	std::shared_ptr<IndexBuffer> IndexBuffer::Resolve(const GraphicsDevice& gfx, const std::string id, const std::vector<u32>& indices)
 	{
 		return std::move(Codex::Resolve<IndexBuffer>(gfx, GenerateUID(id), indices));
 	}

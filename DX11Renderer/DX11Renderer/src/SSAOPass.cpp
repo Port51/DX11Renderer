@@ -38,7 +38,7 @@ namespace gfx
 		// Create random sample directions
 		std::vector<dx::XMVECTOR> sampleOffsets;
 		sampleOffsets.reserve(SampleOffsetCount);
-		for (int i = 0; i < SampleOffsetCount; ++i)
+		for (size_t i = 0; i < SampleOffsetCount; ++i)
 		{
 			// Get random hemisphere direction
 			sampleOffsets.emplace_back(dx::XMVector3Normalize(dx::XMVectorSet(

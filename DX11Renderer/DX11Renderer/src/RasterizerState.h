@@ -12,16 +12,16 @@ namespace gfx
 	class RasterizerState : public Bindable
 	{
 	public:
-		RasterizerState(const GraphicsDevice& gfx, D3D11_CULL_MODE cullMode);
+		RasterizerState(const GraphicsDevice& gfx, const D3D11_CULL_MODE cullMode);
 		virtual void Release() override;
 		void BindRS(const GraphicsDevice& gfx, RenderState& renderState) override;
 		void UnbindRS(const GraphicsDevice& gfx, RenderState& renderState) override;
-		static std::shared_ptr<RasterizerState> Resolve(const GraphicsDevice& gfx, D3D11_CULL_MODE cullMode);
-		static D3D11_CULL_MODE GetCullModeFromMaterialString(std::string name);
+		static std::shared_ptr<RasterizerState> Resolve(const GraphicsDevice& gfx, const D3D11_CULL_MODE cullMode);
+		static const D3D11_CULL_MODE GetCullModeFromMaterialString(const std::string name);
 	protected:
-		static std::string GenerateUID(D3D11_CULL_MODE cullMode);
+		static std::string GenerateUID(const D3D11_CULL_MODE cullMode);
 	protected:
 		ComPtr<ID3D11RasterizerState> m_pRasterizer;
-		D3D11_CULL_MODE m_cullMode;
+		const D3D11_CULL_MODE m_cullMode;
 	};
 }

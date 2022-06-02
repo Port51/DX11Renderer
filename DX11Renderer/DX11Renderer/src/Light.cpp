@@ -8,7 +8,7 @@
 
 namespace gfx
 {
-	Light::Light(const GraphicsDevice& gfx, UINT index, bool allowUserControl, std::shared_ptr<ModelAsset> const& pModelAsset, dx::XMFLOAT3 positionWS, dx::XMFLOAT3 color, float intensity)
+	Light::Light(const GraphicsDevice& gfx, const UINT index, const bool allowUserControl, std::shared_ptr<ModelAsset> const& pModelAsset, const dx::XMFLOAT3 positionWS, const dx::XMFLOAT3 color, const float intensity)
 		: m_index(index),
 		m_allowUserControl(allowUserControl),
 		m_positionWS(positionWS),
@@ -17,7 +17,7 @@ namespace gfx
 	{
 		if (allowUserControl && pModelAsset != nullptr)
 		{
-			m_pModel = std::make_unique<ModelInstance>(gfx, pModelAsset, dx::XMMatrixIdentity());
+			m_pModel = std::make_unique<ModelInstance>(gfx, pModelAsset, dx::XMMatrixIdentity(), dx::XMVectorSet(0.1f, 0.1f, 0.1f, 1.f));
 		}
 	}
 
@@ -29,7 +29,7 @@ namespace gfx
 		return m_shadowAtlasTileIdx;
 	}
 
-	void Light::SetCurrentShadowIdx(int _shadowMapIdx)
+	void Light::SetCurrentShadowIdx(const int _shadowMapIdx)
 	{
 		m_shadowAtlasTileIdx = _shadowMapIdx;
 	}
@@ -39,7 +39,7 @@ namespace gfx
 		return m_positionWS;
 	}
 
-	void Light::SetPositionWS(dx::XMVECTOR _positionWS)
+	void Light::SetPositionWS(const dx::XMVECTOR _positionWS)
 	{
 		dx::XMStoreFloat3(&m_positionWS, _positionWS);
 	}
@@ -54,7 +54,7 @@ namespace gfx
 		return m_pModel.get();
 	}
 
-	void Light::SetShadowMatrixTile(dx::XMMATRIX& shadowMatrix, int tileX, int tileY)
+	void Light::SetShadowMatrixTile(dx::XMMATRIX& shadowMatrix, const int tileX, const int tileY)
 	{
 		// https://www.gamedev.net/forums/topic/591684-xna-40---shimmering-shadow-maps/#entry4752287
 		// https://mynameismjp.wordpress.com/2009/02/17/deferred-cascaded-shadow-maps/

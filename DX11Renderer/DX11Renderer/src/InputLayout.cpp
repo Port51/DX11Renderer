@@ -23,7 +23,7 @@ namespace gfx
 		m_pInputLayout.Reset();
 	}
 
-	void InputLayout::BindIA(const GraphicsDevice& gfx, RenderState& renderState, UINT slot)
+	void InputLayout::BindIA(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot)
 	{
 		if (renderState.IsNewBinding(GetGuid(), RenderBindingType::IA_InputLayout, slot))
 		{
@@ -31,7 +31,7 @@ namespace gfx
 		}
 	}
 
-	void InputLayout::UnbindIA(const GraphicsDevice & gfx, RenderState & renderState, UINT slot)
+	void InputLayout::UnbindIA(const GraphicsDevice & gfx, RenderState & renderState, const slotUINT slot)
 	{
 		renderState.ClearBinding(RenderBindingType::IA_InputLayout, slot);
 		gfx.GetContext()->IASetInputLayout(nullptr);

@@ -5,7 +5,7 @@
 /// Draws a button that's part of an array where one button can be selected
 /// An int controls which button is selected
 ///
-int gfx::DrawSelectableButtonInArray(int mySelectionIdx, const char * label, int activeSelectionIdx, ImVec2& size, bool& changed, bool isSameLine)
+int gfx::DrawSelectableButtonInArray(const int mySelectionIdx, const char * label, const int activeSelectionIdx, const ImVec2& size, bool& changed, const bool isSameLine)
 {
 	static ImVec4 selectedColor = { 1, 1, 1, 0.5 };
 
@@ -35,7 +35,7 @@ int gfx::DrawSelectableButtonInArray(int mySelectionIdx, const char * label, int
 	return newSelectionIdx;
 }
 
-bool gfx::DrawToggleOnOffButton(int id, const char* label, bool isSelected, ImVec2& size, bool& changed, bool isSameLine)
+bool gfx::DrawToggleOnOffButton(const int id, const char* label, const bool isSelected, const ImVec2& size, bool& changed, const bool isSameLine)
 {
 	static ImVec4 selectedColor = { 1, 1, 1, 0.5 };
 
@@ -91,7 +91,7 @@ bool gfx::DrawToggleOnOffButton(int id, const char* label, bool isSelected, ImVe
 	return returnValue;
 }
 
-bool gfx::DrawSliderFloat(int id, int indent, const char* label, float* v, float v_min, float v_max, const char* format, ImGuiSliderFlags flags)
+bool gfx::DrawSliderFloat(const int id, const int indent, const char* label, float* v, const float v_min, const float v_max, const char* format, const ImGuiSliderFlags flags)
 {
 	ImGui::PushID(id + 3048);
 

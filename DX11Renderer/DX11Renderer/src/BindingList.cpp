@@ -24,7 +24,7 @@ namespace gfx
 
 	void BindingList::Bind(const GraphicsDevice& gfx, RenderState& renderState) const
 	{
-		for (int i = 0, ct = m_bindings.size(); i < ct; ++i)
+		for (size_t i = 0, ct = m_bindings.size(); i < ct; ++i)
 		{
 			m_bindings[i].Bind(gfx, renderState);
 		}

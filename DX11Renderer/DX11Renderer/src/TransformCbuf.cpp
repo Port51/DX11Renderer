@@ -20,7 +20,7 @@ namespace gfx
 		m_pVcbuf->Release();
 	}
 
-	void TransformCbuf::BindVS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot)
+	void TransformCbuf::BindVS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot)
 	{
 		if (renderState.IsNewBinding(GetGuid(), RenderBindingType::VS_CB, slot))
 		{
@@ -28,7 +28,7 @@ namespace gfx
 		}
 	}
 
-	void TransformCbuf::UnbindVS(const GraphicsDevice & gfx, RenderState & renderState, UINT slot)
+	void TransformCbuf::UnbindVS(const GraphicsDevice & gfx, RenderState & renderState, const slotUINT slot)
 	{
 		renderState.ClearBinding(RenderBindingType::VS_CB, slot);
 		gfx.GetContext()->VSSetConstantBuffers(slot, 1u, nullptr);

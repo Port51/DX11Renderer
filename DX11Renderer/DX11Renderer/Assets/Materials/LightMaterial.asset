@@ -1,3 +1,8 @@
+Properties
+{
+	Slot, 0
+	Color, 1.0, 1.0, 1.0, 1.0
+}
 Pass
 {
 	Name, DepthPrepassRenderPass
@@ -10,7 +15,7 @@ Pass
 	Cull, Back
 	VS, Assets\\Built\\Shaders\\PhongVS.cso
 	PS, Assets\\Built\\Shaders\\SolidColorGbuffer.cso
-	Color, 1.0, 1.0, 1.0, 1.0
+	PropertySlot, 0
 }
 Pass
 {
@@ -18,5 +23,5 @@ Pass
 	Cull, Back
 	VS, Assets\\Built\\Shaders\\PhongVS.cso
 	PS, Assets\\Built\\Shaders\\SolidColorPS.cso
-	Color, 1.0, 1.0, 1.0, 1.0
+	PropertySlot, 0
 }

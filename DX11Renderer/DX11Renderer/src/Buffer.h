@@ -16,7 +16,7 @@ namespace gfx
 	class Buffer : public Bindable
 	{
 	public:
-		Buffer(D3D11_USAGE usage, UINT bindFlags, UINT byteWidth);
+		Buffer(const D3D11_USAGE usage, const UINT bindFlags, const UINT byteWidth);
 		virtual ~Buffer() override;
 		virtual void Release() override;
 

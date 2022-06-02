@@ -35,7 +35,7 @@ namespace gfx
 
 	void Texture::Release()
 	{
-		for (int i = 0, ct = m_pUAV.size(); i < ct; ++i)
+		for (size_t i = 0, ct = m_pUAV.size(); i < ct; ++i)
 		{
 			m_pUAV[i].Reset();
 		}
@@ -127,7 +127,7 @@ namespace gfx
 		));
 	}
 
-	void Texture::BindCS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot)
+	void Texture::BindCS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot)
 	{
 		if (renderState.IsNewBinding(GetGuid(), RenderBindingType::CS_SRV, slot))
 		{
@@ -135,13 +135,13 @@ namespace gfx
 		}
 	}
 
-	void Texture::UnbindCS(const GraphicsDevice & gfx, RenderState & renderState, UINT slot)
+	void Texture::UnbindCS(const GraphicsDevice & gfx, RenderState & renderState, const slotUINT slot)
 	{
 		renderState.ClearBinding(RenderBindingType::CS_SRV, slot);
 		gfx.GetContext()->CSSetShaderResources(slot, 1u, nullptr);
 	}
 
-	void Texture::BindVS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot)
+	void Texture::BindVS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot)
 	{
 		if (renderState.IsNewBinding(GetGuid(), RenderBindingType::VS_SRV, slot))
 		{
@@ -149,13 +149,13 @@ namespace gfx
 		}
 	}
 
-	void Texture::UnbindVS(const GraphicsDevice & gfx, RenderState & renderState, UINT slot)
+	void Texture::UnbindVS(const GraphicsDevice & gfx, RenderState & renderState, const slotUINT slot)
 	{
 		renderState.ClearBinding(RenderBindingType::VS_SRV, slot);
 		gfx.GetContext()->VSSetShaderResources(slot, 1u, nullptr);
 	}
 
-	void Texture::BindPS(const GraphicsDevice& gfx, RenderState& renderState, UINT slot)
+	void Texture::BindPS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot)
 	{
 		if (renderState.IsNewBinding(GetGuid(), RenderBindingType::PS_SRV, slot))
 		{
@@ -163,7 +163,7 @@ namespace gfx
 		}
 	}
 
-	void Texture::UnbindPS(const GraphicsDevice & gfx, RenderState & renderState, UINT slot)
+	void Texture::UnbindPS(const GraphicsDevice & gfx, RenderState & renderState, const slotUINT slot)
 	{
 		renderState.ClearBinding(RenderBindingType::PS_SRV, slot);
 		gfx.GetContext()->PSSetShaderResources(slot, 1u, nullptr);

@@ -67,7 +67,7 @@ namespace gfx
 			}
 
 			// Add children to queue
-			for (int i = 0, ct = node->m_pChildNodes.size(); i < ct; ++i)
+			for (size_t i = 0, ct = node->m_pChildNodes.size(); i < ct; ++i)
 			{
 				queue.emplace(std::make_pair(nodeDepth + 1, node->m_pChildNodes.at(i).get()));
 			}
@@ -78,7 +78,7 @@ namespace gfx
 		for (int depth = maxDepth; depth >= 0; --depth)
 		{
 			auto pNodes = pNodesByDepth.at(depth);
-			for (int i = 0, ct = pNodes.size(); i < ct; ++i)
+			for (size_t i = 0, ct = pNodes.size(); i < ct; ++i)
 			{
 				pNodes[i].second->RebuildBoundingVolume(false);
 			}

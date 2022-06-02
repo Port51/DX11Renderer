@@ -36,7 +36,7 @@ namespace gfx
 		dx::XMVectorSet(1, 0, 0, 0),
 	};
 
-	PointLight::PointLight(const GraphicsDevice& gfx, UINT index, bool allowUserControl, bool hasShadow, std::shared_ptr<ModelAsset> const& pModelAsset, dx::XMFLOAT3 positionWS, dx::XMFLOAT3 color, float intensity, float attenuationQ, float range)
+	PointLight::PointLight(const GraphicsDevice& gfx, const UINT index, const bool allowUserControl, const bool hasShadow, std::shared_ptr<ModelAsset> const& pModelAsset, const dx::XMFLOAT3 positionWS, const dx::XMFLOAT3 color, const float intensity, const float attenuationQ, const float range)
 		: Light(gfx, index, allowUserControl, pModelAsset, positionWS, color, intensity),
 		m_attenuationQ(attenuationQ),
 		m_range(range)
@@ -90,7 +90,7 @@ namespace gfx
 		gfx.GetContext()->PSSetConstantBuffers(0u, 1u, globalLightCbuf.GetD3DBuffer().GetAddressOf());
 	}*/
 
-	const LightData PointLight::GetLightData(dx::XMMATRIX viewMatrix) const
+	const LightData PointLight::GetLightData(const dx::XMMATRIX viewMatrix) const
 	{
 		LightData light;
 
@@ -164,7 +164,7 @@ namespace gfx
 		}
 	}
 
-	void PointLight::AppendShadowData(UINT shadowStartSlot, std::vector<LightShadowData>& shadowData) const
+	void PointLight::AppendShadowData(const UINT shadowStartSlot, std::vector<LightShadowData>& shadowData) const
 	{
 		for (UINT i = 0u; i < 6u; ++i)
 		{

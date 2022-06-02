@@ -18,7 +18,7 @@
 
 namespace gfx
 {
-	App::App(UINT screenWidth, UINT screenHeight, HINSTANCE hInstance)
+	App::App(const UINT screenWidth, const UINT screenHeight, HINSTANCE hInstance)
 		:
 		m_pImgui(std::make_unique<ImguiManager>()),
 		m_pCamera(std::make_unique<Camera>(40.0f, (float)screenWidth / (float)screenHeight, 0.5f, 50.0f)),
@@ -37,7 +37,7 @@ namespace gfx
 		dx::XMMATRIX modelTransform;
 
 		// temporary...
-		int select = 7;
+		int select = 8;
 		switch (select)
 		{
 		case 0:
@@ -76,7 +76,7 @@ namespace gfx
 			modelTransform = dx::XMMatrixRotationY(3.1415f) * dx::XMMatrixScaling(12.f, 12.f, 12.f);
 			break;
 		case 8:
-			fn = std::string("Assets\\Models\\SimpleCastle.asset");
+			fn = std::string("Assets\\Models\\FullCastle.asset");
 			modelTransform = dx::XMMatrixRotationY(3.1415f) * dx::XMMatrixScaling(1.f, 1.f, 1.f);
 			break;
 		}
@@ -154,7 +154,7 @@ namespace gfx
 		}
 	}
 
-	LRESULT App::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+	LRESULT App::HandleMsg(const HWND hWnd, const UINT msg, const WPARAM wParam, const LPARAM lParam)
 	{
 		switch (msg)
 		{

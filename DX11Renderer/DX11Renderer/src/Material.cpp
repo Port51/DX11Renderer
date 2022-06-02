@@ -31,7 +31,7 @@ namespace gfx
 
 	enum MaterialParseState { None, Properties, Pass };
 
-	Material::Material(const GraphicsDevice& gfx, std::string_view _materialAssetPath)
+	Material::Material(const GraphicsDevice& gfx, const std::string_view _materialAssetPath)
 		: m_materialAssetPath(std::string(_materialAssetPath))
 	{
 
@@ -183,7 +183,7 @@ namespace gfx
 	{
 	}
 
-	void Material::Bind(const GraphicsDevice& gfx, std::string_view passName)
+	void Material::Bind(const GraphicsDevice& gfx, const std::string_view passName)
 	{
 		// Is this needed?
 	}

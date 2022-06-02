@@ -18,15 +18,15 @@ namespace gfx
 		virtual void Release() override;
 	public:
 		const ComPtr<ID3D11Buffer> GetVertexBuffer() const;
-		void BindIA(const GraphicsDevice& gfx, RenderState& renderState, UINT slot);
-		void UnbindIA(const GraphicsDevice& gfx, RenderState& renderState, UINT slot);
+		void BindIA(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot);
+		void UnbindIA(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot);
 		const UINT GetVertexCount() const;
 	protected:
 		void SetupVertexBuffer(const GraphicsDevice& gfx, const BaseBufferData& data);
 		void SetupInstanceBuffer(const GraphicsDevice& gfx, const BaseBufferData& data);
 	public:
-		static std::shared_ptr<VertexBufferWrapper> Resolve(const GraphicsDevice& gfx, std::string id, const BaseBufferData& vertexBuffer);
-		static std::shared_ptr<VertexBufferWrapper> Resolve(const GraphicsDevice& gfx, std::string id, const BaseBufferData& vertexBuffer, const BaseBufferData& instanceBuffer);
+		static std::shared_ptr<VertexBufferWrapper> Resolve(const GraphicsDevice& gfx, const std::string id, const BaseBufferData& vertexBuffer);
+		static std::shared_ptr<VertexBufferWrapper> Resolve(const GraphicsDevice& gfx, const std::string id, const BaseBufferData& vertexBuffer, const BaseBufferData& instanceBuffer);
 	private:
 		static std::string GenerateUID(const std::string& tag);
 	protected:

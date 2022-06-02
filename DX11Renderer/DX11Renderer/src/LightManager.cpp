@@ -91,7 +91,7 @@ namespace gfx
 		}
 	}
 
-	void LightManager::CullLightsAndShadows(const GraphicsDevice& gfx, const Camera& cam, bool enableShadows)
+	void LightManager::CullLightsAndShadows(const GraphicsDevice& gfx, const Camera& cam, const bool enableShadows)
 	{
 		dx::XMFLOAT4 frustumCornersVS;
 		dx::XMStoreFloat4(&frustumCornersVS, cam.GetFrustumCornersVS());
@@ -101,7 +101,7 @@ namespace gfx
 
 		m_visibleLightCt = 0u;
 		int shadowMapIdx = 0;
-		for (int i = 0; i < m_pLights.size(); ++i)
+		for (size_t i = 0; i < m_pLights.size(); ++i)
 		{
 			if (enableShadows && m_pLights[i]->HasShadow())
 			{
@@ -184,7 +184,7 @@ namespace gfx
 		context.gfx.GetContext()->OMSetRenderTargets(0u, nullptr, m_pShadowAtlas->GetView().Get());
 
 		// todo: cull shadows
-		for (int i = 0; i < m_pLights.size(); ++i)
+		for (size_t i = 0; i < m_pLights.size(); ++i)
 		{
 			if (m_pLights[i]->HasShadow())
 			{
@@ -230,9 +230,9 @@ namespace gfx
 		return (UINT)m_pLights.size();
 	}
 
-	Light& LightManager::GetLight(UINT index) const
+	Light& LightManager::GetLight(const UINT index) const
 	{
-		return *m_pLights[index].get();
+		return *m_pLights.at(index).get();
 	}
 
 	const UINT LightManager::GetClusterCount() const
