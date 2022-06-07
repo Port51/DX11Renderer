@@ -35,11 +35,12 @@
 #include "BloomPass.h"
 #include "SSAOPass.h"
 #include "RandomGenerator.h"
+#include "ParticleManager.h"
 
 namespace gfx
 {
-	Renderer::Renderer(const GraphicsDevice& gfx, RandomGenerator& rng, std::shared_ptr<LightManager> pLightManager, std::shared_ptr<RendererList> pRendererList)
-		: m_pRendererList(pRendererList), m_pLightManager(pLightManager)
+	Renderer::Renderer(const GraphicsDevice& gfx, RandomGenerator& rng, std::shared_ptr<LightManager> pLightManager, std::shared_ptr<ParticleManager> pParticleManager, std::shared_ptr<RendererList> pRendererList)
+		: m_pRendererList(pRendererList), m_pLightManager(pLightManager), m_pParticleManager(pParticleManager)
 	{
 		UINT screenWidth = gfx.GetScreenWidth();
 		UINT screenHeight = gfx.GetScreenHeight();

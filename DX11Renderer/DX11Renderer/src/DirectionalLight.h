@@ -30,7 +30,7 @@ namespace gfx
 		const dx::XMVECTOR GetShadowCascadeSphereVS(const UINT idx) const;
 	private:
 		const dx::XMVECTOR GetDirectionWS() const;
-		const ViewProjTransforms GetShadowTransforms(dx::XMVECTOR cascadeSphereCenterWS, const float cascadeDistance) const;
+		const ViewProjTransforms GetShadowTransforms(const dx::XMVECTOR cascadeSphereCenterWS, const float cascadeDistance) const;
 	private:
 		float m_pan;
 		float m_tilt;

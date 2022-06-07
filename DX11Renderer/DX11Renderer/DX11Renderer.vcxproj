@@ -179,6 +179,8 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\ParticleManager.cpp" />
+    <ClCompile Include="src\ParticleSystem.cpp" />
     <ClCompile Include="src\ExceptionHandling.cpp" />
     <ClCompile Include="src\RandomGenerator.cpp" />
     <ClCompile Include="src\BloomPass.cpp" />
@@ -290,6 +292,9 @@
     <ClCompile Include="src\SSAOPass.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\ParticleCommon.h" />
+    <ClInclude Include="src\ParticleManager.h" />
+    <ClInclude Include="src\ParticleSystem.h" />
     <ClInclude Include="src\RandomGenerator.h" />
     <ClInclude Include="src\BloomPass.h" />
     <ClInclude Include="src\DepthOfFieldPass.h" />
@@ -665,6 +670,12 @@
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">OcclusionPass</EntryPointName>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)Assets/Built/Shaders/%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="Assets\Shaders\GPUParticles.hlsl">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">SpawnParticles</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)Assets/Built/Shaders/%(Filename).cso</ObjectFileOutput>
     </FxCompile>
     <None Include="Assets\Shaders\Lighting\Schlick.hlsli" />

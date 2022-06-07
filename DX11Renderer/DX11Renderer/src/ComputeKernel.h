@@ -15,6 +15,7 @@ namespace gfx
 	{
 	public:
 		ComputeKernel(std::shared_ptr<ComputeShader> pComputeShader);
+		~ComputeKernel();
 	public:
 		void Dispatch(const GraphicsDevice& gfx, const UINT threadCountX, const UINT threadCountY, const UINT threadCountZ);
 	private:

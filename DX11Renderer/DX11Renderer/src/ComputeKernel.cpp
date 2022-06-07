@@ -13,6 +13,10 @@ namespace gfx
 
 	}
 
+	ComputeKernel::~ComputeKernel()
+	{
+	}
+
 	void ComputeKernel::Dispatch(const GraphicsDevice& gfx, const UINT threadCountX, const UINT threadCountY, const UINT threadCountZ)
 	{
 		assert(m_pComputeShader != nullptr && "Compute shader has not been created!");

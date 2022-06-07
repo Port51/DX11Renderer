@@ -79,7 +79,7 @@ namespace gfx
 		return 2u;
 	}
 
-	const ViewProjTransforms DirectionalLight::GetShadowTransforms(dx::XMVECTOR cascadeSphereCenterWS, const float cascadeDistance) const
+	const ViewProjTransforms DirectionalLight::GetShadowTransforms(const dx::XMVECTOR cascadeSphereCenterWS, const float cascadeDistance) const
 	{
 		const float nearPlane = 0.5f;
 		const auto cascadeFrustumStartWS = dx::XMVectorSubtract(cascadeSphereCenterWS, dx::XMVectorScale(GetDirectionWS(), cascadeDistance * 0.5f + Config::ShadowCascadeOffset + nearPlane));

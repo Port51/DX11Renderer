@@ -181,6 +181,12 @@
     <Filter Include="Source\Lights\Math">
       <UniqueIdentifier>{641f0e28-51cc-4ef4-bc6b-3b0ced68ba46}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Headers\Particles">
+      <UniqueIdentifier>{6c861cfd-45f0-4f6a-a377-844e460f9208}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Particles">
+      <UniqueIdentifier>{6c01c67e-9d6b-465f-864e-aa452438ba52}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp">
@@ -404,6 +410,12 @@
     </ClCompile>
     <ClCompile Include="src\RenderState.cpp">
       <Filter>Precompiled</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ParticleSystem.cpp">
+      <Filter>Source\Particles</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ParticleManager.cpp">
+      <Filter>Source\Particles</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -701,6 +713,15 @@
     <ClInclude Include="src\RenderState.h">
       <Filter>Precompiled</Filter>
     </ClInclude>
+    <ClInclude Include="src\ParticleSystem.h">
+      <Filter>Headers\Particles</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ParticleManager.h">
+      <Filter>Headers\Particles</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ParticleCommon.h">
+      <Filter>Headers\Particles</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DX11Renderer.rc">
@@ -796,7 +817,6 @@
     <FxCompile Include="Assets\Shaders\DeferredPS.hlsl">
       <Filter>Assets\Shaders\DrawPasses</Filter>
     </FxCompile>
-    <FxCompile Include="Assets\Shaders\DepthOnlyVS.hlsl" />
     <FxCompile Include="Assets\Shaders\Dither.hlsl">
       <Filter>Assets\Shaders\PostFX</Filter>
     </FxCompile>
@@ -850,6 +870,12 @@
     </FxCompile>
     <FxCompile Include="Assets\Shaders\SSAO.hlsl">
       <Filter>Assets\Shaders\PostFX</Filter>
+    </FxCompile>
+    <FxCompile Include="Assets\Shaders\GPUParticles.hlsl">
+      <Filter>Assets\Shaders\DrawPasses</Filter>
+    </FxCompile>
+    <FxCompile Include="Assets\Shaders\DepthOnlyVS.hlsl">
+      <Filter>Assets\Shaders\DrawPasses</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

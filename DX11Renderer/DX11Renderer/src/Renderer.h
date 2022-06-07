@@ -19,6 +19,7 @@ namespace gfx
 	class Sampler;
 	class Texture;
 	class RandomGenerator;
+	class ParticleManager;
 
 	struct GlobalTransformCB;
 	struct PerFrameCB;
@@ -45,7 +46,7 @@ namespace gfx
 		enum RendererFeature { Shadows, DepthOfField, Bloom, FXAA, SSAO, HZBSSR, Dither, Tonemapping, COUNT }; // for COUNT to be accurate, don't set these values to anything weird...
 		
 	public:
-		Renderer(const GraphicsDevice& gfx, RandomGenerator& rng, std::shared_ptr<LightManager> pLightManager, std::shared_ptr<RendererList> pRendererList);
+		Renderer(const GraphicsDevice& gfx, RandomGenerator& rng, std::shared_ptr<LightManager> pLightManager, std::shared_ptr<ParticleManager> pParticleManager, std::shared_ptr<RendererList> pRendererList);
 		virtual ~Renderer();
 		virtual void Release();
 	public:
@@ -110,6 +111,7 @@ namespace gfx
 		std::unique_ptr<RendererList> m_pVisibleRendererList; // filtered by camera frustum
 
 		std::shared_ptr<LightManager> m_pLightManager;
+		std::shared_ptr<ParticleManager> m_pParticleManager;
 
 		std::shared_ptr<Sampler> m_pShadowSampler;
 

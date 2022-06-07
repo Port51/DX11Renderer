@@ -19,6 +19,7 @@ namespace gfx
 	class DX11Window;
 	class Camera;
 	class RandomGenerator;
+	class ParticleManager;
 
 	class App : public InputListener
 	{
@@ -38,6 +39,7 @@ namespace gfx
 		std::unique_ptr<GraphicsDevice> m_pGfx;
 		std::unique_ptr<Camera> m_pCamera;
 		std::shared_ptr<LightManager> m_pLightManager;
+		std::shared_ptr<ParticleManager> m_pParticleManager;
 		std::unique_ptr<Renderer> m_pRenderer;
 		std::unique_ptr<Timer> m_pTimer;
 		std::unique_ptr<RandomGenerator> m_pRandomGenerator;

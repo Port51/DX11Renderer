@@ -15,6 +15,7 @@
 #include "Renderer.h"
 #include "RenderStats.h"
 #include "RandomGenerator.h"
+#include "ParticleManager.h"
 
 namespace gfx
 {
@@ -32,6 +33,7 @@ namespace gfx
 		m_pGfx = std::make_unique<GraphicsDevice>(m_pWindow->GetHwnd(), screenWidth, screenHeight);
 
 		m_pLightManager = std::make_shared<LightManager>(Gfx(), m_pRendererList);
+		m_pParticleManager = std::make_shared<ParticleManager>(Gfx());
 
 		std::string fn;
 		dx::XMMATRIX modelTransform;
@@ -96,7 +98,7 @@ namespace gfx
 		m_pRendererList->AddModelInstance(*m_pModel0);
 		m_pLightManager->AddLightModelsToList(*m_pRendererList);
 
-		m_pRenderer = std::make_unique<Renderer>(Gfx(), *m_pRandomGenerator, m_pLightManager, m_pRendererList);
+		m_pRenderer = std::make_unique<Renderer>(Gfx(), *m_pRandomGenerator, m_pLightManager, m_pParticleManager, m_pRendererList);
 
 		return;
 		/*class Factory
