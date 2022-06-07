@@ -29,6 +29,14 @@ struct ParticleSystemSettings
 	uint maxParticles;
 };
 
+struct ParticleSystemRuntime
+{
+	uint nextIdx;
+	float padding0;
+	float padding1;
+	float padding2;
+};
+
 cbuffer ParticleManagerCB : register(b4)
 {
 	uint _ParticleSystemCount;
@@ -36,8 +44,10 @@ cbuffer ParticleManagerCB : register(b4)
 
 StructuredBuffer<ParticleSystemSettings> ParticleSystems : register(t3);
 RWStructuredBuffer<ParticleStruct> Particles : register(u0);
+RWStructuredBuffer<ParticleSystemRuntime> ParticleSystemsRuntime : register(u1);
 
 // Spawns and kills particles
+// 1 thread per particle system (for now!)
 [numthreads(64, 1, 1)]
 void SpawnParticles(uint3 tId : SV_DispatchThreadID)
 {
@@ -45,22 +55,21 @@ void SpawnParticles(uint3 tId : SV_DispatchThreadID)
 		return;
 
 	ParticleSystemSettings system = ParticleSystems[tId.x];
+	ParticleSystemRuntime systemRuntime = ParticleSystemsRuntime[tId.x];
 
 	float emission = 1.3f;
 	uint numToSpawn = floor(emission);
 	float overflowEmission = frac(emission); // save for next frame
 
-	uint nextIdx = 0u;
-
 	for (uint i = 0u; i < numToSpawn; ++i)
 	{
 		// Find next idx
 		uint startIdx = 0u;
-		while (nextIdx != startIdx)
+		while (systemRuntime.nextIdx != startIdx)
 		{
-			if (!Particles[nextIdx].isAlive)
+			if (!Particles[systemRuntime.nextIdx].isAlive)
 				break;
-			nextIdx = (nextIdx + 1u) % system.maxParticles;
+			systemRuntime.nextIdx = (systemRuntime.nextIdx + 1u) % system.maxParticles;
 		}
 
 		// Spawn particle
@@ -73,14 +82,17 @@ void SpawnParticles(uint3 tId : SV_DispatchThreadID)
 		newPrt.color = 1.f;
 		newPrt.positionWS = system.emitPositionWS;
 
-		Particles[nextIdx] = newPrt;
+		Particles[systemRuntime.nextIdx] = newPrt;
 	}
+
+	// Save runtime
+	ParticleSystemsRuntime[tId.x] = systemRuntime;
 
 }
 
 // Moves particles
 [numthreads(64, 1, 1)]
-void Simulate(uint3 tId : SV_DispatchThreadID)
+void UpdateParticles(uint3 tId : SV_DispatchThreadID)
 {
 
 }

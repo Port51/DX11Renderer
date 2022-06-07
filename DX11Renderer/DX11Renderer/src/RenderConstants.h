@@ -16,6 +16,7 @@ namespace gfx
 		DepthPrepassRenderPass,
 		HiZRenderPass,
 		GBufferRenderPass,
+		ParticleComputeRenderPass,
 		TiledLightingRenderPass,
 		ClusteredLightingRenderPass,
 		OpaqueRenderPass,

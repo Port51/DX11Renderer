@@ -35,6 +35,14 @@ namespace gfx
 		dx::XMVECTOR startColor1;
 	};
 
+	struct ParticleSystemRuntime
+	{
+		u32 nextIdx;
+		float padding0;
+		float padding1;
+		float padding2;
+	};
+
 	struct ParticleManagerCB
 	{
 		u32 particleSystemCount;

@@ -9,6 +9,8 @@ namespace gfx
 	class ParticleSystem;
 	class Camera;
 	class ComputeKernel;
+	class ParticleComputePass;
+	class RenderState;
 
 	template<typename Type>
 	class ConstantBuffer;
@@ -21,19 +23,23 @@ namespace gfx
 		ParticleManager(const GraphicsDevice & gfx);
 		~ParticleManager();
 	public:
-		void Execute(const GraphicsDevice& gfx, const Camera& camera) const;
-	protected:
+		void ExecuteCompute(const GraphicsDevice& gfx, const Camera& camera, RenderState& renderState) const;
+		const StructuredBuffer<Particle>& GetParticleBuffer() const;
+		const StructuredBuffer<ParticleSystemSettings>& GetParticleSystemBuffer() const;
+		const StructuredBuffer<ParticleSystemRuntime>& GetParticleSystemRuntimeBuffer() const;
+		const size_t GetMaxParticles() const;
 		const size_t GetParticleSystemCount() const;
+	protected:
 		static bool SortByDistance(const std::pair<size_t, float>& a, const std::pair<size_t, float>& b);
 	protected:
 
-		size_t maxParticles;
+		size_t m_maxParticles;
 
-		std::unique_ptr<ComputeKernel> m_pSpawnParticlesKernel;
-		std::unique_ptr<ComputeKernel> m_pUpdateParticlesKernel;
+		std::unique_ptr<ParticleComputePass> m_pParticleComputePass;
 
-		std::unique_ptr<StructuredBuffer<Particle>> m_pParticleBuffer;
-		std::unique_ptr<StructuredBuffer<ParticleSystemSettings>> m_pParticleSystemBuffer;
+		std::shared_ptr<StructuredBuffer<Particle>> m_pParticleBuffer;
+		std::shared_ptr<StructuredBuffer<ParticleSystemSettings>> m_pParticleSystemBuffer;
+		std::shared_ptr<StructuredBuffer<ParticleSystemRuntime>> m_pParticleSystemRuntimeBuffer;
 		std::vector<std::unique_ptr<ParticleSystem>> m_pParticleSystems;
 		std::unique_ptr<ParticleSystem> m_pLayeredParticleSystem;
 	};

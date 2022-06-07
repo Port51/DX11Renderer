@@ -524,6 +524,11 @@ namespace gfx
 			pass.UnbindSharedResources(gfx, renderState);
 		}
 
+		// Run GPU particles
+		{
+			m_pParticleManager->ExecuteCompute(gfx, camera, renderState);
+		}
+
 		// Normal-rough-reflectivity pass
 		{
 			const RenderPass& pass = GetRenderPass(RenderPassType::GBufferRenderPass);

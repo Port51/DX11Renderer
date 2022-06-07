@@ -179,6 +179,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\ParticleComputePass.cpp" />
     <ClCompile Include="src\ParticleManager.cpp" />
     <ClCompile Include="src\ParticleSystem.cpp" />
     <ClCompile Include="src\ExceptionHandling.cpp" />
@@ -292,6 +293,7 @@
     <ClCompile Include="src\SSAOPass.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\ParticleComputePass.h" />
     <ClInclude Include="src\ParticleCommon.h" />
     <ClInclude Include="src\ParticleManager.h" />
     <ClInclude Include="src\ParticleSystem.h" />

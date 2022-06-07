@@ -417,6 +417,9 @@
     <ClCompile Include="src\ParticleManager.cpp">
       <Filter>Source\Particles</Filter>
     </ClCompile>
+    <ClCompile Include="src\ParticleComputePass.cpp">
+      <Filter>Source\RenderJobs\Passes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -721,6 +724,9 @@
     </ClInclude>
     <ClInclude Include="src\ParticleCommon.h">
       <Filter>Headers\Particles</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ParticleComputePass.h">
+      <Filter>Headers\RenderJobs\Passes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

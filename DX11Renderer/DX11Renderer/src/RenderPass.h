@@ -5,10 +5,11 @@
 #include "DrawCall.h"
 #include <vector>
 #include "CommonCbuffers.h"
+#include "Binding.h"
 
 namespace gfx
 {
-	class Binding;
+	//class Binding;
 	class Bindable;
 	class RenderTexture;
 

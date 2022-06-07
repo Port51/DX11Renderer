@@ -6,35 +6,42 @@
 #include "Camera.h"
 #include "ParticleSystem.h"
 #include "ComputeKernel.h"
+#include "ComputeShader.h"
+#include "ParticleComputePass.h"
+#include "RenderState.h"
 
 namespace gfx
 {
 	ParticleManager::ParticleManager(const GraphicsDevice & gfx)
 	{
+
 		// Create particle systems
 		m_pParticleSystems.emplace_back(std::move(std::make_unique<ParticleSystem>(128, dx::XMVectorSet(-1, 0, 0, 1))));
 		m_pParticleSystems.emplace_back(std::move(std::make_unique<ParticleSystem>(128, dx::XMVectorSet(1, 0, 0, 1))));
 		m_pParticleSystems.emplace_back(std::move(std::make_unique<ParticleSystem>(128, dx::XMVectorSet(0, 0, 0, 1))));
 		
 		// Determine size of particle buffer
-		maxParticles = (m_pLayeredParticleSystem != nullptr) ? m_pLayeredParticleSystem->GetMaxParticleCount() : 0u;
+		m_maxParticles = (m_pLayeredParticleSystem != nullptr) ? m_pLayeredParticleSystem->GetMaxParticleCount() : 0u;
 		for (int i = 0, ct = m_pParticleSystems.size(); i < ct; ++i)
 		{
-			maxParticles += m_pParticleSystems[i]->GetMaxParticleCount();
+			m_maxParticles += m_pParticleSystems[i]->GetMaxParticleCount();
 		}
 
 		// Raise to next power of 2
-		maxParticles = 1u << (uint32_t)std::ceil(std::log2(maxParticles));
+		m_maxParticles = 1u << (uint32_t)std::ceil(std::log2(m_maxParticles));
 
-		m_pParticleBuffer = std::make_unique<StructuredBuffer<Particle>>(gfx, D3D11_USAGE_DEFAULT, D3D11_BIND_UNORDERED_ACCESS, maxParticles);
-		m_pParticleSystemBuffer = std::make_unique<StructuredBuffer<ParticleSystemSettings>>(gfx, D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE, GetParticleSystemCount());
+		m_pParticleBuffer = std::make_shared<StructuredBuffer<Particle>>(gfx, D3D11_USAGE_DEFAULT, D3D11_BIND_UNORDERED_ACCESS, m_maxParticles);
+		m_pParticleSystemBuffer = std::make_shared<StructuredBuffer<ParticleSystemSettings>>(gfx, D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE, GetParticleSystemCount());
+		m_pParticleSystemRuntimeBuffer = std::make_shared<StructuredBuffer<ParticleSystemRuntime>>(gfx, D3D11_USAGE_DEFAULT, D3D11_BIND_UNORDERED_ACCESS, GetParticleSystemCount());
+
+		m_pParticleComputePass = std::make_unique<ParticleComputePass>(gfx, *this);
 	}
 
 	ParticleManager::~ParticleManager()
 	{
 	}
 
-	void ParticleManager::Execute(const GraphicsDevice & gfx, const Camera& camera) const
+	void ParticleManager::ExecuteCompute(const GraphicsDevice & gfx, const Camera& camera, RenderState& renderState) const
 	{
 		const auto& context = gfx.GetContext();
 
@@ -60,25 +67,7 @@ namespace gfx
 			std::sort(particleSystemsByDistance.begin(), particleSystemsByDistance.end(), SortByDistance);
 		}
 
-		// CS - Spawn particles
-		{
-			m_pSpawnParticlesKernel->Dispatch(gfx, GetParticleSystemCount(), 1u, 1u);
-		}
-
-		// CS - Update particles
-		{
-			m_pUpdateParticlesKernel->Dispatch(gfx, maxParticles, 1u, 1u);
-		}
-
-		// CS - Cull particles
-		{
-
-		}
-
-		// CS - Sort rain particles
-		{
-
-		}
+		m_pParticleComputePass->Execute(gfx, renderState);
 
 		// Draw back rain
 		{
@@ -100,6 +89,26 @@ namespace gfx
 		{
 			//context->DrawInstancedIndirect();
 		}
+	}
+
+	const StructuredBuffer<Particle>& ParticleManager::GetParticleBuffer() const
+	{
+		return *m_pParticleBuffer;
+	}
+
+	const StructuredBuffer<ParticleSystemSettings>& ParticleManager::GetParticleSystemBuffer() const
+	{
+		return *m_pParticleSystemBuffer;
+	}
+
+	const StructuredBuffer<ParticleSystemRuntime>& ParticleManager::GetParticleSystemRuntimeBuffer() const
+	{
+		return *m_pParticleSystemRuntimeBuffer;
+	}
+
+	const size_t ParticleManager::GetMaxParticles() const
+	{
+		return m_maxParticles;
 	}
 
 	const size_t ParticleManager::GetParticleSystemCount() const
