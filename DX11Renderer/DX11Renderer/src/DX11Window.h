@@ -1,10 +1,7 @@
 #pragma once
-
 #include "BaseWindow.h"
 #include "CommonHeader.h"
 #include "WindowsInclude.h"
-#include "MouseInput.h"
-#include <optional>
 
 namespace gfx
 {

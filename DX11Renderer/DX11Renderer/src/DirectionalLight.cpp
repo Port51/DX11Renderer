@@ -65,7 +65,7 @@ namespace gfx
 	const LightData DirectionalLight::GetLightData(const dx::XMMATRIX viewMatrix) const
 	{
 		LightData light;
-		const auto posWS_Vector = dx::XMLoadFloat4(&dx::XMFLOAT4(m_positionWS.x, m_positionWS.y, m_positionWS.z, 1.0f));
+		const auto posWS_Vector = dx::XMVectorSet(m_positionWS.x, m_positionWS.y, m_positionWS.z, 1.0f);
 		const auto dirWS_Vector = dx::XMVector4Transform(dx::XMVectorSet(0, 0, 1, 0), dx::XMMatrixRotationRollPitchYaw(dx::XMConvertToRadians(m_tilt), dx::XMConvertToRadians(m_pan), 0.0f));
 		light.positionVS_range = dx::XMVectorSetW(dx::XMVector4Transform(posWS_Vector, viewMatrix), m_range); // pack range into W
 		light.color_intensity = dx::XMVectorSetW(dx::XMLoadFloat3(&m_color), m_intensity);
@@ -137,7 +137,7 @@ namespace gfx
 			}
 
 			// Calculate transforms that use stabilized sphere center
-			ViewProjTransforms transforms = GetShadowTransforms(cascadeSphereCenterWS, cascadeDistance);
+			const ViewProjTransforms transforms = GetShadowTransforms(cascadeSphereCenterWS, cascadeDistance);
 
 			// Record shadow sphere in VS
 			m_shadowCascadeSpheresVS[i] = dx::XMVectorSetW(dx::XMVector4Transform(dx::XMVectorSetW(cascadeSphereCenterWS, 1.f), context.camera.GetViewMatrix()), cascadeDistance * cascadeDistance * 0.25f); // 0.25 is because cascadeDistance is a diameter
@@ -157,12 +157,12 @@ namespace gfx
 			// This means all shadow draw calls need to be setup on the same thread
 			context.pRendererList->Filter(context.gfx, frustum, RendererList::RendererSortingType::StateThenFrontToBack, cascadeSphereCenterWS, shadowDirWS, cascadeDistance);
 			context.pRendererList->SubmitDrawCalls(drawContext);
-			auto ct = context.pRendererList->GetRendererCount();
+			const auto ct = context.pRendererList->GetRendererCount();
 
 			// Calculate tile in shadow atlas
-			int tileIdx = m_shadowAtlasTileIdx + i;
-			int tileX = (tileIdx % Config::ShadowAtlasTileDimension);
-			int tileY = (tileIdx / Config::ShadowAtlasTileDimension);
+			const int tileIdx = m_shadowAtlasTileIdx + i;
+			const int tileX = (tileIdx % Config::ShadowAtlasTileDimension);
+			const int tileY = (tileIdx / Config::ShadowAtlasTileDimension);
 
 			// todo: defer the rendering
 			{
@@ -174,7 +174,7 @@ namespace gfx
 
 			// todo: move elsewhere
 			{
-				m_lightShadowData[i].shadowMatrix = context.invViewMatrix * transforms.viewMatrix * transforms.projMatrix;
+				m_lightShadowData[i].shadowMatrix = context.camera.GetInverseViewMatrix() * transforms.viewMatrix * transforms.projMatrix;
 				dx::XMStoreUInt2(&m_lightShadowData[i].tile, dx::XMVectorSet((float)tileX, (float)tileY, 0, 0));
 			}
 		}

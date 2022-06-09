@@ -24,7 +24,8 @@ namespace gfx
 	Sampler::Sampler(const GraphicsDevice& gfx, const D3D11_FILTER filter, const D3D11_TEXTURE_ADDRESS_MODE wrapU, const D3D11_TEXTURE_ADDRESS_MODE wrapV, const D3D11_TEXTURE_ADDRESS_MODE wrapW)
 		: m_filter(filter), m_wrapU(wrapU), m_wrapV(wrapV), m_wrapW(wrapW)
 	{
-		D3D11_SAMPLER_DESC samplerDesc = {};
+		D3D11_SAMPLER_DESC samplerDesc;
+		ZERO_MEM(samplerDesc);
 		samplerDesc.Filter = filter;
 		samplerDesc.AddressU = wrapU;
 		samplerDesc.AddressV = wrapV;

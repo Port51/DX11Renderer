@@ -10,6 +10,7 @@ namespace gfx
 	class Camera;
 	class ComputeKernel;
 	class ParticleComputePass;
+	class RenderPass;
 	class RenderState;
 	class ArgsBuffer;
 
@@ -24,7 +25,8 @@ namespace gfx
 		ParticleManager(const GraphicsDevice & gfx);
 		~ParticleManager();
 	public:
-		void ExecuteCompute(const GraphicsDevice& gfx, const Camera& camera, RenderState& renderState) const;
+		void ExecuteComputePass(const GraphicsDevice& gfx, const Camera& camera, RenderState& renderState) const;
+		void ExecuteRenderPass(const GraphicsDevice& gfx, const Camera& camera, RenderState& renderState) const;
 		const StructuredBuffer<Particle>& GetParticleBuffer() const;
 		const StructuredBuffer<ParticleInstance>& GetParticleInstanceBuffer() const;
 		const StructuredBuffer<ParticleSortData>& GetParticleSortBuffer() const;
@@ -41,6 +43,7 @@ namespace gfx
 		size_t m_maxParticles;
 
 		std::unique_ptr<ParticleComputePass> m_pParticleComputePass;
+		std::unique_ptr<RenderPass> m_pParticleRenderPass;
 
 		std::shared_ptr<ArgsBuffer> m_pArgsBuffer;
 		ID3D11Buffer* m_pArgsBufferPtr;

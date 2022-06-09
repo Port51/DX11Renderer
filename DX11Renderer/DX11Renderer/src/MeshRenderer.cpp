@@ -20,16 +20,16 @@ namespace gfx
 		m_pIndexBuffer(std::move(pIndexBuffer)),
 		m_pTopology(std::move(pTopologyBuffer)),
 		m_name(name),
-		m_pMaterial(pMaterial)
+		m_pMaterial(std::move(pMaterial))
 	{
-		assert("Material cannot be null" && pMaterial != nullptr);
-		gfx.GetLog().Info("Create MeshRenderer " + name);
+		assert("Material cannot be null" && m_pMaterial != nullptr);
+		gfx.GetLog().Info("Create MeshRenderer " + m_name);
 
 		m_pTransformCbuf = std::make_shared<TransformCbuf>(gfx);
 	}
 
 	MeshRenderer::MeshRenderer(const GraphicsDevice& gfx, const std::string name, std::shared_ptr<MeshAsset> pMeshAsset, std::shared_ptr<Material> pMaterial, std::shared_ptr<VertexBufferWrapper> pVertexBuffer, std::shared_ptr<IndexBuffer> pIndexBuffer, std::shared_ptr<Topology> pTopologyBuffer)
-		: MeshRenderer(gfx, name, pMeshAsset, pMaterial, pIndexBuffer, pTopologyBuffer)
+		: MeshRenderer(gfx, name, std::move(pMeshAsset), std::move(pMaterial), std::move(pIndexBuffer), std::move(pTopologyBuffer))
 	{
 		m_pVertexBufferWrapper = std::move(pVertexBuffer);
 	}
@@ -58,7 +58,7 @@ namespace gfx
 		const auto modelMatrix = GetTransformXM();
 		const auto modelViewMatrix = modelMatrix * drawContext.viewMatrix;
 		const auto modelViewProjectMatrix = modelViewMatrix * drawContext.projMatrix;
-		Transforms transforms{ modelMatrix, modelViewMatrix, modelViewProjectMatrix };
+		const Transforms transforms{ modelMatrix, modelViewMatrix, modelViewProjectMatrix };
 		m_pTransformCbuf->UpdateTransforms(gfx, transforms);
 
 		m_pTransformCbuf->BindVS(gfx, renderState, RenderSlots::VS_TransformCB);

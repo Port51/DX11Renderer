@@ -20,11 +20,10 @@ namespace gfx
 	public:
 		ShadowPassContext(GraphicsDevice& gfx, const Camera& cam, Renderer& renderer, RenderPass& pRenderPass, ConstantBuffer<GlobalTransformCB>& transformationCB, RendererList* pRendererList);
 		virtual ~ShadowPassContext() = default;
-		void Update();
+		//void Update();
 	public:
 		GraphicsDevice& gfx;
 		const Camera& camera;
-		dx::XMMATRIX invViewMatrix;
 		Renderer& renderer;
 		RenderPass& renderPass;
 		ConstantBuffer<GlobalTransformCB>& transformationCB;

@@ -50,7 +50,8 @@ namespace gfx
 	{
 		const Image image(path);
 
-		D3D11_TEXTURE2D_DESC textureDesc = {};
+		D3D11_TEXTURE2D_DESC textureDesc;
+		ZERO_MEM(textureDesc);
 		textureDesc.Width = image.GetWidth();
 		textureDesc.Height = image.GetHeight();
 		textureDesc.MipLevels = 0; // use all mips
@@ -72,7 +73,8 @@ namespace gfx
 			m_pTexture.Get(), 0u, nullptr, image.GetData(), image.GetPitch(), 0u
 		);
 
-		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
+		ZERO_MEM(srvDesc);
 		srvDesc.Format = textureDesc.Format;
 		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 		srvDesc.Texture2D.MostDetailedMip = 0;
@@ -113,7 +115,8 @@ namespace gfx
 		}
 		else
 		{
-			D3D11_SUBRESOURCE_DATA sd = {};
+			D3D11_SUBRESOURCE_DATA sd;
+			ZERO_MEM(sd);
 			sd.pSysMem = image.GetData();
 			sd.SysMemPitch = image.GetPitch(); // distance in bytes between rows - keep in mind padding!
 

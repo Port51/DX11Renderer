@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "ParticleSystem.h"
+#include "MeshRenderer.h"
 #include "GraphicsDevice.h"
 #include "Material.h"
 #include "Topology.h"
@@ -7,8 +8,8 @@
 
 namespace gfx
 {
-	ParticleSystem::ParticleSystem(size_t maxParticleCount, dx::XMVECTOR positionWS)
-		: m_maxParticleCount(maxParticleCount), m_positionWS(positionWS)
+	ParticleSystem::ParticleSystem(const size_t maxParticleCount, const UINT argsBufferByteOffset, const dx::XMVECTOR positionWS)
+		: m_maxParticleCount(maxParticleCount), m_argsBufferByteOffset(argsBufferByteOffset), m_positionWS(positionWS)
 	{
 	}
 
@@ -26,11 +27,11 @@ namespace gfx
 		return m_positionWS;
 	}
 
-	void ParticleSystem::DrawIndirect(const GraphicsDevice & gfx, RenderState& renderState, ID3D11Buffer* pArgsBuffer, UINT byteOffset) const
+	void ParticleSystem::DrawIndirect(const GraphicsDevice & gfx, RenderState& renderState, ID3D11Buffer* const pArgsBuffer) const
 	{
 		//m_pMaterial->SubmitDrawCommands(gfx, "ParticlePass");
 		m_pTopology->BindIA(gfx, renderState, 0u);
-		gfx.GetContext()->DrawInstancedIndirect(pArgsBuffer, byteOffset);
+		gfx.GetContext()->DrawInstancedIndirect(pArgsBuffer, m_argsBufferByteOffset);
 	}
 
 	ParticleSystemSettings ParticleSystem::GetParticleSystemSettings(const size_t bufferOffset) const

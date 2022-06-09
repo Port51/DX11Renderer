@@ -23,6 +23,7 @@ namespace gfx
 		CreateDownsampledX2Texture,
 		DepthOfFieldRenderPass,
 		BloomRenderPass,
+		ParticleRenderPass,
 		SSAORenderPass,
 		SSRRenderPass,
 		FXAARenderPass,

@@ -215,10 +215,11 @@ namespace gfx
 				// Only move lights the user can't control
 				if (!light.AllowUserControl())
 				{
-					auto positionWS = dx::XMLoadFloat3(&light.GetPositionWS());
-					float theta = i * 0.52738f;
-					float speed = 0.5f * dt;
-					auto velWS = dx::XMVectorSet(std::sin(theta) * speed, 0.f, std::cos(theta) * speed, 0.f);
+					dx::XMFLOAT3 positionWS_f3 = light.GetPositionWS();
+					dx::XMVECTOR positionWS = dx::XMLoadFloat3(&positionWS_f3);
+					const float theta = i * 0.52738f;
+					const float speed = 0.5f * dt;
+					const auto velWS = dx::XMVectorSet(std::sin(theta) * speed, 0.f, std::cos(theta) * speed, 0.f);
 					positionWS = dx::XMVectorAdd(positionWS, velWS);
 
 					light.SetPositionWS(positionWS);

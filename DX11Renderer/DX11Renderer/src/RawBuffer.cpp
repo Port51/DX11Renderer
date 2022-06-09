@@ -14,7 +14,7 @@ namespace gfx
 		// Must be in chunks of 32 bits
 
 		D3D11_BUFFER_DESC bd;
-		ZeroMemory(&bd, sizeof(bd));
+		ZERO_MEM(bd);
 		bd.Usage = usage;
 		bd.ByteWidth = bytes;
 		bd.BindFlags = bindFlags;
@@ -26,6 +26,7 @@ namespace gfx
 		if (bindFlags& D3D11_BIND_SHADER_RESOURCE)
 		{
 			D3D11_SHADER_RESOURCE_VIEW_DESC srvd;
+			ZERO_MEM(srvd);
 			srvd.BufferEx.Flags = D3D11_BUFFEREX_SRV_FLAG_RAW;
 			srvd.ViewDimension = D3D11_SRV_DIMENSION_BUFFEREX;
 			
@@ -35,6 +36,7 @@ namespace gfx
 		if (bindFlags& D3D11_BIND_UNORDERED_ACCESS)
 		{
 			D3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc;
+			ZERO_MEM(uavDesc);
 			uavDesc.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
 			uavDesc.Buffer.FirstElement = 0;
 			uavDesc.Buffer.NumElements = bytes;

@@ -18,9 +18,9 @@ namespace gfx
 
 		// Create particle systems
 		{
-			m_pParticleSystems.emplace_back(std::move(std::make_unique<ParticleSystem>(128, dx::XMVectorSet(-1, 0, 0, 1))));
-			m_pParticleSystems.emplace_back(std::move(std::make_unique<ParticleSystem>(128, dx::XMVectorSet(1, 0, 0, 1))));
-			m_pParticleSystems.emplace_back(std::move(std::make_unique<ParticleSystem>(128, dx::XMVectorSet(0, 0, 0, 1))));
+			m_pParticleSystems.emplace_back(std::move(std::make_unique<ParticleSystem>(128, 4u * 0u, dx::XMVectorSet(-1, 0, 0, 1))));
+			m_pParticleSystems.emplace_back(std::move(std::make_unique<ParticleSystem>(128, 4u * 1u, dx::XMVectorSet(1, 0, 0, 1))));
+			m_pParticleSystems.emplace_back(std::move(std::make_unique<ParticleSystem>(128, 4u * 2u, dx::XMVectorSet(0, 0, 0, 1))));
 		}
 
 		const size_t psCount = GetParticleSystemCount();
@@ -34,7 +34,7 @@ namespace gfx
 			}
 
 			// Raise to next power of 2
-			m_maxParticles = 1u << (uint32_t)std::ceil(std::log2(m_maxParticles));
+			m_maxParticles = 1u << (size_t)std::ceil(std::log2(m_maxParticles));
 		}
 
 		// Create buffers and passes
@@ -63,6 +63,7 @@ namespace gfx
 			m_pParticleManagerCB->Update(gfx, initSettings);
 
 			m_pParticleComputePass = std::make_unique<ParticleComputePass>(gfx, *this);
+			m_pParticleRenderPass = std::make_unique<RenderPass>(RenderPassType::ParticleRenderPass);
 		}
 	}
 
@@ -70,7 +71,7 @@ namespace gfx
 	{
 	}
 
-	void ParticleManager::ExecuteCompute(const GraphicsDevice & gfx, const Camera& camera, RenderState& renderState) const
+	void ParticleManager::ExecuteComputePass(const GraphicsDevice & gfx, const Camera& camera, RenderState& renderState) const
 	{
 		const auto& context = gfx.GetContext();
 
@@ -120,6 +121,10 @@ namespace gfx
 		{
 			//context->DrawInstancedIndirect();
 		}
+	}
+
+	void ParticleManager::ExecuteRenderPass(const GraphicsDevice & gfx, const Camera & camera, RenderState & renderState) const
+	{
 	}
 
 	const StructuredBuffer<Particle>& ParticleManager::GetParticleBuffer() const

@@ -10,7 +10,7 @@ namespace gfx
 		const size_t elementsPerArgSet = (isIndexed ? 5u : 4u);
 
 		D3D11_BUFFER_DESC bd;
-		ZeroMemory(&bd, sizeof(bd));
+		ZERO_MEM(bd);
 		bd.Usage = D3D11_USAGE_DEFAULT;
 		bd.ByteWidth = sizeof(UINT) * elementsPerArgSet * setsOfArgs;
 		bd.BindFlags = D3D11_BIND_UNORDERED_ACCESS;

@@ -9,7 +9,8 @@ namespace gfx
 		: m_count((UINT)indices.size()),
 		m_format(DXGI_FORMAT_R16_UINT)
 	{
-		D3D11_BUFFER_DESC ibd = {};
+		D3D11_BUFFER_DESC ibd;
+		ZERO_MEM(ibd);
 		ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
 		ibd.Usage = D3D11_USAGE_DEFAULT;
 		ibd.CPUAccessFlags = 0u;
@@ -26,6 +27,7 @@ namespace gfx
 		m_format(DXGI_FORMAT_R32_UINT)
 	{
 		D3D11_BUFFER_DESC ibd = {};
+		ZERO_MEM(ibd);
 		ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
 		ibd.Usage = D3D11_USAGE_DEFAULT;
 		ibd.CPUAccessFlags = 0u;

@@ -16,7 +16,7 @@ namespace gfx
 			m_useCounter(useCounter)
 		{
 			D3D11_BUFFER_DESC bd;
-			ZeroMemory(&bd, sizeof(bd));
+			ZERO_MEM(bd);
 			bd.Usage = usage;
 			bd.ByteWidth = sizeof(T) * numElements;
 			bd.BindFlags = bindFlags;

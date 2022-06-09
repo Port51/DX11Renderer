@@ -59,6 +59,7 @@ namespace gfx
 			float specularPower = 30.0f;
 			float padding[2];
 		} pmc;
+		ZERO_MEM(pmc);
 		assert(sizeof(PSMaterialConstant) % 16 == 0);
 
 		//AddBindable(PixelConstantBuffer<PSMaterialConstant>::Resolve(gfx, std::string(assetPath), pmc, 1u));
@@ -144,7 +145,7 @@ namespace gfx
 					pPropertySlot->AddBinding(Texture::Resolve(gfx, texPath))
 						.SetupPSBinding(slotIdx);
 
-					const auto pSampler = Sampler::Resolve(gfx);
+					auto pSampler = Sampler::Resolve(gfx);
 					pPropertySlot->AddBinding(std::move(pSampler))
 						.SetupPSBinding(slotIdx);
 				}

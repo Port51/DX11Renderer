@@ -149,7 +149,7 @@ namespace gfx
 
 		// Update CB
 		LightInputCB lightInputCB;
-		ZeroMemory(&lightInputCB, sizeof(lightInputCB));
+		ZERO_MEM(lightInputCB);
 		lightInputCB.visibleLightCount = m_visibleLightCt;
 		lightInputCB.shadowAtlasTexelResolution = dx::XMVectorSet((float)Config::ShadowAtlasResolution, (float)Config::ShadowAtlasResolution, 1.f / (float)Config::ShadowAtlasResolution, 1.f / (float)Config::ShadowAtlasResolution);
 

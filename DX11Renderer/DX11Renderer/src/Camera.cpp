@@ -26,14 +26,29 @@ namespace gfx
 		return m_viewMatrix;
 	}
 
+	const dx::XMMATRIX Camera::GetInverseViewMatrix() const
+	{
+		return m_inverseViewMatrix;
+	}
+
 	const dx::XMMATRIX Camera::GetViewProjectionMatrix() const
 	{
 		return m_viewProjectionMatrix;
 	}
 
+	const dx::XMMATRIX Camera::GetInverseViewProjectionMatrix() const
+	{
+		return m_inverseViewProjectionMatrix;
+	}
+
 	const dx::XMMATRIX Camera::GetProjectionMatrix() const
 	{
 		return m_projectionMatrix;
+	}
+
+	const dx::XMMATRIX Camera::GetInverseProjectionMatrix() const
+	{
+		return m_inverseProjectionMatrix;
 	}
 
 	void Camera::SetFOV(const float _fov)
@@ -91,6 +106,7 @@ namespace gfx
 	void Camera::UpdateProjectionMatrix()
 	{
 		m_projectionMatrix = dx::XMMatrixPerspectiveFovLH(dx::XMConvertToRadians(m_fov), m_aspect, m_nearClipPlane, m_farClipPlane);
+		m_inverseProjectionMatrix = dx::XMMatrixInverse(nullptr, m_projectionMatrix);
 	}
 
 	void Camera::UpdateFrustumVS()
@@ -178,6 +194,9 @@ namespace gfx
 		m_viewMatrix = dx::XMMatrixLookAtLH(GetPositionWS(), dx::XMVectorZero(), dx::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f))
 			* dx::XMMatrixRotationRollPitchYaw(m_pitch, -m_yaw, m_roll);
 		m_viewProjectionMatrix = dx::XMMatrixMultiply(GetViewMatrix(), GetProjectionMatrix());
+
+		m_inverseViewMatrix = dx::XMMatrixInverse(nullptr, m_viewMatrix);
+		m_inverseViewProjectionMatrix = dx::XMMatrixInverse(nullptr, m_viewProjectionMatrix);
 
 		// Need to update this every frame too
 		UpdateFrustumWS();

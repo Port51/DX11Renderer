@@ -26,7 +26,8 @@ namespace gfx
 		assert(m_pDepthStencil != NULL && "Depth stencil is null!");
 
 		// Create DS View
-		D3D11_DEPTH_STENCIL_VIEW_DESC descDSV = {};
+		D3D11_DEPTH_STENCIL_VIEW_DESC descDSV;
+		ZERO_MEM(descDSV);
 		descDSV.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 		descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 		descDSV.Texture2D.MipSlice = 0u;
@@ -35,7 +36,7 @@ namespace gfx
 
 		// Create SRV
 		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
-		ZeroMemory(&srvDesc, sizeof(srvDesc));
+		ZERO_MEM(srvDesc);
 		srvDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS; // DXGI_FORMAT_D24_UNORM_S8_UINT doesn't work
 		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 		srvDesc.Texture2D.MostDetailedMip = 0;

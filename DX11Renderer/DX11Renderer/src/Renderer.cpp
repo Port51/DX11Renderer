@@ -394,7 +394,6 @@ namespace gfx
 			pass.BindSharedResources(gfx, renderState);
 
 			static ShadowPassContext context(gfx, camera, *this, pass, *m_pTransformationCB.get(), nullptr);
-			context.Update();
 
 			m_pLightManager->CullLightsAndShadows(gfx, camera, IsFeatureEnabled(RendererFeature::Shadows)); // changes the SRV, which will be bound in per-frame binds
 			if (IsFeatureEnabled(RendererFeature::Shadows))
@@ -419,7 +418,7 @@ namespace gfx
 		// Early frame calculations
 		{
 			static PerFrameCB perFrameCB;
-			ZeroMemory(&perFrameCB, sizeof(perFrameCB));
+			ZERO_MEM(perFrameCB);
 			perFrameCB.pixelSelection = { pixelSelectionX, pixelSelectionY, (UINT)m_pixelIteration, 0u };
 			perFrameCB.time = dx::XMVectorSet(timeElapsed / 20.f, timeElapsed, timeElapsed * 2.f, timeElapsed * 3.f);
 			perFrameCB.sinTime = dx::XMVectorSet(std::sin(timeElapsed / 8.f), std::sin(timeElapsed / 4.f), std::sin(timeElapsed / 2.f), std::sin(timeElapsed));
@@ -439,7 +438,7 @@ namespace gfx
 			const float farNearRatio = camera.GetFarClipPlane() / camera.GetNearClipPlane();
 
 			static PerCameraCB perCameraCB;
-			ZeroMemory(&perCameraCB, sizeof(perCameraCB));
+			ZERO_MEM(perCameraCB);
 			perCameraCB.projectionParams = dx::XMVectorSet(1.f, camera.GetNearClipPlane(), camera.GetFarClipPlane(), 1.f / camera.GetFarClipPlane());
 			perCameraCB.screenParams = dx::XMVectorSet(screenWidth, screenHeight, 1.f / screenWidth, 1.f / screenHeight);
 			perCameraCB.zBufferParams = dx::XMVectorSet(1.f - farNearRatio, farNearRatio, 1.f / camera.GetFarClipPlane() - 1.f / camera.GetNearClipPlane(), 1.f / camera.GetNearClipPlane());
@@ -526,9 +525,9 @@ namespace gfx
 			pass.UnbindSharedResources(gfx, renderState);
 		}
 
-		// Run GPU particles
+		// Run GPU particle compute
 		{
-			m_pParticleManager->ExecuteCompute(gfx, camera, renderState);
+			m_pParticleManager->ExecuteComputePass(gfx, camera, renderState);
 		}
 
 		// Normal-rough-reflectivity pass
@@ -634,6 +633,11 @@ namespace gfx
 			m_pSSRKernel->Dispatch(gfx, screenWidth, screenHeight, 1u);
 
 			pass.UnbindSharedResources(gfx, renderState);
+		}
+
+		// Run GPU particle render pass
+		{
+			m_pParticleManager->ExecuteRenderPass(gfx, camera, renderState);
 		}
 
 		// FXAA pass

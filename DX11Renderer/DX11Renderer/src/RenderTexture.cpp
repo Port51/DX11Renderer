@@ -36,7 +36,7 @@ namespace gfx
 
 		// Setup the render target texture description.
 		D3D11_TEXTURE2D_DESC rtDesc;
-		ZeroMemory(&rtDesc, sizeof(rtDesc));
+		ZERO_MEM(rtDesc);
 
 		rtDesc.Width = textureWidth;
 		rtDesc.Height = textureHeight;
@@ -55,7 +55,7 @@ namespace gfx
 
 		// Setup the description of the render target view.
 		D3D11_RENDER_TARGET_VIEW_DESC rtViewDesc;
-		ZeroMemory(&rtViewDesc, sizeof(rtViewDesc));
+		ZERO_MEM(rtViewDesc);
 		rtViewDesc.Format = rtDesc.Format;
 		rtViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
 		rtViewDesc.Texture2D.MipSlice = 0;
@@ -65,7 +65,7 @@ namespace gfx
 
 		// Setup the description of the shader resource view.
 		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
-		ZeroMemory(&srvDesc, sizeof(srvDesc));
+		ZERO_MEM(srvDesc);
 		srvDesc.Format = rtDesc.Format;
 		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 		srvDesc.Texture2D.MostDetailedMip = 0;

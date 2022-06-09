@@ -20,9 +20,9 @@ namespace gfx
 	public:
 		RandomGenerator();
 	public:
-		const int GetUniformInt(const int minInclusive, const int maxExclusive);
-		const float GetUniformFloat(const float minInclusive, const float maxExclusive);
-		const float GetUniformFloat01();
+		const int GetUniformInt(const int minInclusive, const int maxExclusive) const;
+		const float GetUniformFloat(const float minInclusive, const float maxExclusive) const;
+		const float GetUniformFloat01() const;
 		const dx::XMVECTOR GetRandomUnitVector(const float wValue);
 	private:
 		std::unique_ptr<std::random_device> m_pRandomDevice;

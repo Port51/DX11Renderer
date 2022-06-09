@@ -1,5 +1,7 @@
 #pragma once
 
+#define ZERO_MEM(x) ZeroMemory(&x, sizeof(x))
+
 #include <wrl.h>
 using namespace Microsoft::WRL;
 

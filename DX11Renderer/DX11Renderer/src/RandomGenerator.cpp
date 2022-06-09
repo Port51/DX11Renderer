@@ -13,26 +13,26 @@ namespace gfx
 		m_pUniformFloatDistribution01 = std::make_unique<std::uniform_real_distribution<float>>(0.f, 1.f);
 	}
 
-	const int RandomGenerator::GetUniformInt(const int minInclusive, const int maxExclusive)
+	const int RandomGenerator::GetUniformInt(const int minInclusive, const int maxExclusive) const
 	{
-		std::uniform_int_distribution<int> distribution(minInclusive, maxExclusive);
+		const std::uniform_int_distribution<int> distribution(minInclusive, maxExclusive);
 		return distribution(*m_pGenerator);
 	}
 
-	const float RandomGenerator::GetUniformFloat(const float minInclusive, const float maxExclusive)
+	const float RandomGenerator::GetUniformFloat(const float minInclusive, const float maxExclusive) const
 	{
-		std::uniform_real_distribution<float> distribution(minInclusive, maxExclusive);
+		const std::uniform_real_distribution<float> distribution(minInclusive, maxExclusive);
 		return distribution(*m_pGenerator);
 	}
 
-	const float RandomGenerator::GetUniformFloat01()
+	const float RandomGenerator::GetUniformFloat01() const
 	{
 		return (*m_pUniformFloatDistribution01.get())(*m_pGenerator);
 	}
 
 	const dx::XMVECTOR RandomGenerator::GetRandomUnitVector(const float wValue)
 	{
-		auto& f01 = (*m_pUniformFloatDistribution01.get());
+		const auto& f01 = (*m_pUniformFloatDistribution01.get());
 		return dx::XMVector3Normalize(dx::XMVectorSet(
 			f01(*m_pGenerator) * 2.f - 1.f,
 			f01(*m_pGenerator) * 2.f - 1.f,

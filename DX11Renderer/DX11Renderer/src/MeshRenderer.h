@@ -38,7 +38,7 @@ namespace gfx
 		const u64 GetMaterialCode() const;
 		virtual void IssueDrawCall(const GraphicsDevice& gfx) const;
 	protected:
-		std::string m_name;
+		const std::string m_name;
 		std::shared_ptr<Material> m_pMaterial; // keep separate from other bindables for now...
 		mutable dx::XMFLOAT4X4 m_transform;
 	protected:

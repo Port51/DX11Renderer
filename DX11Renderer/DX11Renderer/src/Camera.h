@@ -14,8 +14,11 @@ namespace gfx
 		const dx::XMVECTOR GetPositionWS() const;
 		const dx::XMVECTOR GetForwardWS() const;
 		const dx::XMMATRIX GetViewMatrix() const;
+		const dx::XMMATRIX GetInverseViewMatrix() const;
 		const dx::XMMATRIX GetViewProjectionMatrix() const;
+		const dx::XMMATRIX GetInverseViewProjectionMatrix() const;
 		const dx::XMMATRIX GetProjectionMatrix() const;
+		const dx::XMMATRIX GetInverseProjectionMatrix() const;
 		const dx::XMVECTOR GetFrustumCornersVS() const;
 		const dx::XMVECTOR GetInverseFrustumCornersVS() const;
 		const dx::XMVECTOR GetGPUFrustumPlaneDirVS() const;
@@ -45,8 +48,11 @@ namespace gfx
 		float m_fov = 40.0f;
 		float m_aspect = 0.75f;
 		dx::XMMATRIX m_viewMatrix;
+		dx::XMMATRIX m_inverseViewMatrix;
 		dx::XMMATRIX m_viewProjectionMatrix;
+		dx::XMMATRIX m_inverseViewProjectionMatrix;
 		dx::XMMATRIX m_projectionMatrix;
+		dx::XMMATRIX m_inverseProjectionMatrix;
 		Frustum m_frustumWS;
 		Frustum m_frustumVS;
 		dx::XMVECTOR m_frustumCornersVS;

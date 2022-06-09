@@ -96,9 +96,9 @@ namespace gfx
 
 		// Precalculate sphere radius
 		// (The shader math is the same, but it's easier to tune lights this way)
-		float invSphereRad = m_attenuationQ / std::sqrtf(m_range);
+		const float invSphereRad = m_attenuationQ / std::sqrtf(m_range);
 
-		const auto posWS_Vector = dx::XMLoadFloat4(&dx::XMFLOAT4(m_positionWS.x, m_positionWS.y, m_positionWS.z, 1.0f));
+		const auto posWS_Vector = dx::XMVectorSet(m_positionWS.x, m_positionWS.y, m_positionWS.z, 1.0f);
 		light.positionVS_range = dx::XMVectorSetW(dx::XMVector4Transform(posWS_Vector, viewMatrix), m_range); // pack range into W
 		light.color_intensity = dx::XMVectorSetW(dx::XMLoadFloat3(&m_color), m_intensity);
 		light.directionVS = dx::XMVectorSet(0, 0, 0, (float)m_shadowAtlasTileIdx);
@@ -141,12 +141,12 @@ namespace gfx
 			// This means all shadow draw calls need to be setup on the same thread
 			context.pRendererList->Filter(context.gfx, frustum, RendererList::RendererSortingType::StateThenFrontToBack, lightPosWS, viewDirectionsWS[i * 2u + 0u], m_range);
 			context.pRendererList->SubmitDrawCalls(drawContext);
-			auto ct = context.pRendererList->GetRendererCount();
+			const auto ct = context.pRendererList->GetRendererCount();
 
 			// Calculate tile in shadow atlas
-			int tileIdx = m_shadowAtlasTileIdx + i;
-			int tileX = (tileIdx % Config::ShadowAtlasTileDimension);
-			int tileY = (tileIdx / Config::ShadowAtlasTileDimension);
+			const int tileIdx = m_shadowAtlasTileIdx + i;
+			const int tileX = (tileIdx % Config::ShadowAtlasTileDimension);
+			const int tileY = (tileIdx / Config::ShadowAtlasTileDimension);
 
 			// todo: defer the rendering
 			{
@@ -158,7 +158,7 @@ namespace gfx
 
 			// todo: move elsewhere
 			{
-				lightShadowData[i].shadowMatrix = context.invViewMatrix * viewMatrix * projMatrix;
+				lightShadowData[i].shadowMatrix = context.camera.GetInverseViewMatrix() * viewMatrix * projMatrix;
 				dx::XMStoreUInt2(&lightShadowData[i].tile, dx::XMVectorSet(tileX, tileY, 0, 0));
 			}
 		}

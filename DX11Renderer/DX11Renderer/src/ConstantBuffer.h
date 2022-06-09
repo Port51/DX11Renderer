@@ -17,7 +17,7 @@ namespace gfx
 			: Buffer(usage, D3D11_BIND_CONSTANT_BUFFER, GetCBufferSize(sizeof(T)))
 		{
 			D3D11_BUFFER_DESC bd;
-			ZeroMemory(&bd, sizeof(bd));
+			ZERO_MEM(bd);
 			bd.Usage = usage;
 			bd.ByteWidth = GetCBufferSize(sizeof(T));
 			bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
@@ -31,7 +31,7 @@ namespace gfx
 			: Buffer(usage, D3D11_BIND_CONSTANT_BUFFER, GetCBufferSize(sizeof(T)))
 		{
 			D3D11_BUFFER_DESC bd;
-			ZeroMemory(&bd, sizeof(bd));
+			ZERO_MEM(bd);
 			bd.Usage = usage;
 			bd.ByteWidth = GetCBufferSize(sizeof(T));
 			bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
@@ -39,7 +39,7 @@ namespace gfx
 			bd.StructureByteStride = 0u;
 
 			D3D11_SUBRESOURCE_DATA sd;
-			ZeroMemory(&sd, sizeof(sd));
+			ZERO_MEM(sd);
 			sd.pSysMem = (void*)&initialData;
 			THROW_IF_FAILED(gfx.GetAdapter()->CreateBuffer(&bd, &sd, &m_pBuffer));
 		}
