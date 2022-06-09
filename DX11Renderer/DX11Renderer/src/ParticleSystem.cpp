@@ -1,6 +1,9 @@
 #include "pch.h"
 #include "ParticleSystem.h"
 #include "GraphicsDevice.h"
+#include "Material.h"
+#include "Topology.h"
+#include "RenderState.h"
 
 namespace gfx
 {
@@ -23,8 +26,19 @@ namespace gfx
 		return m_positionWS;
 	}
 
-	void ParticleSystem::DrawIndirect(const GraphicsDevice & gfx) const
+	void ParticleSystem::DrawIndirect(const GraphicsDevice & gfx, RenderState& renderState, ID3D11Buffer* pArgsBuffer, UINT byteOffset) const
 	{
-		//gfx.GetContext()->DrawInstancedIndirect();
+		//m_pMaterial->SubmitDrawCommands(gfx, "ParticlePass");
+		m_pTopology->BindIA(gfx, renderState, 0u);
+		gfx.GetContext()->DrawInstancedIndirect(pArgsBuffer, byteOffset);
+	}
+
+	ParticleSystemSettings ParticleSystem::GetParticleSystemSettings(const size_t bufferOffset) const
+	{
+		ParticleSystemSettings pss;
+		pss.emitPositionWS = m_positionWS;
+		pss.maxParticles = m_maxParticleCount;
+		pss.bufferOffset = bufferOffset;
+		return pss;
 	}
 }

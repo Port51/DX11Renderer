@@ -372,7 +372,7 @@ namespace gfx
 		m_pRenderPasses[targetPass]->EnqueueJob(std::move(job));
 	}
 
-	void Renderer::Execute(GraphicsDevice& gfx, const Camera& camera, const float timeElapsed, const UINT pixelSelectionX, const UINT pixelSelectionY)
+	void Renderer::Execute(GraphicsDevice& gfx, const Camera& camera, const float timeStep, const float timeElapsed, const UINT pixelSelectionX, const UINT pixelSelectionY)
 	{
 		auto context = gfx.GetContext();
 		const UINT screenWidth = gfx.GetScreenWidth();
@@ -421,9 +421,10 @@ namespace gfx
 			static PerFrameCB perFrameCB;
 			ZeroMemory(&perFrameCB, sizeof(perFrameCB));
 			perFrameCB.pixelSelection = { pixelSelectionX, pixelSelectionY, (UINT)m_pixelIteration, 0u };
-			perFrameCB.time = { timeElapsed / 20.f, timeElapsed, timeElapsed * 2.f, timeElapsed * 3.f };
-			perFrameCB.sinTime = { std::sin(timeElapsed / 8.f), std::sin(timeElapsed / 4.f), std::sin(timeElapsed / 2.f), std::sin(timeElapsed) };
-			perFrameCB.cosTime = { std::cos(timeElapsed / 8.f), std::cos(timeElapsed / 4.f), std::cos(timeElapsed / 2.f), std::cos(timeElapsed) };
+			perFrameCB.time = dx::XMVectorSet(timeElapsed / 20.f, timeElapsed, timeElapsed * 2.f, timeElapsed * 3.f);
+			perFrameCB.sinTime = dx::XMVectorSet(std::sin(timeElapsed / 8.f), std::sin(timeElapsed / 4.f), std::sin(timeElapsed / 2.f), std::sin(timeElapsed));
+			perFrameCB.cosTime = dx::XMVectorSet(std::cos(timeElapsed / 8.f), std::cos(timeElapsed / 4.f), std::cos(timeElapsed / 2.f), std::cos(timeElapsed));
+			perFrameCB.timeStep = dx::XMVectorSet(timeStep, std::min(timeStep, 1.f / 30.f), std::min(timeStep, 1.f / 60.f), timeStep);
 			m_pPerFrameCB->Update(gfx, perFrameCB);
 
 			static GlobalTransformCB transformationCB;
@@ -445,6 +446,7 @@ namespace gfx
 			perCameraCB.orthoParams = dx::XMVectorSet(0.f, 0.f, 0.f, 0.f);
 			perCameraCB.frustumCornerDataVS = camera.GetFrustumCornersVS();
 			perCameraCB.inverseFrustumCornerDataVS = camera.GetInverseFrustumCornersVS();
+			perCameraCB.frustumPlaneDirVS = camera.GetGPUFrustumPlaneDirVS();
 			perCameraCB.cameraPositionWS = camera.GetPositionWS();
 			perCameraCB.useOcclusion = IsFeatureEnabled(RendererFeature::SSAO) ? 1u : 0u;
 

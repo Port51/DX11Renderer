@@ -19,6 +19,7 @@ namespace gfx
 		dx::XMVECTOR time; // (t/20, t, t*2, t*3)
 		dx::XMVECTOR sinTime; // sin(t/8), sin(t/4), sin(t/2), sin(t)
 		dx::XMVECTOR cosTime; // cos(t/8), cos(t/4), cos(t/2), cos(t)
+		dx::XMVECTOR timeStep; // so far, all components just contain the timestep
 	};
 
 	struct alignas(16) GlobalTransformCB
@@ -65,6 +66,7 @@ namespace gfx
 
 		dx::XMVECTOR frustumCornerDataVS;
 		dx::XMVECTOR inverseFrustumCornerDataVS;
+		dx::XMVECTOR frustumPlaneDirVS;
 		dx::XMVECTOR cameraPositionWS;
 		dx::XMVECTOR clusterPrecalc;
 		dx::XMVECTOR clusterXYRemap;

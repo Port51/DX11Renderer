@@ -63,6 +63,11 @@ namespace gfx
 		return m_inverseFrustumCornersVS;
 	}
 
+	const dx::XMVECTOR Camera::GetGPUFrustumPlaneDirVS() const
+	{
+		return m_gpuFrustumPlaneDirVS;
+	}
+
 	const Frustum& Camera::GetFrustumWS() const
 	{
 		return m_frustumWS;
@@ -103,6 +108,8 @@ namespace gfx
 
 		m_frustumVS.UpdatePlanesFromMatrix(GetProjectionMatrix());
 		//m_frustumVS.UpdatePlanesFromViewSpaceCorners(m_frustumCornersVS, m_nearClipPlane, m_farClipPlane);
+
+		m_gpuFrustumPlaneDirVS = m_frustumVS.GetGPUFrustumPlaneDir();
 	}
 
 	void Camera::UpdateFrustumWS()

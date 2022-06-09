@@ -420,6 +420,9 @@
     <ClCompile Include="src\ParticleComputePass.cpp">
       <Filter>Source\RenderJobs\Passes</Filter>
     </ClCompile>
+    <ClCompile Include="src\ArgsBuffer.cpp">
+      <Filter>Source\Bindable\Buffers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -727,6 +730,9 @@
     </ClInclude>
     <ClInclude Include="src\ParticleComputePass.h">
       <Filter>Headers\RenderJobs\Passes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ArgsBuffer.h">
+      <Filter>Headers\Bindable\Buffers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

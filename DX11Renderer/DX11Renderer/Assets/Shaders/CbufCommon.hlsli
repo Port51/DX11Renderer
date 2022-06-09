@@ -7,6 +7,7 @@ cbuffer PerFrameCB : register(b0)
     float4 _Time; // (t/20, t, t*2, t*3)
     float4 _SinTime; // sin(t/8), sin(t/4), sin(t/2), sin(t)
     float4 _CosTime; // cos(t/8), cos(t/4), cos(t/2), cos(t)
+	float4 _TimeStep;
 };
 
 cbuffer GlobalTransformCB : register(b1)
@@ -53,6 +54,7 @@ cbuffer PerCameraCB : register(b2)
     
     float4 _FrustumCornerDataVS;
     float4 _InverseFrustumCornerDataVS;
+	float4 _FrustumPlaneDirVS; // (x, z, y, z)
     
     float4 _CameraPositionWS;
     

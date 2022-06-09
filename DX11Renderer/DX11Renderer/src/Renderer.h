@@ -51,7 +51,7 @@ namespace gfx
 		virtual void Release();
 	public:
 		void AcceptDrawCall(DrawCall job, const RenderPassType targetPass);
-		void Execute(GraphicsDevice& gfx, const Camera& cam, const float timeElapsed, const UINT pixelSelectionX, const UINT pixelSelectionY);
+		void Execute(GraphicsDevice& gfx, const Camera& cam, const float timeStep, const float timeElapsed, const UINT pixelSelectionX, const UINT pixelSelectionY);
 		void DrawImguiControlWindow(const GraphicsDevice& gfx);
 		void Reset();
 		bool IsFeatureEnabled(RendererFeature feature) const;

@@ -105,6 +105,17 @@ namespace gfx
 		dx::XMStoreFloat4(&planes[1], dx::XMVectorSet(0.f, 0.f, -1.f, farPlane));
 	}
 
+	const dx::XMVECTOR Frustum::GetGPUFrustumPlaneDir() const
+	{
+		const auto v0 = dx::XMLoadFloat4(&planes[2]);
+		const auto v1 = dx::XMLoadFloat4(&planes[5]);
+		return dx::XMVectorSet(
+			dx::XMVectorGetX(v0),
+			-dx::XMVectorGetZ(v0),
+			dx::XMVectorGetY(v1),
+			-dx::XMVectorGetZ(v1));
+	}
+
 	// Fast version that only checks for intersection
 	const bool Frustum::DoesAABBIntersect(const AABB& aabb, const dx::XMVECTOR aabbObjectPosition) const
 	{

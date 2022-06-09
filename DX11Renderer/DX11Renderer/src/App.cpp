@@ -180,7 +180,7 @@ namespace gfx
 	void App::ExecuteFrame()
 	{
 		static float timeElapsed = 0.f;
-		auto dt = m_pTimer->Mark();
+		const float dt = m_pTimer->Mark();
 		timeElapsed += dt;
 
 		// Process input
@@ -228,7 +228,7 @@ namespace gfx
 
 		Gfx().BeginFrame();
 
-		m_pRenderer->Execute(Gfx(), *m_pCamera.get(), timeElapsed, m_pixelSelectionX, m_pixelSelectionY);
+		m_pRenderer->Execute(Gfx(), *m_pCamera.get(), dt, timeElapsed, m_pixelSelectionX, m_pixelSelectionY);
 
 		// Draw Imgui windows
 		{

@@ -18,6 +18,7 @@ namespace gfx
 		// Typically, the matrix will be either the projection matrix or view-projection matrix
 		void UpdatePlanesFromMatrix(dx::XMMATRIX matrix);
 		void UpdatePlanesFromViewSpaceCorners(const dx::XMVECTOR frustumCorners, const float nearPlane, const float farPlane);
+		const dx::XMVECTOR GetGPUFrustumPlaneDir() const;
 	public:
 		const bool DoesAABBIntersect(const AABB& aabb, const dx::XMVECTOR aabbObjectPosition) const;
 		const bool DoesAABBIntersect(const AABB& aabb, const dx::XMVECTOR aabbObjectPosition, IntersectionType& intersectionType) const;

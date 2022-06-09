@@ -22,6 +22,8 @@ namespace gfx
 		enum ParticleComputeSubpass : UINT {
 			SpawnParticlesSubpass,
 			UpdateParticlesSubpass,
+			FrustumCullSubpass,
+			SetupInstanceBuffer,
 		};
 	public:
 		ParticleComputePass(const GraphicsDevice& gfx, const ParticleManager& particleManager);
@@ -32,5 +34,7 @@ namespace gfx
 		const ParticleManager& m_particleManager;
 		std::unique_ptr<ComputeKernel> m_pSpawnParticlesKernel;
 		std::unique_ptr<ComputeKernel> m_pUpdateParticlesKernel;
+		std::unique_ptr<ComputeKernel> m_pFrustumCullKernel;
+		std::unique_ptr<ComputeKernel> m_pSetupInstanceBufferKernel;
 	};
 }

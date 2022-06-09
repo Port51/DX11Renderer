@@ -18,6 +18,7 @@ namespace gfx
 		const dx::XMMATRIX GetProjectionMatrix() const;
 		const dx::XMVECTOR GetFrustumCornersVS() const;
 		const dx::XMVECTOR GetInverseFrustumCornersVS() const;
+		const dx::XMVECTOR GetGPUFrustumPlaneDirVS() const;
 		const Frustum& GetFrustumWS() const;
 		const Frustum& GetFrustumVS() const;
 		const float GetNearClipPlane() const;
@@ -50,6 +51,7 @@ namespace gfx
 		Frustum m_frustumVS;
 		dx::XMVECTOR m_frustumCornersVS;
 		dx::XMVECTOR m_inverseFrustumCornersVS;
+		dx::XMVECTOR m_gpuFrustumPlaneDirVS;
 		dx::XMVECTOR m_forwardWS;
 		dx::XMVECTOR m_positionWS;
 	};
