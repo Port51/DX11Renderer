@@ -435,6 +435,7 @@
     <None Include="Assets\Shaders\Lighting\Diffuse.hlsli" />
     <None Include="Assets\Models\DefaultSphere.asset" />
     <None Include="Assets\Shaders\Lighting\Shadows.hlsli" />
+    <None Include="Assets\Materials\FireParticleMaterial.asset" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Shaders\BilinearDownsample.hlsl">

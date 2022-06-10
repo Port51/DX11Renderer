@@ -20,6 +20,7 @@ namespace gfx
 		TiledLightingRenderPass,
 		ClusteredLightingRenderPass,
 		OpaqueRenderPass,
+		TransparentRenderPass,
 		CreateDownsampledX2Texture,
 		DepthOfFieldRenderPass,
 		BloomRenderPass,

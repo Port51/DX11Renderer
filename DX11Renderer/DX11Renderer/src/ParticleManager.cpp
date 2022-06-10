@@ -10,6 +10,7 @@
 #include "ParticleComputePass.h"
 #include "RenderState.h"
 #include "ArgsBuffer.h"
+#include "Material.h"
 
 namespace gfx
 {
@@ -18,9 +19,11 @@ namespace gfx
 
 		// Create particle systems
 		{
-			m_pParticleSystems.emplace_back(std::move(std::make_unique<ParticleSystem>(128, 4u * 0u, dx::XMVectorSet(-1, 0, 0, 1))));
-			m_pParticleSystems.emplace_back(std::move(std::make_unique<ParticleSystem>(128, 4u * 1u, dx::XMVectorSet(1, 0, 0, 1))));
-			m_pParticleSystems.emplace_back(std::move(std::make_unique<ParticleSystem>(128, 4u * 2u, dx::XMVectorSet(0, 0, 0, 1))));
+			auto pFireMaterial = std::dynamic_pointer_cast<Material>(Material::Resolve(gfx, "Assets\\Materials\\FireParticleMaterial.asset"));
+
+			m_pParticleSystems.emplace_back(std::move(std::make_unique<ParticleSystem>(pFireMaterial, 128, dx::XMVectorSet(-1, 0, 0, 1))));
+			m_pParticleSystems.emplace_back(std::move(std::make_unique<ParticleSystem>(pFireMaterial, 128, dx::XMVectorSet(1, 0, 0, 1))));
+			m_pParticleSystems.emplace_back(std::move(std::make_unique<ParticleSystem>(pFireMaterial, 128, dx::XMVectorSet(0, 0, 0, 1))));
 		}
 
 		const size_t psCount = GetParticleSystemCount();
@@ -64,6 +67,12 @@ namespace gfx
 
 			m_pParticleComputePass = std::make_unique<ParticleComputePass>(gfx, *this);
 			m_pParticleRenderPass = std::make_unique<RenderPass>(RenderPassType::ParticleRenderPass);
+		}
+
+		// Link particle systems to buffers
+		for (int i = 0, ct = m_pParticleSystems.size(); i < ct; ++i)
+		{
+			m_pParticleSystems[i]->SetupArgsBuffer(m_pArgsBuffer, 4u * i);
 		}
 	}
 
