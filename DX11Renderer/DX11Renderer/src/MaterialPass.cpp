@@ -1,9 +1,9 @@
 #include "pch.h"
 #include "MaterialPass.h"
-#include "MeshRenderer.h"
+#include "Drawable.h"
 #include "Binding.h"
 #include "DrawContext.h"
-#include "DrawCall.h"
+#include "DrawCommand.h"
 #include "VertexShader.h"
 #include "PixelShader.h"
 #include "InputLayout.h"
@@ -88,9 +88,9 @@ namespace gfx
 		return m_renderPass;
 	}
 
-	void MaterialPass::SubmitDrawCommands(const MeshRenderer& meshRenderer, const DrawContext& drawContext, const BindingList* const pPropertyBindings) const
+	void MaterialPass::SubmitDrawCommands(const Drawable& drawable, const DrawContext& drawContext, const BindingList* const pPropertyBindings) const
 	{
-		drawContext.renderer.AcceptDrawCall(std::move(DrawCall(this, &meshRenderer, drawContext, pPropertyBindings)), m_renderPass);
+		drawContext.renderer.AcceptDrawCall(std::move(DrawCommand(this, &drawable, drawContext, pPropertyBindings)), m_renderPass);
 	}
 
 	void MaterialPass::Bind(const GraphicsDevice & gfx, RenderState& renderState) const

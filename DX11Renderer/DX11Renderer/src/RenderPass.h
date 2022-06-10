@@ -2,7 +2,7 @@
 #include "CommonHeader.h"
 #include "RenderConstants.h"
 #include "GraphicsDevice.h"
-#include "DrawCall.h"
+#include "DrawCommand.h"
 #include <vector>
 #include "CommonCbuffers.h"
 #include "Binding.h"
@@ -23,7 +23,7 @@ namespace gfx
 		virtual ~RenderPass() = default;
 	public:
 		const RenderPassType GetRenderPassType() const;
-		void EnqueueJob(DrawCall job);
+		void EnqueueJob(DrawCommand job);
 		virtual void BindSharedResources(const GraphicsDevice& gfx, RenderState& renderState) const;
 		virtual void UnbindSharedResources(const GraphicsDevice& gfx, RenderState& renderState) const;
 		virtual void Execute(const GraphicsDevice& gfx, RenderState& renderState) const;
@@ -54,7 +54,7 @@ namespace gfx
 	protected:
 		std::vector<Binding> m_bindings;
 		const RenderPassType m_renderPassType;
-		std::vector<DrawCall> m_jobs; // will be replaced by render graph
+		std::vector<DrawCommand> m_jobs; // will be replaced by render graph
 
 		// Binds shared by everything in this render pass
 		std::vector<std::pair<UINT, ComPtr<ID3D11Buffer>>> m_CS_CB_Binds;

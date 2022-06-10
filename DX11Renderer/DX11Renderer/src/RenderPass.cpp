@@ -19,7 +19,7 @@ namespace gfx
 		return m_renderPassType;
 	}
 
-	void RenderPass::EnqueueJob(DrawCall job)
+	void RenderPass::EnqueueJob(DrawCommand job)
 	{
 		m_jobs.push_back(std::move(job));
 	}

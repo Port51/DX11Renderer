@@ -12,7 +12,7 @@ namespace gfx
 	class VertexShader;
 	class PixelShader;
 	class MaterialPass;
-	class MeshRenderer;
+	class Drawable;
 	class Renderer;
 	class VertexLayout;
 	class BindingList;
@@ -27,7 +27,7 @@ namespace gfx
 		Material(const GraphicsDevice& gfx, const std::string_view assetPath);
 		virtual void Release() override;
 		void Bind(const GraphicsDevice& gfx, const std::string_view passName);
-		void SubmitDrawCommands(const MeshRenderer& meshRenderer, const DrawContext& drawContext) const;
+		void SubmitDrawCommands(const Drawable& drawable, const DrawContext& drawContext) const;
 	public:
 		const u64 GetMaterialCode() const;
 		const VertexLayout& GetVertexLayout() const;

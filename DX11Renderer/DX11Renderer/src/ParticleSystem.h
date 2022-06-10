@@ -1,5 +1,5 @@
 #pragma once
-#include "MeshRenderer.h"
+#include "Drawable.h"
 #include "CommonHeader.h"
 #include "ParticleCommon.h"
 
@@ -10,7 +10,7 @@ namespace gfx
 	class Topology;
 	class RenderState;
 
-	class ParticleSystem //: public MeshRenderer
+	class ParticleSystem : public Drawable
 	{
 	public:
 		ParticleSystem(const size_t maxParticleCount, const UINT argsBufferByteOffset, const dx::XMVECTOR positionWS);
@@ -18,8 +18,10 @@ namespace gfx
 	public:
 		const size_t GetMaxParticleCount() const;
 		const dx::XMVECTOR GetPositionWS() const;
-		void DrawIndirect(const GraphicsDevice& gfx, RenderState& renderState, ID3D11Buffer* const pArgsBuffer) const;
 		ParticleSystemSettings GetParticleSystemSettings(const size_t bufferOffset = 0u) const;
+	public:
+		void Bind(const GraphicsDevice& gfx, RenderState& renderState, const DrawContext& drawContext) const override;
+		void IssueDrawCall(const GraphicsDevice& gfx) const override;
 	protected:
 		const UINT m_argsBufferByteOffset;
 		const size_t m_maxParticleCount;

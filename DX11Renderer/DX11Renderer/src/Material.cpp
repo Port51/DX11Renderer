@@ -20,6 +20,7 @@
 #include "RasterizerState.h"
 #include "BindingList.h"
 #include "RenderConstants.h"
+#include "Drawable.h"
 
 #include <fstream>
 #include <sstream>
@@ -189,7 +190,7 @@ namespace gfx
 		// Is this needed?
 	}
 
-	void Material::SubmitDrawCommands(const MeshRenderer& meshRenderer, const DrawContext& drawContext) const
+	void Material::SubmitDrawCommands(const Drawable& drawable, const DrawContext& drawContext) const
 	{
 		// Only submit draw calls for passes contained in draw context
 		for (const auto& passName : drawContext.renderPasses)
@@ -199,7 +200,7 @@ namespace gfx
 				const auto& pMaterialPass = m_pMaterialPassesByType.at(passName);
 				const auto propertySlotIdx = pMaterialPass->GetPropertySlot();
  				const BindingList* const pPropertySlot = (propertySlotIdx != -1) ? m_pPropertySlots[propertySlotIdx].get() : nullptr;
-				pMaterialPass->SubmitDrawCommands(meshRenderer, drawContext, pPropertySlot);
+				pMaterialPass->SubmitDrawCommands(drawable, drawContext, pPropertySlot);
 			}
 		}
 	}

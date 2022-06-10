@@ -219,7 +219,7 @@
     <ClCompile Include="src\DirectionalLight.cpp">
       <Filter>Source\Lights</Filter>
     </ClCompile>
-    <ClCompile Include="src\DrawCall.cpp">
+    <ClCompile Include="src\DrawCommand.cpp">
       <Filter>Source\RenderJobs</Filter>
     </ClCompile>
     <ClCompile Include="src\Sampler.cpp">
@@ -476,7 +476,7 @@
     <ClInclude Include="src\DirectionalLight.h">
       <Filter>Headers\Lights</Filter>
     </ClInclude>
-    <ClInclude Include="src\DrawCall.h">
+    <ClInclude Include="src\DrawCommand.h">
       <Filter>Headers\RenderJobs</Filter>
     </ClInclude>
     <ClInclude Include="src\DrawContext.h">
@@ -733,6 +733,9 @@
     </ClInclude>
     <ClInclude Include="src\ArgsBuffer.h">
       <Filter>Headers\Bindable\Buffers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Drawable.h">
+      <Filter>Headers\Drawable</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

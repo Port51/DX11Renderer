@@ -5,7 +5,7 @@
 namespace gfx
 {
 	class GraphicsDevice;
-	class MeshRenderer;
+	class Drawable;
 	class Renderer;
 	class PixelShader;
 	class VertexShader;
@@ -35,7 +35,7 @@ namespace gfx
 		void SetPropertySlot(const int slotIdx);
 		void SetRenderPass(const RenderPassType renderPass);
 		const RenderPassType GetRenderPass() const;
-		void SubmitDrawCommands(const MeshRenderer& meshRenderer, const DrawContext& drawContext, const BindingList* const pPropertyBindings) const;
+		void SubmitDrawCommands(const Drawable& drawable, const DrawContext& drawContext, const BindingList* const pPropertyBindings) const;
 		void Bind(const GraphicsDevice& gfx, RenderState& renderState) const;
 	private:
 		int m_propertySlotIdx = -1;

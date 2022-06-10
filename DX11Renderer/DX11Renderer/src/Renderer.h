@@ -11,7 +11,7 @@ namespace gfx
 	class Camera;
 	class LightManager;
 	class RendererList;
-	class DrawCall;
+	class DrawCommand;
 	class RenderPass;
 	class DepthStencilTarget;
 	class RenderTexture;
@@ -50,7 +50,7 @@ namespace gfx
 		virtual ~Renderer();
 		virtual void Release();
 	public:
-		void AcceptDrawCall(DrawCall job, const RenderPassType targetPass);
+		void AcceptDrawCall(DrawCommand job, const RenderPassType targetPass);
 		void Execute(GraphicsDevice& gfx, const Camera& cam, const float timeStep, const float timeElapsed, const UINT pixelSelectionX, const UINT pixelSelectionY);
 		void DrawImguiControlWindow(const GraphicsDevice& gfx);
 		void Reset();

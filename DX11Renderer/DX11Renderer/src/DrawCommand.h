@@ -2,22 +2,22 @@
 
 namespace gfx
 {
-	class MeshRenderer;
+	class Drawable;
 	class GraphicsDevice;
 	class MaterialPass;
 	class BindingList;
 
 	struct DrawContext;
 
-	class DrawCall
+	class DrawCommand
 	{
 	public:
-		DrawCall(const MaterialPass* const pMaterialPass, const MeshRenderer* const pRenderer, const DrawContext& drawContext, const BindingList* const pPropertyBindings);
-		virtual ~DrawCall() = default;
+		DrawCommand(const MaterialPass* const pMaterialPass, const Drawable* const pDrawable, const DrawContext& drawContext, const BindingList* const pPropertyBindings);
+		virtual ~DrawCommand() = default;
 	public:
 		void Execute(const GraphicsDevice& gfx, RenderState& renderState) const;
 	private:
-		const MeshRenderer* const m_pRenderer;
+		const Drawable* const m_pDrawable;
 		const MaterialPass* const m_pMaterialPass;
 		const DrawContext* const m_pDrawContext;
 		const BindingList* const m_pPropertyBindings;

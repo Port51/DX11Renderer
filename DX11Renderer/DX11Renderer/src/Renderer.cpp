@@ -4,7 +4,7 @@
 #include "Renderer.h"
 #include "DepthStencilState.h"
 #include "GraphicsDevice.h"
-#include "DrawCall.h"
+#include "DrawCommand.h"
 #include "RenderPass.h"
 #include "FullscreenPass.h"
 #include "DepthOfFieldPass.h"
@@ -367,7 +367,7 @@ namespace gfx
 		m_pFinalBlitInputIsIndex0 = cameraOutSlot0;
 	}
 
-	void Renderer::AcceptDrawCall(DrawCall job, const RenderPassType targetPass)
+	void Renderer::AcceptDrawCall(DrawCommand job, const RenderPassType targetPass)
 	{
 		m_pRenderPasses[targetPass]->EnqueueJob(std::move(job));
 	}

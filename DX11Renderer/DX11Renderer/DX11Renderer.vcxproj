@@ -224,7 +224,7 @@
     <ClCompile Include="src\SceneGraphNode.cpp" />
     <ClCompile Include="src\pch.cpp" />
     <ClCompile Include="src\RenderConstants.cpp" />
-    <ClCompile Include="src\DrawCall.cpp" />
+    <ClCompile Include="src\DrawCommand.cpp" />
     <ClCompile Include="src\Log.cpp" />
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\Material.cpp" />
@@ -294,6 +294,7 @@
     <ClCompile Include="src\SSAOPass.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Drawable.h" />
     <ClInclude Include="src\ArgsBuffer.h" />
     <ClInclude Include="src\ParticleComputePass.h" />
     <ClInclude Include="src\ParticleCommon.h" />
@@ -355,7 +356,7 @@
     <ClInclude Include="src\ImguiManager.h" />
     <ClInclude Include="src\IndexBuffer.h" />
     <ClInclude Include="src\InputLayout.h" />
-    <ClInclude Include="src\DrawCall.h" />
+    <ClInclude Include="src\DrawCommand.h" />
     <ClInclude Include="src\Log.h" />
     <ClInclude Include="src\Material.h" />
     <ClInclude Include="src\MaterialPass.h" />
