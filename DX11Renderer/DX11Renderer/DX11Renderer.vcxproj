@@ -180,6 +180,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\ArgsBuffer.cpp" />
+    <ClCompile Include="src\MeshAsset.cpp" />
     <ClCompile Include="src\ParticleComputePass.cpp" />
     <ClCompile Include="src\ParticleManager.cpp" />
     <ClCompile Include="src\ParticleSystem.cpp" />
@@ -292,6 +293,7 @@
     <ClCompile Include="src\VertexShader.cpp" />
     <ClCompile Include="src\DX11Window.cpp" />
     <ClCompile Include="src\SSAOPass.cpp" />
+    <ClCompile Include="src\VertexAttributesLayout.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Drawable.h" />
@@ -393,11 +395,13 @@
     <ClInclude Include="src\vendor\tinygltf\tiny_gltf.h" />
     <ClInclude Include="src\VertexBufferWrapper.h" />
     <ClInclude Include="src\RawBufferData.h" />
-    <ClInclude Include="src\VertexLayout.h" />
+    <ClInclude Include="src\VertexAttributesLayout.h" />
     <ClInclude Include="src\VertexShader.h" />
     <ClInclude Include="src\DX11Window.h" />
     <ClInclude Include="src\WindowsInclude.h" />
     <ClInclude Include="src\SSAOPass.h" />
+    <ClInclude Include="src\VariableParser.h" />
+    <ClInclude Include="src\VertexAttributeLayout.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DX11Renderer.rc" />
@@ -683,6 +687,16 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)Assets/Built/Shaders/%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
+    <FxCompile Include="Assets\Shaders\FireParticle.hlsl">
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)Assets/Built/Shaders/%(Filename).cso</ObjectFileOutput>
+      <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)Assets/Built/Shaders/%(Filename).cso</ObjectFileOutput>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">vert</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">vert</EntryPointName>
     </FxCompile>
     <None Include="Assets\Shaders\Lighting\Schlick.hlsli" />
     <None Include="Assets\Shaders\Lighting\BRDF.hlsli">

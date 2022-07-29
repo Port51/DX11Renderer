@@ -28,10 +28,10 @@ namespace gfx
 		m_pTransformCbuf = std::make_shared<TransformCbuf>(gfx);
 	}
 
-	MeshRenderer::MeshRenderer(const GraphicsDevice& gfx, const std::string name, std::shared_ptr<MeshAsset> pMeshAsset, std::shared_ptr<Material> pMaterial, std::shared_ptr<VertexBufferWrapper> pVertexBuffer, std::shared_ptr<IndexBuffer> pIndexBuffer, std::shared_ptr<Topology> pTopologyBuffer)
+	MeshRenderer::MeshRenderer(const GraphicsDevice& gfx, const std::string name, std::shared_ptr<MeshAsset> pMeshAsset, std::shared_ptr<Material> pMaterial, std::vector<std::shared_ptr<VertexBufferWrapper>> pVertexBuffers, std::shared_ptr<IndexBuffer> pIndexBuffer, std::shared_ptr<Topology> pTopologyBuffer)
 		: MeshRenderer(gfx, name, std::move(pMeshAsset), std::move(pMaterial), std::move(pIndexBuffer), std::move(pTopologyBuffer))
 	{
-		m_pVertexBufferWrapper = std::move(pVertexBuffer);
+		m_pVertexBufferWrappers = std::move(pVertexBuffers);
 	}
 
 	const dx::XMMATRIX MeshRenderer::GetTransformXM() const
@@ -51,10 +51,13 @@ namespace gfx
 
 	void MeshRenderer::Bind(const GraphicsDevice& gfx, RenderState& renderState, const DrawContext& drawContext) const
 	{
+		const auto attributesIdx = m_pMaterial->GetAttributesIndex(drawContext.renderPass);
+
 		m_pTopology->BindIA(gfx, renderState, 0u);
 		m_pIndexBuffer->BindIA(gfx, renderState, 0u);
-		m_pVertexBufferWrapper->BindIA(gfx, renderState, 0u);
+		m_pVertexBufferWrappers.at(attributesIdx)->BindIA(gfx, renderState, 0u);
 
+		// todo: is there a way to only update this for the main camera once?
 		const auto modelMatrix = GetTransformXM();
 		const auto modelViewMatrix = modelMatrix * drawContext.viewMatrix;
 		const auto modelViewProjectMatrix = modelViewMatrix * drawContext.projMatrix;
@@ -66,12 +69,12 @@ namespace gfx
 
 	const UINT MeshRenderer::GetIndexCount() const
 	{
-		return m_pIndexBuffer->GetIndexCount();
+		return m_indexCount;
 	}
 
 	const UINT MeshRenderer::GetVertexCount() const
 	{
-		return m_pVertexBufferWrapper->GetVertexCount();
+		return m_vertexCount;
 	}
 
 	const AABB& MeshRenderer::GetAABB() const

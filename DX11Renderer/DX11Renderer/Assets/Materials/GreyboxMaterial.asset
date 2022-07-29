@@ -6,31 +6,48 @@ Properties
 	Color, 1.0, 1.0, 1.0, 1.0
 	Roughness, 0.9
 }
+Attributes
+{
+	Slot, 0
+    V, float3, Position
+    V, float3, Normal
+    V, float4, Tangent
+    V, float2, TEXCOORD, 0
+}
+Attributes
+{
+	Slot, 1
+    V, float3, Position
+}
 Pass
 {
 	Name, ShadowRenderPass
+	AttributeSlot, 1
 	Cull, Front
 	VS, Assets\\Built\\Shaders\\ShadowPassVS.cso
 }
 Pass
 {
 	Name, DepthPrepassRenderPass
+	AttributeSlot, 1
 	Cull, Back
 	VS, Assets\\Built\\Shaders\\DepthOnlyVS.cso
 }
 Pass
 {
 	Name, GBufferRenderPass
+	PropertySlot, 0
+	AttributeSlot, 0
 	Cull, Back
 	VS, Assets\\Built\\Shaders\\PhongVS.cso
 	PS, Assets\\Built\\Shaders\\OpaqueGbuffer.cso
-	PropertySlot, 0
 }
 Pass
 {
 	Name, OpaqueRenderPass
+	PropertySlot, 0
+	AttributeSlot, 0
 	Cull, Back
 	VS, Assets\\Built\\Shaders\\PhongVS.cso
 	PS, Assets\\Built\\Shaders\\DeferredPS.cso
-	PropertySlot, 0
 }

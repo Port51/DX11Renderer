@@ -10,15 +10,12 @@ namespace gfx
 	struct DrawContext
 	{
 	public:
-		DrawContext(Renderer& renderer);
-		DrawContext(Renderer& renderer, RenderPassType _renderPass);
-		DrawContext(Renderer& renderer, std::vector<RenderPassType> _renderPasses);
-		void SetRenderPasses(RenderPassType _renderPass);
-		void SetRenderPasses(std::vector<RenderPassType> _renderPasses);
+		DrawContext(Renderer& renderer, RenderPassType renderPass);
+		DrawContext(Renderer& renderer, RenderPassType renderPass, const dx::XMMATRIX viewMatrix, const dx::XMMATRIX projMatrix);
 	public:
+		const RenderPassType renderPass;
 		Renderer& renderer;
 		dx::XMMATRIX viewMatrix;
 		dx::XMMATRIX projMatrix;
-		std::vector<RenderPassType> renderPasses;
 	};
 }

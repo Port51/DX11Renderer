@@ -55,7 +55,7 @@ namespace gfx
 		//
 		// Components
 		//
-		m_pVisibleRendererList = std::make_unique<RendererList>(pRendererList);
+		m_pDepthPrepassRendererList = std::make_unique<RendererList>(pRendererList);
 
 		//
 		// Texture assets and samplers
@@ -152,6 +152,7 @@ namespace gfx
 		CreateRenderPass(RenderPassType::TiledLightingRenderPass);
 		CreateRenderPass(RenderPassType::ClusteredLightingRenderPass);
 		CreateRenderPass(RenderPassType::OpaqueRenderPass);
+		//CreateRenderPass(RenderPassType::TransparentRenderPass);
 		CreateRenderPass(RenderPassType::CreateDownsampledX2Texture);
 		CreateRenderPass(RenderPassType::DepthOfFieldRenderPass, std::move(std::make_unique<DepthOfFieldPass>(gfx, DepthOfFieldPass::DepthOfFieldBokehType::DiskBokeh)));
 		CreateRenderPass(RenderPassType::BloomRenderPass, std::move(std::make_unique<BloomPass>(gfx)));
@@ -287,6 +288,18 @@ namespace gfx
 			.PSSetCB(RenderSlots::PS_FreeCB + 0u, m_pClusteredLightingCB->GetD3DBuffer())
 			.PSSetSPL(RenderSlots::PS_FreeSPL + 0u, m_pShadowSampler->GetD3DSampler());
 
+		/*GetRenderPass(RenderPassType::TransparentRenderPass).
+			ClearBinds()
+			.PSSetSRV(RenderSlots::PS_FreeSRV + 0u, m_pSpecularLighting->GetSRV())
+			.PSSetSRV(RenderSlots::PS_FreeSRV + 1u, m_pDiffuseLighting->GetSRV())
+			.PSSetSRV(RenderSlots::PS_FreeSRV + 2u, m_pLightManager->GetClusteredIndices().GetSRV())
+			.PSSetSRV(RenderSlots::PS_FreeSRV + 3u, m_pDitherTexture->GetSRV())
+			.PSSetSRV(RenderSlots::PS_FreeSRV + 4u, m_pLightManager->GetLightDataSRV())
+			.PSSetSRV(RenderSlots::PS_FreeSRV + 5u, m_pLightManager->GetShadowDataSRV())
+			.PSSetSRV(RenderSlots::PS_FreeSRV + 6u, m_pLightManager->GetShadowAtlas().GetSRV())
+			.PSSetCB(RenderSlots::PS_FreeCB + 0u, m_pClusteredLightingCB->GetD3DBuffer())
+			.PSSetSPL(RenderSlots::PS_FreeSPL + 0u, m_pShadowSampler->GetD3DSampler());*/
+
 		GetRenderPass(RenderPassType::CreateDownsampledX2Texture).
 			ClearBinds()
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, m_pCameraColor0->GetSRV())
@@ -406,13 +419,20 @@ namespace gfx
 
 		// Submit draw calls
 		{
-			static DrawContext drawContext(*this, std::move(std::vector<RenderPassType> { RenderPassType::DepthPrepassRenderPass, RenderPassType::GBufferRenderPass, RenderPassType::OpaqueRenderPass }));
-			drawContext.viewMatrix = camera.GetViewMatrix();
-			drawContext.projMatrix = camera.GetProjectionMatrix();
+			DrawContext depthDrawContext(*this, RenderPassType::DepthPrepassRenderPass, camera.GetViewMatrix(), camera.GetProjectionMatrix());
+			DrawContext gbufferDrawContext(*this, RenderPassType::GBufferRenderPass, camera.GetViewMatrix(), camera.GetProjectionMatrix());
+			DrawContext opaqueDrawContext(*this, RenderPassType::OpaqueRenderPass, camera.GetViewMatrix(), camera.GetProjectionMatrix());
+			DrawContext transparentDrawContext(*this, RenderPassType::TransparentRenderPass, camera.GetViewMatrix(), camera.GetProjectionMatrix());
 
-			// todo: filter by render passes too
-			m_pVisibleRendererList->Filter(gfx, camera.GetFrustumWS(), RendererList::RendererSortingType::StateThenBackToFront, camera.GetPositionWS(), camera.GetForwardWS(), camera.GetFarClipPlane());
-			m_pVisibleRendererList->SubmitDrawCalls(drawContext);
+			// todo: do other passes too
+			m_pDepthPrepassRendererList->Filter(gfx, camera.GetFrustumWS(), RendererList::RendererSortingType::StateThenBackToFront, camera.GetPositionWS(), camera.GetForwardWS(), camera.GetFarClipPlane());
+			m_pDepthPrepassRendererList->SubmitDrawCalls(depthDrawContext);
+			m_pGBufferRendererList->Filter(gfx, camera.GetFrustumWS(), RendererList::RendererSortingType::StateThenBackToFront, camera.GetPositionWS(), camera.GetForwardWS(), camera.GetFarClipPlane());
+			m_pGBufferRendererList->SubmitDrawCalls(depthDrawContext);
+			m_pOpaqueList->Filter(gfx, camera.GetFrustumWS(), RendererList::RendererSortingType::StateThenBackToFront, camera.GetPositionWS(), camera.GetForwardWS(), camera.GetFarClipPlane());
+			m_pOpaqueList->SubmitDrawCalls(depthDrawContext);
+			m_pTransparentList->Filter(gfx, camera.GetFrustumWS(), RendererList::RendererSortingType::StateThenBackToFront, camera.GetPositionWS(), camera.GetForwardWS(), camera.GetFarClipPlane());
+			m_pTransparentList->SubmitDrawCalls(depthDrawContext);
 		}
 
 		// Early frame calculations
@@ -527,7 +547,7 @@ namespace gfx
 
 		// Run GPU particle compute
 		{
-			m_pParticleManager->ExecuteComputePass(gfx, camera, renderState);
+			//m_pParticleManager->ExecuteComputePass(gfx, camera, renderState);
 		}
 
 		// Normal-rough-reflectivity pass
@@ -594,10 +614,21 @@ namespace gfx
 			gfx.ClearRenderTargets();
 		}
 
-		// todo: Transparent pass
-		{
+		// Transparent pass
+		/*{
+			const RenderPass& pass = GetRenderPass(RenderPassType::TransparentRenderPass);
+			pass.BindSharedResources(gfx, renderState);
 
-		}
+			DepthStencilState::Resolve(gfx, DepthStencilState::Mode::Gbuffer)->BindOM(gfx, renderState);
+
+			m_pCameraColor0->BindAsTarget(gfx, gfx.GetDepthStencilTarget()->GetView());
+			gfx.SetViewport(screenWidth, screenHeight);
+
+			pass.Execute(gfx, renderState);
+			pass.UnbindSharedResources(gfx, renderState);
+
+			gfx.ClearRenderTargets();
+		}*/
 
 		// Downsample x2 pass
 		{
@@ -794,20 +825,24 @@ namespace gfx
 
 	RenderPass& Renderer::GetRenderPass(const RenderPassType pass) const
 	{
-		assert(m_pRenderPasses.find(pass) != m_pRenderPasses.end() && "Requested RenderPass does not exist!");
+		if (m_pRenderPasses.find(pass) == m_pRenderPasses.end())
+		{
+			THROW(std::string("Requested RenderPass '") + RenderPassConstants::GetRenderPassNameOrIntValue(pass) + std::string("' does not exist!"));
+		}
 		return *m_pRenderPasses.at(pass).get();
 	}
 
 	const RenderPass& Renderer::CreateRenderPass(const RenderPassType pass)
 	{
-		assert(m_pRenderPasses.find(pass) == m_pRenderPasses.end() && "RenderPass cannot be created twice!");
-		m_pRenderPasses.emplace(pass, std::move(std::make_unique<RenderPass>(pass)));
-		return *m_pRenderPasses[pass].get();
+		return CreateRenderPass(pass, std::move(std::make_unique<RenderPass>(pass)));
 	}
 
 	const RenderPass& Renderer::CreateRenderPass(const RenderPassType pass, std::unique_ptr<RenderPass> pRenderPass)
 	{
-		assert(m_pRenderPasses.find(pass) == m_pRenderPasses.end() && "RenderPass cannot be created twice!");
+		if (m_pRenderPasses.find(pass) != m_pRenderPasses.end())
+		{
+			THROW(std::string("RenderPass '") + RenderPassConstants::GetRenderPassNameOrIntValue(pass) + std::string("' cannot be created twice!"));
+		}
 		m_pRenderPasses.emplace(pass, std::move(pRenderPass));
 		return *m_pRenderPasses[pass].get();
 	}

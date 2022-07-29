@@ -150,9 +150,7 @@ namespace gfx
 			transformationCB.projMatrix = transforms.projMatrix;
 			context.transformationCB.Update(context.gfx, transformationCB);
 
-			static DrawContext drawContext(context.renderer, RenderPassType::ShadowRenderPass);
-			drawContext.viewMatrix = transforms.viewMatrix;
-			drawContext.projMatrix = transforms.projMatrix;
+			DrawContext drawContext(context.renderer, RenderPassType::ShadowRenderPass, transforms.viewMatrix, transforms.projMatrix);
 
 			// This means all shadow draw calls need to be setup on the same thread
 			context.pRendererList->Filter(context.gfx, frustum, RendererList::RendererSortingType::StateThenFrontToBack, cascadeSphereCenterWS, shadowDirWS, cascadeDistance);

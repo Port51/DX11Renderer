@@ -6,7 +6,7 @@
 #include "Sampler.h"
 #include "Texture.h"
 #include "RawBufferData.h"
-#include "VertexLayout.h"
+#include "VertexAttributesLayout.h"
 #include "VertexShader.h"
 #include "PixelShader.h"
 #include "Topology.h"
@@ -66,8 +66,8 @@ namespace gfx
 	{
 		// Setup fullscreen geometry
 		// Use 1 large triangle instead of 2 for better caching
-		VertexLayout vertexLayout;
-		vertexLayout.AppendVertexDesc<dx::XMFLOAT2>({ "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 });
+		VertexAttributesLayout vertexLayout;
+		vertexLayout.AppendVertexDesc({ "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 }, sizeof(dx::XMFLOAT2));
 
 		RawBufferData vbuf(3u, vertexLayout.GetPerVertexStride(), vertexLayout.GetPerVertexPadding());
 		vbuf.EmplaceBack(dx::XMFLOAT2{ 0, 0 });

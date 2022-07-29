@@ -23,6 +23,16 @@ namespace gfx
 		
 	}
 
+	void MaterialPass::SetName(std::string name)
+	{
+		m_name = name;
+	}
+
+	const std::string& MaterialPass::GetName() const
+	{
+		return m_name;
+	}
+
 	void MaterialPass::SetPixelShader(std::shared_ptr<PixelShader> pPixelShader)
 	{
 		m_pPixelShader = pPixelShader;
@@ -63,8 +73,8 @@ namespace gfx
 		// 6 bits - UBO bindings (64 possible)
 		auto ps = (m_pPixelShader != nullptr) ? m_pPixelShader->GetInstanceIdx() : 0u;
 		auto vs = (m_pVertexShader != nullptr) ? m_pVertexShader->GetInstanceIdx() : 0u;
-		return ps << 38u
-			+ vs << 28u;
+		return (ps << 38u)
+			+ (vs << 28u);
 	}
 
 	int MaterialPass::GetPropertySlot() const
@@ -75,6 +85,16 @@ namespace gfx
 	void MaterialPass::SetPropertySlot(const int slotIdx)
 	{
 		m_propertySlotIdx = slotIdx;
+	}
+
+	int MaterialPass::GetAttributeSlot() const
+	{
+		return m_attributeSlotIdx;
+	}
+
+	void MaterialPass::SetAttributeSlot(const int slotIdx)
+	{
+		m_attributeSlotIdx = slotIdx;
 	}
 
 	void MaterialPass::SetRenderPass(const RenderPassType _renderPass)

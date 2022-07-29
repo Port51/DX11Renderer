@@ -13,9 +13,9 @@ struct attrib
 {
     float3 pos : Position;
     float3 n : Normal;
-    float3 t : Tangent;
+    float4 t : Tangent;
     float2 uv0 : Texcoord0;
-    float3 instancePosition : INSTANCEPOS;
+    //float3 instancePosition : INSTANCEPOS;
 };
 
 float4 ComputeNonStereoScreenPos(float4 pos)
@@ -29,7 +29,7 @@ float4 ComputeNonStereoScreenPos(float4 pos)
 v2f main(attrib i)
 {
     v2f o;
-    i.pos -= i.instancePosition * 0.5;
+    //i.pos -= i.instancePosition * 0.5;
     o.positionVS = (float3) mul(modelView, float4(i.pos, 1.0f)).xyz;
     o.positionWS = (float3) mul(model, float4(i.pos, 1.0f)).xyz;
     o.normalWS = mul((float3x3) model, i.n).xyz;

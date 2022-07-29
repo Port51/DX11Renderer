@@ -28,6 +28,16 @@ namespace gfxcore
 		return std::stof(std::move(values[index]));
 	}
 
+	const std::string TextParser::ParsedKeyValues::ReadString(int index) const
+	{
+		return values[index];
+	}
+
+	const std::string TextParser::ParsedKeyValues::MoveString(int index) const
+	{
+		return std::move(values[index]);
+	}
+
 	TextParser::TextParser(std::string_view filePath)
 		: file(std::string(filePath).c_str())
 	{}
@@ -46,7 +56,7 @@ namespace gfxcore
 		}
 	}
 
-	bool TextParser::ReadParsedLine(ParsedKeyValues & result, char delimiter)
+	const bool TextParser::ReadParsedLine(ParsedKeyValues & result, const char delimiter)
 	{
 		if (!file.is_open())
 		{
@@ -56,6 +66,9 @@ namespace gfxcore
 		std::string line;
 		if (std::getline(file, line))
 		{
+			// Store original line for error reporting
+			result.line = line;
+
 			// Clean up line first
 			line.erase(std::remove_if(line.begin(), line.end(), &IsWhitespace), line.end());
 

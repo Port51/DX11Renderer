@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "InstancedMeshRenderer.h"
+#include "GraphicsDevice.h"
 #include "Material.h"
 #include "VertexBufferWrapper.h"
 #include "IndexBuffer.h"
@@ -11,8 +12,8 @@
 
 namespace gfx
 {
-	InstancedMeshRenderer::InstancedMeshRenderer(const GraphicsDevice& gfx, const std::string name, std::shared_ptr<MeshAsset> pMeshAsset, std::shared_ptr<Material> pMaterial, std::shared_ptr<VertexBufferWrapper> _pVertexBuffer, std::shared_ptr<IndexBuffer> pIndexBuffer, std::shared_ptr<Topology> pTopologyBuffer, const UINT instanceCount)
-		: MeshRenderer(gfx, name, pMeshAsset, pMaterial, _pVertexBuffer, pIndexBuffer, pTopologyBuffer),
+	InstancedMeshRenderer::InstancedMeshRenderer(const GraphicsDevice& gfx, const std::string name, std::shared_ptr<MeshAsset> pMeshAsset, std::shared_ptr<Material> pMaterial, std::vector<std::shared_ptr<VertexBufferWrapper>> _pVertexBuffers, std::shared_ptr<IndexBuffer> pIndexBuffer, std::shared_ptr<Topology> pTopologyBuffer, const UINT instanceCount)
+		: MeshRenderer(gfx, name, pMeshAsset, pMaterial, _pVertexBuffers, pIndexBuffer, pTopologyBuffer),
 		m_instanceCount(instanceCount)
 	{
 

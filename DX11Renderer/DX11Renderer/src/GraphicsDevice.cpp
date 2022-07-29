@@ -40,7 +40,7 @@ namespace gfx
 		swapChainDesc.Flags = 0;
 
 		UINT swapCreateFlags = 0u;
-#ifndef NDEBUG
+#if defined(_DEBUG)
 		swapCreateFlags |= D3D11_CREATE_DEVICE_DEBUG; // Will create ID3D11Debug
 #endif
 
@@ -154,7 +154,7 @@ namespace gfx
 		}
 	}
 
-	void GraphicsDevice::ClearBuffer(const float red, const float green, const float blue) const
+	void GraphicsDevice::ClearRenderTarget(const float red, const float green, const float blue) const
 	{
 		const float color[] = { red, green, blue, 1.0f };
 		m_pContext->ClearRenderTargetView(m_pBackBufferView.Get(), color);

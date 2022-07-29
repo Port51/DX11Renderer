@@ -11,7 +11,12 @@ namespace gfx
 			: m_elementCount(elementCount), m_stride(stride), m_padding(padding)
 		{
 			m_elements.resize(stride * elementCount);
-			m_nextInput = m_elements.data();
+			m_nextInputByteIdx = 0u;
+		}
+
+		~RawBufferData()
+		{
+			
 		}
 
 		const D3D11_SUBRESOURCE_DATA GetSubresourceData() const override
@@ -41,18 +46,26 @@ namespace gfx
 		template<class T>
 		void EmplaceBack(const T value)
 		{
-			memcpy(m_nextInput, &value, sizeof(T));
-			m_nextInput += sizeof(T);
+#if defined(_DEBUG)
+			if ((m_nextInputByteIdx + sizeof(T) - 1) >= m_elements.size())
+			{
+				THROW("RawBufferData: Element exceeded byte limit! Requested bytes " + std::to_string(m_nextInputByteIdx) + std::string(" to ") + std::to_string(m_nextInputByteIdx + sizeof(T) - 1) + std::string(" and there are only ") + std::to_string(m_elements.size()) + std::string(" bytes available!"));
+			}
+#endif
+			memcpy(&m_elements.data()[m_nextInputByteIdx], &value, sizeof(T));
+			m_nextInputByteIdx += sizeof(T);
 		}
+
 		void EmplacePadding()
 		{
-			m_nextInput += m_padding;
+			m_nextInputByteIdx += m_padding;
 		}
+
 	private:
 		std::vector<char> m_elements;
 		const UINT m_stride;
 		const UINT m_padding;
 		const UINT m_elementCount;
-		char* m_nextInput;
+		size_t m_nextInputByteIdx;
 	};
 }

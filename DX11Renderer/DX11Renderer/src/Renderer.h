@@ -108,7 +108,10 @@ namespace gfx
 		std::shared_ptr<Texture> m_pRGBNoiseTexture;
 
 		std::shared_ptr<RendererList> m_pRendererList;
-		std::unique_ptr<RendererList> m_pVisibleRendererList; // filtered by camera frustum
+		std::unique_ptr<RendererList> m_pDepthPrepassRendererList;
+		std::unique_ptr<RendererList> m_pGBufferRendererList;
+		std::unique_ptr<RendererList> m_pOpaqueList;
+		std::unique_ptr<RendererList> m_pTransparentList;
 
 		std::shared_ptr<LightManager> m_pLightManager;
 		std::shared_ptr<ParticleManager> m_pParticleManager;

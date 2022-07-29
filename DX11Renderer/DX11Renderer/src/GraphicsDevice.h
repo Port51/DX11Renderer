@@ -25,7 +25,7 @@ namespace gfx
 	public:
 		void BeginFrame();
 		void EndFrame();
-		void ClearBuffer(const float red, const float green, const float blue) const;
+		void ClearRenderTarget(const float red, const float green, const float blue) const;
 		void DrawIndexed(const UINT indexCount) const;
 		void DrawIndexedInstanced(const UINT indexCount, const UINT instanceCount) const;
 		void SetDepthOnlyRenderTarget() const;

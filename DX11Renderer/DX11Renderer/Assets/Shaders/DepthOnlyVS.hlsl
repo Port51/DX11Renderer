@@ -10,10 +10,6 @@ cbuffer CBuf : register(b3)
 struct attrib
 {
 	float3 pos : Position;
-	float3 n : Normal;
-	float3 t : Tangent;
-	float2 uv0 : Texcoord0;
-	float3 instancePosition : INSTANCEPOS;
 };
 
 struct v2f

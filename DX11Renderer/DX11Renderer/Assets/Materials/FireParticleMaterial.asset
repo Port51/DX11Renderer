@@ -4,11 +4,18 @@ Properties
 	Texture, 0, Assets\\Textures\\face_albedo_256.png
 	Color, 1.0, 0.2, 0.05, 1.0
 }
+Attributes
+{
+	Slot, 0
+	I, float3, POSITIONVS
+}
 Pass
 {
 	Name, TransparentRenderPass
-	Cull, Off
-	VS, Assets\\Built\\Shaders\\FireParticleVS.cso
-	PS, Assets\\Built\\Shaders\\FireParticlePS.cso
 	PropertySlot, 0
+	AttributeSlot, 0
+	Cull, Off
+	VS, Assets\\Shaders\\FireParticle.hlsl, vert
+	GS, Assets\\Shaders\\FireParticle.hlsl, geom
+	PS, Assets\\Shaders\\FireParticle.hlsl, frag
 }

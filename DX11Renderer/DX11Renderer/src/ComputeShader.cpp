@@ -23,6 +23,7 @@ namespace gfx
 
 		std::wstring wide{ m_path.begin(), m_path.end() }; // convert to wide for file read <-- won't work for special characters
 
+		// todo: move to Shader base class
 		if (endsWithCSO)
 		{
 			// Read pre-compiled shader
@@ -52,7 +53,7 @@ namespace gfx
 			{
 				if (errorBlob)
 				{
-					THROW((char*)errorBlob->GetBufferPointer());
+					THROW(std::string("Error loading compute shader '") + path + std::string("'\n") + (char*)errorBlob->GetBufferPointer());
 					OutputDebugStringA((char*)errorBlob->GetBufferPointer());
 					errorBlob->Release();
 				}

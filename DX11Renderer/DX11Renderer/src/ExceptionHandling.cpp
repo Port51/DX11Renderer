@@ -8,11 +8,10 @@ namespace gfx
 		: m_line(line), m_file(file)
 	{
 		std::ostringstream ss;
-		ss << "[Error]\t ";
+		ss << "[Error]\t " << HrToMessageString(hr) << std::endl << std::endl;
+		ss << "[Code]\t " << HrToStringCode(hr) << " (" << std::to_string(hr) << ")" << std::endl;
 		ss << "[File]\t " << file << std::endl;
 		ss << "[Line]\t " << line << std::endl;
-		ss << "[Code]\t " << HrToStringCode(hr) << " (" << std::to_string(hr) << ")" << std::endl;
-		ss << "[Desc]\t " << HrToMessageString(hr) << std::endl;
 		m_msg = ss.str();
 	}
 
@@ -20,7 +19,7 @@ namespace gfx
 		: m_line(line), m_file(file)
 	{
 		std::ostringstream ss;
-		ss << "[Error]\t " << msg << std::endl;
+		ss << "[Error]\t " << msg << std::endl << std::endl;
 		ss << "[File]\t " << file << std::endl;
 		ss << "[Line]\t " << line << std::endl;
 		m_msg = ss.str();

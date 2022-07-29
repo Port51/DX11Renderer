@@ -112,6 +112,7 @@ namespace gfx
 	class RenderPassConstants
 	{
 	public:
+		static std::string GetRenderPassNameOrIntValue(RenderPassType passType);
 		static std::string GetRenderPassName(RenderPassType passType);
 		static std::size_t GetRenderPassHash(RenderPassType passType);
 		static RenderPassType GetRenderPassType(std::string passName);

@@ -233,7 +233,7 @@ namespace gfx
 					std::vector<std::string> texcoordStrings;
 					for (size_t ti = 0; ti < 4; ++ti)
 					{
-						const auto key = std::string("TEXCOORD_") + std::to_string(ti);
+						auto key = std::string("TEXCOORD_") + std::to_string(ti);
 						if (primitive.attributes.count(key))
 						{
 							texcoordStrings.emplace_back(std::move(key));

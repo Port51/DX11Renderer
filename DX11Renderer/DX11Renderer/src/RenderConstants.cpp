@@ -72,6 +72,11 @@ namespace gfx
 		{ std::hash<std::string>{}("FinalBlitRenderPass"),			RenderPassType::FinalBlitRenderPass },
 	};
 
+	std::string RenderPassConstants::GetRenderPassNameOrIntValue(RenderPassType passType)
+	{
+		return (m_renderPassNameByEnum.find(passType) != m_renderPassNameByEnum.end()) ? m_renderPassNameByEnum.at(passType) : std::to_string((int)passType);
+	}
+
 	std::string RenderPassConstants::GetRenderPassName(RenderPassType passType)
 	{
 		return m_renderPassNameByEnum.at(passType);

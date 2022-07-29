@@ -1,11 +1,11 @@
 #include "pch.h"
 #include "InputLayout.h"
 #include "SharedCodex.h"
-#include "VertexLayout.h"
+#include "VertexAttributesLayout.h"
 
 namespace gfx
 {
-	InputLayout::InputLayout(const GraphicsDevice& gfx, VertexLayout _layout, const char* vertexShaderName, ID3DBlob* pVertexShaderBytecode)
+	InputLayout::InputLayout(const GraphicsDevice& gfx, VertexAttributesLayout _layout, const char* vertexShaderName, ID3DBlob* pVertexShaderBytecode)
 		: m_layout(std::move(_layout)),
 		m_vertexShaderName(vertexShaderName)
 	{
@@ -37,12 +37,12 @@ namespace gfx
 		gfx.GetContext()->IASetInputLayout(nullptr);
 	}
 
-	std::shared_ptr<InputLayout> InputLayout::Resolve(const GraphicsDevice& gfx, const VertexLayout& layout, const char* vertexShaderName, ID3DBlob * pVertexShaderBytecode)
+	std::shared_ptr<InputLayout> InputLayout::Resolve(const GraphicsDevice& gfx, const VertexAttributesLayout& layout, const char* vertexShaderName, ID3DBlob * pVertexShaderBytecode)
 	{
 		return std::move(Codex::Resolve<InputLayout>(gfx, GenerateUID(layout, vertexShaderName, pVertexShaderBytecode), layout, vertexShaderName, pVertexShaderBytecode));
 	}
 
-	std::string InputLayout::GenerateUID(const VertexLayout& layout, const char* vertexShaderName, ID3DBlob * pVertexShaderBytecode)
+	std::string InputLayout::GenerateUID(const VertexAttributesLayout& layout, const char* vertexShaderName, ID3DBlob * pVertexShaderBytecode)
 	{
 		using namespace std::string_literals;
 		return typeid(InputLayout).name() + "#"s + layout.GetCode() + "|" + std::string(vertexShaderName);

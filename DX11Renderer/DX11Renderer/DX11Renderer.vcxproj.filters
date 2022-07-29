@@ -187,6 +187,9 @@
     <Filter Include="Source\Particles">
       <UniqueIdentifier>{6c01c67e-9d6b-465f-864e-aa452438ba52}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Util\VertexData">
+      <UniqueIdentifier>{f78c0d86-48d3-4a5a-a60f-843d2c799b50}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp">
@@ -423,6 +426,12 @@
     <ClCompile Include="src\ArgsBuffer.cpp">
       <Filter>Source\Bindable\Buffers</Filter>
     </ClCompile>
+    <ClCompile Include="src\VertexAttributesLayout.cpp">
+      <Filter>Source\Util\VertexData</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MeshAsset.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -515,7 +524,7 @@
     <ClInclude Include="src\VertexBufferWrapper.h">
       <Filter>Headers\Bindable</Filter>
     </ClInclude>
-    <ClInclude Include="src\VertexLayout.h">
+    <ClInclude Include="src\VertexAttributesLayout.h">
       <Filter>Headers\VertexData</Filter>
     </ClInclude>
     <ClInclude Include="src\VertexShader.h">
@@ -737,6 +746,12 @@
     <ClInclude Include="src\Drawable.h">
       <Filter>Headers\Drawable</Filter>
     </ClInclude>
+    <ClInclude Include="src\VariableParser.h">
+      <Filter>Headers\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\VertexAttributeLayout.h">
+      <Filter>Headers\Bindable</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DX11Renderer.rc">
@@ -893,6 +908,9 @@
       <Filter>Assets\Shaders\DrawPasses</Filter>
     </FxCompile>
     <FxCompile Include="Assets\Shaders\DepthOnlyVS.hlsl">
+      <Filter>Assets\Shaders\DrawPasses</Filter>
+    </FxCompile>
+    <FxCompile Include="Assets\Shaders\FireParticle.hlsl">
       <Filter>Assets\Shaders\DrawPasses</Filter>
     </FxCompile>
   </ItemGroup>

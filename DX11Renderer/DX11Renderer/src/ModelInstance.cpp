@@ -1,9 +1,11 @@
 #include "pch.h"
 #include "ModelInstance.h"
+#include "GraphicsDevice.h"
 #include "ModelAsset.h"
 #include "MeshAsset.h"
 #include "MeshRenderer.h"
 #include "VertexBufferWrapper.h"
+#include "VertexAttributesLayout.h"
 #include "IndexBuffer.h"
 #include "Topology.h"
 #include <exception>
@@ -122,26 +124,11 @@ namespace gfx
 		const UINT instanceCount = 10u;
 
 		const auto pMaterial = m_pMaterials[pMeshAsset->m_materialIndex];
-		RawBufferData vbuf(pMeshAsset->m_vertices.size(), pMaterial->GetVertexLayout().GetPerVertexStride(), pMaterial->GetVertexLayout().GetPerVertexPadding());
 
 		if (pMeshAsset->m_vertices.size() == 0)
 		{
 			THROW(std::string("Mesh '") + pMeshAsset->m_name + std::string("' has 0 vertices!"));
 		}
-
-		for (unsigned int i = 0; i < pMeshAsset->m_vertices.size(); ++i)
-		{
-			const dx::XMFLOAT3 normal = (pMeshAsset->hasNormals) ? pMeshAsset->m_normals[i] : dx::XMFLOAT3(0, 0, 1);
-			const dx::XMFLOAT4 tangent = (pMeshAsset->hasTangents) ? pMeshAsset->m_tangents[i] : dx::XMFLOAT4(0, 0, 1, 0);
-			const dx::XMFLOAT2 uv0 = (pMeshAsset->m_texcoords.size() > 0) ? pMeshAsset->m_texcoords[0][i] : dx::XMFLOAT2(0, 0);
-
-			vbuf.EmplaceBack<dx::XMFLOAT3>(pMeshAsset->m_vertices[i]);
-			vbuf.EmplaceBack<dx::XMFLOAT3>(normal);
-			vbuf.EmplaceBack<dx::XMFLOAT4>(tangent);
-			vbuf.EmplaceBack<dx::XMFLOAT2>(uv0);
-			vbuf.EmplacePadding();
-		}
-
 		if (pMeshAsset->m_indices.size() == 0)
 		{
 			THROW(std::string("Mesh '") + pMeshAsset->m_name + std::string("' has 0 indices!"));
@@ -158,29 +145,50 @@ namespace gfx
 			UINT instanceId;
 		};
 
-		// todo: better way to copy this?
-		std::vector<u32> indices;
-		indices.reserve(pMeshAsset->m_indices.size());
-		for (unsigned int i = 0; i < pMeshAsset->m_indices.size(); ++i)
-		{
-			indices.push_back(pMeshAsset->m_indices[i]);
-		}
-
 		const auto meshTag = "Mesh%" + pMeshAsset->m_name;
 
-		std::shared_ptr<VertexBufferWrapper> pVertexBuffer;
-		if (isInstance)
+		// Create a unique vertex buffer for each attributes slot
+		std::vector<std::shared_ptr<VertexBufferWrapper>> pVertexBuffers;
+		for (size_t attribIdx = 0; attribIdx < pMaterial->GetAttributeSlotsCount(); ++attribIdx)
 		{
-			StructuredBufferData<InstanceData> instanceBuf(instanceCount);
-			for (size_t i = 0; i < instanceCount; ++i)
+			// Buffer data prep
+			RawBufferData vbuf(pMeshAsset->m_vertices.size(), pMaterial->GetVertexLayout(attribIdx).GetPerVertexStride(), pMaterial->GetVertexLayout(attribIdx).GetPerVertexPadding());
+			for (unsigned int i = 0; i < pMeshAsset->m_vertices.size(); ++i)
 			{
-				instanceBuf.EmplaceBack(InstanceData{ dx::XMFLOAT3(i, 0, 0), (UINT)i });
+				// todo: optimize!
+				if (pMaterial->GetVertexLayout(attribIdx).HasPosition())
+					vbuf.EmplaceBack<dx::XMFLOAT3>(pMeshAsset->GetVertexPosition(i));
+				if (pMaterial->GetVertexLayout(attribIdx).HasNormal())
+					vbuf.EmplaceBack<dx::XMFLOAT3>(pMeshAsset->GetNormalOrDefault(i));
+				if (pMaterial->GetVertexLayout(attribIdx).HasTangent())
+					vbuf.EmplaceBack<dx::XMFLOAT4>(pMeshAsset->GetTangentOrDefault(i));
+				if (pMaterial->GetVertexLayout(attribIdx).HasTexcoord(0))
+					vbuf.EmplaceBack<dx::XMFLOAT2>(pMeshAsset->GetTexcoordOrDefault(i, 0));
+				vbuf.EmplacePadding();
 			}
-			pVertexBuffer = VertexBufferWrapper::Resolve(gfx, meshTag, vbuf, instanceBuf);
+
+			// Buffer creation
+			if (isInstance)
+			{
+				StructuredBufferData<InstanceData> instanceBuf(instanceCount);
+				for (size_t i = 0; i < instanceCount; ++i)
+				{
+					instanceBuf.EmplaceBack(InstanceData{ dx::XMFLOAT3(i, 0, 0), (UINT)i });
+				}
+				pVertexBuffers.emplace_back(VertexBufferWrapper::Resolve(gfx, meshTag, vbuf, instanceBuf));
+			}
+			else
+			{
+				pVertexBuffers.emplace_back(VertexBufferWrapper::Resolve(gfx, meshTag, vbuf));
+			}
 		}
-		else
+		
+		// todo: find better way to copy this?
+		std::vector<u32> indices;
+		indices.reserve(pMeshAsset->GetIndexCount());
+		for (unsigned int i = 0; i < pMeshAsset->GetIndexCount(); ++i)
 		{
-			pVertexBuffer = VertexBufferWrapper::Resolve(gfx, meshTag, vbuf);
+			indices.push_back(pMeshAsset->GetIndex(i));
 		}
 		
 		std::shared_ptr<IndexBuffer> pIndexBuffer = IndexBuffer::Resolve(gfx, meshTag, indices);
@@ -188,11 +196,11 @@ namespace gfx
 
 		if (isInstance)
 		{
-			return std::make_shared<InstancedMeshRenderer>(gfx, pMeshAsset->m_name, pMeshAsset, pMaterial, std::move(pVertexBuffer), std::move(pIndexBuffer), std::move(pTopology), instanceCount);
+			return std::make_shared<InstancedMeshRenderer>(gfx, pMeshAsset->m_name, pMeshAsset, pMaterial, std::move(pVertexBuffers), std::move(pIndexBuffer), std::move(pTopology), instanceCount);
 		}
 		else
 		{
-			return std::make_shared<MeshRenderer>(gfx, pMeshAsset->m_name, pMeshAsset, pMaterial, std::move(pVertexBuffer), std::move(pIndexBuffer), std::move(pTopology));
+			return std::make_shared<MeshRenderer>(gfx, pMeshAsset->m_name, pMeshAsset, pMaterial, std::move(pVertexBuffers), std::move(pIndexBuffer), std::move(pTopology));
 		}
 	}
 }
