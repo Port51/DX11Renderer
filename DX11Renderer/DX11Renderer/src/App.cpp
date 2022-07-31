@@ -86,7 +86,7 @@ namespace gfx
 			modelTransform = dx::XMMatrixRotationY(3.1415f) * dx::XMMatrixScaling(1.f, 1.f, 1.f);
 
 			// Moonlight
-			m_pLightManager->AddDirectionalLight(Gfx(), 30.f, 30.f, dx::XMFLOAT3(1.f, 1.f, 1.f), 1.f);
+			m_pLightManager->AddDirectionalLight(Gfx(), 30.f, 30.f, dx::XMFLOAT3(1.f, 1.f, 1.f), 0.25f);
 			// Torches
 			m_pLightManager->AddPointLight(Gfx(), dx::XMFLOAT3(0.f, 11.f, -1.5f), dx::XMFLOAT3(1.f, 0.25f, 0.04f), 1.f, 3.f, 40.f);
 			m_pLightManager->AddPointLight(Gfx(), dx::XMFLOAT3(0.f, 11.f, 1.5f), dx::XMFLOAT3(1.f, 0.25f, 0.04f), 1.f, 3.f, 40.f);

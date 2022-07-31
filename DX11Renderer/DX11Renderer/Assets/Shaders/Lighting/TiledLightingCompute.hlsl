@@ -144,13 +144,15 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
         inFrustum = inFrustum && (light.positionVS_range.z >= tileDepthRange.x - light.positionVS_range.w);
         inFrustum = inFrustum && (light.positionVS_range.z <= tileDepthRange.y + light.positionVS_range.w);
     #endif
-        inFrustum = inFrustum || (light.data0.x == 2); // always show directional lights
+        
 #endif
 
 #if defined(USE_AABB_INTERSECTION_TEST)
         // Sphere-AABB test
         inFrustum = inFrustum && AABBSphereIntersection(sphereBounds.positionVS.xyz, sphereBounds.radius, aabb.centerVS, aabb.extentsVS);
 #endif
+
+        inFrustum = inFrustum || (light.data0.x == 2); // always show directional lights
         
         [branch]
         if (inFrustum)
@@ -200,9 +202,9 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     for (i = 0; i < tileLightCount; ++i)
     {
         StructuredLight light = lights[tileLightIndices[i]];
-        float lightAtten = GetLightAttenuation(light, shadowData, ShadowAtlas, ShadowAtlasSampler, normalVS, positionVS, positionWS, dither, debugViews);
+        //float lightAtten = GetLightAttenuation(light, shadowData, ShadowAtlas, ShadowAtlasSampler, normalVS, positionVS, positionWS, dither, debugViews);
         
-        /*float lightAtten;
+        float lightAtten;
         float3 lightDirVS;
         
         uint type = (uint)light.data0.x;
@@ -240,9 +242,9 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
             float outOfRange = lightDist > light.positionVS_range.w;
             
             lightAtten = GetSphericalLightAttenuation(lightDist, light.data0.y, light.positionVS_range.w);
-            lightAtten = lightDist < 15.f;
-            diffuseLight = lightAtten;
-            break;
+            //lightAtten = lightDist < 15.f;
+            //diffuseLight = lightAtten;
+            //break;
         
             [branch] // should be same for each thread group, as thread groups are the size of 1 tile
             if (type == 1u)
@@ -283,7 +285,7 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
             // This debug view shows a solid color if in light range
             //debugAllLightsInRange += (lightDist < light.positionVS_range.w);
 #endif
-        }*/
+        }
         
         lightAtten *= light.color_intensity.w;
         float3 lightColorInput = saturate(light.color_intensity.rgb * lightAtten);
