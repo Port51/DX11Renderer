@@ -39,7 +39,7 @@ namespace gfx
 		dx::XMMATRIX modelTransform;
 
 		// temporary...
-		int select = 8;
+		int select = 9;
 		switch (select)
 		{
 		case 0:
@@ -80,6 +80,10 @@ namespace gfx
 		case 8:
 			fn = std::string("Assets\\Models\\FullCastle.asset");
 			modelTransform = dx::XMMatrixRotationY(3.1415f) * dx::XMMatrixScaling(1.f, 1.f, 1.f);
+			break;
+		case 9:
+			fn = std::string("Assets\\Models\\NewCastle.asset");
+			modelTransform = dx::XMMatrixRotationY(3.1415f) * dx::XMMatrixScaling(0.35f, 0.35f, 0.35f);
 			break;
 		}
 

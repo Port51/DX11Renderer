@@ -63,8 +63,8 @@ namespace gfx
 		// 6 bits - UBO bindings (64 possible)
 		auto ps = (m_pPixelShader != nullptr) ? m_pPixelShader->GetInstanceIdx() : 0u;
 		auto vs = (m_pVertexShader != nullptr) ? m_pVertexShader->GetInstanceIdx() : 0u;
-		return ps << 38u
-			+ vs << 28u;
+		return (static_cast<u64>(ps) << 38u)
+			+ (static_cast<u64>(vs) << 28u);
 	}
 
 	int MaterialPass::GetPropertySlot() const

@@ -233,7 +233,7 @@ namespace gfx
 					std::vector<std::string> texcoordStrings;
 					for (size_t ti = 0; ti < 4; ++ti)
 					{
-						const auto key = std::string("TEXCOORD_") + std::to_string(ti);
+						auto key = std::string("TEXCOORD_") + std::to_string(ti);
 						if (primitive.attributes.count(key))
 						{
 							texcoordStrings.emplace_back(std::move(key));
@@ -356,7 +356,7 @@ namespace gfx
 		pRootNode->SetChildNodes(std::move(pLevel0Nodes));
 
 		// Create model asset
-		auto pModelAsset = std::make_shared<ModelAsset>(std::move(pRootNode), settings.materialPaths);
+		auto pModelAsset = std::make_shared<ModelAsset>(pRootNode, settings.materialPaths);
 		assert(pModelAsset != nullptr && "Failed to create model asset");
 		return std::move(pModelAsset);
 	}

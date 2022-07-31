@@ -413,6 +413,7 @@
     <None Include="Assets\Models\Head.asset" />
     <None Include="Assets\Materials\HairMaterial.asset" />
     <None Include="Assets\Models\DefaultQuad.asset" />
+    <None Include="Assets\Models\NewCastle.asset" />
     <None Include="Assets\Models\ShadowTestScene.asset" />
     <None Include="Assets\Models\FullCastle.asset" />
     <None Include="Assets\Shaders\Common.hlsli">

@@ -31,9 +31,10 @@ namespace gfx
 
 	void RenderStats::DrawImguiControlWindow()
 	{
-		UINT totalRenderers = m_meshRenderersVisible + m_meshRenderersCulled;
-		UINT totalLights = m_lightsVisible + m_lightsCulled;
-		UINT totalShadows = m_shadowsVisible + m_shadowsCulled;
+		const u32 totalRenderers = m_meshRenderersVisible + m_meshRenderersCulled;
+		const u32 totalLights = m_lightsVisible + m_lightsCulled;
+		const u32 totalShadows = m_shadowsVisible + m_shadowsCulled;
+		const u32 totalGfxCommands = m_gpuCallsThisFrame + m_gpuCallsSavedThisFrame;
 
 		if (ImGui::Begin("Render Stats"))
 		{
@@ -42,7 +43,7 @@ namespace gfx
 			ImGui::Text((std::string("Lights visible:      ") + std::to_string(m_lightsVisible) + std::string(" / ") + std::to_string(totalLights)).c_str());
 			ImGui::Text((std::string("Shadowmap passes:    ") + std::to_string(m_shadowsVisible) + std::string(" / ") + std::to_string(totalShadows)).c_str());
 			ImGui::Text("COMMANDS");
-			ImGui::Text((std::string("GFX commands:        ") + std::to_string(m_gpuCallsThisFrame) + std::string(" / ") + std::to_string(m_gpuCallsThisFrame + m_gpuCallsSavedThisFrame)).c_str());
+			ImGui::Text((std::string("GFX commands:        ") + std::to_string(m_gpuCallsThisFrame) + std::string(" / ") + std::to_string(totalGfxCommands)).c_str());
 		}
 		ImGui::End();
 	}
