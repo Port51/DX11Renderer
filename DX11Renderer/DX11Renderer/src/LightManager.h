@@ -45,6 +45,9 @@ namespace gfx
 		virtual ~LightManager() = default;
 		void Release();
 	public:
+		void AddLight(std::shared_ptr<Light> pLight);
+		void AddPointLight(const GraphicsDevice& gfx, const dx::XMFLOAT3 positionWS, const dx::XMFLOAT3 color, const float intensity = 1.f, const float attenuationQ = 4.f, const float range = 2.5f);
+		void AddDirectionalLight(const GraphicsDevice& gfx, const float pan, const float tilt, const dx::XMFLOAT3 color, const float intensity = 1.f);
 		void AddLightModelsToList(RendererList& pRendererList);
 		void CullLightsAndShadows(const GraphicsDevice& gfx, const Camera& cam, const bool enableShadows);
 		DepthStencilTarget& GetShadowAtlas();

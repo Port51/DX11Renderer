@@ -58,7 +58,10 @@ namespace gfx
 			ImGui::ColorEdit3("Diffuse Color", &m_color.x);
 		}
 
-		m_pModel->SetPositionWS(m_positionWS);
+		if (m_pModel != nullptr)
+		{
+			m_pModel->SetPositionWS(m_positionWS);
+		}
 		ImGui::End();
 	}
 
@@ -83,6 +86,11 @@ namespace gfx
 	{
 		const float nearPlane = 0.5f;
 		const auto cascadeFrustumStartWS = dx::XMVectorSubtract(cascadeSphereCenterWS, dx::XMVectorScale(GetDirectionWS(), cascadeDistance * 0.5f + Config::ShadowCascadeOffset + nearPlane));
+
+		if (dx::XMVectorGetX(dx::XMVector3LengthSq(dx::XMVectorSubtract(cascadeFrustumStartWS, cascadeSphereCenterWS))) < 0.001f * 0.001f)
+		{
+			THROW("Target position cannot match start position!");
+		}
 
 		const auto viewMatrix = dx::XMMatrixLookAtLH(cascadeFrustumStartWS, cascadeSphereCenterWS, dx::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
 

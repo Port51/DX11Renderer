@@ -39,7 +39,7 @@ namespace gfx
 	private:
 		float m_nearClipPlane;
 		float m_farClipPlane;
-		float m_radius = 19.9f;// 10.0f;// 13.3f; // dist from origin
+		float m_radius = 55.0f;// 10.0f;// 13.3f; // dist from origin
 		float m_theta = -0.383972f;// -0.471225f; // rotate around origin
 		float m_phi = 0.558505f;// 0.209f; // rotate around origin
 		float m_pitch = 0.f;// 0.061f;

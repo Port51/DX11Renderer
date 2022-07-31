@@ -22,7 +22,7 @@ namespace gfx
 	App::App(const UINT screenWidth, const UINT screenHeight, HINSTANCE hInstance)
 		:
 		m_pImgui(std::make_unique<ImguiManager>()),
-		m_pCamera(std::make_unique<Camera>(40.0f, (float)screenWidth / (float)screenHeight, 0.5f, 50.0f)),
+		m_pCamera(std::make_unique<Camera>(40.0f, (float)screenWidth / (float)screenHeight, 0.5f, 100.0f)),
 		m_pTimer(std::make_unique<Timer>()),
 		m_pRendererList(std::make_shared<RendererList>()),
 		m_pRandomGenerator(std::make_unique<RandomGenerator>())
@@ -83,7 +83,13 @@ namespace gfx
 			break;
 		case 9:
 			fn = std::string("Assets\\Models\\NewCastle.asset");
-			modelTransform = dx::XMMatrixRotationY(3.1415f) * dx::XMMatrixScaling(0.35f, 0.35f, 0.35f);
+			modelTransform = dx::XMMatrixRotationY(3.1415f) * dx::XMMatrixScaling(1.f, 1.f, 1.f);
+
+			// Moonlight
+			m_pLightManager->AddDirectionalLight(Gfx(), 30.f, 30.f, dx::XMFLOAT3(1.f, 1.f, 1.f), 1.f);
+			// Torches
+			m_pLightManager->AddPointLight(Gfx(), dx::XMFLOAT3(0.f, 11.f, -1.5f), dx::XMFLOAT3(1.f, 0.25f, 0.04f), 1.f, 3.f, 40.f);
+			m_pLightManager->AddPointLight(Gfx(), dx::XMFLOAT3(0.f, 11.f, 1.5f), dx::XMFLOAT3(1.f, 0.25f, 0.04f), 1.f, 3.f, 40.f);
 			break;
 		}
 
@@ -210,6 +216,7 @@ namespace gfx
 		}
 
 		// Animate lights
+		if (false)
 		{
 			UINT ct = m_pLightManager->GetLightCount();
 			for (UINT i = 0u; i < ct; ++i)

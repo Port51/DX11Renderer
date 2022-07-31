@@ -135,14 +135,14 @@ namespace gfx
 
 	void Camera::UpdateBasisWS()
 	{
-		// LookAt fails if position = target
-		const auto safeRad = dx::XMMax(m_radius, 0.01f);
-		m_positionWS = dx::XMVectorSetW(dx::XMVectorScale(GetForwardWS(), -safeRad), 1.f);
-
 		m_forwardWS = dx::XMVectorSetW(dx::XMVector3Transform(
 			dx::XMVectorSet(0.f, 0.f, 1.f, 0.f),
 			dx::XMMatrixRotationRollPitchYaw(m_phi, -m_theta, 0.0f) // rotate that offset
 		), 0.f);
+
+		// LookAt fails if position = target
+		const auto safeRad = dx::XMMax(m_radius, 0.01f);
+		m_positionWS = dx::XMVectorSetW(dx::XMVectorScale(GetForwardWS(), -safeRad), 1.f);
 	}
 
 	void Camera::DrawImguiControlWindow()

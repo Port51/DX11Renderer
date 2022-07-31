@@ -43,7 +43,7 @@ namespace gfx
 	private:
 		DepthOfFieldBokehType m_bokehType;
 
-		float m_focusDistance = 17.5f;
+		float m_focusDistance = 55.0f;
 		float m_focusWidth = 1.f;
 		float m_nearFadeWidth = 5.f;
 		float m_nearIntensity = 1.0f;

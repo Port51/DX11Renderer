@@ -28,8 +28,8 @@ namespace gfx
 		m_pLightData = std::make_unique<StructuredBuffer<LightData>>(gfx, D3D11_USAGE_DYNAMIC, D3D11_BIND_SHADER_RESOURCE, MaxLightCount);
 		m_cachedLightData.resize(MaxLightCount);
 
-		UINT lightIdx = 0u;
-		m_pLights.emplace_back(std::make_shared<PointLight>(gfx, lightIdx++, true, true, pLightModelAsset, dx::XMFLOAT3(0.f, 5.4f, 0.f), dx::XMFLOAT3(1.f, 1.f, 1.f), 3.f, 3.f, 50.f));
+		//UINT lightIdx = 0u;
+		//m_pLights.emplace_back(std::make_shared<PointLight>(gfx, lightIdx++, true, true, pLightModelAsset, dx::XMFLOAT3(0.f, 5.4f, 0.f), dx::XMFLOAT3(1.f, 1.f, 1.f), 3.f, 3.f, 50.f));
 
 		//pLights.emplace_back(std::make_shared<Spotlight>(gfx, lightIdx++, true, true, pLightModelAsset, dx::XMFLOAT3(8.5f, 1.5f, -2.0f), 0.0f, 0.0f, dx::XMFLOAT3(1.0f, 1.0f, 1.0f), 3.0f, 50.f, 50.f));
 		//pMainLight = std::make_shared<DirectionalLight>(gfx, lightIdx++, true, true, pLightModelAsset, 30.f, 30.f, dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 50.0f, 5.0f);
@@ -39,16 +39,16 @@ namespace gfx
 		m_pClusteredIndices = std::make_unique<StructuredBuffer<int>>(gfx, D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS, GetClusterCount() * MaxLightsPerCluster);
 
 		// Create grid of lights
-		const bool renderLightGrid = false;
+		/*const bool renderLightGrid = false;
 		for (int x = -3; x <= 3; ++x)
 		{
 			for (int y = -3; y <= 3; ++y)
 			{
 				m_pLights.emplace_back(std::make_shared<PointLight>(gfx, lightIdx++, renderLightGrid, false, pLightModelAsset, dx::XMFLOAT3(x * 2.f, 1.5f, y * 2.f), RandomSaturatedColorRGB(), 3.f, 3.f, 5.f));
 			}
-		}
+		}*/
 
-		m_lightVisibility.resize(m_pLights.size());
+		//m_lightVisibility.resize(m_pLights.size());
 
 		/*int shadowLightCt = 0;
 		for (const auto& l : pLights)
@@ -78,6 +78,25 @@ namespace gfx
 		m_pLightShadowSB->Release();
 		m_pShadowAtlas->Release();
 		m_pClusteredIndices->Release();
+	}
+
+	void LightManager::AddLight(std::shared_ptr<Light> pLight)
+	{
+		m_pLights.emplace_back(std::move(pLight));
+		m_lightVisibility.resize(m_pLights.size());
+	}
+
+	void LightManager::AddPointLight(const GraphicsDevice& gfx, const dx::XMFLOAT3 positionWS, const dx::XMFLOAT3 color, const float intensity, const float attenuationQ, const float range)
+	{
+		auto prevCount = m_pLights.size();
+		AddLight(std::move(std::make_shared<PointLight>(gfx, prevCount, true, false, nullptr, positionWS, color, intensity, attenuationQ, range)));
+	}
+
+	void LightManager::AddDirectionalLight(const GraphicsDevice& gfx, const float pan, const float tilt, const dx::XMFLOAT3 color, const float intensity)
+	{
+		auto prevCount = m_pLights.size();
+		m_pMainLight = std::make_shared<DirectionalLight>(gfx, prevCount, true, true, nullptr, pan, tilt, color, intensity, 50.0f, 5.0f);
+		AddLight(m_pMainLight);
 	}
 
 	void LightManager::AddLightModelsToList(RendererList& pRendererList)

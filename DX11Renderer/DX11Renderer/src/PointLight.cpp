@@ -70,7 +70,10 @@ namespace gfx
 			ImGui::ColorEdit3("Diffuse Color", &m_color.x);
 		}
 
-		m_pModel->SetPositionWS(m_positionWS);
+		if (m_pModel != nullptr)
+		{
+			m_pModel->SetPositionWS(m_positionWS);
+		}
 		ImGui::End();
 	}
 
