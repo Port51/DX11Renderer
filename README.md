@@ -1,6 +1,6 @@
-# Sword Iownit Renderer
+# DirectX 11 Renderer
 
-I was mainly inspired by the Rise of the Tomb Raider renderer, shown here: https://www.elopezr.com/the-rendering-of-rise-of-the-tomb-raider/
+This is a tiled renderer inspired by the Rise of the Tomb Raider renderer, shown here: https://www.elopezr.com/the-rendering-of-rise-of-the-tomb-raider/
 
 ## Features:
 * Core
@@ -34,9 +34,9 @@ Normally, this is done in 1 compute shader with 3 subpasses.
 2. Find indices of lights within tile
 3. Calculate per-pixel lighting
 
-In my implementation, I skipped the first pass and instead read the depth range from a Hi-Z buffer computed beforehand.
+In my implementation, I skipped the first pass and instead obtained the min/max depth range from a Hi-Z buffer computed beforehand.
 
-When calculating light intersections, I used both Frustum-Sphere and AABB-Sphere tests. By themselves, these methods create false positives, which the other accounts for well.
+When calculating light intersections, I used both Frustum-Sphere and AABB-Sphere tests. By themselves, each method create false positives, which the other method accounts for.
 
 For the per-pixel lighting, I wrote to diffuse and specular light textures. This gave materials more freedom to use simple or complex lighting models.
 
