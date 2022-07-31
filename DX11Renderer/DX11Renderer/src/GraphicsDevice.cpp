@@ -159,6 +159,7 @@ namespace gfx
 		const float color[] = { red, green, blue, 1.0f };
 		m_pContext->ClearRenderTargetView(m_pBackBufferView.Get(), color);
 		m_pContext->ClearDepthStencilView(m_pDepthStencil->GetView().Get(), D3D11_CLEAR_DEPTH, 1.f, 0u);
+		REGISTER_GPU_CALLS_GFX((*this), 2u);
 	}
 
 	void GraphicsDevice::EnableImgui()
@@ -179,38 +180,45 @@ namespace gfx
 	void GraphicsDevice::DrawIndexed(const UINT indexCount) const
 	{
 		m_pContext->DrawIndexed(indexCount, 0u, 0u);
+		REGISTER_GPU_CALL_GFX((*this));
 	}
 
 	void GraphicsDevice::DrawIndexedInstanced(const UINT indexCount, const UINT instanceCount) const
 	{
 		m_pContext->DrawIndexedInstanced(indexCount, instanceCount, 0u, 0, 0u);
+		REGISTER_GPU_CALL_GFX((*this));
 	}
 
 	void GraphicsDevice::SetDepthOnlyRenderTarget() const
 	{
 		m_pContext->OMSetRenderTargets(0u, nullptr, m_pDepthStencil->GetView().Get());
+		REGISTER_GPU_CALL_GFX((*this));
 	}
 
 	void GraphicsDevice::SetDepthOnlyRenderTarget(const std::shared_ptr<DepthStencilTarget>& _pDepthStencil) const
 	{
 		m_pContext->OMSetRenderTargets(0u, nullptr, _pDepthStencil->GetView().Get());
+		REGISTER_GPU_CALL_GFX((*this));
 	}
 
 	void GraphicsDevice::SetRenderTarget(ComPtr<ID3D11RenderTargetView> renderTargetView)
 	{
 		m_pContext->OMSetRenderTargets(1u, renderTargetView.GetAddressOf(), m_pDepthStencil->GetView().Get());
 		m_currentRenderTargetCount = 1u;
+		REGISTER_GPU_CALL_GFX((*this));
 	}
 
 	void GraphicsDevice::SetRenderTargets(const std::vector<ID3D11RenderTargetView*>& renderTargetViews)
 	{
 		m_pContext->OMSetRenderTargets(renderTargetViews.size(), renderTargetViews.data(), m_pDepthStencil->GetView().Get());
 		m_currentRenderTargetCount = renderTargetViews.size();
+		REGISTER_GPU_CALL_GFX((*this));
 	}
 
 	void GraphicsDevice::ClearRenderTargets() const
 	{
 		m_pContext->OMSetRenderTargets(m_currentRenderTargetCount, m_pNullRenderTargetViews.data(), nullptr);
+		REGISTER_GPU_CALL_GFX((*this));
 	}
 
 	void GraphicsDevice::SetViewport(const int x, const int y, const int width, const int height) const
@@ -223,6 +231,7 @@ namespace gfx
 		vp.TopLeftX = (FLOAT)x;
 		vp.TopLeftY = (FLOAT)y;
 		m_pContext->RSSetViewports(1u, &vp);
+		REGISTER_GPU_CALL_GFX((*this));
 	}
 
 	void GraphicsDevice::SetViewport(const int width, const int height) const
@@ -235,6 +244,7 @@ namespace gfx
 		vp.TopLeftX = 0;
 		vp.TopLeftY = 0;
 		m_pContext->RSSetViewports(1u, &vp);
+		REGISTER_GPU_CALL_GFX((*this));
 	}
 
 	const UINT GraphicsDevice::GetScreenWidth() const

@@ -5,7 +5,6 @@
 
 namespace gfx
 {
-
 	// Helper class for minimizing state changes during draw calls
 	class RenderState
 	{
@@ -15,7 +14,7 @@ namespace gfx
 		// Returns TRUE if this is a new binding, and stores that binding
 		// Use this to tell whether to actually bind a resource or not
 		const bool IsNewBinding(const guid64 guid, const RenderBindingType::RenderBindingTypeEnum bindingType, const slotUINT slot);
-		const void ClearBinding(const RenderBindingType::RenderBindingTypeEnum bindingType, const slotUINT slot);
+		void ClearBinding(const RenderBindingType::RenderBindingTypeEnum bindingType, const slotUINT slot);
 	private:
 		const u16 GetKey(const RenderBindingType::RenderBindingTypeEnum bindingType, const slotUINT slot) const;
 	private:

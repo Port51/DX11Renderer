@@ -50,13 +50,16 @@ namespace gfx
 			if (renderState.IsNewBinding(GetGuid(), RenderBindingType::CS_CB, slot))
 			{
 				gfx.GetContext()->CSSetConstantBuffers(slot, 1u, m_pBuffer.GetAddressOf());
+				REGISTER_GPU_CALL();
 			}
+			else REGISTER_GPU_CALL_SAVED();
 		}
 
 		void UnbindCS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override
 		{
 			renderState.ClearBinding(RenderBindingType::CS_CB, slot);
 			gfx.GetContext()->CSSetConstantBuffers(slot, 1u, RenderConstants::NullBufferArray.data());
+			REGISTER_GPU_CALL();
 		}
 
 		void BindVS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override
@@ -64,13 +67,16 @@ namespace gfx
 			if (renderState.IsNewBinding(GetGuid(), RenderBindingType::VS_CB, slot))
 			{
 				gfx.GetContext()->VSSetConstantBuffers(slot, 1u, m_pBuffer.GetAddressOf());
+				REGISTER_GPU_CALL();
 			}
+			else REGISTER_GPU_CALL_SAVED();
 		}
 
 		void UnbindVS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override
 		{
 			renderState.ClearBinding(RenderBindingType::VS_CB, slot);
 			gfx.GetContext()->VSSetConstantBuffers(slot, 1u, RenderConstants::NullBufferArray.data());
+			REGISTER_GPU_CALL();
 		}
 
 		void BindPS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override
@@ -78,13 +84,16 @@ namespace gfx
 			if (renderState.IsNewBinding(GetGuid(), RenderBindingType::PS_CB, slot))
 			{
 				gfx.GetContext()->PSSetConstantBuffers(slot, 1u, m_pBuffer.GetAddressOf());
+				REGISTER_GPU_CALL();
 			}
+			else REGISTER_GPU_CALL_SAVED();
 		}
 
 		void UnbindPS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override
 		{
 			renderState.ClearBinding(RenderBindingType::PS_CB, slot);
 			gfx.GetContext()->PSSetConstantBuffers(slot, 1u, RenderConstants::NullBufferArray.data());
+			REGISTER_GPU_CALL();
 		}
 
 		void Update(const GraphicsDevice& gfx, const T& data)

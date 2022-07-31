@@ -28,13 +28,16 @@ namespace gfx
 		if (renderState.IsNewBinding(GetGuid(), RenderBindingType::IA_InputLayout, slot))
 		{
 			gfx.GetContext()->IASetInputLayout(m_pInputLayout.Get());
+			REGISTER_GPU_CALL();
 		}
+		else REGISTER_GPU_CALL_SAVED();
 	}
 
 	void InputLayout::UnbindIA(const GraphicsDevice & gfx, RenderState & renderState, const slotUINT slot)
 	{
 		renderState.ClearBinding(RenderBindingType::IA_InputLayout, slot);
 		gfx.GetContext()->IASetInputLayout(nullptr);
+		REGISTER_GPU_CALL();
 	}
 
 	std::shared_ptr<InputLayout> InputLayout::Resolve(const GraphicsDevice& gfx, const VertexLayout& layout, const char* vertexShaderName, ID3DBlob * pVertexShaderBytecode)

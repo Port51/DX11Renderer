@@ -71,7 +71,9 @@ namespace gfx
 			if (renderState.IsNewBinding(GetGuid(), RenderBindingType::CS_SRV, slot))
 			{
 				gfx.GetContext()->CSSetShaderResources(slot, 1u, m_pSRV.GetAddressOf());
+				REGISTER_GPU_CALL();
 			}
+			else REGISTER_GPU_CALL_SAVED();
 		}
 
 		void BindVS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override
@@ -79,13 +81,16 @@ namespace gfx
 			if (renderState.IsNewBinding(GetGuid(), RenderBindingType::VS_SRV, slot))
 			{
 				gfx.GetContext()->VSSetShaderResources(slot, 1u, m_pSRV.GetAddressOf());
+				REGISTER_GPU_CALL();
 			}
+			else REGISTER_GPU_CALL_SAVED();
 		}
 
 		void UnbindVS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override
 		{
 			renderState.ClearBinding(RenderBindingType::VS_SRV, slot);
 			gfx.GetContext()->VSSetShaderResources(slot, 1u, RenderConstants::NullSRVArray.data());
+			REGISTER_GPU_CALL();
 		}
 
 		void BindPS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override
@@ -93,13 +98,16 @@ namespace gfx
 			if (renderState.IsNewBinding(GetGuid(), RenderBindingType::PS_SRV, slot))
 			{
 				gfx.GetContext()->PSSetShaderResources(slot, 1u, m_pSRV.GetAddressOf());
+				REGISTER_GPU_CALL();
 			}
+			else REGISTER_GPU_CALL_SAVED();
 		}
 
 		void UnbindPS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override
 		{
 			renderState.ClearBinding(RenderBindingType::PS_SRV, slot);
 			gfx.GetContext()->PSSetShaderResources(slot, 1u, RenderConstants::NullSRVArray.data());
+			REGISTER_GPU_CALL();
 		}
 
 		void Update(const GraphicsDevice& gfx, const void* data, const UINT dataBytes)
@@ -113,16 +121,19 @@ namespace gfx
 					D3D11_MAP_WRITE_DISCARD, 0u,
 					&subresource // msr gets assigned to resource ptr
 				));
+				REGISTER_GPU_CALL();
 				// Handle write
 				memcpy(subresource.pData, data, dataBytes);
 				// Unlock via Unmap()
 				gfx.GetContext()->Unmap(m_pBuffer.Get(), 0u);
+				REGISTER_GPU_CALL();
 			}
 			else if (m_usage == D3D11_USAGE_DEFAULT
 				|| m_usage == D3D11_USAGE_STAGING)
 			{
 				// Doesn't work for dynamic or immutable
 				gfx.GetContext()->UpdateSubresource(m_pBuffer.Get(), 0, nullptr, &data, 0, 0);
+				REGISTER_GPU_CALL();
 			}
 			else
 			{

@@ -182,6 +182,7 @@ namespace gfx
 
 		m_pShadowAtlas->Clear(context.gfx);
 		context.gfx.GetContext()->OMSetRenderTargets(0u, nullptr, m_pShadowAtlas->GetView().Get());
+		REGISTER_GPU_CALL_GFX(context.gfx);
 
 		// todo: cull shadows
 		for (size_t i = 0; i < m_pLights.size(); ++i)

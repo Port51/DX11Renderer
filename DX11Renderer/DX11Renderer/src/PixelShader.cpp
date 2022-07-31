@@ -28,13 +28,16 @@ namespace gfx
 		if (renderState.IsNewBinding(GetGuid(), RenderBindingType::PS_Shader, 0u))
 		{
 			gfx.GetContext()->PSSetShader(m_pPixelShader.Get(), nullptr, 0u);
+			REGISTER_GPU_CALL();
 		}
+		else REGISTER_GPU_CALL_SAVED();
 	}
 
 	void PixelShader::UnbindPS(const GraphicsDevice & gfx, RenderState & renderState, const slotUINT slot)
 	{
 		renderState.ClearBinding(RenderBindingType::PS_Shader, 0u);
 		gfx.GetContext()->PSSetShader(nullptr, nullptr, 0u);
+		REGISTER_GPU_CALL();
 	}
 
 	const u16 PixelShader::GetInstanceIdx() const

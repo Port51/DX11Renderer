@@ -29,13 +29,16 @@ namespace gfx
 		if (renderState.IsNewBinding(GetGuid(), RenderBindingType::RS_State, 0u))
 		{
 			gfx.GetContext()->RSSetState(m_pRasterizer.Get());
+			REGISTER_GPU_CALL();
 		}
+		else REGISTER_GPU_CALL_SAVED();
 	}
 
 	void RasterizerState::UnbindRS(const GraphicsDevice & gfx, RenderState & renderState)
 	{
 		renderState.ClearBinding(RenderBindingType::RS_State, 0u);
 		gfx.GetContext()->RSSetState(nullptr);
+		REGISTER_GPU_CALL();
 	}
 
 	std::shared_ptr<RasterizerState> RasterizerState::Resolve(const GraphicsDevice& gfx, const D3D11_CULL_MODE cullMode)

@@ -16,12 +16,15 @@ namespace gfx
 		if (renderState.IsNewBinding(GetGuid(), RenderBindingType::PS_Shader, 0u))
 		{
 			gfx.GetContext()->PSSetShader(nullptr, nullptr, 0u);
+			REGISTER_GPU_CALL();
 		}
+		else REGISTER_GPU_CALL_SAVED();
 	}
 	void NullPixelShader::UnbindPS(const GraphicsDevice & gfx, RenderState & renderState, const slotUINT slot)
 	{
 		renderState.ClearBinding(RenderBindingType::PS_Shader, 0u);
 		gfx.GetContext()->PSSetShader(nullptr, nullptr, 0u);
+		REGISTER_GPU_CALL();
 	}
 	std::shared_ptr<NullPixelShader> NullPixelShader::Resolve(const GraphicsDevice& gfx)
 	{

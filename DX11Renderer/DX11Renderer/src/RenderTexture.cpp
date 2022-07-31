@@ -128,13 +128,16 @@ namespace gfx
 		if (renderState.IsNewBinding(GetGuid(), RenderBindingType::CS_SRV, slot))
 		{
 			gfx.GetContext()->CSSetShaderResources(slot, 1u, m_pShaderResourceView.GetAddressOf());
+			REGISTER_GPU_CALL();
 		}
+		else REGISTER_GPU_CALL_SAVED();
 	}
 
 	void RenderTexture::UnbindCS(const GraphicsDevice & gfx, RenderState & renderState, const slotUINT slot)
 	{
 		renderState.ClearBinding(RenderBindingType::CS_SRV, slot);
 		gfx.GetContext()->CSSetShaderResources(slot, 1u, nullptr);
+		REGISTER_GPU_CALL();
 	}
 
 	void RenderTexture::BindVS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot)
@@ -142,13 +145,16 @@ namespace gfx
 		if (renderState.IsNewBinding(GetGuid(), RenderBindingType::VS_SRV, slot))
 		{
 			gfx.GetContext()->VSSetShaderResources(slot, 1u, m_pShaderResourceView.GetAddressOf());
+			REGISTER_GPU_CALL();
 		}
+		else REGISTER_GPU_CALL_SAVED();
 	}
 
 	void RenderTexture::UnbindVS(const GraphicsDevice & gfx, RenderState & renderState, const slotUINT slot)
 	{
 		renderState.ClearBinding(RenderBindingType::VS_SRV, slot);
 		gfx.GetContext()->VSSetShaderResources(slot, 1u, nullptr);
+		REGISTER_GPU_CALL();
 	}
 
 	void RenderTexture::BindPS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot)
@@ -156,30 +162,36 @@ namespace gfx
 		if (renderState.IsNewBinding(GetGuid(), RenderBindingType::PS_SRV, slot))
 		{
 			gfx.GetContext()->PSSetShaderResources(slot, 1u, m_pShaderResourceView.GetAddressOf());
+			REGISTER_GPU_CALL();
 		}
+		else REGISTER_GPU_CALL_SAVED();
 	}
 
 	void RenderTexture::UnbindPS(const GraphicsDevice & gfx, RenderState & renderState, const slotUINT slot)
 	{
 		renderState.ClearBinding(RenderBindingType::PS_SRV, slot);
 		gfx.GetContext()->PSSetShaderResources(slot, 1u, nullptr);
+		REGISTER_GPU_CALL();
 	}
 
 	void RenderTexture::BindAsTexture(const GraphicsDevice& gfx, const slotUINT slot) const
 	{
 		gfx.GetContext()->PSSetShaderResources(slot, 1, m_pShaderResourceView.GetAddressOf());
+		REGISTER_GPU_CALL();
 	}
 
 	void RenderTexture::BindAsTarget(const GraphicsDevice& gfx) const
 	{
 		gfx.GetContext()->OMSetRenderTargets(1, m_pRenderTargetView.GetAddressOf(), nullptr);
 		gfx.GetContext()->RSSetViewports(1u, &m_viewport);
+		REGISTER_GPU_CALLS(2u);
 	}
 
 	void RenderTexture::BindAsTarget(const GraphicsDevice& gfx, ComPtr<ID3D11DepthStencilView> pDepthStencilView) const
 	{
 		gfx.GetContext()->OMSetRenderTargets(1, m_pRenderTargetView.GetAddressOf(), pDepthStencilView.Get());
 		gfx.GetContext()->RSSetViewports(1u, &m_viewport);
+		REGISTER_GPU_CALLS(2u);
 	}
 
 	void RenderTexture::SetRenderTarget(ID3D11DeviceContext* deviceContext, ComPtr<ID3D11DepthStencilView> pDepthStencilView)

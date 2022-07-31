@@ -13,18 +13,28 @@ namespace gfx
 		void EndFrame();
 		void DrawImguiControlWindow();
 	public:
-		void AddVisibleRenderers(const UINT count);
-		void AddCulledRenderers(const UINT count);
-		void AddVisibleLights(const UINT count);
-		void AddCulledLights(const UINT count);
-		void AddVisibleShadows(const UINT count);
-		void AddCulledShadows(const UINT count);
+		void AddVisibleRenderers(const u32 count);
+		void AddCulledRenderers(const u32 count);
+		void AddVisibleLights(const u32 count);
+		void AddCulledLights(const u32 count);
+		void AddVisibleShadows(const u32 count);
+		void AddCulledShadows(const u32 count);
+	public:
+		void RegisterGPUCall();
+		void RegisterGPUCalls(const u32 calls);
+		void RegisterGPUCallSaved();
+		void RegisterGPUCallsSaved(const u32 calls);
+		const u32 GetGPUCallsThisFrame() const;
+		const u32 GetGPUCallsSavedThisFrame() const;
 	private:
-		UINT m_meshRenderersVisible;
-		UINT m_meshRenderersCulled;
-		UINT m_lightsVisible;
-		UINT m_lightsCulled;
-		UINT m_shadowsVisible;
-		UINT m_shadowsCulled;
+		u32 m_meshRenderersVisible;
+		u32 m_meshRenderersCulled;
+		u32 m_lightsVisible;
+		u32 m_lightsCulled;
+		u32 m_shadowsVisible;
+		u32 m_shadowsCulled;
+
+		u32 m_gpuCallsThisFrame;
+		u32 m_gpuCallsSavedThisFrame;
 	};
 }

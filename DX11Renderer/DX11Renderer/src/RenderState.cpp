@@ -18,7 +18,7 @@ namespace gfx
 		return false;
 	}
 
-	const void RenderState::ClearBinding(const RenderBindingType::RenderBindingTypeEnum bindingType, const slotUINT slot)
+	void RenderState::ClearBinding(const RenderBindingType::RenderBindingTypeEnum bindingType, const slotUINT slot)
 	{
 		const u16 key = GetKey(bindingType, slot);
 		m_activeBindings[key] = NullGuid64;

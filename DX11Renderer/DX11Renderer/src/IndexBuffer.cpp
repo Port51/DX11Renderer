@@ -49,13 +49,16 @@ namespace gfx
 		if (renderState.IsNewBinding(GetGuid(), RenderBindingType::IA_IndexBuffer, slot))
 		{
 			gfx.GetContext()->IASetIndexBuffer(m_pIndexBuffer.Get(), m_format, 0u);
+			REGISTER_GPU_CALL();
 		}
+		else REGISTER_GPU_CALL_SAVED();
 	}
 
 	void IndexBuffer::UnbindIA(const GraphicsDevice & gfx, RenderState & renderState, const slotUINT slot)
 	{
 		renderState.ClearBinding(RenderBindingType::IA_IndexBuffer, slot);
 		gfx.GetContext()->IASetIndexBuffer(nullptr, m_format, 0u);
+		REGISTER_GPU_CALL();
 	}
 
 	const UINT IndexBuffer::GetIndexCount() const

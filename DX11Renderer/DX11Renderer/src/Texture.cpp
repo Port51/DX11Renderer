@@ -135,13 +135,16 @@ namespace gfx
 		if (renderState.IsNewBinding(GetGuid(), RenderBindingType::CS_SRV, slot))
 		{
 			gfx.GetContext()->CSSetShaderResources(slot, 1u, m_pShaderResourceView.GetAddressOf());
+			REGISTER_GPU_CALL();
 		}
+		else REGISTER_GPU_CALL_SAVED();
 	}
 
 	void Texture::UnbindCS(const GraphicsDevice & gfx, RenderState & renderState, const slotUINT slot)
 	{
 		renderState.ClearBinding(RenderBindingType::CS_SRV, slot);
 		gfx.GetContext()->CSSetShaderResources(slot, 1u, nullptr);
+		REGISTER_GPU_CALL();
 	}
 
 	void Texture::BindVS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot)
@@ -149,13 +152,16 @@ namespace gfx
 		if (renderState.IsNewBinding(GetGuid(), RenderBindingType::VS_SRV, slot))
 		{
 			gfx.GetContext()->VSSetShaderResources(slot, 1u, m_pShaderResourceView.GetAddressOf());
+			REGISTER_GPU_CALL();
 		}
+		else REGISTER_GPU_CALL_SAVED();
 	}
 
 	void Texture::UnbindVS(const GraphicsDevice & gfx, RenderState & renderState, const slotUINT slot)
 	{
 		renderState.ClearBinding(RenderBindingType::VS_SRV, slot);
 		gfx.GetContext()->VSSetShaderResources(slot, 1u, nullptr);
+		REGISTER_GPU_CALL();
 	}
 
 	void Texture::BindPS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot)
@@ -163,13 +169,16 @@ namespace gfx
 		if (renderState.IsNewBinding(GetGuid(), RenderBindingType::PS_SRV, slot))
 		{
 			gfx.GetContext()->PSSetShaderResources(slot, 1u, m_pShaderResourceView.GetAddressOf());
+			REGISTER_GPU_CALL();
 		}
+		else REGISTER_GPU_CALL_SAVED();
 	}
 
 	void Texture::UnbindPS(const GraphicsDevice & gfx, RenderState & renderState, const slotUINT slot)
 	{
 		renderState.ClearBinding(RenderBindingType::PS_SRV, slot);
 		gfx.GetContext()->PSSetShaderResources(slot, 1u, nullptr);
+		REGISTER_GPU_CALL();
 	}
 
 	const ComPtr<ID3D11UnorderedAccessView> Texture::GetUAV(UINT mipSlice) const

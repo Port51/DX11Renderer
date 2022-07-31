@@ -67,13 +67,16 @@ namespace gfx
 		if (renderState.IsNewBinding(GetGuid(), RenderBindingType::OM_DepthStencilState, 0u))
 		{
 			gfx.GetContext()->OMSetDepthStencilState(m_pStencil.Get(), 0x01);
+			REGISTER_GPU_CALL();
 		}
+		else REGISTER_GPU_CALL_SAVED();
 	}
 
 	void DepthStencilState::UnbindOM(const GraphicsDevice & gfx, RenderState & renderState)
 	{
 		renderState.ClearBinding(RenderBindingType::OM_DepthStencilState, 0u);
 		gfx.GetContext()->OMSetDepthStencilState(nullptr, 0x01);
+		REGISTER_GPU_CALL();
 	}
 
 	std::shared_ptr<DepthStencilState> DepthStencilState::Resolve(const GraphicsDevice& gfx, const Mode mode)

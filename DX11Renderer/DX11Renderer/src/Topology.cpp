@@ -18,13 +18,16 @@ namespace gfx
 		if (renderState.IsNewBinding(m_type, RenderBindingType::IA_Topology, 0u))
 		{
 			gfx.GetContext()->IASetPrimitiveTopology(m_type);
+			REGISTER_GPU_CALL();
 		}
+		else REGISTER_GPU_CALL_SAVED();
 	}
 
 	void Topology::UnbindIA(const GraphicsDevice & gfx, RenderState & renderState, const slotUINT slot)
 	{
 		renderState.ClearBinding(RenderBindingType::IA_Topology, 0u);
 		gfx.GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_UNDEFINED);
+		REGISTER_GPU_CALL();
 	}
 
 	std::shared_ptr<Topology> Topology::Resolve(const GraphicsDevice& gfx, const D3D11_PRIMITIVE_TOPOLOGY type)

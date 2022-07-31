@@ -60,13 +60,16 @@ namespace gfx
 		if (renderState.IsNewBinding(GetGuid(), RenderBindingType::CS_Sampler, slot))
 		{
 			gfx.GetContext()->CSSetSamplers(slot, 1u, m_pSampler.GetAddressOf());
+			REGISTER_GPU_CALL();
 		}
+		else REGISTER_GPU_CALL_SAVED();
 	}
 
 	void Sampler::UnbindCS(const GraphicsDevice & gfx, RenderState & renderState, const slotUINT slot)
 	{
 		renderState.ClearBinding(RenderBindingType::CS_Sampler, slot);
 		gfx.GetContext()->CSSetSamplers(slot, 1u, nullptr);
+		REGISTER_GPU_CALL();
 	}
 
 	void Sampler::BindVS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot)
@@ -74,13 +77,16 @@ namespace gfx
 		if (renderState.IsNewBinding(GetGuid(), RenderBindingType::VS_Sampler, slot))
 		{
 			gfx.GetContext()->VSSetSamplers(slot, 1u, m_pSampler.GetAddressOf());
+			REGISTER_GPU_CALL();
 		}
+		else REGISTER_GPU_CALL_SAVED();
 	}
 
 	void Sampler::UnbindVS(const GraphicsDevice & gfx, RenderState & renderState, const slotUINT slot)
 	{
 		renderState.ClearBinding(RenderBindingType::VS_Sampler, slot);
 		gfx.GetContext()->VSSetSamplers(slot, 1u, nullptr);
+		REGISTER_GPU_CALL();
 	}
 
 	void Sampler::BindPS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot)
@@ -88,13 +94,16 @@ namespace gfx
 		if (renderState.IsNewBinding(GetGuid(), RenderBindingType::PS_Sampler, slot))
 		{
 			gfx.GetContext()->PSSetSamplers(slot, 1u, m_pSampler.GetAddressOf());
+			REGISTER_GPU_CALL();
 		}
+		else REGISTER_GPU_CALL_SAVED();
 	}
 
 	void Sampler::UnbindPS(const GraphicsDevice & gfx, RenderState & renderState, const slotUINT slot)
 	{
 		renderState.ClearBinding(RenderBindingType::PS_Sampler, slot);
 		gfx.GetContext()->PSSetSamplers(slot, 1u, RenderConstants::NullSamplerArray.data());
+		REGISTER_GPU_CALL();
 	}
 
 	const ComPtr<ID3D11SamplerState> Sampler::GetD3DSampler() const

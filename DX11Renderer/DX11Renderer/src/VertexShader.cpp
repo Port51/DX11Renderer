@@ -37,13 +37,16 @@ namespace gfx
 		if (renderState.IsNewBinding(GetGuid(), RenderBindingType::VS_Shader, 0u))
 		{
 			gfx.GetContext()->VSSetShader(m_pVertexShader.Get(), nullptr, 0u);
+			REGISTER_GPU_CALL();
 		}
+		else REGISTER_GPU_CALL_SAVED();
 	}
 
 	void VertexShader::UnbindVS(const GraphicsDevice & gfx, RenderState & renderState, const slotUINT slot)
 	{
 		renderState.ClearBinding(RenderBindingType::VS_Shader, 0u);
 		gfx.GetContext()->VSSetShader(nullptr, nullptr, 0u);
+		REGISTER_GPU_CALL();
 	}
 
 	ID3DBlob* VertexShader::GetBytecode() const

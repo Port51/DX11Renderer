@@ -41,7 +41,9 @@ namespace gfx
 		if (renderState.IsNewBinding(GetGuid(), RenderBindingType::IA_VertexBuffer, slot))
 		{
 			gfx.GetContext()->IASetVertexBuffers(slot, m_pBufferArray.size(), m_pBufferArray[0].GetAddressOf(), &m_strides[0], &m_offsets[0]);
+			REGISTER_GPU_CALL();
 		}
+		else REGISTER_GPU_CALL_SAVED();
 	}
 
 	void VertexBufferWrapper::UnbindIA(const GraphicsDevice & gfx, RenderState & renderState, const slotUINT slot)

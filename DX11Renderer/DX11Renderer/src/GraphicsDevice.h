@@ -2,12 +2,22 @@
 #include "CommonHeader.h"
 #include "WindowsInclude.h"
 #include "DXMathInclude.h"
+#include "RenderStats.h"
 #include <vector>
 
 struct ID3D11Device;
 struct ID3D11DeviceContext;
 struct ID3D11RenderTargetView;
 struct IDXGISwapChain;
+
+#define REGISTER_GPU_CALL() gfx.GetRenderStats().RegisterGPUCall()
+#define REGISTER_GPU_CALL_GFX(_gfx) _gfx.GetRenderStats().RegisterGPUCall()
+#define REGISTER_GPU_CALL_SAVED() gfx.GetRenderStats().RegisterGPUCallSaved()
+#define REGISTER_GPU_CALL_SAVED_GFX(_gfx) _gfx.GetRenderStats().RegisterGPUCallSaved()
+#define REGISTER_GPU_CALLS(ct) gfx.GetRenderStats().RegisterGPUCalls(ct)
+#define REGISTER_GPU_CALLS_GFX(_gfx, ct) _gfx.GetRenderStats().RegisterGPUCalls(ct)
+#define REGISTER_GPU_CALLS_SAVED(ct) gfx.GetRenderStats().RegisterGPUCallsSaved(ct)
+#define REGISTER_GPU_CALLS_SAVED_GFX(_gfx, ct) _gfx.GetRenderStats().RegisterGPUCallsSaved(ct)
 
 namespace gfx
 {
