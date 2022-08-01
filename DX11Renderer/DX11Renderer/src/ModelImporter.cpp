@@ -129,7 +129,8 @@ namespace gfx
 			meshCt += mesh.primitives.size();
 		}
 
-		assert(nodeCt >= meshCt && "Not enough nodes for mesh count");
+		if (nodeCt < meshCt) THROW("Not enough nodes for mesh count");
+		
 		gfx.GetLog().Info(std::string("GLTF has ") + std::to_string(nodeCt) + std::string(" nodes, ") + std::to_string(meshCt) + std::string(" meshes"));
 
 		// Create meshes
@@ -148,11 +149,11 @@ namespace gfx
 				const auto& pCurrentMeshAsset = pMeshes.at(pMeshes.size() - 1u);
 				pCurrentMeshAsset->m_name = settings.name + "|" + mesh.name + "(sub=" + std::to_string(subNameCt++) + ")";
 
-				assert(primitive.attributes.count("POSITION") == 1 && "Mesh primitive has no POSITION attribute!");
+				if (primitive.attributes.count("POSITION") != 1u) THROW("Mesh primitive " + pCurrentMeshAsset->m_name + " has no POSITION attribute!");
 
 				// Get vert count from POSITION attribute
 				const auto vertCt = GetAttributeCt(gfx, model, primitive.attributes.at("POSITION"));
-				assert(vertCt > 0 && "Mesh primitive has 0 vertices!");
+				if (vertCt == 0u) THROW("Mesh primitive " + pCurrentMeshAsset->m_name + " has 0 vertices!");
 
 				// Load INDICES
 				{
@@ -161,7 +162,7 @@ namespace gfx
 					const auto& view = model.bufferViews[accessor.bufferView];
 
 					const size_t indicesCt = accessor.count;
-					assert(indicesCt > 0 && "Mesh primitive has 0 indices!");
+					if (indicesCt == 0u) THROW("Mesh primitive " + pCurrentMeshAsset->m_name + " has 0 indices!");
 
 					// Determine index size
 					if (accessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT)
@@ -267,8 +268,8 @@ namespace gfx
 				pCurrentMeshAsset->m_aabb.SetBoundsByVertices(pCurrentMeshAsset->m_vertices);
 
 				// Double check that everything was loaded correctly
-				assert(pCurrentMeshAsset->m_vertices.size() > 0 && "Mesh primitive vertices were incorrectly loaded!");
-				assert(pCurrentMeshAsset->m_indices.size() > 0 && "Mesh primitive indices were incorrectly loaded!");
+				if (pCurrentMeshAsset->m_vertices.size() == 0u) THROW("Mesh primitive " + pCurrentMeshAsset->m_name + " vertices were incorrectly loaded!");
+				if (pCurrentMeshAsset->m_indices.size() == 0u) THROW("Mesh primitive " + pCurrentMeshAsset->m_name + " indices were incorrectly loaded!");
 			}
 		}
 
@@ -310,7 +311,7 @@ namespace gfx
 		{
 			// Create model asset for single mesh
 			auto pModelAsset = std::make_shared<ModelAsset>(std::move(pNodes[0]), settings.materialPaths);
-			assert(pModelAsset != nullptr && "Failed to create 1-mesh model asset");
+			if (pModelAsset == nullptr) THROW("Failed to create 1-mesh model asset");
 			return std::move(pModelAsset);
 		}
 
@@ -355,7 +356,7 @@ namespace gfx
 
 		// Create model asset
 		auto pModelAsset = std::make_shared<ModelAsset>(pRootNode, settings.materialPaths);
-		assert(pModelAsset != nullptr && "Failed to create model asset");
+		if (pModelAsset == nullptr) THROW("Failed to create 1-mesh model asset");
 		return std::move(pModelAsset);
 	}
 }
