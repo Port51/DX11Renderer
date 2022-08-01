@@ -120,157 +120,155 @@ namespace gfx
 
 		// scene.nodes = array of all scene graph nodes
 		const auto scene = model.scenes[model.defaultScene];
-		const size_t meshCt = model.meshes.size();
 		const size_t nodeCt = model.nodes.size();
+
+		// Get total mesh count, including submeshes
+		size_t meshCt = 0u;
+		for (const auto& mesh : model.meshes)
+		{
+			meshCt += mesh.primitives.size();
+		}
+
 		assert(nodeCt >= meshCt && "Not enough nodes for mesh count");
 		gfx.GetLog().Info(std::string("GLTF has ") + std::to_string(nodeCt) + std::string(" nodes, ") + std::to_string(meshCt) + std::string(" meshes"));
 
 		// Create meshes
 		std::vector<std::shared_ptr<MeshAsset>> pMeshes;
 		pMeshes.reserve(meshCt);
-		for (size_t i = 0u; i < meshCt; ++i)
+		for (const auto& mesh : model.meshes)
 		{
-			const auto& mesh = model.meshes[i];
-			pMeshes.emplace_back(std::make_shared<MeshAsset>());
-			const auto& pMeshAsset = pMeshes[i];
-			pMeshAsset->m_name = settings.name + "|" + mesh.name;
-
 			// Each primitive is a submesh
-			// Require only 1 for now
-			if (mesh.primitives.size() == 1)
+			u32 subNameCt = 0u;
+			for (const auto& primitive : mesh.primitives)
 			{
-				for (const auto primitive : mesh.primitives)
+				// Reference:
+				// https://github.com/syoyo/tinygltf/wiki/Accessing-vertex-data
+
+				pMeshes.emplace_back(std::make_shared<MeshAsset>());
+				const auto& pCurrentMeshAsset = pMeshes.at(pMeshes.size() - 1u);
+				pCurrentMeshAsset->m_name = settings.name + "|" + mesh.name + "(sub=" + std::to_string(subNameCt++) + ")";
+
+				assert(primitive.attributes.count("POSITION") == 1 && "Mesh primitive has no POSITION attribute!");
+
+				// Get vert count from POSITION attribute
+				const auto vertCt = GetAttributeCt(gfx, model, primitive.attributes.at("POSITION"));
+				assert(vertCt > 0 && "Mesh primitive has 0 vertices!");
+
+				// Load INDICES
 				{
-					// Reference:
-					// https://github.com/syoyo/tinygltf/wiki/Accessing-vertex-data
+					const int accessorIdx = primitive.indices;
+					const auto accessor = model.accessors[accessorIdx];
+					const auto& view = model.bufferViews[accessor.bufferView];
 
-					assert(primitive.attributes.count("POSITION") == 1 && "Mesh primitive has no POSITION attribute!");
+					const size_t indicesCt = accessor.count;
+					assert(indicesCt > 0 && "Mesh primitive has 0 indices!");
 
-					// Get vert count from POSITION attribute
-					const auto vertCt = GetAttributeCt(gfx, model, primitive.attributes.at("POSITION"));
-					assert(vertCt > 0 && "Mesh primitive has 0 vertices!");
-
-					// Load INDICES
+					// Determine index size
+					if (accessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT)
 					{
-						const int accessorIdx = primitive.indices;
-						const auto accessor = model.accessors[accessorIdx];
-						const auto& view = model.bufferViews[accessor.bufferView];
-
-						const size_t indicesCt = accessor.count;
-						assert(indicesCt > 0 && "Mesh primitive has 0 indices!");
-
-						// Determine index size
-						if (accessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT)
+						const auto bufferAccess = GetAttributeBufferAccess(gfx, model, accessorIdx, indicesCt * sizeof(u16));
+						const u16* indices = reinterpret_cast<const u16*>(&model.buffers[bufferAccess.first].data[bufferAccess.second]);
+						for (size_t vi = 0; vi < indicesCt; ++vi)
 						{
-							const auto bufferAccess = GetAttributeBufferAccess(gfx, model, accessorIdx, indicesCt * sizeof(u16));
-							const u16* indices = reinterpret_cast<const u16*>(&model.buffers[bufferAccess.first].data[bufferAccess.second]);
-							for (size_t vi = 0; vi < indicesCt; ++vi)
-							{
-								pMeshAsset->m_indices.emplace_back((u32)indices[vi]);
-							}
-						}
-						else if (accessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_INT)
-						{
-							const auto bufferAccess = GetAttributeBufferAccess(gfx, model, accessorIdx, indicesCt * sizeof(u32));
-							const u32* indices = reinterpret_cast<const u32*>(&model.buffers[bufferAccess.first].data[bufferAccess.second]);
-							for (size_t vi = 0; vi < indicesCt; ++vi)
-							{
-								pMeshAsset->m_indices.emplace_back((u32)indices[vi]);
-							}
-						}
-						else
-						{
-							THROW("Mesh had unrecognized componentType for indices: " + std::to_string(accessor.componentType));
-							return nullptr;
+							pCurrentMeshAsset->m_indices.emplace_back((u32)indices[vi]);
 						}
 					}
-
-					// Load POSITION
+					else if (accessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_INT)
 					{
-						pMeshAsset->m_vertices.reserve(vertCt);
-
-						const int accessorIdx = primitive.attributes.at("POSITION");
-						const auto bufferAccess = GetAttributeBufferAccess(gfx, model, accessorIdx, vertCt * sizeof(float) * 3u);
-						const float* positions = reinterpret_cast<const float*>(&model.buffers[bufferAccess.first].data[bufferAccess.second]);
-						for (size_t vi = 0; vi < vertCt; ++vi)
+						const auto bufferAccess = GetAttributeBufferAccess(gfx, model, accessorIdx, indicesCt * sizeof(u32));
+						const u32* indices = reinterpret_cast<const u32*>(&model.buffers[bufferAccess.first].data[bufferAccess.second]);
+						for (size_t vi = 0; vi < indicesCt; ++vi)
 						{
-							const auto posF3 = dx::XMFLOAT3(positions[vi * 3 + 0], positions[vi * 3 + 1], positions[vi * 3 + 2]);
-							pMeshAsset->m_vertices.emplace_back(posF3);
+							pCurrentMeshAsset->m_indices.emplace_back((u32)indices[vi]);
 						}
 					}
-
-					// Load NORMAL
-					if (primitive.attributes.count("NORMAL"))
+					else
 					{
-						pMeshAsset->hasNormals = true;
-						pMeshAsset->m_normals.reserve(vertCt);
-
-						const int accessorIdx = primitive.attributes.at("NORMAL");
-						const auto bufferAccess = GetAttributeBufferAccess(gfx, model, accessorIdx, vertCt * sizeof(float) * 3u);
-						const float* normals = reinterpret_cast<const float*>(&model.buffers[bufferAccess.first].data[bufferAccess.second]);
-						for (size_t vi = 0; vi < vertCt; ++vi)
-						{
-							pMeshAsset->m_normals.emplace_back(dx::XMFLOAT3(normals[vi * 3 + 0], normals[vi * 3 + 1], normals[vi * 3 + 2]));
-						}
+						THROW("Mesh had unrecognized componentType for indices: " + std::to_string(accessor.componentType));
+						return nullptr;
 					}
-
-					// Load TANGENT
-					if (primitive.attributes.count("TANGENT"))
-					{
-						pMeshAsset->hasTangents = true;
-						pMeshAsset->m_tangents.reserve(vertCt);
-
-						const int accessorIdx = primitive.attributes.at("TANGENT");
-						const auto bufferAccess = GetAttributeBufferAccess(gfx, model, accessorIdx, vertCt * sizeof(float) * 4u);
-						const float* tangents = reinterpret_cast<const float*>(&model.buffers[bufferAccess.first].data[bufferAccess.second]);
-						for (size_t vi = 0; vi < vertCt; ++vi)
-						{
-							pMeshAsset->m_tangents.emplace_back(dx::XMFLOAT4(tangents[vi * 4 + 0], tangents[vi * 4 + 1], tangents[vi * 4 + 2], tangents[vi * 4 + 3]));
-						}
-					}
-
-					// Detect up to 4 texcoords
-					std::vector<std::string> texcoordStrings;
-					for (size_t ti = 0; ti < 4; ++ti)
-					{
-						auto key = std::string("TEXCOORD_") + std::to_string(ti);
-						if (primitive.attributes.count(key))
-						{
-							texcoordStrings.emplace_back(std::move(key));
-						}
-					}
-
-					pMeshAsset->m_texcoords.reserve(texcoordStrings.size());
-
-					// Load TEXCOORD_0
-					for (size_t ti = 0; ti < texcoordStrings.size(); ++ti)
-					{
-						std::vector<dx::XMFLOAT2> texcoordSet;
-						texcoordSet.reserve(vertCt);
-
-						const int accessorIdx = primitive.attributes.at(texcoordStrings[ti]);
-						const auto bufferAccess = GetAttributeBufferAccess(gfx, model, accessorIdx, vertCt * sizeof(float) * 2u);
-						const float* coords = reinterpret_cast<const float*>(&model.buffers[bufferAccess.first].data[bufferAccess.second]);
-						for (size_t vi = 0; vi < vertCt; ++vi)
-						{
-							texcoordSet.emplace_back(dx::XMFLOAT2(coords[vi * 2 + 0], coords[vi * 2 + 1]));
-						}
-
-						pMeshAsset->m_texcoords.emplace_back(std::move(texcoordSet));
-					}
-
-					// Calculate AABB
-					pMeshAsset->m_aabb.SetBoundsByVertices(pMeshAsset->m_vertices);
-
-					// Double check that everything was loaded correctly
-					assert(pMeshAsset->m_vertices.size() > 0 && "Mesh primitive vertices were incorrectly loaded!");
-					assert(pMeshAsset->m_indices.size() > 0 && "Mesh primitive indices were incorrectly loaded!");
 				}
-			}
-			else
-			{
-				THROW("Mesh had " + std::to_string(mesh.primitives.size()) + " primitives!");
-				return nullptr;
+
+				// Load POSITION
+				{
+					pCurrentMeshAsset->m_vertices.reserve(vertCt);
+
+					const int accessorIdx = primitive.attributes.at("POSITION");
+					const auto bufferAccess = GetAttributeBufferAccess(gfx, model, accessorIdx, vertCt * sizeof(float) * 3u);
+					const float* positions = reinterpret_cast<const float*>(&model.buffers[bufferAccess.first].data[bufferAccess.second]);
+					for (size_t vi = 0; vi < vertCt; ++vi)
+					{
+						const auto posF3 = dx::XMFLOAT3(positions[vi * 3 + 0], positions[vi * 3 + 1], positions[vi * 3 + 2]);
+						pCurrentMeshAsset->m_vertices.emplace_back(posF3);
+					}
+				}
+
+				// Load NORMAL
+				if (primitive.attributes.count("NORMAL"))
+				{
+					pCurrentMeshAsset->hasNormals = true;
+					pCurrentMeshAsset->m_normals.reserve(vertCt);
+
+					const int accessorIdx = primitive.attributes.at("NORMAL");
+					const auto bufferAccess = GetAttributeBufferAccess(gfx, model, accessorIdx, vertCt * sizeof(float) * 3u);
+					const float* normals = reinterpret_cast<const float*>(&model.buffers[bufferAccess.first].data[bufferAccess.second]);
+					for (size_t vi = 0; vi < vertCt; ++vi)
+					{
+						pCurrentMeshAsset->m_normals.emplace_back(dx::XMFLOAT3(normals[vi * 3 + 0], normals[vi * 3 + 1], normals[vi * 3 + 2]));
+					}
+				}
+
+				// Load TANGENT
+				if (primitive.attributes.count("TANGENT"))
+				{
+					pCurrentMeshAsset->hasTangents = true;
+					pCurrentMeshAsset->m_tangents.reserve(vertCt);
+
+					const int accessorIdx = primitive.attributes.at("TANGENT");
+					const auto bufferAccess = GetAttributeBufferAccess(gfx, model, accessorIdx, vertCt * sizeof(float) * 4u);
+					const float* tangents = reinterpret_cast<const float*>(&model.buffers[bufferAccess.first].data[bufferAccess.second]);
+					for (size_t vi = 0; vi < vertCt; ++vi)
+					{
+						pCurrentMeshAsset->m_tangents.emplace_back(dx::XMFLOAT4(tangents[vi * 4 + 0], tangents[vi * 4 + 1], tangents[vi * 4 + 2], tangents[vi * 4 + 3]));
+					}
+				}
+
+				// Detect up to 4 texcoords
+				std::vector<std::string> texcoordStrings;
+				for (size_t ti = 0; ti < 4; ++ti)
+				{
+					auto key = std::string("TEXCOORD_") + std::to_string(ti);
+					if (primitive.attributes.count(key))
+					{
+						texcoordStrings.emplace_back(std::move(key));
+					}
+				}
+
+				pCurrentMeshAsset->m_texcoords.reserve(texcoordStrings.size());
+
+				// Load TEXCOORD_0
+				for (size_t ti = 0; ti < texcoordStrings.size(); ++ti)
+				{
+					std::vector<dx::XMFLOAT2> texcoordSet;
+					texcoordSet.reserve(vertCt);
+
+					const int accessorIdx = primitive.attributes.at(texcoordStrings[ti]);
+					const auto bufferAccess = GetAttributeBufferAccess(gfx, model, accessorIdx, vertCt * sizeof(float) * 2u);
+					const float* coords = reinterpret_cast<const float*>(&model.buffers[bufferAccess.first].data[bufferAccess.second]);
+					for (size_t vi = 0; vi < vertCt; ++vi)
+					{
+						texcoordSet.emplace_back(dx::XMFLOAT2(coords[vi * 2 + 0], coords[vi * 2 + 1]));
+					}
+
+					pCurrentMeshAsset->m_texcoords.emplace_back(std::move(texcoordSet));
+				}
+
+				// Calculate AABB
+				pCurrentMeshAsset->m_aabb.SetBoundsByVertices(pCurrentMeshAsset->m_vertices);
+
+				// Double check that everything was loaded correctly
+				assert(pCurrentMeshAsset->m_vertices.size() > 0 && "Mesh primitive vertices were incorrectly loaded!");
+				assert(pCurrentMeshAsset->m_indices.size() > 0 && "Mesh primitive indices were incorrectly loaded!");
 			}
 		}
 
