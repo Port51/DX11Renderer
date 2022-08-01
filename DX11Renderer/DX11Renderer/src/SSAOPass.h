@@ -52,10 +52,10 @@ namespace gfx
 		std::shared_ptr<RenderTexture> m_pOcclusionTexture0;
 		std::shared_ptr<RenderTexture> m_pOcclusionTexture1;
 
-		float m_radiusVS = 0.125f;
+		float m_radiusVS = 0.15f;
 		float m_biasVS = 0.001f;
-		float m_intensity = 1.f;
-		float m_sharpness = 1.f;
+		float m_intensity = 2.5f;
+		float m_sharpness = 0.75f;
 
 		const size_t SampleOffsetCount = 64u;
 		const size_t BlurWidth = 15u;
