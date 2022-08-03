@@ -35,7 +35,6 @@ namespace gfx
 			}
 			else if (p.key == "Map")
 			{
-				//gfx.GetLog()->Info(p.values[0]);
 				settings.materialPaths.emplace_back(p.values[1]);
 				settings.materialIndicesByName[p.values[0]] = (int)settings.materialPaths.size() - 1;
 			}
@@ -54,66 +53,28 @@ namespace gfx
 		return settings;
 	}
 
-	size_t ModelImporter::GetAttributeCt(const GraphicsDevice& gfx, tinygltf::Model& model, int accessorIdx)
+	size_t ModelImporter::GetAttributeCt(const GraphicsDevice& gfx, const tinygltf::Model& model, int accessorIdx)
 	{
 		const auto accessor = model.accessors[accessorIdx];
 		return accessor.count;
 	}
 
-	std::pair<int, size_t> ModelImporter::GetAttributeBufferAccess(const GraphicsDevice& gfx, tinygltf::Model& model, int accessorIdx, size_t byteCt)
+	std::pair<int, size_t> ModelImporter::GetAttributeBufferAccess(const GraphicsDevice& gfx, const tinygltf::Model& model, const int accessorIdx, const size_t byteCt)
 	{
 		// Each attribute owns a segment of data in the buffer
 		// It can be accessed by using the view and accessor offsets
 		const auto& accessor = model.accessors[accessorIdx];
 		const auto& view = model.bufferViews[accessor.bufferView];
 
-		assert(view.byteLength == byteCt && "Buffer view does not match expected number of elements");
+		if (view.byteLength != byteCt) THROW("Buffer view does not match expected number of elements!");
 
 		return std::pair<int, size_t>(view.buffer, (size_t)(view.byteOffset + accessor.byteOffset));
 	}
 
 	std::shared_ptr<ModelAsset> ModelImporter::LoadGLTF(const GraphicsDevice& gfx, const char * assetFilename)
 	{
-		Model model;
-		TinyGLTF loader;
-		std::string err;
-		std::string warn;
-
-		gfx.GetLog().Info(std::string("LoadGLTF(") + std::string(assetFilename) + std::string(")"));
-
 		const auto settings = GetImportSettings(gfx, assetFilename);
-
-		bool ret;
-		if (settings.gltfIsBinary)
-		{
-			ret = loader.LoadBinaryFromFile(&model, &err, &warn, settings.gltfPath); // for binary glTF(.glb)
-		}
-		else
-		{
-			ret = loader.LoadASCIIFromFile(&model, &err, &warn, settings.gltfPath);
-		}
-
-		if (!warn.empty())
-		{
-			THROW("glTF warning: '" + warn + "'");
-		}
-
-		if (!err.empty())
-		{
-			THROW("glTF error: '" + err + "'");
-		}
-
-		if (!ret)
-		{
-			THROW("Could not parse glTF for filename '" + settings.gltfPath + "'");
-			return nullptr;
-		}
-
-		if (model.scenes.size() <= model.defaultScene || model.defaultScene < 0)
-		{
-			THROW("No default scene for filename '" + settings.gltfPath + "'");
-			return nullptr;
-		}
+		const Model model = TryLoadGLTFModel(gfx, settings.gltfPath.c_str(), settings.gltfIsBinary);
 
 		// Good reference:
 		// https://www.khronos.org/files/gltf20-reference-guide.pdf
@@ -128,8 +89,6 @@ namespace gfx
 		{
 			meshCt += mesh.primitives.size();
 		}
-
-		if (nodeCt < meshCt) THROW("Not enough nodes for mesh count");
 		
 		gfx.GetLog().Info(std::string("GLTF has ") + std::to_string(nodeCt) + std::string(" nodes, ") + std::to_string(meshCt) + std::string(" meshes"));
 
@@ -169,7 +128,7 @@ namespace gfx
 					{
 						const auto bufferAccess = GetAttributeBufferAccess(gfx, model, accessorIdx, indicesCt * sizeof(u16));
 						const u16* indices = reinterpret_cast<const u16*>(&model.buffers[bufferAccess.first].data[bufferAccess.second]);
-						for (size_t vi = 0; vi < indicesCt; ++vi)
+						for (size_t vi = 0u; vi < indicesCt; ++vi)
 						{
 							pCurrentMeshAsset->m_indices.emplace_back((u32)indices[vi]);
 						}
@@ -178,7 +137,7 @@ namespace gfx
 					{
 						const auto bufferAccess = GetAttributeBufferAccess(gfx, model, accessorIdx, indicesCt * sizeof(u32));
 						const u32* indices = reinterpret_cast<const u32*>(&model.buffers[bufferAccess.first].data[bufferAccess.second]);
-						for (size_t vi = 0; vi < indicesCt; ++vi)
+						for (size_t vi = 0u; vi < indicesCt; ++vi)
 						{
 							pCurrentMeshAsset->m_indices.emplace_back((u32)indices[vi]);
 						}
@@ -199,7 +158,7 @@ namespace gfx
 					const float* positions = reinterpret_cast<const float*>(&model.buffers[bufferAccess.first].data[bufferAccess.second]);
 					for (size_t vi = 0; vi < vertCt; ++vi)
 					{
-						const auto posF3 = dx::XMFLOAT3(positions[vi * 3 + 0], positions[vi * 3 + 1], positions[vi * 3 + 2]);
+						const auto posF3 = dx::XMFLOAT3(positions[vi * 3u + 0u], positions[vi * 3u + 1u], positions[vi * 3u + 2u]);
 						pCurrentMeshAsset->m_vertices.emplace_back(posF3);
 					}
 				}
@@ -215,7 +174,7 @@ namespace gfx
 					const float* normals = reinterpret_cast<const float*>(&model.buffers[bufferAccess.first].data[bufferAccess.second]);
 					for (size_t vi = 0; vi < vertCt; ++vi)
 					{
-						pCurrentMeshAsset->m_normals.emplace_back(dx::XMFLOAT3(normals[vi * 3 + 0], normals[vi * 3 + 1], normals[vi * 3 + 2]));
+						pCurrentMeshAsset->m_normals.emplace_back(dx::XMFLOAT3(normals[vi * 3u + 0u], normals[vi * 3u + 1u], normals[vi * 3u + 2u]));
 					}
 				}
 
@@ -230,13 +189,13 @@ namespace gfx
 					const float* tangents = reinterpret_cast<const float*>(&model.buffers[bufferAccess.first].data[bufferAccess.second]);
 					for (size_t vi = 0; vi < vertCt; ++vi)
 					{
-						pCurrentMeshAsset->m_tangents.emplace_back(dx::XMFLOAT4(tangents[vi * 4 + 0], tangents[vi * 4 + 1], tangents[vi * 4 + 2], tangents[vi * 4 + 3]));
+						pCurrentMeshAsset->m_tangents.emplace_back(dx::XMFLOAT4(tangents[vi * 4u + 0u], tangents[vi * 4u + 1u], tangents[vi * 4u + 2u], tangents[vi * 4u + 3u]));
 					}
 				}
 
 				// Detect up to 4 texcoords
 				std::vector<std::string> texcoordStrings;
-				for (size_t ti = 0; ti < 4; ++ti)
+				for (size_t ti = 0u; ti < 4u; ++ti)
 				{
 					auto key = std::string("TEXCOORD_") + std::to_string(ti);
 					if (primitive.attributes.count(key))
@@ -247,8 +206,8 @@ namespace gfx
 
 				pCurrentMeshAsset->m_texcoords.reserve(texcoordStrings.size());
 
-				// Load TEXCOORD_0
-				for (size_t ti = 0; ti < texcoordStrings.size(); ++ti)
+				// Load TEXCOORDs
+				for (size_t ti = 0u; ti < texcoordStrings.size(); ++ti)
 				{
 					std::vector<dx::XMFLOAT2> texcoordSet;
 					texcoordSet.reserve(vertCt);
@@ -256,9 +215,9 @@ namespace gfx
 					const int accessorIdx = primitive.attributes.at(texcoordStrings[ti]);
 					const auto bufferAccess = GetAttributeBufferAccess(gfx, model, accessorIdx, vertCt * sizeof(float) * 2u);
 					const float* coords = reinterpret_cast<const float*>(&model.buffers[bufferAccess.first].data[bufferAccess.second]);
-					for (size_t vi = 0; vi < vertCt; ++vi)
+					for (size_t vi = 0u; vi < vertCt; ++vi)
 					{
-						texcoordSet.emplace_back(dx::XMFLOAT2(coords[vi * 2 + 0], coords[vi * 2 + 1]));
+						texcoordSet.emplace_back(dx::XMFLOAT2(coords[vi * 2u + 0u], coords[vi * 2u + 1u]));
 					}
 
 					pCurrentMeshAsset->m_texcoords.emplace_back(std::move(texcoordSet));
@@ -276,34 +235,10 @@ namespace gfx
 		// Create initial nodes
 		std::vector<std::shared_ptr<ModelAssetNode>> pNodes;
 		pNodes.reserve(nodeCt + 1u);
-		for (size_t i = 0u; i < nodeCt; ++i)
+		for (const auto& node : model.nodes)
 		{
-			const auto& node = model.nodes[i];
-
-			// Calculate transform, using identity for any missing factors
-			dx::XMMATRIX localTransform = dx::XMMatrixIdentity();
-
-			if (node.scale.size() == 3)
-			{
-				localTransform *= dx::XMMatrixScaling((float)node.scale[0], (float)node.scale[1], (float)node.scale[2]);
-			}
-			
-			if (node.rotation.size() == 4)
-			{
-				const auto rotationQuat = dx::XMVectorSet((float)node.rotation[0], (float)node.rotation[1], (float)node.rotation[2], (float)node.rotation[3]);
-				localTransform *= dx::XMMatrixRotationQuaternion(rotationQuat);
-			}
-
-			if (node.translation.size() == 3)
-			{
-				localTransform *= dx::XMMatrixTranslation((float)node.translation[0], (float)node.translation[1], (float)node.translation[2]);
-			}
-
-			dx::XMFLOAT4X4 localTransformFloat;
-			dx::XMStoreFloat4x4(&localTransformFloat, localTransform);
-
 			// pMeshes can be shared, so don't std::move()
-			pNodes.emplace_back(std::make_shared<ModelAssetNode>(node.name, node.mesh != -1 ? pMeshes[node.mesh] : nullptr, std::move(localTransformFloat)));
+			pNodes.emplace_back(std::make_shared<ModelAssetNode>(node.name, node.mesh != -1 ? pMeshes[node.mesh] : nullptr, GetNodeTransform(node)));
 		}
 		
 		// Special case for single meshes, to avoid clunky node structures
@@ -319,7 +254,7 @@ namespace gfx
 		std::unordered_set<int> childNodeIndices;
 		for (size_t i = 0u; i < nodeCt; ++i)
 		{
-			const auto& node = model.nodes[i];
+			const auto& node = model.nodes.at(i);
 
 			std::vector<std::shared_ptr<ModelAssetNode>> pChildNodes;
 			pChildNodes.reserve(node.children.size());
@@ -343,7 +278,7 @@ namespace gfx
 			if (childNodeIndices.find((const int)i) == childNodeIndices.end())
 			{
 				// If is not a child node of something, parent to the root node
-				pLevel0Nodes.emplace_back(pNodes[i]);
+				pLevel0Nodes.emplace_back(pNodes.at(i));
 			}
 		}
 
@@ -351,12 +286,110 @@ namespace gfx
 		dx::XMFLOAT4X4 localTransformFloat;
 		dx::XMStoreFloat4x4(&localTransformFloat, dx::XMMatrixIdentity());
 		pNodes.emplace_back(std::make_shared<ModelAssetNode>(std::move("Root"), nullptr, std::move(localTransformFloat)));
-		const auto& pRootNode = pNodes[pNodes.size() - 1u];
+		const auto& pRootNode = pNodes.at(pNodes.size() - 1u);
 		pRootNode->SetChildNodes(std::move(pLevel0Nodes));
 
 		// Create model asset
 		auto pModelAsset = std::make_shared<ModelAsset>(pRootNode, settings.materialPaths);
 		if (pModelAsset == nullptr) THROW("Failed to create 1-mesh model asset");
 		return std::move(pModelAsset);
+	}
+
+	std::vector<dx::XMFLOAT3> ModelImporter::LoadGLTFPositions(const GraphicsDevice& gfx, const char* gltfFilename, const bool isBinary)
+	{
+		std::vector<dx::XMFLOAT3> positions;
+		const Model model = TryLoadGLTFModel(gfx, gltfFilename, isBinary);
+
+		// Get positions from nodes
+		positions.reserve(model.nodes.size());
+		for (const auto& node : model.nodes)
+		{
+			positions.emplace_back(dx::XMFLOAT3((float)node.translation.at(0u), (float)node.translation.at(1u), (float)node.translation.at(2u)));
+		}
+
+		return std::move(positions);
+	}
+
+	std::vector<dx::XMFLOAT4X4> ModelImporter::LoadGLTFTransforms(const GraphicsDevice& gfx, const char* gltfFilename, const bool isBinary)
+	{
+		std::vector<dx::XMFLOAT4X4> transforms;
+		const Model model = TryLoadGLTFModel(gfx, gltfFilename, isBinary);
+
+		// Get positions from nodes
+		transforms.reserve(model.nodes.size());
+		for (const auto& node : model.nodes)
+		{
+			transforms.emplace_back(GetNodeTransform(node));
+		}
+
+		return std::move(transforms);
+	}
+
+	dx::XMFLOAT4X4 ModelImporter::GetNodeTransform(const tinygltf::Node& node)
+	{
+		// Calculate transform, using identity for any missing factors
+		dx::XMMATRIX localTransform = dx::XMMatrixIdentity();
+
+		if (node.scale.size() == 3u)
+		{
+			localTransform *= dx::XMMatrixScaling((float)node.scale.at(0u), (float)node.scale.at(1u), (float)node.scale.at(2u));
+		}
+
+		if (node.rotation.size() == 4u)
+		{
+			const auto rotationQuat = dx::XMVectorSet((float)node.rotation.at(0u), (float)node.rotation.at(1u), (float)node.rotation.at(2u), (float)node.rotation.at(3u));
+			localTransform *= dx::XMMatrixRotationQuaternion(rotationQuat);
+		}
+
+		if (node.translation.size() == 3u)
+		{
+			localTransform *= dx::XMMatrixTranslation((float)node.translation.at(0u), (float)node.translation.at(1u), (float)node.translation.at(2u));
+		}
+
+		dx::XMFLOAT4X4 localTransformFloat;
+		dx::XMStoreFloat4x4(&localTransformFloat, localTransform);
+		return localTransformFloat;
+	}
+
+	tinygltf::Model ModelImporter::TryLoadGLTFModel(const GraphicsDevice& gfx, const char* gltfFilename, const bool isBinary)
+	{
+		tinygltf::Model model;
+		TinyGLTF loader;
+		std::string err;
+		std::string warn;
+
+		gfx.GetLog().Info(std::string("LoadGLTFPositions(") + std::string(gltfFilename) + std::string(")"));
+
+		bool ret;
+		if (isBinary)
+		{
+			ret = loader.LoadBinaryFromFile(&model, &err, &warn, gltfFilename); // for binary glTF(.glb)
+		}
+		else
+		{
+			ret = loader.LoadASCIIFromFile(&model, &err, &warn, gltfFilename);
+		}
+
+		if (!warn.empty())
+		{
+			THROW("glTF warning: '" + warn + "'");
+		}
+
+		if (!err.empty())
+		{
+			THROW("glTF error: '" + err + "'");
+		}
+
+		if (!ret)
+		{
+			THROW("Could not parse glTF for filename '" + std::string(gltfFilename) + "'");
+		}
+
+		if (model.scenes.size() <= model.defaultScene || model.defaultScene < 0)
+		{
+			THROW("No default scene for filename '" + std::string(gltfFilename) + "'");
+		}
+
+		return model;
 	}
 }

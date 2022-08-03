@@ -89,13 +89,13 @@ namespace gfx
 	void LightManager::AddPointLight(const GraphicsDevice& gfx, const dx::XMFLOAT3 positionWS, const dx::XMFLOAT3 color, const float intensity, const float attenuationQ, const float range)
 	{
 		auto prevCount = m_pLights.size();
-		AddLight(std::move(std::make_shared<PointLight>(gfx, prevCount, true, false, nullptr, positionWS, color, intensity, attenuationQ, range)));
+		AddLight(std::move(std::make_shared<PointLight>(gfx, prevCount, false, false, nullptr, positionWS, color, intensity, attenuationQ, range)));
 	}
 
 	void LightManager::AddDirectionalLight(const GraphicsDevice& gfx, const float pan, const float tilt, const dx::XMFLOAT3 color, const float intensity)
 	{
 		auto prevCount = m_pLights.size();
-		m_pMainLight = std::make_shared<DirectionalLight>(gfx, prevCount, true, true, nullptr, pan, tilt, color, intensity, 50.0f, 5.0f);
+		m_pMainLight = std::make_shared<DirectionalLight>(gfx, prevCount, false, true, nullptr, pan, tilt, color, intensity, 50.0f, 5.0f);
 		AddLight(m_pMainLight);
 	}
 

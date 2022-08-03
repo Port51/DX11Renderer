@@ -46,6 +46,7 @@ namespace gfx
 
 		std::unique_ptr<ModelInstance> m_pModel0;
 		std::unique_ptr<ModelInstance> m_pModel1;
+		std::vector<std::unique_ptr<ModelInstance>> m_pModels;
 		std::vector<std::unique_ptr<MeshRenderer>> m_pDrawables;
 		std::shared_ptr<RendererList> m_pRendererList;
 

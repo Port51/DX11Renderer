@@ -6,6 +6,7 @@
 namespace tinygltf
 {
 	class Model;
+	class Node;
 }
 
 namespace gfx
@@ -27,9 +28,13 @@ namespace gfx
 		};
 	public:
 		static std::shared_ptr<ModelAsset> LoadGLTF(const GraphicsDevice& gfx, const char* assetFilename);
+		static std::vector<dx::XMFLOAT3> LoadGLTFPositions(const GraphicsDevice& gfx, const char* assetFilename, const bool isBinary = true);
+		static std::vector<dx::XMFLOAT4X4> LoadGLTFTransforms(const GraphicsDevice& gfx, const char* assetFilename, const bool isBinary = true);
 	private:
+		static dx::XMFLOAT4X4 GetNodeTransform(const tinygltf::Node& node);
+		static tinygltf::Model TryLoadGLTFModel(const GraphicsDevice& gfx, const char* gltfFilename, const bool isBinary);
 		static ModelImportSettings GetImportSettings(const GraphicsDevice& gfx, const char* assetFilename);
-		static size_t GetAttributeCt(const GraphicsDevice& gfx, tinygltf::Model& model, int accessorIdx);
-		static std::pair<int, size_t> GetAttributeBufferAccess(const GraphicsDevice& gfx, tinygltf::Model& model, int accessorIdx, size_t byteCt);
+		static size_t GetAttributeCt(const GraphicsDevice& gfx, const tinygltf::Model& model, int accessorIdx);
+		static std::pair<int, size_t> GetAttributeBufferAccess(const GraphicsDevice& gfx, const tinygltf::Model& model, const int accessorIdx, const size_t byteCt);
 	};
 }

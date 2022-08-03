@@ -85,13 +85,34 @@ namespace gfx
 			fn = std::string("Assets\\Models\\NewCastle.asset");
 
 			const float baseLevelY = -3.f;
-			modelTransform = dx::XMMatrixScaling(1.f, 1.f, 1.f) * dx::XMMatrixRotationY(3.1415f) * dx::XMMatrixTranslation(0.f, baseLevelY, 0.f);
+			auto sceneTranslation = dx::XMMatrixTranslation(0.f, baseLevelY, 0.f);
+			modelTransform = dx::XMMatrixScaling(1.f, 1.f, 1.f) * dx::XMMatrixRotationY(3.1415f) * sceneTranslation;
 
 			// Moonlight
 			m_pLightManager->AddDirectionalLight(Gfx(), 30.f, 30.f, dx::XMFLOAT3(1.f, 1.f, 1.f), 0.25f);
-			// Torches
-			m_pLightManager->AddPointLight(Gfx(), dx::XMFLOAT3(-0.5f, 11.f + baseLevelY, -1.5f), dx::XMFLOAT3(1.f, 0.25f, 0.04f), 2.f, 1.f, 3.f);
-			m_pLightManager->AddPointLight(Gfx(), dx::XMFLOAT3(-0.5f, 11.f + baseLevelY, 1.5f), dx::XMFLOAT3(1.f, 0.25f, 0.04f), 2.f, 1.f, 3.f);
+
+			// Add torches
+			{
+				const auto torchPlacements = ModelImporter::LoadGLTFPositions(Gfx(), "Assets\\Models\\GLTF\\NewCastle_TorchPlacements.glb");
+				for (const auto& tp : torchPlacements)
+				{
+					// todo: don't flip!
+					m_pLightManager->AddPointLight(Gfx(), dx::XMFLOAT3(-tp.x, tp.y + baseLevelY, -tp.z), dx::XMFLOAT3(1.f, 0.25f, 0.04f), 2.f, 1.f, 3.f);
+				}
+			}
+			
+			// Add boat placements
+			{
+				auto pBoatAsset = ModelImporter::LoadGLTF(Gfx(), "Assets\\Models\\Boat.asset");
+				auto boatPlacements = ModelImporter::LoadGLTFTransforms(Gfx(), "Assets\\Models\\GLTF\\NewCastle_BoatPlacements.glb");
+				for (const auto& bp : boatPlacements)
+				{
+					// todo: don't flip!
+					m_pModels.emplace_back(std::make_unique<ModelInstance>(Gfx(), pBoatAsset, dx::XMMatrixMultiply(dx::XMLoadFloat4x4(&bp), sceneTranslation)));
+					m_pRendererList->AddModelInstance(*m_pModels.at(m_pModels.size() - 1u));
+				}
+			}
+
 			break;
 		}
 

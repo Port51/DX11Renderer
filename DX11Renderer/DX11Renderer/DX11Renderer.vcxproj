@@ -409,6 +409,7 @@
     <None Include="Assets\Materials\GreyboxMaterial.asset" />
     <None Include="Assets\Materials\HeadMaterial.asset" />
     <None Include="Assets\Materials\LightMaterial.asset" />
+    <None Include="Assets\Models\Boat.asset" />
     <None Include="Assets\Models\CascadeTestScene.asset" />
     <None Include="Assets\Models\Head.asset" />
     <None Include="Assets\Materials\HairMaterial.asset" />
