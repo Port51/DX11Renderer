@@ -240,15 +240,16 @@ namespace gfx
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, gfx.GetDepthStencilTarget()->GetSRV())
 			.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, m_pHiZBufferTarget->GetUAV())
 			.CSSetUAV(RenderSlots::CS_FreeUAV + 1u, nullptr)
-			.CSSetCB(RenderSlots::CS_FreeCB + 0u, m_pHiZCreationCB->GetD3DBuffer());
+			.CSSetCB(RenderSlots::CS_FreeCB + 0u, m_pHiZCreationCB->GetD3DBuffer())
+			.AddBinding(RasterizerState::Resolve(gfx, D3D11_CULL_MODE::D3D11_CULL_BACK)).SetupRSBinding();
 
 		GetRenderPass(RenderPassType::ShadowRenderPass).
 			ClearBinds()
-			.AddBinding(RasterizerState::Resolve(gfx, D3D11_CULL_FRONT)).SetupRSBinding(); // Reduce shadow acne w/ front face culling during shadow pass
+			.AddBinding(RasterizerState::Resolve(gfx, D3D11_CULL_MODE::D3D11_CULL_FRONT)).SetupRSBinding(); // Reduce shadow acne w/ front face culling during shadow pass
 
 		GetRenderPass(RenderPassType::GBufferRenderPass).
 			ClearBinds()
-			.AddBinding(RasterizerState::Resolve(gfx, D3D11_CULL_BACK)).SetupRSBinding();
+			.AddBinding(RasterizerState::Resolve(gfx, D3D11_CULL_MODE::D3D11_CULL_BACK)).SetupRSBinding();
 
 		GetRenderPass(RenderPassType::TiledLightingRenderPass).
 			ClearBinds()

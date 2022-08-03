@@ -72,9 +72,9 @@ namespace gfx
 		RawBufferData vbuf(3u, vertexLayout.GetPerVertexStride(), vertexLayout.GetPerVertexPadding());
 		vbuf.EmplaceBack(dx::XMFLOAT2{ 0, 0 });
 		vbuf.EmplacePadding();
-		vbuf.EmplaceBack(dx::XMFLOAT2{ 0, 2 });
-		vbuf.EmplacePadding();
 		vbuf.EmplaceBack(dx::XMFLOAT2{ 2, 0 });
+		vbuf.EmplacePadding();
+		vbuf.EmplaceBack(dx::XMFLOAT2{ 0, 2 });
 		vbuf.EmplacePadding();
 		m_pVertexBufferWrapper = std::make_unique<VertexBufferWrapper>(gfx, std::move(vbuf));
 

@@ -158,7 +158,7 @@ namespace gfx
 					const float* positions = reinterpret_cast<const float*>(&model.buffers[bufferAccess.first].data[bufferAccess.second]);
 					for (size_t vi = 0; vi < vertCt; ++vi)
 					{
-						const auto posF3 = dx::XMFLOAT3(positions[vi * 3u + 0u], positions[vi * 3u + 1u], positions[vi * 3u + 2u]);
+						const auto posF3 = ImportVec3(dx::XMFLOAT3(positions[vi * 3u + 0u], positions[vi * 3u + 1u], positions[vi * 3u + 2u]));
 						pCurrentMeshAsset->m_vertices.emplace_back(posF3);
 					}
 				}
@@ -174,7 +174,7 @@ namespace gfx
 					const float* normals = reinterpret_cast<const float*>(&model.buffers[bufferAccess.first].data[bufferAccess.second]);
 					for (size_t vi = 0; vi < vertCt; ++vi)
 					{
-						pCurrentMeshAsset->m_normals.emplace_back(dx::XMFLOAT3(normals[vi * 3u + 0u], normals[vi * 3u + 1u], normals[vi * 3u + 2u]));
+						pCurrentMeshAsset->m_normals.emplace_back(ImportVec3(dx::XMFLOAT3(normals[vi * 3u + 0u], normals[vi * 3u + 1u], normals[vi * 3u + 2u])));
 					}
 				}
 
@@ -189,7 +189,7 @@ namespace gfx
 					const float* tangents = reinterpret_cast<const float*>(&model.buffers[bufferAccess.first].data[bufferAccess.second]);
 					for (size_t vi = 0; vi < vertCt; ++vi)
 					{
-						pCurrentMeshAsset->m_tangents.emplace_back(dx::XMFLOAT4(tangents[vi * 4u + 0u], tangents[vi * 4u + 1u], tangents[vi * 4u + 2u], tangents[vi * 4u + 3u]));
+						pCurrentMeshAsset->m_tangents.emplace_back(ImportVec4(dx::XMFLOAT4(tangents[vi * 4u + 0u], tangents[vi * 4u + 1u], tangents[vi * 4u + 2u], tangents[vi * 4u + 3u])));
 					}
 				}
 
@@ -304,7 +304,7 @@ namespace gfx
 		positions.reserve(model.nodes.size());
 		for (const auto& node : model.nodes)
 		{
-			positions.emplace_back(dx::XMFLOAT3((float)node.translation.at(0u), (float)node.translation.at(1u), (float)node.translation.at(2u)));
+			positions.emplace_back(ImportVec3(dx::XMFLOAT3((float)node.translation.at(0u), (float)node.translation.at(1u), (float)node.translation.at(2u))));
 		}
 
 		return std::move(positions);
@@ -325,6 +325,16 @@ namespace gfx
 		return std::move(transforms);
 	}
 
+	inline dx::XMFLOAT3 ModelImporter::ImportVec3(const dx::XMFLOAT3& vec)
+	{
+		return dx::XMFLOAT3(vec.x, vec.y, -vec.z);
+	}
+
+	inline dx::XMFLOAT4 ModelImporter::ImportVec4(const dx::XMFLOAT4& vec)
+	{
+		return dx::XMFLOAT4(vec.x, vec.y, -vec.z, vec.w);
+	}
+
 	dx::XMFLOAT4X4 ModelImporter::GetNodeTransform(const tinygltf::Node& node)
 	{
 		// Calculate transform, using identity for any missing factors
@@ -343,7 +353,8 @@ namespace gfx
 
 		if (node.translation.size() == 3u)
 		{
-			localTransform *= dx::XMMatrixTranslation((float)node.translation.at(0u), (float)node.translation.at(1u), (float)node.translation.at(2u));
+			const auto tr = ImportVec3(dx::XMFLOAT3((float)node.translation.at(0u), (float)node.translation.at(1u), (float)node.translation.at(2u)));
+			localTransform *= dx::XMMatrixTranslation(tr.x, tr.y, tr.z);
 		}
 
 		dx::XMFLOAT4X4 localTransformFloat;
