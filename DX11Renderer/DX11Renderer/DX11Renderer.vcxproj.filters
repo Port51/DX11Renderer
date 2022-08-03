@@ -821,6 +821,18 @@
     <None Include="Assets\Models\Boat.asset">
       <Filter>Assets\Models</Filter>
     </None>
+    <None Include="Assets\Models\FloatingLantern.asset">
+      <Filter>Assets\Models</Filter>
+    </None>
+    <None Include="Assets\Materials\WaterMaterial.asset">
+      <Filter>Assets\Materials</Filter>
+    </None>
+    <None Include="Assets\Materials\BoatWoodMaterial.asset">
+      <Filter>Assets\Materials</Filter>
+    </None>
+    <None Include="Assets\Materials\IslandMaterial.asset">
+      <Filter>Assets\Materials</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Shaders\Lighting\ClusteredLightingCompute.hlsl">

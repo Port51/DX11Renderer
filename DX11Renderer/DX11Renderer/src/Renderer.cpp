@@ -49,9 +49,9 @@ namespace gfx
 		// Debug stuff
 		//
 		m_rendererFeatureEnabled.resize(RendererFeature::COUNT, true); // enable all features by default
-		m_rendererFeatureEnabled[RendererFeature::HZBSSR] = false;
+		m_rendererFeatureEnabled[RendererFeature::HZBSSR] = true;
 		m_rendererFeatureEnabled[RendererFeature::DepthOfField] = false;
-		//m_rendererFeatureEnabled[RendererFeature::Bloom] = false;
+		m_rendererFeatureEnabled[RendererFeature::Bloom] = true;
 
 		//
 		// Components
@@ -245,7 +245,8 @@ namespace gfx
 
 		GetRenderPass(RenderPassType::ShadowRenderPass).
 			ClearBinds()
-			.AddBinding(RasterizerState::Resolve(gfx, D3D11_CULL_MODE::D3D11_CULL_FRONT)).SetupRSBinding(); // Reduce shadow acne w/ front face culling during shadow pass
+			.AddBinding(RasterizerState::Resolve(gfx, D3D11_CULL_MODE::D3D11_CULL_BACK)).SetupRSBinding();
+			//.AddBinding(RasterizerState::Resolve(gfx, D3D11_CULL_MODE::D3D11_CULL_FRONT)).SetupRSBinding(); // Reduce shadow acne w/ front face culling during shadow pass
 
 		GetRenderPass(RenderPassType::GBufferRenderPass).
 			ClearBinds()

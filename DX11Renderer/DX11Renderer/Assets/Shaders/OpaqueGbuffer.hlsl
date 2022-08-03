@@ -8,13 +8,14 @@ cbuffer LightCBuf : register(b0)
     float lightIntensity;
 };
 
-cbuffer ObjectCBuf : register(b1)
+cbuffer ObjectCBuf : register(b5)
 {
     float3 materialColor;
     float roughness;
     bool normalMapEnabled; // 4 bytes in HLSL, so use BOOL in C++ to match
     float specularPower;
-    float padding[2];
+    float reflectivity;
+    float padding[1];
 };
 
 /*cbuffer CBuf : register(b2)
@@ -54,7 +55,6 @@ float4 main(v2f i) : SV_Target
     
     // cheap ambient gradient
     float3 ambient = pow(i.normalWS.y * -0.5 + 0.5, 2) * 0.15 * float3(0.75, 0.95, 1.0);
-    float reflectivity = 1.f;
     
     return float4(i.normalVS.xy * 0.5f + 0.5f, roughness, reflectivity);
 }

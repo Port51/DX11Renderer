@@ -238,10 +238,11 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
             float3 displ = light.positionVS_range.xyz - positionVS.xyz;
             float lightDist = length(displ);
             lightDirVS = displ / max(lightDist, 0.0001f);
-            float NdotL = dot(normalVS, -lightDirVS.xyz);
+            float NdotL = dot(normalVS, lightDirVS.xyz);
             float outOfRange = lightDist > light.positionVS_range.w;
             
             lightAtten = GetSphericalLightAttenuation(lightDist, light.data0.y, light.positionVS_range.w);
+            lightAtten *= saturate(NdotL * 1.5 + 0.5); // wrap lighting
             //lightAtten = lightDist < 15.f;
             //diffuseLight = lightAtten;
             //break;

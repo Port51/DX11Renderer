@@ -47,6 +47,7 @@ namespace gfx
 
 		dx::XMFLOAT3 colorProp = { 0.8f, 0.8f, 0.8f };
 		float roughnessProp = 0.75f;
+		float reflectivityProp = 0.0f;
 
 		MaterialParseState state = MaterialParseState::None;
 
@@ -58,7 +59,8 @@ namespace gfx
 			float roughness;
 			BOOL normalMappingEnabled = TRUE; // BOOL uses 4 bytes as it's an int, rather than bool
 			float specularPower = 30.0f;
-			float padding[2];
+			float reflectivity = 0.0f;
+			float padding[1];
 		} pmc;
 		ZERO_MEM(pmc);
 		assert(sizeof(PSMaterialConstant) % 16 == 0);
@@ -136,6 +138,11 @@ namespace gfx
 				{
 					roughnessProp = p.MoveFloat(0);
 					pmc.roughness = roughnessProp;
+				}
+				else if (p.key == "Reflectivity")
+				{
+					reflectivityProp = p.MoveFloat(0);
+					pmc.reflectivity = reflectivityProp;
 				}
 				else if (p.key == "Texture")
 				{

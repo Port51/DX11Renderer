@@ -31,8 +31,9 @@ namespace gfx
 		static std::vector<dx::XMFLOAT3> LoadGLTFPositions(const GraphicsDevice& gfx, const char* assetFilename, const bool isBinary = true);
 		static std::vector<dx::XMFLOAT4X4> LoadGLTFTransforms(const GraphicsDevice& gfx, const char* assetFilename, const bool isBinary = true);
 	private:
-		static dx::XMFLOAT3 ImportVec3(const dx::XMFLOAT3& vec);
-		static dx::XMFLOAT4 ImportVec4(const dx::XMFLOAT4& vec);
+		static dx::XMFLOAT3 RH_to_LH(const dx::XMFLOAT3& vec);
+		static dx::XMFLOAT4 RH_to_LH(const dx::XMFLOAT4& vec);
+		static dx::XMFLOAT4 RH_to_LH_Quaternion(const dx::XMFLOAT4& q);
 		static dx::XMFLOAT4X4 GetNodeTransform(const tinygltf::Node& node);
 		static tinygltf::Model TryLoadGLTFModel(const GraphicsDevice& gfx, const char* gltfFilename, const bool isBinary);
 		static ModelImportSettings GetImportSettings(const GraphicsDevice& gfx, const char* assetFilename);

@@ -10,13 +10,14 @@ cbuffer LightCBuf : register(b0)
 	float lightIntensity;
 };
 
-cbuffer ObjectCBuf : register(b1)
+cbuffer ObjectCBuf : register(b5)
 {
-	float3 materialColor;
+    float3 materialColor;
     float roughness;
     bool normalMapEnabled; // 4 bytes in HLSL, so use BOOL in C++ to match
-	float specularPower;
-    float padding[2];
+    float specularPower;
+    float reflectivity;
+    float padding[1];
 };
 
 /*cbuffer CBuf : register(b2)
@@ -53,6 +54,7 @@ float4 main(v2f i) : SV_Target
     //return _Time.x;
     //return screenPos.y;
     //return combinedLight.rgbb;
-    return diffuseLight;
+    //return float4(materialColor.rgb, 1);
+    return float4(diffuseLight.rgb * materialColor.rgb, 1);
     return diffuseTex;
 }

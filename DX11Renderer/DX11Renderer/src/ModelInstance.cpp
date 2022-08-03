@@ -121,7 +121,7 @@ namespace gfx
 		const bool isInstance = false;
 		const UINT instanceCount = 10u;
 
-		const auto pMaterial = m_pMaterials[pMeshAsset->m_materialIndex];
+		const auto pMaterial = m_pMaterials.at(pMeshAsset->m_materialIndex);
 		RawBufferData vbuf(pMeshAsset->m_vertices.size(), pMaterial->GetVertexLayout().GetPerVertexStride(), pMaterial->GetVertexLayout().GetPerVertexPadding());
 
 		if (pMeshAsset->m_vertices.size() == 0)

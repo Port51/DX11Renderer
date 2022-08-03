@@ -406,9 +406,12 @@
     <Image Include="icon1.ico" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\Materials\BoatWoodMaterial.asset" />
     <None Include="Assets\Materials\GreyboxMaterial.asset" />
     <None Include="Assets\Materials\HeadMaterial.asset" />
+    <None Include="Assets\Materials\IslandMaterial.asset" />
     <None Include="Assets\Materials\LightMaterial.asset" />
+    <None Include="Assets\Materials\WaterMaterial.asset" />
     <None Include="Assets\Models\Boat.asset" />
     <None Include="Assets\Models\CascadeTestScene.asset" />
     <None Include="Assets\Models\Head.asset" />
@@ -438,6 +441,7 @@
     <None Include="Assets\Models\DefaultSphere.asset" />
     <None Include="Assets\Shaders\Lighting\Shadows.hlsli" />
     <None Include="Assets\Materials\FireParticleMaterial.asset" />
+    <None Include="Assets\Models\FloatingLantern.asset" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Shaders\BilinearDownsample.hlsl">

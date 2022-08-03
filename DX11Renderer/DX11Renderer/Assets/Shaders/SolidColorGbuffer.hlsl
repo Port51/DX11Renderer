@@ -8,13 +8,14 @@ cbuffer LightCBuf : register(b0)
     float lightIntensity;
 };
 
-cbuffer ObjectCBuf : register(b1)
+cbuffer ObjectCBuf : register(b5)
 {
     float3 materialColor;
     float roughness;
     bool normalMapEnabled; // 4 bytes in HLSL, so use BOOL in C++ to match
     float specularPower;
-    float padding[2];
+    float reflectivity;
+    float padding[1];
 };
 
 /*cbuffer CBuf : register(b2)

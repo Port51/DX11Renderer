@@ -33,6 +33,7 @@ namespace gfx
 		GraphicsDevice& Gfx() const;
 	private:
 		void ExecuteFrame();
+		void CreateCastleScene();
 	private:
 		std::unique_ptr<ImguiManager> m_pImgui; // must be initialized before wnd
 		std::unique_ptr<DX11Window> m_pWindow;
@@ -44,10 +45,8 @@ namespace gfx
 		std::unique_ptr<Timer> m_pTimer;
 		std::unique_ptr<RandomGenerator> m_pRandomGenerator;
 
-		std::unique_ptr<ModelInstance> m_pModel0;
-		std::unique_ptr<ModelInstance> m_pModel1;
-		std::vector<std::unique_ptr<ModelInstance>> m_pModels;
-		std::vector<std::unique_ptr<MeshRenderer>> m_pDrawables;
+		std::unique_ptr<ModelInstance> m_pCastleModel;
+		std::vector<std::unique_ptr<ModelInstance>> m_pBoatModels;
 		std::shared_ptr<RendererList> m_pRendererList;
 
 		bool m_showDemoWindow = true;

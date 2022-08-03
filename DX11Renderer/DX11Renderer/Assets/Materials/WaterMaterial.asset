@@ -1,22 +1,23 @@
 Properties
 {
-	// Properties shared between passes
-	Texture, tex, Assets\\Textures\\hair_color_256.png
-	Texture, nmap, Assets\\Textures\\face_normal_256.png
-	Color, 0.0, 1.0, 0.0, 1.0
-	Roughness, 0.3
+	Slot, 0
+	Texture, 0, Assets\\Textures\\face_albedo_256.png
+	Texture, 1, Assets\\Textures\\face_normal_256.png
+	Color, 0.05, 0.5, 1.0, 1.0
+	Roughness, 0.0
+	Reflectivity, 1.0
 }
 Pass
 {
 	Name, ShadowRenderPass
-	Cull, Back
-	VS, Assets\\Built\\Shaders\\PhongVS.cso
+	Cull, Front
+	VS, Assets\\Built\\Shaders\\ShadowPassVS.cso
 }
 Pass
 {
 	Name, DepthPrepassRenderPass
 	Cull, Back
-	VS, Assets\\Built\\Shaders\\PhongVS.cso
+	VS, Assets\\Built\\Shaders\\DepthOnlyVS.cso
 }
 Pass
 {
@@ -24,8 +25,7 @@ Pass
 	Cull, Back
 	VS, Assets\\Built\\Shaders\\PhongVS.cso
 	PS, Assets\\Built\\Shaders\\OpaqueGbuffer.cso
-	Texture, tex, 0
-	Texture, nmap, 1
+	PropertySlot, 0
 }
 Pass
 {
@@ -33,6 +33,5 @@ Pass
 	Cull, Back
 	VS, Assets\\Built\\Shaders\\PhongVS.cso
 	PS, Assets\\Built\\Shaders\\DeferredPS.cso
-	Texture, tex, 0
-	Texture, nmap, 1
+	PropertySlot, 0
 }

@@ -22,7 +22,7 @@ namespace gfx
 	App::App(const UINT screenWidth, const UINT screenHeight, HINSTANCE hInstance)
 		:
 		m_pImgui(std::make_unique<ImguiManager>()),
-		m_pCamera(std::make_unique<Camera>(40.0f, (float)screenWidth / (float)screenHeight, 0.5f, 100.0f)),
+		m_pCamera(std::make_unique<Camera>(40.0f, (float)screenWidth / (float)screenHeight, 0.5f, 1000.0f)),
 		m_pTimer(std::make_unique<Timer>()),
 		m_pRendererList(std::make_shared<RendererList>()),
 		m_pRandomGenerator(std::make_unique<RandomGenerator>())
@@ -35,138 +35,10 @@ namespace gfx
 		m_pLightManager = std::make_shared<LightManager>(Gfx(), m_pRendererList);
 		m_pParticleManager = std::make_shared<ParticleManager>(Gfx());
 
-		std::string fn;
-		dx::XMMATRIX modelTransform;
+		CreateCastleScene();
 
-		// temporary...
-		int select = 9;
-		switch (select)
-		{
-		case 0:
-			fn = std::string("Assets\\Models\\Head.asset");
-			modelTransform =
-				dx::XMMatrixRotationY(3.1415f)
-				* dx::XMMatrixTranslation(0.f, -4.7f, 0.f)
-				* dx::XMMatrixScaling(5.f, 5.f, 5.f); // hack to keep model centered
-			break;
-		case 1:
-			fn = std::string("Models\\SceneGraphTest.fbx");
-			modelTransform = dx::XMMatrixIdentity();
-			break;
-		case 2:
-			fn = std::string("Models\\TransformTest.fbx");
-			modelTransform = dx::XMMatrixIdentity();
-			break;
-		case 3:
-			fn = std::string("Models\\TransformTestMultiLevel.fbx");
-			modelTransform = dx::XMMatrixIdentity();
-			break;
-		case 4:
-			fn = std::string("Models\\TransformTestOneLevel.fbx");
-			modelTransform = dx::XMMatrixIdentity();
-			break;
-		case 5:
-			fn = std::string("Assets\\Models\\DefaultQuad.asset");
-			modelTransform = dx::XMMatrixIdentity() * dx::XMMatrixScaling(51.f, 51.f, 51.f);
-			break;
-		case 6:
-			fn = std::string("Assets\\Models\\ShadowTestScene.asset");
-			modelTransform = dx::XMMatrixRotationY(3.1415f) * dx::XMMatrixScaling(12.f, 12.f, 12.f);
-			break;
-		case 7:
-			fn = std::string("Assets\\Models\\CascadeTestScene.asset");
-			modelTransform = dx::XMMatrixRotationY(3.1415f) * dx::XMMatrixScaling(12.f, 12.f, 12.f);
-			break;
-		case 8:
-			fn = std::string("Assets\\Models\\FullCastle.asset");
-			modelTransform = dx::XMMatrixRotationY(3.1415f) * dx::XMMatrixScaling(1.f, 1.f, 1.f);
-			break;
-		case 9:
-			fn = std::string("Assets\\Models\\NewCastle.asset");
-
-			const float baseLevelY = -3.f * 0.0;
-			auto sceneTransform = dx::XMMatrixTranslation(0.f, baseLevelY, 0.f);
-			modelTransform = sceneTransform;
-
-			// Moonlight
-			m_pLightManager->AddDirectionalLight(Gfx(), 30.f, 30.f, dx::XMFLOAT3(1.f, 1.f, 1.f), 0.25f);
-
-			// Add torches
-			{
-				const auto torchPlacements = ModelImporter::LoadGLTFPositions(Gfx(), "Assets\\Models\\GLTF\\NewCastle_TorchPlacements.glb");
-				for (const auto& tp : torchPlacements)
-				{
-					// todo: don't flip!
-					m_pLightManager->AddPointLight(Gfx(), dx::XMFLOAT3(tp.x, tp.y + baseLevelY, tp.z), dx::XMFLOAT3(1.f, 0.25f, 0.04f), 2.f, 1.f, 3.f);
-				}
-			}
-			
-			// Add boat placements
-			{
-				auto pBoatAsset = ModelImporter::LoadGLTF(Gfx(), "Assets\\Models\\Boat.asset");
-				auto boatPlacements = ModelImporter::LoadGLTFTransforms(Gfx(), "Assets\\Models\\GLTF\\NewCastle_BoatPlacements.glb");
-				for (const auto& bp : boatPlacements)
-				{
-					// todo: don't flip!
-					m_pModels.emplace_back(std::make_unique<ModelInstance>(Gfx(), pBoatAsset, sceneTransform * dx::XMLoadFloat4x4(&bp)));
-					m_pRendererList->AddModelInstance(*m_pModels.at(m_pModels.size() - 1u));
-				}
-			}
-
-			break;
-		}
-
-		auto pModelAsset = ModelImporter::LoadGLTF(Gfx(), fn.c_str());
-		if (pModelAsset)
-		{
-			Gfx().GetLog().Info("Model loaded");
-		}
-		else
-		{
-			Gfx().GetLog().Error("Failed to load model");
-		}
-
-		m_pModel0 = std::make_unique<ModelInstance>(Gfx(), pModelAsset, modelTransform);
-
-		m_pRendererList->AddModelInstance(*m_pModel0);
 		m_pLightManager->AddLightModelsToList(*m_pRendererList);
-
 		m_pRenderer = std::make_unique<Renderer>(Gfx(), *m_pRandomGenerator, m_pLightManager, m_pParticleManager, m_pRendererList);
-
-		return;
-		/*class Factory
-		{
-		public:
-			Factory(Graphics& gfx, std::unique_ptr<ModelAsset> const& pModelAssetRef)
-				: gfx(gfx), pModelAssetRef(pModelAssetRef)
-			{}
-			std::unique_ptr<Drawable> operator()()
-			{
-				const dx::XMFLOAT3 materialColor = { cdist(rng),cdist(rng),cdist(rng) };
-
-				switch (typedist(rng))
-				{
-				case 0:
-					return std::make_unique<ModelInstance>(gfx, pModelAssetRef, materialColor, dx::XMFLOAT3(3.f, 3.f, 3.f));
-					//return std::make_unique<Mesh>(gfx, materialColor, dx::XMFLOAT3(3.f, 3.f, 3.f));
-				default:
-					assert(false && "bad drawable type in factory");
-					return {};
-				}
-			}
-		private:
-			Graphics& gfx;
-			std::unique_ptr<ModelAsset> const& pModelAssetRef;
-			std::mt19937 rng{ std::random_device{}() };
-			std::uniform_int_distribution<int> tessDist{ 3,30 };
-		};
-
-		Factory f(wnd->Gfx(), pModelAsset);
-		drawables.reserve(nDrawables);
-		std::generate_n(std::back_inserter(drawables), nDrawables, f);*/
-
-		//wnd->Gfx().SetProjectionMatrix(dx::XMMatrixPerspectiveLH(1.0f, (float)ResolutionY / (float)ResolutionX, 0.5f, 40.0f));
-		//wnd->Gfx().SetProjectionMatrix(dx::XMMatrixPerspectiveFovLH(dx::XMConvertToRadians(40.0f), (float)ResolutionX / (float)ResolutionY, 0.5f, 100.0f));
 	}
 
 	App::~App()
@@ -276,5 +148,49 @@ namespace gfx
 
 		Gfx().EndFrame();
 		m_pRenderer->Reset();
+	}
+
+	void App::CreateCastleScene()
+	{
+		auto sceneTransform = dx::XMMatrixTranslation(2.f, -5.f, 0.f);
+
+		// Moonlight
+		m_pLightManager->AddDirectionalLight(Gfx(), 30.f, 30.f, dx::XMFLOAT3(1.f, 1.f, 1.f), 0.25f);
+
+		// Add castle
+		{
+			auto pCastleAsset = ModelImporter::LoadGLTF(Gfx(), "Assets\\Models\\NewCastle.asset");
+			m_pCastleModel = std::make_unique<ModelInstance>(Gfx(), pCastleAsset, sceneTransform);
+			m_pRendererList->AddModelInstance(*m_pCastleModel);
+		}
+
+		// Add torches
+		{
+			const auto torchPlacements = ModelImporter::LoadGLTFPositions(Gfx(), "Assets\\Models\\GLTF\\NewCastle_TorchPlacements.glb");
+			for (const auto& tp : torchPlacements)
+			{
+				auto transformedPos = dx::XMVector4Transform(dx::XMVectorSet(tp.x, tp.y, tp.z, 1.0), sceneTransform);
+				dx::XMFLOAT3 f3;
+				dx::XMStoreFloat3(&f3, transformedPos);
+				m_pLightManager->AddPointLight(Gfx(), f3, dx::XMFLOAT3(1.f, 0.25f, 0.04f), 1.8f, 1.f, 2.15f);
+			}
+		}
+
+		// Add boat placements
+		{
+			auto pBoatAsset = ModelImporter::LoadGLTF(Gfx(), "Assets\\Models\\Boat.asset");
+			auto boatPlacements = ModelImporter::LoadGLTFTransforms(Gfx(), "Assets\\Models\\GLTF\\NewCastle_BoatPlacements.glb");
+			for (const auto& bp : boatPlacements)
+			{
+				m_pBoatModels.emplace_back(std::make_unique<ModelInstance>(Gfx(), pBoatAsset, dx::XMLoadFloat4x4(&bp) * sceneTransform));
+				m_pRendererList->AddModelInstance(*m_pBoatModels.at(m_pBoatModels.size() - 1u));
+			}
+		}
+
+		// Add lanterns
+		auto pLanternAsset = ModelImporter::LoadGLTF(Gfx(), "Assets\\Models\\FloatingLantern.asset");
+		{
+			
+		}
 	}
 }
