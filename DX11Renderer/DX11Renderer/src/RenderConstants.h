@@ -53,7 +53,7 @@ namespace gfx
 	{
 	public:
 		static const UINT CS_PerFrameCB = 0u;
-		static const UINT CS_TransformationCB = 1u;
+		static const UINT CS_GlobalTransformsCB = 1u;
 		static const UINT CS_PerCameraCB = 2u;
 		static const UINT CS_LightInputCB = 3u;
 		static const UINT CS_FreeCB = 4u; // 1st available general-purpose slot
@@ -71,19 +71,20 @@ namespace gfx
 		static const UINT CS_FreeUAV = 0u; // 1st available general-purpose slot
 
 		static const UINT VS_PerFrameCB = 0u;
-		static const UINT VS_TransformationCB = 1u;
+		static const UINT VS_GlobalTransformsCB = 1u;
 		static const UINT VS_PerCameraCB = 2u;
-		static const UINT VS_TransformCB = 3u;
+		static const UINT VS_PerObjectTransformCB = 3u;
 		static const UINT VS_FreeCB = 4u; // 1st available general-purpose slot
 		static const UINT VS_FreeSPL = 0u; // 1st available general-purpose slot
 
 		static const UINT VS_FreeSRV = 0u; // 1st available general-purpose slot
 
 		static const UINT PS_PerFrameCB = 0u;
-		static const UINT PS_TransformationCB = 1u;
+		static const UINT PS_GlobalTransformsCB = 1u;
 		static const UINT PS_PerCameraCB = 2u;
-		static const UINT PS_LightInputCB = 3u;
-		static const UINT PS_FreeCB = 4u; // 1st available general-purpose slot
+		static const UINT PS_PerObjectTransformCB = 3u;
+		static const UINT PS_LightInputCB = 4u;
+		static const UINT PS_FreeCB = 5u; // 1st available general-purpose slot
 		static const UINT PS_FreeSRV = 5u; // save 0-4 for materials
 		static const UINT PS_FreeSPL = 5u; // save 0-4 for materials
 

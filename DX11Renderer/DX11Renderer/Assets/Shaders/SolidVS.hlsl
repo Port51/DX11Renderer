@@ -1,8 +1,10 @@
-cbuffer CBuf
+
+
+cbuffer PerObjectTransformCB : register(b3)
 {
-	matrix model;
-	matrix modelView;
-	matrix modelViewProj;
+    matrix model;
+    matrix modelView;
+    matrix modelViewProj;
 };
 
 struct attrib

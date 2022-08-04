@@ -296,6 +296,12 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
         //diffuseLight += brdf.diffuseLight * lightColorInput;
         //specularLight += brdf.specularLight * lightColorInput;
     }
+
+    // Ambient lighting (todo: replace with something fancier and read colors from CB!)
+    const float3 normalWS = mul(_InvViewMatrix, float4(normalVS.xyz, 0.f)).xyz;
+    const float lv = saturate(normalWS.y + 0.15);
+    const float ambientIntensity = 0.085;
+    diffuseLight += lerp(float4(0.05, 0.03, 0.4, 1), float4(0.55, 0.75, 0.8, 1), lv) * ambientIntensity;
     
     diffuseLight *= isGeometry;
     specularLight *= isGeometry;

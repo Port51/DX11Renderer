@@ -1,13 +1,6 @@
 
 #include "CbufCommon.hlsli"
 
-cbuffer CBuf : register(b3)
-{
-    matrix model;
-    matrix modelView;
-    matrix modelViewProj;
-};
-
 struct attrib
 {
     float3 pos : Position;
@@ -21,6 +14,13 @@ struct v2f
 {
     float4 pos : SV_POSITION;
     float depth : TEXCOORD0;
+};
+
+cbuffer PerObjectTransformCB : register(b3)
+{
+    matrix model;
+    matrix modelView;
+    matrix modelViewProj;
 };
 
 float4 ComputeNonStereoScreenPos(float4 pos)

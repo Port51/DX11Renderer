@@ -3,12 +3,6 @@
 
 namespace gfx
 {
-	struct Transforms
-	{
-		dx::XMMATRIX model;
-		dx::XMMATRIX modelView;
-		dx::XMMATRIX modelViewProj;
-	};
 
 	struct ViewProjTransforms
 	{

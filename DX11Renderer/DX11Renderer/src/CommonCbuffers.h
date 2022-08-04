@@ -32,6 +32,13 @@ namespace gfx
 		dx::XMMATRIX invViewProjMatrix;
 	};
 
+	struct alignas(16) ObjectTransformsCB
+	{
+		dx::XMMATRIX model;
+		dx::XMMATRIX modelView;
+		dx::XMMATRIX modelViewProj;
+	};
+
 	struct alignas(16) PerCameraCB
 	{
 		// x = 1 or -1 (-1 if projection is flipped)

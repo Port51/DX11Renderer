@@ -4,7 +4,7 @@ Properties
 	Texture, 0, Assets\\Textures\\GreyNoise0_512.png
 	Color, 0.0, 0.7, 0.0, 1.0
 	Roughness, 0.0
-	NoiseIntensity, 0.25
+	NoiseIntensity, 0.4
 }
 Pass
 {
@@ -31,6 +31,6 @@ Pass
 	Name, OpaqueRenderPass
 	Cull, Back
 	VS, Assets\\Built\\Shaders\\PhongVS.cso
-	PS, Assets\\Built\\Shaders\\DeferredPS.cso
+	PS, Assets\\Built\\Shaders\\DeferredIslandPS.cso
 	PropertySlot, 0
 }

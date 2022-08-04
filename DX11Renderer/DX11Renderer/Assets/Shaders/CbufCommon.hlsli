@@ -10,7 +10,7 @@ cbuffer PerFrameCB : register(b0)
 	float4 _TimeStep;
 };
 
-cbuffer GlobalTransformCB : register(b1)
+cbuffer GlobalTransformsCB : register(b1)
 {
     matrix _ViewMatrix;
     matrix _ProjMatrix;

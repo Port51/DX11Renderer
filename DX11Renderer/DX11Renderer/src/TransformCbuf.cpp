@@ -11,7 +11,7 @@ namespace gfx
 	{
 		if (!m_pVcbuf)
 		{
-			m_pVcbuf = std::make_unique<ConstantBuffer<Transforms>>(gfx, D3D11_USAGE_DYNAMIC);
+			m_pVcbuf = std::make_unique<ConstantBuffer<ObjectTransformsCB>>(gfx, D3D11_USAGE_DYNAMIC);
 		}
 	}
 
@@ -37,11 +37,11 @@ namespace gfx
 		REGISTER_GPU_CALL();
 	}
 
-	void TransformCbuf::UpdateTransforms(const GraphicsDevice& gfx, const Transforms& transforms)
+	void TransformCbuf::UpdateTransforms(const GraphicsDevice& gfx, const ObjectTransformsCB& transforms)
 	{
 		m_pVcbuf->Update(gfx, transforms);
 	}
 
 	// Because static
-	std::unique_ptr<ConstantBuffer<Transforms>> TransformCbuf::m_pVcbuf;
+	std::unique_ptr<ConstantBuffer<ObjectTransformsCB>> TransformCbuf::m_pVcbuf;
 }

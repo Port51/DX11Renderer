@@ -216,16 +216,16 @@ namespace gfx
 		GetRenderPass(RenderPassType::PerCameraRenderPass).
 			ClearBinds()
 			.CSSetCB(RenderSlots::CS_PerFrameCB, m_pPerFrameCB->GetD3DBuffer())
-			.CSSetCB(RenderSlots::CS_TransformationCB, m_pTransformationCB->GetD3DBuffer())
+			.CSSetCB(RenderSlots::CS_GlobalTransformsCB, m_pTransformationCB->GetD3DBuffer())
 			.CSSetCB(RenderSlots::CS_PerCameraCB, m_pPerCameraCB->GetD3DBuffer())
 			.CSSetCB(RenderSlots::CS_LightInputCB, m_pLightManager->GetLightInputCB().GetD3DBuffer())
 			.CSSetSRV(RenderSlots::CS_LightDataSRV, m_pLightManager->GetLightDataSRV())
 			.CSSetSRV(RenderSlots::CS_LightShadowDataSRV, m_pLightManager->GetShadowDataSRV())
 			.VSSetCB(RenderSlots::VS_PerFrameCB, m_pPerFrameCB->GetD3DBuffer())
-			.VSSetCB(RenderSlots::VS_TransformationCB, m_pTransformationCB->GetD3DBuffer())
+			.VSSetCB(RenderSlots::VS_GlobalTransformsCB, m_pTransformationCB->GetD3DBuffer())
 			.VSSetCB(RenderSlots::VS_PerCameraCB, m_pPerCameraCB->GetD3DBuffer())
 			.PSSetCB(RenderSlots::PS_PerFrameCB, m_pPerFrameCB->GetD3DBuffer())
-			.PSSetCB(RenderSlots::PS_TransformationCB, m_pTransformationCB->GetD3DBuffer())
+			.PSSetCB(RenderSlots::PS_GlobalTransformsCB, m_pTransformationCB->GetD3DBuffer())
 			.PSSetCB(RenderSlots::PS_PerCameraCB, m_pPerCameraCB->GetD3DBuffer())
 			.PSSetCB(RenderSlots::PS_LightInputCB, m_pLightManager->GetLightInputCB().GetD3DBuffer())
 			.CSSetSPL(RenderSlots::CS_PointWrapSampler, m_pPointWrapSampler->GetD3DSampler())
@@ -436,7 +436,7 @@ namespace gfx
 			static GlobalTransformCB transformationCB;
 			transformationCB.viewMatrix = camera.GetViewMatrix();
 			transformationCB.projMatrix = camera.GetProjectionMatrix();
-			transformationCB.viewProjMatrix = transformationCB.projMatrix * transformationCB.viewMatrix;
+			transformationCB.viewProjMatrix = transformationCB.viewMatrix * transformationCB.projMatrix;
 			transformationCB.invViewMatrix = dx::XMMatrixInverse(nullptr, transformationCB.viewMatrix);
 			transformationCB.invProjMatrix = dx::XMMatrixInverse(nullptr, transformationCB.projMatrix);
 			transformationCB.invViewProjMatrix = dx::XMMatrixInverse(nullptr, transformationCB.viewProjMatrix);

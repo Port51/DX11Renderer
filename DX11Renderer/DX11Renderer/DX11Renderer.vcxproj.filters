@@ -187,6 +187,24 @@
     <Filter Include="Source\Particles">
       <UniqueIdentifier>{6c01c67e-9d6b-465f-864e-aa452438ba52}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Assets\Shaders\DrawPasses\GBufferPasses">
+      <UniqueIdentifier>{36e40221-f383-4e40-bf8d-efef3742f535}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Shaders\DrawPasses\GeometryPasses">
+      <UniqueIdentifier>{afb9f654-918c-4537-a279-71ebe5b2d2ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Shaders\DrawPasses\VertexShaders">
+      <UniqueIdentifier>{a0f016be-2c84-4980-8f8c-060065e4dc79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Shaders\DrawPasses\ShadowPasses">
+      <UniqueIdentifier>{4cf59577-5ff5-4e7c-8c52-c0aa41a799c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Shaders\DrawPasses\Particles">
+      <UniqueIdentifier>{c4b1a0b6-66b3-4cfd-86e6-e0e58f25d44f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Shaders\DrawPasses\VertexShaders\GerstnerWaves">
+      <UniqueIdentifier>{5bb28604-20c7-4e60-9bf5-24bae148f762}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp">
@@ -836,6 +854,9 @@
     <None Include="Assets\Materials\CastleWindowMaterial.asset">
       <Filter>Assets\Materials</Filter>
     </None>
+    <None Include="Assets\Shaders\GerstnerWaves.hlsli">
+      <Filter>Assets\Shaders\DrawPasses\VertexShaders\GerstnerWaves</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Shaders\Lighting\ClusteredLightingCompute.hlsl">
@@ -853,14 +874,8 @@
     <FxCompile Include="Assets\Shaders\BlurPyramidDownscale.hlsl">
       <Filter>Assets\Shaders\PostFX</Filter>
     </FxCompile>
-    <FxCompile Include="Assets\Shaders\DeferredPS.hlsl">
-      <Filter>Assets\Shaders\DrawPasses</Filter>
-    </FxCompile>
     <FxCompile Include="Assets\Shaders\Dither.hlsl">
       <Filter>Assets\Shaders\PostFX</Filter>
-    </FxCompile>
-    <FxCompile Include="Assets\Shaders\ForwardPS.hlsl">
-      <Filter>Assets\Shaders\DrawPasses</Filter>
     </FxCompile>
     <FxCompile Include="Assets\Shaders\FullscreenVS.hlsl">
       <Filter>Assets\Shaders\Util</Filter>
@@ -870,30 +885,6 @@
     </FxCompile>
     <FxCompile Include="Assets\Shaders\HiZCreateMip.hlsl">
       <Filter>Assets\Shaders\PostFX</Filter>
-    </FxCompile>
-    <FxCompile Include="Assets\Shaders\OpaqueGbuffer.hlsl">
-      <Filter>Assets\Shaders\DrawPasses</Filter>
-    </FxCompile>
-    <FxCompile Include="Assets\Shaders\PhongVS.hlsl">
-      <Filter>Assets\Shaders\DrawPasses</Filter>
-    </FxCompile>
-    <FxCompile Include="Assets\Shaders\ShadowPassPS.hlsl">
-      <Filter>Assets\Shaders\DrawPasses</Filter>
-    </FxCompile>
-    <FxCompile Include="Assets\Shaders\ShadowPassVS.hlsl">
-      <Filter>Assets\Shaders\DrawPasses</Filter>
-    </FxCompile>
-    <FxCompile Include="Assets\Shaders\SolidColorGbuffer.hlsl">
-      <Filter>Assets\Shaders\DrawPasses</Filter>
-    </FxCompile>
-    <FxCompile Include="Assets\Shaders\SolidColorPS.hlsl">
-      <Filter>Assets\Shaders\DrawPasses</Filter>
-    </FxCompile>
-    <FxCompile Include="Assets\Shaders\SolidPS.hlsl">
-      <Filter>Assets\Shaders\DrawPasses</Filter>
-    </FxCompile>
-    <FxCompile Include="Assets\Shaders\SolidVS.hlsl">
-      <Filter>Assets\Shaders\DrawPasses</Filter>
     </FxCompile>
     <FxCompile Include="Assets\Shaders\SSR.hlsl">
       <Filter>Assets\Shaders\PostFX</Filter>
@@ -910,14 +901,56 @@
     <FxCompile Include="Assets\Shaders\SSAO.hlsl">
       <Filter>Assets\Shaders\PostFX</Filter>
     </FxCompile>
-    <FxCompile Include="Assets\Shaders\GPUParticles.hlsl">
-      <Filter>Assets\Shaders\DrawPasses</Filter>
-    </FxCompile>
-    <FxCompile Include="Assets\Shaders\DepthOnlyVS.hlsl">
-      <Filter>Assets\Shaders\DrawPasses</Filter>
-    </FxCompile>
     <FxCompile Include="Assets\Shaders\Skybox.hlsl">
       <Filter>Assets\Shaders\PostFX</Filter>
+    </FxCompile>
+    <FxCompile Include="Assets\Shaders\OpaqueGbuffer.hlsl">
+      <Filter>Assets\Shaders\DrawPasses\GBufferPasses</Filter>
+    </FxCompile>
+    <FxCompile Include="Assets\Shaders\SolidPS.hlsl">
+      <Filter>Assets\Shaders\DrawPasses\GeometryPasses</Filter>
+    </FxCompile>
+    <FxCompile Include="Assets\Shaders\ForwardPS.hlsl">
+      <Filter>Assets\Shaders\DrawPasses\GeometryPasses</Filter>
+    </FxCompile>
+    <FxCompile Include="Assets\Shaders\DeferredPS.hlsl">
+      <Filter>Assets\Shaders\DrawPasses\GeometryPasses</Filter>
+    </FxCompile>
+    <FxCompile Include="Assets\Shaders\DepthOnlyVS.hlsl">
+      <Filter>Assets\Shaders\DrawPasses\VertexShaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Assets\Shaders\PhongVS.hlsl">
+      <Filter>Assets\Shaders\DrawPasses\VertexShaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Assets\Shaders\ShadowPassPS.hlsl">
+      <Filter>Assets\Shaders\DrawPasses\ShadowPasses</Filter>
+    </FxCompile>
+    <FxCompile Include="Assets\Shaders\ShadowPassVS.hlsl">
+      <Filter>Assets\Shaders\DrawPasses\ShadowPasses</Filter>
+    </FxCompile>
+    <FxCompile Include="Assets\Shaders\SolidColorGbuffer.hlsl">
+      <Filter>Assets\Shaders\DrawPasses\GBufferPasses</Filter>
+    </FxCompile>
+    <FxCompile Include="Assets\Shaders\SolidColorPS.hlsl">
+      <Filter>Assets\Shaders\DrawPasses\GeometryPasses</Filter>
+    </FxCompile>
+    <FxCompile Include="Assets\Shaders\SolidVS.hlsl">
+      <Filter>Assets\Shaders\DrawPasses\VertexShaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Assets\Shaders\GPUParticles.hlsl">
+      <Filter>Assets\Shaders\DrawPasses\Particles</Filter>
+    </FxCompile>
+    <FxCompile Include="Assets\Shaders\WaterGbuffer.hlsl">
+      <Filter>Assets\Shaders\DrawPasses\GBufferPasses</Filter>
+    </FxCompile>
+    <FxCompile Include="Assets\Shaders\DeferredIslandPS.hlsl">
+      <Filter>Assets\Shaders\DrawPasses\GeometryPasses</Filter>
+    </FxCompile>
+    <FxCompile Include="Assets\Shaders\WaterVS.hlsl">
+      <Filter>Assets\Shaders\DrawPasses\VertexShaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Assets\Shaders\WaterDepthOnlyVS.hlsl">
+      <Filter>Assets\Shaders\DrawPasses\VertexShaders</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

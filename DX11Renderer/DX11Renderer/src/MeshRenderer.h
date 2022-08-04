@@ -18,7 +18,7 @@ namespace gfx
 	class MeshAsset;
 
 	struct DrawContext;
-	struct Transforms;
+	struct ObjectTransformsCB;
 
 	class MeshRenderer : public Drawable
 	{

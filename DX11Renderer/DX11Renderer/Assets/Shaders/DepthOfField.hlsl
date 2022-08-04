@@ -19,6 +19,8 @@
 
 // Use 1 component for near, 2 components for far
 
+//#define BLUR_RGB_ONLY
+
 Texture2D<float4> SRVTex0 : register(t3);
 Texture2D<float4> SRVTex1 : register(t4);
 Texture2D<float2> HiZBuffer : register(t5);
@@ -132,8 +134,13 @@ void HorizontalFilter(uint3 gtId : SV_GroupThreadID, uint3 tId : SV_DispatchThre
 		Si += discCache0[i + gtId.x] * GetImaginaryWeight(i);
 	}
 
+#if defined(BLUR_RGB_ONLY)
+	UAVTex0[tId.xy] = float4(Sr.rgb, UAVTex0[tId.xy].a);
+	UAVTex1[tId.xy] = float4(Si.rgb, UAVTex1[tId.xy].a);
+#else
 	UAVTex0[tId.xy] = Sr;
 	UAVTex1[tId.xy] = Si;
+#endif
 }
 
 // Input: UAVTex0, UAVTex1
@@ -187,8 +194,13 @@ void VerticalFilterAndCombine(uint3 gtId : SV_GroupThreadID, uint3 tId : SV_Disp
 		Si += (Pr * Qi + Qr * Pi);
 	}
 
+#if defined(BLUR_RGB_ONLY)
+	// Allows for adding or overwriting
+	UAVTex2[tId.xy] = float4(UAVTex2[tId.xy].rgb * _VerticalPassAddFactor + (Sr.rgb * _CombineRealFactor + Si.rgb * _CombineImaginaryFactor), UAVTex2[tId.xy].a);
+#else
 	// Allows for adding or overwriting
 	UAVTex2[tId.xy] = UAVTex2[tId.xy] * _VerticalPassAddFactor + (Sr * _CombineRealFactor + Si * _CombineImaginaryFactor);
+#endif
 
 	// Debug views
 	//UAVTex2[tId.xy] = Sr;

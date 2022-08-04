@@ -12,7 +12,7 @@ namespace gfx
 	template<typename Type>
 	class ConstantBuffer;
 
-	struct Transforms;
+	struct ObjectTransformsCB;
 
 	class TransformCbuf : public Bindable
 	{
@@ -21,9 +21,9 @@ namespace gfx
 		virtual void Release() override;
 		void BindVS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override;
 		void UnbindVS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override;
-		void UpdateTransforms(const GraphicsDevice& gfx, const Transforms& transforms);
+		void UpdateTransforms(const GraphicsDevice& gfx, const ObjectTransformsCB& transforms);
 	private:
 		// Static so can be re-used each drawcall
-		static std::unique_ptr<ConstantBuffer<Transforms>> m_pVcbuf;
+		static std::unique_ptr<ConstantBuffer<ObjectTransformsCB>> m_pVcbuf;
 	};
 }

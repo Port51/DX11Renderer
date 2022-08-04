@@ -58,10 +58,10 @@ namespace gfx
 		const auto modelMatrix = GetTransformXM();
 		const auto modelViewMatrix = modelMatrix * drawContext.viewMatrix;
 		const auto modelViewProjectMatrix = modelViewMatrix * drawContext.projMatrix;
-		const Transforms transforms{ modelMatrix, modelViewMatrix, modelViewProjectMatrix };
+		const ObjectTransformsCB transforms{ modelMatrix, modelViewMatrix, modelViewProjectMatrix };
 		m_pTransformCbuf->UpdateTransforms(gfx, transforms);
 
-		m_pTransformCbuf->BindVS(gfx, renderState, RenderSlots::VS_TransformCB);
+		m_pTransformCbuf->BindVS(gfx, renderState, RenderSlots::VS_PerObjectTransformCB);
 	}
 
 	const UINT MeshRenderer::GetIndexCount() const
