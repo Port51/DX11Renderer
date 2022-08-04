@@ -74,4 +74,15 @@ cbuffer LightInputCB : register(b3)
     float4 _ShadowCascadeSphere3;
 };
 
+cbuffer ObjectCBuf : register(b5)
+{
+    float3 materialColor;
+    float roughness;
+    bool normalMapEnabled; // 4 bytes in HLSL, so use BOOL in C++ to match
+    float specularPower;
+    float reflectivity;
+    float noiseIntensity;
+    //float padding[1];
+};
+
 #endif

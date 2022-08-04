@@ -1,7 +1,7 @@
 Properties
 {
 	Slot, 0
-	Texture, 0, Assets\\Textures\\face_albedo_256.png
+	Texture, 0, Assets\\Textures\\GreyNoise0_512.png
 	Color, 0.0, 0.5, 0.0, 1.0
 }
 Pass

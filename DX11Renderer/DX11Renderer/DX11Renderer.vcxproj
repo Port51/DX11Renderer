@@ -407,15 +407,14 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Materials\BoatWoodMaterial.asset" />
+    <None Include="Assets\Materials\CastleWindowMaterial.asset" />
     <None Include="Assets\Materials\GreyboxMaterial.asset" />
-    <None Include="Assets\Materials\HeadMaterial.asset" />
     <None Include="Assets\Materials\IslandMaterial.asset" />
     <None Include="Assets\Materials\LightMaterial.asset" />
     <None Include="Assets\Materials\WaterMaterial.asset" />
     <None Include="Assets\Models\Boat.asset" />
     <None Include="Assets\Models\CascadeTestScene.asset" />
     <None Include="Assets\Models\Head.asset" />
-    <None Include="Assets\Materials\HairMaterial.asset" />
     <None Include="Assets\Models\DefaultQuad.asset" />
     <None Include="Assets\Models\NewCastle.asset" />
     <None Include="Assets\Models\ShadowTestScene.asset" />

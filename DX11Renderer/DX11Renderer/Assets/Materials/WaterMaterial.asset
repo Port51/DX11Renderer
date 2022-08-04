@@ -1,17 +1,11 @@
 Properties
 {
 	Slot, 0
-	Texture, 0, Assets\\Textures\\face_albedo_256.png
-	Texture, 1, Assets\\Textures\\face_normal_256.png
+	Texture, 0, Assets\\Textures\\GreyNoise0_512.png
 	Color, 0.05, 0.5, 1.0, 1.0
 	Roughness, 0.0
 	Reflectivity, 1.0
-}
-Pass
-{
-	Name, ShadowRenderPass
-	Cull, Front
-	VS, Assets\\Built\\Shaders\\ShadowPassVS.cso
+	NoiseIntensity, 0.0
 }
 Pass
 {

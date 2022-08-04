@@ -755,12 +755,6 @@
     <None Include="Assets\Models\Head.asset">
       <Filter>Assets\Models</Filter>
     </None>
-    <None Include="Assets\Materials\HeadMaterial.asset">
-      <Filter>Assets\Materials</Filter>
-    </None>
-    <None Include="Assets\Materials\HairMaterial.asset">
-      <Filter>Assets\Materials</Filter>
-    </None>
     <None Include="Assets\Models\DefaultSphere.asset">
       <Filter>Assets\Models</Filter>
     </None>
@@ -831,6 +825,9 @@
       <Filter>Assets\Materials</Filter>
     </None>
     <None Include="Assets\Materials\IslandMaterial.asset">
+      <Filter>Assets\Materials</Filter>
+    </None>
+    <None Include="Assets\Materials\CastleWindowMaterial.asset">
       <Filter>Assets\Materials</Filter>
     </None>
   </ItemGroup>

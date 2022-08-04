@@ -45,24 +45,20 @@ namespace gfx
 			.AppendInstanceDesc<dx::XMFLOAT3>({ "INSTANCEPOS", 0, DXGI_FORMAT_R32G32B32_FLOAT, 1, 0, D3D11_INPUT_PER_INSTANCE_DATA, 1 }); // last = # instances to draw before moving onto next instance
 		assert(m_vertexLayout.GetPerVertexStride() % 16 == 0);
 
-		dx::XMFLOAT3 colorProp = { 0.8f, 0.8f, 0.8f };
-		float roughnessProp = 0.75f;
-		float reflectivityProp = 0.0f;
-
 		MaterialParseState state = MaterialParseState::None;
 
 		// For unpacking main properties
 		// Must be multiple of 16 bytes
 		struct PSMaterialConstant
 		{
-			dx::XMFLOAT3 materialColor;
+			dx::XMFLOAT3 materialColor = { 0.8f, 0.8f, 0.8f };
 			float roughness;
 			BOOL normalMappingEnabled = TRUE; // BOOL uses 4 bytes as it's an int, rather than bool
 			float specularPower = 30.0f;
 			float reflectivity = 0.0f;
-			float padding[1];
+			float noiseIntensity = 0.0f;
+			//float padding[1];
 		} pmc;
-		ZERO_MEM(pmc);
 		assert(sizeof(PSMaterialConstant) % 16 == 0);
 
 		//AddBindable(PixelConstantBuffer<PSMaterialConstant>::Resolve(gfx, std::string(assetPath), pmc, 1u));
@@ -131,18 +127,19 @@ namespace gfx
 				}
 				else if (p.key == "Color")
 				{
-					colorProp = { p.MoveFloat(0), p.MoveFloat(1), p.MoveFloat(2) };
-					pmc.materialColor = colorProp;
+					pmc.materialColor = { p.MoveFloat(0), p.MoveFloat(1), p.MoveFloat(2) };
 				}
 				else if (p.key == "Roughness")
 				{
-					roughnessProp = p.MoveFloat(0);
-					pmc.roughness = roughnessProp;
+					pmc.roughness = p.MoveFloat(0);
 				}
 				else if (p.key == "Reflectivity")
 				{
-					reflectivityProp = p.MoveFloat(0);
-					pmc.reflectivity = reflectivityProp;
+					pmc.reflectivity = p.MoveFloat(0);
+				}
+				else if (p.key == "NoiseIntensity")
+				{
+					pmc.noiseIntensity = p.MoveFloat(0);
 				}
 				else if (p.key == "Texture")
 				{

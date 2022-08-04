@@ -10,16 +10,6 @@ cbuffer LightCBuf : register(b0)
 	float lightIntensity;
 };
 
-cbuffer ObjectCBuf : register(b5)
-{
-    float3 materialColor;
-    float roughness;
-    bool normalMapEnabled; // 4 bytes in HLSL, so use BOOL in C++ to match
-    float specularPower;
-    float reflectivity;
-    float padding[1];
-};
-
 /*cbuffer CBuf : register(b2)
 {
     matrix model;
@@ -47,14 +37,19 @@ float4 main(v2f i) : SV_Target
     
     float3 combinedLight = specularLight.rgb + diffuseLight.rgb;
     
-    float4 diffuseTex = tex.Sample(splr, i.uv0);
-    diffuseTex.rgb *= combinedLight;
+    // Triplanar sampling
+    const float diffuseScale = 0.15;
+    float4 diffuseXZ = tex.Sample(splr, i.positionWS.xz * diffuseScale) * abs(i.normalWS.y);
+    float4 diffuseXY = tex.Sample(splr, i.positionWS.xy * diffuseScale) * abs(i.normalWS.z);
+    float4 diffuseYZ = tex.Sample(splr, i.positionWS.yz * diffuseScale) * abs(i.normalWS.x);
+
+    float4 diffuseTex = lerp(1.0, diffuseXZ + diffuseXY + diffuseYZ, noiseIntensity);
     
     //return float4(0, 0, 1, 1);
     //return _Time.x;
     //return screenPos.y;
     //return combinedLight.rgbb;
     //return float4(materialColor.rgb, 1);
-    return float4(diffuseLight.rgb * materialColor.rgb, 1);
+    return float4(combinedLight.rgb * materialColor.rgb, 1) * diffuseTex;
     return diffuseTex;
 }

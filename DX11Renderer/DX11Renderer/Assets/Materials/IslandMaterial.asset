@@ -1,10 +1,10 @@
 Properties
 {
 	Slot, 0
-	Texture, 0, Assets\\Textures\\face_albedo_256.png
-	Texture, 1, Assets\\Textures\\face_normal_256.png
+	Texture, 0, Assets\\Textures\\GreyNoise0_512.png
 	Color, 0.0, 0.7, 0.0, 1.0
 	Roughness, 0.0
+	NoiseIntensity, 0.25
 }
 Pass
 {

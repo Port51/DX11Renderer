@@ -647,7 +647,7 @@ void CSMain(uint3 tId : SV_DispatchThreadID)
     
     const float linearRoughness = gbufferTex.z;
     const float roughness = linearRoughness * linearRoughness;
-    const float reflectivity = gbufferTex.w * pow(saturate(1.0 - dot(viewDirVS, -normalVS)), 3.0);
+    const float reflectivity = gbufferTex.w;// * pow(saturate(1.0 - dot(viewDirVS, -normalVS)), 3.0);
     
     //
     // Calculate reflection
