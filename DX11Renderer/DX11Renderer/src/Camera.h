@@ -39,13 +39,13 @@ namespace gfx
 	private:
 		float m_nearClipPlane;
 		float m_farClipPlane;
-		float m_radius = 55.0f; // dist from origin
+		float m_radius = 45.0f; // dist from origin
 		float m_theta = 0.523599f; // rotate around origin
 		float m_phi = 0.261799f; // rotate around origin
 		float m_pitch = 0.0f;// 0.061f;
 		float m_yaw = 0.0f;
 		float m_roll = 0.0f;
-		float m_fov = 40.0f;
+		float m_fov = 55.0f;
 		float m_aspect = 0.75f;
 		dx::XMMATRIX m_viewMatrix;
 		dx::XMMATRIX m_inverseViewMatrix;

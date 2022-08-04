@@ -7,6 +7,7 @@
 #include "DrawCommand.h"
 #include "RenderPass.h"
 #include "FullscreenPass.h"
+#include "SkyboxPass.h"
 #include "DepthOfFieldPass.h"
 #include "NullPixelShader.h"
 #include "RenderTexture.h"
@@ -153,6 +154,7 @@ namespace gfx
 		CreateRenderPass(RenderPassType::TiledLightingRenderPass);
 		CreateRenderPass(RenderPassType::ClusteredLightingRenderPass);
 		CreateRenderPass(RenderPassType::OpaqueRenderPass);
+		CreateRenderPass(RenderPassType::SkyboxRenderPass, std::move(std::make_unique<SkyboxPass>(gfx)));
 		CreateRenderPass(RenderPassType::CreateDownsampledX2Texture);
 		CreateRenderPass(RenderPassType::DepthOfFieldRenderPass, std::move(std::make_unique<DepthOfFieldPass>(gfx, DepthOfFieldPass::DepthOfFieldBokehType::DiskBokeh)));
 		CreateRenderPass(RenderPassType::BloomRenderPass, std::move(std::make_unique<BloomPass>(gfx)));
@@ -289,6 +291,8 @@ namespace gfx
 			.PSSetSRV(RenderSlots::PS_FreeSRV + 6u, m_pLightManager->GetShadowAtlas().GetSRV())
 			.PSSetCB(RenderSlots::PS_FreeCB + 0u, m_pClusteredLightingCB->GetD3DBuffer())
 			.PSSetSPL(RenderSlots::PS_FreeSPL + 0u, m_pShadowSampler->GetD3DSampler());
+
+		static_cast<SkyboxPass&>(GetRenderPass(RenderPassType::SkyboxRenderPass)).SetupRenderPassDependencies(gfx, gfx.GetDepthStencilTarget()->GetSRV(), *m_pCameraColor0);
 
 		GetRenderPass(RenderPassType::CreateDownsampledX2Texture).
 			ClearBinds()
@@ -595,6 +599,11 @@ namespace gfx
 			pass.UnbindSharedResources(gfx, renderState);
 
 			gfx.ClearRenderTargets();
+		}
+
+		// Skybox pass
+		{
+			GetRenderPass(SkyboxRenderPass).Execute(gfx, renderState);
 		}
 
 		// todo: Transparent pass

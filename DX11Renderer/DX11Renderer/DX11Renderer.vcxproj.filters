@@ -423,6 +423,9 @@
     <ClCompile Include="src\ArgsBuffer.cpp">
       <Filter>Source\Bindable\Buffers</Filter>
     </ClCompile>
+    <ClCompile Include="src\SkyboxPass.cpp">
+      <Filter>Source\RenderJobs\Passes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -737,6 +740,9 @@
     <ClInclude Include="src\Drawable.h">
       <Filter>Headers\Drawable</Filter>
     </ClInclude>
+    <ClInclude Include="src\SkyboxPass.h">
+      <Filter>Headers\RenderJobs\Passes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DX11Renderer.rc">
@@ -909,6 +915,9 @@
     </FxCompile>
     <FxCompile Include="Assets\Shaders\DepthOnlyVS.hlsl">
       <Filter>Assets\Shaders\DrawPasses</Filter>
+    </FxCompile>
+    <FxCompile Include="Assets\Shaders\Skybox.hlsl">
+      <Filter>Assets\Shaders\PostFX</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

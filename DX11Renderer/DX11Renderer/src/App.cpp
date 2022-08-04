@@ -22,7 +22,7 @@ namespace gfx
 	App::App(const UINT screenWidth, const UINT screenHeight, HINSTANCE hInstance)
 		:
 		m_pImgui(std::make_unique<ImguiManager>()),
-		m_pCamera(std::make_unique<Camera>(40.0f, (float)screenWidth / (float)screenHeight, 0.5f, 1000.0f)),
+		m_pCamera(std::make_unique<Camera>(55.0f, (float)screenWidth / (float)screenHeight, 0.5f, 1000.0f)),
 		m_pTimer(std::make_unique<Timer>()),
 		m_pRendererList(std::make_shared<RendererList>()),
 		m_pRandomGenerator(std::make_unique<RandomGenerator>())
