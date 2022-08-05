@@ -118,9 +118,48 @@ namespace gfx
 				auto centerOffset = GerstnerWaves::GetGerstnerWaveOffset(m_pBoatModels.at(i)->GetPositionWS(), timeElapsed);
 				// Dampen motion
 				centerOffset = dx::XMVectorMultiply(centerOffset, dx::XMVectorSet(0.5f, 0.9f, 0.5f, 1.f));
-				m_pBoatModels[i]->SetPositionWS(dx::XMVectorAdd(m_boatStartPositions.at(i), centerOffset), false);
-				//m_pBoatModels[i]->SetRoll(45.f);
+				auto buoyancyCenter = dx::XMVectorAdd(m_boatStartPositions.at(i), centerOffset);
+
+				// Adjust to Y value
+				buoyancyCenter = dx::XMVectorSetY(buoyancyCenter, GerstnerWaves::GetGerstnerWaveVerticalDisplacementEstimate(buoyancyCenter, timeElapsed, 4u));
+
+				float pitchOffset = 0.f;
+				float rollOffset = 0.f;
+				float sumOffsetY = dx::XMVectorGetY(buoyancyCenter) * 2.f;
+
+				// Estimate rotation via samples in oval pattern
+				for (size_t si = 0; si < 8; ++si)
+				{
+					const float theta = static_cast<float>(si) * dx::XM_2PI / 8.f + m_pBoatModels.at(i)->GetYaw();
+					const float s = std::sin(theta) * 2.f; // oval shape
+					const float c = std::cos(theta);
+					const float dist = 0.2f;
+					const auto sampleOffset = dx::XMVectorSet(c * dist, 0.f, s * dist, 0.f);
+					const auto samplePos = dx::XMVectorAdd(sampleOffset, buoyancyCenter);
+
+					const auto sampleY = GerstnerWaves::GetGerstnerWaveVerticalDisplacementEstimate(samplePos, timeElapsed, 4u);
+
+					pitchOffset += sampleY * s;
+					rollOffset += sampleY * c;
+					sumOffsetY += sampleY;
+				}
+
+				// Set Y to average, with center weighted x2
+				buoyancyCenter = dx::XMVectorSetY(buoyancyCenter, dx::XMVectorGetY(m_boatStartPositions.at(i)) + sumOffsetY / 10.f);
+
+				const float rotationScale = 0.1f;
+				m_pBoatModels[i]->SetPositionWS(buoyancyCenter, false);
+				m_pBoatModels[i]->SetPitch(pitchOffset * -0.225f * rotationScale, false);
+				m_pBoatModels[i]->SetRoll(rollOffset * 1.2f * rotationScale, false);
 				m_pBoatModels[i]->UpdateTransform();
+			}
+		}
+
+		// Animate gems
+		{
+			for (size_t i = 0; i < m_pGemModels.size(); ++i)
+			{
+				m_pGemModels[i]->SetYaw(m_pGemModels[i]->GetYaw() + dt * 0.5f);
 			}
 		}
 
@@ -176,13 +215,17 @@ namespace gfx
 
 		// Add magic lights (static)
 		{
-			const auto torchPlacements = ModelImporter::LoadGLTFPositions(Gfx(), "Assets\\Models\\GLTF\\NewCastle_TorchPlacements.glb");
+			auto pGemAsset = ModelImporter::LoadGLTF(Gfx(), "Assets\\Models\\Gem.asset");
+			const auto torchPlacements = ModelImporter::LoadGLTFPositionsAndScales(Gfx(), "Assets\\Models\\GLTF\\NewCastle_TorchPlacements.glb");
 			for (const auto& tp : torchPlacements)
 			{
 				auto transformedPos = dx::XMVector4Transform(dx::XMVectorSet(tp.x, tp.y, tp.z, 1.0), sceneTransform);
 				dx::XMFLOAT3 f3;
 				dx::XMStoreFloat3(&f3, transformedPos);
-				m_pLightManager->AddPointLight(Gfx(), f3, GetRandomMagicLight(), 2.8f, 1.f, 2.15f);
+				m_pLightManager->AddPointLight(Gfx(), f3, GetRandomMagicLight(), 2.8f * std::sqrt(tp.w), 1.f, 2.15f * tp.w);
+
+				m_pGemModels.emplace_back(std::make_unique<ModelInstance>(Gfx(), pGemAsset, dx::XMMatrixScaling(tp.w, tp.w, tp.w) * dx::XMMatrixTranslationFromVector(transformedPos)));
+				m_pRendererList->AddModelInstance(*m_pGemModels.at(m_pGemModels.size() - 1u));
 
 				// dx::XMFLOAT3(1.f, 0.25f, 0.04f) was a good color for torches
 			}

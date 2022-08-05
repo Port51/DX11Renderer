@@ -79,6 +79,31 @@ namespace gfx
 		return dx::XMLoadFloat3(&m_upWS);
 	}
 
+	const dx::XMVECTOR GameObject::GetRotationWS() const
+	{
+		return dx::XMLoadFloat3(&m_rotationWS);
+	}
+
+	const float GameObject::GetPitch() const
+	{
+		return m_rotationWS.x;
+	}
+
+	const float GameObject::GetYaw() const
+	{
+		return m_rotationWS.y;
+	}
+
+	const float GameObject::GetRoll() const
+	{
+		return m_rotationWS.z;
+	}
+
+	const dx::XMVECTOR GameObject::GetScaleWS() const
+	{
+		return dx::XMLoadFloat3(&m_scaleWS);
+	}
+
 	void GameObject::UpdateBasisVectors()
 	{
 		const auto rotMatrix = dx::XMMatrixRotationRollPitchYawFromVector(dx::XMLoadFloat3(&m_rotationWS));

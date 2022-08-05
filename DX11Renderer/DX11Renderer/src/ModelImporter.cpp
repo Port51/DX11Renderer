@@ -320,6 +320,22 @@ namespace gfx
 		return std::move(positions);
 	}
 
+	std::vector<dx::XMFLOAT4> ModelImporter::LoadGLTFPositionsAndScales(const GraphicsDevice& gfx, const char* gltfFilename, const bool isBinary)
+	{
+		std::vector<dx::XMFLOAT4> positions;
+		const Model model = TryLoadGLTFModel(gfx, gltfFilename, isBinary);
+
+		// Get positions from nodes
+		positions.reserve(model.nodes.size());
+		for (const auto& node : model.nodes)
+		{
+			const float avgScale = (node.scale.size() == 3u) ? ((float)node.scale.at(0u) + (float)node.scale.at(1u) + (float)node.scale.at(2u)) / 3.f : 1.f;
+			positions.emplace_back(RH_to_LH(dx::XMFLOAT4((float)node.translation.at(0u), (float)node.translation.at(1u), (float)node.translation.at(2u), avgScale)));
+		}
+
+		return std::move(positions);
+	}
+
 	std::vector<dx::XMFLOAT4X4> ModelImporter::LoadGLTFTransforms(const GraphicsDevice& gfx, const char* gltfFilename, const bool isBinary)
 	{
 		std::vector<dx::XMFLOAT4X4> transforms;

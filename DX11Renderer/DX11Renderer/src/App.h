@@ -49,6 +49,7 @@ namespace gfx
 		std::unique_ptr<ModelInstance> m_pCastleModel;
 		std::shared_ptr<RendererList> m_pRendererList;
 
+		std::vector<std::unique_ptr<ModelInstance>> m_pGemModels;
 		std::vector<std::unique_ptr<ModelInstance>> m_pBoatModels;
 		std::vector<dx::XMVECTOR> m_boatStartPositions;
 

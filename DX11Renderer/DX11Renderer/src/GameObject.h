@@ -20,6 +20,12 @@ namespace gfx
 		const dx::XMVECTOR GetForwardWS() const;
 		const dx::XMVECTOR GetRightWS() const;
 		const dx::XMVECTOR GetUpWS() const;
+		const dx::XMVECTOR GetRotationWS() const;
+		const float GetPitch() const;
+		const float GetYaw() const;
+		const float GetRoll() const;
+		const dx::XMVECTOR GetScaleWS() const;
+
 	protected:
 		void UpdateBasisVectors();
 		void DecomposeTRS();

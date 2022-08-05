@@ -28,7 +28,8 @@ namespace gfx
 		};
 	public:
 		static std::shared_ptr<ModelAsset> LoadGLTF(const GraphicsDevice& gfx, const char* assetFilename);
-		static std::vector<dx::XMFLOAT3> LoadGLTFPositions(const GraphicsDevice& gfx, const char* assetFilename, const bool isBinary = true);
+		static std::vector<dx::XMFLOAT3> LoadGLTFPositions(const GraphicsDevice& gfx, const char* gltfFilename, const bool isBinary = true);
+		static std::vector<dx::XMFLOAT4> LoadGLTFPositionsAndScales(const GraphicsDevice& gfx, const char* gltfFilename, const bool isBinary = true);
 		static std::vector<dx::XMFLOAT4X4> LoadGLTFTransforms(const GraphicsDevice& gfx, const char* assetFilename, const bool isBinary = true);
 	private:
 		static dx::XMFLOAT3 RH_to_LH(const dx::XMFLOAT3& vec);

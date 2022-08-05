@@ -414,6 +414,7 @@
   <ItemGroup>
     <None Include="Assets\Materials\BoatWoodMaterial.asset" />
     <None Include="Assets\Materials\CastleWindowMaterial.asset" />
+    <None Include="Assets\Materials\GemMaterial.asset" />
     <None Include="Assets\Materials\GreyboxMaterial.asset" />
     <None Include="Assets\Materials\IslandMaterial.asset" />
     <None Include="Assets\Materials\LightMaterial.asset" />
@@ -448,6 +449,7 @@
     <None Include="Assets\Materials\FireParticleMaterial.asset" />
     <None Include="Assets\Models\FloatingLantern.asset" />
     <None Include="Assets\Shaders\GerstnerWaves.hlsli" />
+    <None Include="Assets\Models\Gem.asset" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Shaders\BilinearDownsample.hlsl">

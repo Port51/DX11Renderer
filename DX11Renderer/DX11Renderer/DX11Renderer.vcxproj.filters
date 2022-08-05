@@ -872,6 +872,12 @@
     <None Include="Assets\Shaders\GerstnerWaves.hlsli">
       <Filter>Assets\Shaders\DrawPasses\VertexShaders\GerstnerWaves</Filter>
     </None>
+    <None Include="Assets\Models\Gem.asset">
+      <Filter>Assets\Models</Filter>
+    </None>
+    <None Include="Assets\Materials\GemMaterial.asset">
+      <Filter>Assets\Materials</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Shaders\Lighting\ClusteredLightingCompute.hlsl">
