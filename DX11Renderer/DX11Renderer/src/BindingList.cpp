@@ -12,7 +12,7 @@ namespace gfx
 
 	Binding& BindingList::AddBinding(const Binding binding)
 	{
-		m_bindings.emplace_back(std::move(binding));
+		m_bindings.emplace_back(binding);
 		return m_bindings[m_bindings.size() - 1];
 	}
 

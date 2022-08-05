@@ -10,13 +10,13 @@ namespace gfx
 		planes.resize(PlaneCt);
 	}
 
-	Frustum::Frustum(std::vector<dx::XMFLOAT4> planes)
+	Frustum::Frustum(const std::vector<dx::XMFLOAT4>& planes)
 		: planes(planes)
 	{
 		assert(planes.size() == PlaneCt && "Wrong number of Frustum planes");
 	}
 
-	void Frustum::UpdatePlanesFromMatrix(dx::XMMATRIX inputMatrix)
+	void Frustum::UpdatePlanesFromMatrix(const dx::XMMATRIX& inputMatrix)
 	{
 		// Reference: http://www8.cs.umu.se/kurser/5DV051/HT12/lab/plane_extraction.pdf
 		// Note that plane equations point INWARD
@@ -90,7 +90,7 @@ namespace gfx
 				)));
 	}
 
-	void Frustum::UpdatePlanesFromViewSpaceCorners(const dx::XMVECTOR frustumCorners, const float nearPlane, const float farPlane)
+	void Frustum::UpdatePlanesFromViewSpaceCorners(const dx::XMVECTOR& frustumCorners, const float nearPlane, const float farPlane)
 	{
 		// Use cross product to turn tile view directions into plane directions
 		// The cross product is done by flipping X or Y with Z
@@ -117,7 +117,7 @@ namespace gfx
 	}
 
 	// Fast version that only checks for intersection
-	const bool Frustum::DoesAABBIntersect(const AABB& aabb, const dx::XMVECTOR aabbObjectPosition) const
+	const bool Frustum::DoesAABBIntersect(const AABB& aabb, const dx::XMVECTOR& aabbObjectPosition) const
 	{
 		// Reference: http://www.cse.chalmers.se/~uffe/vfc_bbox.pdf
 
@@ -161,7 +161,7 @@ namespace gfx
 	}
 
 	// Slower version that also checks if AABB is entirely inside frustum
-	const bool Frustum::DoesAABBIntersect(const AABB& aabb, const dx::XMVECTOR aabbObjectPosition, IntersectionType& intersectionType) const
+	const bool Frustum::DoesAABBIntersect(const AABB& aabb, const dx::XMVECTOR& aabbObjectPosition, IntersectionType& intersectionType) const
 	{
 		// Reference: http://www.cse.chalmers.se/~uffe/vfc_bbox.pdf
 
@@ -220,7 +220,7 @@ namespace gfx
 		return true;
 	}
 
-	const bool Frustum::DoesSphereIntersect(const dx::XMVECTOR spherePosition, const float sphereRadius) const
+	const bool Frustum::DoesSphereIntersect(const dx::XMVECTOR& spherePosition, const float sphereRadius) const
 	{
 		for (size_t i = 0; i < PlaneCt; ++i)
 		{
@@ -234,7 +234,7 @@ namespace gfx
 		return true;
 	}
 
-	const bool Frustum::DoesSphereIntersect(const dx::XMVECTOR spherePositionAndRadius) const
+	const bool Frustum::DoesSphereIntersect(const dx::XMVECTOR& spherePositionAndRadius) const
 	{
 		return DoesSphereIntersect(spherePositionAndRadius, dx::XMVectorGetW(spherePositionAndRadius));
 	}

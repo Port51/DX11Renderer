@@ -15,32 +15,32 @@ namespace gfx
 	Camera::~Camera()
 	{}
 
-	const dx::XMMATRIX Camera::GetViewMatrix() const
+	const dx::XMMATRIX& Camera::GetViewMatrix() const
 	{
 		return m_viewMatrix;
 	}
 
-	const dx::XMMATRIX Camera::GetInverseViewMatrix() const
+	const dx::XMMATRIX& Camera::GetInverseViewMatrix() const
 	{
 		return m_inverseViewMatrix;
 	}
 
-	const dx::XMMATRIX Camera::GetViewProjectionMatrix() const
+	const dx::XMMATRIX& Camera::GetViewProjectionMatrix() const
 	{
 		return m_viewProjectionMatrix;
 	}
 
-	const dx::XMMATRIX Camera::GetInverseViewProjectionMatrix() const
+	const dx::XMMATRIX& Camera::GetInverseViewProjectionMatrix() const
 	{
 		return m_inverseViewProjectionMatrix;
 	}
 
-	const dx::XMMATRIX Camera::GetProjectionMatrix() const
+	const dx::XMMATRIX& Camera::GetProjectionMatrix() const
 	{
 		return m_projectionMatrix;
 	}
 
-	const dx::XMMATRIX Camera::GetInverseProjectionMatrix() const
+	const dx::XMMATRIX& Camera::GetInverseProjectionMatrix() const
 	{
 		return m_inverseProjectionMatrix;
 	}
@@ -64,17 +64,17 @@ namespace gfx
 	/// This assumes a "normal" camera frustum, so don't try this with a planar reflection camera!
 	const dx::XMVECTOR Camera::GetFrustumCornersVS() const
 	{
-		return m_frustumCornersVS;
+		return dx::XMLoadFloat4(&m_frustumCornersVS);
 	}
 
 	const dx::XMVECTOR Camera::GetInverseFrustumCornersVS() const
 	{
-		return m_inverseFrustumCornersVS;
+		return dx::XMLoadFloat4(&m_inverseFrustumCornersVS);
 	}
 
 	const dx::XMVECTOR Camera::GetGPUFrustumPlaneDirVS() const
 	{
-		return m_gpuFrustumPlaneDirVS;
+		return dx::XMLoadFloat4(&m_gpuFrustumPlaneDirVS);
 	}
 
 	const Frustum& Camera::GetFrustumWS() const
@@ -113,13 +113,13 @@ namespace gfx
 		float halfAngleX = halfAngleY * m_aspect;
 
 		// Flip Y
-		m_frustumCornersVS = dx::XMVectorSet(halfAngleX, -halfAngleY, halfAngleX * m_farClipPlane, -halfAngleY * m_farClipPlane);
-		m_inverseFrustumCornersVS = dx::XMVectorSet(1.f / halfAngleX, -1.f / halfAngleY, 1.f / (halfAngleX * m_farClipPlane), -1.f / (halfAngleY * m_farClipPlane));
+		m_frustumCornersVS = dx::XMFLOAT4(halfAngleX, -halfAngleY, halfAngleX * m_farClipPlane, -halfAngleY * m_farClipPlane);
+		m_inverseFrustumCornersVS = dx::XMFLOAT4(1.f / halfAngleX, -1.f / halfAngleY, 1.f / (halfAngleX * m_farClipPlane), -1.f / (halfAngleY * m_farClipPlane));
 
 		m_frustumVS.UpdatePlanesFromMatrix(GetProjectionMatrix());
 		//m_frustumVS.UpdatePlanesFromViewSpaceCorners(m_frustumCornersVS, m_nearClipPlane, m_farClipPlane);
 
-		m_gpuFrustumPlaneDirVS = m_frustumVS.GetGPUFrustumPlaneDir();
+		dx::XMStoreFloat4(&m_gpuFrustumPlaneDirVS, m_frustumVS.GetGPUFrustumPlaneDir());
 	}
 
 	void Camera::UpdateFrustumWS()

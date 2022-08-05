@@ -244,7 +244,7 @@ namespace gfx
 
 	const std::size_t RenderPass::GetHash(const std::string passName)
 	{
-		return std::hash<std::string>{}(std::move(passName));
+		return std::hash<std::string>{}(passName);
 	}
 
 	RenderPass& RenderPass::GetSubPass(const UINT pass) const

@@ -11,12 +11,12 @@ namespace gfx
 		Camera(const float fov, const float aspect, const float nearClipPlane, const float farClipPlane);
 		virtual ~Camera();
 	public:
-		const dx::XMMATRIX GetViewMatrix() const;
-		const dx::XMMATRIX GetInverseViewMatrix() const;
-		const dx::XMMATRIX GetViewProjectionMatrix() const;
-		const dx::XMMATRIX GetInverseViewProjectionMatrix() const;
-		const dx::XMMATRIX GetProjectionMatrix() const;
-		const dx::XMMATRIX GetInverseProjectionMatrix() const;
+		const dx::XMMATRIX& GetViewMatrix() const;
+		const dx::XMMATRIX& GetInverseViewMatrix() const;
+		const dx::XMMATRIX& GetViewProjectionMatrix() const;
+		const dx::XMMATRIX& GetInverseViewProjectionMatrix() const;
+		const dx::XMMATRIX& GetProjectionMatrix() const;
+		const dx::XMMATRIX& GetInverseProjectionMatrix() const;
 		const dx::XMVECTOR GetFrustumCornersVS() const;
 		const dx::XMVECTOR GetInverseFrustumCornersVS() const;
 		const dx::XMVECTOR GetGPUFrustumPlaneDirVS() const;
@@ -48,8 +48,8 @@ namespace gfx
 		dx::XMMATRIX m_inverseProjectionMatrix;
 		Frustum m_frustumWS;
 		Frustum m_frustumVS;
-		dx::XMVECTOR m_frustumCornersVS;
-		dx::XMVECTOR m_inverseFrustumCornersVS;
-		dx::XMVECTOR m_gpuFrustumPlaneDirVS;
+		dx::XMFLOAT4 m_frustumCornersVS;
+		dx::XMFLOAT4 m_inverseFrustumCornersVS;
+		dx::XMFLOAT4 m_gpuFrustumPlaneDirVS;
 	};
 }

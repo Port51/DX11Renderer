@@ -37,22 +37,22 @@ namespace gfx
 		ApplyTRS();
 	}
 
-	const dx::XMVECTOR& GameObject::GetPositionWS() const
+	const dx::XMVECTOR GameObject::GetPositionWS() const
 	{
 		return dx::XMLoadFloat3(&m_positionWS);
 	}
 
-	const dx::XMVECTOR& GameObject::GetForwardWS() const
+	const dx::XMVECTOR GameObject::GetForwardWS() const
 	{
 		return dx::XMLoadFloat3(&m_forwardWS);
 	}
 
-	const dx::XMVECTOR& GameObject::GetRightWS() const
+	const dx::XMVECTOR GameObject::GetRightWS() const
 	{
 		return dx::XMLoadFloat3(&m_rightWS);
 	}
 
-	const dx::XMVECTOR& GameObject::GetUpWS() const
+	const dx::XMVECTOR GameObject::GetUpWS() const
 	{
 		return dx::XMLoadFloat3(&m_upWS);
 	}

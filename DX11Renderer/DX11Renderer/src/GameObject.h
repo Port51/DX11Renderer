@@ -12,10 +12,10 @@ namespace gfx
 		void SetScaleWS(const dx::XMVECTOR& scaleWS);
 		void SetTRS(const dx::XMVECTOR& positionWS, const dx::XMVECTOR& rotationWS, const dx::XMVECTOR& scaleWS);
 
-		const dx::XMVECTOR& GetPositionWS() const;
-		const dx::XMVECTOR& GetForwardWS() const;
-		const dx::XMVECTOR& GetRightWS() const;
-		const dx::XMVECTOR& GetUpWS() const;
+		const dx::XMVECTOR GetPositionWS() const;
+		const dx::XMVECTOR GetForwardWS() const;
+		const dx::XMVECTOR GetRightWS() const;
+		const dx::XMVECTOR GetUpWS() const;
 	protected:
 		void UpdateBasisVectors();
 		void DecomposeTRS();
