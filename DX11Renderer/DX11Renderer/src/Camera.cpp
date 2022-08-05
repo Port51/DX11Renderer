@@ -12,6 +12,9 @@ namespace gfx
 		UpdateFrustumVS();
 	}
 
+	Camera::~Camera()
+	{}
+
 	const dx::XMMATRIX Camera::GetViewMatrix() const
 	{
 		return m_viewMatrix;
@@ -140,32 +143,15 @@ namespace gfx
 			{
 				SetFOV(newFov);
 			}
-
-			if (ImGui::Button("Reset"))
-			{
-				Reset();
-			}
 		}
 		ImGui::End();
 	}
 
-	void Camera::Reset()
-	{
-		m_radius = 20.0f;
-		m_orbitYaw = 0.0f;
-		m_orbitPitch = 0.0f;
-		m_pitch = 0.0f;
-		m_yaw = 0.0f;
-		m_roll = 0.0f;
-		m_fov = 40.0f;
-	}
-
 	void Camera::Update()
 	{
-		m_yaw = -m_orbitYaw;
-		m_pitch = m_orbitPitch;
+		m_rotationWS = dx::XMFLOAT3(m_orbitPitch, -m_orbitYaw, 0.f);
 
-		const auto camRotationMatrix = dx::XMMatrixRotationRollPitchYaw(m_pitch, m_yaw, m_roll);
+		const auto camRotationMatrix = dx::XMMatrixRotationRollPitchYawFromVector(dx::XMLoadFloat3(&m_rotationWS));
 		auto camTarget = XMVector3TransformCoord(dx::XMVectorSet(0.f, 0.f, 1.f, 0.f), camRotationMatrix);
 		camTarget = dx::XMVector3Normalize(camTarget);
 

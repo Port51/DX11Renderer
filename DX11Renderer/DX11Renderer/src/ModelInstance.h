@@ -18,7 +18,7 @@ namespace gfx
 	class MeshAsset;
 	struct DrawContext;
 
-	class ModelInstance //: public GameObject
+	class ModelInstance : public GameObject
 	{
 	public:
 		ModelInstance(const GraphicsDevice& gfx, const ModelAsset& pModelAsset, const dx::XMMATRIX transform);
@@ -26,16 +26,13 @@ namespace gfx
 		virtual ~ModelInstance() = default;
 	public:
 		//void SubmitDrawCalls(const DrawContext& drawContext) const;
-		const dx::XMVECTOR GetPositionWS() const;
-		void SetPositionWS(const dx::XMVECTOR& positionWS);
-		void SetTRS(const dx::XMVECTOR& positionWS, const dx::XMVECTOR& rotationWS, const dx::XMVECTOR& scaleWS);
 		void RebuildSceneGraphTransforms();
 		const std::shared_ptr<SceneGraphNode> GetSceneGraph() const;
 		const std::vector<std::shared_ptr<MeshRenderer>>& GetMeshRenderers() const;
+	protected:
+		virtual void ApplyTRS() override;
 	private:
 		void InitializeModel();
-		void DecomposeTRS();
-		void ApplyTRS();
 	private:
 		std::shared_ptr<MeshRenderer> CreateMeshRenderer(const GraphicsDevice& gfx, std::shared_ptr<MeshAsset> const& pMeshAsset);
 		std::shared_ptr<SceneGraphNode> CreateModelInstanceNode(const GraphicsDevice& gfx, std::shared_ptr<ModelAssetNode> const& pSourceNode);
@@ -45,9 +42,8 @@ namespace gfx
 		std::vector<std::shared_ptr<MeshRenderer>> m_pMeshes;
 
 		// TRS
-		dx::XMFLOAT3 m_translation;
-		dx::XMFLOAT3 m_rotation;
-		dx::XMFLOAT3 m_scale;
-		dx::XMFLOAT4X4 m_transform;
+		//dx::XMFLOAT3 m_translation;
+		//dx::XMFLOAT3 m_rotation;
+		//dx::XMFLOAT3 m_scale;
 	};
 }

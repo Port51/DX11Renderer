@@ -53,25 +53,9 @@ namespace gfx
 		RebuildSceneGraphTransforms();
 	}
 
-	void ModelInstance::DecomposeTRS()
-	{
-		auto trs = dx::XMLoadFloat4x4(&m_transform);
-		dx::XMVECTOR tra;
-		dx::XMVECTOR rot;
-		dx::XMVECTOR sca;
-		dx::XMMatrixDecompose(&sca, &rot, &tra, trs);
-		dx::XMStoreFloat3(&m_translation, tra);
-		dx::XMStoreFloat3(&m_rotation, rot);
-		dx::XMStoreFloat3(&m_scale, sca);
-	}
-
 	void ModelInstance::ApplyTRS()
 	{
-		auto trs = dx::XMMatrixScalingFromVector(dx::XMLoadFloat3(&m_scale))
-			* dx::XMMatrixRotationRollPitchYawFromVector(dx::XMLoadFloat3(&m_rotation))
-			* dx::XMMatrixTranslationFromVector(dx::XMLoadFloat3(&m_translation));
-		dx::XMStoreFloat4x4(&m_transform, trs);
-
+		GameObject::ApplyTRS();
 		RebuildSceneGraphTransforms();
 	}
 
@@ -79,25 +63,6 @@ namespace gfx
 	{
 		m_pSceneGraph->SubmitDrawCalls(drawContext);
 	}*/
-
-	const dx::XMVECTOR ModelInstance::GetPositionWS() const
-	{
-		return dx::XMLoadFloat3(&m_translation);
-	}
-
-	void ModelInstance::SetPositionWS(const dx::XMVECTOR& positionWS)
-	{
-		dx::XMStoreFloat3(&m_translation, positionWS);
-		ApplyTRS();
-	}
-
-	void ModelInstance::SetTRS(const dx::XMVECTOR& positionWS, const dx::XMVECTOR& rotationWS, const dx::XMVECTOR& scaleWS)
-	{
-		dx::XMStoreFloat3(&m_translation, positionWS);
-		dx::XMStoreFloat3(&m_rotation, rotationWS);
-		dx::XMStoreFloat3(&m_scale, scaleWS);
-		ApplyTRS();
-	}
 
 	void ModelInstance::RebuildSceneGraphTransforms()
 	{

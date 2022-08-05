@@ -9,7 +9,7 @@ namespace gfx
 	{
 	public:
 		Camera(const float fov, const float aspect, const float nearClipPlane, const float farClipPlane);
-		virtual ~Camera() = default;
+		virtual ~Camera();
 	public:
 		const dx::XMMATRIX GetViewMatrix() const;
 		const dx::XMMATRIX GetInverseViewMatrix() const;
@@ -27,7 +27,6 @@ namespace gfx
 		void SetFOV(const float fov);
 		void SetAspect(const float aspect);
 		void DrawImguiControlWindow();
-		void Reset();
 		void Update();
 	private:
 		void UpdateProjectionMatrix();
