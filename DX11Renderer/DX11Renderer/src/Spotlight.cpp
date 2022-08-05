@@ -66,7 +66,7 @@ namespace gfx
 		ImGui::End();
 	}
 
-	const LightData Spotlight::GetLightData(const dx::XMMATRIX viewMatrix) const
+	const LightData Spotlight::GetLightData(const dx::XMMATRIX& viewMatrix) const
 	{
 		LightData light;
 

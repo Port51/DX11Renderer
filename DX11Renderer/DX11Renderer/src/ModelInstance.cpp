@@ -12,10 +12,11 @@
 #include "RawBufferData.h"
 #include "StructuredBufferData.h"
 #include "DrawContext.h"
+#include "SceneGraphNode.h"
 
 namespace gfx
 {
-	ModelInstance::ModelInstance(const GraphicsDevice& gfx, const ModelAsset& pModelAsset, const dx::XMMATRIX transform)
+	ModelInstance::ModelInstance(const GraphicsDevice& gfx, const ModelAsset& pModelAsset, const dx::XMMATRIX& transform)
 	{
 		dx::XMStoreFloat4x4(&m_transform, transform);
 		DecomposeTRS();
@@ -31,7 +32,7 @@ namespace gfx
 		InitializeModel();
 	}
 
-	ModelInstance::ModelInstance(const GraphicsDevice& gfx, std::shared_ptr<ModelAsset> const& pModelAsset, const dx::XMMATRIX transform)
+	ModelInstance::ModelInstance(const GraphicsDevice& gfx, std::shared_ptr<ModelAsset> const& pModelAsset, const dx::XMMATRIX& transform)
 	{
 		dx::XMStoreFloat4x4(&m_transform, transform);
 		DecomposeTRS();
@@ -46,6 +47,9 @@ namespace gfx
 		m_pSceneGraph = CreateModelInstanceNode(gfx, pModelAsset->m_pSceneGraph);
 		InitializeModel();
 	}
+
+	ModelInstance::~ModelInstance()
+	{}
 
 	void ModelInstance::InitializeModel()
 	{

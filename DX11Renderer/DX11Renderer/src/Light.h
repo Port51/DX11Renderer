@@ -38,7 +38,7 @@ namespace gfx
 		virtual ~Light();
 	public:
 		virtual void DrawImguiControlWindow() = 0;
-		virtual const LightData GetLightData(const dx::XMMATRIX viewMatrix) const = 0;
+		virtual const LightData GetLightData(const dx::XMMATRIX& viewMatrix) const = 0;
 		virtual const UINT GetLightType() const = 0;
 		virtual void RenderShadow(const ShadowPassContext& context, RenderState& renderState) = 0;
 		const int GetCurrentShadowIdx() const;

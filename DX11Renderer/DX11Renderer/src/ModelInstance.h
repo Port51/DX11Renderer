@@ -1,11 +1,6 @@
 #pragma once
 #include "GameObject.h"
 #include "CommonHeader.h"
-#include <string>
-#include "DX11Include.h"
-#include "SceneGraphNode.h"
-#include "MeshRenderer.h"
-//#include "ModelAsset.h"
 
 namespace gfx
 {
@@ -21,9 +16,9 @@ namespace gfx
 	class ModelInstance : public GameObject
 	{
 	public:
-		ModelInstance(const GraphicsDevice& gfx, const ModelAsset& pModelAsset, const dx::XMMATRIX transform);
-		ModelInstance(const GraphicsDevice& gfx, std::shared_ptr<ModelAsset> const& pModelAsset, const dx::XMMATRIX transform);
-		virtual ~ModelInstance() = default;
+		ModelInstance(const GraphicsDevice& gfx, const ModelAsset& pModelAsset, const dx::XMMATRIX& transform);
+		ModelInstance(const GraphicsDevice& gfx, std::shared_ptr<ModelAsset> const& pModelAsset, const dx::XMMATRIX& transform);
+		virtual ~ModelInstance();
 	public:
 		//void SubmitDrawCalls(const DrawContext& drawContext) const;
 		void RebuildSceneGraphTransforms();

@@ -93,7 +93,7 @@ namespace gfx
 		gfx.GetContext()->PSSetConstantBuffers(0u, 1u, globalLightCbuf.GetD3DBuffer().GetAddressOf());
 	}*/
 
-	const LightData PointLight::GetLightData(const dx::XMMATRIX viewMatrix) const
+	const LightData PointLight::GetLightData(const dx::XMMATRIX& viewMatrix) const
 	{
 		LightData light;
 

@@ -65,7 +65,7 @@ namespace gfx
 		ImGui::End();
 	}
 
-	const LightData DirectionalLight::GetLightData(const dx::XMMATRIX viewMatrix) const
+	const LightData DirectionalLight::GetLightData(const dx::XMMATRIX& viewMatrix) const
 	{
 		LightData light;
 		light.positionVS_range = dx::XMVectorSetW(dx::XMVector4Transform(GetPositionWS(), viewMatrix), m_range); // pack range into W
@@ -80,7 +80,7 @@ namespace gfx
 		return 2u;
 	}
 
-	const ViewProjTransforms DirectionalLight::GetShadowTransforms(const dx::XMVECTOR cascadeSphereCenterWS, const float cascadeDistance) const
+	const ViewProjTransforms DirectionalLight::GetShadowTransforms(const dx::XMVECTOR& cascadeSphereCenterWS, const float cascadeDistance) const
 	{
 		const float nearPlane = 0.5f;
 		const auto cascadeFrustumStartWS = dx::XMVectorSubtract(cascadeSphereCenterWS, dx::XMVectorScale(GetForwardWS(), cascadeDistance * 0.5f + Config::ShadowCascadeOffset + nearPlane));
