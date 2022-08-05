@@ -40,10 +40,5 @@ namespace gfx
 		std::vector<std::shared_ptr<Material>> m_pMaterials;
 		std::shared_ptr<SceneGraphNode> m_pSceneGraph;
 		std::vector<std::shared_ptr<MeshRenderer>> m_pMeshes;
-
-		// TRS
-		//dx::XMFLOAT3 m_translation;
-		//dx::XMFLOAT3 m_rotation;
-		//dx::XMFLOAT3 m_scale;
 	};
 }

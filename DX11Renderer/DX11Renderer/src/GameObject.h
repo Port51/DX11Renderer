@@ -7,7 +7,11 @@ namespace gfx
 	{
 	public:
 		void SetPositionWS(const dx::XMVECTOR& positionWS);
+		void SetRotationWS(const float pitch, const float yaw, const float roll);
+		void SetRotationWS(const dx::XMVECTOR& rotationWS);
+		void SetScaleWS(const dx::XMVECTOR& scaleWS);
 		void SetTRS(const dx::XMVECTOR& positionWS, const dx::XMVECTOR& rotationWS, const dx::XMVECTOR& scaleWS);
+
 		const dx::XMVECTOR& GetPositionWS() const;
 		const dx::XMVECTOR& GetForwardWS() const;
 		const dx::XMVECTOR& GetRightWS() const;

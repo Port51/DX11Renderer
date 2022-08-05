@@ -22,7 +22,7 @@ namespace gfx
 	struct LightShadowData;
 	struct ShadowPassCB;
 
-	class Light //: public GameObject
+	class Light : public GameObject
 	{
 	public:
 		struct ShadowSettings
@@ -43,8 +43,6 @@ namespace gfx
 		virtual void RenderShadow(const ShadowPassContext& context, RenderState& renderState) = 0;
 		const int GetCurrentShadowIdx() const;
 		void SetCurrentShadowIdx(const int shadowMapIdx);
-		dx::XMFLOAT3 GetPositionWS() const;
-		void SetPositionWS(const dx::XMVECTOR positionWS);
 		const bool HasShadow() const;
 		virtual void AppendShadowData(const UINT shadowStartSlot, std::vector<LightShadowData>& shadowData) const = 0;
 		virtual const UINT GetShadowTileCount() const = 0;
@@ -54,7 +52,6 @@ namespace gfx
 	protected:
 		UINT m_index;
 		bool m_allowUserControl;
-		dx::XMFLOAT3 m_positionWS;
 		dx::XMFLOAT3 m_color;
 		float m_intensity;
 		std::unique_ptr<ModelInstance> m_pModel;

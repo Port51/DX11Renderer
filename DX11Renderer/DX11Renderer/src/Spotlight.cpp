@@ -21,11 +21,11 @@ namespace gfx
 {
 	Spotlight::Spotlight(const GraphicsDevice& gfx, const UINT index, const bool allowUserControl, const bool hasShadow, std::shared_ptr<ModelAsset> const& pModelAsset, const dx::XMFLOAT3 positionWS, const float pan, const float tilt, const dx::XMFLOAT3 color, const float intensity, const float attenuationQ, const float range)
 		: Light(gfx, index, allowUserControl, pModelAsset, positionWS, color, intensity),
-		m_pan(pan),
-		m_tilt(tilt),
 		m_attenuationQ(attenuationQ),
 		m_range(range)
 	{
+		SetRotationWS(dx::XMConvertToRadians(tilt), dx::XMConvertToRadians(pan), 0.0f);
+
 		m_shadowSettings.hasShadow = hasShadow;
 
 		if (m_shadowSettings.hasShadow)
@@ -46,8 +46,8 @@ namespace gfx
 			ImGui::SliderFloat("X", &m_positionWS.x, -60.0f, 60.0f, "%.1f");
 			ImGui::SliderFloat("Y", &m_positionWS.y, -60.0f, 60.0f, "%.1f");
 			ImGui::SliderFloat("Z", &m_positionWS.z, -60.0f, 60.0f, "%.1f");
-			ImGui::SliderFloat("Pan", &m_pan, -360.0f, 360.0f, "%.1f");
-			ImGui::SliderFloat("Tilt", &m_tilt, -180.0f, 180.0f, "%.1f");
+			//ImGui::SliderFloat("Pan", &m_pan, -360.0f, 360.0f, "%.1f");
+			//ImGui::SliderFloat("Tilt", &m_tilt, -180.0f, 180.0f, "%.1f");
 
 			ImGui::Text("Intensity/Color");
 			// ImGuiSliderFlags_Logarithmic makes it power of 2?
@@ -77,7 +77,7 @@ namespace gfx
 		const auto posWS_Vector = dx::XMVectorSet(m_positionWS.x, m_positionWS.y, m_positionWS.z, 1.0f);
 		light.positionVS_range = dx::XMVectorSetW(dx::XMVector4Transform(posWS_Vector, viewMatrix), m_range); // pack range into W
 		light.color_intensity = dx::XMVectorSetW(dx::XMLoadFloat3(&m_color), m_intensity);
-		light.directionVS = dx::XMVectorSetW(dx::XMVector4Transform(GetDirectionWS(), viewMatrix), (float)m_shadowAtlasTileIdx);
+		light.directionVS = dx::XMVectorSetW(dx::XMVector4Transform(GetForwardWS(), viewMatrix), (float)m_shadowAtlasTileIdx);
 		light.data0 = dx::XMVectorSet(1, invSphereRad, dx::XMMax(std::cos(dx::XMConvertToRadians(m_outerAngle)) + 0.01f, std::cos(dx::XMConvertToRadians(m_innerAngle))), std::cos(dx::XMConvertToRadians(m_outerAngle)));
 		return light;
 	}
@@ -92,7 +92,7 @@ namespace gfx
 		// Apply look-at and local orientation
 		// +Y = up
 		const auto lightPosWS = dx::XMLoadFloat3(&m_positionWS);
-		const auto viewMatrix = dx::XMMatrixLookAtLH(lightPosWS, dx::XMVectorAdd(lightPosWS, GetDirectionWS()), dx::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
+		const auto viewMatrix = dx::XMMatrixLookAtLH(lightPosWS, dx::XMVectorAdd(lightPosWS, GetForwardWS()), dx::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
 
 		float fovTheta = dx::XMConvertToRadians(2.0f * m_outerAngle);
 		const float nearPlane = 0.1f;
@@ -112,7 +112,7 @@ namespace gfx
 		drawContext.projMatrix = projMatrix;
 
 		// This means all shadow draw calls need to be setup on the same thread
-		context.pRendererList->Filter(context.gfx, frustum, RendererList::RendererSortingType::StateThenFrontToBack, lightPosWS, GetDirectionWS(), m_range);
+		context.pRendererList->Filter(context.gfx, frustum, RendererList::RendererSortingType::StateThenFrontToBack, lightPosWS, GetForwardWS(), m_range);
 		context.pRendererList->SubmitDrawCalls(drawContext);
 		const auto ct = context.pRendererList->GetRendererCount();
 
@@ -145,10 +145,5 @@ namespace gfx
 	const UINT Spotlight::GetShadowTileCount() const
 	{
 		return HasShadow() ? 1u : 0u;
-	}
-
-	const dx::XMVECTOR Spotlight::GetDirectionWS() const
-	{
-		return dx::XMVector4Transform(dx::XMVectorSet(0, 0, 1, 0), dx::XMMatrixRotationRollPitchYaw(dx::XMConvertToRadians(m_tilt), dx::XMConvertToRadians(m_pan), 0.0f));
 	}
 }

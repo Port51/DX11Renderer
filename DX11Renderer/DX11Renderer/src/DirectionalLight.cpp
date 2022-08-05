@@ -24,11 +24,11 @@ namespace gfx
 {
 	DirectionalLight::DirectionalLight(const GraphicsDevice& gfx, const UINT index, const bool allowUserControl, const bool hasShadow, std::shared_ptr<ModelAsset> const& pModelAsset, const float pan, const float tilt, const dx::XMFLOAT3 color, const float intensity, const float sphereRad, const float range)
 		: Light(gfx, index, allowUserControl, pModelAsset, dx::XMFLOAT3(0.f, 0.f, 0.f), color, intensity),
-		m_pan(pan),
-		m_tilt(tilt),
 		m_sphereRad(sphereRad),
 		m_range(range)
 	{
+		SetRotationWS(dx::XMConvertToRadians(tilt), dx::XMConvertToRadians(pan), 0.0f);
+
 		m_shadowSettings.hasShadow = hasShadow;
 
 		if (m_shadowSettings.hasShadow)
@@ -46,9 +46,9 @@ namespace gfx
 		const auto identifier = std::string("Light") + std::to_string(m_index);
 		if (ImGui::Begin(identifier.c_str()))
 		{
-			ImGui::Text("Position");
-			ImGui::SliderFloat("Pan", &m_pan, -360.0f, 360.0f, "%.1f");
-			ImGui::SliderFloat("Tilt", &m_tilt, -180.0f, 180.0f, "%.1f");
+			//ImGui::Text("Position");
+			//ImGui::SliderFloat("Pan", &m_pan, -360.0f, 360.0f, "%.1f");
+			//ImGui::SliderFloat("Tilt", &m_tilt, -180.0f, 180.0f, "%.1f");
 
 			ImGui::Text("Intensity/Color");
 			// ImGuiSliderFlags_Logarithmic makes it power of 2?
@@ -68,11 +68,9 @@ namespace gfx
 	const LightData DirectionalLight::GetLightData(const dx::XMMATRIX viewMatrix) const
 	{
 		LightData light;
-		const auto posWS_Vector = dx::XMVectorSet(m_positionWS.x, m_positionWS.y, m_positionWS.z, 1.0f);
-		const auto dirWS_Vector = dx::XMVector4Transform(dx::XMVectorSet(0, 0, 1, 0), dx::XMMatrixRotationRollPitchYaw(dx::XMConvertToRadians(m_tilt), dx::XMConvertToRadians(m_pan), 0.0f));
-		light.positionVS_range = dx::XMVectorSetW(dx::XMVector4Transform(posWS_Vector, viewMatrix), m_range); // pack range into W
+		light.positionVS_range = dx::XMVectorSetW(dx::XMVector4Transform(GetPositionWS(), viewMatrix), m_range); // pack range into W
 		light.color_intensity = dx::XMVectorSetW(dx::XMLoadFloat3(&m_color), m_intensity);
-		light.directionVS = dx::XMVectorSetW(dx::XMVector4Transform(dirWS_Vector, viewMatrix), (float)m_shadowAtlasTileIdx);
+		light.directionVS = dx::XMVectorSetW(dx::XMVector4Transform(GetForwardWS(), viewMatrix), (float)m_shadowAtlasTileIdx);
 		light.data0 = dx::XMVectorSet(2, 1.f / m_sphereRad, 0, 0);
 		return light;
 	}
@@ -85,7 +83,7 @@ namespace gfx
 	const ViewProjTransforms DirectionalLight::GetShadowTransforms(const dx::XMVECTOR cascadeSphereCenterWS, const float cascadeDistance) const
 	{
 		const float nearPlane = 0.5f;
-		const auto cascadeFrustumStartWS = dx::XMVectorSubtract(cascadeSphereCenterWS, dx::XMVectorScale(GetDirectionWS(), cascadeDistance * 0.5f + Config::ShadowCascadeOffset + nearPlane));
+		const auto cascadeFrustumStartWS = dx::XMVectorSubtract(cascadeSphereCenterWS, dx::XMVectorScale(GetForwardWS(), cascadeDistance * 0.5f + Config::ShadowCascadeOffset + nearPlane));
 
 		if (dx::XMVectorGetX(dx::XMVector3LengthSq(dx::XMVectorSubtract(cascadeFrustumStartWS, cascadeSphereCenterWS))) < 0.001f * 0.001f)
 		{
@@ -110,7 +108,7 @@ namespace gfx
 		const auto cameraPositionWS = context.camera.GetPositionWS();
 		const auto cameraForwardWS = context.camera.GetForwardWS();
 
-		const auto shadowDirWS = GetDirectionWS();
+		const auto shadowDirWS = GetForwardWS();
 
 		// Render all cascades
 		for (UINT i = 0u; i < (UINT)Config::ShadowCascades; ++i)
@@ -204,10 +202,5 @@ namespace gfx
 	const dx::XMVECTOR DirectionalLight::GetShadowCascadeSphereVS(const UINT idx) const
 	{
 		return m_shadowCascadeSpheresVS[idx];
-	}
-
-	const dx::XMVECTOR DirectionalLight::GetDirectionWS() const
-	{
-		return dx::XMVector4Transform(dx::XMVectorSet(0, 0, 1, 0), dx::XMMatrixRotationRollPitchYaw(dx::XMConvertToRadians(m_tilt), dx::XMConvertToRadians(m_pan), 0.0f));
 	}
 }

@@ -29,11 +29,8 @@ namespace gfx
 		const UINT GetShadowTileCount() const override;
 		const dx::XMVECTOR GetShadowCascadeSphereVS(const UINT idx) const;
 	private:
-		const dx::XMVECTOR GetDirectionWS() const;
 		const ViewProjTransforms GetShadowTransforms(const dx::XMVECTOR cascadeSphereCenterWS, const float cascadeDistance) const;
 	private:
-		float m_pan;
-		float m_tilt;
 		float m_sphereRad;
 		float m_range;
 		std::vector<LightShadowData> m_lightShadowData;

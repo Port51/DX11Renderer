@@ -28,10 +28,6 @@ namespace gfx
 		void AppendShadowData(const UINT shadowStartSlot, std::vector<LightShadowData>& shadowData) const override;
 		const UINT GetShadowTileCount() const override;
 	private:
-		const dx::XMVECTOR GetDirectionWS() const;
-	private:
-		float m_pan;
-		float m_tilt;
 		float m_attenuationQ;
 		float m_range;
 		float m_innerAngle = 80.f;

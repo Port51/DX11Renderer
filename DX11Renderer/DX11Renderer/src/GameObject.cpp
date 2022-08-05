@@ -9,6 +9,26 @@ namespace gfx
 		ApplyTRS();
 	}
 
+	void GameObject::SetRotationWS(const float pitch, const float yaw, const float roll)
+	{
+		m_rotationWS = dx::XMFLOAT3(pitch, yaw, roll);
+		ApplyTRS();
+		UpdateBasisVectors();
+	}
+
+	void GameObject::SetRotationWS(const dx::XMVECTOR& rotationWS)
+	{
+		dx::XMStoreFloat3(&m_rotationWS, rotationWS);
+		ApplyTRS();
+		UpdateBasisVectors();
+	}
+
+	void GameObject::SetScaleWS(const dx::XMVECTOR& scaleWS)
+	{
+		dx::XMStoreFloat3(&m_scaleWS, scaleWS);
+		ApplyTRS();
+	}
+
 	void GameObject::SetTRS(const dx::XMVECTOR& positionWS, const dx::XMVECTOR& rotationWS, const dx::XMVECTOR& scaleWS)
 	{
 		dx::XMStoreFloat3(&m_positionWS, positionWS);

@@ -11,10 +11,10 @@ namespace gfx
 	Light::Light(const GraphicsDevice& gfx, const UINT index, const bool allowUserControl, std::shared_ptr<ModelAsset> const& pModelAsset, const dx::XMFLOAT3 positionWS, const dx::XMFLOAT3 color, const float intensity)
 		: m_index(index),
 		m_allowUserControl(allowUserControl),
-		m_positionWS(positionWS),
 		m_color(color),
 		m_intensity(intensity)
 	{
+		SetPositionWS(dx::XMLoadFloat3(&positionWS));
 		if (allowUserControl && pModelAsset != nullptr)
 		{
 			m_pModel = std::make_unique<ModelInstance>(gfx, pModelAsset, dx::XMMatrixScaling(0.1f, 0.1f, 0.1f));
@@ -32,16 +32,6 @@ namespace gfx
 	void Light::SetCurrentShadowIdx(const int _shadowMapIdx)
 	{
 		m_shadowAtlasTileIdx = _shadowMapIdx;
-	}
-
-	dx::XMFLOAT3 Light::GetPositionWS() const
-	{
-		return m_positionWS;
-	}
-
-	void Light::SetPositionWS(const dx::XMVECTOR _positionWS)
-	{
-		dx::XMStoreFloat3(&m_positionWS, _positionWS);
 	}
 
 	const bool Light::HasShadow() const
