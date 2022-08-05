@@ -38,9 +38,13 @@ v2f main(attrib i)
     o.positionVS = (float3) mul(_ViewMatrix, float4(positionWS, 1.0f)).xyz;
     o.positionWS = positionWS;
 
-    o.normalWS = mul((float3x3) model, i.n).xyz;
-    o.normalVS = mul((float3x3) modelView, i.n).xyz;
-    o.tangentVS = mul((float3x3) modelView, i.t).xyz;
+    float3 tangent = GetGerstnerWavesTangent(positionWS);
+    float3 bitangent = GetGerstnerWavesBitangent(positionWS);
+    float3 normal = cross(tangent, bitangent);
+
+    o.normalWS = mul((float3x3) model, normal).xyz;
+    o.normalVS = mul((float3x3) modelView, normal).xyz;
+    o.tangentVS = mul((float3x3) modelView, tangent).xyz;
     o.pos = mul(_ViewProjMatrix, float4(positionWS, 1.0f));
     o.positionNDC = o.pos;
     o.uv0 = float2(i.uv0.x, 1.f - i.uv0.y);
