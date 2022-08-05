@@ -6,11 +6,15 @@ namespace gfx
 	class GameObject
 	{
 	public:
-		void SetPositionWS(const dx::XMVECTOR& positionWS);
-		void SetRotationWS(const float pitch, const float yaw, const float roll);
-		void SetRotationWS(const dx::XMVECTOR& rotationWS);
-		void SetScaleWS(const dx::XMVECTOR& scaleWS);
-		void SetTRS(const dx::XMVECTOR& positionWS, const dx::XMVECTOR& rotationWS, const dx::XMVECTOR& scaleWS);
+		void SetPositionWS(const dx::XMVECTOR& positionWS, const bool updateTransform = true);
+		void SetPitch(const float pitch, const bool updateTransform = true);
+		void SetYaw(const float yaw, const bool updateTransform = true);
+		void SetRoll(const float roll, const bool updateTransform = true);
+		void SetRotationWS(const float pitch, const float yaw, const float roll, const bool updateTransform = true);
+		void SetRotationWS(const dx::XMVECTOR& rotationWS, const bool updateTransform = true);
+		void SetScaleWS(const dx::XMVECTOR& scaleWS, const bool updateTransform = true);
+		void SetTRS(const dx::XMVECTOR& positionWS, const dx::XMVECTOR& rotationWS, const dx::XMVECTOR& scaleWS, const bool updateTransform = true);
+		void UpdateTransform();
 
 		const dx::XMVECTOR GetPositionWS() const;
 		const dx::XMVECTOR GetForwardWS() const;

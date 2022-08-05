@@ -3,38 +3,60 @@
 
 namespace gfx
 {
-	void GameObject::SetPositionWS(const dx::XMVECTOR& positionWS)
+	void GameObject::SetPositionWS(const dx::XMVECTOR& positionWS, const bool updateTransform)
 	{
 		dx::XMStoreFloat3(&m_positionWS, positionWS);
-		ApplyTRS();
+		if (updateTransform) ApplyTRS();
 	}
 
-	void GameObject::SetRotationWS(const float pitch, const float yaw, const float roll)
+	void GameObject::SetPitch(const float pitch, const bool updateTransform)
+	{
+		m_rotationWS.x = pitch;
+		if (updateTransform) UpdateTransform();
+	}
+
+	void GameObject::SetYaw(const float yaw, const bool updateTransform)
+	{
+		m_rotationWS.y = yaw;
+		if (updateTransform) UpdateTransform();
+	}
+
+	void GameObject::SetRoll(const float roll, const bool updateTransform)
+	{
+		m_rotationWS.z = roll;
+		if (updateTransform) UpdateTransform();
+	}
+
+	void GameObject::SetRotationWS(const float pitch, const float yaw, const float roll, const bool updateTransform)
 	{
 		m_rotationWS = dx::XMFLOAT3(pitch, yaw, roll);
-		ApplyTRS();
-		UpdateBasisVectors();
+		if (updateTransform) UpdateTransform();
 	}
 
-	void GameObject::SetRotationWS(const dx::XMVECTOR& rotationWS)
+	void GameObject::SetRotationWS(const dx::XMVECTOR& rotationWS, const bool updateTransform)
 	{
 		dx::XMStoreFloat3(&m_rotationWS, rotationWS);
-		ApplyTRS();
-		UpdateBasisVectors();
+		if (updateTransform) UpdateTransform();
 	}
 
-	void GameObject::SetScaleWS(const dx::XMVECTOR& scaleWS)
+	void GameObject::SetScaleWS(const dx::XMVECTOR& scaleWS, const bool updateTransform)
 	{
 		dx::XMStoreFloat3(&m_scaleWS, scaleWS);
-		ApplyTRS();
+		if (updateTransform) ApplyTRS();
 	}
 
-	void GameObject::SetTRS(const dx::XMVECTOR& positionWS, const dx::XMVECTOR& rotationWS, const dx::XMVECTOR& scaleWS)
+	void GameObject::SetTRS(const dx::XMVECTOR& positionWS, const dx::XMVECTOR& rotationWS, const dx::XMVECTOR& scaleWS, const bool updateTransform)
 	{
 		dx::XMStoreFloat3(&m_positionWS, positionWS);
 		dx::XMStoreFloat3(&m_rotationWS, rotationWS);
 		dx::XMStoreFloat3(&m_scaleWS, scaleWS);
+		if (updateTransform) UpdateTransform();
+	}
+
+	void GameObject::UpdateTransform()
+	{
 		ApplyTRS();
+		UpdateBasisVectors();
 	}
 
 	const dx::XMVECTOR GameObject::GetPositionWS() const

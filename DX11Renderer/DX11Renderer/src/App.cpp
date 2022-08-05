@@ -115,10 +115,12 @@ namespace gfx
 		{
 			for (size_t i = 0; i < m_pBoatModels.size(); ++i)
 			{
-				auto offset = GerstnerWaves::GetGerstnerWaveOffset(m_pBoatModels.at(i)->GetPositionWS(), timeElapsed);
+				auto centerOffset = GerstnerWaves::GetGerstnerWaveOffset(m_pBoatModels.at(i)->GetPositionWS(), timeElapsed);
 				// Dampen motion
-				offset = dx::XMVectorMultiply(offset, dx::XMVectorSet(0.5f, 0.9f, 0.5f, 1.f));
-				m_pBoatModels[i]->SetPositionWS(dx::XMVectorAdd(m_boatStartPositions.at(i), offset));
+				centerOffset = dx::XMVectorMultiply(centerOffset, dx::XMVectorSet(0.5f, 0.9f, 0.5f, 1.f));
+				m_pBoatModels[i]->SetPositionWS(dx::XMVectorAdd(m_boatStartPositions.at(i), centerOffset), false);
+				//m_pBoatModels[i]->SetRoll(45.f);
+				m_pBoatModels[i]->UpdateTransform();
 			}
 		}
 
