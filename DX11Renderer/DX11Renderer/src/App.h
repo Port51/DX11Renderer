@@ -52,6 +52,8 @@ namespace gfx
 		std::vector<std::unique_ptr<ModelInstance>> m_pGemModels;
 		std::vector<std::unique_ptr<ModelInstance>> m_pBoatModels;
 		std::vector<dx::XMVECTOR> m_boatStartPositions;
+		std::vector<dx::XMVECTOR> m_boatVelocities;
+		std::vector<dx::XMVECTOR> m_boatAngularVelocities;
 
 		bool m_showDemoWindow = true;
 		UINT m_pixelSelectionX = 450u;

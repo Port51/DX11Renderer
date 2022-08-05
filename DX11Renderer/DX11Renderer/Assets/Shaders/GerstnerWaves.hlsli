@@ -27,9 +27,11 @@ float3 GetGerstnerWaves(float3 positionWS)
 	positionWS += GerstnerWave(positionWS.xz, float2(0.8384436f, 0.5449883f), 0.25f * wM, 1.0f * qM, _Time.y * 2.0f, ampM * 5.0f); // medium waves
 #else
 	positionWS += GerstnerWave(positionWS.xz, float2(0.8384436f, 0.5449883f), 1.0f * wM, 1.0f * qM, _Time.y * 2.0f, ampM * 0.5f); // medium waves
-	positionWS += GerstnerWave(positionWS.xz, float2(0.2576626f, -0.9662349f), 3.18923f * wM, 1.1389f * qM, _Time.y * 3.91f, ampM * 0.75f); // quick waves
-	positionWS += GerstnerWave(positionWS.xz, float2(0.6940289f, 0.7199471f), 3.18923f * wM, 1.1389f * qM, _Time.y * 4.07f, ampM * 0.85f); // quick waves
-	positionWS += GerstnerWave(positionWS.xz, float2(-0.9941821f, 0.1077120f), 7.18923f * wM, 0.7789f * qM, _Time.y * 5.1f, ampM * 0.551f); // very quick waves
+	positionWS += GerstnerWave(positionWS.xz, float2(0.2576626f, -0.9662349f), 2.78923f * wM, 1.3389f * qM, _Time.y * 3.91f, ampM * 0.75f); // quick waves
+	positionWS += GerstnerWave(positionWS.xz, float2(0.1077120f, -0.9941821f), 7.18923f * wM, 1.1789f * qM, _Time.y * 7.1f, ampM * 0.251f); // very quick waves
+	positionWS += GerstnerWave(positionWS.xz, float2(0.9941821f, -0.1077120f), 7.18923f * wM, 1.2789f * qM, _Time.y * 9.1f, ampM * 0.141f); // very quick waves
+	positionWS += GerstnerWave(positionWS.xz, float2(0.3576626f, -0.8662349f), 0.832f * wM, 0.5f * qM, _Time.y * 0.721f, ampM * 0.804f); // large, shallow waves
+	positionWS += GerstnerWave(positionWS.xz, float2(0.4076626f, -0.4062349f), 0.432f * wM, 0.5f * qM, _Time.y * 0.721f, ampM * 0.904f); // large, shallow waves
 #endif
 
 	return positionWS;
@@ -70,9 +72,11 @@ float3 GetGerstnerWavesTangent(float3 positionWS)
 	tangent += GerstnerWaveTangent(positionWS.xz, float2(0.8384436f, 0.5449883f), 0.25f * wM, 1.0f * qM, _Time.y * 2.0f, ampM * 5.0f); // medium waves
 #else
 	tangent += GerstnerWaveTangent(positionWS.xz, float2(0.8384436f, 0.5449883f), 1.0f * wM, 1.0f * qM, _Time.y * 2.0f, ampM * 0.5f); // medium waves
-	tangent += GerstnerWaveTangent(positionWS.xz, float2(0.2576626f, -0.9662349f), 3.18923f * wM, 1.1389f * qM, _Time.y * 3.91f, ampM * 0.75f); // quick waves
-	tangent += GerstnerWaveTangent(positionWS.xz, float2(0.6940289f, 0.7199471f), 3.18923f * wM, 1.1389f * qM, _Time.y * 4.07f, ampM * 0.85f); // quick waves
-	tangent += GerstnerWaveTangent(positionWS.xz, float2(-0.9941821f, 0.1077120f), 7.18923f * wM, 0.7789f * qM, _Time.y * 5.1f, ampM * 0.551f); // very quick waves
+	tangent += GerstnerWaveTangent(positionWS.xz, float2(0.2576626f, -0.9662349f), 2.78923f * wM, 1.3389f * qM, _Time.y * 3.91f, ampM * 0.75f); // quick waves
+	tangent += GerstnerWaveTangent(positionWS.xz, float2(0.1077120f, -0.9941821f), 7.18923f * wM, 1.1789f * qM, _Time.y * 7.1f, ampM * 0.251f); // very quick waves
+	tangent += GerstnerWaveTangent(positionWS.xz, float2(0.9941821f, -0.1077120f), 7.18923f * wM, 1.2789f * qM, _Time.y * 9.1f, ampM * 0.141f); // very quick waves
+	tangent += GerstnerWaveTangent(positionWS.xz, float2(0.3576626f, -0.8662349f), 0.832f * wM, 0.5f * qM, _Time.y * 0.721f, ampM * 0.804f); // large, shallow waves
+	tangent += GerstnerWaveTangent(positionWS.xz, float2(0.4076626f, -0.4062349f), 0.432f * wM, 0.5f * qM, _Time.y * 0.721f, ampM * 0.904f); // large, shallow waves
 #endif
 
 	return normalize(tangent);
@@ -93,9 +97,11 @@ float3 GetGerstnerWavesBitangent(float3 positionWS)
 	bitangent += GerstnerWaveBitangent(positionWS.xz, float2(0.8384436f, 0.5449883f), 0.25f * wM, 1.0f * qM, _Time.y * 2.0f, ampM * 5.0f); // medium waves
 #else
 	bitangent += GerstnerWaveBitangent(positionWS.xz, float2(0.8384436f, 0.5449883f), 1.0f * wM, 1.0f * qM, _Time.y * 2.0f, ampM * 0.5f); // medium waves
-	bitangent += GerstnerWaveBitangent(positionWS.xz, float2(0.2576626f, -0.9662349f), 3.18923f * wM, 1.1389f * qM, _Time.y * 3.91f, ampM * 0.75f); // quick waves
-	bitangent += GerstnerWaveBitangent(positionWS.xz, float2(0.6940289f, 0.7199471f), 3.18923f * wM, 1.1389f * qM, _Time.y * 4.07f, ampM * 0.85f); // quick waves
-	bitangent += GerstnerWaveBitangent(positionWS.xz, float2(-0.9941821f, 0.1077120f), 7.18923f * wM, 0.7789f * qM, _Time.y * 5.1f, ampM * 0.551f); // very quick waves
+	bitangent += GerstnerWaveBitangent(positionWS.xz, float2(0.2576626f, -0.9662349f), 2.78923f * wM, 1.3389f * qM, _Time.y * 3.91f, ampM * 0.75f); // quick waves
+	bitangent += GerstnerWaveBitangent(positionWS.xz, float2(0.1077120f, -0.9941821f), 7.18923f * wM, 1.1789f * qM, _Time.y * 7.1f, ampM * 0.251f); // very quick waves
+	bitangent += GerstnerWaveBitangent(positionWS.xz, float2(0.9941821f, -0.1077120f), 7.18923f * wM, 1.2789f * qM, _Time.y * 9.1f, ampM * 0.141f); // very quick waves
+	bitangent += GerstnerWaveBitangent(positionWS.xz, float2(0.3576626f, -0.8662349f), 0.832f * wM, 0.5f * qM, _Time.y * 0.721f, ampM * 0.804f); // large, shallow waves
+	bitangent += GerstnerWaveBitangent(positionWS.xz, float2(0.4076626f, -0.4062349f), 0.432f * wM, 0.5f * qM, _Time.y * 0.721f, ampM * 0.904f); // large, shallow waves
 #endif
 
 	return normalize(bitangent);

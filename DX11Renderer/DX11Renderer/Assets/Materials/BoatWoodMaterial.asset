@@ -16,12 +16,26 @@ Pass
 {
 	Name, DepthPrepassRenderPass
 	Cull, Back
+
+	StencilRef,			1
+	StencilComp,		8
+	StencilPass,		2
+	StencilReadMask,	1
+	StencilWriteMask,	1
+
 	VS, Assets\\Built\\Shaders\\DepthOnlyVS.cso
 }
 Pass
 {
 	Name, GBufferRenderPass
 	Cull, Back
+
+	StencilRef,			1
+	StencilComp,		8
+	StencilPass,		2
+	StencilReadMask,	1
+	StencilWriteMask,	1
+
 	VS, Assets\\Built\\Shaders\\PhongVS.cso
 	PS, Assets\\Built\\Shaders\\OpaqueGbuffer.cso
 	PropertySlot, 0
@@ -30,6 +44,13 @@ Pass
 {
 	Name, OpaqueRenderPass
 	Cull, Back
+
+	StencilRef,			1
+	StencilComp,		8
+	StencilPass,		2
+	StencilReadMask,	1
+	StencilWriteMask,	1
+
 	VS, Assets\\Built\\Shaders\\PhongVS.cso
 	PS, Assets\\Built\\Shaders\\DeferredPS.cso
 	PropertySlot, 0

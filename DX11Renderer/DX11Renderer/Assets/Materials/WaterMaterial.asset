@@ -11,12 +11,26 @@ Pass
 {
 	Name, DepthPrepassRenderPass
 	Cull, Back
+
+	StencilRef,			0
+	StencilComp,		3
+	StencilPass,		0
+	StencilReadMask,	1
+	StencilWriteMask,	1
+
 	VS, Assets\\Built\\Shaders\\WaterDepthOnlyVS.cso
 }
 Pass
 {
 	Name, GBufferRenderPass
 	Cull, Back
+
+	StencilRef,			0
+	StencilComp,		3
+	StencilPass,		0
+	StencilReadMask,	1
+	StencilWriteMask,	1
+
 	VS, Assets\\Built\\Shaders\\WaterVS.cso
 	PS, Assets\\Built\\Shaders\\WaterGbuffer.cso
 	PropertySlot, 0
@@ -25,7 +39,15 @@ Pass
 {
 	Name, OpaqueRenderPass
 	Cull, Back
+
+	StencilRef,			0
+	StencilComp,		3
+	StencilPass,		0
+	StencilReadMask,	1
+	StencilWriteMask,	1
+
+
 	VS, Assets\\Built\\Shaders\\WaterVS.cso
-	PS, Assets\\Built\\Shaders\\DeferredPS.cso
+	PS, Assets\\Built\\Shaders\\WaterPS.cso
 	PropertySlot, 0
 }

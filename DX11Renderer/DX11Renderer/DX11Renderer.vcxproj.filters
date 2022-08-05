@@ -973,6 +973,9 @@
     <FxCompile Include="Assets\Shaders\WaterDepthOnlyVS.hlsl">
       <Filter>Assets\Shaders\DrawPasses\VertexShaders</Filter>
     </FxCompile>
+    <FxCompile Include="Assets\Shaders\WaterPS.hlsl">
+      <Filter>Assets\Shaders\DrawPasses\GeometryPasses</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="Assets\Shaders\HiZDepthCopy.hlsl">

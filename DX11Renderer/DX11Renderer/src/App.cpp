@@ -147,10 +147,27 @@ namespace gfx
 				// Set Y to average, with center weighted x2
 				buoyancyCenter = dx::XMVectorSetY(buoyancyCenter, dx::XMVectorGetY(m_boatStartPositions.at(i)) + sumOffsetY / 10.f);
 
-				const float rotationScale = 0.1f;
+				//m_boatVelocities[i] = dx::XMVectorAdd(m_boatVelocities[i], dx::XMVectorScale(dx::XMVectorSubtract(buoyancyCenter, m_pBoatModels[i]->GetPositionWS()), dt));
+
+				// Scale up over time to avoid spinning boats at the beginning
+				const float rotationScale = 3.0f * std::clamp(timeElapsed / 8.0f, 0.f, 1.f);
+				auto angularAccel = dx::XMVectorSet(pitchOffset * -0.225f * rotationScale, 0.f, rollOffset * 1.2f * rotationScale, 0.f);
+
+				// Add spring force that "rights" the boat
+				const float uprightForce = 4.0f;
+				angularAccel = dx::XMVectorSubtract(angularAccel, dx::XMVectorScale(m_pBoatModels[i]->GetRotationWS(), uprightForce));
+
+				// Add damping force that opposes velocity
+				const float dampingForce = 0.25f;
+				angularAccel = dx::XMVectorSubtract(angularAccel, dx::XMVectorScale(m_boatAngularVelocities[i], dampingForce));
+
+				// Lock yaw velocity to 0
+				m_boatAngularVelocities[i] = dx::XMVectorSetY(dx::XMVectorAdd(m_boatAngularVelocities[i], dx::XMVectorScale(angularAccel, dt)), 0.0f);
+				auto angularPos = m_pBoatModels[i]->GetRotationWS();
+				angularPos = dx::XMVectorAdd(angularPos, dx::XMVectorScale(m_boatAngularVelocities[i], dt));
+
 				m_pBoatModels[i]->SetPositionWS(buoyancyCenter, false);
-				m_pBoatModels[i]->SetPitch(pitchOffset * -0.225f * rotationScale, false);
-				m_pBoatModels[i]->SetRoll(rollOffset * 1.2f * rotationScale, false);
+				m_pBoatModels[i]->SetRotationWS(angularPos, false);
 				m_pBoatModels[i]->UpdateTransform();
 			}
 		}
@@ -222,9 +239,9 @@ namespace gfx
 				auto transformedPos = dx::XMVector4Transform(dx::XMVectorSet(tp.x, tp.y, tp.z, 1.0), sceneTransform);
 				dx::XMFLOAT3 f3;
 				dx::XMStoreFloat3(&f3, transformedPos);
-				m_pLightManager->AddPointLight(Gfx(), f3, GetRandomMagicLight(), 2.8f * std::sqrt(tp.w), 1.f, 2.15f * tp.w);
+				m_pLightManager->AddPointLight(Gfx(), f3, GetRandomMagicLight(), 2.8f * std::sqrt(tp.w), 1.f, 3.15f * tp.w);
 
-				m_pGemModels.emplace_back(std::make_unique<ModelInstance>(Gfx(), pGemAsset, dx::XMMatrixScaling(tp.w, tp.w, tp.w) * dx::XMMatrixTranslationFromVector(transformedPos)));
+				m_pGemModels.emplace_back(std::make_unique<ModelInstance>(Gfx(), pGemAsset, dx::XMMatrixScaling(tp.w, tp.w, tp.w) * dx::XMMatrixRotationRollPitchYaw(0.f, m_pRandomGenerator->GetUniformFloat(0.f, dx::XM_2PI), 0.f) * dx::XMMatrixTranslationFromVector(transformedPos)));
 				m_pRendererList->AddModelInstance(*m_pGemModels.at(m_pGemModels.size() - 1u));
 
 				// dx::XMFLOAT3(1.f, 0.25f, 0.04f) was a good color for torches
@@ -235,6 +252,9 @@ namespace gfx
 		{
 			auto pBoatAsset = ModelImporter::LoadGLTF(Gfx(), "Assets\\Models\\Boat.asset");
 			auto boatPlacements = ModelImporter::LoadGLTFTransforms(Gfx(), "Assets\\Models\\GLTF\\NewCastle_BoatPlacements.glb");
+
+			m_boatVelocities.resize(boatPlacements.size());
+			m_boatAngularVelocities.resize(boatPlacements.size());
 			for (const auto& bp : boatPlacements)
 			{
 				m_pBoatModels.emplace_back(std::make_unique<ModelInstance>(Gfx(), pBoatAsset, dx::XMLoadFloat4x4(&bp) * sceneTransform));
