@@ -205,6 +205,9 @@
     <Filter Include="Assets\Shaders\DrawPasses\VertexShaders\GerstnerWaves">
       <UniqueIdentifier>{5bb28604-20c7-4e60-9bf5-24bae148f762}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Math">
+      <UniqueIdentifier>{edc3ee3d-0ed6-44fb-b24c-75cbaddc78ad}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\App.cpp">
@@ -443,6 +446,12 @@
     </ClCompile>
     <ClCompile Include="src\SkyboxPass.cpp">
       <Filter>Source\RenderJobs\Passes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GerstnerWaves.cpp">
+      <Filter>Source\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GameObject.cpp">
+      <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -760,6 +769,12 @@
     </ClInclude>
     <ClInclude Include="src\SkyboxPass.h">
       <Filter>Headers\RenderJobs\Passes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GerstnerWaves.h">
+      <Filter>Headers\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GameObject.h">
+      <Filter>Headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

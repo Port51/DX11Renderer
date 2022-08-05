@@ -39,5 +39,6 @@ dx::XMFLOAT4 RandomSaturatedColorRGBA();
 
 // Return translation portion of TRS matrix
 dx::XMFLOAT3 DecomposeMatrixTranslation(const dx::XMFLOAT4X4& trsMatrix);
+dx::XMFLOAT3 DecomposeMatrixTranslation(const dx::XMMATRIX& trsMatrix);
 
 using namespace Microsoft::WRL;

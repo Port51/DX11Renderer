@@ -34,6 +34,7 @@ namespace gfx
 	private:
 		void ExecuteFrame();
 		void CreateCastleScene();
+		const dx::XMFLOAT3 GetRandomMagicLight() const;
 	private:
 		std::unique_ptr<ImguiManager> m_pImgui; // must be initialized before wnd
 		std::unique_ptr<DX11Window> m_pWindow;
@@ -46,8 +47,10 @@ namespace gfx
 		std::unique_ptr<RandomGenerator> m_pRandomGenerator;
 
 		std::unique_ptr<ModelInstance> m_pCastleModel;
-		std::vector<std::unique_ptr<ModelInstance>> m_pBoatModels;
 		std::shared_ptr<RendererList> m_pRendererList;
+
+		std::vector<std::unique_ptr<ModelInstance>> m_pBoatModels;
+		std::vector<dx::XMVECTOR> m_boatStartPositions;
 
 		bool m_showDemoWindow = true;
 		UINT m_pixelSelectionX = 450u;

@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Camera.h"
+#include "GraphicsDevice.h"
 #include "RenderConstants.h"
 
 namespace gfx
@@ -9,16 +10,6 @@ namespace gfx
 	{
 		UpdateProjectionMatrix();
 		UpdateFrustumVS();
-	}
-
-	const dx::XMVECTOR Camera::GetPositionWS() const
-	{
-		return m_positionWS;
-	}
-
-	const dx::XMVECTOR Camera::GetForwardWS() const
-	{
-		return m_forwardWS;
 	}
 
 	const dx::XMMATRIX Camera::GetViewMatrix() const
@@ -133,30 +124,14 @@ namespace gfx
 		m_frustumWS.UpdatePlanesFromMatrix(GetViewProjectionMatrix());
 	}
 
-	void Camera::UpdateBasisWS()
-	{
-		m_forwardWS = dx::XMVectorSetW(dx::XMVector3Transform(
-			dx::XMVectorSet(0.f, 0.f, 1.f, 0.f),
-			dx::XMMatrixRotationRollPitchYaw(m_phi, -m_theta, 0.0f) // rotate that offset
-		), 0.f);
-
-		// LookAt fails if position = target
-		const auto safeRad = dx::XMMax(m_radius, 0.01f);
-		m_positionWS = dx::XMVectorSetW(dx::XMVectorScale(GetForwardWS(), -safeRad), 1.f);
-	}
-
 	void Camera::DrawImguiControlWindow()
 	{
 		if (ImGui::Begin("Camera"))
 		{
 			ImGui::Text("Position");
 			ImGui::SliderFloat("R", &m_radius, 0.0f, 80.0f, "%.1f");
-			ImGui::SliderAngle("Theta", &m_theta, -180.0f, 180.0f);
-			ImGui::SliderAngle("Phi", &m_phi, -89.0f, 89.0f);
-			ImGui::Text("Orientation");
-			ImGui::SliderAngle("Roll", &m_roll, -180.0f, 180.0f);
-			ImGui::SliderAngle("Pitch", &m_pitch, -180.0f, 180.0f);
-			ImGui::SliderAngle("Yaw", &m_yaw, -180.0f, 180.0f);
+			ImGui::SliderAngle("Yaw", &m_orbitYaw, -180.0f, 180.0f);
+			ImGui::SliderAngle("Pitch", &m_orbitPitch, -89.0f, 89.0f);
 
 			ImGui::Text("Settings");
 			float newFov = m_fov;
@@ -177,8 +152,8 @@ namespace gfx
 	void Camera::Reset()
 	{
 		m_radius = 20.0f;
-		m_theta = 0.0f;
-		m_phi = 0.0f;
+		m_orbitYaw = 0.0f;
+		m_orbitPitch = 0.0f;
 		m_pitch = 0.0f;
 		m_yaw = 0.0f;
 		m_roll = 0.0f;
@@ -187,12 +162,18 @@ namespace gfx
 
 	void Camera::Update()
 	{
+		m_yaw = -m_orbitYaw;
+		m_pitch = m_orbitPitch;
+
+		const auto camRotationMatrix = dx::XMMatrixRotationRollPitchYaw(m_pitch, m_yaw, m_roll);
+		auto camTarget = XMVector3TransformCoord(dx::XMVectorSet(0.f, 0.f, 1.f, 0.f), camRotationMatrix);
+		camTarget = dx::XMVector3Normalize(camTarget);
+
 		// Update view and viewProj matrices (projection only changes when camera properties change)
 
 		// Apply look-at and local orientation
 		// +Y = up
-		m_viewMatrix = dx::XMMatrixLookAtLH(GetPositionWS(), dx::XMVectorZero(), dx::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f))
-			* dx::XMMatrixRotationRollPitchYaw(m_pitch, -m_yaw, m_roll);
+		m_viewMatrix = dx::XMMatrixLookAtLH(GetPositionWS(), camTarget, dx::XMVectorSet(0.f, 1.f, 0.f, 0.f));
 		m_viewProjectionMatrix = dx::XMMatrixMultiply(GetViewMatrix(), GetProjectionMatrix());
 
 		m_inverseViewMatrix = dx::XMMatrixInverse(nullptr, m_viewMatrix);
@@ -200,6 +181,15 @@ namespace gfx
 
 		// Need to update this every frame too
 		UpdateFrustumWS();
-		UpdateBasisWS();
+		UpdateBasisVectors();
+
+		/*m_forwardWS = dx::XMVectorSetW(dx::XMVector3Transform(
+			dx::XMVectorSet(0.f, 0.f, 1.f, 0.f),
+			dx::XMMatrixRotationRollPitchYaw(m_orbitPitch, -m_orbitYaw, 0.0f) // rotate that offset
+		), 0.f);*/
+
+		// LookAt fails if position = target
+		const auto safeRad = dx::XMMax(m_radius, 0.01f);
+		SetPositionWS(dx::XMVectorSetW(dx::XMVectorScale(GetForwardWS(), -safeRad), 1.f));
 	}
 }

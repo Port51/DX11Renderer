@@ -17,7 +17,7 @@ namespace gfx
 	{
 		if (allowUserControl && pModelAsset != nullptr)
 		{
-			m_pModel = std::make_unique<ModelInstance>(gfx, pModelAsset, dx::XMMatrixIdentity(), dx::XMVectorSet(0.1f, 0.1f, 0.1f, 1.f));
+			m_pModel = std::make_unique<ModelInstance>(gfx, pModelAsset, dx::XMMatrixScaling(0.1f, 0.1f, 0.1f));
 		}
 	}
 

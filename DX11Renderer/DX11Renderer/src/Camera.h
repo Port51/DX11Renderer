@@ -1,18 +1,16 @@
 #pragma once
-#include "GraphicsDevice.h"
+#include "GameObject.h"
 #include "Frustum.h"
 
 namespace gfx
 {
 
-	class Camera
+	class Camera : public GameObject
 	{
 	public:
 		Camera(const float fov, const float aspect, const float nearClipPlane, const float farClipPlane);
 		virtual ~Camera() = default;
 	public:
-		const dx::XMVECTOR GetPositionWS() const;
-		const dx::XMVECTOR GetForwardWS() const;
 		const dx::XMMATRIX GetViewMatrix() const;
 		const dx::XMMATRIX GetInverseViewMatrix() const;
 		const dx::XMMATRIX GetViewProjectionMatrix() const;
@@ -35,16 +33,12 @@ namespace gfx
 		void UpdateProjectionMatrix();
 		void UpdateFrustumVS();
 		void UpdateFrustumWS();
-		void UpdateBasisWS();
 	private:
 		float m_nearClipPlane;
 		float m_farClipPlane;
 		float m_radius = 45.0f; // dist from origin
-		float m_theta = 0.523599f; // rotate around origin
-		float m_phi = 0.261799f; // rotate around origin
-		float m_pitch = 0.0f;// 0.061f;
-		float m_yaw = 0.0f;
-		float m_roll = 0.0f;
+		float m_orbitYaw = 0.523599f; // rotate around origin
+		float m_orbitPitch = 0.261799f; // rotate around origin
 		float m_fov = 55.0f;
 		float m_aspect = 0.75f;
 		dx::XMMATRIX m_viewMatrix;
@@ -58,7 +52,5 @@ namespace gfx
 		dx::XMVECTOR m_frustumCornersVS;
 		dx::XMVECTOR m_inverseFrustumCornersVS;
 		dx::XMVECTOR m_gpuFrustumPlaneDirVS;
-		dx::XMVECTOR m_forwardWS;
-		dx::XMVECTOR m_positionWS;
 	};
 }

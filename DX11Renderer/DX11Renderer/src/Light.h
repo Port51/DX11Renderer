@@ -1,4 +1,5 @@
 #pragma once
+#include "GameObject.h"
 #include "CommonHeader.h"
 #include <vector>
 #include "DXMathInclude.h"
@@ -21,7 +22,7 @@ namespace gfx
 	struct LightShadowData;
 	struct ShadowPassCB;
 
-	class Light
+	class Light //: public GameObject
 	{
 	public:
 		struct ShadowSettings

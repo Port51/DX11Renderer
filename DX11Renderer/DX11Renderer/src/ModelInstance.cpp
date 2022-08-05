@@ -16,16 +16,10 @@
 namespace gfx
 {
 	ModelInstance::ModelInstance(const GraphicsDevice& gfx, const ModelAsset& pModelAsset, const dx::XMMATRIX transform)
-		: ModelInstance(gfx, pModelAsset, transform, dx::XMVectorSet(1.f, 1.f, 1.f, 1.f))
-	{}
-
-	ModelInstance::ModelInstance(const GraphicsDevice& gfx, std::shared_ptr<ModelAsset> const& pModelAsset, const dx::XMMATRIX transform)
-		: ModelInstance(gfx, pModelAsset, transform, dx::XMVectorSet(1.f, 1.f, 1.f, 1.f))
-	{}
-
-	ModelInstance::ModelInstance(const GraphicsDevice& gfx, const ModelAsset& pModelAsset, const dx::XMMATRIX transform, const dx::XMVECTOR scale)
-		: m_transform(transform), m_scale(scale)
 	{
+		dx::XMStoreFloat4x4(&m_transform, transform);
+		DecomposeTRS();
+
 		m_pMaterials.reserve(pModelAsset.m_materialPaths.size());
 		for (const auto& materialPath : pModelAsset.m_materialPaths)
 		{
@@ -37,9 +31,11 @@ namespace gfx
 		InitializeModel();
 	}
 
-	ModelInstance::ModelInstance(const GraphicsDevice& gfx, std::shared_ptr<ModelAsset> const& pModelAsset, const dx::XMMATRIX transform, const dx::XMVECTOR scale)
-		: m_transform(transform), m_scale(scale)
+	ModelInstance::ModelInstance(const GraphicsDevice& gfx, std::shared_ptr<ModelAsset> const& pModelAsset, const dx::XMMATRIX transform)
 	{
+		dx::XMStoreFloat4x4(&m_transform, transform);
+		DecomposeTRS();
+
 		m_pMaterials.reserve(pModelAsset->m_materialPaths.size());
 		for (const auto& materialPath : pModelAsset->m_materialPaths)
 		{
@@ -57,21 +53,55 @@ namespace gfx
 		RebuildSceneGraphTransforms();
 	}
 
+	void ModelInstance::DecomposeTRS()
+	{
+		auto trs = dx::XMLoadFloat4x4(&m_transform);
+		dx::XMVECTOR tra;
+		dx::XMVECTOR rot;
+		dx::XMVECTOR sca;
+		dx::XMMatrixDecompose(&sca, &rot, &tra, trs);
+		dx::XMStoreFloat3(&m_translation, tra);
+		dx::XMStoreFloat3(&m_rotation, rot);
+		dx::XMStoreFloat3(&m_scale, sca);
+	}
+
+	void ModelInstance::ApplyTRS()
+	{
+		auto trs = dx::XMMatrixScalingFromVector(dx::XMLoadFloat3(&m_scale))
+			* dx::XMMatrixRotationRollPitchYawFromVector(dx::XMLoadFloat3(&m_rotation))
+			* dx::XMMatrixTranslationFromVector(dx::XMLoadFloat3(&m_translation));
+		dx::XMStoreFloat4x4(&m_transform, trs);
+
+		RebuildSceneGraphTransforms();
+	}
+
 	/*void ModelInstance::SubmitDrawCalls(const DrawContext& drawContext) const
 	{
 		m_pSceneGraph->SubmitDrawCalls(drawContext);
 	}*/
 
-	void ModelInstance::SetPositionWS(const dx::XMFLOAT3 positionWS)
+	const dx::XMVECTOR ModelInstance::GetPositionWS() const
 	{
-		m_transform = dx::XMMatrixScalingFromVector(m_scale)
-			* dx::XMMatrixTranslation(positionWS.x, positionWS.y, positionWS.z);
-		RebuildSceneGraphTransforms();
+		return dx::XMLoadFloat3(&m_translation);
+	}
+
+	void ModelInstance::SetPositionWS(const dx::XMVECTOR& positionWS)
+	{
+		dx::XMStoreFloat3(&m_translation, positionWS);
+		ApplyTRS();
+	}
+
+	void ModelInstance::SetTRS(const dx::XMVECTOR& positionWS, const dx::XMVECTOR& rotationWS, const dx::XMVECTOR& scaleWS)
+	{
+		dx::XMStoreFloat3(&m_translation, positionWS);
+		dx::XMStoreFloat3(&m_rotation, rotationWS);
+		dx::XMStoreFloat3(&m_scale, scaleWS);
+		ApplyTRS();
 	}
 
 	void ModelInstance::RebuildSceneGraphTransforms()
 	{
-		m_pSceneGraph->RebuildTransform(m_transform);
+		m_pSceneGraph->RebuildTransform(dx::XMLoadFloat4x4(&m_transform));
 	}
 
 	const std::shared_ptr<SceneGraphNode> ModelInstance::GetSceneGraph() const

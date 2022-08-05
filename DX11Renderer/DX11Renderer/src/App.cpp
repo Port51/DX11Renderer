@@ -16,6 +16,7 @@
 #include "RenderStats.h"
 #include "RandomGenerator.h"
 #include "ParticleManager.h"
+#include "GerstnerWaves.h"
 
 namespace gfx
 {
@@ -110,6 +111,17 @@ namespace gfx
 			m_pCamera->Update();
 		}
 
+		// Animate boats
+		{
+			for (size_t i = 0; i < m_pBoatModels.size(); ++i)
+			{
+				auto offset = GerstnerWaves::GetGerstnerWaveOffset(m_pBoatModels.at(i)->GetPositionWS(), timeElapsed);
+				// Dampen motion
+				offset = dx::XMVectorMultiply(offset, dx::XMVectorSet(0.5f, 0.9f, 0.5f, 1.f));
+				m_pBoatModels[i]->SetPositionWS(dx::XMVectorAdd(m_boatStartPositions.at(i), offset));
+			}
+		}
+
 		// Animate lights
 		if (false)
 		{
@@ -164,7 +176,7 @@ namespace gfx
 			m_pRendererList->AddModelInstance(*m_pCastleModel);
 		}
 
-		// Add torches
+		// Add magic lights (static)
 		{
 			const auto torchPlacements = ModelImporter::LoadGLTFPositions(Gfx(), "Assets\\Models\\GLTF\\NewCastle_TorchPlacements.glb");
 			for (const auto& tp : torchPlacements)
@@ -172,7 +184,9 @@ namespace gfx
 				auto transformedPos = dx::XMVector4Transform(dx::XMVectorSet(tp.x, tp.y, tp.z, 1.0), sceneTransform);
 				dx::XMFLOAT3 f3;
 				dx::XMStoreFloat3(&f3, transformedPos);
-				m_pLightManager->AddPointLight(Gfx(), f3, dx::XMFLOAT3(1.f, 0.25f, 0.04f), 1.8f, 1.f, 2.15f);
+				m_pLightManager->AddPointLight(Gfx(), f3, GetRandomMagicLight(), 2.8f, 1.f, 2.15f);
+
+				// dx::XMFLOAT3(1.f, 0.25f, 0.04f) was a good color for torches
 			}
 		}
 
@@ -184,6 +198,8 @@ namespace gfx
 			{
 				m_pBoatModels.emplace_back(std::make_unique<ModelInstance>(Gfx(), pBoatAsset, dx::XMLoadFloat4x4(&bp) * sceneTransform));
 				m_pRendererList->AddModelInstance(*m_pBoatModels.at(m_pBoatModels.size() - 1u));
+
+				m_boatStartPositions.emplace_back(m_pBoatModels.at(m_pBoatModels.size() - 1u)->GetPositionWS());
 			}
 		}
 
@@ -192,5 +208,28 @@ namespace gfx
 		{
 			
 		}
+	}
+
+	const dx::XMFLOAT3 App::GetRandomMagicLight() const
+	{
+		float h = m_pRandomGenerator->GetUniformFloat01();
+		float s = m_pRandomGenerator->GetUniformFloat01() * 0.4f + 0.6f;
+		float v = 1.f;
+
+		dx::XMFLOAT3 rgb;
+		float C = v * s;
+		float H = h * 6.f;
+		float X = C * (1 - abs(fmod(H, 2) - 1));
+		{
+			int I = floor(H);
+			if (I == 0) { rgb = dx::XMFLOAT3(C, X, 0.f); }
+			else if (I == 1) { rgb = dx::XMFLOAT3(X, C, 0.f); }
+			else if (I == 2) { rgb = dx::XMFLOAT3(0.f, C, X); }
+			else if (I == 3) { rgb = dx::XMFLOAT3(0.f, X, C); }
+			else if (I == 4) { rgb = dx::XMFLOAT3(X, 0.f, C); }
+			else { rgb = dx::XMFLOAT3(C, 0, X); }
+		}
+		float M = v - C;
+		return dx::XMFLOAT3(rgb.x + M, rgb.y + M, rgb.z + M);
 	}
 }

@@ -1,4 +1,5 @@
 #pragma once
+#include "GameObject.h"
 
 namespace gfx
 {
@@ -7,7 +8,7 @@ namespace gfx
 
 	struct DrawContext;
 
-	class Drawable
+	class Drawable //: public GameObject
 	{
 	public:
 		virtual void Bind(const GraphicsDevice& gfx, RenderState& renderState, const DrawContext& drawContext) const = 0;

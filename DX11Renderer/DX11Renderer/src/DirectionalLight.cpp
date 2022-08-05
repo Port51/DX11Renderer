@@ -60,7 +60,7 @@ namespace gfx
 
 		if (m_pModel != nullptr)
 		{
-			m_pModel->SetPositionWS(m_positionWS);
+			m_pModel->SetPositionWS(dx::XMLoadFloat3(&m_positionWS));
 		}
 		ImGui::End();
 	}

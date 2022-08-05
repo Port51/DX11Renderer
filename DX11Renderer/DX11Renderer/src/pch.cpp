@@ -31,3 +31,10 @@ dx::XMFLOAT3 DecomposeMatrixTranslation(const dx::XMFLOAT4X4& trsMatrix)
 {
 	return std::move(dx::XMFLOAT3(trsMatrix._14, trsMatrix._24, trsMatrix._34));
 }
+
+dx::XMFLOAT3 DecomposeMatrixTranslation(const dx::XMMATRIX& trsMatrix)
+{
+	dx::XMFLOAT4X4 f44;
+	dx::XMStoreFloat4x4(&f44, trsMatrix);
+	return std::move(DecomposeMatrixTranslation(f44));
+}

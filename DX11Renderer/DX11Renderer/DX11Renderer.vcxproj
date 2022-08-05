@@ -179,6 +179,8 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\GameObject.cpp" />
+    <ClCompile Include="src\GerstnerWaves.cpp" />
     <ClCompile Include="src\SkyboxPass.cpp" />
     <ClCompile Include="src\ArgsBuffer.cpp" />
     <ClCompile Include="src\ParticleComputePass.cpp" />
@@ -295,6 +297,8 @@
     <ClCompile Include="src\SSAOPass.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\GameObject.h" />
+    <ClInclude Include="src\GerstnerWaves.h" />
     <ClInclude Include="src\SkyboxPass.h" />
     <ClInclude Include="src\Drawable.h" />
     <ClInclude Include="src\ArgsBuffer.h" />
