@@ -776,6 +776,9 @@
     <ClInclude Include="src\GameObject.h">
       <Filter>Headers</Filter>
     </ClInclude>
+    <ClInclude Include="src\TRS.h">
+      <Filter>Headers\Math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DX11Renderer.rc">
@@ -989,6 +992,9 @@
       <Filter>Assets\Shaders\DrawPasses\GeometryPasses</Filter>
     </FxCompile>
     <FxCompile Include="Assets\Shaders\DeferredCastlePS.hlsl">
+      <Filter>Assets\Shaders\DrawPasses\GeometryPasses</Filter>
+    </FxCompile>
+    <FxCompile Include="Assets\Shaders\DeferredPersonPS.hlsl">
       <Filter>Assets\Shaders\DrawPasses\GeometryPasses</Filter>
     </FxCompile>
   </ItemGroup>

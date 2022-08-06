@@ -28,6 +28,7 @@ namespace gfx
 	const guid64 NullGuid64 = 0u;
 }
 
+#include "TRS.h"
 #include <memory>
 
 namespace gfxcore

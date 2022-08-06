@@ -19,7 +19,7 @@ namespace gfx
 	class PointLight : public Light
 	{
 	public:
-		PointLight(const GraphicsDevice& gfx, const UINT index, const bool allowUserControl, const bool hasShadow, std::shared_ptr<ModelAsset> const& pModelAsset, const dx::XMFLOAT3 positionWS, const dx::XMFLOAT3 color, const float intensity = 1.f, const float attenuationQ = 4.f, const float range = 2.5f);
+		PointLight(const GraphicsDevice& gfx, const UINT index, const bool allowUserControl, const bool hasShadow, std::shared_ptr<ModelAsset> const& pModelAsset, const dx::XMVECTOR positionWS, const dx::XMFLOAT3 color, const float intensity = 1.f, const float attenuationQ = 4.f, const float range = 2.5f);
 	public:
 		void DrawImguiControlWindow() override;
 		const LightData GetLightData(const dx::XMMATRIX& viewMatrix) const override;

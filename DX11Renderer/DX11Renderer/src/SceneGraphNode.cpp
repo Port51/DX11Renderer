@@ -12,7 +12,7 @@ namespace gfx
 		dx::XMStoreFloat4x4(&m_localTransform, _transform);
 
 		// Decompose translation part of matrix
-		m_localTransformOffset = DecomposeMatrixTranslation(m_localTransform);
+		dx::XMStoreFloat3(&m_localTransformOffset, DecomposeMatrixTranslation(m_localTransform));
 	}
 
 	void SceneGraphNode::RebuildTransform(dx::XMMATRIX accumulatedTransform)
@@ -20,7 +20,7 @@ namespace gfx
 		const auto worldMatrix = dx::XMLoadFloat4x4(&m_localTransform) * accumulatedTransform;
 		dx::XMStoreFloat4x4(&m_accumulatedWorldTransform, worldMatrix);
 
-		m_accumulatedWorldTransformOffset = DecomposeMatrixTranslation(m_accumulatedWorldTransform);
+		dx::XMStoreFloat3(&m_accumulatedWorldTransformOffset, DecomposeMatrixTranslation(m_accumulatedWorldTransform));
 
 		if (m_pMeshRenderer)
 		{

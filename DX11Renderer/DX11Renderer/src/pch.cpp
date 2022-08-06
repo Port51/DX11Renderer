@@ -27,12 +27,12 @@ dx::XMFLOAT4 RandomSaturatedColorRGBA()
 	return std::move(dx::XMFLOAT4(rgb.x, rgb.y, rgb.z, RandomRange(0.f, 1.f)));
 }
 
-dx::XMFLOAT3 DecomposeMatrixTranslation(const dx::XMFLOAT4X4& trsMatrix)
+dx::XMVECTOR DecomposeMatrixTranslation(const dx::XMFLOAT4X4& trsMatrix)
 {
-	return std::move(dx::XMFLOAT3(trsMatrix._14, trsMatrix._24, trsMatrix._34));
+	return std::move(dx::XMVectorSet(trsMatrix._14, trsMatrix._24, trsMatrix._34, 1.f));
 }
 
-dx::XMFLOAT3 DecomposeMatrixTranslation(const dx::XMMATRIX& trsMatrix)
+dx::XMVECTOR DecomposeMatrixTranslation(const dx::XMMATRIX& trsMatrix)
 {
 	dx::XMFLOAT4X4 f44;
 	dx::XMStoreFloat4x4(&f44, trsMatrix);

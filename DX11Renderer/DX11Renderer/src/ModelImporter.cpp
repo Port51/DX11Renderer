@@ -269,7 +269,7 @@ namespace gfx
 		for (const auto& node : model.nodes)
 		{
 			// pMeshes can be shared, so don't std::move()
-			pNodes.emplace_back(std::make_shared<ModelAssetNode>(node.name, node.mesh != -1 ? pMeshes[node.mesh] : nullptr, GetNodeTransform(node)));
+			pNodes.emplace_back(std::make_shared<ModelAssetNode>(node.name, node.mesh != -1 ? pMeshes[node.mesh] : nullptr, GetNodeTransform(node).trs));
 		}
 		
 		// Special case for single meshes, to avoid clunky node structures
@@ -357,9 +357,9 @@ namespace gfx
 		return std::move(positions);
 	}
 
-	std::vector<dx::XMFLOAT4X4> ModelImporter::LoadGLTFTransforms(const GraphicsDevice& gfx, const char* gltfFilename, const bool isBinary)
+	std::vector<TRS> ModelImporter::LoadGLTFTransforms(const GraphicsDevice& gfx, const char* gltfFilename, const bool isBinary)
 	{
-		std::vector<dx::XMFLOAT4X4> transforms;
+		std::vector<TRS> transforms;
 		const Model model = TryLoadGLTFModel(gfx, gltfFilename, isBinary);
 
 		// Get positions from nodes
@@ -388,7 +388,7 @@ namespace gfx
 		return dx::XMFLOAT4(q.z, q.y, q.x, -q.w);
 	}
 
-	dx::XMFLOAT4X4 ModelImporter::GetNodeTransform(const tinygltf::Node& node)
+	TRS ModelImporter::GetNodeTransform(const tinygltf::Node& node)
 	{
 		// Calculate transform, using identity for any missing factors
 		dx::XMMATRIX localTransform = dx::XMMatrixIdentity();
@@ -410,9 +410,18 @@ namespace gfx
 			localTransform *= dx::XMMatrixTranslation(tr.x, tr.y, tr.z);
 		}
 
-		dx::XMFLOAT4X4 localTransformFloat;
-		dx::XMStoreFloat4x4(&localTransformFloat, localTransform);
-		return localTransformFloat;
+		dx::XMVECTOR scale;
+		dx::XMVECTOR rotation;
+		dx::XMVECTOR position;
+		dx::XMMatrixDecompose(&scale, &rotation, &position, localTransform);
+
+		TRS trs;
+		dx::XMStoreFloat3(&trs.scale, scale);
+		dx::XMStoreFloat3(&trs.rotation, rotation);
+		dx::XMStoreFloat3(&trs.position, position);
+		dx::XMStoreFloat4x4(&trs.trs, localTransform);
+
+		return trs;
 	}
 
 	tinygltf::Model ModelImporter::TryLoadGLTFModel(const GraphicsDevice& gfx, const char* gltfFilename, const bool isBinary)

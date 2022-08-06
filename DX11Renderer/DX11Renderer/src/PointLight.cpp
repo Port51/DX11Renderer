@@ -36,7 +36,7 @@ namespace gfx
 		dx::XMVectorSet(1, 0, 0, 0),
 	};
 
-	PointLight::PointLight(const GraphicsDevice& gfx, const UINT index, const bool allowUserControl, const bool hasShadow, std::shared_ptr<ModelAsset> const& pModelAsset, const dx::XMFLOAT3 positionWS, const dx::XMFLOAT3 color, const float intensity, const float attenuationQ, const float range)
+	PointLight::PointLight(const GraphicsDevice& gfx, const UINT index, const bool allowUserControl, const bool hasShadow, std::shared_ptr<ModelAsset> const& pModelAsset, const dx::XMVECTOR positionWS, const dx::XMFLOAT3 color, const float intensity, const float attenuationQ, const float range)
 		: Light(gfx, index, allowUserControl, pModelAsset, positionWS, color, intensity),
 		m_attenuationQ(attenuationQ),
 		m_range(range)

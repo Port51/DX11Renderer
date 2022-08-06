@@ -19,7 +19,7 @@
 
 namespace gfx
 {
-	Spotlight::Spotlight(const GraphicsDevice& gfx, const UINT index, const bool allowUserControl, const bool hasShadow, std::shared_ptr<ModelAsset> const& pModelAsset, const dx::XMFLOAT3 positionWS, const float pan, const float tilt, const dx::XMFLOAT3 color, const float intensity, const float attenuationQ, const float range)
+	Spotlight::Spotlight(const GraphicsDevice& gfx, const UINT index, const bool allowUserControl, const bool hasShadow, std::shared_ptr<ModelAsset> const& pModelAsset, const dx::XMVECTOR positionWS, const float pan, const float tilt, const dx::XMFLOAT3 color, const float intensity, const float attenuationQ, const float range)
 		: Light(gfx, index, allowUserControl, pModelAsset, positionWS, color, intensity),
 		m_attenuationQ(attenuationQ),
 		m_range(range)

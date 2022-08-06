@@ -30,12 +30,12 @@ namespace gfx
 		static std::shared_ptr<ModelAsset> LoadGLTF(const GraphicsDevice& gfx, const char* assetFilename);
 		static std::vector<dx::XMFLOAT3> LoadGLTFPositions(const GraphicsDevice& gfx, const char* gltfFilename, const bool isBinary = true);
 		static std::vector<dx::XMFLOAT4> LoadGLTFPositionsAndScales(const GraphicsDevice& gfx, const char* gltfFilename, const bool isBinary = true);
-		static std::vector<dx::XMFLOAT4X4> LoadGLTFTransforms(const GraphicsDevice& gfx, const char* assetFilename, const bool isBinary = true);
+		static std::vector<TRS> LoadGLTFTransforms(const GraphicsDevice& gfx, const char* assetFilename, const bool isBinary = true);
 	private:
 		static dx::XMFLOAT3 RH_to_LH(const dx::XMFLOAT3& vec);
 		static dx::XMFLOAT4 RH_to_LH(const dx::XMFLOAT4& vec);
 		static dx::XMFLOAT4 RH_to_LH_Quaternion(const dx::XMFLOAT4& q);
-		static dx::XMFLOAT4X4 GetNodeTransform(const tinygltf::Node& node);
+		static TRS GetNodeTransform(const tinygltf::Node& node);
 		static tinygltf::Model TryLoadGLTFModel(const GraphicsDevice& gfx, const char* gltfFilename, const bool isBinary);
 		static ModelImportSettings GetImportSettings(const GraphicsDevice& gfx, const char* assetFilename);
 		static size_t GetAttributeCt(const GraphicsDevice& gfx, const tinygltf::Model& model, int accessorIdx);

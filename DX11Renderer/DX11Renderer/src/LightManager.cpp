@@ -86,7 +86,7 @@ namespace gfx
 		m_lightVisibility.resize(m_pLights.size());
 	}
 
-	void LightManager::AddPointLight(const GraphicsDevice& gfx, const dx::XMFLOAT3 positionWS, const dx::XMFLOAT3 color, const float intensity, const float attenuationQ, const float range)
+	void LightManager::AddPointLight(const GraphicsDevice& gfx, const dx::XMVECTOR positionWS, const dx::XMFLOAT3 color, const float intensity, const float attenuationQ, const float range)
 	{
 		auto prevCount = m_pLights.size();
 		AddLight(std::move(std::make_shared<PointLight>(gfx, prevCount, false, false, nullptr, positionWS, color, intensity, attenuationQ, range)));

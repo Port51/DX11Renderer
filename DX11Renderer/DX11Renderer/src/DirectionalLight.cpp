@@ -23,7 +23,7 @@
 namespace gfx
 {
 	DirectionalLight::DirectionalLight(const GraphicsDevice& gfx, const UINT index, const bool allowUserControl, const bool hasShadow, std::shared_ptr<ModelAsset> const& pModelAsset, const float pan, const float tilt, const dx::XMFLOAT3 color, const float intensity, const float sphereRad, const float range)
-		: Light(gfx, index, allowUserControl, pModelAsset, dx::XMFLOAT3(0.f, 0.f, 0.f), color, intensity),
+		: Light(gfx, index, allowUserControl, pModelAsset, dx::XMVectorSet(0.f, 0.f, 0.f, 1.f), color, intensity),
 		m_sphereRad(sphereRad),
 		m_range(range)
 	{
