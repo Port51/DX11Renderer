@@ -878,6 +878,9 @@
     <None Include="Assets\Materials\GemMaterial.asset">
       <Filter>Assets\Materials</Filter>
     </None>
+    <None Include="Assets\Materials\CastleMaterial.asset">
+      <Filter>Assets\Materials</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Shaders\Lighting\ClusteredLightingCompute.hlsl">
@@ -974,6 +977,9 @@
       <Filter>Assets\Shaders\DrawPasses\VertexShaders</Filter>
     </FxCompile>
     <FxCompile Include="Assets\Shaders\WaterPS.hlsl">
+      <Filter>Assets\Shaders\DrawPasses\GeometryPasses</Filter>
+    </FxCompile>
+    <FxCompile Include="Assets\Shaders\DeferredCastlePS.hlsl">
       <Filter>Assets\Shaders\DrawPasses\GeometryPasses</Filter>
     </FxCompile>
   </ItemGroup>

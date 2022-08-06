@@ -132,11 +132,13 @@ namespace gfx
 		{
 			const dx::XMFLOAT3 normal = (pMeshAsset->hasNormals) ? pMeshAsset->m_normals[i] : dx::XMFLOAT3(0, 0, 1);
 			const dx::XMFLOAT4 tangent = (pMeshAsset->hasTangents) ? pMeshAsset->m_tangents[i] : dx::XMFLOAT4(0, 0, 1, 0);
+			const dx::XMFLOAT4 vertColor = (pMeshAsset->hasVertColors) ? pMeshAsset->m_vertColors[i] : dx::XMFLOAT4(1, 1, 1, 1);
 			const dx::XMFLOAT2 uv0 = (pMeshAsset->m_texcoords.size() > 0) ? pMeshAsset->m_texcoords[0][i] : dx::XMFLOAT2(0, 0);
 
 			vbuf.EmplaceBack<dx::XMFLOAT3>(pMeshAsset->m_vertices[i]);
 			vbuf.EmplaceBack<dx::XMFLOAT3>(normal);
 			vbuf.EmplaceBack<dx::XMFLOAT4>(tangent);
+			vbuf.EmplaceBack<dx::XMFLOAT4>(vertColor);
 			vbuf.EmplaceBack<dx::XMFLOAT2>(uv0);
 			vbuf.EmplacePadding();
 		}

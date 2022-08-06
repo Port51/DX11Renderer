@@ -1,0 +1,36 @@
+Properties
+{
+	Slot, 0
+	Texture, 0, Assets\\Textures\\GreyNoise0_512.png
+	Color, 1.0, 1.0, 1.0, 1.0
+	Roughness, 0.9
+	NoiseIntensity, 0.75
+}
+Pass
+{
+	Name, ShadowRenderPass
+	Cull, Front
+	VS, Assets\\Built\\Shaders\\ShadowPassVS.cso
+}
+Pass
+{
+	Name, DepthPrepassRenderPass
+	Cull, Back
+	VS, Assets\\Built\\Shaders\\DepthOnlyVS.cso
+}
+Pass
+{
+	Name, GBufferRenderPass
+	Cull, Back
+	VS, Assets\\Built\\Shaders\\PhongVS.cso
+	PS, Assets\\Built\\Shaders\\OpaqueGbuffer.cso
+	PropertySlot, 0
+}
+Pass
+{
+	Name, OpaqueRenderPass
+	Cull, Back
+	VS, Assets\\Built\\Shaders\\PhongVS.cso
+	PS, Assets\\Built\\Shaders\\DeferredCastlePS.cso
+	PropertySlot, 0
+}

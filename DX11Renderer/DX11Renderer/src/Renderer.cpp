@@ -702,9 +702,6 @@ namespace gfx
 			RenderPass& pass = GetRenderPass(RenderPassType::FinalBlitRenderPass);
 			auto& fsPass = static_cast<FullscreenPass&>(pass);
 
-			// todo: remove this - for now it's needed to clear SRVs
-			//context->ClearState();
-
 			pass.BindSharedResources(gfx, renderState);
 			DepthStencilState::Resolve(gfx, DepthStencilState::Mode::StencilOff)->BindOM(gfx, renderState);
 

@@ -28,6 +28,9 @@ namespace gfx
 		bool hasTangents;
 		std::vector<dx::XMFLOAT4> m_tangents;
 
+		bool hasVertColors;
+		std::vector<dx::XMFLOAT4> m_vertColors;
+
 		std::vector<std::vector<dx::XMFLOAT2>> m_texcoords;
 
 		UINT m_numFaces;

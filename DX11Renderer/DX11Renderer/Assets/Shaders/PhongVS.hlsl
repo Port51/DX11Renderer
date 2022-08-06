@@ -7,6 +7,7 @@ struct attrib
     float3 pos : Position;
     float3 n : Normal;
     float3 t : Tangent;
+    float4 vertColor : VERTCOLOR0;
     float2 uv0 : Texcoord0;
     float3 instancePosition : INSTANCEPOS;
 };
@@ -38,6 +39,7 @@ v2f main(attrib i)
 	o.pos = mul(modelViewProj, float4(i.pos, 1.0f));
     o.positionNDC = o.pos;
     o.uv0 = float2(i.uv0.x, 1.f - i.uv0.y);
+    o.vertColor = i.vertColor;
     o.screenPos = o.pos;
 	return o;
 }

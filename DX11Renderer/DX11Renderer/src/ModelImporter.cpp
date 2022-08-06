@@ -7,6 +7,7 @@
 #include "TextParser.h"
 #include <assert.h>
 #include <unordered_set>
+#include <limits>
 
 namespace gfx
 {
@@ -200,6 +201,26 @@ namespace gfx
 					for (size_t vi = 0; vi < vertCt; ++vi)
 					{
 						pCurrentMeshAsset->m_tangents.emplace_back(RH_to_LH(dx::XMFLOAT4(tangents[vi * 4u + 0u], tangents[vi * 4u + 1u], tangents[vi * 4u + 2u], tangents[vi * 4u + 3u])));
+					}
+				}
+
+				// Load VERTCOLOR0
+				if (primitive.attributes.count("COLOR_0"))
+				{
+					pCurrentMeshAsset->hasVertColors = true;
+					pCurrentMeshAsset->m_vertColors.reserve(vertCt);
+
+					const int accessorIdx = primitive.attributes.at("COLOR_0");
+					const auto bufferAccess = GetAttributeBufferAccess(gfx, model, accessorIdx, vertCt * sizeof(u16) * 4u);
+					const u16* vertColors = reinterpret_cast<const u16*>(&model.buffers[bufferAccess.first].data[bufferAccess.second]);
+					for (size_t vi = 0; vi < vertCt; ++vi)
+					{
+						// todo: move this to separate method and figure out what gamma/linear formula GLTF uses
+						auto r = std::sqrt((float)(vertColors[vi * 4u + 0u]) / std::numeric_limits<u16>::max());
+						auto g = std::sqrt((float)(vertColors[vi * 4u + 1u]) / std::numeric_limits<u16>::max());
+						auto b = std::sqrt((float)(vertColors[vi * 4u + 2u]) / std::numeric_limits<u16>::max());
+						auto a = std::sqrt((float)(vertColors[vi * 4u + 3u]) / std::numeric_limits<u16>::max());
+						pCurrentMeshAsset->m_vertColors.emplace_back(dx::XMFLOAT4(r, g, b, a));
 					}
 				}
 
