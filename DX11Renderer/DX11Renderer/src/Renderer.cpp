@@ -155,6 +155,7 @@ namespace gfx
 		CreateRenderPass(RenderPassType::ClusteredLightingRenderPass);
 		CreateRenderPass(RenderPassType::OpaqueRenderPass);
 		CreateRenderPass(RenderPassType::SkyboxRenderPass, std::move(std::make_unique<SkyboxPass>(gfx)));
+		CreateRenderPass(RenderPassType::TransparentRenderPass);
 		CreateRenderPass(RenderPassType::CreateDownsampledX2Texture);
 		CreateRenderPass(RenderPassType::DepthOfFieldRenderPass, std::move(std::make_unique<DepthOfFieldPass>(gfx, DepthOfFieldPass::DepthOfFieldBokehType::DiskBokeh)));
 		CreateRenderPass(RenderPassType::BloomRenderPass, std::move(std::make_unique<BloomPass>(gfx)));
@@ -293,6 +294,16 @@ namespace gfx
 			.PSSetSPL(RenderSlots::PS_FreeSPL + 0u, m_pShadowSampler->GetD3DSampler());
 
 		static_cast<SkyboxPass&>(GetRenderPass(RenderPassType::SkyboxRenderPass)).SetupRenderPassDependencies(gfx, gfx.GetDepthStencilTarget()->GetSRV(), *m_pCameraColor0);
+
+		GetRenderPass(RenderPassType::TransparentRenderPass).
+			ClearBinds()
+			.PSSetSRV(RenderSlots::PS_FreeSRV + 2u, m_pLightManager->GetClusteredIndices().GetSRV())
+			.PSSetSRV(RenderSlots::PS_FreeSRV + 3u, m_pDitherTexture->GetSRV())
+			.PSSetSRV(RenderSlots::PS_FreeSRV + 4u, m_pLightManager->GetLightDataSRV())
+			.PSSetSRV(RenderSlots::PS_FreeSRV + 5u, m_pLightManager->GetShadowDataSRV())
+			.PSSetSRV(RenderSlots::PS_FreeSRV + 6u, m_pLightManager->GetShadowAtlas().GetSRV())
+			.PSSetCB(RenderSlots::PS_FreeCB + 0u, m_pClusteredLightingCB->GetD3DBuffer())
+			.PSSetSPL(RenderSlots::PS_FreeSPL + 0u, m_pShadowSampler->GetD3DSampler());
 
 		GetRenderPass(RenderPassType::CreateDownsampledX2Texture).
 			ClearBinds()
@@ -608,7 +619,18 @@ namespace gfx
 
 		// todo: Transparent pass
 		{
+			const RenderPass& pass = GetRenderPass(RenderPassType::TransparentRenderPass);
+			pass.BindSharedResources(gfx, renderState);
 
+			DepthStencilState::Resolve(gfx, DepthStencilState::Mode::Gbuffer)->BindOM(gfx, renderState);
+
+			m_pCameraColor0->BindAsTarget(gfx, gfx.GetDepthStencilTarget()->GetView());
+			gfx.SetViewport(screenWidth, screenHeight);
+
+			pass.Execute(gfx, renderState);
+			pass.UnbindSharedResources(gfx, renderState);
+
+			gfx.ClearRenderTargets();
 		}
 
 		// Downsample x2 pass
@@ -803,20 +825,20 @@ namespace gfx
 
 	RenderPass& Renderer::GetRenderPass(const RenderPassType pass) const
 	{
-		assert(m_pRenderPasses.find(pass) != m_pRenderPasses.end() && "Requested RenderPass does not exist!");
+		if (m_pRenderPasses.find(pass) == m_pRenderPasses.end()) THROW("Requested RenderPass does not exist!");
 		return *m_pRenderPasses.at(pass).get();
 	}
 
 	const RenderPass& Renderer::CreateRenderPass(const RenderPassType pass)
 	{
-		assert(m_pRenderPasses.find(pass) == m_pRenderPasses.end() && "RenderPass cannot be created twice!");
+		if (m_pRenderPasses.find(pass) != m_pRenderPasses.end()) THROW("RenderPass cannot be created twice!");
 		m_pRenderPasses.emplace(pass, std::move(std::make_unique<RenderPass>(pass)));
 		return *m_pRenderPasses[pass].get();
 	}
 
 	const RenderPass& Renderer::CreateRenderPass(const RenderPassType pass, std::unique_ptr<RenderPass> pRenderPass)
 	{
-		assert(m_pRenderPasses.find(pass) == m_pRenderPasses.end() && "RenderPass cannot be created twice!");
+		if (m_pRenderPasses.find(pass) != m_pRenderPasses.end()) THROW("RenderPass cannot be created twice!");
 		m_pRenderPasses.emplace(pass, std::move(pRenderPass));
 		return *m_pRenderPasses[pass].get();
 	}
