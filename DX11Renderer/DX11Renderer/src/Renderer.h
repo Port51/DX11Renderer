@@ -13,7 +13,6 @@ namespace gfx
 	class RendererList;
 	class DrawCommand;
 	class RenderPass;
-	class DepthStencilTarget;
 	class RenderTexture;
 	class ComputeKernel;
 	class Sampler;

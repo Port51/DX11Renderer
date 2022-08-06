@@ -35,6 +35,11 @@ namespace gfx
 		//pMainLight = std::make_shared<DirectionalLight>(gfx, lightIdx++, true, true, pLightModelAsset, 30.f, 30.f, dx::XMFLOAT3(1.f, 1.f, 1.f), 3.0, 50.0f, 5.0f);
 		//pLights.emplace_back(pMainLight);
 
+		// Setup cluster dimensions based on screen size, rounding up
+		m_clusterDimensionX = (gfx.GetScreenWidth() + LightManager::ClusteredLightingClusterPixels - 1u) / LightManager::ClusteredLightingClusterPixels;
+		m_clusterDimensionY = (gfx.GetScreenHeight() + LightManager::ClusteredLightingClusterPixels - 1u) / LightManager::ClusteredLightingClusterPixels;
+		m_clusterDimensionZ = ClusteredLightingZLevels;
+
 		m_pLightInputCB = std::make_unique<ConstantBuffer<LightInputCB>>(gfx, D3D11_USAGE_DYNAMIC);
 		m_pClusteredIndices = std::make_unique<StructuredBuffer<int>>(gfx, D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS, GetClusterCount() * MaxLightsPerCluster);
 
@@ -64,12 +69,10 @@ namespace gfx
 		m_pShadowRendererList = std::make_shared<RendererList>(pRendererList);
 
 		m_pShadowAtlas = std::make_unique<DepthStencilTarget>(gfx, Config::ShadowAtlasResolution, Config::ShadowAtlasResolution);
-
-		// Setup cluster dimensions based on screen size, rounding up
-		m_clusterDimensionX = (gfx.GetScreenWidth() + LightManager::ClusteredLightingClusterPixels - 1u) / LightManager::ClusteredLightingClusterPixels;
-		m_clusterDimensionY = (gfx.GetScreenHeight() + LightManager::ClusteredLightingClusterPixels - 1u) / LightManager::ClusteredLightingClusterPixels;
-		m_clusterDimensionZ = ClusteredLightingZLevels;
 	}
+
+	LightManager::~LightManager()
+	{}
 
 	void LightManager::Release()
 	{

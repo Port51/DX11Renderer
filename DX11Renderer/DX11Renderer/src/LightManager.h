@@ -42,7 +42,7 @@ namespace gfx
 		const static UINT MaxLightsPerCluster = 32u;
 	public:
 		LightManager(const GraphicsDevice& gfx, std::shared_ptr<RendererList> pRendererList);
-		virtual ~LightManager() = default;
+		virtual ~LightManager();
 		void Release();
 	public:
 		void AddLight(std::shared_ptr<Light> pLight);
