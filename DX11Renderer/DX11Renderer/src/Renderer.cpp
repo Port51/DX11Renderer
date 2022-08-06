@@ -430,14 +430,14 @@ namespace gfx
 			opaqueDrawContext.projMatrix = camera.GetProjectionMatrix();
 
 			// todo: filter by render passes too
-			m_pVisibleRendererList->Filter(gfx, camera.GetFrustumWS(), RendererList::RendererSortingType::StateThenBackToFront, camera.GetPositionWS(), camera.GetForwardWS(), camera.GetFarClipPlane());
+			m_pVisibleRendererList->Filter(gfx, camera.GetFrustumWS(), RendererList::RendererSortingType::StateThenBackToFront, RenderPassType::OpaqueRenderPass, camera.GetPositionWS(), camera.GetForwardWS(), camera.GetFarClipPlane());
 			m_pVisibleRendererList->SubmitDrawCalls(opaqueDrawContext);
 
 			static DrawContext transparentDrawContext(*this, std::move(std::vector<RenderPassType> { RenderPassType::TransparentRenderPass }));
 			transparentDrawContext.viewMatrix = camera.GetViewMatrix();
 			transparentDrawContext.projMatrix = camera.GetProjectionMatrix();
 
-			m_pVisibleTransparentRendererList->Filter(gfx, camera.GetFrustumWS(), RendererList::RendererSortingType::BackToFrontThenState, camera.GetPositionWS(), camera.GetForwardWS(), camera.GetFarClipPlane());
+			m_pVisibleTransparentRendererList->Filter(gfx, camera.GetFrustumWS(), RendererList::RendererSortingType::BackToFrontThenState, RenderPassType::TransparentRenderPass, camera.GetPositionWS(), camera.GetForwardWS(), camera.GetFarClipPlane());
 			m_pVisibleTransparentRendererList->SubmitDrawCalls(transparentDrawContext);
 		}
 

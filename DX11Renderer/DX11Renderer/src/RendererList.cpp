@@ -27,7 +27,7 @@ namespace gfx
 		return (UINT)m_pRenderers.size();
 	}
 
-	void RendererList::Filter(const GraphicsDevice& gfx, const Frustum& frustum, const RendererSortingType sorting, const dx::XMVECTOR originWS, const dx::XMVECTOR directionWS, const float farClipPlane)
+	void RendererList::Filter(const GraphicsDevice& gfx, const Frustum& frustum, const RendererSortingType sorting, const RenderPassType renderPassType, const dx::XMVECTOR originWS, const dx::XMVECTOR directionWS, const float farClipPlane)
 	{
 		const bool testDepth = (sorting != RendererSortingType::State);
 		const bool reverseDepth = (sorting == RendererSortingType::BackToFrontThenState || sorting == RendererSortingType::StateThenBackToFront);
@@ -81,7 +81,7 @@ namespace gfx
 							}
 
 							const u64 depthCode = (u64)(4096u * depthPercentage); // use 12 bits for depth
-							const u64 materialCode = renderer->GetMaterialCode();
+							const u64 materialCode = renderer->GetMaterialCode(renderPassType);
 
 							code = (sortStateFirst) ?
 								(materialCode << 12u) + depthCode
@@ -90,7 +90,7 @@ namespace gfx
 						else
 						{
 							// Only sort by state
-							code = renderer->GetMaterialCode();
+							code = renderer->GetMaterialCode(renderPassType);
 						}
 						
 

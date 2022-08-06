@@ -29,7 +29,7 @@ namespace gfx
 		void Bind(const GraphicsDevice& gfx, const std::string_view passName);
 		void SubmitDrawCommands(const Drawable& drawable, const DrawContext& drawContext) const;
 	public:
-		const u64 GetMaterialCode() const;
+		const u64 GetMaterialCode(const RenderPassType renderPassType) const;
 		const VertexLayout& GetVertexLayout() const;
 		static std::shared_ptr<Bindable> Resolve(const GraphicsDevice& gfx, const std::string_view assetPath);
 	protected:
@@ -41,7 +41,7 @@ namespace gfx
 		std::unordered_map<RenderPassType, std::unique_ptr<MaterialPass>> m_pMaterialPassesByType;
 		std::vector<std::shared_ptr<Bindable>> m_pBindables;
 		std::string m_materialAssetPath;
-		u64 m_materialCode;
+		u64 m_fallbackMaterialCode;
 		VertexLayout m_vertexLayout;
 	};
 }

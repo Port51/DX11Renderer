@@ -79,9 +79,9 @@ namespace gfx
 		return m_pMeshAsset->m_aabb;
 	}
 
-	const u64 MeshRenderer::GetMaterialCode() const
+	const u64 MeshRenderer::GetMaterialCode(const RenderPassType renderPassType) const
 	{
-		return m_pMaterial->GetMaterialCode();
+		return m_pMaterial->GetMaterialCode(renderPassType);
 	}
 
 	void MeshRenderer::IssueDrawCall(const GraphicsDevice& gfx) const

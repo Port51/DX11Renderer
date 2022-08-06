@@ -38,7 +38,7 @@ namespace gfx
 		const UINT GetIndexCount() const;
 		const UINT GetVertexCount() const;
 		const AABB& GetAABB() const;
-		const u64 GetMaterialCode() const;
+		const u64 GetMaterialCode(const RenderPassType renderPassType) const;
 	protected:
 		const std::string m_name;
 		std::shared_ptr<Material> m_pMaterial; // keep separate from other bindables for now...

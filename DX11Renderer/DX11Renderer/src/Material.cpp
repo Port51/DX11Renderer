@@ -227,9 +227,13 @@ namespace gfx
 		}
 	}
 
-	const u64 Material::GetMaterialCode() const
+	const u64 Material::GetMaterialCode(const RenderPassType renderPassType) const
 	{
-		return m_materialCode;
+		if (m_pMaterialPassesByType.find(renderPassType) != m_pMaterialPassesByType.end())
+		{
+			return m_pMaterialPassesByType.at(renderPassType)->GetMaterialCode();
+		}
+		return m_fallbackMaterialCode;
 	}
 
 	const VertexLayout& Material::GetVertexLayout() const

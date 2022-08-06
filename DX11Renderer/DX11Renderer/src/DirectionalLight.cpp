@@ -161,7 +161,7 @@ namespace gfx
 			drawContext.projMatrix = transforms.projMatrix;
 
 			// This means all shadow draw calls need to be setup on the same thread
-			context.pRendererList->Filter(context.gfx, frustum, RendererList::RendererSortingType::StateThenFrontToBack, cascadeSphereCenterWS, shadowDirWS, cascadeDistance);
+			context.pRendererList->Filter(context.gfx, frustum, RendererList::RendererSortingType::StateThenFrontToBack, RenderPassType::ShadowRenderPass, cascadeSphereCenterWS, shadowDirWS, cascadeDistance);
 			context.pRendererList->SubmitDrawCalls(drawContext);
 			const auto ct = context.pRendererList->GetRendererCount();
 

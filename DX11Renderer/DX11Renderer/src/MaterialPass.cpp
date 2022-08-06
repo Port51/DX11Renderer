@@ -75,7 +75,7 @@ namespace gfx
 		// 6 bits - UBO bindings (64 possible)
 		auto ps = (m_pPixelShader != nullptr) ? m_pPixelShader->GetInstanceIdx() : 0u;
 		auto vs = (m_pVertexShader != nullptr) ? m_pVertexShader->GetInstanceIdx() : 0u;
-		return (static_cast<u64>(16u - m_renderQueue) << 44u)
+		return (static_cast<u64>(m_renderQueue) << 44u)
 			+ (static_cast<u64>(ps) << 34u)
 			+ (static_cast<u64>(vs) << 24u);
 	}
