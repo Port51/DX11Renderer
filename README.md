@@ -2,6 +2,10 @@
 
 This is a tiled renderer inspired by the Rise of the Tomb Raider renderer, shown here: https://www.elopezr.com/the-rendering-of-rise-of-the-tomb-raider/
 
+It's still a work-in-progress, and here are the results so far:
+
+(todo: pictures!)
+
 ## Features:
 * Core
     *	Tiled deferred lighting
@@ -10,6 +14,8 @@ This is a tiled renderer inspired by the Rise of the Tomb Raider renderer, shown
         *	Supports 1 cascaded directional light
         *	Number of spot and point lights is only limited by atlas size
     *	PCF shadow filtering
+    * Dynamic water using gerstner waves
+    * Stencil masking
 * Post effects
     *	Bloom w/ separable gaussian filter
     *	Depth of field w/ separable disk filter
@@ -70,10 +76,7 @@ Passes:
 3. Near blur pass - executes 1 component in 2 dispatches
 4. Composite - camera color with near and far bokehs
 
-References:
+## References:
 * http://yehar.com/blog/?p=1495
 * https://bartwronski.com/2017/08/06/separable-bokeh/
 * https://dl.acm.org/doi/10.1145/3084363.3085022
-
-
-
