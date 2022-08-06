@@ -9,7 +9,13 @@ namespace gfx
 	{
 		D3D11_DEPTH_STENCIL_DESC dsDesc = CD3D11_DEPTH_STENCIL_DESC{ CD3D11_DEFAULT{} };
 
-		if (mode == Mode::Gbuffer)
+		if (mode == Mode::StencilOff)
+		{
+			dsDesc.StencilEnable = FALSE;
+			dsDesc.DepthEnable = TRUE;
+			dsDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL; // allow less because maybe not everything will be in prepass
+		}
+		else if (mode == Mode::Normal)
 		{
 			dsDesc.StencilEnable = FALSE;
 			dsDesc.DepthEnable = TRUE;
@@ -18,6 +24,9 @@ namespace gfx
 		}
 		else if (mode == Mode::Write)
 		{
+			dsDesc.DepthEnable = TRUE;
+			dsDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL; // allow less because maybe not everything will be in prepass
+
 			dsDesc.StencilEnable = TRUE;
 			dsDesc.StencilWriteMask = 0x01;
 
@@ -33,7 +42,9 @@ namespace gfx
 		}
 		else if (mode == Mode::Mask)
 		{
-			dsDesc.DepthEnable = FALSE;
+			dsDesc.DepthEnable = TRUE;
+			dsDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL; // allow less because maybe not everything will be in prepass
+
 			dsDesc.StencilEnable = TRUE;
 			dsDesc.StencilReadMask = 0x01;
 
@@ -46,6 +57,28 @@ namespace gfx
 			dsDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP::D3D11_STENCIL_OP_KEEP;
 			dsDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP::D3D11_STENCIL_OP_KEEP;
 			dsDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP::D3D11_STENCIL_OP_KEEP;
+		}
+		else if (mode == Mode::InverseMask)
+		{
+			dsDesc.DepthEnable = TRUE;
+			dsDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL; // allow less because maybe not everything will be in prepass
+
+			dsDesc.StencilEnable = TRUE;
+			dsDesc.StencilReadMask = 0x01;
+
+			dsDesc.BackFace.StencilFunc = D3D11_COMPARISON_FUNC::D3D11_COMPARISON_NEVER;
+			dsDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP::D3D11_STENCIL_OP_KEEP;
+			dsDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP::D3D11_STENCIL_OP_KEEP;
+			dsDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP::D3D11_STENCIL_OP_KEEP;
+
+			dsDesc.FrontFace.StencilFunc = D3D11_COMPARISON_FUNC::D3D11_COMPARISON_NOT_EQUAL;
+			dsDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP::D3D11_STENCIL_OP_KEEP;
+			dsDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP::D3D11_STENCIL_OP_KEEP;
+			dsDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP::D3D11_STENCIL_OP_KEEP;
+		}
+		else
+		{
+			THROW("Unrecognized stencil mode!");
 		}
 
 		gfx.GetAdapter()->CreateDepthStencilState(&dsDesc, &m_pStencil);
@@ -92,10 +125,16 @@ namespace gfx
 			{
 			case Mode::StencilOff:
 				return "off"s;
+			case Mode::Normal:
+				return "normal"s;
 			case Mode::Write:
 				return "write"s;
 			case Mode::Mask:
 				return "mask"s;
+			case Mode::InverseMask:
+				return "inversemask"s;
+			default:
+				THROW("Unrecognized stencil mode!");
 			}
 			return "ERROR"s;
 		};

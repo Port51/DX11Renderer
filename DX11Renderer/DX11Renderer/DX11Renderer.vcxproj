@@ -451,6 +451,7 @@
     <None Include="Assets\Shaders\GerstnerWaves.hlsli" />
     <None Include="Assets\Models\Gem.asset" />
     <None Include="Assets\Materials\CastleMaterial.asset" />
+    <None Include="Assets\Materials\BoatInteriorMaterial.asset" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Shaders\WaterPS.hlsl">

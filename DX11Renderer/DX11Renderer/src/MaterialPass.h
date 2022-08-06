@@ -14,6 +14,7 @@ namespace gfx
 	class InputLayout;
 	class Bindable;
 	class BindingList;
+	class DepthStencilState;
 
 	struct DrawContext;
 
@@ -28,6 +29,8 @@ namespace gfx
 	public:
 		void SetPixelShader(std::shared_ptr<PixelShader> pPixelShader);
 		void SetVertexShader(std::shared_ptr<VertexShader> pVertexShader, std::shared_ptr<InputLayout> pInputLayout);
+		void SetStencil(std::shared_ptr<DepthStencilState> pDepthStencilState);
+		const std::shared_ptr<DepthStencilState> GetStencil() const;
 		//void SetVertexLayout(std::shared_ptr<VertexLayout> pVertexLayout);
 		Binding& AddBinding(std::shared_ptr<Bindable> pBindable);
 		const u64 GetMaterialCode() const;
@@ -46,6 +49,7 @@ namespace gfx
 		std::shared_ptr<InputLayout> m_pInputLayout;
 		std::shared_ptr<VertexShader> m_pVertexShader;
 		std::shared_ptr<PixelShader> m_pPixelShader;
+		std::shared_ptr<DepthStencilState> m_pDepthStencilState;
 		std::vector<Binding> m_bindings;
 	};
 }

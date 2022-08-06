@@ -881,6 +881,9 @@
     <None Include="Assets\Materials\CastleMaterial.asset">
       <Filter>Assets\Materials</Filter>
     </None>
+    <None Include="Assets\Materials\BoatInteriorMaterial.asset">
+      <Filter>Assets\Materials</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Shaders\Lighting\ClusteredLightingCompute.hlsl">

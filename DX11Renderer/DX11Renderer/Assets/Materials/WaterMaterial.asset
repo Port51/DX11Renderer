@@ -13,6 +13,7 @@ Pass
 	Cull, Back
 	RenderQueue, 10
 
+	Stencil,			InverseMask
 	StencilRef,			0
 	StencilComp,		3
 	StencilPass,		0
@@ -27,6 +28,7 @@ Pass
 	Cull, Back
 	RenderQueue, 10
 
+	Stencil,			InverseMask
 	StencilRef,			0
 	StencilComp,		3
 	StencilPass,		0
@@ -43,12 +45,12 @@ Pass
 	Cull, Back
 	RenderQueue, 10
 
+	Stencil,			InverseMask
 	StencilRef,			0
 	StencilComp,		3
 	StencilPass,		0
 	StencilReadMask,	1
 	StencilWriteMask,	1
-
 
 	VS, Assets\\Built\\Shaders\\WaterVS.cso
 	PS, Assets\\Built\\Shaders\\WaterPS.cso

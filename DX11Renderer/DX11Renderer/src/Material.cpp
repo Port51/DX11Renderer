@@ -21,6 +21,7 @@
 #include "BindingList.h"
 #include "RenderConstants.h"
 #include "Drawable.h"
+#include "DepthStencilState.h"
 
 #include <fstream>
 #include <sstream>
@@ -96,6 +97,9 @@ namespace gfx
 					// Init cbuffer
 					pMaterialPass->AddBinding(std::move(std::make_shared<ConstantBuffer<PSMaterialConstant>>(gfx, D3D11_USAGE_IMMUTABLE, pmc)))
 						.SetupPSBinding(RenderSlots::PS_FreeRendererCB + 0u);
+
+					if (pMaterialPass->GetStencil() == nullptr)
+						pMaterialPass->SetStencil(DepthStencilState::Resolve(gfx, DepthStencilState::Mode::Normal));
 
 					m_pMaterialPassesByType.emplace(materialPassRenderType, std::move(pMaterialPass));
 				}
@@ -179,10 +183,18 @@ namespace gfx
 					const auto slotIdx = p.ReadInt(0);
 					pMaterialPass->SetPropertySlot(slotIdx);
 				}
-
 				else if (p.key == "RenderQueue")
 				{
 					pMaterialPass->SetRenderQueue(p.ReadInt(0));
+				}
+				else if (p.key == "Stencil")
+				{
+					if (p.values.at(0) == "Write")
+						pMaterialPass->SetStencil(DepthStencilState::Resolve(gfx, DepthStencilState::Mode::Write));
+					else if (p.values.at(0) == "Mask")
+						pMaterialPass->SetStencil(DepthStencilState::Resolve(gfx, DepthStencilState::Mode::Mask));
+					else if (p.values.at(0) == "InverseMask")
+						pMaterialPass->SetStencil(DepthStencilState::Resolve(gfx, DepthStencilState::Mode::InverseMask));
 				}
 			}
 

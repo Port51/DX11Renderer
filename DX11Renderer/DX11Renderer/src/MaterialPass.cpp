@@ -9,6 +9,7 @@
 #include "InputLayout.h"
 #include "DrawContext.h"
 #include "Renderer.h"
+#include "DepthStencilState.h"
 #include <assert.h>
 
 namespace gfx
@@ -34,6 +35,16 @@ namespace gfx
 		assert(pInputLayout != nullptr);
 		m_pVertexShader = pVertexShader;
 		m_pInputLayout = pInputLayout;
+	}
+
+	void MaterialPass::SetStencil(std::shared_ptr<DepthStencilState> pDepthStencilState)
+	{
+		m_pDepthStencilState = pDepthStencilState;
+	}
+
+	const std::shared_ptr<DepthStencilState> MaterialPass::GetStencil() const
+	{
+		return m_pDepthStencilState;
 	}
 
 	/*void MaterialPass::SetVertexLayout(std::shared_ptr<VertexLayout> pVertexLayout)
@@ -64,7 +75,7 @@ namespace gfx
 		// 6 bits - UBO bindings (64 possible)
 		auto ps = (m_pPixelShader != nullptr) ? m_pPixelShader->GetInstanceIdx() : 0u;
 		auto vs = (m_pVertexShader != nullptr) ? m_pVertexShader->GetInstanceIdx() : 0u;
-		return (static_cast<u64>(m_renderQueue) << 44u)
+		return (static_cast<u64>(16u - m_renderQueue) << 44u)
 			+ (static_cast<u64>(ps) << 34u)
 			+ (static_cast<u64>(vs) << 24u);
 	}
@@ -112,6 +123,15 @@ namespace gfx
 		if (m_pPixelShader != nullptr)
 		{
 			m_pPixelShader->BindPS(gfx, renderState, 0u);
+		}
+		if (m_pDepthStencilState != nullptr)
+		{
+			if (renderState.IsNewBinding(m_pDepthStencilState->GetGuid(), RenderBindingType::OM_DepthStencilState, 0u))
+			{
+				m_pDepthStencilState->BindOM(gfx, renderState);
+				REGISTER_GPU_CALL();
+			}
+			else REGISTER_GPU_CALL_SAVED();
 		}
 		for (const auto& b : m_bindings)
 		{

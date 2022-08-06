@@ -14,9 +14,10 @@ namespace gfx
 		enum class Mode
 		{
 			StencilOff,
-			Gbuffer,
+			Normal,
 			Write,
-			Mask
+			Mask,
+			InverseMask
 		};
 		DepthStencilState(const GraphicsDevice& gfx, const Mode mode);
 		DepthStencilState(const GraphicsDevice& gfx, const D3D11_DEPTH_STENCIL_DESC desc);

@@ -561,7 +561,7 @@ namespace gfx
 			const RenderPass& pass = GetRenderPass(RenderPassType::GBufferRenderPass);
 
 			pass.BindSharedResources(gfx, renderState);
-			DepthStencilState::Resolve(gfx, DepthStencilState::Mode::Gbuffer)->BindOM(gfx, renderState);
+			DepthStencilState::Resolve(gfx, DepthStencilState::Mode::Normal)->BindOM(gfx, renderState);
 			m_pNormalRoughReflectivityTarget->ClearRenderTarget(context.Get(), 1.f, 0.f, 0.f, 1.f);
 
 			gfx.SetRenderTarget(m_pNormalRoughReflectivityTarget->GetRenderTargetView());
@@ -608,7 +608,7 @@ namespace gfx
 			const RenderPass& pass = GetRenderPass(RenderPassType::OpaqueRenderPass);
 			pass.BindSharedResources(gfx, renderState);
 
-			DepthStencilState::Resolve(gfx, DepthStencilState::Mode::Gbuffer)->BindOM(gfx, renderState);
+			DepthStencilState::Resolve(gfx, DepthStencilState::Mode::Normal)->BindOM(gfx, renderState);
 
 			m_pCameraColor0->ClearRenderTarget(context.Get(), 0.f, 0.f, 0.f, 0.f);
 			m_pCameraColor0->BindAsTarget(gfx, gfx.GetDepthStencilTarget()->GetView());
@@ -630,7 +630,7 @@ namespace gfx
 			const RenderPass& pass = GetRenderPass(RenderPassType::TransparentRenderPass);
 			pass.BindSharedResources(gfx, renderState);
 
-			DepthStencilState::Resolve(gfx, DepthStencilState::Mode::Gbuffer)->BindOM(gfx, renderState);
+			DepthStencilState::Resolve(gfx, DepthStencilState::Mode::Normal)->BindOM(gfx, renderState);
 
 			m_pCameraColor0->BindAsTarget(gfx, gfx.GetDepthStencilTarget()->GetView());
 			gfx.SetViewport(screenWidth, screenHeight);
