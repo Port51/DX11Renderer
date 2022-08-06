@@ -45,11 +45,5 @@ float4 main(v2f i) : SV_Target
 
     float4 diffuseTex = lerp(1.0, diffuseXZ + diffuseXY + diffuseYZ, noiseIntensity);
     
-    //return float4(0, 0, 1, 1);
-    //return _Time.x;
-    //return screenPos.y;
-    //return combinedLight.rgbb;
-    //return float4(materialColor.rgb, 1);
     return float4(combinedLight.rgb * materialColor.rgb, 1) * diffuseTex;
-    return diffuseTex;
 }

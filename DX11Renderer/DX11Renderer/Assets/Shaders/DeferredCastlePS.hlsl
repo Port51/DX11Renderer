@@ -46,14 +46,7 @@ float4 main(v2f i) : SV_Target
     float4 diffuseTex = lerp(1.0, diffuseXZ + diffuseXY + diffuseYZ, noiseIntensity * i.vertColor.r);
 
     // Random window emission
-    float3 emission = float3(1.f, 0.25f, 0.04f) * saturate(1.0 - i.vertColor.b);
+    float3 emission = float3(1.f, 0.25f, 0.04f) * (saturate(1.0 - i.vertColor.b) * 1.5f);
 
-    //return float4(0, 0, 1, 1);
-    //return _Time.x;
-    //return screenPos.y;
-    //return combinedLight.rgbb;
-    //return float4(materialColor.rgb, 1);
-    //return i.vertColor;
     return float4(combinedLight.rgb * (materialColor.rgb * i.vertColor.g) * diffuseTex + emission, 1);
-    return diffuseTex;
 }
