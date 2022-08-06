@@ -55,6 +55,8 @@ namespace gfx
 		std::vector<dx::XMVECTOR> m_boatVelocities;
 		std::vector<dx::XMVECTOR> m_boatAngularVelocities;
 
+		std::vector<std::unique_ptr<ModelInstance>> m_pPersonModels;
+
 		bool m_showDemoWindow = true;
 		UINT m_pixelSelectionX = 450u;
 		UINT m_pixelSelectionY = 480u;

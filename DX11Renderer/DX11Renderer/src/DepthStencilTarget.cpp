@@ -23,7 +23,7 @@ namespace gfx
 		descDepth.Usage = D3D11_USAGE_DEFAULT;
 		descDepth.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_DEPTH_STENCIL;
 		THROW_IF_FAILED(gfx.GetAdapter()->CreateTexture2D(&descDepth, nullptr, &m_pDepthStencil));
-		assert(m_pDepthStencil != NULL && "Depth stencil is null!");
+		if (m_pDepthStencil == NULL) THROW("Depth stencil is null!");
 
 		// Create DS View
 		D3D11_DEPTH_STENCIL_VIEW_DESC descDSV;
@@ -32,7 +32,7 @@ namespace gfx
 		descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 		descDSV.Texture2D.MipSlice = 0u;
 		THROW_IF_FAILED(gfx.GetAdapter()->CreateDepthStencilView(m_pDepthStencil.Get(), &descDSV, &m_pDepthStencilView));
-		assert(m_pDepthStencilView != NULL && "Depth stencil view is null!");
+		if (m_pDepthStencilView == NULL) THROW("Depth stencil view is null!");
 
 		// Create SRV
 		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
@@ -42,7 +42,7 @@ namespace gfx
 		srvDesc.Texture2D.MostDetailedMip = 0;
 		srvDesc.Texture2D.MipLevels = 1;
 		THROW_IF_FAILED(gfx.GetAdapter()->CreateShaderResourceView(m_pDepthStencil.Get(), &srvDesc, &m_pShaderResourceView));
-		assert(m_pShaderResourceView != NULL && "Depth SRV is null!");
+		if (m_pShaderResourceView == NULL) THROW("Depth SRV is null!");
 	}
 
 	DepthStencilTarget::~DepthStencilTarget()

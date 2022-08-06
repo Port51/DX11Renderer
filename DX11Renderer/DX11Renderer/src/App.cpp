@@ -248,6 +248,24 @@ namespace gfx
 			}
 		}
 
+		// Add people (static)
+		{
+			auto pPersonAsset = ModelImporter::LoadGLTF(Gfx(), "Assets\\Models\\Person.asset");
+			const auto personPlacements = ModelImporter::LoadGLTFPositionsAndScales(Gfx(), "Assets\\Models\\GLTF\\NewCastle_PersonPlacements.glb");
+			for (const auto& tp : personPlacements)
+			{
+				auto transformedPos = dx::XMVector4Transform(dx::XMVectorSet(tp.x, tp.y, tp.z, 1.0), sceneTransform);
+				dx::XMFLOAT3 f3;
+				dx::XMStoreFloat3(&f3, transformedPos);
+				//m_pLightManager->AddPointLight(Gfx(), f3, GetRandomMagicLight(), 2.8f * std::sqrt(tp.w), 1.f, 3.15f * tp.w);
+
+				m_pPersonModels.emplace_back(std::make_unique<ModelInstance>(Gfx(), pPersonAsset, dx::XMMatrixScaling(tp.w, tp.w, tp.w) * dx::XMMatrixRotationRollPitchYaw(0.f, m_pRandomGenerator->GetUniformFloat(0.f, dx::XM_2PI), 0.f) * dx::XMMatrixTranslationFromVector(transformedPos)));
+				m_pRendererList->AddModelInstance(*m_pPersonModels.at(m_pPersonModels.size() - 1u));
+
+				// dx::XMFLOAT3(1.f, 0.25f, 0.04f) was a good color for torches
+			}
+		}
+
 		// Add boat placements
 		{
 			auto pBoatAsset = ModelImporter::LoadGLTF(Gfx(), "Assets\\Models\\Boat.asset");
