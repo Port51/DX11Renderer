@@ -124,28 +124,28 @@ namespace gfx
 			{
 				if (p.key == "Slot")
 				{
-					const auto slotIdx = p.MoveInt(0);
+					const auto slotIdx = p.ReadInt(0);
 				}
 				else if (p.key == "Color")
 				{
-					pmc.materialColor = { p.MoveFloat(0), p.MoveFloat(1), p.MoveFloat(2) };
+					pmc.materialColor = { p.ReadFloat(0), p.ReadFloat(1), p.ReadFloat(2) };
 				}
 				else if (p.key == "Roughness")
 				{
-					pmc.roughness = p.MoveFloat(0);
+					pmc.roughness = p.ReadFloat(0);
 				}
 				else if (p.key == "Reflectivity")
 				{
-					pmc.reflectivity = p.MoveFloat(0);
+					pmc.reflectivity = p.ReadFloat(0);
 				}
 				else if (p.key == "NoiseIntensity")
 				{
-					pmc.noiseIntensity = p.MoveFloat(0);
+					pmc.noiseIntensity = p.ReadFloat(0);
 				}
 				else if (p.key == "Texture")
 				{
 					// Format: Slot, TextureName
-					const auto slotIdx = p.MoveInt(0);
+					const auto slotIdx = p.ReadInt(0);
 					const auto texPath = std::move(p.values[1]);
 
 					pPropertySlot->AddBinding(Texture::Resolve(gfx, texPath))
@@ -176,8 +176,13 @@ namespace gfx
 				else if (p.key == "PropertySlot")
 				{
 					// Connects to previously defined properties
-					const auto slotIdx = p.MoveInt(0);
+					const auto slotIdx = p.ReadInt(0);
 					pMaterialPass->SetPropertySlot(slotIdx);
+				}
+
+				else if (p.key == "RenderQueue")
+				{
+					pMaterialPass->SetRenderQueue(p.ReadInt(0));
 				}
 			}
 

@@ -10,22 +10,10 @@ namespace gfxcore
 		return std::stoi(values[index]);
 	}
 
-	// Returns as int, using std::move()
-	const int TextParser::ParsedKeyValues::MoveInt(int index) const
-	{
-		return std::stoi(std::move(values[index]));
-	}
-
 	// Returns as float
 	const float TextParser::ParsedKeyValues::ReadFloat(int index) const
 	{
 		return std::stof(values[index]);
-	}
-
-	// Returns as float, using std::move()
-	const float TextParser::ParsedKeyValues::MoveFloat(int index) const
-	{
-		return std::stof(std::move(values[index]));
 	}
 
 	TextParser::TextParser(std::string_view filePath)

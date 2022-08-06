@@ -54,7 +54,8 @@ namespace gfx
 		// Cost determines the order:
 		// Shader program > ROP > texture bindings > vertex format > UBO bindings > vert bindings > uniform updates
 
-		// Actually use 48 bits for this, as 16 will be used for depth
+		// Actually use 52 bits for this, as 12 will be used for depth
+		// 4 bits - render queue
 		// 10 bits - pixel shader (1024 possible)
 		// 10 bits - vertex shader (1024 possible)
 		// 2 bits - rasterizer state (4 possible)
@@ -63,11 +64,12 @@ namespace gfx
 		// 6 bits - UBO bindings (64 possible)
 		auto ps = (m_pPixelShader != nullptr) ? m_pPixelShader->GetInstanceIdx() : 0u;
 		auto vs = (m_pVertexShader != nullptr) ? m_pVertexShader->GetInstanceIdx() : 0u;
-		return (static_cast<u64>(ps) << 38u)
-			+ (static_cast<u64>(vs) << 28u);
+		return (static_cast<u64>(m_renderQueue) << 44u)
+			+ (static_cast<u64>(ps) << 34u)
+			+ (static_cast<u64>(vs) << 24u);
 	}
 
-	int MaterialPass::GetPropertySlot() const
+	const int MaterialPass::GetPropertySlot() const
 	{
 		return m_propertySlotIdx;
 	}
@@ -75,6 +77,16 @@ namespace gfx
 	void MaterialPass::SetPropertySlot(const int slotIdx)
 	{
 		m_propertySlotIdx = slotIdx;
+	}
+
+	const int MaterialPass::GetRenderQueue() const
+	{
+		return m_renderQueue;
+	}
+
+	void MaterialPass::SetRenderQueue(const u8 renderQueue)
+	{
+		m_renderQueue = renderQueue;
 	}
 
 	void MaterialPass::SetRenderPass(const RenderPassType _renderPass)

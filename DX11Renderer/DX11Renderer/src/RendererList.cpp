@@ -80,12 +80,12 @@ namespace gfx
 								depthPercentage = 1.f - depthPercentage;
 							}
 
-							const u64 depthCode = (u64)(65535u * depthPercentage); // use 16 bits for depth
+							const u64 depthCode = (u64)(4096u * depthPercentage); // use 12 bits for depth
 							const u64 materialCode = renderer->GetMaterialCode();
 
 							code = (sortStateFirst) ?
-								(materialCode << 16u) + depthCode
-								: (depthCode << 48u) + materialCode;
+								(materialCode << 12u) + depthCode
+								: (depthCode << 52u) + materialCode;
 						}
 						else
 						{

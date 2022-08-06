@@ -11,6 +11,7 @@ Pass
 {
 	Name, DepthPrepassRenderPass
 	Cull, Back
+	RenderQueue, 10
 
 	StencilRef,			0
 	StencilComp,		3
@@ -24,6 +25,7 @@ Pass
 {
 	Name, GBufferRenderPass
 	Cull, Back
+	RenderQueue, 10
 
 	StencilRef,			0
 	StencilComp,		3
@@ -39,6 +41,7 @@ Pass
 {
 	Name, OpaqueRenderPass
 	Cull, Back
+	RenderQueue, 10
 
 	StencilRef,			0
 	StencilComp,		3

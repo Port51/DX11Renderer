@@ -31,14 +31,17 @@ namespace gfx
 		//void SetVertexLayout(std::shared_ptr<VertexLayout> pVertexLayout);
 		Binding& AddBinding(std::shared_ptr<Bindable> pBindable);
 		const u64 GetMaterialCode() const;
-		int GetPropertySlot() const;
+		const int GetPropertySlot() const;
 		void SetPropertySlot(const int slotIdx);
+		const int GetRenderQueue() const;
+		void SetRenderQueue(const u8 renderQueue);
 		void SetRenderPass(const RenderPassType renderPass);
 		const RenderPassType GetRenderPass() const;
 		void SubmitDrawCommands(const Drawable& drawable, const DrawContext& drawContext, const BindingList* const pPropertyBindings) const;
 		void Bind(const GraphicsDevice& gfx, RenderState& renderState) const;
 	private:
 		int m_propertySlotIdx = -1;
+		u8 m_renderQueue = 0;
 		RenderPassType m_renderPass;
 		std::shared_ptr<InputLayout> m_pInputLayout;
 		std::shared_ptr<VertexShader> m_pVertexShader;
