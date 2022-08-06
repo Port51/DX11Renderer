@@ -12,7 +12,7 @@ namespace gfx
 	class Camera;
 	class RenderPass;
 	class ShadowPassContext;
-	class ModelInstance;
+	class Model;
 	class ModelAsset;
 
 	template<typename Type>
@@ -46,7 +46,7 @@ namespace gfx
 		const bool HasShadow() const;
 		virtual void AppendShadowData(const UINT shadowStartSlot, std::vector<LightShadowData>& shadowData) const = 0;
 		virtual const UINT GetShadowTileCount() const = 0;
-		ModelInstance* GetModelInstance() const;
+		Model* GetModel() const;
 		void SetShadowMatrixTile(dx::XMMATRIX& shadowMatrix, const int tileX, const int tileY);
 		const bool AllowUserControl() const;
 	protected:
@@ -54,7 +54,7 @@ namespace gfx
 		bool m_allowUserControl;
 		dx::XMFLOAT3 m_color;
 		float m_intensity;
-		std::unique_ptr<ModelInstance> m_pModel;
+		std::unique_ptr<Model> m_pModel;
 		ShadowSettings m_shadowSettings;
 		std::unique_ptr<ConstantBuffer<ShadowPassCB>> m_pShadowPassCB;
 		int m_shadowAtlasTileIdx;

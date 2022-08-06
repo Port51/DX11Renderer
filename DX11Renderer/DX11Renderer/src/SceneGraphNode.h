@@ -1,5 +1,5 @@
 #pragma once
-#include "ModelInstance.h"
+#include "Model.h"
 #include "CommonHeader.h"
 #include <string>
 #include "DX11Include.h"
@@ -17,7 +17,7 @@ namespace gfx
 	class SceneGraphNode
 	{
 		friend class AABB;
-		friend class ModelInstance;
+		friend class Model;
 	public:
 		SceneGraphNode(int id, const dx::XMMATRIX& _transform, std::shared_ptr<MeshRenderer> pMeshPtr, std::vector<std::shared_ptr<SceneGraphNode>> pChildNodes);
 		virtual ~SceneGraphNode() = default;

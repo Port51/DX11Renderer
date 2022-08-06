@@ -6,7 +6,7 @@ namespace gfx
 {
 	class Renderer;
 	class MeshRenderer;
-	class ModelInstance;
+	class Model;
 	class SceneGraphNode;
 	class GraphicsDevice;
 
@@ -32,7 +32,7 @@ namespace gfx
 		const UINT GetRendererCount() const;
 		void Filter(const GraphicsDevice& gfx, const Frustum& frustum, const RendererSortingType sorting, const RenderPassType renderPassType, const dx::XMVECTOR originWS, const dx::XMVECTOR directionWS, const float farClipPlane);
 		void SubmitDrawCalls(const DrawContext& drawContext) const;
-		void AddModelInstance(const ModelInstance& modelInstance);
+		void AddModel(const Model& model);
 		void AddSceneGraph(std::shared_ptr<SceneGraphNode> pSceneGraph);
 	private:
 		static bool SortByCode(const std::pair<std::shared_ptr<MeshRenderer>, u64>& a, const std::pair<std::shared_ptr<MeshRenderer>, u64>& b);

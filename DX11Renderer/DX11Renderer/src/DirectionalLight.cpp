@@ -2,7 +2,7 @@
 #include "DirectionalLight.h"
 #include "DX11Include.h"
 #include "MeshRenderer.h"
-#include "ModelInstance.h"
+#include "Model.h"
 #include "ModelAsset.h"
 #include "LightData.h"
 #include "Camera.h"

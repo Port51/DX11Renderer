@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "Light.h"
-#include "ModelInstance.h"
+#include "Model.h"
 #include "ModelAsset.h"
 #include "ConstantBuffer.h"
 #include "GraphicsDevice.h"
@@ -18,7 +18,7 @@ namespace gfx
 		if (pModelAsset != nullptr)
 		{
 			const float scale = 0.25f;
-			m_pModel = std::make_unique<ModelInstance>(gfx, pModelAsset, dx::XMMatrixScaling(scale, scale, scale) * dx::XMMatrixTranslationFromVector(positionWS));
+			m_pModel = std::make_unique<Model>(gfx, pModelAsset, dx::XMMatrixScaling(scale, scale, scale) * dx::XMMatrixTranslationFromVector(positionWS));
 		}
 	}
 
@@ -40,7 +40,7 @@ namespace gfx
 		return m_shadowSettings.hasShadow;
 	}
 
-	ModelInstance* Light::GetModelInstance() const
+	Model* Light::GetModel() const
 	{
 		return m_pModel.get();
 	}

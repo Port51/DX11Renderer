@@ -5,12 +5,12 @@
 namespace gfx
 {
 	class MeshAsset;
-	class ModelInstance;
+	class Model;
 	class ModelImporter;
 
 	class ModelAssetNode
 	{
-		friend class ModelInstance;
+		friend class Model;
 		friend class ModelImporter;
 
 	public:
@@ -29,7 +29,7 @@ namespace gfx
 
 	class ModelAsset : CodexElement
 	{
-		friend class ModelInstance;
+		friend class Model;
 		friend class ModelImporter;
 
 	public:
@@ -38,8 +38,8 @@ namespace gfx
 		virtual void Release() override;
 
 	public:
-		std::shared_ptr<ModelInstance> CreateSharedInstance(const GraphicsDevice& gfx, dx::XMMATRIX transform);
-		std::unique_ptr<ModelInstance> CreateUniqueInstance(const GraphicsDevice& gfx, dx::XMMATRIX transform);
+		std::shared_ptr<Model> CreateSharedInstance(const GraphicsDevice& gfx, dx::XMMATRIX transform);
+		std::unique_ptr<Model> CreateUniqueInstance(const GraphicsDevice& gfx, dx::XMMATRIX transform);
 
 	private:
 		std::shared_ptr<ModelAssetNode> m_pSceneGraph;

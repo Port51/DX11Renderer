@@ -5,7 +5,7 @@
 #include "Camera.h"
 #include "MeshRenderer.h"
 #include "RendererList.h"
-#include "ModelInstance.h"
+#include "Model.h"
 #include "ModelImporter.h"
 #include "SharedCodex.h"
 #include "VertexShader.h"
@@ -226,8 +226,8 @@ namespace gfx
 		// Add castle
 		{
 			const auto pCastleAsset = ModelImporter::LoadGLTF(Gfx(), "Assets\\Models\\NewCastle.asset");
-			m_pCastleModel = std::make_unique<ModelInstance>(Gfx(), pCastleAsset, sceneTransform);
-			m_pRendererList->AddModelInstance(*m_pCastleModel);
+			m_pCastleModel = std::make_unique<Model>(Gfx(), pCastleAsset, sceneTransform);
+			m_pRendererList->AddModel(*m_pCastleModel);
 		}
 
 		// Add magic lights (static)
@@ -239,8 +239,8 @@ namespace gfx
 				const auto transformedPos = dx::XMVector4Transform(dx::XMVectorSet(tp.x, tp.y, tp.z, 1.0), sceneTransform);
 				m_pLightManager->AddPointLight(Gfx(), transformedPos, GetRandomMagicLight(), 2.8f * std::sqrt(tp.w), 1.f, 3.15f * tp.w);
 
-				m_pGemModels.emplace_back(std::make_unique<ModelInstance>(Gfx(), pGemAsset, dx::XMMatrixScaling(tp.w, tp.w, tp.w) * dx::XMMatrixRotationRollPitchYaw(0.f, m_pRandomGenerator->GetUniformFloat(0.f, dx::XM_2PI), 0.f) * dx::XMMatrixTranslationFromVector(transformedPos)));
-				m_pRendererList->AddModelInstance(*m_pGemModels.at(m_pGemModels.size() - 1u));
+				m_pGemModels.emplace_back(std::make_unique<Model>(Gfx(), pGemAsset, dx::XMMatrixScaling(tp.w, tp.w, tp.w) * dx::XMMatrixRotationRollPitchYaw(0.f, m_pRandomGenerator->GetUniformFloat(0.f, dx::XM_2PI), 0.f) * dx::XMMatrixTranslationFromVector(transformedPos)));
+				m_pRendererList->AddModel(*m_pGemModels.at(m_pGemModels.size() - 1u));
 
 				// dx::XMFLOAT3(1.f, 0.25f, 0.04f) was a good color for torches
 			}
@@ -260,8 +260,8 @@ namespace gfx
 				//lightPosition = dx::XMLoadFloat3(&tp.position);
 				m_pLightManager->AddPointLight(Gfx(), lightPosition, dx::XMFLOAT3(0.f / 255.f, 98.f / 255.f, 255.f / 255.f), 2.8f, 1.f, 3.15f);
 
-				m_pPersonModels.emplace_back(std::make_unique<ModelInstance>(Gfx(), pPersonAsset, transformedPos));
-				m_pRendererList->AddModelInstance(*m_pPersonModels.at(m_pPersonModels.size() - 1u));
+				m_pPersonModels.emplace_back(std::make_unique<Model>(Gfx(), pPersonAsset, transformedPos));
+				m_pRendererList->AddModel(*m_pPersonModels.at(m_pPersonModels.size() - 1u));
 
 				// dx::XMFLOAT3(1.f, 0.25f, 0.04f) was a good color for torches
 			}
@@ -276,8 +276,8 @@ namespace gfx
 			m_boatAngularVelocities.resize(boatPlacements.size());
 			for (const auto& bp : boatPlacements)
 			{
-				m_pBoatModels.emplace_back(std::make_unique<ModelInstance>(Gfx(), pBoatAsset, dx::XMLoadFloat4x4(&bp.trs) * sceneTransform));
-				m_pRendererList->AddModelInstance(*m_pBoatModels.at(m_pBoatModels.size() - 1u));
+				m_pBoatModels.emplace_back(std::make_unique<Model>(Gfx(), pBoatAsset, dx::XMLoadFloat4x4(&bp.trs) * sceneTransform));
+				m_pRendererList->AddModel(*m_pBoatModels.at(m_pBoatModels.size() - 1u));
 
 				m_boatStartPositions.emplace_back(m_pBoatModels.at(m_pBoatModels.size() - 1u)->GetPositionWS());
 			}

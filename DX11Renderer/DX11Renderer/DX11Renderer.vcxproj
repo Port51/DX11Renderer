@@ -233,7 +233,7 @@
     <ClCompile Include="src\Material.cpp" />
     <ClCompile Include="src\MaterialPass.cpp" />
     <ClCompile Include="src\MeshRenderer.cpp" />
-    <ClCompile Include="src\ModelInstance.cpp" />
+    <ClCompile Include="src\Model.cpp" />
     <ClCompile Include="src\NullPixelShader.cpp" />
     <ClCompile Include="src\PixelShader.cpp" />
     <ClCompile Include="src\PointLight.cpp" />
@@ -369,7 +369,7 @@
     <ClInclude Include="src\MeshRenderer.h" />
     <ClInclude Include="src\MeshAsset.h" />
     <ClInclude Include="src\ModelAsset.h" />
-    <ClInclude Include="src\ModelInstance.h" />
+    <ClInclude Include="src\Model.h" />
     <ClInclude Include="src\NullPixelShader.h" />
     <ClInclude Include="src\RasterizerState.h" />
     <ClInclude Include="src\RenderTexture.h" />

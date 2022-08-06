@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "ModelAsset.h"
 #include "MeshAsset.h"
-#include "ModelInstance.h"
+#include "Model.h"
 #include <assert.h>
 #include <stdio.h>
 
@@ -12,7 +12,7 @@
 #include "Camera.h"
 #include "MeshRenderer.h"
 #include "RendererList.h"
-#include "ModelInstance.h"
+#include "Model.h"
 #include "ModelImporter.h"
 #include "SharedCodex.h"
 #include "VertexShader.h"
@@ -34,18 +34,18 @@ namespace gfx
 		m_pSceneGraph->Release();
 	}
 
-	std::shared_ptr<ModelInstance> ModelAsset::CreateSharedInstance(const GraphicsDevice& gfx, dx::XMMATRIX transform)
+	std::shared_ptr<Model> ModelAsset::CreateSharedInstance(const GraphicsDevice& gfx, dx::XMMATRIX transform)
 	{
 		// todo: fix alignment bug
 		return nullptr;
-		//return std::make_shared<ModelInstance>(gfx, *this, std::move(transform));
+		//return std::make_shared<Model>(gfx, *this, std::move(transform));
 	}
 
-	std::unique_ptr<ModelInstance> ModelAsset::CreateUniqueInstance(const GraphicsDevice& gfx, dx::XMMATRIX transform)
+	std::unique_ptr<Model> ModelAsset::CreateUniqueInstance(const GraphicsDevice& gfx, dx::XMMATRIX transform)
 	{
 		// todo: fix alignment bug
 		return nullptr;
-		//return std::make_unique<ModelInstance>(gfx, *this, std::move(transform));
+		//return std::make_unique<Model>(gfx, *this, std::move(transform));
 	}
 
 	ModelAssetNode::ModelAssetNode(std::string _name, std::shared_ptr<MeshAsset> pMeshAsset, dx::XMFLOAT4X4 _localTransform)

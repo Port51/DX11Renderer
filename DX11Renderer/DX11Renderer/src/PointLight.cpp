@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "PointLight.h"
 #include "MeshRenderer.h"
-#include "ModelInstance.h"
+#include "Model.h"
 #include "ModelAsset.h"
 #include "LightData.h"
 #include "Camera.h"

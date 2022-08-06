@@ -12,7 +12,7 @@ namespace gfx
 {
 	class MeshRenderer;
 	class RendererList;
-	class ModelInstance;
+	class Model;
 	class LightManager;
 	class Renderer;
 	class ImguiManager;
@@ -46,16 +46,16 @@ namespace gfx
 		std::unique_ptr<Timer> m_pTimer;
 		std::unique_ptr<RandomGenerator> m_pRandomGenerator;
 
-		std::unique_ptr<ModelInstance> m_pCastleModel;
+		std::unique_ptr<Model> m_pCastleModel;
 		std::shared_ptr<RendererList> m_pRendererList;
 
-		std::vector<std::unique_ptr<ModelInstance>> m_pGemModels;
-		std::vector<std::unique_ptr<ModelInstance>> m_pBoatModels;
+		std::vector<std::unique_ptr<Model>> m_pGemModels;
+		std::vector<std::unique_ptr<Model>> m_pBoatModels;
 		std::vector<dx::XMVECTOR> m_boatStartPositions;
 		std::vector<dx::XMVECTOR> m_boatVelocities;
 		std::vector<dx::XMVECTOR> m_boatAngularVelocities;
 
-		std::vector<std::unique_ptr<ModelInstance>> m_pPersonModels;
+		std::vector<std::unique_ptr<Model>> m_pPersonModels;
 
 		bool m_showDemoWindow = true;
 		UINT m_pixelSelectionX = 450u;

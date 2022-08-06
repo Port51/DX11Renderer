@@ -13,7 +13,7 @@
 #include "RenderTexture.h"
 #include "RenderPass.h"
 #include "RendererList.h"
-#include "ModelInstance.h"
+#include "Model.h"
 #include "LightShadowData.h"
 #include "DepthStencilTarget.h"
 #include "ModelImporter.h"
@@ -113,9 +113,9 @@ namespace gfx
 	{
 		for (const auto& l : m_pLights)
 		{
-			if (l->GetModelInstance() != nullptr)
+			if (l->GetModel() != nullptr)
 			{
-				pRendererList.AddModelInstance(*l->GetModelInstance());
+				pRendererList.AddModel(*l->GetModel());
 			}
 		}
 	}

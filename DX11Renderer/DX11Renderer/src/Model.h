@@ -1,6 +1,7 @@
 #pragma once
 #include "GameObject.h"
 #include "CommonHeader.h"
+#include <vector>
 
 namespace gfx
 {
@@ -13,12 +14,12 @@ namespace gfx
 	class MeshAsset;
 	struct DrawContext;
 
-	class ModelInstance : public GameObject
+	class Model : public GameObject
 	{
 	public:
-		ModelInstance(const GraphicsDevice& gfx, const ModelAsset& pModelAsset, const dx::XMMATRIX& transform);
-		ModelInstance(const GraphicsDevice& gfx, std::shared_ptr<ModelAsset> const& pModelAsset, const dx::XMMATRIX& transform);
-		virtual ~ModelInstance();
+		Model(const GraphicsDevice& gfx, const ModelAsset& pModelAsset, const dx::XMMATRIX& transform);
+		Model(const GraphicsDevice& gfx, std::shared_ptr<ModelAsset> const& pModelAsset, const dx::XMMATRIX& transform);
+		virtual ~Model();
 	public:
 		//void SubmitDrawCalls(const DrawContext& drawContext) const;
 		void RebuildSceneGraphTransforms();
@@ -30,7 +31,7 @@ namespace gfx
 		void InitializeModel();
 	private:
 		std::shared_ptr<MeshRenderer> CreateMeshRenderer(const GraphicsDevice& gfx, std::shared_ptr<MeshAsset> const& pMeshAsset);
-		std::shared_ptr<SceneGraphNode> CreateModelInstanceNode(const GraphicsDevice& gfx, std::shared_ptr<ModelAssetNode> const& pSourceNode);
+		std::shared_ptr<SceneGraphNode> CreateModelNode(const GraphicsDevice& gfx, std::shared_ptr<ModelAssetNode> const& pSourceNode);
 	private:
 		std::vector<std::shared_ptr<Material>> m_pMaterials;
 		std::shared_ptr<SceneGraphNode> m_pSceneGraph;

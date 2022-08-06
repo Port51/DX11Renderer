@@ -75,7 +75,7 @@ namespace gfx
 	std::shared_ptr<ModelAsset> ModelImporter::LoadGLTF(const GraphicsDevice& gfx, const char * assetFilename)
 	{
 		const auto settings = GetImportSettings(gfx, assetFilename);
-		const Model model = TryLoadGLTFModel(gfx, settings.gltfPath.c_str(), settings.gltfIsBinary);
+		const tinygltf::Model model = TryLoadGLTFModel(gfx, settings.gltfPath.c_str(), settings.gltfIsBinary);
 
 		// Good reference:
 		// https://www.khronos.org/files/gltf20-reference-guide.pdf
@@ -329,7 +329,7 @@ namespace gfx
 	std::vector<dx::XMFLOAT3> ModelImporter::LoadGLTFPositions(const GraphicsDevice& gfx, const char* gltfFilename, const bool isBinary)
 	{
 		std::vector<dx::XMFLOAT3> positions;
-		const Model model = TryLoadGLTFModel(gfx, gltfFilename, isBinary);
+		const tinygltf::Model model = TryLoadGLTFModel(gfx, gltfFilename, isBinary);
 
 		// Get positions from nodes
 		positions.reserve(model.nodes.size());
@@ -344,7 +344,7 @@ namespace gfx
 	std::vector<dx::XMFLOAT4> ModelImporter::LoadGLTFPositionsAndScales(const GraphicsDevice& gfx, const char* gltfFilename, const bool isBinary)
 	{
 		std::vector<dx::XMFLOAT4> positions;
-		const Model model = TryLoadGLTFModel(gfx, gltfFilename, isBinary);
+		const tinygltf::Model model = TryLoadGLTFModel(gfx, gltfFilename, isBinary);
 
 		// Get positions from nodes
 		positions.reserve(model.nodes.size());
@@ -360,7 +360,7 @@ namespace gfx
 	std::vector<TRS> ModelImporter::LoadGLTFTransforms(const GraphicsDevice& gfx, const char* gltfFilename, const bool isBinary)
 	{
 		std::vector<TRS> transforms;
-		const Model model = TryLoadGLTFModel(gfx, gltfFilename, isBinary);
+		const tinygltf::Model model = TryLoadGLTFModel(gfx, gltfFilename, isBinary);
 
 		// Get positions from nodes
 		transforms.reserve(model.nodes.size());

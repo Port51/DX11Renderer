@@ -294,7 +294,7 @@
     <ClCompile Include="src\MeshRenderer.cpp">
       <Filter>Source\Drawable</Filter>
     </ClCompile>
-    <ClCompile Include="src\ModelInstance.cpp">
+    <ClCompile Include="src\Model.cpp">
       <Filter>Source\Drawable</Filter>
     </ClCompile>
     <ClCompile Include="src\NullPixelShader.cpp">
@@ -587,7 +587,7 @@
     <ClInclude Include="src\MeshRenderer.h">
       <Filter>Headers\Drawable</Filter>
     </ClInclude>
-    <ClInclude Include="src\ModelInstance.h">
+    <ClInclude Include="src\Model.h">
       <Filter>Headers\Drawable</Filter>
     </ClInclude>
     <ClInclude Include="src\NullPixelShader.h">

@@ -4,7 +4,7 @@
 #include "RendererList.h"
 #include "Frustum.h"
 #include "MeshRenderer.h"
-#include "ModelInstance.h"
+#include "Model.h"
 #include "Renderer.h"
 #include "SceneGraphNode.h"
 #include <queue>
@@ -112,9 +112,9 @@ namespace gfx
 		}
 	}
 
-	void RendererList::AddModelInstance(const ModelInstance & modelInstance)
+	void RendererList::AddModel(const Model & model)
 	{
-		m_pSceneGraphs.emplace_back(modelInstance.GetSceneGraph());
+		m_pSceneGraphs.emplace_back(model.GetSceneGraph());
 	}
 
 	void RendererList::AddSceneGraph(std::shared_ptr<SceneGraphNode> pSceneGraph)
