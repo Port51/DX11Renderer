@@ -14,12 +14,12 @@ namespace gfx
 	class MeshAsset;
 	struct DrawContext;
 
-	class Model : public BaseModel
+	class InstancedModel : public BaseModel
 	{
 	public:
-		Model(const GraphicsDevice& gfx, const ModelAsset& pModelAsset, const dx::XMMATRIX& transform);
-		Model(const GraphicsDevice& gfx, std::shared_ptr<ModelAsset> const& pModelAsset, const dx::XMMATRIX& transform);
-		virtual ~Model();
+		InstancedModel(const GraphicsDevice& gfx, const ModelAsset& pModelAsset, const dx::XMMATRIX& transform);
+		InstancedModel(const GraphicsDevice& gfx, std::shared_ptr<ModelAsset> const& pModelAsset, const dx::XMMATRIX& transform);
+		virtual ~InstancedModel();
 	public:
 		//void SubmitDrawCalls(const DrawContext& drawContext) const;
 		void RebuildSceneGraphTransforms();
@@ -33,6 +33,7 @@ namespace gfx
 		std::shared_ptr<MeshRenderer> CreateMeshRenderer(const GraphicsDevice& gfx, std::shared_ptr<MeshAsset> const& pMeshAsset);
 		std::shared_ptr<SceneGraphNode> CreateModelNode(const GraphicsDevice& gfx, std::shared_ptr<ModelAssetNode> const& pSourceNode);
 	protected:
+		size_t m_instanceCount;
 		std::vector<std::shared_ptr<Material>> m_pMaterials;
 		std::shared_ptr<SceneGraphNode> m_pSceneGraph;
 		std::vector<std::shared_ptr<MeshRenderer>> m_pMeshRenderers;

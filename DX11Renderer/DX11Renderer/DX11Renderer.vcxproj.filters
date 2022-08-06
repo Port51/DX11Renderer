@@ -453,6 +453,12 @@
     <ClCompile Include="src\GameObject.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="src\InstancedModel.cpp">
+      <Filter>Source\Drawable</Filter>
+    </ClCompile>
+    <ClCompile Include="src\BaseModel.cpp">
+      <Filter>Source\Drawable</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -778,6 +784,12 @@
     </ClInclude>
     <ClInclude Include="src\TRS.h">
       <Filter>Headers\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\InstancedModel.h">
+      <Filter>Headers\Drawable</Filter>
+    </ClInclude>
+    <ClInclude Include="src\BaseModel.h">
+      <Filter>Headers\Drawable</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

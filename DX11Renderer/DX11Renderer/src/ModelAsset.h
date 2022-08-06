@@ -11,6 +11,7 @@ namespace gfx
 	class ModelAssetNode
 	{
 		friend class Model;
+		friend class InstancedModel;
 		friend class ModelImporter;
 
 	public:
@@ -30,6 +31,7 @@ namespace gfx
 	class ModelAsset : CodexElement
 	{
 		friend class Model;
+		friend class InstancedModel;
 		friend class ModelImporter;
 
 	public:

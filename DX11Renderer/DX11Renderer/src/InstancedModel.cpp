@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "Model.h"
+#include "InstancedModel.h"
 #include "ModelAsset.h"
 #include "MeshAsset.h"
 #include "MeshRenderer.h"
@@ -16,7 +16,7 @@
 
 namespace gfx
 {
-	Model::Model(const GraphicsDevice& gfx, const ModelAsset& pModelAsset, const dx::XMMATRIX& transform)
+	InstancedModel::InstancedModel(const GraphicsDevice& gfx, const ModelAsset& pModelAsset, const dx::XMMATRIX& transform)
 	{
 		dx::XMStoreFloat4x4(&m_transform, transform);
 		DecomposeTRS();
@@ -32,7 +32,7 @@ namespace gfx
 		InitializeModel();
 	}
 
-	Model::Model(const GraphicsDevice& gfx, std::shared_ptr<ModelAsset> const& pModelAsset, const dx::XMMATRIX& transform)
+	InstancedModel::InstancedModel(const GraphicsDevice& gfx, std::shared_ptr<ModelAsset> const& pModelAsset, const dx::XMMATRIX& transform)
 	{
 		dx::XMStoreFloat4x4(&m_transform, transform);
 		DecomposeTRS();
@@ -48,38 +48,38 @@ namespace gfx
 		InitializeModel();
 	}
 
-	Model::~Model()
+	InstancedModel::~InstancedModel()
 	{}
 
-	void Model::InitializeModel()
+	void InstancedModel::InitializeModel()
 	{
 		m_pSceneGraph->RebuildBoundingVolumeHierarchy();
 		RebuildSceneGraphTransforms();
 	}
 
-	void Model::ApplyTRS()
+	void InstancedModel::ApplyTRS()
 	{
 		GameObject::ApplyTRS();
 		RebuildSceneGraphTransforms();
 	}
 
-	void Model::RebuildSceneGraphTransforms()
+	void InstancedModel::RebuildSceneGraphTransforms()
 	{
 		m_pSceneGraph->RebuildTransform(dx::XMLoadFloat4x4(&m_transform));
 	}
 
-	const std::shared_ptr<SceneGraphNode> Model::GetSceneGraph() const
+	const std::shared_ptr<SceneGraphNode> InstancedModel::GetSceneGraph() const
 	{
 		return m_pSceneGraph;
 	}
 
-	const std::vector<std::shared_ptr<MeshRenderer>>& Model::GetMeshRenderers() const
+	const std::vector<std::shared_ptr<MeshRenderer>>& InstancedModel::GetMeshRenderers() const
 	{
 		return m_pMeshRenderers;
 	}
 
 	static int nextNodeId = 0; // todo: move
-	std::shared_ptr<SceneGraphNode> Model::CreateModelNode(const GraphicsDevice& gfx, std::shared_ptr<ModelAssetNode> const& pSourceNode)
+	std::shared_ptr<SceneGraphNode> InstancedModel::CreateModelNode(const GraphicsDevice& gfx, std::shared_ptr<ModelAssetNode> const& pSourceNode)
 	{
 		gfx.GetLog().Info("Create ModelNode " + pSourceNode->m_name + " w/ " + std::to_string(pSourceNode->m_pChildNodes.size()) + " children");
 
@@ -105,11 +105,11 @@ namespace gfx
 		{
 			child->m_pParentNode = pNode;
 		}
-		
+
 		return std::move(pNode);
 	}
 
-	std::shared_ptr<MeshRenderer> Model::CreateMeshRenderer(const GraphicsDevice& gfx, std::shared_ptr<MeshAsset> const& pMeshAsset)
+	std::shared_ptr<MeshRenderer> InstancedModel::CreateMeshRenderer(const GraphicsDevice& gfx, std::shared_ptr<MeshAsset> const& pMeshAsset)
 	{
 		// temporary way of testing instances
 		const bool isInstance = false;
@@ -178,7 +178,7 @@ namespace gfx
 		{
 			pVertexBuffer = VertexBufferWrapper::Resolve(gfx, meshTag, vbuf);
 		}
-		
+
 		std::shared_ptr<IndexBuffer> pIndexBuffer = IndexBuffer::Resolve(gfx, meshTag, indices);
 		std::shared_ptr<Topology> pTopology = Topology::Resolve(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
