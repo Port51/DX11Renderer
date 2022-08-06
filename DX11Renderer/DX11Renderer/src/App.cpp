@@ -258,7 +258,7 @@ namespace gfx
 				const auto lightOffset = dx::XMVector4Transform(dx::XMVectorSet(0.2f, 1.41f, -0.28f, 0.f), dx::XMMatrixRotationRollPitchYawFromVector(dx::XMLoadFloat3(&tp.rotation)));
 				auto lightPosition = dx::XMVector3Transform(dx::XMVectorAdd(dx::XMLoadFloat3(&tp.position), lightOffset), sceneTransform);
 				//lightPosition = dx::XMLoadFloat3(&tp.position);
-				m_pLightManager->AddPointLight(Gfx(), lightPosition, dx::XMFLOAT3(32.f / 256.f, 255.f / 256.f, 47.f / 256.f), 2.8f, 1.f, 3.15f);
+				m_pLightManager->AddPointLight(Gfx(), lightPosition, dx::XMFLOAT3(0.f / 255.f, 98.f / 255.f, 255.f / 255.f), 2.8f, 1.f, 3.15f);
 
 				m_pPersonModels.emplace_back(std::make_unique<ModelInstance>(Gfx(), pPersonAsset, transformedPos));
 				m_pRendererList->AddModelInstance(*m_pPersonModels.at(m_pPersonModels.size() - 1u));
