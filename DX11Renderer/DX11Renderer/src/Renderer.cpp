@@ -15,6 +15,7 @@
 #include "ComputeShader.h"
 #include "ComputeKernel.h"
 #include "StructuredBuffer.h"
+#include "ConstantBuffer.h"
 #include "CommonCbuffers.h"
 #include "LightData.h"
 #include "PointLight.h"

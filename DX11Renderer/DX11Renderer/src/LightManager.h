@@ -2,10 +2,7 @@
 #include "CommonHeader.h"
 #include "DXMathInclude.h"
 #include <vector>
-#include "ShadowPassContext.h"
 
-#include "StructuredBuffer.h"
-#include "ConstantBuffer.h"
 #include "LightShadowData.h"
 #include "CommonCbuffers.h"
 #include "LightData.h"

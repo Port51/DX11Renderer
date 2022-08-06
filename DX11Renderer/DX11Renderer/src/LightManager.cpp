@@ -4,6 +4,7 @@
 #include "GraphicsDevice.h"
 #include "Camera.h"
 #include "StructuredBuffer.h"
+#include "ConstantBuffer.h"
 #include "Renderer.h"
 #include "RenderStats.h"
 #include "RenderConstants.h"
@@ -18,6 +19,7 @@
 #include "DepthStencilTarget.h"
 #include "ModelImporter.h"
 #include "Config.h"
+#include "ShadowPassContext.h"
 
 namespace gfx
 {
