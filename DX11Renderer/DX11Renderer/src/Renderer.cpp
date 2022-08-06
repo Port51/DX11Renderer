@@ -58,6 +58,7 @@ namespace gfx
 		// Components
 		//
 		m_pVisibleRendererList = std::make_unique<RendererList>(pRendererList);
+		m_pVisibleTransparentRendererList = std::make_unique<RendererList>(pRendererList);
 
 		//
 		// Texture assets and samplers
@@ -302,7 +303,7 @@ namespace gfx
 			.PSSetSRV(RenderSlots::PS_FreeSRV + 4u, m_pLightManager->GetLightDataSRV())
 			.PSSetSRV(RenderSlots::PS_FreeSRV + 5u, m_pLightManager->GetShadowDataSRV())
 			.PSSetSRV(RenderSlots::PS_FreeSRV + 6u, m_pLightManager->GetShadowAtlas().GetSRV())
-			.PSSetCB(RenderSlots::PS_FreeCB + 0u, m_pClusteredLightingCB->GetD3DBuffer())
+			.PSSetCB(RenderSlots::PS_FreeCB + 1u, m_pClusteredLightingCB->GetD3DBuffer())
 			.PSSetSPL(RenderSlots::PS_FreeSPL + 0u, m_pShadowSampler->GetD3DSampler());
 
 		GetRenderPass(RenderPassType::CreateDownsampledX2Texture).
@@ -424,13 +425,20 @@ namespace gfx
 
 		// Submit draw calls
 		{
-			static DrawContext drawContext(*this, std::move(std::vector<RenderPassType> { RenderPassType::DepthPrepassRenderPass, RenderPassType::GBufferRenderPass, RenderPassType::OpaqueRenderPass }));
-			drawContext.viewMatrix = camera.GetViewMatrix();
-			drawContext.projMatrix = camera.GetProjectionMatrix();
+			static DrawContext opaqueDrawContext(*this, std::move(std::vector<RenderPassType> { RenderPassType::DepthPrepassRenderPass, RenderPassType::GBufferRenderPass, RenderPassType::OpaqueRenderPass }));
+			opaqueDrawContext.viewMatrix = camera.GetViewMatrix();
+			opaqueDrawContext.projMatrix = camera.GetProjectionMatrix();
 
 			// todo: filter by render passes too
 			m_pVisibleRendererList->Filter(gfx, camera.GetFrustumWS(), RendererList::RendererSortingType::StateThenBackToFront, camera.GetPositionWS(), camera.GetForwardWS(), camera.GetFarClipPlane());
-			m_pVisibleRendererList->SubmitDrawCalls(drawContext);
+			m_pVisibleRendererList->SubmitDrawCalls(opaqueDrawContext);
+
+			static DrawContext transparentDrawContext(*this, std::move(std::vector<RenderPassType> { RenderPassType::TransparentRenderPass }));
+			transparentDrawContext.viewMatrix = camera.GetViewMatrix();
+			transparentDrawContext.projMatrix = camera.GetProjectionMatrix();
+
+			m_pVisibleTransparentRendererList->Filter(gfx, camera.GetFrustumWS(), RendererList::RendererSortingType::BackToFrontThenState, camera.GetPositionWS(), camera.GetForwardWS(), camera.GetFarClipPlane());
+			m_pVisibleTransparentRendererList->SubmitDrawCalls(transparentDrawContext);
 		}
 
 		// Early frame calculations

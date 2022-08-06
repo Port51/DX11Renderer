@@ -109,6 +109,7 @@ namespace gfx
 
 		std::shared_ptr<RendererList> m_pRendererList;
 		std::unique_ptr<RendererList> m_pVisibleRendererList; // filtered by camera frustum
+		std::unique_ptr<RendererList> m_pVisibleTransparentRendererList; // filtered by camera frustum
 
 		std::shared_ptr<LightManager> m_pLightManager;
 		std::shared_ptr<ParticleManager> m_pParticleManager;
