@@ -15,9 +15,10 @@ namespace gfx
 		m_intensity(intensity)
 	{
 		SetPositionWS(positionWS);
-		if (allowUserControl && pModelAsset != nullptr)
+		if (pModelAsset != nullptr)
 		{
-			m_pModel = std::make_unique<ModelInstance>(gfx, pModelAsset, dx::XMMatrixScaling(0.1f, 0.1f, 0.1f));
+			const float scale = 0.25f;
+			m_pModel = std::make_unique<ModelInstance>(gfx, pModelAsset, dx::XMMatrixScaling(scale, scale, scale) * dx::XMMatrixTranslationFromVector(positionWS));
 		}
 	}
 

@@ -218,25 +218,25 @@ namespace gfx
 
 	void App::CreateCastleScene()
 	{
-		auto sceneTransform = dx::XMMatrixTranslation(2.f, -5.f, 0.f);
+		const auto sceneTransform = dx::XMMatrixTranslation(2.f, -5.f, 0.f);
 
 		// Moonlight
 		m_pLightManager->AddDirectionalLight(Gfx(), 30.f, 30.f, dx::XMFLOAT3(1.f, 1.f, 1.f), 0.25f);
 
 		// Add castle
 		{
-			auto pCastleAsset = ModelImporter::LoadGLTF(Gfx(), "Assets\\Models\\NewCastle.asset");
+			const auto pCastleAsset = ModelImporter::LoadGLTF(Gfx(), "Assets\\Models\\NewCastle.asset");
 			m_pCastleModel = std::make_unique<ModelInstance>(Gfx(), pCastleAsset, sceneTransform);
 			m_pRendererList->AddModelInstance(*m_pCastleModel);
 		}
 
 		// Add magic lights (static)
 		{
-			auto pGemAsset = ModelImporter::LoadGLTF(Gfx(), "Assets\\Models\\Gem.asset");
+			const auto pGemAsset = ModelImporter::LoadGLTF(Gfx(), "Assets\\Models\\Gem.asset");
 			const auto torchPlacements = ModelImporter::LoadGLTFPositionsAndScales(Gfx(), "Assets\\Models\\GLTF\\NewCastle_TorchPlacements.glb");
 			for (const auto& tp : torchPlacements)
 			{
-				auto transformedPos = dx::XMVector4Transform(dx::XMVectorSet(tp.x, tp.y, tp.z, 1.0), sceneTransform);
+				const auto transformedPos = dx::XMVector4Transform(dx::XMVectorSet(tp.x, tp.y, tp.z, 1.0), sceneTransform);
 				m_pLightManager->AddPointLight(Gfx(), transformedPos, GetRandomMagicLight(), 2.8f * std::sqrt(tp.w), 1.f, 3.15f * tp.w);
 
 				m_pGemModels.emplace_back(std::make_unique<ModelInstance>(Gfx(), pGemAsset, dx::XMMatrixScaling(tp.w, tp.w, tp.w) * dx::XMMatrixRotationRollPitchYaw(0.f, m_pRandomGenerator->GetUniformFloat(0.f, dx::XM_2PI), 0.f) * dx::XMMatrixTranslationFromVector(transformedPos)));
@@ -248,15 +248,16 @@ namespace gfx
 
 		// Add people (static)
 		{
-			auto pPersonAsset = ModelImporter::LoadGLTF(Gfx(), "Assets\\Models\\Person.asset");
+			const auto pPersonAsset = ModelImporter::LoadGLTF(Gfx(), "Assets\\Models\\Person.asset");
 			const auto personPlacements = ModelImporter::LoadGLTFTransforms(Gfx(), "Assets\\Models\\GLTF\\NewCastle_PersonPlacements.glb");
 			for (const auto& tp : personPlacements)
 			{
-				auto transformedPos = dx::XMLoadFloat4x4(&tp.trs) * sceneTransform;
+				const auto transformedPos = dx::XMLoadFloat4x4(&tp.trs) * sceneTransform;
 				
 				// Mask out translation by setting W = 0
-				auto lightOffset = dx::XMVector4Transform(dx::XMVectorSet(0.2f, 1.41f, 0.28f, 0.f), transformedPos);
-				auto lightPosition = dx::XMVectorAdd(DecomposeMatrixTranslation(transformedPos), lightOffset); 
+				const auto lightOffset = dx::XMVector4Transform(dx::XMVectorSet(0.2f, 1.41f, -0.28f, 0.f), dx::XMMatrixRotationRollPitchYawFromVector(dx::XMLoadFloat3(&tp.rotation)));
+				auto lightPosition = dx::XMVector3Transform(dx::XMVectorAdd(dx::XMLoadFloat3(&tp.position), lightOffset), sceneTransform);
+				//lightPosition = dx::XMLoadFloat3(&tp.position);
 				m_pLightManager->AddPointLight(Gfx(), lightPosition, dx::XMFLOAT3(32.f / 256.f, 255.f / 256.f, 47.f / 256.f), 2.8f, 1.f, 3.15f);
 
 				m_pPersonModels.emplace_back(std::make_unique<ModelInstance>(Gfx(), pPersonAsset, transformedPos));
@@ -268,8 +269,8 @@ namespace gfx
 
 		// Add boat placements
 		{
-			auto pBoatAsset = ModelImporter::LoadGLTF(Gfx(), "Assets\\Models\\Boat.asset");
-			auto boatPlacements = ModelImporter::LoadGLTFTransforms(Gfx(), "Assets\\Models\\GLTF\\NewCastle_BoatPlacements.glb");
+			const auto pBoatAsset = ModelImporter::LoadGLTF(Gfx(), "Assets\\Models\\Boat.asset");
+			const auto boatPlacements = ModelImporter::LoadGLTFTransforms(Gfx(), "Assets\\Models\\GLTF\\NewCastle_BoatPlacements.glb");
 
 			m_boatVelocities.resize(boatPlacements.size());
 			m_boatAngularVelocities.resize(boatPlacements.size());

@@ -89,7 +89,17 @@ namespace gfx
 	void LightManager::AddPointLight(const GraphicsDevice& gfx, const dx::XMVECTOR positionWS, const dx::XMFLOAT3 color, const float intensity, const float attenuationQ, const float range)
 	{
 		auto prevCount = m_pLights.size();
-		AddLight(std::move(std::make_shared<PointLight>(gfx, prevCount, false, false, nullptr, positionWS, color, intensity, attenuationQ, range)));
+
+		const bool createDebugModels = false;
+		if (createDebugModels)
+		{
+			const auto pLightModelAsset = ModelImporter::LoadGLTF(gfx, "Assets\\Models\\DefaultSphere.asset");
+			AddLight(std::move(std::make_shared<PointLight>(gfx, prevCount, false, false, pLightModelAsset, positionWS, color, intensity, attenuationQ, range)));
+		}
+		else
+		{
+			AddLight(std::move(std::make_shared<PointLight>(gfx, prevCount, false, false, nullptr, positionWS, color, intensity, attenuationQ, range)));
+		}
 	}
 
 	void LightManager::AddDirectionalLight(const GraphicsDevice& gfx, const float pan, const float tilt, const dx::XMFLOAT3 color, const float intensity)
