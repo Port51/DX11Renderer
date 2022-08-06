@@ -62,7 +62,7 @@ namespace gfx
 
 	void DepthStencilTarget::Clear(const GraphicsDevice& gfx) const
 	{
-		gfx.GetContext()->ClearDepthStencilView(m_pDepthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.f, 0u);
+		gfx.GetContext()->ClearDepthStencilView(m_pDepthStencilView.Get(), D3D11_CLEAR_FLAG::D3D11_CLEAR_DEPTH | D3D11_CLEAR_FLAG::D3D11_CLEAR_STENCIL, 1.f, 0u);
 	}
 
 	const ComPtr<ID3D11DepthStencilView> DepthStencilTarget::GetView() const

@@ -126,12 +126,7 @@ namespace gfx
 		}
 		if (m_pDepthStencilState != nullptr)
 		{
-			if (renderState.IsNewBinding(m_pDepthStencilState->GetGuid(), RenderBindingType::OM_DepthStencilState, 0u))
-			{
-				m_pDepthStencilState->BindOM(gfx, renderState);
-				REGISTER_GPU_CALL();
-			}
-			else REGISTER_GPU_CALL_SAVED();
+			m_pDepthStencilState->BindOM(gfx, renderState);
 		}
 		for (const auto& b : m_bindings)
 		{
