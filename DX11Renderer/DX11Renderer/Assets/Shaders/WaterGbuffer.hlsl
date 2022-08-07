@@ -54,7 +54,7 @@ float4 main(v2f i) : SV_Target
     const float foamTex0 = tex.Sample(splr, i.positionWS.xz * foamScale + _Time.x * 1.13891).x;
     const float foamTex1 = tex.Sample(splr, i.positionWS.xz * foamScale * 0.8924 - _Time.x + float2(0.24839, 0.78214)).x;
     float foam = saturate((i.positionWS.y + 6.05) * 1.1);
-    foam = saturate(foam + (sdfTex.r + sdfTex.g) * 0.75f);
+    foam = saturate(foam + (sdfTex.r + sdfTex.g) * 0.65f);
     foam *= lerp(foamTex0 * foamTex1, 1.0, foam);
     foam = SCurve(foam);
 

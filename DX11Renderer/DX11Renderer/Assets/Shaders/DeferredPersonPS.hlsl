@@ -44,7 +44,7 @@ float4 main(v2f i) : SV_Target
 
     // Color selection
     const float3 interiorColor = 0.f;// float3(255.f / 255.f, 174.f / 255.f, 0.f / 255.f);
-    const float3 clothColor = 0.135f;
+    const float3 clothColor = float3(255.f / 255.f, 37.f / 255.f, 0.f / 255.f); // 0.135f;
     const float3 staffColor = float3(122.f / 255.f, 37.f / 255.f, 0.f / 255.f);
     const float3 magicColor = float3(0, 0, 0);
     float3 color = lerp(magicColor, lerp(interiorColor, lerp(staffColor, clothColor, i.vertColor.g), i.vertColor.r), i.vertColor.b);
