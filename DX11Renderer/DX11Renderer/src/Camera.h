@@ -37,7 +37,7 @@ namespace gfx
 		float m_farClipPlane;
 		float m_radius = 40.0f; // dist from origin
 		float m_orbitYaw = 0.523599f; // rotate around origin
-		float m_orbitPitch = 0.261799f; // rotate around origin
+		float m_orbitPitch = 0.314159f; // rotate around origin
 		float m_fov = 55.0f;
 		float m_aspect = 0.75f;
 		dx::XMMATRIX m_viewMatrix;

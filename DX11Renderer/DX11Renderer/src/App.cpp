@@ -155,15 +155,15 @@ namespace gfx
 				//m_boatVelocities[i] = dx::XMVectorAdd(m_boatVelocities[i], dx::XMVectorScale(dx::XMVectorSubtract(buoyancyCenter, m_pBoatModels[i]->GetPositionWS()), dt));
 
 				// Scale up over time to avoid spinning boats at the beginning
-				const float rotationScale = 3.0f * std::clamp(timeElapsed / 8.0f, 0.f, 1.f);
+				const float rotationScale = 5.51f * std::clamp(timeElapsed / 8.0f, 0.f, 1.f);
 				auto angularAccel = dx::XMVectorSet(pitchOffset * -0.225f * rotationScale, 0.f, rollOffset * 1.2f * rotationScale, 0.f);
 
 				// Add spring force that "rights" the boat
-				const float uprightForce = 4.0f;
+				const float uprightForce = 3.75f;
 				angularAccel = dx::XMVectorSubtract(angularAccel, dx::XMVectorScale(dx::XMLoadFloat3(&m_boatTransforms[i].rotation), uprightForce));
 
 				// Add damping force that opposes velocity
-				const float dampingForce = 0.25f;
+				const float dampingForce = 0.225f;
 				angularAccel = dx::XMVectorSubtract(angularAccel, dx::XMVectorScale(m_boatAngularVelocities[i], dampingForce));
 
 				// Lock yaw velocity to 0
@@ -276,7 +276,7 @@ namespace gfx
 
 	void App::CreateCastleScene()
 	{
-		m_sceneTransform = dx::XMMatrixTranslation(2.f, -5.f, 0.f);
+		m_sceneTransform = dx::XMMatrixTranslation(2.f, -4.f, 0.f);
 
 		// Moonlight
 		m_pLightManager->AddDirectionalLight(Gfx(), 30.f, 30.f, dx::XMFLOAT3(1.f, 1.f, 1.f), 0.25f);
