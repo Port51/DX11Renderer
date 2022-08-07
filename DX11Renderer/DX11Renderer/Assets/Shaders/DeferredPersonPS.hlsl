@@ -30,7 +30,6 @@ SamplerState splr : register(s0);
 
 float4 main(v2f i) : SV_Target
 {
-    i.normalVS = 1;
     float2 screenPos = (i.screenPos.xy * float2(1, -1) / i.screenPos.w) * 0.5 + 0.5;
     //screenPos = i.pos.xy / i.pos.w;
     float4 specularLight = SpecularLightingRT.Sample(splr, screenPos);
@@ -50,7 +49,7 @@ float4 main(v2f i) : SV_Target
     float3 color = lerp(magicColor, lerp(interiorColor, lerp(staffColor, clothColor, i.vertColor.g), i.vertColor.r), i.vertColor.b);
 
     // Glowy gem on end of staff
-    float3 emission = float3(0.f / 255.f, 98.f / 255.f, 255.f / 255.f) * (1.0f - i.vertColor.b) * (0.2f + 2.8f * fresnel);
+    float3 emission = float3(0.f / 255.f, 98.f / 255.f, 255.f / 255.f) * ((1.0f - i.vertColor.b) * (0.2f + 2.8f * fresnel) * 2.0f);
 
     return float4(combinedLight.rgb * color + emission, 1);
 }
