@@ -111,84 +111,14 @@ namespace gfx
 
 	std::shared_ptr<MeshRenderer> Model::CreateMeshRenderer(const GraphicsDevice& gfx, std::shared_ptr<MeshAsset> const& pMeshAsset)
 	{
-		// temporary way of testing instances
-		const bool isInstance = false;
-		const UINT instanceCount = 10u;
-
-		const auto pMaterial = m_pMaterials.at(pMeshAsset->m_materialIndex);
-		RawBufferData vbuf(pMeshAsset->m_vertices.size(), pMaterial->GetVertexLayout().GetPerVertexStride(), pMaterial->GetVertexLayout().GetPerVertexPadding());
-
-		if (pMeshAsset->m_vertices.size() == 0)
-		{
-			THROW(std::string("Mesh '") + pMeshAsset->m_name + std::string("' has 0 vertices!"));
-		}
-
-		for (unsigned int i = 0; i < pMeshAsset->m_vertices.size(); ++i)
-		{
-			const dx::XMFLOAT3 normal = (pMeshAsset->hasNormals) ? pMeshAsset->m_normals[i] : dx::XMFLOAT3(0, 0, 1);
-			const dx::XMFLOAT4 tangent = (pMeshAsset->hasTangents) ? pMeshAsset->m_tangents[i] : dx::XMFLOAT4(0, 0, 1, 0);
-			const dx::XMFLOAT4 vertColor = (pMeshAsset->hasVertColors) ? pMeshAsset->m_vertColors[i] : dx::XMFLOAT4(1, 1, 1, 1);
-			const dx::XMFLOAT2 uv0 = (pMeshAsset->m_texcoords.size() > 0) ? pMeshAsset->m_texcoords[0][i] : dx::XMFLOAT2(0, 0);
-
-			vbuf.EmplaceBack<dx::XMFLOAT3>(pMeshAsset->m_vertices[i]);
-			vbuf.EmplaceBack<dx::XMFLOAT3>(normal);
-			vbuf.EmplaceBack<dx::XMFLOAT4>(tangent);
-			vbuf.EmplaceBack<dx::XMFLOAT4>(vertColor);
-			vbuf.EmplaceBack<dx::XMFLOAT2>(uv0);
-			vbuf.EmplacePadding();
-		}
-
-		if (pMeshAsset->m_indices.size() == 0)
-		{
-			THROW(std::string("Mesh '") + pMeshAsset->m_name + std::string("' has 0 indices!"));
-		}
-		if (pMeshAsset->m_indices.size() % 3 != 0)
-		{
-			THROW(std::string("Mesh '") + pMeshAsset->m_name + std::string("' has indices which are not a multiple of 3!"));
-		}
-
-		// todo: move instance stuff somewhere else!
-		struct InstanceData
-		{
-			dx::XMFLOAT3 positionWS;
-			UINT instanceId;
-		};
-
-		// todo: better way to copy this?
-		std::vector<u32> indices;
-		indices.reserve(pMeshAsset->m_indices.size());
-		for (unsigned int i = 0; i < pMeshAsset->m_indices.size(); ++i)
-		{
-			indices.push_back(pMeshAsset->m_indices[i]);
-		}
-
 		const auto meshTag = "Mesh%" + pMeshAsset->m_name;
+		const auto pMaterial = m_pMaterials.at(pMeshAsset->m_materialIndex);
+		const auto vbuf = CreateVertexBufferData(pMeshAsset, pMaterial);
 
-		std::shared_ptr<VertexBufferWrapper> pVertexBuffer;
-		if (isInstance)
-		{
-			StructuredBufferData<InstanceData> instanceBuf(instanceCount);
-			for (size_t i = 0; i < instanceCount; ++i)
-			{
-				instanceBuf.EmplaceBack(InstanceData{ dx::XMFLOAT3(i, 0, 0), (UINT)i });
-			}
-			pVertexBuffer = VertexBufferWrapper::Resolve(gfx, meshTag, vbuf, instanceBuf);
-		}
-		else
-		{
-			pVertexBuffer = VertexBufferWrapper::Resolve(gfx, meshTag, vbuf);
-		}
-		
-		std::shared_ptr<IndexBuffer> pIndexBuffer = IndexBuffer::Resolve(gfx, meshTag, indices);
+		std::shared_ptr<VertexBufferWrapper> pVertexBuffer = VertexBufferWrapper::Resolve(gfx, meshTag, vbuf);
+		std::shared_ptr<IndexBuffer> pIndexBuffer = IndexBuffer::Resolve(gfx, meshTag, pMeshAsset->m_indices);
 		std::shared_ptr<Topology> pTopology = Topology::Resolve(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-		if (isInstance)
-		{
-			return std::make_shared<InstancedMeshRenderer>(gfx, pMeshAsset->m_name, pMeshAsset, pMaterial, std::move(pVertexBuffer), std::move(pIndexBuffer), std::move(pTopology), instanceCount);
-		}
-		else
-		{
-			return std::make_shared<MeshRenderer>(gfx, pMeshAsset->m_name, pMeshAsset, pMaterial, std::move(pVertexBuffer), std::move(pIndexBuffer), std::move(pTopology));
-		}
+		return std::make_shared<MeshRenderer>(gfx, pMeshAsset->m_name, pMeshAsset, pMaterial, std::move(pVertexBuffer), std::move(pIndexBuffer), std::move(pTopology));
 	}
 }

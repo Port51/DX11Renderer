@@ -1,6 +1,7 @@
 #pragma once
 #include "GameObject.h"
 #include "CommonHeader.h"
+#include "RawBufferData.h"
 #include <vector>
 
 namespace gfx
@@ -17,6 +18,6 @@ namespace gfx
 	class BaseModel : public GameObject
 	{
 	protected:
-		
+		const RawBufferData CreateVertexBufferData(std::shared_ptr<MeshAsset> const& pMeshAsset, std::shared_ptr<Material> const& pMaterial) const;
 	};
 }
