@@ -9,14 +9,12 @@ Pass
 {
 	Name, DepthPrepassRenderPass
 	Cull, Back
-	Define, INSTANCING_ON
 	VS, Assets\\Shaders\\DepthOnlyVS.hlsl
 }
 Pass
 {
 	Name, GBufferRenderPass
 	Cull, Back
-	Define, INSTANCING_ON
 	VS, Assets\\Shaders\\PhongVS.hlsl
 	PS, Assets\\Shaders\\OpaqueGbuffer.hlsl
 	PropertySlot, 0
@@ -25,7 +23,6 @@ Pass
 {
 	Name, OpaqueRenderPass
 	Cull, Back
-	Define, INSTANCING_ON
 	VS, Assets\\Shaders\\PhongVS.hlsl
 	PS, Assets\\Shaders\\DeferredPS.hlsl
 	PropertySlot, 0

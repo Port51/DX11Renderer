@@ -10,14 +10,12 @@ Pass
 {
 	Name, ShadowRenderPass
 	Cull, Front
-	Define, INSTANCING_ON
 	VS, Assets\\Shaders\\ShadowPassVS.hlsl
 }
 Pass
 {
 	Name, DepthPrepassRenderPass
 	Cull, Back
-	Define, INSTANCING_ON
 
 	Stencil,			Write
 	StencilRef,			1
@@ -32,7 +30,6 @@ Pass
 {
 	Name, GBufferRenderPass
 	Cull, Back
-	Define, INSTANCING_ON
 	
 	Stencil,			Write
 	StencilRef,			1
@@ -49,7 +46,6 @@ Pass
 {
 	Name, OpaqueRenderPass
 	Cull, Back
-	Define, INSTANCING_ON
 	
 	Stencil,			Write
 	StencilRef,			1

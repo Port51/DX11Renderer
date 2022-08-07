@@ -24,7 +24,7 @@ namespace gfx
 	class Material : public Bindable
 	{
 	public:
-		Material(const GraphicsDevice& gfx, const std::string_view assetPath);
+		Material(const GraphicsDevice& gfx, const std::string_view assetPath, const bool instancingOn);
 		virtual void Release() override;
 
 	public:
@@ -36,9 +36,10 @@ namespace gfx
 		const u64 GetMaterialCode(const RenderPassType renderPassType) const;
 		const VertexLayout& GetVertexLayout() const;
 		static std::shared_ptr<Bindable> Resolve(const GraphicsDevice& gfx, const std::string_view assetPath);
+		static std::shared_ptr<Bindable> Resolve(const GraphicsDevice& gfx, const std::string_view assetPath, const bool instancingOn);
 
 	protected:
-		static std::string GenerateUID(const std::string_view assetPath);
+		static std::string GenerateUID(const std::string_view assetPath, const bool instancingOn);
 		void AddBindable(std::shared_ptr<Bindable> pBindable);
 
 	private:

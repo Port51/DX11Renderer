@@ -32,6 +32,7 @@ namespace gfx
 		void Bind(const GraphicsDevice& gfx, RenderState& renderState) const;
 
 	public:
+		void SetInstanced(const bool isInstanced);
 		void SetPixelShader(std::shared_ptr<PixelShader> pPixelShader);
 		void SetVertexShader(std::shared_ptr<VertexShader> pVertexShader, std::shared_ptr<InputLayout> pInputLayout);
 		void SetStencil(std::shared_ptr<DepthStencilState> pDepthStencilState);

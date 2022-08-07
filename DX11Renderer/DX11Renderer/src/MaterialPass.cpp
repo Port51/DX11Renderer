@@ -24,6 +24,11 @@ namespace gfx
 		
 	}
 
+	void MaterialPass::SetInstanced(const bool isInstanced)
+	{
+		m_instanced = isInstanced;
+	}
+
 	void MaterialPass::SetPixelShader(std::shared_ptr<PixelShader> pPixelShader)
 	{
 		m_pPixelShader = pPixelShader;
@@ -54,7 +59,6 @@ namespace gfx
 
 	void MaterialPass::AddShaderDefine(std::string define)
 	{
-		if (define == "INSTANCING_ON") m_instanced = true;
 		m_shaderDefines.emplace_back(define);
 	}
 

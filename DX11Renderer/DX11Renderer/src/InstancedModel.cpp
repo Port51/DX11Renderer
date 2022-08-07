@@ -27,7 +27,7 @@ namespace gfx
 		m_pMaterials.reserve(pModelAsset->m_materialPaths.size());
 		for (const auto& materialPath : pModelAsset->m_materialPaths)
 		{
-			std::shared_ptr<Material> pMaterial = std::dynamic_pointer_cast<Material>(Material::Resolve(gfx, materialPath.c_str()));
+			std::shared_ptr<Material> pMaterial = std::dynamic_pointer_cast<Material>(Material::Resolve(gfx, materialPath.c_str(), true));
 			m_pMaterials.push_back(pMaterial);
 		}
 

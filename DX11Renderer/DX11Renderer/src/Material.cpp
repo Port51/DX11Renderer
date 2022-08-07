@@ -33,7 +33,7 @@ namespace gfx
 
 	enum MaterialParseState { None, Properties, Pass };
 
-	Material::Material(const GraphicsDevice& gfx, const std::string_view _materialAssetPath)
+	Material::Material(const GraphicsDevice& gfx, const std::string_view _materialAssetPath, const bool instancingOn)
 		: m_materialAssetPath(std::string(_materialAssetPath))
 	{
 		// Ref: https://gamedev.stackexchange.com/questions/93105/binding-an-instance-matrix-with-an-inputlayout
@@ -89,6 +89,12 @@ namespace gfx
 			{
 				state = MaterialParseState::Pass;
 				pMaterialPass = std::make_unique<MaterialPass>();
+
+				pMaterialPass->SetInstanced(instancingOn);
+				if (instancingOn)
+				{
+					pMaterialPass->AddShaderDefine("INSTANCING_ON");
+				}
 			}
 			else if (p.key == "}")
 			{
@@ -264,12 +270,17 @@ namespace gfx
 
 	std::shared_ptr<Bindable> Material::Resolve(const GraphicsDevice& gfx, const std::string_view assetPath)
 	{
-		return std::move(Codex::Resolve<Material>(gfx, GenerateUID(assetPath), assetPath));
+		return std::move(Resolve(gfx, assetPath, false));
 	}
 
-	std::string Material::GenerateUID(const std::string_view assetPath)
+	std::shared_ptr<Bindable> Material::Resolve(const GraphicsDevice& gfx, const std::string_view assetPath, const bool instancingOn)
 	{
-		return typeid(Material).name() + "#"s + std::string(assetPath);
+		return std::move(Codex::Resolve<Material>(gfx, GenerateUID(assetPath, instancingOn), assetPath, instancingOn));
+	}
+
+	std::string Material::GenerateUID(const std::string_view assetPath, const bool instancingOn)
+	{
+		return typeid(Material).name() + "#"s + std::string(assetPath) + std::string((instancingOn) ? "-INSTANCED" : "");
 	}
 
 	void Material::AddBindable(std::shared_ptr<Bindable> pBindable)
