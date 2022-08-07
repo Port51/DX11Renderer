@@ -170,17 +170,20 @@ namespace gfx
 				if (p.key == "VS")
 				{
 					// Bind vertex shader and input layout
-					const auto vertexShaderName = std::move(p.values[0]);
-					auto pVertexShader = VertexShader::Resolve(gfx, vertexShaderName.c_str(), pMaterialPass->GetShaderDefines());
+					const auto vertexShaderPath = p.values[0].c_str();
+					const auto vertexShaderEntry = (p.values.size() >= 2u) ? p.values[1].c_str() : "main";
+
+					auto pVertexShader = VertexShader::Resolve(gfx, vertexShaderPath, vertexShaderEntry, pMaterialPass->GetShaderDefines());
 					const auto pvsbc = pVertexShader->GetBytecode();
-					auto pInputLayout = InputLayout::Resolve(gfx, std::move(m_vertexLayout), vertexShaderName.c_str(), pvsbc);
+					auto pInputLayout = InputLayout::Resolve(gfx, std::move(m_vertexLayout), vertexShaderPath, pvsbc);
 
 					pMaterialPass->SetVertexShader(std::move(pVertexShader), std::move(pInputLayout));
 				}
 				else if (p.key == "PS")
 				{
-					const auto pixelShaderName = std::move(p.values[0]);
-					pMaterialPass->SetPixelShader(PixelShader::Resolve(gfx, pixelShaderName.c_str(), pMaterialPass->GetShaderDefines()));
+					const auto pixelShaderPath = p.values[0].c_str();
+					const auto pixelShaderEntry = (p.values.size() >= 2u) ? p.values[1].c_str() : "main";
+					pMaterialPass->SetPixelShader(PixelShader::Resolve(gfx, pixelShaderPath, pixelShaderEntry, pMaterialPass->GetShaderDefines()));
 				}
 				else if (p.key == "PropertySlot")
 				{

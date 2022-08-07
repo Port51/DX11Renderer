@@ -11,16 +11,20 @@ namespace gfx
 	u16 PixelShader::m_nextInstanceIdx = 1u; // start from 1, as 0 is reserved for "no pixel shader"
 
 	PixelShader::PixelShader(const GraphicsDevice& gfx, const char* path)
-		: PixelShader(gfx, path, std::vector<std::string>())
-	{}
+		: PixelShader(gfx, path, "main", std::vector<std::string>())
+	{
+		
+	}
 
-	PixelShader::PixelShader(const GraphicsDevice& gfx, const char* path, const std::vector<std::string>& shaderDefines)
+	PixelShader::PixelShader(const GraphicsDevice& gfx, const char* path, const char* entryPoint, const std::vector<std::string>& shaderDefines)
 		: m_instanceIdx(m_nextInstanceIdx++), // overflow is unlikely, but ok here
-		Shader(path)
+		Shader(path, entryPoint)
 	{
 		ComPtr<ID3DBlob> pBlob;
 		std::wstring wide{ m_path.begin(), m_path.end() }; // convert to wide for file read <-- won't work for special characters
 		THROW_IF_FAILED(D3DReadFileToBlob(wide.c_str(), &pBlob));
+
+
 		THROW_IF_FAILED(gfx.GetAdapter()->CreatePixelShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &m_pPixelShader));
 	}
 
@@ -53,17 +57,27 @@ namespace gfx
 
 	std::shared_ptr<PixelShader> PixelShader::Resolve(const GraphicsDevice& gfx, const char* path)
 	{
-		return PixelShader::Resolve(gfx, path, std::vector<std::string>());
+		return std::move(Codex::Resolve<PixelShader>(gfx, GenerateUID(path), path));
 	}
 
-	std::shared_ptr<PixelShader> PixelShader::Resolve(const GraphicsDevice& gfx, const char* path, const std::vector<std::string>& shaderDefines)
+	std::shared_ptr<PixelShader> PixelShader::Resolve(const GraphicsDevice& gfx, const char* path, const char* entryPoint)
 	{
-		return std::move(Codex::Resolve<PixelShader>(gfx, GenerateUID(path, shaderDefines), path, shaderDefines));
+		return std::move(Resolve(gfx, path, entryPoint, std::vector<std::string>()));
 	}
 
-	std::string PixelShader::GenerateUID(const char* path, const std::vector<std::string>& shaderDefines)
+	std::shared_ptr<PixelShader> PixelShader::Resolve(const GraphicsDevice& gfx, const char* path, const char* entryPoint, const std::vector<std::string>& shaderDefines)
 	{
-		std::string uid = typeid(PixelShader).name() + "#"s + path;
+		return std::move(Codex::Resolve<PixelShader>(gfx, GenerateUID(path, entryPoint, shaderDefines), path, entryPoint, shaderDefines));
+	}
+
+	std::string PixelShader::GenerateUID(const char* path)
+	{
+		return typeid(PixelShader).name() + "#"s + path;
+	}
+
+	std::string PixelShader::GenerateUID(const char* path, const char* entryPoint, const std::vector<std::string>& shaderDefines)
+	{
+		std::string uid = GenerateUID(path) + "-" + entryPoint;
 		for (const auto& s : shaderDefines)
 		{
 			uid += ("|" + s);

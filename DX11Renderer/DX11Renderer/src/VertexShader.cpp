@@ -13,12 +13,12 @@ namespace gfx
 	u16 VertexShader::m_nextInstanceIdx = 1u; // start from 1, as 0 is reserved for "no vertex shader"
 
 	VertexShader::VertexShader(const GraphicsDevice& gfx, const char* path)
-		: VertexShader(gfx, path, std::vector<std::string>())
+		: VertexShader(gfx, path, "main", std::vector<std::string>())
 	{}
 
-	VertexShader::VertexShader(const GraphicsDevice& gfx, const char* path, const std::vector<std::string>& shaderDefines)
+	VertexShader::VertexShader(const GraphicsDevice& gfx, const char* path, const char* entryPoint, const std::vector<std::string>& shaderDefines)
 		: m_instanceIdx(m_nextInstanceIdx++), // overflow is unlikely, but ok here
-		Shader(path)
+		Shader(path, entryPoint)
 	{
 		std::wstring wide{ m_path.begin(), m_path.end() }; // convert to wide for file read <-- won't work for special characters
 		THROW_IF_FAILED(D3DReadFileToBlob(wide.c_str(), &m_pBytecodeBlob));
@@ -65,17 +65,27 @@ namespace gfx
 
 	std::shared_ptr<VertexShader> VertexShader::Resolve(const GraphicsDevice& gfx, const char* path)
 	{
-		return VertexShader::Resolve(gfx, path, std::vector<std::string>());
+		return std::move(Codex::Resolve<VertexShader>(gfx, GenerateUID(path), path));
 	}
 
-	std::shared_ptr<VertexShader> VertexShader::Resolve(const GraphicsDevice& gfx, const char* path, const std::vector<std::string>& shaderDefines)
+	std::shared_ptr<VertexShader> VertexShader::Resolve(const GraphicsDevice& gfx, const char* path, const char* entryPoint)
 	{
-		return std::move(Codex::Resolve<VertexShader>(gfx, GenerateUID(path, shaderDefines), path, shaderDefines));
+		return std::move(Resolve(gfx, path, entryPoint, std::vector<std::string>()));
 	}
 
-	std::string VertexShader::GenerateUID(const char* path, const std::vector<std::string>& shaderDefines)
+	std::shared_ptr<VertexShader> VertexShader::Resolve(const GraphicsDevice& gfx, const char* path, const char* entryPoint, const std::vector<std::string>& shaderDefines)
 	{
-		std::string uid = typeid(VertexShader).name() + "#"s + path;
+		return std::move(Codex::Resolve<VertexShader>(gfx, GenerateUID(path, entryPoint, shaderDefines), path, entryPoint, shaderDefines));
+	}
+
+	std::string VertexShader::GenerateUID(const char* path)
+	{
+		return typeid(VertexShader).name() + "#"s + path;
+	}
+
+	std::string VertexShader::GenerateUID(const char* path, const char* entryPoint, const std::vector<std::string>& shaderDefines)
+	{
+		std::string uid = GenerateUID(path) + "-" + entryPoint;
 		for (const auto& s : shaderDefines)
 		{
 			uid += ("|" + s);

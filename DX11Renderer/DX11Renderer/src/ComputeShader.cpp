@@ -12,14 +12,14 @@ namespace gfx
 	using namespace std::string_literals;
 
 	ComputeShader::ComputeShader(const GraphicsDevice & gfx, const char* path)
-		: ComputeShader(gfx, path, std::string("CSMain"))
+		: ComputeShader(gfx, path, "CSMain", std::vector<std::string>())
 	{}
 
-	ComputeShader::ComputeShader(const GraphicsDevice& gfx, const char* path, const std::string& kernelName)
-		: m_kernelName(kernelName), Shader(path)
+	ComputeShader::ComputeShader(const GraphicsDevice& gfx, const char* path, const char* entryPoint, const std::vector<std::string>& shaderDefines)
+		: Shader(path, entryPoint)
 	{
 		if (PathEndsWithCSO(path)) CompileBytecodeBlob(gfx, path);
-		else CompileBytecodeBlob(gfx, path, kernelName.c_str());
+		else CompileBytecodeBlob(gfx, path, entryPoint);
 
 		// Create shader
 		THROW_IF_FAILED(gfx.GetAdapter()->CreateComputeShader(
@@ -75,13 +75,23 @@ namespace gfx
 		return std::move(ComputeShader::Resolve(gfx, path, "CSMain"));
 	}
 
-	std::shared_ptr<ComputeShader> ComputeShader::Resolve(const GraphicsDevice& gfx, const char* path, const char* kernelName)
+	std::shared_ptr<ComputeShader> ComputeShader::Resolve(const GraphicsDevice& gfx, const char* path, const char* entryPoint)
 	{
-		return std::move(Codex::Resolve<ComputeShader>(gfx, GenerateUID(path, kernelName), path, kernelName));
+		return std::move(Resolve(gfx, path, entryPoint, std::vector<std::string>()));
 	}
 
-	std::string ComputeShader::GenerateUID(const char* path, const char* kernelName)
+	std::shared_ptr<ComputeShader> ComputeShader::Resolve(const GraphicsDevice& gfx, const char* path, const char* entryPoint, const std::vector<std::string>& shaderDefines)
 	{
-		return typeid(ComputeShader).name() + "#"s + std::string(path) + "#"s + std::string(kernelName);
+		return std::move(Codex::Resolve<ComputeShader>(gfx, GenerateUID(path, entryPoint, shaderDefines), path, entryPoint, shaderDefines));
+	}
+
+	std::string ComputeShader::GenerateUID(const char* path)
+	{
+		return typeid(ComputeShader).name() + "#"s + std::string(path);
+	}
+
+	std::string ComputeShader::GenerateUID(const char* path, const char* entryPoint, const std::vector<std::string>& shaderDefines)
+	{
+		return GenerateUID(path) + "#"s + std::string(entryPoint);
 	}
 }

@@ -13,7 +13,7 @@ namespace gfx
 	{
 	public:
 		VertexShader(const GraphicsDevice& gfx, const char* path);
-		VertexShader(const GraphicsDevice& gfx, const char* path, const std::vector<std::string>& shaderDefines);
+		VertexShader(const GraphicsDevice& gfx, const char* path, const char* entryPoint, const std::vector<std::string>& shaderDefines);
 
 	public:
 		virtual void Release() override;
@@ -24,8 +24,10 @@ namespace gfx
 
 	public:
 		static std::shared_ptr<VertexShader> Resolve(const GraphicsDevice& gfx, const char* path);
-		static std::shared_ptr<VertexShader> Resolve(const GraphicsDevice& gfx, const char* path, const std::vector<std::string>& shaderDefines);
-		static std::string GenerateUID(const char* path, const std::vector<std::string>& shaderDefines);
+		static std::shared_ptr<VertexShader> Resolve(const GraphicsDevice& gfx, const char* path, const char* entryPoint);
+		static std::shared_ptr<VertexShader> Resolve(const GraphicsDevice& gfx, const char* path, const char* entryPoint, const std::vector<std::string>& shaderDefines);
+		static std::string GenerateUID(const char* path);
+		static std::string GenerateUID(const char* path, const char* entryPoint, const std::vector<std::string>& shaderDefines);
 
 	protected:
 		static u16 m_nextInstanceIdx;

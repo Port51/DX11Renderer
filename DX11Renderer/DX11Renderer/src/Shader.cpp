@@ -8,8 +8,8 @@ namespace gfx
 {
     using namespace std::string_literals;
 
-	Shader::Shader(const char* path)
-		: m_path(path)
+	Shader::Shader(const char* path, const char* entryPoint)
+		: m_path(path), m_entryPoint(entryPoint)
 	{}
 
 	void Shader::CompileBytecodeBlob(const GraphicsDevice& gfx, const char* path)

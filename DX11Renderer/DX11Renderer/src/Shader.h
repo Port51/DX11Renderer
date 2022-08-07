@@ -6,7 +6,7 @@ namespace gfx
 	class Shader : public Bindable
 	{
 	public:
-		Shader(const char* path);
+		Shader(const char* path, const char* entryPoint);
 
 	protected:
 		void CompileBytecodeBlob(const GraphicsDevice& gfx, const char* path);
@@ -15,6 +15,7 @@ namespace gfx
 
 	protected:
 		const std::string m_path;
+		const std::string m_entryPoint;
 		ComPtr<ID3DBlob> m_pBytecodeBlob;
 
 	};

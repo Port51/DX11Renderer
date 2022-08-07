@@ -6,7 +6,7 @@
 namespace gfx
 {
 	NullPixelShader::NullPixelShader(const GraphicsDevice& gfx)
-		: Shader("Null")
+		: Shader("Null", "Null")
 	{
 	}
 

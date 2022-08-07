@@ -12,7 +12,7 @@ namespace gfx
 	{
 	public:
 		ComputeShader(const GraphicsDevice& gfx, const char* path);
-		ComputeShader(const GraphicsDevice& gfx, const char* path, const std::string& kernelName);
+		ComputeShader(const GraphicsDevice& gfx, const char* path, const char* entryPoint, const std::vector<std::string>& shaderDefines);
 		virtual void Release() override;
 
 	public:
@@ -22,13 +22,14 @@ namespace gfx
 
 	public:
 		static std::shared_ptr<ComputeShader> Resolve(const GraphicsDevice& gfx, const char* path);
-		static std::shared_ptr<ComputeShader> Resolve(const GraphicsDevice& gfx, const char* path, const char* kernelName);
+		static std::shared_ptr<ComputeShader> Resolve(const GraphicsDevice& gfx, const char* path, const char* entryPoint);
+		static std::shared_ptr<ComputeShader> Resolve(const GraphicsDevice& gfx, const char* path, const char* entryPoint, const std::vector<std::string>& shaderDefines);
 
 	protected:
-		static std::string GenerateUID(const char* path, const char* kernelName);
+		static std::string GenerateUID(const char* path);
+		static std::string GenerateUID(const char* path, const char* entryPoint, const std::vector<std::string>& shaderDefines);
 
 	protected:
-		const std::string m_kernelName;
 		UINT m_kernelSizeX;
 		UINT m_kernelSizeY;
 		UINT m_kernelSizeZ;

@@ -13,7 +13,7 @@ namespace gfx
 	{
 	public:
 		PixelShader(const GraphicsDevice& gfx, const char* path);
-		PixelShader(const GraphicsDevice& gfx, const char* path, const std::vector<std::string>& shaderDefines);
+		PixelShader(const GraphicsDevice& gfx, const char* path, const char* entryPoint, const std::vector<std::string>& shaderDefines);
 
 	public:
 		virtual void Release() override;
@@ -23,8 +23,10 @@ namespace gfx
 
 	public:
 		static std::shared_ptr<PixelShader> Resolve(const GraphicsDevice& gfx, const char* path);
-		static std::shared_ptr<PixelShader> Resolve(const GraphicsDevice& gfx, const char* path, const std::vector<std::string>& shaderDefines);
-		static std::string GenerateUID(const char* path, const std::vector<std::string>& shaderDefines);
+		static std::shared_ptr<PixelShader> Resolve(const GraphicsDevice& gfx, const char* path, const char* entryPoint);
+		static std::shared_ptr<PixelShader> Resolve(const GraphicsDevice& gfx, const char* path, const char* entryPoint, const std::vector<std::string>& shaderDefines);
+		static std::string GenerateUID(const char* path);
+		static std::string GenerateUID(const char* path, const char* entryPoint, const std::vector<std::string>& shaderDefines);
 
 	protected:
 		static u16 m_nextInstanceIdx;

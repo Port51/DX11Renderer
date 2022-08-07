@@ -11,7 +11,7 @@ namespace gfx
 		: RenderPass(RenderPassType::SkyboxRenderPass)
 	{
 		const char* computeShaderPath = "Assets\\Shaders\\Skybox.hlsl";
-		m_pSkyboxKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, computeShaderPath, "CSMain"));
+		m_pSkyboxKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, computeShaderPath));
 	}
 
 	void SkyboxPass::Execute(const GraphicsDevice & gfx, RenderState & renderState) const
