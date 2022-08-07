@@ -9,6 +9,7 @@ struct attrib
     float2 uv0 : Texcoord0;
     float4x4 instanceTransform : INSTANCE_TRANSFORM;
     float4 instanceColor : INSTANCE_COLOR;
+    float4 instanceRngAndIndex : INSTANCE_RNG_AND_INDEX;
 };
 
 struct v2f

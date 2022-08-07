@@ -14,11 +14,12 @@
 #include "StructuredBufferData.h"
 #include "DrawContext.h"
 #include "SceneGraphNode.h"
+#include "RandomGenerator.h"
 
 namespace gfx
 {
 
-	InstancedModel::InstancedModel(const GraphicsDevice& gfx, std::shared_ptr<ModelAsset> const& pModelAsset, const dx::XMMATRIX& transform, const std::vector<TRS>& instancePositions)
+	InstancedModel::InstancedModel(const GraphicsDevice& gfx, std::shared_ptr<ModelAsset> const& pModelAsset, const dx::XMMATRIX& transform, const std::vector<TRS>& instancePositions, const RandomGenerator& randomGenerator)
 		: m_instanceCount(instancePositions.size())
 	{
 		dx::XMStoreFloat4x4(&m_transform, transform);
@@ -37,7 +38,7 @@ namespace gfx
 		m_pInstanceBuf = std::make_unique<StructuredBufferData<InstanceData>>(m_instanceCount);
 		for (size_t i = 0; i < m_instanceCount; ++i)
 		{
-			m_pInstanceBuf->EmplaceBack(InstanceData{ instancePositions.at(i).trs, dx::XMFLOAT4(1, 1, 1, 1) });
+			m_pInstanceBuf->EmplaceBack(InstanceData{ instancePositions.at(i).trs, dx::XMFLOAT4(1, 1, 1, 1), dx::XMFLOAT4(randomGenerator.GetUniformFloat01(), randomGenerator.GetUniformFloat01(), randomGenerator.GetUniformFloat01(), static_cast<float>(i))});
 		}
 
 		m_pSceneGraph = CreateModelNode(gfx, pModelAsset->m_pSceneGraph, instancePositions);

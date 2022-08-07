@@ -13,6 +13,7 @@ namespace gfx
 	class ModelAssetNode;
 	class MeshAsset;
 	class VertexBufferWrapper;
+	class RandomGenerator;
 	struct DrawContext;
 
 	template<typename Type>
@@ -22,12 +23,13 @@ namespace gfx
 	{
 		dx::XMFLOAT4X4 transform;
 		dx::XMFLOAT4 color;
+		dx::XMFLOAT4 rngAndIndex;
 	};
 
 	class InstancedModel : public BaseModel
 	{
 	public:
-		InstancedModel(const GraphicsDevice& gfx, std::shared_ptr<ModelAsset> const& pModelAsset, const dx::XMMATRIX& transform, const std::vector<TRS>& instancePositions);
+		InstancedModel(const GraphicsDevice& gfx, std::shared_ptr<ModelAsset> const& pModelAsset, const dx::XMMATRIX& transform, const std::vector<TRS>& instancePositions, const RandomGenerator& randomGenerator);
 		virtual ~InstancedModel();
 
 	public:

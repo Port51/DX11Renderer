@@ -308,7 +308,7 @@ namespace gfx
 					dx::XMStoreFloat4x4(&placements[i].trs, dx::XMMatrixMultiply(dx::XMLoadFloat4x4(&placements[i].trs), m_sceneTransform));
 				}
 
-				m_pStaticInstancedModels.emplace_back(std::make_unique<InstancedModel>(Gfx(), pAsset, dx::XMMatrixIdentity(), placements));
+				m_pStaticInstancedModels.emplace_back(std::make_unique<InstancedModel>(Gfx(), pAsset, dx::XMMatrixIdentity(), placements, *m_pRandomGenerator));
 				m_pRendererList->AddModel(*m_pStaticInstancedModels.at(m_pStaticInstancedModels.size() - 1u));
 			}
 		}
@@ -343,7 +343,7 @@ namespace gfx
 				}
 
 				// Setup instances
-				m_pGemModels.emplace_back(std::make_unique<InstancedModel>(Gfx(), pGemAsset, dx::XMMatrixIdentity(), gemPlacements));
+				m_pGemModels.emplace_back(std::make_unique<InstancedModel>(Gfx(), pGemAsset, dx::XMMatrixIdentity(), gemPlacements, *m_pRandomGenerator));
 				m_pRendererList->AddModel(*m_pGemModels.at(m_pGemModels.size() - 1u));
 			}
 		}
@@ -377,7 +377,7 @@ namespace gfx
 				}
 
 				// Setup instances
-				m_pPersonModels.emplace_back(std::make_unique<InstancedModel>(Gfx(), pPersonAsset, dx::XMMatrixIdentity(), personPlacements));
+				m_pPersonModels.emplace_back(std::make_unique<InstancedModel>(Gfx(), pPersonAsset, dx::XMMatrixIdentity(), personPlacements, *m_pRandomGenerator));
 				m_pRendererList->AddModel(*m_pPersonModels.at(m_pPersonModels.size() - 1u));
 			}
 		}
@@ -405,7 +405,7 @@ namespace gfx
 				}
 
 				// Setup instances
-				m_pBoatModels.emplace_back(std::make_unique<InstancedModel>(Gfx(), pBoatAsset, dx::XMMatrixIdentity(), boatPlacements));
+				m_pBoatModels.emplace_back(std::make_unique<InstancedModel>(Gfx(), pBoatAsset, dx::XMMatrixIdentity(), boatPlacements, *m_pRandomGenerator));
 				m_pRendererList->AddModel(*m_pBoatModels.at(m_pBoatModels.size() - 1u));
 			}
 			else

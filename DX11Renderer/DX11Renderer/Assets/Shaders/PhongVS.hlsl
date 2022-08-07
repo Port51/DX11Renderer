@@ -11,6 +11,7 @@ struct attrib
     float2 uv0 : Texcoord0;
     float4x4 instanceTransform : INSTANCE_TRANSFORM;
     float4 instanceColor : INSTANCE_COLOR;
+    float4 instanceRngAndIndex : INSTANCE_RNG_AND_INDEX;
 };
 
 cbuffer PerObjectTransformCB : register(b3)
@@ -51,5 +52,13 @@ v2f main(attrib i)
     o.uv0 = float2(i.uv0.x, 1.f - i.uv0.y);
     o.vertColor = i.vertColor;
     o.screenPos = o.pos;
+
+#if defined(INSTANCING_ON)
+    o.rng = i.instanceRngAndIndex;
+    o.vertColor *= i.instanceColor;
+#else
+    o.rng = 0.f;
+#endif
+
 	return o;
 }
