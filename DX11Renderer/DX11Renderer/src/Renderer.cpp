@@ -135,15 +135,15 @@ namespace gfx
 		//
 		// Compute shaders
 		//
-		m_pHiZDepthCopyKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, "Assets\\Built\\Shaders\\HiZDepthCopy.cso"));
-		m_pHiZCreateMipKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, "Assets\\Built\\Shaders\\HiZCreateMip.cso"));
-		m_pTiledLightingKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, "Assets\\Built\\Shaders\\TiledLightingCompute.cso"));
-		m_pClusteredLightingKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, "Assets\\Built\\Shaders\\ClusteredLightingCompute.cso"));
-		m_pBilinearDownsampleKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, "Assets\\Built\\Shaders\\BilinearDownsample.cso"));
-		m_pSSRKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, "Assets\\Built\\Shaders\\SSR.cso"));
-		m_pFXAAKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, "Assets\\Built\\Shaders\\FXAA.cso"));
-		m_pDitherKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, "Assets\\Built\\Shaders\\Dither.cso"));
-		m_pTonemappingKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, "Assets\\Built\\Shaders\\Tonemapping.cso"));
+		m_pHiZDepthCopyKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, "HiZDepthCopy.cso"));
+		m_pHiZCreateMipKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, "HiZCreateMip.cso"));
+		m_pTiledLightingKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, "TiledLightingCompute.cso"));
+		m_pClusteredLightingKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, "ClusteredLightingCompute.cso"));
+		m_pBilinearDownsampleKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, "BilinearDownsample.cso"));
+		m_pSSRKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, "SSR.cso"));
+		m_pFXAAKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, "FXAA.cso"));
+		m_pDitherKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, "Dither.cso"));
+		m_pTonemappingKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, "Tonemapping.cso"));
 
 		//
 		// Render passes
@@ -168,7 +168,7 @@ namespace gfx
 		CreateRenderPass(RenderPassType::TonemappingRenderPass);
 
 		CreateRenderPass(RenderPassType::FinalBlitRenderPass,
-			std::move(std::make_unique<FullscreenPass>(gfx, RenderPassType::FinalBlitRenderPass, "Assets\\Built\\Shaders\\BlitPS.cso")));
+			std::move(std::make_unique<FullscreenPass>(gfx, RenderPassType::FinalBlitRenderPass, "BlitPS.cso")));
 
 		SetupRenderPassDependencies(gfx);
 	}

@@ -9,21 +9,21 @@ Pass
 {
 	Name, DepthPrepassRenderPass
 	Cull, Back
-	VS, Assets\\Shaders\\DepthOnlyVS.hlsl
+	VS, DepthOnlyVS.hlsl
 }
 Pass
 {
 	Name, GBufferRenderPass
 	Cull, Back
-	VS, Assets\\Shaders\\PhongVS.hlsl
-	PS, Assets\\Shaders\\OpaqueGbuffer.hlsl
+	VS, PhongVS.hlsl
+	PS, OpaqueGbuffer.hlsl
 	PropertySlot, 0
 }
 Pass
 {
 	Name, OpaqueRenderPass
 	Cull, Back
-	VS, Assets\\Shaders\\PhongVS.hlsl
-	PS, Assets\\Shaders\\DeferredPS.hlsl
+	VS, PhongVS.hlsl
+	PS, DeferredPS.hlsl
 	PropertySlot, 0
 }

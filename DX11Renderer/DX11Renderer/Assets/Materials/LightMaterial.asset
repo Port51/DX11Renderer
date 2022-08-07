@@ -7,21 +7,21 @@ Pass
 {
 	Name, DepthPrepassRenderPass
 	Cull, Back
-	VS, Assets\\Built\\Shaders\\PhongVS.cso
+	VS, PhongVS.hlsl
 }
 Pass
 {
 	Name, GBufferRenderPass
 	Cull, Back
-	VS, Assets\\Built\\Shaders\\PhongVS.cso
-	PS, Assets\\Built\\Shaders\\SolidColorGbuffer.cso
+	VS, PhongVS.hlsl
+	PS, SolidColorGbuffer.hlsl
 	PropertySlot, 0
 }
 Pass
 {
 	Name, OpaqueRenderPass
 	Cull, Back
-	VS, Assets\\Built\\Shaders\\PhongVS.cso
-	PS, Assets\\Built\\Shaders\\SolidColorPS.cso
+	VS, PhongVS.hlsl
+	PS, SolidColorPS.hlsl
 	PropertySlot, 0
 }

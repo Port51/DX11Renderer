@@ -20,7 +20,7 @@ Pass
 	StencilReadMask,	1
 	StencilWriteMask,	1
 
-	VS, Assets\\Built\\Shaders\\WaterDepthOnlyVS.cso
+	VS, WaterDepthOnlyVS.hlsl
 }
 Pass
 {
@@ -35,8 +35,8 @@ Pass
 	StencilReadMask,	1
 	StencilWriteMask,	1
 
-	VS, Assets\\Built\\Shaders\\WaterVS.cso
-	PS, Assets\\Built\\Shaders\\WaterGbuffer.cso
+	VS, WaterVS.hlsl
+	PS, WaterGbuffer.hlsl
 	PropertySlot, 0
 }
 Pass
@@ -52,7 +52,7 @@ Pass
 	StencilReadMask,	1
 	StencilWriteMask,	1
 
-	VS, Assets\\Built\\Shaders\\WaterVS.cso
-	PS, Assets\\Built\\Shaders\\WaterPS.cso
+	VS, WaterVS.hlsl
+	PS, WaterPS.hlsl
 	PropertySlot, 0
 }

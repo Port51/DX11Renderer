@@ -14,7 +14,9 @@ namespace gfx
 
 	void Shader::CompileBytecodeBlob(const GraphicsDevice& gfx, const char* path)
 	{
-		std::wstring wide{ m_path.begin(), m_path.end() }; // convert to wide for file read <-- won't work for special characters
+		// Setup path
+		const std::string fullPath = (std::string("Assets\\Built\\Shaders\\") + std::string(path));
+		std::wstring wide{ fullPath.begin(), fullPath.end() }; // convert to wide for file read <-- won't work for special characters
 
 		// Read pre-compiled shader
 		THROW_IF_FAILED(D3DReadFileToBlob(wide.c_str(), &m_pBytecodeBlob));
@@ -24,7 +26,9 @@ namespace gfx
 
 	void Shader::CompileBytecodeBlob(const GraphicsDevice& gfx, const char* path, const char* entryPoint, const std::vector<std::string>& shaderDefines, const LPCSTR profile)
     {
-		std::wstring wide{ m_path.begin(), m_path.end() }; // convert to wide for file read <-- won't work for special characters
+		// Setup path
+		const std::string fullPath = (std::string("Assets\\Shaders\\") + std::string(path));
+		std::wstring wide{ fullPath.begin(), fullPath.end() }; // convert to wide for file read <-- won't work for special characters
 
 		// Compile shader from HLSL
 		UINT flags = D3DCOMPILE_ENABLE_STRICTNESS;

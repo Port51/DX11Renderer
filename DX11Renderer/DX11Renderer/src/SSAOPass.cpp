@@ -31,9 +31,9 @@ namespace gfx
 		m_pOcclusionTexture1 = std::make_shared<RenderTexture>(gfx, DXGI_FORMAT_R8_UNORM);
 		m_pOcclusionTexture1->Init(gfx.GetAdapter(), occlusionTextureWidth, occlusionTextureHeight);
 
-		m_pOcclusionKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, "Assets\\Shaders\\SSAO.hlsl", "OcclusionPass"));
-		m_pHorizontalBlurKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, "Assets\\Shaders\\SSAO.hlsl", "HorizontalBlurPass"));
-		m_pVerticalBlurKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, "Assets\\Shaders\\SSAO.hlsl", "VerticalBlurPass"));
+		m_pOcclusionKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, "SSAO.hlsl", "OcclusionPass"));
+		m_pHorizontalBlurKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, "SSAO.hlsl", "HorizontalBlurPass"));
+		m_pVerticalBlurKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, "SSAO.hlsl", "VerticalBlurPass"));
 
 		// Create random sample directions
 		std::vector<dx::XMVECTOR> sampleOffsets;

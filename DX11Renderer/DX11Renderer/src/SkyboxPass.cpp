@@ -10,7 +10,7 @@ namespace gfx
 	SkyboxPass::SkyboxPass(const GraphicsDevice& gfx)
 		: RenderPass(RenderPassType::SkyboxRenderPass)
 	{
-		const char* computeShaderPath = "Assets\\Shaders\\Skybox.hlsl";
+		const char* computeShaderPath = "Skybox.hlsl";
 		m_pSkyboxKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, computeShaderPath));
 	}
 

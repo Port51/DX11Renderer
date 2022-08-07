@@ -10,7 +10,7 @@ Pass
 {
 	Name, ShadowRenderPass
 	Cull, Front
-	VS, Assets\\Shaders\\ShadowPassVS.hlsl
+	VS, ShadowPassVS.hlsl
 }
 Pass
 {
@@ -24,7 +24,7 @@ Pass
 	StencilReadMask,	1
 	StencilWriteMask,	1
 
-	VS, Assets\\Shaders\\DepthOnlyVS.hlsl
+	VS, DepthOnlyVS.hlsl
 }
 Pass
 {
@@ -38,8 +38,8 @@ Pass
 	StencilReadMask,	1
 	StencilWriteMask,	1
 
-	VS, Assets\\Shaders\\PhongVS.hlsl
-	PS, Assets\\Shaders\\OpaqueGbuffer.hlsl
+	VS, PhongVS.hlsl
+	PS, OpaqueGbuffer.hlsl
 	PropertySlot, 0
 }
 Pass
@@ -54,7 +54,7 @@ Pass
 	StencilReadMask,	1
 	StencilWriteMask,	1
 
-	VS, Assets\\Shaders\\PhongVS.hlsl
-	PS, Assets\\Shaders\\DeferredPS.hlsl
+	VS, PhongVS.hlsl
+	PS, DeferredPS.hlsl
 	PropertySlot, 0
 }

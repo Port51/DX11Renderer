@@ -15,7 +15,7 @@ namespace gfx
 	ParticleComputePass::ParticleComputePass(const GraphicsDevice & gfx, const ParticleManager& particleManager)
 		: RenderPass(RenderPassType::ParticleComputeRenderPass), m_particleManager(particleManager)
 	{
-		const char* computeShaderPath = "Assets\\Shaders\\GPUParticles.hlsl";
+		const char* computeShaderPath = "GPUParticles.hlsl";
 		m_pSpawnParticlesKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, computeShaderPath, "SpawnParticles"));
 		m_pUpdateParticlesKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, computeShaderPath, "UpdateParticles"));
 		m_pFrustumCullKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, computeShaderPath, "FrustumCull"));

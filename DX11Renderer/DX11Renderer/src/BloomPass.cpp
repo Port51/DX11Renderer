@@ -38,10 +38,10 @@ namespace gfx
 		Gaussian::GetGaussianWeights1D(blurWeights, 5.f);
 		m_pBloomGaussianWeights->Update(gfx, blurWeights, blurWeights.size());
 
-		m_pBloomPrefilterKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, "Assets\\Shaders\\Bloom.hlsl", "Prefilter"));
-		m_pBloomHorizontalBlurKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, "Assets\\Shaders\\Bloom.hlsl", "HorizontalGaussian"));
-		m_pBloomVerticalBlurKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, "Assets\\Shaders\\Bloom.hlsl", "VerticalGaussian"));
-		m_pBloomCombineKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, "Assets\\Shaders\\Bloom.hlsl", "Combine"));
+		m_pBloomPrefilterKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, "Bloom.hlsl", "Prefilter"));
+		m_pBloomHorizontalBlurKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, "Bloom.hlsl", "HorizontalGaussian"));
+		m_pBloomVerticalBlurKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, "Bloom.hlsl", "VerticalGaussian"));
+		m_pBloomCombineKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, "Bloom.hlsl", "Combine"));
 
 	}
 

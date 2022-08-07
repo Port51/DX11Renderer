@@ -20,7 +20,7 @@ namespace gfx
 	FullscreenPass::FullscreenPass(const GraphicsDevice& gfx, const RenderPassType renderPassType, const char* pixelShader)
 		: RenderPass(renderPassType)
 	{
-		const char* vertexShaderName = "Assets\\Built\\Shaders\\FullscreenVS.cso";
+		const char* vertexShaderName = "FullscreenVS.cso";
 		auto vs = VertexShader::Resolve(gfx, vertexShaderName);
 
 		SetupFullscreenQuadBindings(gfx, vertexShaderName, *vs.get());

@@ -27,7 +27,7 @@ namespace gfx
 		CreateSubPass(DepthOfFieldSubpass::NearBlurSubpass);
 		CreateSubPass(DepthOfFieldSubpass::CompositeSubpass);
 
-		const char* computeShaderPath = "Assets\\Shaders\\DepthOfField.hlsl";
+		const char* computeShaderPath = "DepthOfField.hlsl";
 		m_pDoFPrefilterKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, computeShaderPath, "Prefilter"));
 
 		m_pDoFHorizontalFilterKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, computeShaderPath, "HorizontalFilter"));

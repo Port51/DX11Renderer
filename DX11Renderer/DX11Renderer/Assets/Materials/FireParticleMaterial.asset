@@ -8,7 +8,7 @@ Pass
 {
 	Name, TransparentRenderPass
 	Cull, Off
-	VS, Assets\\Built\\Shaders\\FireParticleVS.cso
-	PS, Assets\\Built\\Shaders\\FireParticlePS.cso
+	VS, FireParticleVS.hlsl
+	PS, FireParticlePS.hlsl
 	PropertySlot, 0
 }
