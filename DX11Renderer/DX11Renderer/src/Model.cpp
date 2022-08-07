@@ -51,34 +51,11 @@ namespace gfx
 	Model::~Model()
 	{}
 
-	void Model::InitializeModel()
-	{
-		m_pSceneGraph->RebuildBoundingVolumeHierarchy();
-		RebuildSceneGraphTransforms();
-	}
-
-	void Model::ApplyTRS()
-	{
-		GameObject::ApplyTRS();
-		RebuildSceneGraphTransforms();
-	}
-
-	void Model::RebuildSceneGraphTransforms()
-	{
-		m_pSceneGraph->RebuildTransform(dx::XMLoadFloat4x4(&m_transform));
-	}
-
-	const std::shared_ptr<SceneGraphNode> Model::GetSceneGraph() const
-	{
-		return m_pSceneGraph;
-	}
-
-	const std::vector<std::shared_ptr<MeshRenderer>>& Model::GetMeshRenderers() const
+	/*const std::vector<std::shared_ptr<MeshRenderer>>& Model::GetMeshRenderers() const
 	{
 		return m_pMeshRenderers;
-	}
+	}*/
 
-	static int nextNodeId = 0; // todo: move
 	std::shared_ptr<SceneGraphNode> Model::CreateModelNode(const GraphicsDevice& gfx, std::shared_ptr<ModelAssetNode> const& pSourceNode)
 	{
 		gfx.GetLog().Info("Create ModelNode " + pSourceNode->m_name + " w/ " + std::to_string(pSourceNode->m_pChildNodes.size()) + " children");
@@ -98,7 +75,7 @@ namespace gfx
 			pChildNodes.emplace_back(std::move(pChildNode));
 		}
 
-		auto pNode = std::make_shared<SceneGraphNode>(nextNodeId++, dx::XMLoadFloat4x4(&pSourceNode->m_localTransform), pMeshRenderer, std::move(pChildNodes));
+		auto pNode = std::make_shared<SceneGraphNode>(dx::XMLoadFloat4x4(&pSourceNode->m_localTransform), pMeshRenderer, std::move(pChildNodes));
 
 		// After creating, set parent
 		for (const auto& child : pNode->m_pChildNodes)

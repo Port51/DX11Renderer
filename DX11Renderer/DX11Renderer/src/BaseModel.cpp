@@ -2,6 +2,7 @@
 #include "BaseModel.h"
 #include "MeshAsset.h"
 #include "Material.h"
+#include "SceneGraphNode.h"
 
 namespace gfx
 {
@@ -38,5 +39,27 @@ namespace gfx
 		}
 
 		return vbuf;
+	}
+
+	void BaseModel::ApplyTRS()
+	{
+		GameObject::ApplyTRS();
+		RebuildSceneGraphTransforms();
+	}
+
+	void BaseModel::RebuildSceneGraphTransforms()
+	{
+		m_pSceneGraph->RebuildTransform(dx::XMLoadFloat4x4(&m_transform));
+	}
+
+	void BaseModel::InitializeModel()
+	{
+		m_pSceneGraph->RebuildBoundingVolumeHierarchy();
+		RebuildSceneGraphTransforms();
+	}
+
+	const std::shared_ptr<SceneGraphNode> BaseModel::GetSceneGraph() const
+	{
+		return m_pSceneGraph;
 	}
 }

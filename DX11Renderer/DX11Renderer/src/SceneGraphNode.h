@@ -20,7 +20,7 @@ namespace gfx
 		friend class Model;
 		friend class InstancedModel;
 	public:
-		SceneGraphNode(int id, const dx::XMMATRIX& _transform, std::shared_ptr<MeshRenderer> pMeshPtr, std::vector<std::shared_ptr<SceneGraphNode>> pChildNodes);
+		SceneGraphNode(const dx::XMMATRIX& _transform, std::shared_ptr<MeshRenderer> pMeshPtr, std::vector<std::shared_ptr<SceneGraphNode>> pChildNodes);
 		virtual ~SceneGraphNode() = default;
 	public:
 		//void SubmitDrawCalls(const DrawContext& drawContext) const;

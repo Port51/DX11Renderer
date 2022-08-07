@@ -7,7 +7,7 @@ namespace gfx
 {
 	class GraphicsDevice;
 	class Material;
-	class MeshRenderer;
+	class InstancedMeshRenderer;
 	class SceneGraphNode;
 	class ModelAsset;
 	class ModelAssetNode;
@@ -22,20 +22,12 @@ namespace gfx
 		virtual ~InstancedModel();
 	public:
 		//void SubmitDrawCalls(const DrawContext& drawContext) const;
-		void RebuildSceneGraphTransforms();
-		const std::shared_ptr<SceneGraphNode> GetSceneGraph() const;
-		const std::vector<std::shared_ptr<MeshRenderer>>& GetMeshRenderers() const;
+		//const std::vector<std::shared_ptr<InstancedMeshRenderer>>& GetMeshRenderers() const;
 	protected:
-		virtual void ApplyTRS() override;
-	protected:
-		void InitializeModel();
-	protected:
-		std::shared_ptr<MeshRenderer> CreateMeshRenderer(const GraphicsDevice& gfx, std::shared_ptr<MeshAsset> const& pMeshAsset);
+		std::shared_ptr<InstancedMeshRenderer> CreateInstancedMeshRenderer(const GraphicsDevice& gfx, std::shared_ptr<MeshAsset> const& pMeshAsset);
 		std::shared_ptr<SceneGraphNode> CreateModelNode(const GraphicsDevice& gfx, std::shared_ptr<ModelAssetNode> const& pSourceNode);
 	protected:
 		size_t m_instanceCount;
-		std::vector<std::shared_ptr<Material>> m_pMaterials;
-		std::shared_ptr<SceneGraphNode> m_pSceneGraph;
-		std::vector<std::shared_ptr<MeshRenderer>> m_pMeshRenderers;
+		std::vector<std::shared_ptr<InstancedMeshRenderer>> m_pMeshRenderers;
 	};
 }

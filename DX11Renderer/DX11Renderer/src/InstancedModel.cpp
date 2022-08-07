@@ -3,6 +3,7 @@
 #include "ModelAsset.h"
 #include "MeshAsset.h"
 #include "MeshRenderer.h"
+#include "InstancedMeshRenderer.h"
 #include "VertexBufferWrapper.h"
 #include "IndexBuffer.h"
 #include "Topology.h"
@@ -51,43 +52,20 @@ namespace gfx
 	InstancedModel::~InstancedModel()
 	{}
 
-	void InstancedModel::InitializeModel()
-	{
-		m_pSceneGraph->RebuildBoundingVolumeHierarchy();
-		RebuildSceneGraphTransforms();
-	}
-
-	void InstancedModel::ApplyTRS()
-	{
-		GameObject::ApplyTRS();
-		RebuildSceneGraphTransforms();
-	}
-
-	void InstancedModel::RebuildSceneGraphTransforms()
-	{
-		m_pSceneGraph->RebuildTransform(dx::XMLoadFloat4x4(&m_transform));
-	}
-
-	const std::shared_ptr<SceneGraphNode> InstancedModel::GetSceneGraph() const
-	{
-		return m_pSceneGraph;
-	}
-
-	const std::vector<std::shared_ptr<MeshRenderer>>& InstancedModel::GetMeshRenderers() const
+	/*const std::vector<std::shared_ptr<MeshRenderer>>& InstancedModel::GetMeshRenderers() const
 	{
 		return m_pMeshRenderers;
-	}
+	}*/
 
-	static int nextNodeId = 0; // todo: move
 	std::shared_ptr<SceneGraphNode> InstancedModel::CreateModelNode(const GraphicsDevice& gfx, std::shared_ptr<ModelAssetNode> const& pSourceNode)
 	{
 		gfx.GetLog().Info("Create ModelNode " + pSourceNode->m_name + " w/ " + std::to_string(pSourceNode->m_pChildNodes.size()) + " children");
 
 		// Copy mesh if needed
-		auto pMeshRenderer = std::shared_ptr<MeshRenderer>();
+		auto pMeshRenderer = std::shared_ptr<InstancedMeshRenderer>();
 		if (pSourceNode->m_pMeshAsset)
 		{
-			pMeshRenderer = CreateMeshRenderer(gfx, pSourceNode->m_pMeshAsset);
+			pMeshRenderer = CreateInstancedMeshRenderer(gfx, pSourceNode->m_pMeshAsset);
 			m_pMeshRenderers.emplace_back(pMeshRenderer);
 		}
 
@@ -98,7 +76,7 @@ namespace gfx
 			pChildNodes.emplace_back(std::move(pChildNode));
 		}
 
-		auto pNode = std::make_shared<SceneGraphNode>(nextNodeId++, dx::XMLoadFloat4x4(&pSourceNode->m_localTransform), pMeshRenderer, std::move(pChildNodes));
+		auto pNode = std::make_shared<SceneGraphNode>(dx::XMLoadFloat4x4(&pSourceNode->m_localTransform), pMeshRenderer, std::move(pChildNodes));
 
 		// After creating, set parent
 		for (const auto& child : pNode->m_pChildNodes)
@@ -109,7 +87,7 @@ namespace gfx
 		return std::move(pNode);
 	}
 
-	std::shared_ptr<MeshRenderer> InstancedModel::CreateMeshRenderer(const GraphicsDevice& gfx, std::shared_ptr<MeshAsset> const& pMeshAsset)
+	std::shared_ptr<InstancedMeshRenderer> InstancedModel::CreateInstancedMeshRenderer(const GraphicsDevice& gfx, std::shared_ptr<MeshAsset> const& pMeshAsset)
 	{
 		const auto meshTag = "Mesh%" + pMeshAsset->m_name;
 		const auto pMaterial = m_pMaterials.at(pMeshAsset->m_materialIndex);
