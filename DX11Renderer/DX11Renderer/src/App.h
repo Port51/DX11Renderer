@@ -13,6 +13,7 @@ namespace gfx
 	class MeshRenderer;
 	class RendererList;
 	class BaseModel;
+	class InstancedModel;
 	class LightManager;
 	class Renderer;
 	class ImguiManager;
@@ -64,6 +65,8 @@ namespace gfx
 		std::vector<dx::XMVECTOR> m_boatAngularVelocities;
 
 		std::vector<std::unique_ptr<BaseModel>> m_pPersonModels;
+
+		std::vector<std::unique_ptr<InstancedModel>> m_pStaticInstancedModels;
 
 		bool m_showDemoWindow = true;
 		UINT m_pixelSelectionX = 450u;

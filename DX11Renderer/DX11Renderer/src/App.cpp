@@ -288,6 +288,31 @@ namespace gfx
 			m_pRendererList->AddModel(*m_pCastleModel);
 		}
 
+		// Add static instanced objects
+		{
+			std::vector<const char*> assets {
+				"Assets\\Models\\WindowA.asset",
+				"Assets\\Models\\GLTF\\NewCastle_WindowAPlacements.glb",
+				"Assets\\Models\\RampartA.asset",
+				"Assets\\Models\\GLTF\\NewCastle_RampartAPlacements.glb",
+				"Assets\\Models\\TowerRampartA.asset",
+				"Assets\\Models\\GLTF\\NewCastle_TowerRampartAPlacements.glb"
+			};
+
+			for (size_t i = 0; i < assets.size() / 2u; ++i)
+			{
+				const auto pAsset = ModelImporter::LoadGLTF(Gfx(), assets.at(i * 2u + 0u));
+				auto placements = ModelImporter::LoadGLTFTransforms(Gfx(), assets.at(i * 2u + 1u));
+				for (int i = 0, ct = placements.size(); i < ct; ++i)
+				{
+					dx::XMStoreFloat4x4(&placements[i].trs, dx::XMMatrixMultiply(dx::XMLoadFloat4x4(&placements[i].trs), m_sceneTransform));
+				}
+
+				m_pStaticInstancedModels.emplace_back(std::make_unique<InstancedModel>(Gfx(), pAsset, dx::XMMatrixIdentity(), placements));
+				m_pRendererList->AddModel(*m_pStaticInstancedModels.at(m_pStaticInstancedModels.size() - 1u));
+			}
+		}
+
 		// Add magic lights (static)
 		{
 			const auto pGemAsset = ModelImporter::LoadGLTF(Gfx(), "Assets\\Models\\Gem.asset");

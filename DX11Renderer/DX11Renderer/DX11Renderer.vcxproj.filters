@@ -908,6 +908,15 @@
     <None Include="Assets\Materials\BoatSailMaterial.asset">
       <Filter>Assets\Materials</Filter>
     </None>
+    <None Include="Assets\Models\WindowA.asset">
+      <Filter>Assets\Models</Filter>
+    </None>
+    <None Include="Assets\Models\RampartA.asset">
+      <Filter>Assets\Models</Filter>
+    </None>
+    <None Include="Assets\Models\TowerRampartA.asset">
+      <Filter>Assets\Models</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Shaders\Lighting\ClusteredLightingCompute.hlsl">
