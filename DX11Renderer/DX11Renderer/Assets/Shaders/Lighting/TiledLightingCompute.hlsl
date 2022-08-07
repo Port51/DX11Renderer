@@ -54,6 +54,7 @@ RWTexture2D<float4> DiffuseLightingOut : register(u1);
 RWTexture2D<float4> DebugOut : register(u2);
 
 groupshared uint tileLightCount;
+groupshared uint tileDirLightCount;
 groupshared uint tileLightIndices[MAX_TILE_LIGHTS];
 groupshared uint minTileZ;
 groupshared uint maxTileZ;
@@ -68,6 +69,7 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     if (gIndex == 0)
     {
         tileLightCount = 0u;
+        tileDirLightCount = 0u;
         minTileZ = asuint(10000.f);
         maxTileZ = asuint(0.f);
     }
@@ -160,6 +162,11 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
             uint idx;
             InterlockedAdd(tileLightCount, 1u, idx);
             tileLightIndices[idx] = i;
+
+            if ((uint)light.data0.x == 2u)
+            {
+                InterlockedAdd(tileDirLightCount, 1u, idx);
+            }
         }
     }
     
@@ -312,8 +319,9 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
 	}
     
     float3 debugColor = debugValue;
+    uint debugLightCount = tileLightCount - tileDirLightCount;
 #if defined(DEBUG_VIEW_LIGHT_COUNTS)
-    debugColor = float3((diffuseLight.r) * isGeometry, tileLightCount * 0.2, 0);
+    debugColor = float3((diffuseLight.r) * isGeometry, debugLightCount * 0.2, 0);
     #define DEBUG_VIEW_SHOW_GRID
 #elif defined(DEBUG_VIEW_VERIFY_AABB_BOUNDS)
     // Show green where position is within AABB, and red where it isn't
@@ -322,7 +330,7 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
     debugColor = inBounds ? float3(0, 1, 0) : float3(1, 0, 0);
     #define DEBUG_VIEW_SHOW_GRID
 #elif defined(DEBUG_VIEW_LIGHT_COUNTS_AND_RANGES)
-    debugColor = float3(tileLightCount * 0.05 - debugViews.z * isGeometry * 0.05, tileLightCount * 0.05, tileLightCount * 0.05);
+    debugColor = float3(debugLightCount * 0.05 - debugViews.z * isGeometry * 0.05, debugLightCount * 0.05, debugLightCount * 0.05);
     #define DEBUG_VIEW_SHOW_GRID
 #elif defined(DEBUG_VIEW_ALL_SHADOWS)
     debugColor = debugViews.y; // - debugCascade;
