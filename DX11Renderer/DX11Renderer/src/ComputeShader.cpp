@@ -19,7 +19,7 @@ namespace gfx
 		: Shader(path, entryPoint)
 	{
 		if (PathEndsWithCSO(path)) CompileBytecodeBlob(gfx, path);
-		else CompileBytecodeBlob(gfx, path, entryPoint);
+		else CompileBytecodeBlob(gfx, path, entryPoint, shaderDefines);
 
 		// Create shader
 		THROW_IF_FAILED(gfx.GetAdapter()->CreateComputeShader(

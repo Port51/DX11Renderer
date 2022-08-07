@@ -22,7 +22,7 @@ namespace gfx
 		if (m_pBytecodeBlob == nullptr) THROW("Could not create bytecode blob!");
 	}
 
-	void Shader::CompileBytecodeBlob(const GraphicsDevice& gfx, const char* path, const char* entryPoint)
+	void Shader::CompileBytecodeBlob(const GraphicsDevice& gfx, const char* path, const char* entryPoint, const std::vector<std::string>& shaderDefines)
     {
 		std::wstring wide{ m_path.begin(), m_path.end() }; // convert to wide for file read <-- won't work for special characters
 
@@ -33,14 +33,23 @@ namespace gfx
 #endif
 
 		LPCSTR profile = (gfx.GetAdapter()->GetFeatureLevel() >= D3D_FEATURE_LEVEL_11_0) ? "cs_5_0" : "cs_4_0";
-		const D3D_SHADER_MACRO defines[] =
+
+		// Ref: https://gamedev.net/forums/topic/683507-d3d_shader_macro-initialization-why-does-this-work/5317541/
+		std::vector<D3D_SHADER_MACRO> defines;
+		for (const auto& s : shaderDefines)
 		{
-			//"EXAMPLE_DEFINE", "1",
-			NULL, NULL
-		};
+			D3D_SHADER_MACRO macro;
+			macro.Name = s.c_str();
+			macro.Definition = "1";
+			defines.emplace_back(macro);
+		}
+		D3D_SHADER_MACRO macro;
+		macro.Name = NULL;
+		macro.Definition = NULL;
+		defines.emplace_back(macro);
 
 		ID3DBlob* errorBlob = nullptr;
-		HRESULT hr = D3DCompileFromFile(wide.c_str(), defines, D3D_COMPILE_STANDARD_FILE_INCLUDE,
+		HRESULT hr = D3DCompileFromFile(wide.c_str(), defines.data(), D3D_COMPILE_STANDARD_FILE_INCLUDE,
 			entryPoint, profile,
 			flags, 0, &m_pBytecodeBlob, &errorBlob);
 

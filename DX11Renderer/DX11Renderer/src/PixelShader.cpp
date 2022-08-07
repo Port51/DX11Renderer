@@ -12,9 +12,7 @@ namespace gfx
 
 	PixelShader::PixelShader(const GraphicsDevice& gfx, const char* path)
 		: PixelShader(gfx, path, "main", std::vector<std::string>())
-	{
-		
-	}
+	{}
 
 	PixelShader::PixelShader(const GraphicsDevice& gfx, const char* path, const char* entryPoint, const std::vector<std::string>& shaderDefines)
 		: m_instanceIdx(m_nextInstanceIdx++), // overflow is unlikely, but ok here
