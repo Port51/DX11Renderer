@@ -64,7 +64,7 @@ float3 GetGerstnerWavesTangent(float3 positionWS)
 
 	const float wM = 0.44f;
 	const float qM = 0.85f;
-	const float ampM = lerp(0.25f, 0.0f, isHorizon) * 0.1; // lower amplitude (otherwise, need to calculate per-pixel or add tons of verts)
+	const float ampM = lerp(0.25f, 0.0f, isHorizon) * 0.09; // lower amplitude (otherwise, need to calculate per-pixel or add tons of verts)
 
 	// todo: optimize by precalculating sincos() for all of these?
 	float3 tangent = float3(0, 0, 1);
@@ -89,7 +89,7 @@ float3 GetGerstnerWavesBitangent(float3 positionWS)
 
 	const float wM = 0.44f;
 	const float qM = 0.85f;
-	const float ampM = lerp(0.25f, 0.0f, isHorizon) * 0.1; // lower amplitude (otherwise, need to calculate per-pixel or add tons of verts)
+	const float ampM = lerp(0.25f, 0.0f, isHorizon) * 0.09; // lower amplitude (otherwise, need to calculate per-pixel or add tons of verts)
 
 	// todo: optimize by precalculating sincos() for all of these?
 	float3 bitangent = float3(1, 0, 0);

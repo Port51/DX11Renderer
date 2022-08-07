@@ -34,8 +34,8 @@ float4 main(v2f i) : SV_Target
     // Calculate procedural normals
     {
         // todo: get normalmaps and use whiteout blending
-        const float2 baseUV = (i.positionWS.xz + _Time.x * 4.0f * float2(10.29303f, 0.9821f)) * float2(0.01f, 0.1f);
-        const float sampleOffset = 0.005f;
+        const float2 baseUV = (i.positionWS.xz + _Time.x * 4.0f * float2(0.09328f, -10.29303f)) * float2(0.01f, 0.1f);
+        const float sampleOffset = 0.01f;
         const float n0 = tex.Sample(splr, baseUV).x;
         const float n1 = tex.Sample(splr, baseUV + float2(sampleOffset, 0.0)).x;
         const float n2 = tex.Sample(splr, baseUV + float2(0.0, sampleOffset)).x;
