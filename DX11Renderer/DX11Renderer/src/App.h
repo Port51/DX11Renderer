@@ -54,6 +54,8 @@ namespace gfx
 		std::shared_ptr<RendererList> m_pRendererList;
 
 		std::vector<std::unique_ptr<BaseModel>> m_pGemModels;
+		std::vector<TRS> m_gemStartTransforms;
+
 		std::vector<std::unique_ptr<BaseModel>> m_pBoatModels;
 		std::vector<dx::XMVECTOR> m_boatStartPositions;
 		std::vector<dx::XMVECTOR> m_boatVelocities;
@@ -66,6 +68,7 @@ namespace gfx
 		UINT m_pixelSelectionY = 480u;
 		UINT m_pixelIteration = 0u;
 
+		dx::XMMATRIX m_sceneTransform;
 		static constexpr UINT m_nDrawables = 1;
 	};
 }

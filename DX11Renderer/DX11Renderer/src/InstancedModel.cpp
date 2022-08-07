@@ -33,12 +33,47 @@ namespace gfx
 
 		VerifyInstancing(true);
 
+		// Setup initial data
+		m_pInstanceBuf = std::make_unique<StructuredBufferData<InstanceData>>(m_instanceCount);
+		for (size_t i = 0; i < m_instanceCount; ++i)
+		{
+			m_pInstanceBuf->EmplaceBack(InstanceData{ instancePositions.at(i).trs, dx::XMFLOAT4(1, 1, 1, 1) });
+		}
+
 		m_pSceneGraph = CreateModelNode(gfx, pModelAsset->m_pSceneGraph, instancePositions);
 		InitializeModel();
 	}
 
 	InstancedModel::~InstancedModel()
 	{}
+
+	const size_t InstancedModel::GetInstanceCount() const
+	{
+		return m_instanceCount;
+	}
+
+	StructuredBufferData<InstanceData>& InstancedModel::GetInstanceData() const
+	{
+		return *m_pInstanceBuf;
+	}
+
+	InstanceData InstancedModel::GetInstanceDataPoint(const size_t i) const
+	{
+		return m_pInstanceBuf->GetElement(i);
+	}
+
+	void InstancedModel::SetInstanceDataPoint(const size_t i, const InstanceData& data)
+	{
+		m_pInstanceBuf->SetElement(i, data);
+	}
+
+	void InstancedModel::ApplyInstanceData(const GraphicsDevice& gfx)
+	{
+		for (const auto& vb : m_pVertexBuffers)
+		{
+			vb->ApplyInstanceData(gfx, *m_pInstanceBuf);
+		}
+	}
 
 	/*const std::vector<std::shared_ptr<MeshRenderer>>& InstancedModel::GetMeshRenderers() const
 	{
@@ -81,23 +116,12 @@ namespace gfx
 		const auto pMaterial = m_pMaterials.at(pMeshAsset->m_materialIndex);
 		const auto vbuf = CreateVertexBufferData(pMeshAsset, pMaterial);
 
-		// todo: move instance stuff somewhere else!
-		struct InstanceData
-		{
-			dx::XMFLOAT4X4 transform;
-			dx::XMFLOAT4 color;
-		};
-
-		StructuredBufferData<InstanceData> instanceBuf(m_instanceCount);
-		for (size_t i = 0; i < m_instanceCount; ++i)
-		{
-			instanceBuf.EmplaceBack(InstanceData{ instancePositions.at(i).trs, dx::XMFLOAT4(1, 1, 1, 1)});
-		}
-
-		std::shared_ptr<VertexBufferWrapper> pVertexBuffer = VertexBufferWrapper::Resolve(gfx, meshTag, vbuf, instanceBuf);
+		std::shared_ptr<VertexBufferWrapper> pVertexBuffer = std::make_shared<VertexBufferWrapper>(gfx, vbuf, *m_pInstanceBuf);
 		std::shared_ptr<IndexBuffer> pIndexBuffer = IndexBuffer::Resolve(gfx, meshTag, pMeshAsset->m_indices);
 		std::shared_ptr<Topology> pTopology = Topology::Resolve(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-		return std::make_shared<InstancedMeshRenderer>(gfx, pMeshAsset->m_name, pMeshAsset, pMaterial, std::move(pVertexBuffer), std::move(pIndexBuffer), std::move(pTopology), m_instanceCount);
+		m_pVertexBuffers.emplace_back(pVertexBuffer);
+
+		return std::make_shared<InstancedMeshRenderer>(gfx, pMeshAsset->m_name, pMeshAsset, pMaterial, pVertexBuffer, std::move(pIndexBuffer), std::move(pTopology), m_instanceCount);
 	}
 }

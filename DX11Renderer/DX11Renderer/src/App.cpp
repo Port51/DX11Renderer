@@ -177,9 +177,35 @@ namespace gfx
 
 		// Animate gems
 		{
-			for (size_t i = 0; i < m_pGemModels.size(); ++i)
+			if (instanceGems)
 			{
-				m_pGemModels[i]->SetYaw(m_pGemModels[i]->GetYaw() + limitedDt * 0.5f);
+				auto& gems = static_cast<InstancedModel&>(*m_pGemModels.at(0));
+				for (size_t i = 0u; i < gems.GetInstanceCount(); ++i)
+				{
+					auto data = gems.GetInstanceDataPoint(i);
+					auto& initialTransform = m_gemStartTransforms.at(i);
+
+					// Rotate by random vector!
+					auto rotation = dx::XMVector3Normalize(dx::XMVectorSet(std::sin(i * 12.389213), std::cos(i * 14.389213), std::sin(i * 21.889213), 0.f));
+					rotation = dx::XMVectorScale(rotation, 0.7f * timeElapsed);
+
+					auto newTransform = dx::XMMatrixScalingFromVector(dx::XMLoadFloat3(&initialTransform.scale))
+						* dx::XMMatrixRotationRollPitchYawFromVector(rotation)
+						* dx::XMMatrixTranslationFromVector(dx::XMLoadFloat3(&initialTransform.position));
+
+					newTransform = dx::XMMatrixMultiply(newTransform, m_sceneTransform);
+					dx::XMStoreFloat4x4(&data.transform, newTransform);
+					
+					gems.SetInstanceDataPoint(i, data);
+					gems.ApplyInstanceData(Gfx());
+				}
+			}
+			else
+			{
+				for (size_t i = 0; i < m_pGemModels.size(); ++i)
+				{
+					m_pGemModels[i]->SetYaw(m_pGemModels[i]->GetYaw() + limitedDt * 0.5f);
+				}
 			}
 		}
 
@@ -221,7 +247,7 @@ namespace gfx
 
 	void App::CreateCastleScene()
 	{
-		const auto sceneTransform = dx::XMMatrixTranslation(2.f, -5.f, 0.f);
+		m_sceneTransform = dx::XMMatrixTranslation(2.f, -5.f, 0.f);
 
 		// Moonlight
 		m_pLightManager->AddDirectionalLight(Gfx(), 30.f, 30.f, dx::XMFLOAT3(1.f, 1.f, 1.f), 0.25f);
@@ -229,7 +255,7 @@ namespace gfx
 		// Add castle
 		{
 			const auto pCastleAsset = ModelImporter::LoadGLTF(Gfx(), "Assets\\Models\\NewCastle.asset");
-			m_pCastleModel = std::make_unique<Model>(Gfx(), pCastleAsset, sceneTransform);
+			m_pCastleModel = std::make_unique<Model>(Gfx(), pCastleAsset, m_sceneTransform);
 			m_pRendererList->AddModel(*m_pCastleModel);
 		}
 
@@ -237,10 +263,13 @@ namespace gfx
 		{
 			const auto pGemAsset = ModelImporter::LoadGLTF(Gfx(), "Assets\\Models\\Gem.asset");
 			auto gemPlacements = ModelImporter::LoadGLTFTransforms(Gfx(), "Assets\\Models\\GLTF\\NewCastle_TorchPlacements.glb");
+			m_gemStartTransforms.reserve(gemPlacements.size());
 			for (const auto& p : gemPlacements)
 			{
-				const auto transformedPos = dx::XMLoadFloat4x4(&p.trs) * sceneTransform;
-				const auto lightPosition = dx::XMVector3Transform(dx::XMLoadFloat3(&p.position), sceneTransform);
+				m_gemStartTransforms.emplace_back(p);
+
+				const auto transformedPos = dx::XMLoadFloat4x4(&p.trs) * m_sceneTransform;
+				const auto lightPosition = dx::XMVector3Transform(dx::XMLoadFloat3(&p.position), m_sceneTransform);
 				m_pLightManager->AddPointLight(Gfx(), lightPosition, GetRandomMagicLight(), 2.8f * std::sqrt(p.scale.x), 1.f, 3.15f * p.scale.x);
 
 				if (!instanceGems)
@@ -256,7 +285,7 @@ namespace gfx
 				// Apply scene transform to all instances
 				for (int i = 0, ct = gemPlacements.size(); i < ct; ++i)
 				{
-					dx::XMStoreFloat4x4(&gemPlacements[i].trs, dx::XMMatrixMultiply(dx::XMLoadFloat4x4(&gemPlacements[i].trs), sceneTransform));
+					dx::XMStoreFloat4x4(&gemPlacements[i].trs, dx::XMMatrixMultiply(dx::XMLoadFloat4x4(&gemPlacements[i].trs), m_sceneTransform));
 				}
 
 				// Setup instances
@@ -271,11 +300,11 @@ namespace gfx
 			auto personPlacements = ModelImporter::LoadGLTFTransforms(Gfx(), "Assets\\Models\\GLTF\\NewCastle_PersonPlacements.glb");
 			for (const auto& p : personPlacements)
 			{
-				const auto transformedPos = dx::XMLoadFloat4x4(&p.trs) * sceneTransform;
+				const auto transformedPos = dx::XMLoadFloat4x4(&p.trs) * m_sceneTransform;
 				
 				// Mask out translation by setting W = 0
 				const auto lightOffset = dx::XMVector4Transform(dx::XMVectorSet(0.2f, 1.41f, -0.28f, 0.f), dx::XMMatrixRotationRollPitchYawFromVector(dx::XMLoadFloat3(&p.rotation)));
-				const auto lightPosition = dx::XMVector3Transform(dx::XMVectorAdd(dx::XMLoadFloat3(&p.position), lightOffset), sceneTransform);
+				const auto lightPosition = dx::XMVector3Transform(dx::XMVectorAdd(dx::XMLoadFloat3(&p.position), lightOffset), m_sceneTransform);
 				m_pLightManager->AddPointLight(Gfx(), lightPosition, dx::XMFLOAT3(0.f / 255.f, 98.f / 255.f, 255.f / 255.f), 2.8f, 1.f, 3.15f);
 
 				if (!instancePeople)
@@ -290,7 +319,7 @@ namespace gfx
 				// Apply scene transform to all instances
 				for (int i = 0, ct = personPlacements.size(); i < ct; ++i)
 				{
-					dx::XMStoreFloat4x4(&personPlacements[i].trs, dx::XMMatrixMultiply(dx::XMLoadFloat4x4(&personPlacements[i].trs), sceneTransform));
+					dx::XMStoreFloat4x4(&personPlacements[i].trs, dx::XMMatrixMultiply(dx::XMLoadFloat4x4(&personPlacements[i].trs), m_sceneTransform));
 				}
 
 				// Setup instances
@@ -308,7 +337,7 @@ namespace gfx
 			m_boatAngularVelocities.resize(boatPlacements.size());
 			for (const auto& bp : boatPlacements)
 			{
-				m_pBoatModels.emplace_back(std::make_unique<Model>(Gfx(), pBoatAsset, dx::XMLoadFloat4x4(&bp.trs) * sceneTransform));
+				m_pBoatModels.emplace_back(std::make_unique<Model>(Gfx(), pBoatAsset, dx::XMLoadFloat4x4(&bp.trs) * m_sceneTransform));
 				m_pRendererList->AddModel(*m_pBoatModels.at(m_pBoatModels.size() - 1u));
 
 				m_boatStartPositions.emplace_back(m_pBoatModels.at(m_pBoatModels.size() - 1u)->GetPositionWS());

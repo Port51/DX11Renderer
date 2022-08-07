@@ -46,6 +46,21 @@ namespace gfx
 			return m_stride;
 		}
 
+		std::vector<T>& GetElements() const
+		{
+			return m_elements;
+		}
+
+		T GetElement(const size_t i) const
+		{
+			return m_elements.at(i);
+		}
+
+		void SetElement(const size_t i, const T data)
+		{
+			m_elements[i] = data;
+		}
+
 		void EmplaceBack(const T value)
 		{
 			assert(m_nextInputIdx < m_elements.size() && "StructuredBufferData out of range!");

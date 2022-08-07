@@ -82,9 +82,9 @@ namespace gfx
 		ZERO_MEM(bd);
 
 		bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-		bd.Usage = D3D11_USAGE_DEFAULT;
+		bd.Usage = D3D11_USAGE_DYNAMIC;
 		bd.ByteWidth = UINT(data.GetSizeInBytes());
-		bd.CPUAccessFlags = 0u;
+		bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 		bd.MiscFlags = 0u;
 		bd.StructureByteStride = data.GetStride();
 
@@ -116,5 +116,15 @@ namespace gfx
 	const UINT VertexBufferWrapper::GetVertexCount() const
 	{
 		return m_vertexCount;
+	}
+
+	void VertexBufferWrapper::ApplyInstanceData(const GraphicsDevice& gfx, const BaseBufferData& instanceBuffer)
+	{
+		D3D11_MAPPED_SUBRESOURCE resource;
+		ZERO_MEM(resource);
+
+		gfx.GetContext()->Map(m_pBufferArray[1].Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &resource);
+		memcpy(resource.pData, instanceBuffer.GetSubresourceData().pSysMem, instanceBuffer.GetSizeInBytes());
+		gfx.GetContext()->Unmap(m_pBufferArray[1].Get(), 0);
 	}
 }
