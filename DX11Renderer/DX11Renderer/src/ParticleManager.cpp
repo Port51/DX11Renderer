@@ -16,7 +16,6 @@ namespace gfx
 {
 	ParticleManager::ParticleManager(const GraphicsDevice & gfx)
 	{
-
 		// Create particle systems
 		{
 			auto pFireMaterial = std::dynamic_pointer_cast<Material>(Material::Resolve(gfx, "Assets\\Materials\\FireParticleMaterial.asset"));

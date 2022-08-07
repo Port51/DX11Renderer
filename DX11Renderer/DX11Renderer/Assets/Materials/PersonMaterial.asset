@@ -22,7 +22,7 @@ Pass
 {
 	Name, GBufferRenderPass
 	Cull, Back
-	VS, Assets\\Built\\Shaders\\PhongVS.cso
+	VS, Assets\\Built\\Shaders\\InstancedPhongVS.cso
 	PS, Assets\\Built\\Shaders\\OpaqueGbuffer.cso
 	PropertySlot, 0
 }
@@ -30,7 +30,7 @@ Pass
 {
 	Name, OpaqueRenderPass
 	Cull, Back
-	VS, Assets\\Built\\Shaders\\PhongVS.cso
+	VS, Assets\\Built\\Shaders\\InstancedPhongVS.cso
 	PS, Assets\\Built\\Shaders\\DeferredPersonPS.cso
 	PropertySlot, 0
 }

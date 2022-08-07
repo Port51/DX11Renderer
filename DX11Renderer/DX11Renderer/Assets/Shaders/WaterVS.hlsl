@@ -9,7 +9,8 @@ struct attrib
     float3 n : Normal;
     float3 t : Tangent;
     float2 uv0 : Texcoord0;
-    float3 instancePosition : INSTANCEPOS;
+    float4x4 instanceTransform : INSTANCE_TRANSFORM;
+    float4 instanceColor : INSTANCE_COLOR;
 };
 
 cbuffer PerObjectTransformCB : register(b3)
@@ -30,7 +31,6 @@ float4 ComputeNonStereoScreenPos(float4 pos)
 v2f main(attrib i)
 {
     v2f o;
-    i.pos -= i.instancePosition * 0.5;
 
     float3 positionWS = (float3) mul(model, float4(i.pos, 1.0f)).xyz; 
     positionWS = GetGerstnerWaves(positionWS);

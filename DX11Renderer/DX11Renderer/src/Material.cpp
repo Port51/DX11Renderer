@@ -36,6 +36,7 @@ namespace gfx
 	Material::Material(const GraphicsDevice& gfx, const std::string_view _materialAssetPath)
 		: m_materialAssetPath(std::string(_materialAssetPath))
 	{
+		// Ref: https://gamedev.stackexchange.com/questions/93105/binding-an-instance-matrix-with-an-inputlayout
 
 		// todo: make this depend on material props
 		m_vertexLayout
@@ -44,7 +45,11 @@ namespace gfx
 			.AppendVertexDesc<dx::XMFLOAT4>({ "TANGENT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 })
 			.AppendVertexDesc<dx::XMFLOAT4>({ "VERTCOLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 })
 			.AppendVertexDesc<dx::XMFLOAT2>({ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 })
-			.AppendInstanceDesc<dx::XMFLOAT3>({ "INSTANCEPOS", 0, DXGI_FORMAT_R32G32B32_FLOAT, 1, 0, D3D11_INPUT_PER_INSTANCE_DATA, 1 }); // last = # instances to draw before moving onto next instance
+			.AppendInstanceDesc<dx::XMFLOAT4>({ "INSTANCE_TRANSFORM", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 0, D3D11_INPUT_PER_INSTANCE_DATA, 1 })
+			.AppendInstanceDesc<dx::XMFLOAT4>({ "INSTANCE_TRANSFORM", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 0, D3D11_INPUT_PER_INSTANCE_DATA, 1 })
+			.AppendInstanceDesc<dx::XMFLOAT4>({ "INSTANCE_TRANSFORM", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 0, D3D11_INPUT_PER_INSTANCE_DATA, 1 })
+			.AppendInstanceDesc<dx::XMFLOAT4>({ "INSTANCE_TRANSFORM", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 0, D3D11_INPUT_PER_INSTANCE_DATA, 1 }) // last = # instances to draw before moving onto next instance
+			.AppendInstanceDesc<dx::XMFLOAT4>({ "INSTANCE_COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 0, D3D11_INPUT_PER_INSTANCE_DATA, 1 });
 		assert(m_vertexLayout.GetPerVertexStride() % 16 == 0);
 
 		MaterialParseState state = MaterialParseState::None;

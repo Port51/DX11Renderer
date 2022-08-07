@@ -7,7 +7,8 @@ struct attrib
     float3 n : Normal;
     float3 t : Tangent;
     float2 uv0 : Texcoord0;
-    float3 instancePosition : INSTANCEPOS;
+    float4x4 instanceTransform : INSTANCE_TRANSFORM;
+    float4 instanceColor : INSTANCE_COLOR;
 };
 
 struct v2f

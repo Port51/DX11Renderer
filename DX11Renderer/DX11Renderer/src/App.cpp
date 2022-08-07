@@ -36,7 +36,7 @@ namespace gfx
 		m_pGfx = std::make_unique<GraphicsDevice>(m_pWindow->GetHwnd(), screenWidth, screenHeight);
 
 		m_pLightManager = std::make_shared<LightManager>(Gfx(), m_pRendererList);
-		m_pParticleManager = std::make_shared<ParticleManager>(Gfx());
+		//m_pParticleManager = std::make_shared<ParticleManager>(Gfx());
 
 		CreateCastleScene();
 
@@ -229,7 +229,7 @@ namespace gfx
 		{
 			const auto pCastleAsset = ModelImporter::LoadGLTF(Gfx(), "Assets\\Models\\NewCastle.asset");
 			m_pCastleModel = std::make_unique<Model>(Gfx(), pCastleAsset, sceneTransform);
-			m_pRendererList->AddModel(*m_pCastleModel);
+			//m_pRendererList->AddModel(*m_pCastleModel);
 		}
 
 		// Add magic lights (static)
@@ -250,7 +250,7 @@ namespace gfx
 
 		// Add people (static)
 		{
-			const bool instancePeople = false;
+			const bool instancePeople = true;
 
 			const auto pPersonAsset = ModelImporter::LoadGLTF(Gfx(), "Assets\\Models\\Person.asset");
 			const auto personPlacements = ModelImporter::LoadGLTFTransforms(Gfx(), "Assets\\Models\\GLTF\\NewCastle_PersonPlacements.glb");

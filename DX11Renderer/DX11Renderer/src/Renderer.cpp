@@ -554,7 +554,7 @@ namespace gfx
 
 		// Run GPU particle compute
 		{
-			m_pParticleManager->ExecuteComputePass(gfx, camera, renderState);
+			//m_pParticleManager->ExecuteComputePass(gfx, camera, renderState);
 		}
 
 		// Normal-rough-reflectivity pass
@@ -680,7 +680,7 @@ namespace gfx
 
 		// Run GPU particle render pass
 		{
-			m_pParticleManager->ExecuteRenderPass(gfx, camera, renderState);
+			//m_pParticleManager->ExecuteRenderPass(gfx, camera, renderState);
 		}
 
 		// FXAA pass

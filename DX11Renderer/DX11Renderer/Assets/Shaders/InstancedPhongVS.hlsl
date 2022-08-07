@@ -36,10 +36,10 @@ v2f main(attrib i)
     o.normalWS = mul((float3x3) model, i.n).xyz;
     o.normalVS = mul((float3x3) modelView, i.n).xyz;
     o.tangentVS = mul((float3x3) modelView, i.t).xyz;
-	o.pos = mul(modelViewProj, float4(i.pos, 1.0f));
+    o.pos = mul(modelViewProj, float4(i.pos, 1.0f));
     o.positionNDC = o.pos;
     o.uv0 = float2(i.uv0.x, 1.f - i.uv0.y);
     o.vertColor = i.vertColor;
     o.screenPos = o.pos;
-	return o;
+    return o;
 }

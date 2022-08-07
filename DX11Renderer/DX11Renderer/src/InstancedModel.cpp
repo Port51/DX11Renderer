@@ -96,14 +96,16 @@ namespace gfx
 		// todo: move instance stuff somewhere else!
 		struct InstanceData
 		{
-			dx::XMFLOAT3 positionWS;
-			UINT instanceId;
+			dx::XMFLOAT4X4 transform;
+			dx::XMFLOAT4 color;
 		};
 
 		StructuredBufferData<InstanceData> instanceBuf(m_instanceCount);
 		for (size_t i = 0; i < m_instanceCount; ++i)
 		{
-			instanceBuf.EmplaceBack(InstanceData{ dx::XMFLOAT3(i, 0, 0), (UINT)i });
+			dx::XMFLOAT4X4 m;
+			dx::XMStoreFloat4x4(&m, dx::XMMatrixTranslation(i, 5, 0));
+			instanceBuf.EmplaceBack(InstanceData{ m, dx::XMFLOAT4(1, 1, 1, 1)});
 		}
 
 		std::shared_ptr<VertexBufferWrapper> pVertexBuffer = VertexBufferWrapper::Resolve(gfx, meshTag, vbuf, instanceBuf);
