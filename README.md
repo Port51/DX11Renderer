@@ -25,6 +25,7 @@ It's still a work-in-progress, and here are the results so far:
         * Binary search
     *	HDR + tonemapping
 *	Optimizations
+    * Instancing
     * Depth prepass
     * Hi-Z buffer
     *	Frustum culling via AABB scene graph
