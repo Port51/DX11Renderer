@@ -33,7 +33,7 @@ namespace gfx
 		void BindPS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override;
 		void UnbindPS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override;
 		const ComPtr<ID3D11ShaderResourceView> GetSRV() const;
-		const ComPtr<ID3D11UnorderedAccessView> GetUAV(UINT mipSlice = 0u) const;
+		const ComPtr<ID3D11UnorderedAccessView> GetUAV(const UINT mipSlice = 0u) const;
 		const TextureDimension GetDimension() const;
 	public:
 		static std::shared_ptr<Bindable> Resolve(const GraphicsDevice& gfx, const std::string& path);

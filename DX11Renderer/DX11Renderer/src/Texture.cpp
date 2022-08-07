@@ -181,7 +181,7 @@ namespace gfx
 		REGISTER_GPU_CALL();
 	}
 
-	const ComPtr<ID3D11UnorderedAccessView> Texture::GetUAV(UINT mipSlice) const
+	const ComPtr<ID3D11UnorderedAccessView> Texture::GetUAV(const UINT mipSlice) const
 	{
 		return m_pUAV.size() > mipSlice ? m_pUAV[mipSlice] : nullptr;
 	}

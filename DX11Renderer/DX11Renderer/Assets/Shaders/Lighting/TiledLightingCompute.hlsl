@@ -154,7 +154,8 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
         inFrustum = inFrustum && AABBSphereIntersection(sphereBounds.positionVS.xyz, sphereBounds.radius, aabb.centerVS, aabb.extentsVS);
 #endif
 
-        inFrustum = inFrustum || (light.data0.x == 2); // always show directional lights
+        bool isDirectional = ((uint)(light.data0.x + 0.01f) == 2u);
+        inFrustum = inFrustum || isDirectional; // always show directional lights
         
         [branch]
         if (inFrustum)
@@ -163,7 +164,8 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
             InterlockedAdd(tileLightCount, 1u, idx);
             tileLightIndices[idx] = i;
 
-            if ((uint)light.data0.x == 2u)
+            [branch]
+            if (isDirectional)
             {
                 InterlockedAdd(tileDirLightCount, 1u, idx);
             }
@@ -214,8 +216,8 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
         float lightAtten;
         float3 lightDirVS;
         
-        uint type = (uint)light.data0.x;
-        int shadowIdx = light.direction.w;
+        uint type = (uint)(light.data0.x + 0.01f);
+        int shadowIdx = (int)(light.direction.w + 0.01f);
         [branch] // should be same for each thread group
         if (type == 2u)
         {
