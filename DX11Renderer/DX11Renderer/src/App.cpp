@@ -115,10 +115,12 @@ namespace gfx
 		}
 
 		// Animate boats
+		// todo: clean this up and move it to another class!!
 		{
-			for (size_t i = 0; i < m_pBoatModels.size(); ++i)
+			const size_t ct = (instanceBoats) ? m_boatTransforms.size() : m_pBoatModels.size();
+			for (size_t i = 0; i < ct; ++i)
 			{
-				auto centerOffset = GerstnerWaves::GetGerstnerWaveOffset(m_pBoatModels.at(i)->GetPositionWS(), timeElapsed);
+				auto centerOffset = GerstnerWaves::GetGerstnerWaveOffset(dx::XMLoadFloat3(&m_boatTransforms[i].position), timeElapsed);
 				// Dampen motion
 				centerOffset = dx::XMVectorMultiply(centerOffset, dx::XMVectorSet(0.5f, 0.9f, 0.5f, 1.f));
 				auto buoyancyCenter = dx::XMVectorAdd(m_boatStartPositions.at(i), centerOffset);
@@ -133,7 +135,7 @@ namespace gfx
 				// Estimate rotation via samples in oval pattern
 				for (size_t si = 0; si < 8; ++si)
 				{
-					const float theta = static_cast<float>(si) * dx::XM_2PI / 8.f + m_pBoatModels.at(i)->GetYaw();
+					const float theta = static_cast<float>(si) * dx::XM_2PI / 8.f + m_boatTransforms[i].rotation.y;
 					const float s = std::sin(theta) * 2.f; // oval shape
 					const float c = std::cos(theta);
 					const float dist = 0.2f;
@@ -158,7 +160,7 @@ namespace gfx
 
 				// Add spring force that "rights" the boat
 				const float uprightForce = 4.0f;
-				angularAccel = dx::XMVectorSubtract(angularAccel, dx::XMVectorScale(m_pBoatModels[i]->GetRotationWS(), uprightForce));
+				angularAccel = dx::XMVectorSubtract(angularAccel, dx::XMVectorScale(dx::XMLoadFloat3(&m_boatTransforms[i].rotation), uprightForce));
 
 				// Add damping force that opposes velocity
 				const float dampingForce = 0.25f;
@@ -166,12 +168,39 @@ namespace gfx
 
 				// Lock yaw velocity to 0
 				m_boatAngularVelocities[i] = dx::XMVectorSetY(dx::XMVectorAdd(m_boatAngularVelocities[i], dx::XMVectorScale(angularAccel, limitedDt)), 0.0f);
-				auto angularPos = m_pBoatModels[i]->GetRotationWS();
+				auto angularPos = dx::XMLoadFloat3(&m_boatTransforms[i].rotation);
 				angularPos = dx::XMVectorAdd(angularPos, dx::XMVectorScale(m_boatAngularVelocities[i], limitedDt));
 
-				m_pBoatModels[i]->SetPositionWS(buoyancyCenter, false);
-				m_pBoatModels[i]->SetRotationWS(angularPos, false);
-				m_pBoatModels[i]->UpdateTransform();
+				dx::XMStoreFloat3(&m_boatTransforms[i].position, buoyancyCenter);
+				dx::XMStoreFloat3(&m_boatTransforms[i].rotation, angularPos);
+
+				if (instanceBoats)
+				{
+					auto& boats = static_cast<InstancedModel&>(*m_pBoatModels.at(0));
+					auto data = boats.GetInstanceDataPoint(i);
+					auto& initialTransform = m_boatTransforms.at(i);
+					
+					auto newTransform = dx::XMMatrixScalingFromVector(dx::XMLoadFloat3(&initialTransform.scale))
+						* dx::XMMatrixRotationRollPitchYawFromVector(angularPos)
+						* dx::XMMatrixTranslationFromVector(buoyancyCenter);
+
+					//newTransform = dx::XMMatrixMultiply(newTransform, m_sceneTransform);
+					dx::XMStoreFloat4x4(&data.transform, newTransform);
+
+					boats.SetInstanceDataPoint(i, data);
+				}
+				else
+				{
+					m_pBoatModels[i]->SetPositionWS(buoyancyCenter, false);
+					m_pBoatModels[i]->SetRotationWS(angularPos, false);
+					m_pBoatModels[i]->UpdateTransform();
+				}
+			}
+
+			if (instanceBoats)
+			{
+				auto& boats = static_cast<InstancedModel&>(*m_pBoatModels.at(0));
+				boats.ApplyInstanceData(Gfx());
 			}
 		}
 
@@ -197,8 +226,8 @@ namespace gfx
 					dx::XMStoreFloat4x4(&data.transform, newTransform);
 					
 					gems.SetInstanceDataPoint(i, data);
-					gems.ApplyInstanceData(Gfx());
 				}
+				gems.ApplyInstanceData(Gfx());
 			}
 			else
 			{
@@ -333,6 +362,8 @@ namespace gfx
 			const auto pBoatAsset = ModelImporter::LoadGLTF(Gfx(), "Assets\\Models\\Boat.asset");
 			auto boatPlacements = ModelImporter::LoadGLTFTransforms(Gfx(), "Assets\\Models\\GLTF\\NewCastle_BoatPlacements.glb");
 
+			m_boatTransforms.reserve(boatPlacements.size());
+			m_boatStartPositions.reserve(boatPlacements.size());
 			m_boatVelocities.resize(boatPlacements.size());
 			m_boatAngularVelocities.resize(boatPlacements.size());
 
@@ -341,6 +372,7 @@ namespace gfx
 				// Apply scene transform to all instances
 				for (auto& p : boatPlacements)
 				{
+					m_boatTransforms.emplace_back(p);
 					dx::XMStoreFloat4x4(&p.trs, dx::XMMatrixMultiply(dx::XMLoadFloat4x4(&p.trs), m_sceneTransform));
 
 					const auto transformedPos = dx::XMVector3Transform(dx::XMLoadFloat3(&p.position), m_sceneTransform);

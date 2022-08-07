@@ -58,6 +58,7 @@ namespace gfx
 		std::vector<TRS> m_gemStartTransforms;
 
 		std::vector<std::unique_ptr<BaseModel>> m_pBoatModels;
+		std::vector<TRS> m_boatTransforms;
 		std::vector<dx::XMVECTOR> m_boatStartPositions;
 		std::vector<dx::XMVECTOR> m_boatVelocities;
 		std::vector<dx::XMVECTOR> m_boatAngularVelocities;
