@@ -5,6 +5,7 @@ namespace gfx
 {
 	class Shader : public Bindable
 	{
-
+	protected:
+		const bool PathEndsWithCSO(const char* path) const;
 	};
 }

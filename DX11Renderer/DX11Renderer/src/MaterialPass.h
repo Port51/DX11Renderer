@@ -26,22 +26,29 @@ namespace gfx
 	public:
 		MaterialPass();
 		virtual void Release();
+
+	public:
+		void SubmitDrawCommands(const Drawable& drawable, const DrawContext& drawContext, const BindingList* const pPropertyBindings) const;
+		void Bind(const GraphicsDevice& gfx, RenderState& renderState) const;
+
 	public:
 		void SetPixelShader(std::shared_ptr<PixelShader> pPixelShader);
 		void SetVertexShader(std::shared_ptr<VertexShader> pVertexShader, std::shared_ptr<InputLayout> pInputLayout);
 		void SetStencil(std::shared_ptr<DepthStencilState> pDepthStencilState);
-		const std::shared_ptr<DepthStencilState> GetStencil() const;
-		//void SetVertexLayout(std::shared_ptr<VertexLayout> pVertexLayout);
-		Binding& AddBinding(std::shared_ptr<Bindable> pBindable);
-		const u64 GetMaterialCode() const;
-		const int GetPropertySlot() const;
 		void SetPropertySlot(const int slotIdx);
-		const int GetRenderQueue() const;
 		void SetRenderQueue(const u8 renderQueue);
 		void SetRenderPass(const RenderPassType renderPass);
+		void AddShaderDefine(std::string define);
+		Binding& AddBinding(std::shared_ptr<Bindable> pBindable);
+
+	public:
+		const std::shared_ptr<DepthStencilState> GetStencil() const;
+		const std::vector<std::string>& GetShaderDefines() const;
+		const u64 GetMaterialCode() const;
+		const int GetPropertySlot() const;
+		const int GetRenderQueue() const;
 		const RenderPassType GetRenderPass() const;
-		void SubmitDrawCommands(const Drawable& drawable, const DrawContext& drawContext, const BindingList* const pPropertyBindings) const;
-		void Bind(const GraphicsDevice& gfx, RenderState& renderState) const;
+		
 	private:
 		int m_propertySlotIdx = -1;
 		u8 m_renderQueue = 0;
@@ -51,5 +58,6 @@ namespace gfx
 		std::shared_ptr<PixelShader> m_pPixelShader;
 		std::shared_ptr<DepthStencilState> m_pDepthStencilState;
 		std::vector<Binding> m_bindings;
+		std::vector<std::string> m_shaderDefines;
 	};
 }

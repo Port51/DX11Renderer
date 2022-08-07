@@ -6,9 +6,15 @@
 
 namespace gfx
 {
+	using namespace std::string_literals;
+
 	u16 PixelShader::m_nextInstanceIdx = 1u; // start from 1, as 0 is reserved for "no pixel shader"
 
 	PixelShader::PixelShader(const GraphicsDevice& gfx, const char* path)
+		: PixelShader(gfx, path, std::vector<std::string>())
+	{}
+
+	PixelShader::PixelShader(const GraphicsDevice& gfx, const char* path, const std::vector<std::string>& shaderDefines)
 		: m_instanceIdx(m_nextInstanceIdx++), // overflow is unlikely, but ok here
 		m_path(path)
 	{
@@ -47,12 +53,21 @@ namespace gfx
 
 	std::shared_ptr<PixelShader> PixelShader::Resolve(const GraphicsDevice& gfx, const char* path)
 	{
-		return std::move(Codex::Resolve<PixelShader>(gfx, GenerateUID(path), path));
+		return PixelShader::Resolve(gfx, path, std::vector<std::string>());
 	}
 
-	std::string PixelShader::GenerateUID(const char* path)
+	std::shared_ptr<PixelShader> PixelShader::Resolve(const GraphicsDevice& gfx, const char* path, const std::vector<std::string>& shaderDefines)
 	{
-		using namespace std::string_literals;
-		return typeid(PixelShader).name() + "#"s + path;
+		return std::move(Codex::Resolve<PixelShader>(gfx, GenerateUID(path, shaderDefines), path, shaderDefines));
+	}
+
+	std::string PixelShader::GenerateUID(const char* path, const std::vector<std::string>& shaderDefines)
+	{
+		std::string uid = typeid(PixelShader).name() + "#"s + path;
+		for (const auto& s : shaderDefines)
+		{
+			uid += ("|" + s);
+		}
+		return uid;
 	}
 }

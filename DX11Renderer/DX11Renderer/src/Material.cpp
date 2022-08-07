@@ -171,7 +171,7 @@ namespace gfx
 				{
 					// Bind vertex shader and input layout
 					const auto vertexShaderName = std::move(p.values[0]);
-					auto pVertexShader = VertexShader::Resolve(gfx, vertexShaderName.c_str());
+					auto pVertexShader = VertexShader::Resolve(gfx, vertexShaderName.c_str(), pMaterialPass->GetShaderDefines());
 					const auto pvsbc = pVertexShader->GetBytecode();
 					auto pInputLayout = InputLayout::Resolve(gfx, std::move(m_vertexLayout), vertexShaderName.c_str(), pvsbc);
 
@@ -180,7 +180,7 @@ namespace gfx
 				else if (p.key == "PS")
 				{
 					const auto pixelShaderName = std::move(p.values[0]);
-					pMaterialPass->SetPixelShader(PixelShader::Resolve(gfx, pixelShaderName.c_str()));
+					pMaterialPass->SetPixelShader(PixelShader::Resolve(gfx, pixelShaderName.c_str(), pMaterialPass->GetShaderDefines()));
 				}
 				else if (p.key == "PropertySlot")
 				{
@@ -200,6 +200,10 @@ namespace gfx
 						pMaterialPass->SetStencil(DepthStencilState::Resolve(gfx, DepthStencilState::Mode::Mask));
 					else if (p.values.at(0) == "InverseMask")
 						pMaterialPass->SetStencil(DepthStencilState::Resolve(gfx, DepthStencilState::Mode::InverseMask));
+				}
+				else if (p.key == "Define")
+				{
+					pMaterialPass->AddShaderDefine(p.values.at(0));
 				}
 			}
 

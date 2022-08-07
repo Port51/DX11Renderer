@@ -18,9 +18,7 @@ namespace gfx
 	ComputeShader::ComputeShader(const GraphicsDevice& gfx, const char* path, const std::string& kernelName)
 		: m_path(path), m_kernelName(kernelName)
 	{
-		static std::string cso = std::string(".cso");
-		bool endsWithCSO = (0 == m_path.compare(m_path.length() - cso.length(), cso.length(), cso));
-
+		const bool endsWithCSO = PathEndsWithCSO(path);
 		std::wstring wide{ m_path.begin(), m_path.end() }; // convert to wide for file read <-- won't work for special characters
 
 		if (endsWithCSO)

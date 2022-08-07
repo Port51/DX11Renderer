@@ -52,6 +52,16 @@ namespace gfx
 		m_pVertexLayout = pVertexLayout;
 	}*/
 
+	void MaterialPass::AddShaderDefine(std::string define)
+	{
+		m_shaderDefines.emplace_back(define);
+	}
+
+	const std::vector<std::string>& MaterialPass::GetShaderDefines() const
+	{
+		return m_shaderDefines;
+	}
+
 	Binding & MaterialPass::AddBinding(std::shared_ptr<Bindable> pBindable)
 	{
 		assert(pBindable != nullptr);

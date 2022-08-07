@@ -13,6 +13,10 @@ namespace gfx
 	u16 VertexShader::m_nextInstanceIdx = 1u; // start from 1, as 0 is reserved for "no vertex shader"
 
 	VertexShader::VertexShader(const GraphicsDevice& gfx, const char* path)
+		: VertexShader(gfx, path, std::vector<std::string>())
+	{}
+
+	VertexShader::VertexShader(const GraphicsDevice& gfx, const char* path, const std::vector<std::string>& shaderDefines)
 		: m_instanceIdx(m_nextInstanceIdx++), // overflow is unlikely, but ok here
 		m_path(path)
 	{
@@ -61,11 +65,21 @@ namespace gfx
 
 	std::shared_ptr<VertexShader> VertexShader::Resolve(const GraphicsDevice& gfx, const char* path)
 	{
-		return std::move(Codex::Resolve<VertexShader>(gfx, GenerateUID(path), path));
+		return VertexShader::Resolve(gfx, path, std::vector<std::string>());
 	}
 
-	std::string VertexShader::GenerateUID(const char* path)
+	std::shared_ptr<VertexShader> VertexShader::Resolve(const GraphicsDevice& gfx, const char* path, const std::vector<std::string>& shaderDefines)
 	{
-		return typeid(VertexShader).name() + "#"s + path;
+		return std::move(Codex::Resolve<VertexShader>(gfx, GenerateUID(path, shaderDefines), path, shaderDefines));
+	}
+
+	std::string VertexShader::GenerateUID(const char* path, const std::vector<std::string>& shaderDefines)
+	{
+		std::string uid = typeid(VertexShader).name() + "#"s + path;
+		for (const auto& s : shaderDefines)
+		{
+			uid += ("|" + s);
+		}
+		return uid;
 	}
 }
