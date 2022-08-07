@@ -50,8 +50,6 @@ float4 main(v2f i) : SV_Target
     foam = saturate(foam + (sdfTex.r + sdfTex.g) * 0.65f);
     foam *= lerp(foamTex0 * foamTex1, 1.0f, foam);
     foam = SCurve(foam);
-    //return foam;
 
     return float4(combinedLight.rgb * lerp(materialColor.rgb, 3.0, foam).rgb, 1) * diffuseTex;
-    return diffuseTex;
 }

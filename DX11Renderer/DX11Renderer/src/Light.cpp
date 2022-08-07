@@ -12,7 +12,9 @@ namespace gfx
 		: m_index(index),
 		m_allowUserControl(allowUserControl),
 		m_color(color),
-		m_intensity(intensity)
+		m_intensity(intensity),
+		m_shadowAtlasTileIdx(-1),
+		m_shadowSettings({ false })
 	{
 		SetPositionWS(positionWS);
 		if (pModelAsset != nullptr)
@@ -27,7 +29,7 @@ namespace gfx
 
 	const int Light::GetCurrentShadowIdx() const
 	{
-		return m_shadowAtlasTileIdx;
+		return HasShadow() ? m_shadowAtlasTileIdx : -1;
 	}
 
 	void Light::SetCurrentShadowIdx(const int _shadowMapIdx)

@@ -154,7 +154,7 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
         inFrustum = inFrustum && AABBSphereIntersection(sphereBounds.positionVS.xyz, sphereBounds.radius, aabb.centerVS, aabb.extentsVS);
 #endif
 
-        bool isDirectional = ((uint)(light.data0.x + 0.01f) == 2u);
+        bool isDirectional = ((uint)round(light.data0.x) == 2u);
         inFrustum = inFrustum || isDirectional; // always show directional lights
         
         [branch]
@@ -216,8 +216,8 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
         float lightAtten;
         float3 lightDirVS;
         
-        uint type = (uint)(light.data0.x + 0.01f);
-        int shadowIdx = (int)(light.direction.w + 0.01f);
+        uint type = (uint)round(light.data0.x);
+        int shadowIdx = (int)round(light.direction.w);
         [branch] // should be same for each thread group
         if (type == 2u)
         {
