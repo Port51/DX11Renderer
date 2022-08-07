@@ -26,10 +26,11 @@ Texture2D tex : register(t0);
 Texture2D nmap : register(t1);
 SamplerState splr : register(s0);
 
-#include "Lighting/BRDF.hlsli"
+#include "./Lighting/BRDF.hlsli"
 
 float4 main(v2f i) : SV_Target
 {
+    i.normalVS = 1;
     float2 screenPos = (i.screenPos.xy * float2(1, -1) / i.screenPos.w) * 0.5 + 0.5;
     //screenPos = i.pos.xy / i.pos.w;
     float4 specularLight = SpecularLightingRT.Sample(splr, screenPos);

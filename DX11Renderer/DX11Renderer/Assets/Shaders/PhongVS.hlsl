@@ -31,12 +31,22 @@ float4 ComputeNonStereoScreenPos(float4 pos)
 v2f main(attrib i)
 {
     v2f o;
-    o.positionVS = (float3) mul(modelView, float4(i.pos, 1.0f)).xyz;
+
+#if defined(INSTANCING_ON)
+    o.positionWS = (float3) mul(i.instanceTransform, float4(i.pos, 1.0f)).xyz;
+    o.positionVS = (float3) mul(_ViewMatrix, float4(o.positionWS.xyz, 1.0f)).xyz;
+    o.normalWS = mul((float3x3) i.instanceTransform, i.n).xyz;
+    o.normalVS = mul((float3x3) _ViewMatrix, o.normalWS).xyz;
+    o.tangentVS = mul((float3x3)_ViewMatrix, mul((float3x3)i.instanceTransform, i.t)).xyz;
+    o.pos = mul(_ViewProjMatrix, float4(o.positionWS, 1.0f));
+#else
     o.positionWS = (float3) mul(model, float4(i.pos, 1.0f)).xyz;
+    o.positionVS = (float3) mul(modelView, float4(i.pos, 1.0f)).xyz;
     o.normalWS = mul((float3x3) model, i.n).xyz;
     o.normalVS = mul((float3x3) modelView, i.n).xyz;
     o.tangentVS = mul((float3x3) modelView, i.t).xyz;
-	o.pos = mul(modelViewProj, float4(i.pos, 1.0f));
+    o.pos = mul(modelViewProj, float4(i.pos, 1.0f));
+#endif
     o.positionNDC = o.pos;
     o.uv0 = float2(i.uv0.x, 1.f - i.uv0.y);
     o.vertColor = i.vertColor;

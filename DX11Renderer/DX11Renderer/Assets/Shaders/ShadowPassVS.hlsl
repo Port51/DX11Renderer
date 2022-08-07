@@ -35,7 +35,11 @@ float4 ComputeNonStereoScreenPos(float4 pos)
 v2f main(attrib i)
 {
     v2f o;
+#if defined(INSTANCING_ON)
+    o.pos = mul(_ViewProjMatrix, mul(i.instanceTransform, float4(i.pos, 1.0f)));
+#else
     o.pos = mul(modelViewProj, float4(i.pos, 1.0f));
+#endif
     o.depth = o.pos.z;
     return o;
 }

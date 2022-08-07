@@ -17,23 +17,9 @@
 
 namespace gfx
 {
-	InstancedModel::InstancedModel(const GraphicsDevice& gfx, const ModelAsset& pModelAsset, const dx::XMMATRIX& transform)
-	{
-		dx::XMStoreFloat4x4(&m_transform, transform);
-		DecomposeTRS();
 
-		m_pMaterials.reserve(pModelAsset.m_materialPaths.size());
-		for (const auto& materialPath : pModelAsset.m_materialPaths)
-		{
-			std::shared_ptr<Material> pMaterial = std::dynamic_pointer_cast<Material>(Material::Resolve(gfx, materialPath.c_str()));
-			m_pMaterials.push_back(pMaterial);
-		}
-
-		m_pSceneGraph = CreateModelNode(gfx, pModelAsset.m_pSceneGraph);
-		InitializeModel();
-	}
-
-	InstancedModel::InstancedModel(const GraphicsDevice& gfx, std::shared_ptr<ModelAsset> const& pModelAsset, const dx::XMMATRIX& transform)
+	InstancedModel::InstancedModel(const GraphicsDevice& gfx, std::shared_ptr<ModelAsset> const& pModelAsset, const dx::XMMATRIX& transform, const std::vector<TRS>& instancePositions)
+		: m_instanceCount(instancePositions.size())
 	{
 		dx::XMStoreFloat4x4(&m_transform, transform);
 		DecomposeTRS();
@@ -45,7 +31,7 @@ namespace gfx
 			m_pMaterials.push_back(pMaterial);
 		}
 
-		m_pSceneGraph = CreateModelNode(gfx, pModelAsset->m_pSceneGraph);
+		m_pSceneGraph = CreateModelNode(gfx, pModelAsset->m_pSceneGraph, instancePositions);
 		InitializeModel();
 	}
 
@@ -57,7 +43,7 @@ namespace gfx
 		return m_pMeshRenderers;
 	}*/
 
-	std::shared_ptr<SceneGraphNode> InstancedModel::CreateModelNode(const GraphicsDevice& gfx, std::shared_ptr<ModelAssetNode> const& pSourceNode)
+	std::shared_ptr<SceneGraphNode> InstancedModel::CreateModelNode(const GraphicsDevice& gfx, std::shared_ptr<ModelAssetNode> const& pSourceNode, const std::vector<TRS>& instancePositions)
 	{
 		gfx.GetLog().Info("Create ModelNode " + pSourceNode->m_name + " w/ " + std::to_string(pSourceNode->m_pChildNodes.size()) + " children");
 
@@ -65,14 +51,14 @@ namespace gfx
 		auto pMeshRenderer = std::shared_ptr<InstancedMeshRenderer>();
 		if (pSourceNode->m_pMeshAsset)
 		{
-			pMeshRenderer = CreateInstancedMeshRenderer(gfx, pSourceNode->m_pMeshAsset);
+			pMeshRenderer = CreateInstancedMeshRenderer(gfx, pSourceNode->m_pMeshAsset, instancePositions);
 			m_pMeshRenderers.emplace_back(pMeshRenderer);
 		}
 
 		auto pChildNodes = std::vector<std::shared_ptr<SceneGraphNode>>();
 		for (const auto& child : pSourceNode->m_pChildNodes)
 		{
-			auto pChildNode = CreateModelNode(gfx, child);
+			auto pChildNode = CreateModelNode(gfx, child, instancePositions);
 			pChildNodes.emplace_back(std::move(pChildNode));
 		}
 
@@ -87,7 +73,7 @@ namespace gfx
 		return std::move(pNode);
 	}
 
-	std::shared_ptr<InstancedMeshRenderer> InstancedModel::CreateInstancedMeshRenderer(const GraphicsDevice& gfx, std::shared_ptr<MeshAsset> const& pMeshAsset)
+	std::shared_ptr<InstancedMeshRenderer> InstancedModel::CreateInstancedMeshRenderer(const GraphicsDevice& gfx, std::shared_ptr<MeshAsset> const& pMeshAsset, const std::vector<TRS>& instancePositions)
 	{
 		const auto meshTag = "Mesh%" + pMeshAsset->m_name;
 		const auto pMaterial = m_pMaterials.at(pMeshAsset->m_materialIndex);
@@ -103,9 +89,7 @@ namespace gfx
 		StructuredBufferData<InstanceData> instanceBuf(m_instanceCount);
 		for (size_t i = 0; i < m_instanceCount; ++i)
 		{
-			dx::XMFLOAT4X4 m;
-			dx::XMStoreFloat4x4(&m, dx::XMMatrixTranslation(i, 5, 0));
-			instanceBuf.EmplaceBack(InstanceData{ m, dx::XMFLOAT4(1, 1, 1, 1)});
+			instanceBuf.EmplaceBack(InstanceData{ instancePositions.at(i).trs, dx::XMFLOAT4(1, 1, 1, 1)});
 		}
 
 		std::shared_ptr<VertexBufferWrapper> pVertexBuffer = VertexBufferWrapper::Resolve(gfx, meshTag, vbuf, instanceBuf);

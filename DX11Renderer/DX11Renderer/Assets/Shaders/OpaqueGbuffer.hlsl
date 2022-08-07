@@ -1,4 +1,4 @@
-#include "PhongCommon.hlsli"
+#include "./PhongCommon.hlsli"
 #include "./CbufCommon.hlsli"
 
 cbuffer LightCBuf : register(b0)

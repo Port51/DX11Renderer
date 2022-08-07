@@ -89,6 +89,7 @@ namespace gfx
 	{
 		static float timeElapsed = 0.f;
 		const float dt = m_pTimer->Mark();
+		const float limitedDt = std::min(dt, 1.f / 30.f);
 		timeElapsed += dt;
 
 		// Process input
@@ -164,9 +165,9 @@ namespace gfx
 				angularAccel = dx::XMVectorSubtract(angularAccel, dx::XMVectorScale(m_boatAngularVelocities[i], dampingForce));
 
 				// Lock yaw velocity to 0
-				m_boatAngularVelocities[i] = dx::XMVectorSetY(dx::XMVectorAdd(m_boatAngularVelocities[i], dx::XMVectorScale(angularAccel, dt)), 0.0f);
+				m_boatAngularVelocities[i] = dx::XMVectorSetY(dx::XMVectorAdd(m_boatAngularVelocities[i], dx::XMVectorScale(angularAccel, limitedDt)), 0.0f);
 				auto angularPos = m_pBoatModels[i]->GetRotationWS();
-				angularPos = dx::XMVectorAdd(angularPos, dx::XMVectorScale(m_boatAngularVelocities[i], dt));
+				angularPos = dx::XMVectorAdd(angularPos, dx::XMVectorScale(m_boatAngularVelocities[i], limitedDt));
 
 				m_pBoatModels[i]->SetPositionWS(buoyancyCenter, false);
 				m_pBoatModels[i]->SetRotationWS(angularPos, false);
@@ -178,7 +179,7 @@ namespace gfx
 		{
 			for (size_t i = 0; i < m_pGemModels.size(); ++i)
 			{
-				m_pGemModels[i]->SetYaw(m_pGemModels[i]->GetYaw() + dt * 0.5f);
+				m_pGemModels[i]->SetYaw(m_pGemModels[i]->GetYaw() + limitedDt * 0.5f);
 			}
 		}
 
@@ -229,7 +230,7 @@ namespace gfx
 		{
 			const auto pCastleAsset = ModelImporter::LoadGLTF(Gfx(), "Assets\\Models\\NewCastle.asset");
 			m_pCastleModel = std::make_unique<Model>(Gfx(), pCastleAsset, sceneTransform);
-			//m_pRendererList->AddModel(*m_pCastleModel);
+			m_pRendererList->AddModel(*m_pCastleModel);
 		}
 
 		// Add magic lights (static)
@@ -253,15 +254,14 @@ namespace gfx
 			const bool instancePeople = true;
 
 			const auto pPersonAsset = ModelImporter::LoadGLTF(Gfx(), "Assets\\Models\\Person.asset");
-			const auto personPlacements = ModelImporter::LoadGLTFTransforms(Gfx(), "Assets\\Models\\GLTF\\NewCastle_PersonPlacements.glb");
+			auto personPlacements = ModelImporter::LoadGLTFTransforms(Gfx(), "Assets\\Models\\GLTF\\NewCastle_PersonPlacements.glb");
 			for (const auto& tp : personPlacements)
 			{
 				const auto transformedPos = dx::XMLoadFloat4x4(&tp.trs) * sceneTransform;
 				
 				// Mask out translation by setting W = 0
 				const auto lightOffset = dx::XMVector4Transform(dx::XMVectorSet(0.2f, 1.41f, -0.28f, 0.f), dx::XMMatrixRotationRollPitchYawFromVector(dx::XMLoadFloat3(&tp.rotation)));
-				auto lightPosition = dx::XMVector3Transform(dx::XMVectorAdd(dx::XMLoadFloat3(&tp.position), lightOffset), sceneTransform);
-				//lightPosition = dx::XMLoadFloat3(&tp.position);
+				const auto lightPosition = dx::XMVector3Transform(dx::XMVectorAdd(dx::XMLoadFloat3(&tp.position), lightOffset), sceneTransform);
 				m_pLightManager->AddPointLight(Gfx(), lightPosition, dx::XMFLOAT3(0.f / 255.f, 98.f / 255.f, 255.f / 255.f), 2.8f, 1.f, 3.15f);
 
 				if (!instancePeople)
@@ -272,9 +272,16 @@ namespace gfx
 				// dx::XMFLOAT3(1.f, 0.25f, 0.04f) was a good color for torches
 			}
 
-			if (!instancePeople)
+			if (instancePeople)
 			{
-				m_pPersonModels.emplace_back(std::make_unique<InstancedModel>(Gfx(), pPersonAsset, dx::XMMatrixIdentity()));
+				// Apply scene transform to all instances
+				for (int i = 0, ct = personPlacements.size(); i < ct; ++i)
+				{
+					dx::XMStoreFloat4x4(&personPlacements[i].trs, dx::XMMatrixMultiply(dx::XMLoadFloat4x4(&personPlacements[i].trs), sceneTransform));
+				}
+
+				// Setup instances
+				m_pPersonModels.emplace_back(std::make_unique<InstancedModel>(Gfx(), pPersonAsset, dx::XMMatrixIdentity(), personPlacements));
 				m_pRendererList->AddModel(*m_pPersonModels.at(m_pPersonModels.size() - 1u));
 			}
 		}

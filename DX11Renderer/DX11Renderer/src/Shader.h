@@ -10,7 +10,7 @@ namespace gfx
 
 	protected:
 		void CompileBytecodeBlob(const GraphicsDevice& gfx, const char* path);
-		void CompileBytecodeBlob(const GraphicsDevice& gfx, const char* path, const char* entryPoint, const std::vector<std::string>& shaderDefines);
+		void CompileBytecodeBlob(const GraphicsDevice& gfx, const char* path, const char* entryPoint, const std::vector<std::string>& shaderDefines, const LPCSTR profile);
 		const bool PathEndsWithCSO(const char* path) const;
 
 	protected:

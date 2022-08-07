@@ -11,22 +11,22 @@ Pass
 	Name, ShadowRenderPass
 	Cull, Front
 	Define, INSTANCING_ON
-	VS, Assets\\Built\\Shaders\\ShadowPassVS.cso
+	VS, Assets\\Shaders\\ShadowPassVS.hlsl
 }
 Pass
 {
 	Name, DepthPrepassRenderPass
 	Cull, Back
 	Define, INSTANCING_ON
-	VS, Assets\\Built\\Shaders\\DepthOnlyVS.cso
+	VS, Assets\\Shaders\\DepthOnlyVS.hlsl
 }
 Pass
 {
 	Name, GBufferRenderPass
 	Cull, Back
 	Define, INSTANCING_ON
-	VS, Assets\\Built\\Shaders\\InstancedPhongVS.cso
-	PS, Assets\\Built\\Shaders\\OpaqueGbuffer.cso
+	VS, Assets\\Shaders\\PhongVS.hlsl
+	PS, Assets\\Shaders\\OpaqueGbuffer.hlsl
 	PropertySlot, 0
 }
 Pass
@@ -34,7 +34,7 @@ Pass
 	Name, OpaqueRenderPass
 	Cull, Back
 	Define, INSTANCING_ON
-	VS, Assets\\Built\\Shaders\\InstancedPhongVS.cso
-	PS, Assets\\Built\\Shaders\\DeferredPersonPS.cso
+	VS, Assets\\Shaders\\PhongVS.hlsl
+	PS, Assets\\Shaders\\DeferredPersonPS.hlsl
 	PropertySlot, 0
 }

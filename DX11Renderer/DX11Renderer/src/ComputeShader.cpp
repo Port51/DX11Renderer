@@ -18,8 +18,12 @@ namespace gfx
 	ComputeShader::ComputeShader(const GraphicsDevice& gfx, const char* path, const char* entryPoint, const std::vector<std::string>& shaderDefines)
 		: Shader(path, entryPoint)
 	{
-		if (PathEndsWithCSO(path)) CompileBytecodeBlob(gfx, path);
-		else CompileBytecodeBlob(gfx, path, entryPoint, shaderDefines);
+		if (PathEndsWithCSO(path))
+		{
+			if (shaderDefines.size() > 0u) THROW("Shader defines won't be used as precompiled CSO is used!");
+			CompileBytecodeBlob(gfx, path);
+		}
+		else CompileBytecodeBlob(gfx, path, entryPoint, shaderDefines, "cs_5_0");
 
 		// Create shader
 		THROW_IF_FAILED(gfx.GetAdapter()->CreateComputeShader(

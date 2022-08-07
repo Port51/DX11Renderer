@@ -18,12 +18,22 @@ namespace gfx
 		: m_instanceIdx(m_nextInstanceIdx++), // overflow is unlikely, but ok here
 		Shader(path, entryPoint)
 	{
-		ComPtr<ID3DBlob> pBlob;
-		std::wstring wide{ m_path.begin(), m_path.end() }; // convert to wide for file read <-- won't work for special characters
-		THROW_IF_FAILED(D3DReadFileToBlob(wide.c_str(), &pBlob));
+		if (PathEndsWithCSO(path))
+		{
+			if (shaderDefines.size() > 0u) THROW("Shader defines won't be used as precompiled CSO is used!");
+			CompileBytecodeBlob(gfx, path);
+		}
+		else CompileBytecodeBlob(gfx, path, entryPoint, shaderDefines, "ps_5_0");
 
+		// Create shader
+		THROW_IF_FAILED(gfx.GetAdapter()->CreatePixelShader(
+			m_pBytecodeBlob->GetBufferPointer(),
+			m_pBytecodeBlob->GetBufferSize(),
+			nullptr,
+			&m_pPixelShader
+		));
 
-		THROW_IF_FAILED(gfx.GetAdapter()->CreatePixelShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &m_pPixelShader));
+		if (m_pPixelShader == nullptr) THROW("Could not create shader!");
 	}
 
 	void PixelShader::Release()

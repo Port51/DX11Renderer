@@ -20,6 +20,7 @@ namespace gfx
 
 	void InstancedMeshRenderer::IssueDrawCall(const GraphicsDevice& gfx) const
 	{
+		if (m_instanceCount == 0u) THROW("You dummy, you forgot to set instance counts!");
 		gfx.DrawIndexedInstanced(GetIndexCount(), m_instanceCount);
 	}
 }

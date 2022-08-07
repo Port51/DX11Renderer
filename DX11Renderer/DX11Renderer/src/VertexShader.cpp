@@ -20,14 +20,22 @@ namespace gfx
 		: m_instanceIdx(m_nextInstanceIdx++), // overflow is unlikely, but ok here
 		Shader(path, entryPoint)
 	{
-		std::wstring wide{ m_path.begin(), m_path.end() }; // convert to wide for file read <-- won't work for special characters
-		THROW_IF_FAILED(D3DReadFileToBlob(wide.c_str(), &m_pBytecodeBlob));
+		if (PathEndsWithCSO(path))
+		{
+			if (shaderDefines.size() > 0u) THROW("Shader defines won't be used as precompiled CSO is used!");
+			CompileBytecodeBlob(gfx, path);
+		}
+		else CompileBytecodeBlob(gfx, path, entryPoint, shaderDefines, "vs_5_0");
+
+		// Create shader
 		THROW_IF_FAILED(gfx.GetAdapter()->CreateVertexShader(
 			m_pBytecodeBlob->GetBufferPointer(),
 			m_pBytecodeBlob->GetBufferSize(),
 			nullptr,
 			&m_pVertexShader
 		));
+
+		if (m_pVertexShader == nullptr) THROW("Could not create shader!");
 	}
 
 	void VertexShader::Release()

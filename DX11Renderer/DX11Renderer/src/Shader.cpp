@@ -22,7 +22,7 @@ namespace gfx
 		if (m_pBytecodeBlob == nullptr) THROW("Could not create bytecode blob!");
 	}
 
-	void Shader::CompileBytecodeBlob(const GraphicsDevice& gfx, const char* path, const char* entryPoint, const std::vector<std::string>& shaderDefines)
+	void Shader::CompileBytecodeBlob(const GraphicsDevice& gfx, const char* path, const char* entryPoint, const std::vector<std::string>& shaderDefines, const LPCSTR profile)
     {
 		std::wstring wide{ m_path.begin(), m_path.end() }; // convert to wide for file read <-- won't work for special characters
 
@@ -31,8 +31,6 @@ namespace gfx
 #if defined( DEBUG ) || defined( _DEBUG )
 		flags |= D3DCOMPILE_DEBUG;
 #endif
-
-		LPCSTR profile = (gfx.GetAdapter()->GetFeatureLevel() >= D3D_FEATURE_LEVEL_11_0) ? "cs_5_0" : "cs_4_0";
 
 		// Ref: https://gamedev.net/forums/topic/683507-d3d_shader_macro-initialization-why-does-this-work/5317541/
 		std::vector<D3D_SHADER_MACRO> defines;
@@ -57,7 +55,7 @@ namespace gfx
 		{
 			if (errorBlob)
 			{
-				THROW((char*)errorBlob->GetBufferPointer());
+				THROW(std::string("Shader '") + std::string(path) + std::string("' error: ") + std::string((char*)errorBlob->GetBufferPointer()));
 				OutputDebugStringA((char*)errorBlob->GetBufferPointer());
 				errorBlob->Release();
 			}
