@@ -5,7 +5,9 @@
 #include "Camera.h"
 #include "MeshRenderer.h"
 #include "RendererList.h"
+#include "BaseModel.h"
 #include "Model.h"
+#include "InstancedModel.h"
 #include "ModelImporter.h"
 #include "SharedCodex.h"
 #include "VertexShader.h"
@@ -248,6 +250,8 @@ namespace gfx
 
 		// Add people (static)
 		{
+			const bool instancePeople = false;
+
 			const auto pPersonAsset = ModelImporter::LoadGLTF(Gfx(), "Assets\\Models\\Person.asset");
 			const auto personPlacements = ModelImporter::LoadGLTFTransforms(Gfx(), "Assets\\Models\\GLTF\\NewCastle_PersonPlacements.glb");
 			for (const auto& tp : personPlacements)
@@ -260,10 +264,18 @@ namespace gfx
 				//lightPosition = dx::XMLoadFloat3(&tp.position);
 				m_pLightManager->AddPointLight(Gfx(), lightPosition, dx::XMFLOAT3(0.f / 255.f, 98.f / 255.f, 255.f / 255.f), 2.8f, 1.f, 3.15f);
 
-				m_pPersonModels.emplace_back(std::make_unique<Model>(Gfx(), pPersonAsset, transformedPos));
-				m_pRendererList->AddModel(*m_pPersonModels.at(m_pPersonModels.size() - 1u));
-
+				if (!instancePeople)
+				{
+					m_pPersonModels.emplace_back(std::make_unique<Model>(Gfx(), pPersonAsset, transformedPos));
+					m_pRendererList->AddModel(*m_pPersonModels.at(m_pPersonModels.size() - 1u));
+				}
 				// dx::XMFLOAT3(1.f, 0.25f, 0.04f) was a good color for torches
+			}
+
+			if (!instancePeople)
+			{
+				m_pPersonModels.emplace_back(std::make_unique<InstancedModel>(Gfx(), pPersonAsset, dx::XMMatrixIdentity()));
+				m_pRendererList->AddModel(*m_pPersonModels.at(m_pPersonModels.size() - 1u));
 			}
 		}
 
