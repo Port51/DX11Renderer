@@ -21,7 +21,9 @@ namespace gfx
 		m_shadowsVisible = 0u;
 		m_shadowsCulled = 0u;
 
-		m_gpuCallsThisFrame = 0u;
+		m_cpuDrawCallsThisFrame = 0u;
+		m_cpuDrawCallsSavedByInstancingThisFrame = 0u;
+		m_gpuCommandsThisFrame = 0u;
 		m_gpuCallsSavedThisFrame = 0u;
 	}
 
@@ -34,16 +36,21 @@ namespace gfx
 		const u32 totalRenderers = m_meshRenderersVisible + m_meshRenderersCulled;
 		const u32 totalLights = m_lightsVisible + m_lightsCulled;
 		const u32 totalShadows = m_shadowsVisible + m_shadowsCulled;
-		const u32 totalGfxCommands = m_gpuCallsThisFrame + m_gpuCallsSavedThisFrame;
+		const u32 totalDrawCalls = m_cpuDrawCallsThisFrame + m_cpuDrawCallsSavedByInstancingThisFrame;
+		const u32 totalGPUCommands = m_gpuCommandsThisFrame + m_gpuCallsSavedThisFrame;
 
 		if (ImGui::Begin("Render Stats"))
 		{
 			ImGui::Text("CULLING");
-			ImGui::Text((std::string("Renderers visible:   ") + std::to_string(m_meshRenderersVisible) + std::string(" / ") + std::to_string(totalRenderers)).c_str());
-			ImGui::Text((std::string("Lights visible:      ") + std::to_string(m_lightsVisible) + std::string(" / ") + std::to_string(totalLights)).c_str());
-			ImGui::Text((std::string("Shadowmap passes:    ") + std::to_string(m_shadowsVisible) + std::string(" / ") + std::to_string(totalShadows)).c_str());
+			ImGui::Text((std::string("Renderers visible:     ") + std::to_string(m_meshRenderersVisible) + std::string(" / ") + std::to_string(totalRenderers)).c_str());
+			ImGui::Text((std::string("Lights visible:        ") + std::to_string(m_lightsVisible) + std::string(" / ") + std::to_string(totalLights)).c_str());
+			ImGui::Text((std::string("Shadowmap passes:      ") + std::to_string(m_shadowsVisible) + std::string(" / ") + std::to_string(totalShadows)).c_str());
+			ImGui::Text("");
 			ImGui::Text("COMMANDS");
-			ImGui::Text((std::string("GFX commands:        ") + std::to_string(m_gpuCallsThisFrame) + std::string(" / ") + std::to_string(totalGfxCommands)).c_str());
+			ImGui::Text((std::string("CPU draw calls:        ") + std::to_string(m_cpuDrawCallsThisFrame)).c_str());
+			//ImGui::Text((std::string("Saved via instancing:  ") + std::to_string(m_cpuDrawCallsSavedByInstancingThisFrame)).c_str());
+			ImGui::Text((std::string("GPU commands:          ") + std::to_string(m_gpuCommandsThisFrame)).c_str());
+			ImGui::Text((std::string("^^ saved by sorting:   ") + std::to_string(m_gpuCallsSavedThisFrame)).c_str());
 		}
 		ImGui::End();
 	}
@@ -78,9 +85,39 @@ namespace gfx
 		m_shadowsCulled += count;
 	}
 
+	void RenderStats::RegisterCPUDrawCall()
+	{
+		m_cpuDrawCallsThisFrame++;
+	}
+
+	void RenderStats::RegisterCPUDrawCalls(const u32 calls)
+	{
+		m_cpuDrawCallsThisFrame += calls;
+	}
+
+	void RenderStats::RegisterCPUDrawCallSaved()
+	{
+		m_cpuDrawCallsSavedByInstancingThisFrame++;
+	}
+
+	void RenderStats::RegisterCPUDrawCallsSaved(const u32 calls)
+	{
+		m_cpuDrawCallsSavedByInstancingThisFrame += calls;
+	}
+
+	const u32 RenderStats::GetCPUDrawCallsThisFrame() const
+	{
+		return m_cpuDrawCallsThisFrame;
+	}
+
+	const u32 RenderStats::GetCPUDrawCallsSavedThisFrame() const
+	{
+		return m_cpuDrawCallsSavedByInstancingThisFrame;
+	}
+
 	const u32 RenderStats::GetGPUCallsThisFrame() const
 	{
-		return m_gpuCallsThisFrame;
+		return m_gpuCommandsThisFrame;
 	}
 
 	const u32 RenderStats::GetGPUCallsSavedThisFrame() const
@@ -90,12 +127,12 @@ namespace gfx
 
 	void RenderStats::RegisterGPUCall()
 	{
-		m_gpuCallsThisFrame++;
+		m_gpuCommandsThisFrame++;
 	}
 
 	void RenderStats::RegisterGPUCalls(const u32 calls)
 	{
-		m_gpuCallsThisFrame += calls;
+		m_gpuCommandsThisFrame += calls;
 	}
 
 	void RenderStats::RegisterGPUCallSaved()

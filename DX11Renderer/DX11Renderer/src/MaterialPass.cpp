@@ -131,9 +131,9 @@ namespace gfx
 		return m_instanced;
 	}
 
-	void MaterialPass::SubmitDrawCommands(const Drawable& drawable, const DrawContext& drawContext, const BindingList* const pPropertyBindings) const
+	void MaterialPass::SubmitDrawCommands(GraphicsDevice& gfx, const Drawable& drawable, const DrawContext& drawContext, const BindingList* const pPropertyBindings) const
 	{
-		drawContext.renderer.AcceptDrawCall(std::move(DrawCommand(this, &drawable, drawContext, pPropertyBindings)), m_renderPass);
+		drawContext.renderer.AcceptDrawCall(gfx, std::move(DrawCommand(this, &drawable, drawContext, pPropertyBindings)), m_renderPass);
 	}
 
 	void MaterialPass::Bind(const GraphicsDevice & gfx, RenderState& renderState) const

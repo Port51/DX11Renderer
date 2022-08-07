@@ -28,7 +28,7 @@ namespace gfx
 		virtual void Release();
 
 	public:
-		void SubmitDrawCommands(const Drawable& drawable, const DrawContext& drawContext, const BindingList* const pPropertyBindings) const;
+		void SubmitDrawCommands(GraphicsDevice& gfx, const Drawable& drawable, const DrawContext& drawContext, const BindingList* const pPropertyBindings) const;
 		void Bind(const GraphicsDevice& gfx, RenderState& renderState) const;
 
 	public:

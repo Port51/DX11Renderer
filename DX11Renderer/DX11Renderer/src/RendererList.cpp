@@ -104,11 +104,11 @@ namespace gfx
 		std::sort(m_pRenderers.begin(), m_pRenderers.end(), SortByCode);
 	}
 
-	void RendererList::SubmitDrawCalls(const DrawContext& drawContext) const
+	void RendererList::SubmitDrawCalls(GraphicsDevice& gfx, const DrawContext& drawContext) const
 	{
 		for (const auto pr : m_pRenderers)
 		{
-			pr.first->SubmitDrawCommands(drawContext);
+			pr.first->SubmitDrawCommands(gfx, drawContext);
 		}
 	}
 

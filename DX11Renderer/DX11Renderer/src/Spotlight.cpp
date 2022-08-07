@@ -113,7 +113,7 @@ namespace gfx
 
 		// This means all shadow draw calls need to be setup on the same thread
 		context.pRendererList->Filter(context.gfx, frustum, RendererList::RendererSortingType::StateThenFrontToBack, RenderPassType::ShadowRenderPass, lightPosWS, GetForwardWS(), m_range);
-		context.pRendererList->SubmitDrawCalls(drawContext);
+		context.pRendererList->SubmitDrawCalls(context.gfx, drawContext);
 		const auto ct = context.pRendererList->GetRendererCount();
 
 		// Calculate tile in shadow atlas

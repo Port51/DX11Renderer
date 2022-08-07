@@ -29,7 +29,7 @@ namespace gfx
 
 	public:
 		void Bind(const GraphicsDevice& gfx, const std::string_view passName);
-		void SubmitDrawCommands(const Drawable& drawable, const DrawContext& drawContext) const;
+		void SubmitDrawCommands(GraphicsDevice& gfx, const Drawable& drawable, const DrawContext& drawContext) const;
 
 	public:
 		void VerifyInstancing(const bool requireInstancing) const;

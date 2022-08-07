@@ -30,7 +30,7 @@ namespace gfx
 	public:
 		const dx::XMMATRIX GetTransformXM() const;
 		void SetTransform(const dx::XMMATRIX transform);
-		void SubmitDrawCommands(const DrawContext& drawContext) const;
+		void SubmitDrawCommands(GraphicsDevice& gfx, const DrawContext& drawContext) const;
 	public:
 		virtual void Bind(const GraphicsDevice& gfx, RenderState& renderState, const DrawContext& drawContext) const;
 		virtual void IssueDrawCall(const GraphicsDevice& gfx) const;

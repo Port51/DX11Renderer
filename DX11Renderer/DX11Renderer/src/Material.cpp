@@ -234,7 +234,7 @@ namespace gfx
 		// Is this needed?
 	}
 
-	void Material::SubmitDrawCommands(const Drawable& drawable, const DrawContext& drawContext) const
+	void Material::SubmitDrawCommands(GraphicsDevice& gfx, const Drawable& drawable, const DrawContext& drawContext) const
 	{
 		// Only submit draw calls for passes contained in draw context
 		for (const auto& passName : drawContext.renderPasses)
@@ -244,7 +244,7 @@ namespace gfx
 				const auto& pMaterialPass = m_pMaterialPassesByType.at(passName);
 				const auto propertySlotIdx = pMaterialPass->GetPropertySlot();
  				const BindingList* const pPropertySlot = (propertySlotIdx != -1) ? m_pPropertySlots[propertySlotIdx].get() : nullptr;
-				pMaterialPass->SubmitDrawCommands(drawable, drawContext, pPropertySlot);
+				pMaterialPass->SubmitDrawCommands(gfx, drawable, drawContext, pPropertySlot);
 			}
 		}
 	}

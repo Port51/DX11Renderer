@@ -31,7 +31,7 @@ namespace gfx
 	public:
 		const UINT GetRendererCount() const;
 		void Filter(const GraphicsDevice& gfx, const Frustum& frustum, const RendererSortingType sorting, const RenderPassType renderPassType, const dx::XMVECTOR originWS, const dx::XMVECTOR directionWS, const float farClipPlane);
-		void SubmitDrawCalls(const DrawContext& drawContext) const;
+		void SubmitDrawCalls(GraphicsDevice& gfx, const DrawContext& drawContext) const;
 		void AddModel(const BaseModel& model);
 		void AddSceneGraph(std::shared_ptr<SceneGraphNode> pSceneGraph);
 	private:

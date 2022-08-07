@@ -387,8 +387,9 @@ namespace gfx
 		m_pFinalBlitInputIsIndex0 = cameraOutSlot0;
 	}
 
-	void Renderer::AcceptDrawCall(DrawCommand job, const RenderPassType targetPass)
+	void Renderer::AcceptDrawCall(GraphicsDevice& gfx, DrawCommand job, const RenderPassType targetPass)
 	{
+		gfx.GetRenderStats().RegisterCPUDrawCall();
 		m_pRenderPasses[targetPass]->EnqueueJob(std::move(job));
 	}
 
@@ -432,14 +433,14 @@ namespace gfx
 
 			// todo: filter by render passes too
 			m_pVisibleRendererList->Filter(gfx, camera.GetFrustumWS(), RendererList::RendererSortingType::StateThenBackToFront, RenderPassType::OpaqueRenderPass, camera.GetPositionWS(), camera.GetForwardWS(), camera.GetFarClipPlane());
-			m_pVisibleRendererList->SubmitDrawCalls(opaqueDrawContext);
+			m_pVisibleRendererList->SubmitDrawCalls(gfx, opaqueDrawContext);
 
 			static DrawContext transparentDrawContext(*this, std::move(std::vector<RenderPassType> { RenderPassType::TransparentRenderPass }));
 			transparentDrawContext.viewMatrix = camera.GetViewMatrix();
 			transparentDrawContext.projMatrix = camera.GetProjectionMatrix();
 
 			m_pVisibleTransparentRendererList->Filter(gfx, camera.GetFrustumWS(), RendererList::RendererSortingType::BackToFrontThenState, RenderPassType::TransparentRenderPass, camera.GetPositionWS(), camera.GetForwardWS(), camera.GetFarClipPlane());
-			m_pVisibleTransparentRendererList->SubmitDrawCalls(transparentDrawContext);
+			m_pVisibleTransparentRendererList->SubmitDrawCalls(gfx, transparentDrawContext);
 		}
 
 		// Early frame calculations
