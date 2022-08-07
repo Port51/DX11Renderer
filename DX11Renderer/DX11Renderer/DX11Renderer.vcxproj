@@ -465,6 +465,7 @@
     <None Include="Assets\Materials\BoatInteriorMaterial.asset" />
     <None Include="Assets\Models\Person.asset" />
     <None Include="Assets\Materials\PersonMaterial.asset" />
+    <None Include="Assets\Materials\BoatSailMaterial.asset" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Shaders\WaterPS.hlsl">

@@ -10,12 +10,14 @@ Pass
 {
 	Name, ShadowRenderPass
 	Cull, Front
-	VS, Assets\\Built\\Shaders\\ShadowPassVS.cso
+	Define, INSTANCING_ON
+	VS, Assets\\Shaders\\ShadowPassVS.hlsl
 }
 Pass
 {
 	Name, DepthPrepassRenderPass
 	Cull, Back
+	Define, INSTANCING_ON
 
 	StencilRef,			1
 	StencilComp,		8
@@ -23,12 +25,13 @@ Pass
 	StencilReadMask,	1
 	StencilWriteMask,	1
 
-	VS, Assets\\Built\\Shaders\\DepthOnlyVS.cso
+	VS, Assets\\Shaders\\DepthOnlyVS.hlsl
 }
 Pass
 {
 	Name, GBufferRenderPass
 	Cull, Back
+	Define, INSTANCING_ON
 
 	StencilRef,			1
 	StencilComp,		8
@@ -36,14 +39,15 @@ Pass
 	StencilReadMask,	1
 	StencilWriteMask,	1
 
-	VS, Assets\\Built\\Shaders\\PhongVS.cso
-	PS, Assets\\Built\\Shaders\\OpaqueGbuffer.cso
+	VS, Assets\\Shaders\\PhongVS.hlsl
+	PS, Assets\\Shaders\\OpaqueGbuffer.hlsl
 	PropertySlot, 0
 }
 Pass
 {
 	Name, OpaqueRenderPass
 	Cull, Back
+	Define, INSTANCING_ON
 
 	StencilRef,			1
 	StencilComp,		8
@@ -51,7 +55,7 @@ Pass
 	StencilReadMask,	1
 	StencilWriteMask,	1
 
-	VS, Assets\\Built\\Shaders\\PhongVS.cso
-	PS, Assets\\Built\\Shaders\\DeferredPS.cso
+	VS, Assets\\Shaders\\PhongVS.hlsl
+	PS, Assets\\Shaders\\DeferredPS.hlsl
 	PropertySlot, 0
 }

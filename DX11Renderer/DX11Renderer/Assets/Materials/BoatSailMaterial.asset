@@ -2,9 +2,9 @@ Properties
 {
 	Slot, 0
 	Texture, 0, Assets\\Textures\\GreyNoise0_512.png
-	Color, 0.42, 0.11, 0.05, 1.0
-	Roughness, 0.0
-	NoiseIntensity, 1.0
+	Color, 1.0, 1.0, 1.0, 1.0
+	Roughness, 0.9
+	NoiseIntensity, 0.75
 }
 Pass
 {
@@ -18,14 +18,6 @@ Pass
 	Name, DepthPrepassRenderPass
 	Cull, Back
 	Define, INSTANCING_ON
-
-	Stencil,			Write
-	StencilRef,			1
-	StencilComp,		8
-	StencilPass,		2
-	StencilReadMask,	1
-	StencilWriteMask,	1
-
 	VS, Assets\\Shaders\\DepthOnlyVS.hlsl
 }
 Pass
@@ -33,14 +25,6 @@ Pass
 	Name, GBufferRenderPass
 	Cull, Back
 	Define, INSTANCING_ON
-	
-	Stencil,			Write
-	StencilRef,			1
-	StencilComp,		8
-	StencilPass,		2
-	StencilReadMask,	1
-	StencilWriteMask,	1
-
 	VS, Assets\\Shaders\\PhongVS.hlsl
 	PS, Assets\\Shaders\\OpaqueGbuffer.hlsl
 	PropertySlot, 0
@@ -50,14 +34,6 @@ Pass
 	Name, OpaqueRenderPass
 	Cull, Back
 	Define, INSTANCING_ON
-	
-	Stencil,			Write
-	StencilRef,			1
-	StencilComp,		8
-	StencilPass,		2
-	StencilReadMask,	1
-	StencilWriteMask,	1
-
 	VS, Assets\\Shaders\\PhongVS.hlsl
 	PS, Assets\\Shaders\\DeferredPS.hlsl
 	PropertySlot, 0

@@ -25,6 +25,7 @@ namespace gfx
 	{
 	private:
 		const bool instanceGems = true;
+		const bool instanceBoats = true;
 		const bool instancePeople = true;
 
 	public:

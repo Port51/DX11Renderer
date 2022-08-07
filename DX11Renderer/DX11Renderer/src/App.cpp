@@ -331,16 +331,35 @@ namespace gfx
 		// Add boat placements
 		{
 			const auto pBoatAsset = ModelImporter::LoadGLTF(Gfx(), "Assets\\Models\\Boat.asset");
-			const auto boatPlacements = ModelImporter::LoadGLTFTransforms(Gfx(), "Assets\\Models\\GLTF\\NewCastle_BoatPlacements.glb");
+			auto boatPlacements = ModelImporter::LoadGLTFTransforms(Gfx(), "Assets\\Models\\GLTF\\NewCastle_BoatPlacements.glb");
 
 			m_boatVelocities.resize(boatPlacements.size());
 			m_boatAngularVelocities.resize(boatPlacements.size());
-			for (const auto& bp : boatPlacements)
-			{
-				m_pBoatModels.emplace_back(std::make_unique<Model>(Gfx(), pBoatAsset, dx::XMLoadFloat4x4(&bp.trs) * m_sceneTransform));
-				m_pRendererList->AddModel(*m_pBoatModels.at(m_pBoatModels.size() - 1u));
 
-				m_boatStartPositions.emplace_back(m_pBoatModels.at(m_pBoatModels.size() - 1u)->GetPositionWS());
+			if (instanceBoats)
+			{
+				// Apply scene transform to all instances
+				for (auto& p : boatPlacements)
+				{
+					dx::XMStoreFloat4x4(&p.trs, dx::XMMatrixMultiply(dx::XMLoadFloat4x4(&p.trs), m_sceneTransform));
+
+					const auto transformedPos = dx::XMVector3Transform(dx::XMLoadFloat3(&p.position), m_sceneTransform);
+					m_boatStartPositions.emplace_back(transformedPos);
+				}
+
+				// Setup instances
+				m_pBoatModels.emplace_back(std::make_unique<InstancedModel>(Gfx(), pBoatAsset, dx::XMMatrixIdentity(), boatPlacements));
+				m_pRendererList->AddModel(*m_pBoatModels.at(m_pBoatModels.size() - 1u));
+			}
+			else
+			{
+				for (auto& p : boatPlacements)
+				{
+					m_pBoatModels.emplace_back(std::make_unique<Model>(Gfx(), pBoatAsset, dx::XMLoadFloat4x4(&p.trs) * m_sceneTransform));
+					m_pRendererList->AddModel(*m_pBoatModels.at(m_pBoatModels.size() - 1u));
+
+					m_boatStartPositions.emplace_back(m_pBoatModels.at(m_pBoatModels.size() - 1u)->GetPositionWS());
+				}
 			}
 		}
 
