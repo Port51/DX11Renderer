@@ -16,7 +16,7 @@ namespace gfx
 
 	PixelShader::PixelShader(const GraphicsDevice& gfx, const char* path, const std::vector<std::string>& shaderDefines)
 		: m_instanceIdx(m_nextInstanceIdx++), // overflow is unlikely, but ok here
-		m_path(path)
+		Shader(path)
 	{
 		ComPtr<ID3DBlob> pBlob;
 		std::wstring wide{ m_path.begin(), m_path.end() }; // convert to wide for file read <-- won't work for special characters

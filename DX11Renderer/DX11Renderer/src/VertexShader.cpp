@@ -18,7 +18,7 @@ namespace gfx
 
 	VertexShader::VertexShader(const GraphicsDevice& gfx, const char* path, const std::vector<std::string>& shaderDefines)
 		: m_instanceIdx(m_nextInstanceIdx++), // overflow is unlikely, but ok here
-		m_path(path)
+		Shader(path)
 	{
 		std::wstring wide{ m_path.begin(), m_path.end() }; // convert to wide for file read <-- won't work for special characters
 		THROW_IF_FAILED(D3DReadFileToBlob(wide.c_str(), &m_pBytecodeBlob));

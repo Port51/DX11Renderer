@@ -62,4 +62,7 @@ namespace gfx
 	{
 		THROW("UnbindOM() not implemented on type derived from Bindable");
 	}
+
+	Bindable::~Bindable()
+	{}
 }

@@ -1,6 +1,6 @@
 #pragma once
 #include "CodexElement.h"
-#include <wrl.h>
+#include "CommonHeader.h"
 
 struct ID3D11DeviceContext;
 struct ID3D11Device;
@@ -26,7 +26,7 @@ namespace gfx
 		virtual void UnbindPS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot);
 		virtual void UnbindRS(const GraphicsDevice& gfx, RenderState& renderState);
 		virtual void UnbindOM(const GraphicsDevice& gfx, RenderState& renderState);
-		virtual ~Bindable() = default;
+		virtual ~Bindable();
 		virtual void Release() override = 0;
 	};
 }

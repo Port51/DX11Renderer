@@ -16,48 +16,10 @@ namespace gfx
 	{}
 
 	ComputeShader::ComputeShader(const GraphicsDevice& gfx, const char* path, const std::string& kernelName)
-		: m_path(path), m_kernelName(kernelName)
+		: m_kernelName(kernelName), Shader(path)
 	{
-		const bool endsWithCSO = PathEndsWithCSO(path);
-		std::wstring wide{ m_path.begin(), m_path.end() }; // convert to wide for file read <-- won't work for special characters
-
-		if (endsWithCSO)
-		{
-			// Read pre-compiled shader
-			THROW_IF_FAILED(D3DReadFileToBlob(wide.c_str(), &m_pBytecodeBlob));
-		}
-		else
-		{
-			// Compile shader from HLSL
-			UINT flags = D3DCOMPILE_ENABLE_STRICTNESS;
-#if defined( DEBUG ) || defined( _DEBUG )
-			flags |= D3DCOMPILE_DEBUG;
-#endif
-
-			LPCSTR profile = (gfx.GetAdapter()->GetFeatureLevel() >= D3D_FEATURE_LEVEL_11_0) ? "cs_5_0" : "cs_4_0";
-			const D3D_SHADER_MACRO defines[] =
-			{
-				//"EXAMPLE_DEFINE", "1",
-				NULL, NULL
-			};
-
-			ID3DBlob* errorBlob = nullptr;
-			HRESULT hr = D3DCompileFromFile(wide.c_str(), defines, D3D_COMPILE_STANDARD_FILE_INCLUDE,
-				m_kernelName.c_str(), profile,
-				flags, 0, &m_pBytecodeBlob, &errorBlob);
-
-			if (FAILED(hr))
-			{
-				if (errorBlob)
-				{
-					THROW((char*)errorBlob->GetBufferPointer());
-					OutputDebugStringA((char*)errorBlob->GetBufferPointer());
-					errorBlob->Release();
-				}
-			}
-		}
-
-		assert(m_pBytecodeBlob != nullptr);
+		if (PathEndsWithCSO(path)) CompileBytecodeBlob(gfx, path);
+		else CompileBytecodeBlob(gfx, path, kernelName.c_str());
 
 		// Create shader
 		THROW_IF_FAILED(gfx.GetAdapter()->CreateComputeShader(
@@ -67,7 +29,7 @@ namespace gfx
 			&m_pComputeShader
 		));
 
-		assert(m_pComputeShader != nullptr);
+		if (m_pComputeShader == nullptr) THROW("Could not create shader!");
 
 		// Read info from shader
 		ID3D11ShaderReflection* pReflector = NULL;
@@ -75,7 +37,6 @@ namespace gfx
 			IID_ID3D11ShaderReflection, (void**)&pReflector);
 
 		pReflector->GetThreadGroupSize(&m_kernelSizeX, &m_kernelSizeY, &m_kernelSizeZ);
-
 	}
 
 	void ComputeShader::Release()
