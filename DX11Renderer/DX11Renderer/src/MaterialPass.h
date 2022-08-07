@@ -48,10 +48,12 @@ namespace gfx
 		const int GetPropertySlot() const;
 		const int GetRenderQueue() const;
 		const RenderPassType GetRenderPass() const;
+		const bool IsInstanced() const;
 		
 	private:
 		int m_propertySlotIdx = -1;
 		u8 m_renderQueue = 0;
+		bool m_instanced = false;
 		RenderPassType m_renderPass;
 		std::shared_ptr<InputLayout> m_pInputLayout;
 		std::shared_ptr<VertexShader> m_pVertexShader;

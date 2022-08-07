@@ -58,6 +58,14 @@ namespace gfx
 		RebuildSceneGraphTransforms();
 	}
 
+	void BaseModel::VerifyInstancing(const bool requireInstancing) const
+	{
+		for (const auto& m : m_pMaterials)
+		{
+			m->VerifyInstancing(requireInstancing);
+		}
+	}
+
 	const std::shared_ptr<SceneGraphNode> BaseModel::GetSceneGraph() const
 	{
 		return m_pSceneGraph;

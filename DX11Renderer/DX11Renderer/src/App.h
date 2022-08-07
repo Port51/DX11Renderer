@@ -23,6 +23,10 @@ namespace gfx
 
 	class App : public InputListener
 	{
+	private:
+		const bool instanceGems = true;
+		const bool instancePeople = true;
+
 	public:
 		App(const UINT screenWidth, const UINT screenHeight, HINSTANCE hInstance);
 		virtual ~App();

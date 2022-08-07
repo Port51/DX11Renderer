@@ -26,15 +26,21 @@ namespace gfx
 	public:
 		Material(const GraphicsDevice& gfx, const std::string_view assetPath);
 		virtual void Release() override;
+
+	public:
 		void Bind(const GraphicsDevice& gfx, const std::string_view passName);
 		void SubmitDrawCommands(const Drawable& drawable, const DrawContext& drawContext) const;
+
 	public:
+		void VerifyInstancing(const bool requireInstancing) const;
 		const u64 GetMaterialCode(const RenderPassType renderPassType) const;
 		const VertexLayout& GetVertexLayout() const;
 		static std::shared_ptr<Bindable> Resolve(const GraphicsDevice& gfx, const std::string_view assetPath);
+
 	protected:
 		static std::string GenerateUID(const std::string_view assetPath);
 		void AddBindable(std::shared_ptr<Bindable> pBindable);
+
 	private:
 		// Contains bindings like textures and uniform data, shared across 1+ material passes
 		std::vector<std::unique_ptr<BindingList>> m_pPropertySlots;
@@ -43,5 +49,8 @@ namespace gfx
 		std::string m_materialAssetPath;
 		u64 m_fallbackMaterialCode;
 		VertexLayout m_vertexLayout;
+		size_t m_instancedPasses = 0u;
+		size_t m_nonInstancedPasses = 0u;
+
 	};
 }

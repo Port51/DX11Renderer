@@ -236,32 +236,46 @@ namespace gfx
 		// Add magic lights (static)
 		{
 			const auto pGemAsset = ModelImporter::LoadGLTF(Gfx(), "Assets\\Models\\Gem.asset");
-			const auto torchPlacements = ModelImporter::LoadGLTFPositionsAndScales(Gfx(), "Assets\\Models\\GLTF\\NewCastle_TorchPlacements.glb");
-			for (const auto& tp : torchPlacements)
+			auto gemPlacements = ModelImporter::LoadGLTFTransforms(Gfx(), "Assets\\Models\\GLTF\\NewCastle_TorchPlacements.glb");
+			for (const auto& p : gemPlacements)
 			{
-				const auto transformedPos = dx::XMVector4Transform(dx::XMVectorSet(tp.x, tp.y, tp.z, 1.0), sceneTransform);
-				m_pLightManager->AddPointLight(Gfx(), transformedPos, GetRandomMagicLight(), 2.8f * std::sqrt(tp.w), 1.f, 3.15f * tp.w);
+				const auto transformedPos = dx::XMLoadFloat4x4(&p.trs) * sceneTransform;
+				const auto lightPosition = dx::XMVector3Transform(dx::XMLoadFloat3(&p.position), sceneTransform);
+				m_pLightManager->AddPointLight(Gfx(), lightPosition, GetRandomMagicLight(), 2.8f * std::sqrt(p.scale.x), 1.f, 3.15f * p.scale.x);
 
-				m_pGemModels.emplace_back(std::make_unique<Model>(Gfx(), pGemAsset, dx::XMMatrixScaling(tp.w, tp.w, tp.w) * dx::XMMatrixRotationRollPitchYaw(0.f, m_pRandomGenerator->GetUniformFloat(0.f, dx::XM_2PI), 0.f) * dx::XMMatrixTranslationFromVector(transformedPos)));
+				if (!instanceGems)
+				{
+					m_pGemModels.emplace_back(std::make_unique<Model>(Gfx(), pGemAsset, transformedPos));
+					m_pRendererList->AddModel(*m_pGemModels.at(m_pGemModels.size() - 1u));
+				}
+				// Note - dx::XMFLOAT3(1.f, 0.25f, 0.04f) was a good color for torches
+			}
+
+			if (instanceGems)
+			{
+				// Apply scene transform to all instances
+				for (int i = 0, ct = gemPlacements.size(); i < ct; ++i)
+				{
+					dx::XMStoreFloat4x4(&gemPlacements[i].trs, dx::XMMatrixMultiply(dx::XMLoadFloat4x4(&gemPlacements[i].trs), sceneTransform));
+				}
+
+				// Setup instances
+				m_pGemModels.emplace_back(std::make_unique<InstancedModel>(Gfx(), pGemAsset, dx::XMMatrixIdentity(), gemPlacements));
 				m_pRendererList->AddModel(*m_pGemModels.at(m_pGemModels.size() - 1u));
-
-				// dx::XMFLOAT3(1.f, 0.25f, 0.04f) was a good color for torches
 			}
 		}
 
 		// Add people (static)
 		{
-			const bool instancePeople = true;
-
 			const auto pPersonAsset = ModelImporter::LoadGLTF(Gfx(), "Assets\\Models\\Person.asset");
 			auto personPlacements = ModelImporter::LoadGLTFTransforms(Gfx(), "Assets\\Models\\GLTF\\NewCastle_PersonPlacements.glb");
-			for (const auto& tp : personPlacements)
+			for (const auto& p : personPlacements)
 			{
-				const auto transformedPos = dx::XMLoadFloat4x4(&tp.trs) * sceneTransform;
+				const auto transformedPos = dx::XMLoadFloat4x4(&p.trs) * sceneTransform;
 				
 				// Mask out translation by setting W = 0
-				const auto lightOffset = dx::XMVector4Transform(dx::XMVectorSet(0.2f, 1.41f, -0.28f, 0.f), dx::XMMatrixRotationRollPitchYawFromVector(dx::XMLoadFloat3(&tp.rotation)));
-				const auto lightPosition = dx::XMVector3Transform(dx::XMVectorAdd(dx::XMLoadFloat3(&tp.position), lightOffset), sceneTransform);
+				const auto lightOffset = dx::XMVector4Transform(dx::XMVectorSet(0.2f, 1.41f, -0.28f, 0.f), dx::XMMatrixRotationRollPitchYawFromVector(dx::XMLoadFloat3(&p.rotation)));
+				const auto lightPosition = dx::XMVector3Transform(dx::XMVectorAdd(dx::XMLoadFloat3(&p.position), lightOffset), sceneTransform);
 				m_pLightManager->AddPointLight(Gfx(), lightPosition, dx::XMFLOAT3(0.f / 255.f, 98.f / 255.f, 255.f / 255.f), 2.8f, 1.f, 3.15f);
 
 				if (!instancePeople)
@@ -269,7 +283,6 @@ namespace gfx
 					m_pPersonModels.emplace_back(std::make_unique<Model>(Gfx(), pPersonAsset, transformedPos));
 					m_pRendererList->AddModel(*m_pPersonModels.at(m_pPersonModels.size() - 1u));
 				}
-				// dx::XMFLOAT3(1.f, 0.25f, 0.04f) was a good color for torches
 			}
 
 			if (instancePeople)

@@ -106,6 +106,9 @@ namespace gfx
 					if (pMaterialPass->GetStencil() == nullptr)
 						pMaterialPass->SetStencil(DepthStencilState::Resolve(gfx, DepthStencilState::Mode::Normal));
 
+					if (pMaterialPass->IsInstanced()) m_instancedPasses++;
+					else m_nonInstancedPasses++;
+
 					m_pMaterialPassesByType.emplace(materialPassRenderType, std::move(pMaterialPass));
 				}
 			}
@@ -237,6 +240,12 @@ namespace gfx
 				pMaterialPass->SubmitDrawCommands(drawable, drawContext, pPropertySlot);
 			}
 		}
+	}
+
+	void Material::VerifyInstancing(const bool requireInstancing) const
+	{
+		if (requireInstancing && m_nonInstancedPasses > 0u) THROW(m_materialAssetPath + std::string(": Non-instanced material pass in an instanced renderer!"));
+		else if (!requireInstancing && m_instancedPasses > 0u) THROW(m_materialAssetPath + std::string(": Instanced material pass in a non-instanced renderer!"));
 	}
 
 	const u64 Material::GetMaterialCode(const RenderPassType renderPassType) const

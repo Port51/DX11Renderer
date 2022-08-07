@@ -31,6 +31,8 @@ namespace gfx
 			m_pMaterials.push_back(pMaterial);
 		}
 
+		VerifyInstancing(true);
+
 		m_pSceneGraph = CreateModelNode(gfx, pModelAsset->m_pSceneGraph, instancePositions);
 		InitializeModel();
 	}

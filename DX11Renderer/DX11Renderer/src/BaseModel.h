@@ -25,6 +25,7 @@ namespace gfx
 		virtual void ApplyTRS() override;
 		void RebuildSceneGraphTransforms();
 		void InitializeModel();
+		void VerifyInstancing(const bool requireInstancing) const;
 
 	protected:
 		std::vector<std::shared_ptr<Material>> m_pMaterials;

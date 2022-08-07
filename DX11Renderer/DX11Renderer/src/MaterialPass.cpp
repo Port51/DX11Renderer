@@ -54,6 +54,7 @@ namespace gfx
 
 	void MaterialPass::AddShaderDefine(std::string define)
 	{
+		if (define == "INSTANCING_ON") m_instanced = true;
 		m_shaderDefines.emplace_back(define);
 	}
 
@@ -119,6 +120,11 @@ namespace gfx
 	const RenderPassType MaterialPass::GetRenderPass() const
 	{
 		return m_renderPass;
+	}
+
+	const bool MaterialPass::IsInstanced() const
+	{
+		return m_instanced;
 	}
 
 	void MaterialPass::SubmitDrawCommands(const Drawable& drawable, const DrawContext& drawContext, const BindingList* const pPropertyBindings) const
