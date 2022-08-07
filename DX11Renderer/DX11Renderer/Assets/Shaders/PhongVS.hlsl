@@ -49,7 +49,7 @@ v2f main(attrib i)
     o.pos = mul(modelViewProj, float4(i.pos, 1.0f));
 #endif
     o.positionNDC = o.pos;
-    o.uv0 = float2(i.uv0.x, 1.f - i.uv0.y);
+    o.uv0 = float2(i.uv0.x, 1.0 - i.uv0.y);
     o.vertColor = i.vertColor;
     o.screenPos = o.pos;
 

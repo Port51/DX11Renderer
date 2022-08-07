@@ -18,8 +18,9 @@ cbuffer LightCBuf : register(b0)
 };*/
 
 Texture2D tex : register(t0);
-Texture2D nmap : register(t1);
+Texture2D sdfs : register(t1);
 SamplerState splr : register(s0);
+SamplerState splr2 : register(s1);
 
 float4 main(v2f i) : SV_Target
 {
@@ -45,10 +46,15 @@ float4 main(v2f i) : SV_Target
         i.normalVS = normalize(n);
     }
 
+    const float sdfScale = 3.7f;
+    const float2 sdfOffset = float2(0.05f, 0.0f);
+    const float4 sdfTex = sdfs.Sample(splr2, (i.uv0.xy - 0.5f) * sdfScale + 0.5f + sdfOffset);
+
     const float foamScale = 0.35;
     const float foamTex0 = tex.Sample(splr, i.positionWS.xz * foamScale + _Time.x * 1.13891).x;
     const float foamTex1 = tex.Sample(splr, i.positionWS.xz * foamScale * 0.8924 - _Time.x + float2(0.24839, 0.78214)).x;
     float foam = saturate((i.positionWS.y + 6.05) * 1.1);
+    foam = saturate(foam + (sdfTex.r + sdfTex.g) * 0.75f);
     foam *= lerp(foamTex0 * foamTex1, 1.0, foam);
     foam = SCurve(foam);
 

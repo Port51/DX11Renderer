@@ -75,7 +75,11 @@ namespace gfx
 		static const UINT VS_PerCameraCB = 2u;
 		static const UINT VS_PerObjectTransformCB = 3u;
 		static const UINT VS_FreeCB = 4u; // 1st available general-purpose slot
-		static const UINT VS_FreeSPL = 0u; // 1st available general-purpose slot
+		static const UINT VS_PointWrapSampler = 0u;
+		static const UINT VS_PointClampSampler = 1u;
+		static const UINT VS_BilinearClampSampler = 2u;
+		static const UINT VS_BilinearWrapSampler = 3u;
+		static const UINT VS_FreeSPL = 4u; // 1st available general-purpose slot
 
 		static const UINT VS_FreeSRV = 0u; // 1st available general-purpose slot
 
@@ -86,7 +90,11 @@ namespace gfx
 		static const UINT PS_LightInputCB = 4u;
 		static const UINT PS_FreeCB = 5u; // 1st available general-purpose slot
 		static const UINT PS_FreeSRV = 5u; // save 0-4 for materials
-		static const UINT PS_FreeSPL = 5u; // save 0-4 for materials
+		static const UINT PS_PointWrapSampler = 0u;
+		static const UINT PS_PointClampSampler = 1u;
+		static const UINT PS_BilinearClampSampler = 2u;
+		static const UINT PS_BilinearWrapSampler = 3u;
+		static const UINT PS_FreeSPL = 4u;
 
 		// These are the first slots available for renderers
 		static const UINT VS_FreeRendererCB = 0u;

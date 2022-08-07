@@ -169,10 +169,6 @@ namespace gfx
 
 					pPropertySlot->AddBinding(Texture::Resolve(gfx, texPath))
 						.SetupPSBinding(slotIdx);
-
-					auto pSampler = Sampler::Resolve(gfx);
-					pPropertySlot->AddBinding(std::move(pSampler))
-						.SetupPSBinding(slotIdx);
 				}
 			}
 			else if (state == MaterialParseState::Pass)

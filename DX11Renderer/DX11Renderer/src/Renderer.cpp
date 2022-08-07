@@ -234,7 +234,15 @@ namespace gfx
 			.CSSetSPL(RenderSlots::CS_PointWrapSampler, m_pPointWrapSampler->GetD3DSampler())
 			.CSSetSPL(RenderSlots::CS_PointClampSampler, m_pPointClampSampler->GetD3DSampler())
 			.CSSetSPL(RenderSlots::CS_BilinearWrapSampler, m_pBilinearWrapSampler->GetD3DSampler())
-			.CSSetSPL(RenderSlots::CS_BilinearClampSampler, m_pBilinearClampSampler->GetD3DSampler());
+			.CSSetSPL(RenderSlots::CS_BilinearClampSampler, m_pBilinearClampSampler->GetD3DSampler())
+			.VSSetSPL(RenderSlots::VS_PointWrapSampler, m_pPointWrapSampler->GetD3DSampler())
+			.VSSetSPL(RenderSlots::VS_PointClampSampler, m_pPointClampSampler->GetD3DSampler())
+			.VSSetSPL(RenderSlots::VS_BilinearWrapSampler, m_pBilinearWrapSampler->GetD3DSampler())
+			.VSSetSPL(RenderSlots::VS_BilinearClampSampler, m_pBilinearClampSampler->GetD3DSampler())
+			.PSSetSPL(RenderSlots::PS_PointWrapSampler, m_pPointWrapSampler->GetD3DSampler())
+			.PSSetSPL(RenderSlots::PS_PointClampSampler, m_pPointClampSampler->GetD3DSampler())
+			.PSSetSPL(RenderSlots::PS_BilinearWrapSampler, m_pBilinearWrapSampler->GetD3DSampler())
+			.PSSetSPL(RenderSlots::PS_BilinearClampSampler, m_pBilinearClampSampler->GetD3DSampler());
 
 		GetRenderPass(RenderPassType::DepthPrepassRenderPass).
 			ClearBinds()

@@ -48,7 +48,7 @@ v2f main(attrib i)
     o.tangentVS = mul((float3x3) modelView, tangent).xyz;
     o.pos = mul(_ViewProjMatrix, float4(positionWS, 1.0f));
     o.positionNDC = o.pos;
-    o.uv0 = float2(i.uv0.x, 1.f - i.uv0.y);
+    o.uv0 = float2(i.uv0.x, i.uv0.y);
     o.screenPos = o.pos;
     return o;
 }
