@@ -103,6 +103,7 @@ namespace gfx
 
 		// Setup transformation buffer
 		static GlobalTransformCB transformationCB;
+		transformationCB.viewProjMatrix = viewMatrix * projMatrix; // required for instancing!
 		transformationCB.viewMatrix = viewMatrix;
 		transformationCB.projMatrix = projMatrix;
 		context.transformationCB.Update(context.gfx, transformationCB);

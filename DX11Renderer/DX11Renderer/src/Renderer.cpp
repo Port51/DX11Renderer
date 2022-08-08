@@ -258,6 +258,7 @@ namespace gfx
 
 		GetRenderPass(RenderPassType::ShadowRenderPass).
 			ClearBinds()
+			.VSSetCB(RenderSlots::VS_GlobalTransformsCB, m_pTransformationCB->GetD3DBuffer())
 			.AddBinding(RasterizerState::Resolve(gfx, D3D11_CULL_MODE::D3D11_CULL_BACK)).SetupRSBinding();
 			//.AddBinding(RasterizerState::Resolve(gfx, D3D11_CULL_MODE::D3D11_CULL_FRONT)).SetupRSBinding(); // Reduce shadow acne w/ front face culling during shadow pass
 
