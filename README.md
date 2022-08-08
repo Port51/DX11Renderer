@@ -59,6 +59,14 @@ As an optimization, I checked the Hi-Z buffer for each cluster. If the maximum d
 
 Each frame, lights are culled against the camera frustum. Shadowed lights in view are then assigned a section of the shadow atlas to render to.
 
+## Instancing
+
+Instancing was hugely beneficial for reducing the number of draw calls and GPU commands. The instancing system I added allows for updating transforms, so it can be used for things like boats that move with water waves.
+
+## Material sorting
+
+Another helpful optimization was applying GPU bindings only when needed, and sorting draw calls to minimize changes to those bindings. I used an unsigned 64-bit int to store a "code" for each material, and then sorted by that code. Shader program changes are especially slow, so I had the sort prioritize those. The result is that draw calls with the same shaders are drawn together.
+
 ## Bloom
 
 (todo: pictures!)
