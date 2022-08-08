@@ -23,4 +23,9 @@ namespace gfx
 		if (m_instanceCount == 0u) THROW("You dummy, you forgot to set instance counts!");
 		gfx.DrawIndexedInstanced(GetIndexCount(), m_instanceCount);
 	}
+
+	const bool InstancedMeshRenderer::UseModelTransform() const
+	{
+		return false;
+	}
 }
