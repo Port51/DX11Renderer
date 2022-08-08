@@ -52,6 +52,14 @@ namespace gfx
 	class RenderSlots
 	{
 	public:
+		// Shared by all stages
+		static const UINT Global_PointWrapSampler = 0u;
+		static const UINT Global_PointClampSampler = 1u;
+		static const UINT Global_PointMirrorSampler = 2u;
+		static const UINT Global_BilinearClampSampler = 3u;
+		static const UINT Global_BilinearWrapSampler = 4u;
+		static const UINT Global_BilinearMirrorSampler = 5u;
+
 		static const UINT CS_PerFrameCB = 0u;
 		static const UINT CS_GlobalTransformsCB = 1u;
 		static const UINT CS_PerCameraCB = 2u;
@@ -62,12 +70,7 @@ namespace gfx
 		static const UINT CS_LightShadowDataSRV = 1u;
 		static const UINT CS_GbufferNormalRoughSRV = 2u;
 		static const UINT CS_FreeSRV = 3u; // 1st available general-purpose slot
-		static const UINT CS_PointWrapSampler = 0u;
-		static const UINT CS_PointClampSampler = 1u;
-		static const UINT CS_BilinearClampSampler = 2u;
-		static const UINT CS_BilinearWrapSampler = 3u;
-		static const UINT CS_FreeSPL = 4u; // 1st available general-purpose slot
-
+		static const UINT CS_FreeSPL = 6u; // 1st available general-purpose slot
 		static const UINT CS_FreeUAV = 0u; // 1st available general-purpose slot
 
 		static const UINT VS_PerFrameCB = 0u;
@@ -75,12 +78,7 @@ namespace gfx
 		static const UINT VS_PerCameraCB = 2u;
 		static const UINT VS_PerObjectTransformCB = 3u;
 		static const UINT VS_FreeCB = 4u; // 1st available general-purpose slot
-		static const UINT VS_PointWrapSampler = 0u;
-		static const UINT VS_PointClampSampler = 1u;
-		static const UINT VS_BilinearClampSampler = 2u;
-		static const UINT VS_BilinearWrapSampler = 3u;
-		static const UINT VS_FreeSPL = 4u; // 1st available general-purpose slot
-
+		static const UINT VS_FreeSPL = 6u; // 1st available general-purpose slot
 		static const UINT VS_FreeSRV = 0u; // 1st available general-purpose slot
 
 		static const UINT PS_PerFrameCB = 0u;
@@ -90,11 +88,7 @@ namespace gfx
 		static const UINT PS_LightInputCB = 4u;
 		static const UINT PS_FreeCB = 5u; // 1st available general-purpose slot
 		static const UINT PS_FreeSRV = 5u; // save 0-4 for materials
-		static const UINT PS_PointWrapSampler = 0u;
-		static const UINT PS_PointClampSampler = 1u;
-		static const UINT PS_BilinearClampSampler = 2u;
-		static const UINT PS_BilinearWrapSampler = 3u;
-		static const UINT PS_FreeSPL = 4u;
+		static const UINT PS_FreeSPL = 6u;
 
 		// These are the first slots available for renderers
 		static const UINT VS_FreeRendererCB = 0u;

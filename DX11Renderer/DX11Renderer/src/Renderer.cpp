@@ -69,8 +69,10 @@ namespace gfx
 
 		m_pPointWrapSampler = std::make_shared<Sampler>(gfx, D3D11_FILTER_MIN_MAG_MIP_POINT, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP);
 		m_pPointClampSampler = std::make_shared<Sampler>(gfx, D3D11_FILTER_MIN_MAG_MIP_POINT, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP);
+		m_pPointMirrorSampler = std::make_shared<Sampler>(gfx, D3D11_FILTER_MIN_MAG_MIP_POINT, D3D11_TEXTURE_ADDRESS_MIRROR, D3D11_TEXTURE_ADDRESS_MIRROR, D3D11_TEXTURE_ADDRESS_MIRROR);
 		m_pBilinearWrapSampler = std::make_shared<Sampler>(gfx, D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP);
 		m_pBilinearClampSampler = std::make_shared<Sampler>(gfx, D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP);
+		m_pBilinearMirrorSampler = std::make_shared<Sampler>(gfx, D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT, D3D11_TEXTURE_ADDRESS_MIRROR, D3D11_TEXTURE_ADDRESS_MIRROR, D3D11_TEXTURE_ADDRESS_MIRROR);
 		
 		D3D11_SAMPLER_DESC shadowSamplerDesc = {};
 		shadowSamplerDesc.Filter = D3D11_FILTER_COMPARISON_MIN_MAG_LINEAR_MIP_POINT;
@@ -231,18 +233,24 @@ namespace gfx
 			.PSSetCB(RenderSlots::PS_GlobalTransformsCB, m_pTransformationCB->GetD3DBuffer())
 			.PSSetCB(RenderSlots::PS_PerCameraCB, m_pPerCameraCB->GetD3DBuffer())
 			.PSSetCB(RenderSlots::PS_LightInputCB, m_pLightManager->GetLightInputCB().GetD3DBuffer())
-			.CSSetSPL(RenderSlots::CS_PointWrapSampler, m_pPointWrapSampler->GetD3DSampler())
-			.CSSetSPL(RenderSlots::CS_PointClampSampler, m_pPointClampSampler->GetD3DSampler())
-			.CSSetSPL(RenderSlots::CS_BilinearWrapSampler, m_pBilinearWrapSampler->GetD3DSampler())
-			.CSSetSPL(RenderSlots::CS_BilinearClampSampler, m_pBilinearClampSampler->GetD3DSampler())
-			.VSSetSPL(RenderSlots::VS_PointWrapSampler, m_pPointWrapSampler->GetD3DSampler())
-			.VSSetSPL(RenderSlots::VS_PointClampSampler, m_pPointClampSampler->GetD3DSampler())
-			.VSSetSPL(RenderSlots::VS_BilinearWrapSampler, m_pBilinearWrapSampler->GetD3DSampler())
-			.VSSetSPL(RenderSlots::VS_BilinearClampSampler, m_pBilinearClampSampler->GetD3DSampler())
-			.PSSetSPL(RenderSlots::PS_PointWrapSampler, m_pPointWrapSampler->GetD3DSampler())
-			.PSSetSPL(RenderSlots::PS_PointClampSampler, m_pPointClampSampler->GetD3DSampler())
-			.PSSetSPL(RenderSlots::PS_BilinearWrapSampler, m_pBilinearWrapSampler->GetD3DSampler())
-			.PSSetSPL(RenderSlots::PS_BilinearClampSampler, m_pBilinearClampSampler->GetD3DSampler());
+			.CSSetSPL(RenderSlots::Global_PointWrapSampler, m_pPointWrapSampler->GetD3DSampler())
+			.CSSetSPL(RenderSlots::Global_PointClampSampler, m_pPointClampSampler->GetD3DSampler())
+			.CSSetSPL(RenderSlots::Global_PointMirrorSampler, m_pPointMirrorSampler->GetD3DSampler())
+			.CSSetSPL(RenderSlots::Global_BilinearWrapSampler, m_pBilinearWrapSampler->GetD3DSampler())
+			.CSSetSPL(RenderSlots::Global_BilinearClampSampler, m_pBilinearClampSampler->GetD3DSampler())
+			.CSSetSPL(RenderSlots::Global_BilinearMirrorSampler, m_pBilinearMirrorSampler->GetD3DSampler())
+			.VSSetSPL(RenderSlots::Global_PointWrapSampler, m_pPointWrapSampler->GetD3DSampler())
+			.VSSetSPL(RenderSlots::Global_PointClampSampler, m_pPointClampSampler->GetD3DSampler())
+			.VSSetSPL(RenderSlots::Global_PointMirrorSampler, m_pPointMirrorSampler->GetD3DSampler())
+			.VSSetSPL(RenderSlots::Global_BilinearWrapSampler, m_pBilinearWrapSampler->GetD3DSampler())
+			.VSSetSPL(RenderSlots::Global_BilinearClampSampler, m_pBilinearClampSampler->GetD3DSampler())
+			.VSSetSPL(RenderSlots::Global_BilinearMirrorSampler, m_pBilinearMirrorSampler->GetD3DSampler())
+			.PSSetSPL(RenderSlots::Global_PointWrapSampler, m_pPointWrapSampler->GetD3DSampler())
+			.PSSetSPL(RenderSlots::Global_PointClampSampler, m_pPointClampSampler->GetD3DSampler())
+			.PSSetSPL(RenderSlots::Global_PointMirrorSampler, m_pPointMirrorSampler->GetD3DSampler())
+			.PSSetSPL(RenderSlots::Global_BilinearWrapSampler, m_pBilinearWrapSampler->GetD3DSampler())
+			.PSSetSPL(RenderSlots::Global_BilinearClampSampler, m_pBilinearClampSampler->GetD3DSampler())
+			.PSSetSPL(RenderSlots::Global_BilinearMirrorSampler, m_pBilinearMirrorSampler->GetD3DSampler());
 
 		GetRenderPass(RenderPassType::DepthPrepassRenderPass).
 			ClearBinds()

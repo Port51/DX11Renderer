@@ -6,8 +6,10 @@
 // todo: move elsewhere?
 SamplerState PointWrapSampler : register(s0);
 SamplerState PointClampSampler : register(s1);
-SamplerState BilinearWrapSampler : register(s2);
-SamplerState BilinearClampSampler : register(s3);
+SamplerState PointMirrorSampler : register(s2);
+SamplerState BilinearWrapSampler : register(s3);
+SamplerState BilinearClampSampler : register(s4);
+SamplerState BilinearMirrorSampler : register(s5);
 
 // Z buffer to linear depth.
 // Does NOT correctly handle oblique view frustums.

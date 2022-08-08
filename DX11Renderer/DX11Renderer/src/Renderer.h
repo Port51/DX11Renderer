@@ -67,8 +67,10 @@ namespace gfx
 
 		std::shared_ptr<Sampler> m_pPointWrapSampler;
 		std::shared_ptr<Sampler> m_pPointClampSampler;
+		std::shared_ptr<Sampler> m_pPointMirrorSampler;
 		std::shared_ptr<Sampler> m_pBilinearWrapSampler;
 		std::shared_ptr<Sampler> m_pBilinearClampSampler;
+		std::shared_ptr<Sampler> m_pBilinearMirrorSampler;
 
 		std::shared_ptr<RenderTexture> m_pNormalRoughReflectivityTarget;
 		std::shared_ptr<RenderTexture> m_pSpecularLighting;
