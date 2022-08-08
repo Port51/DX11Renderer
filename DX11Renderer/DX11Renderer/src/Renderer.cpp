@@ -52,7 +52,7 @@ namespace gfx
 		//
 		m_rendererFeatureEnabled.resize(RendererFeature::COUNT, true); // enable all features by default
 		m_rendererFeatureEnabled[RendererFeature::HZBSSR] = true;
-		m_rendererFeatureEnabled[RendererFeature::DepthOfField] = false;
+		m_rendererFeatureEnabled[RendererFeature::DepthOfField] = true;
 		m_rendererFeatureEnabled[RendererFeature::Bloom] = true;
 
 		//

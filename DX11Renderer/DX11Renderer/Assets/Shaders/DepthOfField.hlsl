@@ -220,11 +220,17 @@ void Composite(uint3 tId : SV_DispatchThreadID)
 
 	uint2 dofId = tId >> 1u;
 
+	// Recalculate far CoC so it doesn't bleed over what's in focus
+	// Mip 1 matches downrez'd texture
+	float hzbFar = HiZBuffer.Load(int3(dofId.xy, 1u)).r;
+	hzbFar = HZB_LINEAR(hzbFar, _ZBufferParams);
+	float cocFar = SCurve(saturate(hzbFar * _FarCoCScale + _FarCoCBias)) * _FarCoCIntensity;
+
 	float4 src = UAVTex0[tId.xy];
 	float4 farCoC = saturate(SRVTex0[dofId.xy]);
 	float4 nearCoC = saturate(SRVTex1[dofId.xy]);
 
-	float3 color = lerp(lerp(src, farCoC.rgb, farCoC.a), nearCoC.rgb, nearCoC.a);
+	float3 color = lerp(lerp(src, farCoC.rgb, cocFar), nearCoC.rgb, nearCoC.a);
 	UAVTex0[tId.xy] = float4(max(color, 0.f), src.a);
 }
 
