@@ -78,8 +78,8 @@ namespace gfx
 			{
 				for (UINT y = 0u; y < elementsPerComponent; ++y)
 				{
-					// Complex mult: P * Q = PrQr - PiQi + [PrQi + QrPi]i
-					// Note that each complex element uses 2 floats
+					// Sum of complex numbers is done component-wise
+					// P + Q = (Pr + Qr) + (Pi + Qi) * i
 					const float xReal = weights[elementsPerComponent * 2u * cIdx + x];
 					const float xImag = weights[elementsPerComponent * 2u * cIdx + elementsPerComponent + x];
 					const float yReal = weights[elementsPerComponent * 2u * cIdx + y];
@@ -90,7 +90,7 @@ namespace gfx
 			}
 			accu = accu * (sumR * combineRealFactor + sumI * combineImaginaryFactor); // todo: add weights
 		}
-		return accu;
+		return accu * 1.8f;
 	}
 
 	const void Bokeh::ApplyScaleToDisk(std::vector<float>& weights, const UINT startComponentIdx, const UINT componentCount, const UINT elementsPerComponent, const float scaleFactor)

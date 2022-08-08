@@ -122,13 +122,14 @@ void HorizontalFilter(uint3 gtId : SV_GroupThreadID, uint3 tId : SV_DispatchThre
 	if (tId.x >= (uint) resolution.x || tId.y >= (uint) resolution.y)
 		return;
 
-	// Sum of complex numbers is done component-wise
-	// P + Q = (Pr + Qr) + (Pi + Qi)i
 	float4 Sr = 0.0;
 	float4 Si = 0.0;
 	[unroll(DiscKernelSize)]
 	for (uint i = 0; i < DiscKernelSize; ++i)
 	{
+		// Sum of complex numbers is done component-wise
+		// P + Q = (Pr + Qr) + (Pi + Qi)i
+		
 		// Multiplication of real with complex number
 		Sr += discCache0[i + gtId.x] * GetRealWeight(i);
 		Si += discCache0[i + gtId.x] * GetImaginaryWeight(i);
@@ -175,16 +176,17 @@ void VerticalFilterAndCombine(uint3 gtId : SV_GroupThreadID, uint3 tId : SV_Disp
 	if (tId.x >= (uint) resolution.x || tId.y >= (uint) resolution.y)
 		return;
 
-	// Sum of complex numbers is done component-wise
-	// P + Q = (Pr + Qr) + (Pi + Qi)i
+	
 	float4 Sr = 0.0;
 	float4 Si = 0.0;
 	[unroll(DiscKernelSize)]
 	for (uint i = 0; i < DiscKernelSize; ++i)
 	{
+		// Sum of complex numbers is done component-wise
+		// P + Q = (Pr + Qr) + (Pi + Qi)i
+		// 
 		// Multiplication of complex numbers
 		// P * Q = PrQr - PiQi + [PrQi + PrSi]i
-
 		float4 Pr = discCache0[i + gtId.y];
 		float4 Pi = discCache1[i + gtId.y];
 		float4 Qr = GetRealWeight(i);

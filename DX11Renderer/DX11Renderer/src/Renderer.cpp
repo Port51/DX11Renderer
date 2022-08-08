@@ -316,20 +316,6 @@ namespace gfx
 			.PSSetCB(RenderSlots::PS_FreeCB + 1u, m_pClusteredLightingCB->GetD3DBuffer())
 			.PSSetSPL(RenderSlots::PS_FreeSPL + 0u, m_pShadowSampler->GetD3DSampler());
 
-		GetRenderPass(RenderPassType::CreateDownsampledX2Texture).
-			ClearBinds()
-			.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, m_pCameraColor0->GetSRV())
-			.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, m_pDownsampledColor->GetUAV());
-
-		static_cast<DepthOfFieldPass&>(GetRenderPass(RenderPassType::DepthOfFieldRenderPass)).SetupRenderPassDependencies(gfx, *m_pDownsampledColor, *m_pHiZBufferTarget, *m_pCameraColor0);
-
-		static_cast<BloomPass&>(GetRenderPass(RenderPassType::BloomRenderPass)).SetupRenderPassDependencies(gfx, *m_pDownsampledColor, *m_pCameraColor0);
-
-		if (IsFeatureEnabled(RendererFeature::SSAO))
-		{
-			static_cast<SSAOPass&>(GetRenderPass(RenderPassType::SSAORenderPass)).SetupRenderPassDependencies(gfx, *m_pNormalRoughReflectivityTarget, *m_pHiZBufferTarget, *m_pRGBNoiseTexture);
-		}
-
 		if (IsFeatureEnabled(RendererFeature::HZBSSR))
 		{
 			// Assign inputs and outputs
@@ -348,6 +334,27 @@ namespace gfx
 				.CSSetUAV(RenderSlots::CS_FreeUAV + 1u, m_pSSR_DebugData->GetUAV())
 				.CSSetUAV(RenderSlots::CS_FreeUAV + 2u, m_pDebugSSR->GetUAV())
 				.CSSetCB(RenderSlots::CS_FreeCB + 0u, m_pSSR_CB->GetD3DBuffer());
+		}
+
+		// Downsampled FX
+		{
+			const auto& pColorIn = (cameraOutSlot0) ? m_pCameraColor0 : m_pCameraColor1;
+			const auto& pColorOut = (cameraOutSlot0) ? m_pCameraColor1 : m_pCameraColor0;
+			//cameraOutSlot0 = !cameraOutSlot0;
+
+			GetRenderPass(RenderPassType::CreateDownsampledX2Texture).
+				ClearBinds()
+				.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, pColorIn->GetSRV())
+				.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, m_pDownsampledColor->GetUAV());
+
+			static_cast<DepthOfFieldPass&>(GetRenderPass(RenderPassType::DepthOfFieldRenderPass)).SetupRenderPassDependencies(gfx, *m_pDownsampledColor, *m_pHiZBufferTarget, *pColorIn);
+
+			static_cast<BloomPass&>(GetRenderPass(RenderPassType::BloomRenderPass)).SetupRenderPassDependencies(gfx, *m_pDownsampledColor, *pColorIn);
+		}
+
+		if (IsFeatureEnabled(RendererFeature::SSAO))
+		{
+			static_cast<SSAOPass&>(GetRenderPass(RenderPassType::SSAORenderPass)).SetupRenderPassDependencies(gfx, *m_pNormalRoughReflectivityTarget, *m_pHiZBufferTarget, *m_pRGBNoiseTexture);
 		}
 		
 		if (IsFeatureEnabled(RendererFeature::FXAA))
@@ -636,7 +643,7 @@ namespace gfx
 			GetRenderPass(SkyboxRenderPass).Execute(gfx, renderState);
 		}
 
-		// todo: Transparent pass
+		// Transparent pass
 		{
 			const RenderPass& pass = GetRenderPass(RenderPassType::TransparentRenderPass);
 			pass.BindSharedResources(gfx, renderState);
@@ -650,6 +657,21 @@ namespace gfx
 			pass.UnbindSharedResources(gfx, renderState);
 
 			gfx.ClearRenderTargets();
+		}
+
+		// SSR pass
+		if (IsFeatureEnabled(RendererFeature::HZBSSR))
+		{
+			const RenderPass& pass = GetRenderPass(RenderPassType::SSRRenderPass);
+			pass.BindSharedResources(gfx, renderState);
+
+			static SSR_CB ssrCB;
+			ssrCB.debugViewStep = (frameCt / 20u) % 25u;
+			m_pSSR_CB->Update(gfx, ssrCB);
+
+			m_pSSRKernel->Dispatch(gfx, screenWidth, screenHeight, 1u);
+
+			pass.UnbindSharedResources(gfx, renderState);
 		}
 
 		// Downsample x2 pass
@@ -671,21 +693,6 @@ namespace gfx
 		if (m_viewIdx == RendererView::Final && IsFeatureEnabled(RendererFeature::Bloom))
 		{
 			GetRenderPass(BloomRenderPass).Execute(gfx, renderState);
-		}
-
-		// SSR pass
-		if (IsFeatureEnabled(RendererFeature::HZBSSR))
-		{
-			const RenderPass& pass = GetRenderPass(RenderPassType::SSRRenderPass);
-			pass.BindSharedResources(gfx, renderState);
-
-			static SSR_CB ssrCB;
-			ssrCB.debugViewStep = (frameCt / 20u) % 25u;
-			m_pSSR_CB->Update(gfx, ssrCB);
-
-			m_pSSRKernel->Dispatch(gfx, screenWidth, screenHeight, 1u);
-
-			pass.UnbindSharedResources(gfx, renderState);
 		}
 
 		// Run GPU particle render pass
