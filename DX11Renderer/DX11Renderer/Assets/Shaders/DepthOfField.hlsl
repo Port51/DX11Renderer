@@ -106,14 +106,16 @@ void HorizontalFilter(uint3 gtId : SV_GroupThreadID, uint3 tId : SV_DispatchThre
 	//CameraColorIn.SampleLevel(BilinearSampler, uv, 0.f)
 
 	// Extra samples for data outside group bounds
+	// Mirror at border so the accumulation isn't halved
 	if (gtId.x < DiscWidth)
 	{
-		int srcX = max(0, clampedId.x - DiscWidth);
+		int srcX = abs(clampedId.x - DiscWidth); 
 		discCache0[gtId.x] = SRVTex0[uint2(srcX, clampedId.y)];
 	}
 	else if (gtId.x >= 64u - DiscWidth)
 	{
-		int srcX = min(resolution.x - 1u, clampedId.x + DiscWidth);
+		//int srcX = min(resolution.x - 1u, clampedId.x + DiscWidth);
+		int srcX = resolution.x - 1u - abs(resolution.x - 1u - (clampedId.x + DiscWidth));
 		discCache0[gtId.x + 2u * DiscWidth] = SRVTex0[uint2(srcX, clampedId.y)];
 	}
 
@@ -160,15 +162,16 @@ void VerticalFilterAndCombine(uint3 gtId : SV_GroupThreadID, uint3 tId : SV_Disp
 	discCache1[gtId.y + DiscWidth] = UAVTex1[clampedId.xy];
 
 	// Extra samples for data outside group bounds
+	// Mirror at border so the accumulation isn't halved
 	if (gtId.y < DiscWidth)
 	{
-		int srcY = max(0, clampedId.y - DiscWidth);
+		int srcY = abs(clampedId.y - DiscWidth);
 		discCache0[gtId.y] = UAVTex0[uint2(clampedId.x, srcY)];
 		discCache1[gtId.y] = UAVTex1[uint2(clampedId.x, srcY)];
 	}
 	else if (gtId.y >= 64u - DiscWidth)
 	{
-		int srcY = min(resolution.y - 1u, clampedId.y + DiscWidth);
+		int srcY = resolution.y - 1u - abs(resolution.y - 1u - (clampedId.y + DiscWidth));
 		discCache0[gtId.y + 2u * DiscWidth] = UAVTex0[uint2(clampedId.x, srcY)];
 		discCache1[gtId.y + 2u * DiscWidth] = UAVTex1[uint2(clampedId.x, srcY)];
 	}
