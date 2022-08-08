@@ -99,7 +99,7 @@ void HorizontalFilter(uint3 gtId : SV_GroupThreadID, uint3 tId : SV_DispatchThre
 {
 	uint2 resolution;
 	SRVTex0.GetDimensions(resolution.x, resolution.y);
-	uint2 clampedId = min(tId.xy, (uint2)resolution.xy);
+	uint2 clampedId = min(tId.xy, (uint2)resolution.xy - 1u);
 
 	// Cache within group bounds
 	discCache0[gtId.x + DiscWidth] = SRVTex0[clampedId.xy];
@@ -127,6 +127,8 @@ void HorizontalFilter(uint3 gtId : SV_GroupThreadID, uint3 tId : SV_DispatchThre
 	[unroll(DiscKernelSize)]
 	for (uint i = 0; i < DiscKernelSize; ++i)
 	{
+		//if (tId.y + i - DiscWidth >= (uint)resolution.y) break;
+
 		// Sum of complex numbers is done component-wise
 		// P + Q = (Pr + Qr) + (Pi + Qi)i
 		
@@ -151,7 +153,7 @@ void VerticalFilterAndCombine(uint3 gtId : SV_GroupThreadID, uint3 tId : SV_Disp
 {
 	uint2 resolution;
 	UAVTex0.GetDimensions(resolution.x, resolution.y);
-	uint2 clampedId = min(tId.xy, (uint2)resolution.xy);
+	uint2 clampedId = min(tId.xy, (uint2)resolution.xy - 1u);
 
 	// Cache within group bounds
 	discCache0[gtId.y + DiscWidth] = UAVTex0[clampedId.xy];

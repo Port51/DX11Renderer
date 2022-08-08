@@ -90,7 +90,7 @@ namespace gfx
 			}
 			accu = accu * (sumR * combineRealFactor + sumI * combineImaginaryFactor); // todo: add weights
 		}
-		return accu * 1.8f;
+		return accu;
 	}
 
 	const void Bokeh::ApplyScaleToDisk(std::vector<float>& weights, const UINT startComponentIdx, const UINT componentCount, const UINT elementsPerComponent, const float scaleFactor)
