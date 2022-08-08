@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Model.h"
+#include "GraphicsDevice.h"
 #include "ModelAsset.h"
 #include "MeshAsset.h"
 #include "MeshRenderer.h"

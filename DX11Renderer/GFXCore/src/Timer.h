@@ -7,7 +7,7 @@ namespace gfxcore
 	{
 	public:
 		Timer();
-		virtual ~Timer() = default;
+		virtual ~Timer();
 		float Mark();
 		float Peek() const;
 	private:

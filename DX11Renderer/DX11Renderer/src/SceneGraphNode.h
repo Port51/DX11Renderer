@@ -1,5 +1,4 @@
 #pragma once
-#include "Model.h"
 #include "CommonHeader.h"
 #include <string>
 #include "DX11Include.h"
@@ -21,7 +20,7 @@ namespace gfx
 		friend class InstancedModel;
 	public:
 		SceneGraphNode(const dx::XMMATRIX& _transform, std::shared_ptr<MeshRenderer> pMeshPtr, std::vector<std::shared_ptr<SceneGraphNode>> pChildNodes);
-		virtual ~SceneGraphNode() = default;
+		virtual ~SceneGraphNode();
 
 	public:
 		//void SubmitDrawCalls(const DrawContext& drawContext) const;

@@ -4,6 +4,7 @@
 #include "Binding.h"
 #include "Bindable.h"
 #include "RenderTexture.h"
+#include "GraphicsDevice.h"
 
 namespace gfx
 {
@@ -13,6 +14,9 @@ namespace gfx
 	{
 
 	}
+
+	RenderPass::~RenderPass()
+	{}
 
 	const RenderPassType RenderPass::GetRenderPassType() const
 	{
@@ -228,12 +232,6 @@ namespace gfx
 	Binding& RenderPass::AddBinding(const std::shared_ptr<Bindable>& pBindable)
 	{
 		m_bindings.push_back(Binding(pBindable));
-		return m_bindings[m_bindings.size() - 1];
-	}
-
-	Binding& RenderPass::AddBinding(Binding pBinding)
-	{
-		m_bindings.push_back(std::move(pBinding));
 		return m_bindings[m_bindings.size() - 1];
 	}
 

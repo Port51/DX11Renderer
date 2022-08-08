@@ -27,7 +27,7 @@ namespace gfx
 
 	public:
 		Log();
-		virtual ~Log() = default;
+		virtual ~Log();
 	public:
 		void Info(const char* message);
 		void Info(const std::string message);

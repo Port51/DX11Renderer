@@ -302,6 +302,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\VertexBufferWrapper.cpp" />
+    <ClCompile Include="src\VertexLayout.cpp" />
     <ClCompile Include="src\VertexShader.cpp" />
     <ClCompile Include="src\DX11Window.cpp" />
     <ClCompile Include="src\SSAOPass.cpp" />

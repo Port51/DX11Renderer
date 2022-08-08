@@ -13,6 +13,7 @@
 #include "Transforms.h"
 #include "TransformCbuf.h"
 #include "MeshAsset.h"
+#include "CommonCbuffers.h"
 
 namespace gfx
 {

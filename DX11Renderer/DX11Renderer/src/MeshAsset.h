@@ -1,11 +1,8 @@
 #pragma once
-#include <assert.h>
-#include <stdio.h>
-#include <string>
+#include "BaseMesh.h"
 #include <vector>
 #include "DXMathInclude.h"
 #include "AABB.h"
-#include "BaseMesh.h"
 
 namespace gfx
 {

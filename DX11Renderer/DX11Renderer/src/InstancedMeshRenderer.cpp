@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "InstancedMeshRenderer.h"
+#include "GraphicsDevice.h"
 #include "Material.h"
 #include "VertexBufferWrapper.h"
 #include "IndexBuffer.h"

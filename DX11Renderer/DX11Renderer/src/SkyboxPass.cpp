@@ -4,6 +4,7 @@
 #include "ComputeKernel.h"
 #include "ComputeShader.h"
 #include "RenderTexture.h"
+#include "GraphicsDevice.h"
 
 namespace gfx
 {

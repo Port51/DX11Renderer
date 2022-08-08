@@ -15,6 +15,9 @@ namespace gfx
 		dx::XMStoreFloat3(&m_localTransformOffset, DecomposeMatrixTranslation(m_localTransform));
 	}
 
+	SceneGraphNode::~SceneGraphNode()
+	{}
+
 	void SceneGraphNode::RebuildTransform(const dx::XMMATRIX& accumulatedTransform)
 	{
 		const auto worldMatrix = dx::XMLoadFloat4x4(&m_localTransform) * accumulatedTransform;

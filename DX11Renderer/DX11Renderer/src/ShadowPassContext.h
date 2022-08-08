@@ -19,7 +19,7 @@ namespace gfx
 	{
 	public:
 		ShadowPassContext(GraphicsDevice& gfx, const Camera& cam, Renderer& renderer, RenderPass& pRenderPass, ConstantBuffer<GlobalTransformCB>& transformationCB, RendererList* pRendererList);
-		virtual ~ShadowPassContext() = default;
+		virtual ~ShadowPassContext();
 		//void Update();
 	public:
 		GraphicsDevice& gfx;

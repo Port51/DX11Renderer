@@ -15,6 +15,9 @@ namespace gfx
 		m_pPropertyBindings(pPropertyBindings)
 	{}
 
+	DrawCommand::~DrawCommand()
+	{}
+
 	void DrawCommand::Execute(const GraphicsDevice& gfx, RenderState& renderState) const
 	{
 		if (m_pPropertyBindings != nullptr)

@@ -1,5 +1,4 @@
 #pragma once
-#include "GraphicsDevice.h"
 
 namespace gfx
 {
@@ -9,7 +8,7 @@ namespace gfx
 		friend class GraphicsDevice;
 	public:
 		DepthStencil(const GraphicsDevice& gfx, const UINT width, const UINT height);
-		virtual ~DepthStencil() = default;
+		virtual ~DepthStencil();
 
 	public:
 		void BindAsDepthStencil(const GraphicsDevice& gfx) const;

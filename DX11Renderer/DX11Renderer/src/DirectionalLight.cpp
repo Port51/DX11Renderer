@@ -19,6 +19,7 @@
 #include "Config.h"
 #include "Transforms.h"
 #include "RenderConstants.h"
+#include "CommonCbuffers.h"
 
 namespace gfx
 {

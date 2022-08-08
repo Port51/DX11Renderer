@@ -17,6 +17,9 @@ namespace gfx
 		m_pRenderers.reserve(m_pSource->m_pRenderers.size());
 	}
 
+	RendererList::~RendererList()
+	{}
+
 	bool RendererList::SortByCode(const std::pair<std::shared_ptr<MeshRenderer>, u64>& a, const std::pair<std::shared_ptr<MeshRenderer>, u64>& b)
 	{
 		return (a.second < b.second);

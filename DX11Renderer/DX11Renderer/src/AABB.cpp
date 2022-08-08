@@ -11,6 +11,9 @@ namespace gfx
 		Clear();
 	}
 
+	AABB::~AABB()
+	{}
+
 	void AABB::Clear()
 	{
 		m_centerLS = dx::XMFLOAT3(0.f, 0.f, 0.f);

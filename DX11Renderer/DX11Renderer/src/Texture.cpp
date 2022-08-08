@@ -3,6 +3,7 @@
 #include "SharedCodex.h"
 #include "RenderPass.h"
 #include "Image.h"
+#include "GraphicsDevice.h"
 
 namespace gfx
 {

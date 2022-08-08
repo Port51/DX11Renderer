@@ -11,6 +11,7 @@
 #include "ComputeKernel.h"
 #include "Binding.h"
 #include "RandomGenerator.h"
+#include "CommonCbuffers.h"
 
 namespace gfx
 {

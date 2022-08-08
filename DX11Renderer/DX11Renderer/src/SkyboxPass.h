@@ -6,6 +6,7 @@ struct ID3D11ShaderResourceView;
 
 namespace gfx
 {
+	class GraphicsDevice;
 	class ComputeKernel;
 
 	class SkyboxPass : public RenderPass

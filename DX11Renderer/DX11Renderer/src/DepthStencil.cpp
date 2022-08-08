@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "DepthStencil.h"
 #include "Config.h"
+#include "GraphicsDevice.h"
 
 namespace gfx
 {
@@ -25,6 +26,9 @@ namespace gfx
 			pDepthStencil.Get(), nullptr, &m_pDepthStencilView
 		));
 	}
+
+	DepthStencil::~DepthStencil()
+	{}
 
 	void DepthStencil::BindAsDepthStencil(const GraphicsDevice& gfx) const
 	{

@@ -8,6 +8,9 @@ namespace gfx
 		Info("Create log");
 	}
 
+	Log::~Log()
+	{}
+
 	void Log::Info(const char* message)
 	{
 		Info(std::string(message));

@@ -10,6 +10,9 @@ namespace gfx
 		: m_pBindable(pBindable)
 	{}
 
+	Binding::~Binding()
+	{}
+
 	void Binding::BindVertexPipelineOnly(const GraphicsDevice& gfx, RenderState& renderState) const
 	{
 		const guid64 guid = m_pBindable->GetGuid();
