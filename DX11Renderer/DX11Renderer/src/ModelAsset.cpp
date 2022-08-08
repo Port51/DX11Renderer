@@ -29,6 +29,9 @@ namespace gfx
 
 	}
 
+	ModelAsset::~ModelAsset()
+	{}
+
 	void ModelAsset::Release()
 	{
 		m_pSceneGraph->Release();

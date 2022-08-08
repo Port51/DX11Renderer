@@ -26,7 +26,7 @@ namespace gfx
 		UnbindSharedResources(gfx, renderState);
 	}
 
-	void SkyboxPass::SetupRenderPassDependencies(const GraphicsDevice& gfx, ComPtr<ID3D11ShaderResourceView> pDepthStencil, const RenderTexture& pCameraColor)
+	void SkyboxPass::SetupRenderPassDependencies(const GraphicsDevice& gfx, const ComPtr<ID3D11ShaderResourceView>& pDepthStencil, const RenderTexture& pCameraColor)
 	{
 		CSSetSRV(RenderSlots::CS_FreeSRV + 0u, pDepthStencil);
 		CSSetUAV(RenderSlots::CS_FreeUAV + 0u, pCameraColor.GetUAV());

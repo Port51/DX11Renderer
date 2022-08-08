@@ -43,7 +43,7 @@ namespace gfx
 		Binding& AddBinding(std::shared_ptr<Bindable> pBindable);
 
 	public:
-		const std::shared_ptr<DepthStencilState> GetStencil() const;
+		const std::shared_ptr<DepthStencilState>& GetStencil() const;
 		const std::vector<std::string>& GetShaderDefines() const;
 		const u64 GetMaterialCode() const;
 		const int GetPropertySlot() const;

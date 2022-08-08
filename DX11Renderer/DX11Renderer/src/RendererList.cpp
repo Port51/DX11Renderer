@@ -12,7 +12,7 @@
 namespace gfx
 {
 	RendererList::RendererList(std::shared_ptr<RendererList> source)
-		: m_pSource(source)
+		: m_pSource(std::move(source))
 	{
 		m_pRenderers.reserve(m_pSource->m_pRenderers.size());
 	}

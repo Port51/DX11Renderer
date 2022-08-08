@@ -191,7 +191,7 @@ namespace gfx
 		return m_dimension;
 	}
 
-	const ComPtr<ID3D11ShaderResourceView> Texture::GetSRV() const
+	const ComPtr<ID3D11ShaderResourceView>& Texture::GetSRV() const
 	{
 		return m_pShaderResourceView;
 	}

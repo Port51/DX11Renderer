@@ -42,7 +42,7 @@
 namespace gfx
 {
 	Renderer::Renderer(const GraphicsDevice& gfx, RandomGenerator& rng, std::shared_ptr<LightManager> pLightManager, std::shared_ptr<ParticleManager> pParticleManager, std::shared_ptr<RendererList> pRendererList)
-		: m_pRendererList(pRendererList), m_pLightManager(pLightManager), m_pParticleManager(pParticleManager)
+		: m_pRendererList(std::move(pRendererList)), m_pLightManager(std::move(pLightManager)), m_pParticleManager(std::move(pParticleManager))
 	{
 		UINT screenWidth = gfx.GetScreenWidth();
 		UINT screenHeight = gfx.GetScreenHeight();
@@ -58,8 +58,8 @@ namespace gfx
 		//
 		// Components
 		//
-		m_pVisibleRendererList = std::make_unique<RendererList>(pRendererList);
-		m_pVisibleTransparentRendererList = std::make_unique<RendererList>(pRendererList);
+		m_pVisibleRendererList = std::make_unique<RendererList>(m_pRendererList);
+		m_pVisibleTransparentRendererList = std::make_unique<RendererList>(m_pRendererList);
 
 		//
 		// Texture assets and samplers

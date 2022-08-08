@@ -23,7 +23,7 @@
 
 namespace gfx
 {
-	LightManager::LightManager(const GraphicsDevice& gfx, std::shared_ptr<RendererList> pRendererList)
+	LightManager::LightManager(const GraphicsDevice& gfx, const std::shared_ptr<RendererList>& pRendererList)
 	{
 		const auto pLightModelAsset = ModelImporter::LoadGLTF(gfx, "Assets\\Models\\DefaultSphere.asset");
 
@@ -242,12 +242,12 @@ namespace gfx
 		m_pLightShadowSB->Update(context.gfx, m_cachedShadowData, (UINT)m_cachedShadowData.size());
 	}
 
-	const ComPtr<ID3D11ShaderResourceView> LightManager::GetLightDataSRV() const
+	const ComPtr<ID3D11ShaderResourceView>& LightManager::GetLightDataSRV() const
 	{
 		return m_pLightData->GetSRV();
 	}
 
-	const ComPtr<ID3D11ShaderResourceView> LightManager::GetShadowDataSRV() const
+	const ComPtr<ID3D11ShaderResourceView>& LightManager::GetShadowDataSRV() const
 	{
 		return m_pLightShadowSB->GetSRV();
 	}

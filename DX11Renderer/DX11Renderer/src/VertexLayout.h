@@ -61,7 +61,7 @@ namespace gfx
 			return (UINT)m_elements.size();
 		}
 
-		const std::vector<D3D11_INPUT_ELEMENT_DESC> GetD3DLayout() const
+		const std::vector<D3D11_INPUT_ELEMENT_DESC>& GetD3DLayout() const
 		{
 			return m_elements;
 		}

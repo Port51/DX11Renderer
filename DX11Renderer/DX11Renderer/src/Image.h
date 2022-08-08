@@ -9,11 +9,13 @@ namespace gfx
 	public:
 		Image(const std::string& path);
 		virtual ~Image();
+
 	public:
 		const unsigned char* GetData() const;
 		const UINT GetPitch() const;
 		const UINT GetWidth() const;
 		const UINT GetHeight() const;
+
 	private:
 		unsigned char* m_data;
 		int m_width;

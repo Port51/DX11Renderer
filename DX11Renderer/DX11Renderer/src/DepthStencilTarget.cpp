@@ -65,12 +65,12 @@ namespace gfx
 		gfx.GetContext()->ClearDepthStencilView(m_pDepthStencilView.Get(), D3D11_CLEAR_FLAG::D3D11_CLEAR_DEPTH | D3D11_CLEAR_FLAG::D3D11_CLEAR_STENCIL, 1.f, 0u);
 	}
 
-	const ComPtr<ID3D11DepthStencilView> DepthStencilTarget::GetView() const
+	const ComPtr<ID3D11DepthStencilView>& DepthStencilTarget::GetView() const
 	{
 		return m_pDepthStencilView;
 	}
 
-	const ComPtr<ID3D11ShaderResourceView> DepthStencilTarget::GetSRV() const
+	const ComPtr<ID3D11ShaderResourceView>& DepthStencilTarget::GetSRV() const
 	{
 		return m_pShaderResourceView;
 	}

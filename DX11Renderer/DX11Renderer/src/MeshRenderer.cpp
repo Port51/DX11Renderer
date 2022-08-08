@@ -43,7 +43,7 @@ namespace gfx
 		return dx::XMLoadFloat4x4(&m_transform);
 	}
 
-	void MeshRenderer::SetTransform(const dx::XMMATRIX _transform)
+	void MeshRenderer::SetTransform(const dx::XMMATRIX& _transform)
 	{
 		dx::XMStoreFloat4x4(&m_transform, _transform);
 	}

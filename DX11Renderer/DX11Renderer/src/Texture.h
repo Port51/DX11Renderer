@@ -32,7 +32,7 @@ namespace gfx
 		void UnbindVS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override;
 		void BindPS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override;
 		void UnbindPS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override;
-		const ComPtr<ID3D11ShaderResourceView> GetSRV() const;
+		const ComPtr<ID3D11ShaderResourceView>& GetSRV() const;
 		const ComPtr<ID3D11UnorderedAccessView> GetUAV(const UINT mipSlice = 0u) const;
 		const TextureDimension GetDimension() const;
 	public:

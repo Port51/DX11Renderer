@@ -64,7 +64,7 @@ namespace gfx
 		gfx.GetContext()->Dispatch(threadGroupCountX, threadGroupCountY, threadGroupCountZ);
 	}
 
-	const ComPtr<ID3D11ComputeShader> ComputeShader::GetComputeShader() const
+	const ComPtr<ID3D11ComputeShader>& ComputeShader::GetComputeShader() const
 	{
 		return m_pComputeShader;
 	}

@@ -44,10 +44,10 @@ namespace gfx
 
 	void MaterialPass::SetStencil(std::shared_ptr<DepthStencilState> pDepthStencilState)
 	{
-		m_pDepthStencilState = pDepthStencilState;
+		m_pDepthStencilState = std::move(pDepthStencilState);
 	}
 
-	const std::shared_ptr<DepthStencilState> MaterialPass::GetStencil() const
+	const std::shared_ptr<DepthStencilState>& MaterialPass::GetStencil() const
 	{
 		return m_pDepthStencilState;
 	}

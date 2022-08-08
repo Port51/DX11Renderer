@@ -201,7 +201,7 @@ namespace gfx
 		REGISTER_GPU_CALL_GFX((*this));
 	}
 
-	void GraphicsDevice::SetRenderTarget(ComPtr<ID3D11RenderTargetView> renderTargetView)
+	void GraphicsDevice::SetRenderTarget(const ComPtr<ID3D11RenderTargetView>& renderTargetView)
 	{
 		m_pContext->OMSetRenderTargets(1u, renderTargetView.GetAddressOf(), m_pDepthStencil->GetView().Get());
 		m_currentRenderTargetCount = 1u;
@@ -257,12 +257,12 @@ namespace gfx
 		return m_screenHeight;
 	}
 
-	const ComPtr<ID3D11Device> GraphicsDevice::GetAdapter() const
+	const ComPtr<ID3D11Device>& GraphicsDevice::GetAdapter() const
 	{
 		return m_pDevice;
 	}
 
-	const ComPtr<ID3D11DeviceContext> GraphicsDevice::GetContext() const
+	const ComPtr<ID3D11DeviceContext>& GraphicsDevice::GetContext() const
 	{
 		return m_pContext;
 	}

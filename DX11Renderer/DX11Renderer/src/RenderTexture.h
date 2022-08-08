@@ -33,8 +33,8 @@ namespace gfx
 		void UnbindPS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override;
 		void BindAsTexture(const GraphicsDevice& gfx, const slotUINT slot) const;
 		void BindAsTarget(const GraphicsDevice& gfx) const;
-		void BindAsTarget(const GraphicsDevice& gfx, ComPtr<ID3D11DepthStencilView> pDepthStencilView) const;
-		void SetRenderTarget(ID3D11DeviceContext* deviceContext, ComPtr<ID3D11DepthStencilView> depthStencilView);
+		void BindAsTarget(const GraphicsDevice& gfx, const ComPtr<ID3D11DepthStencilView>& pDepthStencilView) const;
+		void SetRenderTarget(ID3D11DeviceContext* deviceContext, const ComPtr<ID3D11DepthStencilView>& depthStencilView);
 		void ClearRenderTarget(ID3D11DeviceContext* deviceContext, float, float, float, float);
 	protected:
 		ComPtr<ID3D11RenderTargetView> m_pRenderTargetView;

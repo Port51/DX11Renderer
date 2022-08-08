@@ -1,12 +1,14 @@
 #pragma once
 #include "CodexElement.h"
-#include "SceneGraphNode.h"
+#include "CommonHeader.h"
+#include "DirectXMath.h"
 
 namespace gfx
 {
 	class MeshAsset;
 	class Model;
 	class ModelImporter;
+	class GraphicsDevice;
 
 	class ModelAssetNode
 	{
@@ -36,7 +38,7 @@ namespace gfx
 
 	public:
 		ModelAsset(std::shared_ptr<ModelAssetNode> _pSceneGraph, std::vector<std::string> _materialPaths);
-		virtual ~ModelAsset() = default;
+		virtual ~ModelAsset();
 		virtual void Release() override;
 
 	public:

@@ -4,7 +4,7 @@
 namespace gfx
 {
 
-	GfxException::GfxException(size_t line, const char * file, HRESULT hr)
+	GfxException::GfxException(const size_t line, const char * file, const HRESULT hr)
 		: m_line(line), m_file(file)
 	{
 		std::ostringstream ss;
@@ -16,7 +16,7 @@ namespace gfx
 		m_msg = ss.str();
 	}
 
-	GfxException::GfxException(size_t line, const char * file, std::string msg)
+	GfxException::GfxException(const size_t line, const char * file, const std::string msg)
 		: m_line(line), m_file(file)
 	{
 		std::ostringstream ss;
@@ -26,7 +26,7 @@ namespace gfx
 		m_msg = ss.str();
 	}
 
-	GfxException::GfxException(size_t line, const char * file, const char * msg)
+	GfxException::GfxException(const size_t line, const char * file, const char * msg)
 		: GfxException(line, file, std::string(msg))
 	{}
 
@@ -35,19 +35,19 @@ namespace gfx
 		return m_msg.c_str();
 	}
 
-	std::string GfxException::HrToMessageString(HRESULT hr)
+	const std::string GfxException::HrToMessageString(const HRESULT hr) const
 	{
 		return std::system_category().message(hr);
 	}
 
-	std::string GfxException::HrToStringCode(HRESULT hr)
+	const std::string GfxException::HrToStringCode(const HRESULT hr) const
 	{
 		char s_str[64] = {};
 		sprintf_s(s_str, "HRESULT of 0x%08X", static_cast<UINT>(hr));
 		return std::string(s_str);
 	}
 
-	std::string GfxException::GetExceptionString(int line, const char * file, HRESULT hr)
+	const std::string GfxException::GetExceptionString(const int line, const char * file, const HRESULT hr) const
 	{
 		std::ostringstream oss;
 		oss << "[Error Code] " << HrToStringCode(hr) << " (" << std::to_string(hr) << ")" << std::endl << std::endl
