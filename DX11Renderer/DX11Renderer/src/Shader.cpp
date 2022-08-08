@@ -74,4 +74,19 @@ namespace gfx
         std::string sPath = std::string(path);
         return (0 == sPath.compare(sPath.length() - cso.length(), cso.length(), cso));
     }
+
+	std::string Shader::GenerateUID(const char* shaderType, const char* path)
+	{
+		return shaderType + "#"s + path;
+	}
+
+	std::string Shader::GenerateUID(const char* shaderType, const char* path, const char* entryPoint, const std::vector<std::string>& shaderDefines)
+	{
+		std::string uid = GenerateUID(shaderType, path) + "-" + entryPoint;
+		for (const auto& s : shaderDefines)
+		{
+			uid += ("|" + s);
+		}
+		return uid;
+	}
 }

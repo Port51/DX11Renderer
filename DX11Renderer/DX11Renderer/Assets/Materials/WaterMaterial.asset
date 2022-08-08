@@ -21,7 +21,9 @@ Pass
 	StencilReadMask,	1
 	StencilWriteMask,	1
 
-	VS, WaterDepthOnlyVS.hlsl
+	VS, WaterTessellation.hlsl, WaterVS
+	HS, WaterTessellation.hlsl, WaterHS
+	DS, WaterTessellation.hlsl, WaterDS
 }
 Pass
 {
@@ -36,7 +38,9 @@ Pass
 	StencilReadMask,	1
 	StencilWriteMask,	1
 
-	VS, WaterVS.hlsl
+	VS, WaterTessellation.hlsl, WaterVS
+	HS, WaterTessellation.hlsl, WaterHS
+	DS, WaterTessellation.hlsl, WaterDS
 	PS, WaterGbuffer.hlsl
 	PropertySlot, 0
 }
@@ -53,7 +57,9 @@ Pass
 	StencilReadMask,	1
 	StencilWriteMask,	1
 
-	VS, WaterVS.hlsl
+	VS, WaterTessellation.hlsl, WaterVS
+	HS, WaterTessellation.hlsl, WaterHS
+	DS, WaterTessellation.hlsl, WaterDS
 	PS, WaterPS.hlsl
 	PropertySlot, 0
 }

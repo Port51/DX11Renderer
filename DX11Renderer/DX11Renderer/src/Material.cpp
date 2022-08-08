@@ -3,6 +3,8 @@
 #include <typeinfo>
 #include "GraphicsDevice.h"
 #include "VertexShader.h"
+#include "HullShader.h"
+#include "DomainShader.h"
 #include "PixelShader.h"
 #include "InputLayout.h"
 #include "Texture.h"
@@ -176,20 +178,35 @@ namespace gfx
 				if (p.key == "VS")
 				{
 					// Bind vertex shader and input layout
-					const auto vertexShaderPath = p.values[0].c_str();
-					const auto vertexShaderEntry = (p.values.size() >= 2u) ? p.values[1].c_str() : "main";
+					const auto shaderPath = p.values[0].c_str();
+					const auto shaderEntry = (p.values.size() >= 2u) ? p.values[1].c_str() : "main";
 
-					auto pVertexShader = VertexShader::Resolve(gfx, vertexShaderPath, vertexShaderEntry, pMaterialPass->GetShaderDefines());
+					auto pVertexShader = VertexShader::Resolve(gfx, shaderPath, shaderEntry, pMaterialPass->GetShaderDefines());
 					const auto pvsbc = pVertexShader->GetBytecode();
-					auto pInputLayout = InputLayout::Resolve(gfx, std::move(m_vertexLayout), vertexShaderPath, pvsbc);
+					auto pInputLayout = InputLayout::Resolve(gfx, std::move(m_vertexLayout), shaderPath, pvsbc);
 
 					pMaterialPass->SetVertexShader(std::move(pVertexShader), std::move(pInputLayout));
 				}
+				else if (p.key == "HS")
+				{
+					// Hull shader
+					const auto shaderPath = p.values[0].c_str();
+					const auto shaderEntry = (p.values.size() >= 2u) ? p.values[1].c_str() : "main";
+					pMaterialPass->SetHullShader(HullShader::Resolve(gfx, shaderPath, shaderEntry, pMaterialPass->GetShaderDefines()));
+				}
+				else if (p.key == "DS")
+				{
+					// Domain shader
+					const auto shaderPath = p.values[0].c_str();
+					const auto shaderEntry = (p.values.size() >= 2u) ? p.values[1].c_str() : "main";
+					pMaterialPass->SetDomainShader(DomainShader::Resolve(gfx, shaderPath, shaderEntry, pMaterialPass->GetShaderDefines()));
+				}
 				else if (p.key == "PS")
 				{
-					const auto pixelShaderPath = p.values[0].c_str();
-					const auto pixelShaderEntry = (p.values.size() >= 2u) ? p.values[1].c_str() : "main";
-					pMaterialPass->SetPixelShader(PixelShader::Resolve(gfx, pixelShaderPath, pixelShaderEntry, pMaterialPass->GetShaderDefines()));
+					// Pixel shader
+					const auto shaderPath = p.values[0].c_str();
+					const auto shaderEntry = (p.values.size() >= 2u) ? p.values[1].c_str() : "main";
+					pMaterialPass->SetPixelShader(PixelShader::Resolve(gfx, shaderPath, shaderEntry, pMaterialPass->GetShaderDefines()));
 				}
 				else if (p.key == "PropertySlot")
 				{

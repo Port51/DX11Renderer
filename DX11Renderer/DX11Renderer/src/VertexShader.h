@@ -17,8 +17,8 @@ namespace gfx
 
 	public:
 		virtual void Release() override;
-		void BindVS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override;
-		void UnbindVS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override;
+		virtual void BindVS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override;
+		virtual void UnbindVS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override;
 		ID3DBlob* GetBytecode() const;
 		const u16 GetInstanceIdx() const;
 
@@ -26,8 +26,6 @@ namespace gfx
 		static std::shared_ptr<VertexShader> Resolve(const GraphicsDevice& gfx, const char* path);
 		static std::shared_ptr<VertexShader> Resolve(const GraphicsDevice& gfx, const char* path, const char* entryPoint);
 		static std::shared_ptr<VertexShader> Resolve(const GraphicsDevice& gfx, const char* path, const char* entryPoint, const std::vector<std::string>& shaderDefines);
-		static std::string GenerateUID(const char* path);
-		static std::string GenerateUID(const char* path, const char* entryPoint, const std::vector<std::string>& shaderDefines);
 
 	protected:
 		static u16 m_nextInstanceIdx;

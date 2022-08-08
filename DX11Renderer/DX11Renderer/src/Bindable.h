@@ -17,12 +17,16 @@ namespace gfx
 		virtual void BindIA(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot);
 		virtual void BindCS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot);
 		virtual void BindVS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot);
+		virtual void BindHS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot);
+		virtual void BindDS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot);
 		virtual void BindPS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot);
 		virtual void BindRS(const GraphicsDevice& gfx, RenderState& renderState);
 		virtual void BindOM(const GraphicsDevice& gfx, RenderState& renderState);
 		virtual void UnbindIA(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot);
 		virtual void UnbindCS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot);
 		virtual void UnbindVS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot);
+		virtual void UnbindHS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot);
+		virtual void UnbindDS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot);
 		virtual void UnbindPS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot);
 		virtual void UnbindRS(const GraphicsDevice& gfx, RenderState& renderState);
 		virtual void UnbindOM(const GraphicsDevice& gfx, RenderState& renderState);

@@ -76,7 +76,7 @@ namespace gfx
 
 	std::shared_ptr<ComputeShader> ComputeShader::Resolve(const GraphicsDevice& gfx, const char* path)
 	{
-		return std::move(ComputeShader::Resolve(gfx, path, "CSMain"));
+		return std::move(Resolve(gfx, path, "CSMain"));
 	}
 
 	std::shared_ptr<ComputeShader> ComputeShader::Resolve(const GraphicsDevice& gfx, const char* path, const char* entryPoint)
@@ -86,16 +86,7 @@ namespace gfx
 
 	std::shared_ptr<ComputeShader> ComputeShader::Resolve(const GraphicsDevice& gfx, const char* path, const char* entryPoint, const std::vector<std::string>& shaderDefines)
 	{
-		return std::move(Codex::Resolve<ComputeShader>(gfx, GenerateUID(path, entryPoint, shaderDefines), path, entryPoint, shaderDefines));
+		return std::move(Codex::Resolve<ComputeShader>(gfx, GenerateUID(typeid(ComputeShader).name(), path, entryPoint, shaderDefines), path, entryPoint, shaderDefines));
 	}
 
-	std::string ComputeShader::GenerateUID(const char* path)
-	{
-		return typeid(ComputeShader).name() + "#"s + std::string(path);
-	}
-
-	std::string ComputeShader::GenerateUID(const char* path, const char* entryPoint, const std::vector<std::string>& shaderDefines)
-	{
-		return GenerateUID(path) + "#"s + std::string(entryPoint);
-	}
 }

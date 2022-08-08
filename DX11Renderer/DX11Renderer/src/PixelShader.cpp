@@ -65,7 +65,7 @@ namespace gfx
 
 	std::shared_ptr<PixelShader> PixelShader::Resolve(const GraphicsDevice& gfx, const char* path)
 	{
-		return std::move(Codex::Resolve<PixelShader>(gfx, GenerateUID(path), path));
+		return std::move(Codex::Resolve<PixelShader>(gfx, GenerateUID(typeid(PixelShader).name(), path), path));
 	}
 
 	std::shared_ptr<PixelShader> PixelShader::Resolve(const GraphicsDevice& gfx, const char* path, const char* entryPoint)
@@ -75,21 +75,7 @@ namespace gfx
 
 	std::shared_ptr<PixelShader> PixelShader::Resolve(const GraphicsDevice& gfx, const char* path, const char* entryPoint, const std::vector<std::string>& shaderDefines)
 	{
-		return std::move(Codex::Resolve<PixelShader>(gfx, GenerateUID(path, entryPoint, shaderDefines), path, entryPoint, shaderDefines));
+		return std::move(Codex::Resolve<PixelShader>(gfx, GenerateUID(typeid(PixelShader).name(), path, entryPoint, shaderDefines), path, entryPoint, shaderDefines));
 	}
 
-	std::string PixelShader::GenerateUID(const char* path)
-	{
-		return typeid(PixelShader).name() + "#"s + path;
-	}
-
-	std::string PixelShader::GenerateUID(const char* path, const char* entryPoint, const std::vector<std::string>& shaderDefines)
-	{
-		std::string uid = GenerateUID(path) + "-" + entryPoint;
-		for (const auto& s : shaderDefines)
-		{
-			uid += ("|" + s);
-		}
-		return uid;
-	}
 }

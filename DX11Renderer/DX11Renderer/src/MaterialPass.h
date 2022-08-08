@@ -9,6 +9,8 @@ namespace gfx
 	class Renderer;
 	class PixelShader;
 	class VertexShader;
+	class HullShader;
+	class DomainShader;
 	class VertexLayout;
 	class Binding;
 	class InputLayout;
@@ -32,9 +34,12 @@ namespace gfx
 		void Bind(const GraphicsDevice& gfx, RenderState& renderState) const;
 
 	public:
-		void SetInstanced(const bool isInstanced);
-		void SetPixelShader(std::shared_ptr<PixelShader> pPixelShader);
 		void SetVertexShader(std::shared_ptr<VertexShader> pVertexShader, std::shared_ptr<InputLayout> pInputLayout);
+		void SetHullShader(std::shared_ptr<HullShader> pHullShader);
+		void SetDomainShader(std::shared_ptr<DomainShader> pDomainShader);
+		void SetPixelShader(std::shared_ptr<PixelShader> pPixelShader);
+
+		void SetInstanced(const bool isInstanced);
 		void SetStencil(std::shared_ptr<DepthStencilState> pDepthStencilState);
 		void SetPropertySlot(const int slotIdx);
 		void SetRenderQueue(const u8 renderQueue);
@@ -58,6 +63,8 @@ namespace gfx
 		RenderPassType m_renderPass;
 		std::shared_ptr<InputLayout> m_pInputLayout;
 		std::shared_ptr<VertexShader> m_pVertexShader;
+		std::shared_ptr<HullShader> m_pHullShader;
+		std::shared_ptr<DomainShader> m_pDomainShader;
 		std::shared_ptr<PixelShader> m_pPixelShader;
 		std::shared_ptr<DepthStencilState> m_pDepthStencilState;
 		std::vector<Binding> m_bindings;

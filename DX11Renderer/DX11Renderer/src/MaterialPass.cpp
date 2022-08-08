@@ -31,20 +31,30 @@ namespace gfx
 
 	void MaterialPass::SetPixelShader(std::shared_ptr<PixelShader> pPixelShader)
 	{
-		m_pPixelShader = pPixelShader;
+		m_pPixelShader = std::move(pPixelShader);
 	}
 
 	void MaterialPass::SetVertexShader(std::shared_ptr<VertexShader> pVertexShader, std::shared_ptr<InputLayout> pInputLayout)
 	{
 		assert(pVertexShader != nullptr);
 		assert(pInputLayout != nullptr);
-		m_pVertexShader = pVertexShader;
-		m_pInputLayout = pInputLayout;
+		m_pVertexShader = std::move(pVertexShader);
+		m_pInputLayout = std::move(pInputLayout);
+	}
+
+	void MaterialPass::SetHullShader(std::shared_ptr<HullShader> pHullShader)
+	{
+		m_pHullShader = std::move(pHullShader);
+	}
+
+	void MaterialPass::SetDomainShader(std::shared_ptr<DomainShader> pDomainShader)
+	{
+		m_pDomainShader = std::move(pDomainShader);
 	}
 
 	void MaterialPass::SetStencil(std::shared_ptr<DepthStencilState> pDepthStencilState)
 	{
-		m_pDepthStencilState = pDepthStencilState;
+		m_pDepthStencilState = std::move(pDepthStencilState);
 	}
 
 	const std::shared_ptr<DepthStencilState> MaterialPass::GetStencil() const
@@ -140,6 +150,14 @@ namespace gfx
 	{
 		m_pInputLayout->BindIA(gfx, renderState, 0u);
 		m_pVertexShader->BindVS(gfx, renderState, 0u);
+		if (m_pHullShader != nullptr)
+		{
+			m_pHullShader->BindHS(gfx, renderState, 0u);
+		}
+		if (m_pDomainShader != nullptr)
+		{
+			m_pDomainShader->BindDS(gfx, renderState, 0u);
+		}
 		if (m_pPixelShader != nullptr)
 		{
 			m_pPixelShader->BindPS(gfx, renderState, 0u);

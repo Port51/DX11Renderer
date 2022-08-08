@@ -18,6 +18,16 @@ namespace gfx
 		THROW("BindVS() not implemented on type derived from Bindable");
 	}
 
+	void Bindable::BindHS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot)
+	{
+		THROW("BindHS() not implemented on type derived from Bindable");
+	}
+
+	void Bindable::BindDS(const GraphicsDevice & gfx, RenderState & renderState, const slotUINT slot)
+	{
+		THROW("BindDS() not implemented on type derived from Bindable");
+	}
+
 	void Bindable::BindPS(const GraphicsDevice & gfx, RenderState & renderState, const slotUINT slot)
 	{
 		THROW("BindPS() not implemented on type derived from Bindable");
@@ -46,6 +56,16 @@ namespace gfx
 	void Bindable::UnbindVS(const GraphicsDevice & gfx, RenderState & renderState, const slotUINT slot)
 	{
 		THROW("UnbindVS() not implemented on type derived from Bindable");
+	}
+
+	void Bindable::UnbindHS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot)
+	{
+		THROW("UnbindHS() not implemented on type derived from Bindable");
+	}
+
+	void Bindable::UnbindDS(const GraphicsDevice & gfx, RenderState & renderState, const slotUINT slot)
+	{
+		THROW("UnbindDS() not implemented on type derived from Bindable");
 	}
 
 	void Bindable::UnbindPS(const GraphicsDevice & gfx, RenderState & renderState, const slotUINT slot)

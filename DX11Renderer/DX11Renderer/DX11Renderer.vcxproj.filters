@@ -459,6 +459,12 @@
     <ClCompile Include="src\BaseModel.cpp">
       <Filter>Source\Drawable</Filter>
     </ClCompile>
+    <ClCompile Include="src\HullShader.cpp">
+      <Filter>Source\Bindable\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="src\DomainShader.cpp">
+      <Filter>Source\Bindable\Shaders</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">
@@ -791,6 +797,12 @@
     <ClInclude Include="src\BaseModel.h">
       <Filter>Headers\Drawable</Filter>
     </ClInclude>
+    <ClInclude Include="src\HullShader.h">
+      <Filter>Headers\Bindable\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="src\DomainShader.h">
+      <Filter>Headers\Bindable\Shaders</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DX11Renderer.rc">
@@ -1020,6 +1032,9 @@
     </FxCompile>
     <FxCompile Include="Assets\Shaders\DeferredPersonPS.hlsl">
       <Filter>Assets\Shaders\DrawPasses\GeometryPasses</Filter>
+    </FxCompile>
+    <FxCompile Include="Assets\Shaders\WaterTessellation.hlsl">
+      <Filter>Assets\Shaders\DrawPasses\VertexShaders</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
