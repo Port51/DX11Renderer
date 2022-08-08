@@ -4,7 +4,7 @@ This is a tiled renderer inspired by the Rise of the Tomb Raider renderer, shown
 
 It's still a work-in-progress, and here are the results so far:
 
-(todo: pictures!)
+![Castle render](DX11Renderer/Doc/Castle-Final-0.jpg)
 
 ## Features:
 * Core
@@ -35,6 +35,10 @@ It's still a work-in-progress, and here are the results so far:
 
 The idea behind tiled lighting is to only calculate lights (and shadows!) for opaque geometry only where pixels are in the light range. It divides the screen into tiles and uses the depth buffer to get min and max depth for each tile.
 
+Here's a debug view showing light counts per tile:
+
+![Tiled light counts](DX11Renderer/Doc/Castle-Tiled-Lights.jpg)
+
 Normally, this is done in 1 compute shader with 3 subpasses.
 
 1. Find depth range of tile
@@ -50,6 +54,10 @@ For the per-pixel lighting, I wrote to diffuse and specular light textures. This
 ## Clustered Forward Lighting
 
 Clustered lighting is great for transparent objects, as it has minimal reliance on the z-buffer. It uses a 3D buffer of mini-frustums that encapsulate the full camera frustum. This buffer stores indices of intersected lights, which shaders can read from.
+
+This debug view shows a histogram of light counts per mini-frustum:
+
+![Tiled light counts](DX11Renderer/Doc/Castle-Clustered-Lights.jpg)
 
 The z-bounds of each 3D cluster should be divided in a way that makes far clusters take about as much screen space as near clusters. It should also use a function that has an easily calculated inverse. I used the function described here: http://www.aortiz.me/2018/12/21/CG.html#part-2
 
