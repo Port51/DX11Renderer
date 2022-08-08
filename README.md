@@ -81,9 +81,9 @@ Another helpful optimization was applying GPU bindings only when needed, and sor
 
 ## Bloom
 
-(todo: pictures!)
-
 For the blur, instead of multiple up and down-sampling passes, I used a compute shader and calculated a separable gaussian blur in 2 passes (horizontal and vertical). Each pass caches texture samples in groupshared memory to reduce the cost of texture accesses.
+
+![Castle render](DX11Renderer/Doc/Castle-Bloom-Breakdown.jpg)
 
 ## Depth of Field
 
@@ -98,6 +98,7 @@ Passes:
 4. Composite - camera color with near and far bokehs
 
 ## References:
+* https://www.elopezr.com/the-rendering-of-rise-of-the-tomb-raider/
 * http://yehar.com/blog/?p=1495
 * https://bartwronski.com/2017/08/06/separable-bokeh/
 * https://dl.acm.org/doi/10.1145/3084363.3085022
