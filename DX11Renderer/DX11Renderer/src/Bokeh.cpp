@@ -68,9 +68,16 @@ namespace gfx
 
 	const float Bokeh::GetDiskAccumulation(const std::vector<float>& weights, const UINT startComponentIdx, const UINT componentCount, const UINT elementsPerComponent, const float combineRealFactor, const float combineImaginaryFactor)
 	{
+		// Weights are in order: C0-real, C0-imag, C1-real, C1-imag, ...
+		
+		//std::vector<float> 
+
 		float accu = 1.f;
 		for (UINT cIdx = startComponentIdx; cIdx < startComponentIdx + componentCount; ++cIdx)
 		{
+			const UINT baseRealIdx = elementsPerComponent * 2u * cIdx;
+			const UINT baseImagIdx = elementsPerComponent * 2u * cIdx + elementsPerComponent;
+
 			// Calculate complex sum
 			float sumR = 0.f;
 			float sumI = 0.f;
@@ -80,10 +87,10 @@ namespace gfx
 				{
 					// Sum of complex numbers is done component-wise
 					// P + Q = (Pr + Qr) + (Pi + Qi) * i
-					const float xReal = weights[elementsPerComponent * 2u * cIdx + x];
-					const float xImag = weights[elementsPerComponent * 2u * cIdx + elementsPerComponent + x];
-					const float yReal = weights[elementsPerComponent * 2u * cIdx + y];
-					const float yImag = weights[elementsPerComponent * 2u * cIdx + elementsPerComponent + y];
+					const float xReal = weights[baseRealIdx + x];
+					const float xImag = weights[baseImagIdx + x];
+					const float yReal = weights[baseRealIdx + y];
+					const float yImag = weights[baseImagIdx + y];
 					sumR += (xReal * yReal - xImag * yImag);
 					sumI += (xReal * yImag + xImag * yReal);
 				}
