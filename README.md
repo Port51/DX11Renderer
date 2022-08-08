@@ -4,7 +4,11 @@ This is a tiled renderer inspired by the Rise of the Tomb Raider renderer, shown
 
 It's still a work-in-progress, and here are the results so far:
 
+![Castle gif](DX11Renderer/Doc/Castle-Waves-0.gif)
+
 ![Castle render](DX11Renderer/Doc/Castle-Final-0.jpg)
+
+![Castle render](DX11Renderer/Doc/Castle-Final-2.jpg)
 
 ## Features:
 * Core
