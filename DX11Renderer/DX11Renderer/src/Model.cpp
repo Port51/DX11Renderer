@@ -3,6 +3,7 @@
 #include "ModelAsset.h"
 #include "MeshAsset.h"
 #include "MeshRenderer.h"
+#include "Material.h"
 #include "VertexBufferWrapper.h"
 #include "IndexBuffer.h"
 #include "Topology.h"

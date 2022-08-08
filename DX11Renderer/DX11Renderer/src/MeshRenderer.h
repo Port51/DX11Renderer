@@ -1,9 +1,7 @@
 #pragma once
 #include "Drawable.h"
-#include "Material.h"
 #include "CommonHeader.h"
 #include "DX11Include.h"
-#include "AABB.h"
 #include <string>
 
 namespace gfx
@@ -16,6 +14,8 @@ namespace gfx
 	class InputLayout;
 	class TransformCbuf;
 	class MeshAsset;
+	class Material;
+	class AABB;
 
 	struct DrawContext;
 	struct ObjectTransformsCB;

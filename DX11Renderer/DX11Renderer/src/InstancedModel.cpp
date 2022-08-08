@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "InstancedModel.h"
 #include "ModelAsset.h"
+#include "Material.h"
 #include "MeshAsset.h"
 #include "MeshRenderer.h"
 #include "InstancedMeshRenderer.h"

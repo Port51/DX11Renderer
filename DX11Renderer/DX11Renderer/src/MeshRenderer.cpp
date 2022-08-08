@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "MeshRenderer.h"
 #include "Material.h"
+#include "AABB.h"
 #include "VertexBufferWrapper.h"
 #include "IndexBuffer.h"
 #include "Topology.h"
