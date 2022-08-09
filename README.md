@@ -21,19 +21,20 @@ It's still a work-in-progress, and here are the results so far:
     * Dynamic water using gerstner waves
     * Stencil masking
 * Post effects
-    *	Bloom w/ separable gaussian filter
     *	Depth of field w/ separable disk filter
     *	SSR methods:
         * 3D raymarch (for testing)
         * Nonconservative DDA
         * Binary search
+    *	Bloom w/ separable gaussian filter
     *	HDR + tonemapping
+    *	Dither
 *	Optimizations
     * Instancing
+    * Draw call sorting to minimize state changes
     * Depth prepass
     * Hi-Z buffer
     *	Frustum culling via AABB scene graph
-    *	Draw call sorting to minimize state changes
 
 ## Depth of Field
 
@@ -56,6 +57,8 @@ This step calculates near and far CoC, and creates temporary rendertextures with
 ### Step 2: Near DoF:
 
 ![DoF process](DX11Renderer/Doc/DoF-Near-Process.jpg)
+
+Note that the last step includes both a vertical pass, and combining the real and imaginary values to a single RGB value. Doing these at once saves a compute dispatch.
 
 ### Step 3: Far DoF: (the white-yellow texture is remapped, as most values were negative)
 
