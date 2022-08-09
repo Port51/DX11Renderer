@@ -3,25 +3,25 @@
 
 namespace gfx
 {
-	class ComplexNumber
+	class Complex
 	{
 	public:
-		ComplexNumber();
-		ComplexNumber(const float real, const float imaginary);
+		Complex();
+		Complex(const float real, const float imaginary);
 
     public:
         const float GetRealComponent() const;
         const float GetImaginaryComponent() const;
 
     public:
-        ComplexNumber& operator+=(const ComplexNumber& v)
+        Complex& operator+=(const Complex& v)
         {
             m_realComponent += v.m_realComponent;
             m_imaginaryComponent += v.m_imaginaryComponent;
             return *this;
         }
 
-        ComplexNumber& operator*=(const ComplexNumber& v)
+        Complex& operator*=(const Complex& v)
         {
             // Multiplication of complex numbers
             // P * Q = PrQr - PiQi + [PrQi + PrQi]i
@@ -37,21 +37,21 @@ namespace gfx
 		float m_imaginaryComponent;
 	};
 
-    inline ComplexNumber operator+(const ComplexNumber& u, const ComplexNumber& v)
+    inline Complex operator+(const Complex& u, const Complex& v)
     {
-        return ComplexNumber(u.GetRealComponent() + v.GetRealComponent(), u.GetImaginaryComponent() + v.GetImaginaryComponent());
+        return Complex(u.GetRealComponent() + v.GetRealComponent(), u.GetImaginaryComponent() + v.GetImaginaryComponent());
     }
 
-    inline ComplexNumber operator-(const ComplexNumber& u, const ComplexNumber& v)
+    inline Complex operator-(const Complex& u, const Complex& v)
     {
-        return ComplexNumber(u.GetRealComponent() - v.GetRealComponent(), u.GetImaginaryComponent() - v.GetImaginaryComponent());
+        return Complex(u.GetRealComponent() - v.GetRealComponent(), u.GetImaginaryComponent() - v.GetImaginaryComponent());
     }
 
-    inline ComplexNumber operator*(const ComplexNumber& u, const ComplexNumber& v)
+    inline Complex operator*(const Complex& u, const Complex& v)
     {
         // Multiplication of complex numbers
         // P * Q = PrQr - PiQi + [PrQi + PrQi]i
-        return ComplexNumber(u.GetRealComponent() * v.GetRealComponent() - u.GetImaginaryComponent() * v.GetImaginaryComponent(),
+        return Complex(u.GetRealComponent() * v.GetRealComponent() - u.GetImaginaryComponent() * v.GetImaginaryComponent(),
             u.GetRealComponent() * v.GetImaginaryComponent() + u.GetRealComponent() * v.GetImaginaryComponent());
     }
 }

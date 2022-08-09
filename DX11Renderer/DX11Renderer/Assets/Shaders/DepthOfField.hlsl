@@ -23,8 +23,9 @@
 
 Texture2D<float4> SRVTex0 : register(t3);
 Texture2D<float4> SRVTex1 : register(t4);
-Texture2D<float2> HiZBuffer : register(t5);
-StructuredBuffer<float> DiskWeights : register(t6); // packed into (C0 real, C0 imaginary, C1 real, C1 imaginary)
+Texture2D<float4> SRVTex2 : register(t5);
+Texture2D<float2> HiZBuffer : register(t6);
+StructuredBuffer<float> DiskWeights : register(t7); // packed into (C0 real, C0 imaginary, C1 real, C1 imaginary)
 RWTexture2D<float4> UAVTex0 : register(u0);
 RWTexture2D<float4> UAVTex1 : register(u1);
 RWTexture2D<float4> UAVTex2 : register(u2);
@@ -99,24 +100,23 @@ void HorizontalFilter(uint3 gtId : SV_GroupThreadID, uint3 tId : SV_DispatchThre
 {
 	uint2 resolution;
 	SRVTex0.GetDimensions(resolution.x, resolution.y);
-	uint2 clampedId = min(tId.xy, (uint2)resolution.xy - 1u);
+	const float2 invResolution = 1.f / resolution;
+	const float pixelOffset = invResolution * 0.5f;
 
 	// Cache within group bounds
-	discCache0[gtId.x + DiscWidth] = SRVTex0[clampedId.xy];
-	//CameraColorIn.SampleLevel(BilinearSampler, uv, 0.f)
+	discCache0[gtId.x + DiscWidth] = SRVTex0.SampleLevel(PointMirrorSampler, tId * invResolution + pixelOffset, 0.f);
 
 	// Extra samples for data outside group bounds
 	// Mirror at border so the accumulation isn't halved
 	if (gtId.x < DiscWidth)
 	{
-		int srcX = abs(clampedId.x - DiscWidth); 
-		discCache0[gtId.x] = SRVTex0[uint2(srcX, clampedId.y)];
+		const int srcX = tId.x - DiscWidth;
+		discCache0[gtId.x] = SRVTex0.SampleLevel(PointMirrorSampler, uint2(srcX, tId.y) * invResolution + pixelOffset, 0.f);
 	}
 	else if (gtId.x >= 64u - DiscWidth)
 	{
-		//int srcX = min(resolution.x - 1u, clampedId.x + DiscWidth);
-		int srcX = resolution.x - 1u - abs(resolution.x - 1u - (clampedId.x + DiscWidth));
-		discCache0[gtId.x + 2u * DiscWidth] = SRVTex0[uint2(srcX, clampedId.y)];
+		const int srcX = tId.x + DiscWidth;
+		discCache0[gtId.x + 2u * DiscWidth] = SRVTex0.SampleLevel(PointMirrorSampler, uint2(srcX, tId.y) * invResolution + pixelOffset, 0.f);
 	}
 
 	GroupMemoryBarrierWithGroupSync();
@@ -148,32 +148,36 @@ void HorizontalFilter(uint3 gtId : SV_GroupThreadID, uint3 tId : SV_DispatchThre
 #endif
 }
 
-// Input: UAVTex0, UAVTex1
+// Input: SRVTex1, SRVTex2
 // Outputs: UAVTex2 (combined)
 [numthreads(1, 64, 1)]
 void VerticalFilterAndCombine(uint3 gtId : SV_GroupThreadID, uint3 tId : SV_DispatchThreadID)
 {
 	uint2 resolution;
-	UAVTex0.GetDimensions(resolution.x, resolution.y);
-	uint2 clampedId = min(tId.xy, (uint2)resolution.xy - 1u);
+	SRVTex1.GetDimensions(resolution.x, resolution.y);
+	const float2 invResolution = 1.f / resolution;
+	const float pixelOffset = invResolution * 0.5f;
 
 	// Cache within group bounds
-	discCache0[gtId.y + DiscWidth] = UAVTex0[clampedId.xy];
-	discCache1[gtId.y + DiscWidth] = UAVTex1[clampedId.xy];
+	const float2 uv0 = tId * invResolution + pixelOffset;
+	discCache0[gtId.y + DiscWidth] = SRVTex1.SampleLevel(PointMirrorSampler, uv0, 0.f);
+	discCache1[gtId.y + DiscWidth] = SRVTex2.SampleLevel(PointMirrorSampler, uv0, 0.f);
 
 	// Extra samples for data outside group bounds
 	// Mirror at border so the accumulation isn't halved
 	if (gtId.y < DiscWidth)
 	{
-		int srcY = abs(clampedId.y - DiscWidth);
-		discCache0[gtId.y] = UAVTex0[uint2(clampedId.x, srcY)];
-		discCache1[gtId.y] = UAVTex1[uint2(clampedId.x, srcY)];
+		const int srcY = (tId.y - DiscWidth);
+		const float2 uv = uint2(tId.x, srcY) * invResolution + pixelOffset;
+		discCache0[gtId.y] = SRVTex1.SampleLevel(PointMirrorSampler, uv, 0.f);
+		discCache1[gtId.y] = SRVTex2.SampleLevel(PointMirrorSampler, uv, 0.f);
 	}
 	else if (gtId.y >= 64u - DiscWidth)
 	{
-		int srcY = resolution.y - 1u - abs(resolution.y - 1u - (clampedId.y + DiscWidth));
-		discCache0[gtId.y + 2u * DiscWidth] = UAVTex0[uint2(clampedId.x, srcY)];
-		discCache1[gtId.y + 2u * DiscWidth] = UAVTex1[uint2(clampedId.x, srcY)];
+		const int srcY = (tId.y + DiscWidth);
+		const float2 uv = uint2(tId.x, srcY) * invResolution + pixelOffset;
+		discCache0[gtId.y + 2u * DiscWidth] = SRVTex1.SampleLevel(PointMirrorSampler, uv, 0.f);
+		discCache1[gtId.y + 2u * DiscWidth] = SRVTex2.SampleLevel(PointMirrorSampler, uv, 0.f);
 	}
 
 	GroupMemoryBarrierWithGroupSync();

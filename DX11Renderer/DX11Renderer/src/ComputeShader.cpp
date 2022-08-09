@@ -54,6 +54,7 @@ namespace gfx
 		assert(m_pComputeShader != nullptr);
 		auto a = m_path;
 		gfx.GetContext()->CSSetShader(m_pComputeShader.Get(), nullptr, 0);
+		REGISTER_GPU_CALL();
 
 		// Determine thread counts by dividing and rounding up
 		const UINT threadGroupCountX = (threadCountX + m_kernelSizeX - 1u) / m_kernelSizeX;
@@ -62,6 +63,7 @@ namespace gfx
 
 		assert(threadGroupCountX > 0u && threadGroupCountY > 0u && threadGroupCountZ > 0u && "All thread group sizes must be > 0");
 		gfx.GetContext()->Dispatch(threadGroupCountX, threadGroupCountY, threadGroupCountZ);
+		REGISTER_GPU_CALL();
 	}
 
 	const ComPtr<ID3D11ComputeShader>& ComputeShader::GetComputeShader() const

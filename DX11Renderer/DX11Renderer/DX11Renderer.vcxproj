@@ -187,7 +187,7 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\ComplexNumber.cpp" />
+    <ClCompile Include="src\Complex.cpp" />
     <ClCompile Include="src\BaseModel.cpp" />
     <ClCompile Include="src\InstancedModel.cpp" />
     <ClCompile Include="src\GameObject.cpp" />
@@ -309,7 +309,7 @@
     <ClCompile Include="src\SSAOPass.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\ComplexNumber.h" />
+    <ClInclude Include="src\Complex.h" />
     <ClInclude Include="src\BaseModel.h" />
     <ClInclude Include="src\InstancedModel.h" />
     <ClInclude Include="src\GameObject.h" />

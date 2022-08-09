@@ -462,7 +462,7 @@
     <ClCompile Include="src\VertexLayout.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="src\ComplexNumber.cpp">
+    <ClCompile Include="src\Complex.cpp">
       <Filter>Source\Math</Filter>
     </ClCompile>
   </ItemGroup>
@@ -797,7 +797,7 @@
     <ClInclude Include="src\BaseModel.h">
       <Filter>Headers\Drawable</Filter>
     </ClInclude>
-    <ClInclude Include="src\ComplexNumber.h">
+    <ClInclude Include="src\Complex.h">
       <Filter>Headers\Math</Filter>
     </ClInclude>
   </ItemGroup>

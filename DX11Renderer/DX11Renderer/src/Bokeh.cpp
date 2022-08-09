@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "Bokeh.h"
-#include "ComplexNumber.h"
+#include "Complex.h"
 
 namespace gfx
 {
@@ -80,15 +80,15 @@ namespace gfx
 			const UINT baseImagIdx = elementsPerComponent * 2u * cIdx + elementsPerComponent;
 
 			// Calculate complex sum
-			ComplexNumber sum;
+			Complex sum;
 			for (UINT x = 0u; x < elementsPerComponent; ++x)
 			{
 				for (UINT y = 0u; y < elementsPerComponent; ++y)
 				{
 					// Sum of complex numbers is done component-wise
 					// P + Q = (Pr + Qr) + (Pi + Qi) * i
-					const ComplexNumber xValue(weights[baseRealIdx + x], weights[baseImagIdx + x]);
-					const ComplexNumber yValue(weights[baseRealIdx + y], weights[baseImagIdx + y]);
+					const Complex xValue(weights[baseRealIdx + x], weights[baseImagIdx + x]);
+					const Complex yValue(weights[baseRealIdx + y], weights[baseImagIdx + y]);
 					sum += (xValue * yValue);
 				}
 			}
