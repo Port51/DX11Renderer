@@ -6,9 +6,9 @@ It's still a work-in-progress, and here are the results so far:
 
 ![Castle gif](DX11Renderer/Doc/Castle-Waves-0.gif)
 
-![Castle render](DX11Renderer/Doc/Castle-Final-0.jpg)
+![Castle render](DX11Renderer/Doc/Castle-Final-3.jpg)
 
-![Castle render](DX11Renderer/Doc/Castle-Final-2.jpg)
+![Castle render](DX11Renderer/Doc/Castle-Final-4.jpg)
 
 ## Features:
 * Core
@@ -34,6 +34,32 @@ It's still a work-in-progress, and here are the results so far:
     * Hi-Z buffer
     *	Frustum culling via AABB scene graph
     *	Draw call sorting to minimize state changes
+
+## Depth of Field
+
+Depth of Field is an effect that approximates a "circle of confusion" (CoC) for pixels based on how far they are from a focal point. Cameras usually have a CoC that looks like a disk or hexagon-shaped bokeh.
+
+Disk filters normally require 2D filters, which are very slow. However, I found some articles describing a disk approximation which used separable 1D filters and complex numbers. (Implementation in Frostbite: https://dl.acm.org/doi/10.1145/3084363.3085022, lots of math: http://yehar.com/blog/?p=1495, and more examples: https://bartwronski.com/2017/08/06/separable-bokeh/).
+
+I used these passes:
+1. Prefilter - calculates near and far CoC and pre-multiplies RGB by the CoC
+2. Far blur pass - executes 2 components in 4 dispatches
+3. Near blur pass - executes 1 component in 2 dispatches
+4. Composite - combines camera color with near and far bokehs
+
+### DoF prefilter:
+
+![DoF prefilter](DX11Renderer/Doc/DoF-Prefilter.jpg)
+
+### Far DoF calculation: (the white-yellow texture is remapped, as most values were negative)
+
+![DoF process](DX11Renderer/Doc/DoF-Far-Process.jpg)
+
+The near DoF pass is similar, but only uses one component as it typically won't have as wide of a blur.
+
+### Combined result of near and far DoF:
+
+![DoF final](DX11Renderer/Doc/DoF-Combined.jpg)
 
 ## Tiled Deferred Lighting
 
@@ -85,20 +111,9 @@ For the blur, instead of multiple up and down-sampling passes, I used a compute 
 
 ![Castle render](DX11Renderer/Doc/Castle-Bloom-Breakdown.jpg)
 
-## Depth of Field
-
-Depth of Field is an effect that approximates a "circle of confusion" (CoC) for pixels based on how far they are from a focal point. Cameras usually have a CoC that looks like a disk or hexagon-shaped bokeh.
-
-Disk filters normally require 2D filters, which are very slow. However, I found some articles describing a disk approximation which used separable 1D filters and complex numbers.
-
-Passes:
-1. Prefilter - calculates near and far CoC and pre-multiplies RGB by the CoC
-2. Far blur pass - executes 2 components in 4 dispatches
-3. Near blur pass - executes 1 component in 2 dispatches
-4. Composite - camera color with near and far bokehs
-
 ## References:
-* https://www.elopezr.com/the-rendering-of-rise-of-the-tomb-raider/
-* http://yehar.com/blog/?p=1495
-* https://bartwronski.com/2017/08/06/separable-bokeh/
-* https://dl.acm.org/doi/10.1145/3084363.3085022
+1. _"The Rendering of Rise of the Tomb Raider"_. (2018). https://www.elopezr.com/the-rendering-of-rise-of-the-tomb-raider/
+2. Kleber Garcia. 2017. _"Circular separable convolution depth of field"_. (2017). https://dl.acm.org/doi/10.1145/3084363.3085022
+3. Ollie Niemitalo. 2010. _"Circularly symmetric convolution and lens blur"_. (2010). http://yehar.com/blog/?p=1495
+4. Bart Wronski. 2017. _"Separable disk-like depth of field"_. (2017). https://bartwronski.com/2017/08/06/separable-bokeh/
+
