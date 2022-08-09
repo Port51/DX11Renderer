@@ -47,19 +47,27 @@ I used these passes:
 3. Near blur pass - executes 1 component in 2 dispatches
 4. Composite - combines camera color with near and far bokehs
 
-### DoF prefilter:
+### Step 1: DoF prefilter:
 
 ![DoF prefilter](DX11Renderer/Doc/DoF-Prefilter.jpg)
 
-### Far DoF calculation: (the white-yellow texture is remapped, as most values were negative)
+This step calculates near and far CoC, and creates temporary rendertextures with the source image multiplied by the CoC.
+
+### Step 2: Near DoF:
+
+![DoF process](DX11Renderer/Doc/DoF-Near-Process.jpg)
+
+### Step 3: Far DoF: (the white-yellow texture is remapped, as most values were negative)
 
 ![DoF process](DX11Renderer/Doc/DoF-Far-Process.jpg)
 
-The near DoF pass is similar, but only uses one component as it typically won't have as wide of a blur.
+Using 2 components for far blur increases the quality. This helps, as far blur will often be more noticeable than near blur.
 
-### Combined result of near and far DoF:
+### Step 4: Final composite:
 
 ![DoF final](DX11Renderer/Doc/DoF-Combined.jpg)
+
+The result is wide, circular blur at a reasonable cost!
 
 ## Tiled Deferred Lighting
 
