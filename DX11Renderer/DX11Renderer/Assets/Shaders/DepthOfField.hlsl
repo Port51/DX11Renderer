@@ -129,8 +129,6 @@ void HorizontalFilter(uint3 gtId : SV_GroupThreadID, uint3 tId : SV_DispatchThre
 	[unroll(DiscKernelSize)]
 	for (uint i = 0; i < DiscKernelSize; ++i)
 	{
-		//if (tId.y + i - DiscWidth >= (uint)resolution.y) break;
-
 		// Sum of complex numbers is done component-wise
 		// P + Q = (Pr + Qr) + (Pi + Qi)i
 		
@@ -195,7 +193,7 @@ void VerticalFilterAndCombine(uint3 gtId : SV_GroupThreadID, uint3 tId : SV_Disp
 		// P + Q = (Pr + Qr) + (Pi + Qi)i
 		// 
 		// Multiplication of complex numbers
-		// P * Q = PrQr - PiQi + [PrQi + PrSi]i
+		// P * Q = (PrQr - PiQi) + (PrQi + PrQi)i
 		float4 Pr = discCache0[i + gtId.y];
 		float4 Pi = discCache1[i + gtId.y];
 		float4 Qr = GetRealWeight(i);
