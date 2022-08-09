@@ -104,19 +104,22 @@ void HorizontalFilter(uint3 gtId : SV_GroupThreadID, uint3 tId : SV_DispatchThre
 	const float pixelOffset = invResolution * 0.5f;
 
 	// Cache within group bounds
-	discCache0[gtId.x + DiscWidth] = SRVTex0.SampleLevel(PointMirrorSampler, tId * invResolution + pixelOffset, 0.f);
+	const float2 uv0 = float2(tId.xy) * invResolution + pixelOffset;
+	discCache0[gtId.x + DiscWidth] = SRVTex0.SampleLevel(PointMirrorSampler, uv0, 0.f);
 
 	// Extra samples for data outside group bounds
 	// Mirror at border so the accumulation isn't halved
 	if (gtId.x < DiscWidth)
 	{
-		const int srcX = tId.x - DiscWidth;
-		discCache0[gtId.x] = SRVTex0.SampleLevel(PointMirrorSampler, uint2(srcX, tId.y) * invResolution + pixelOffset, 0.f);
+		const int srcX = ((int)tId.x - (int)DiscWidth);
+		const float2 uv = float2(srcX, tId.y) * invResolution + pixelOffset;
+		discCache0[gtId.x] = SRVTex0.SampleLevel(PointMirrorSampler, uv, 0.f);
 	}
 	else if (gtId.x >= 64u - DiscWidth)
 	{
-		const int srcX = tId.x + DiscWidth;
-		discCache0[gtId.x + 2u * DiscWidth] = SRVTex0.SampleLevel(PointMirrorSampler, uint2(srcX, tId.y) * invResolution + pixelOffset, 0.f);
+		const int srcX = ((int)tId.x + (int)DiscWidth);
+		const float2 uv = float2(srcX, tId.y) * invResolution + pixelOffset;
+		discCache0[gtId.x + 2u * DiscWidth] = SRVTex0.SampleLevel(PointMirrorSampler, uv, 0.f);
 	}
 
 	GroupMemoryBarrierWithGroupSync();
@@ -157,7 +160,7 @@ void VerticalFilterAndCombine(uint3 gtId : SV_GroupThreadID, uint3 tId : SV_Disp
 	const float pixelOffset = invResolution * 0.5f;
 
 	// Cache within group bounds
-	const float2 uv0 = tId * invResolution + pixelOffset;
+	const float2 uv0 = float2(tId.xy) * invResolution + pixelOffset;
 	discCache0[gtId.y + DiscWidth] = SRVTex1.SampleLevel(PointMirrorSampler, uv0, 0.f);
 	discCache1[gtId.y + DiscWidth] = SRVTex2.SampleLevel(PointMirrorSampler, uv0, 0.f);
 
@@ -165,15 +168,15 @@ void VerticalFilterAndCombine(uint3 gtId : SV_GroupThreadID, uint3 tId : SV_Disp
 	// Mirror at border so the accumulation isn't halved
 	if (gtId.y < DiscWidth)
 	{
-		const int srcY = (tId.y - DiscWidth);
-		const float2 uv = uint2(tId.x, srcY) * invResolution + pixelOffset;
+		const int srcY = ((int)tId.y - (int)DiscWidth);
+		const float2 uv = float2(tId.x, srcY) * invResolution + pixelOffset;
 		discCache0[gtId.y] = SRVTex1.SampleLevel(PointMirrorSampler, uv, 0.f);
 		discCache1[gtId.y] = SRVTex2.SampleLevel(PointMirrorSampler, uv, 0.f);
 	}
 	else if (gtId.y >= 64u - DiscWidth)
 	{
-		const int srcY = (tId.y + DiscWidth);
-		const float2 uv = uint2(tId.x, srcY) * invResolution + pixelOffset;
+		const int srcY = ((int)tId.y + (int)DiscWidth);
+		const float2 uv = float2(tId.x, srcY) * invResolution + pixelOffset;
 		discCache0[gtId.y + 2u * DiscWidth] = SRVTex1.SampleLevel(PointMirrorSampler, uv, 0.f);
 		discCache1[gtId.y + 2u * DiscWidth] = SRVTex2.SampleLevel(PointMirrorSampler, uv, 0.f);
 	}
