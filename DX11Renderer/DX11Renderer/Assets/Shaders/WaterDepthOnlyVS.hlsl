@@ -32,6 +32,5 @@ v2f main(attrib i)
 	positionWS = GetGerstnerWaves(positionWS);
 
 	o.pos = mul(_ViewProjMatrix, float4(positionWS, 1.0f));
-	//o.pos = mul(modelViewProj, float4(i.pos, 1.0f));
 	return o;
 }

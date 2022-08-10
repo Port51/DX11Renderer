@@ -30,10 +30,6 @@ void CSMain(uint3 tId : SV_DispatchThreadID)
     float4 c = CameraColorIn[tId.xy];
     
     c.rgb = ReinhardExtendedLuminance(c.rgb, 0.9f);
-
-#if defined(TEST)
-    c *= 0;
-#endif
     
     CameraColorOut[tId.xy] = saturate(c);
 }

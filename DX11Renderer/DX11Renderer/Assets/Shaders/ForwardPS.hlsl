@@ -71,12 +71,6 @@ float4 main(v2f i) : SV_Target
         diffuseLight += lightColorInput;
     }
     
-    // DEBUG: Show normal dir
-    //float3 normalDirColor = 0.f;
-    //normalDirColor += saturate(abs(i.normalWS.x) * 2.f - 1.f) * float3(1.f, 0.25f, 0.f);
-    //normalDirColor += saturate(abs(i.normalWS.z) * 2.f - 1.f) * float3(0.f, 0.25f, 1.f);
-    //return float4(normalDirColor, 1.f);
-    
 #if defined(DEBUG_VIEW_ALL_SHADOWS)
     return float4(debugViews.yyy, 1.f);
 #elif defined(DEBUG_VIEW_CLUSTER_XY)

@@ -77,7 +77,6 @@ RWBuffer<uint> ArgsBuffer : register(u4);
 	Particles[idx + system.bufferOffset]
 
 // Spawns and kills particles
-// 1 thread per particle system (for now!)
 [numthreads(64, 1, 1)]
 void SpawnParticles(uint3 tId : SV_DispatchThreadID)
 {

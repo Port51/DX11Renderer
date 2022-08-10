@@ -51,7 +51,6 @@ v2f main(attrib i)
     o.positionNDC = o.pos;
     o.uv0 = float2(i.uv0.x, 1.0 - i.uv0.y);
     o.vertColor = i.vertColor;
-    o.screenPos = o.pos;
 
 #if defined(INSTANCING_ON)
     o.rng = i.instanceRngAndIndex;

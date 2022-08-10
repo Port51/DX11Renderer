@@ -9,13 +9,6 @@ cbuffer LightCBuf : register(b0)
     float lightIntensity;
 };
 
-/*cbuffer CBuf : register(b2)
-{
-    matrix model;
-    matrix modelView;
-    matrix modelViewProj;
-};*/
-
 Texture2D tex : register(t0);
 Texture2D nmap : register(t1);
 SamplerState splr : register(s0);

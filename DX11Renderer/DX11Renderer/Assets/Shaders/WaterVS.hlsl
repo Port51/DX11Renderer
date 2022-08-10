@@ -49,6 +49,5 @@ v2f main(attrib i)
     o.pos = mul(_ViewProjMatrix, float4(positionWS, 1.0f));
     o.positionNDC = o.pos;
     o.uv0 = float2(i.uv0.x, i.uv0.y);
-    o.screenPos = o.pos;
     return o;
 }

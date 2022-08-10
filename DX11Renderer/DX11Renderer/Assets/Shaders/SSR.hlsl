@@ -157,7 +157,7 @@ DDAPt SampleDDAPt(DDAParams params, float steps, float jitter)
     float2 unswappedSS = (params.swapXY) ? traceSS.yx : traceSS.xy;
     float traceZ = GetPerspectiveCorrectDepth_Optimized(params.invStartDepth, params.invEndDepth, steps * params.invTraceRange);
         
-        // Read depth and convert it to linear depth
+    // Read depth and convert it to linear depth
     float depth = HiZBuffer.Load(int3(unswappedSS.xy, 0)).x;
     if (depth == 0.f) // early return if sample out of viewport
         return pt;
