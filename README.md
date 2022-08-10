@@ -1,8 +1,8 @@
 # DirectX 11 Renderer
 
-This is a tiled renderer inspired by the Rise of the Tomb Raider renderer, shown here: https://www.elopezr.com/the-rendering-of-rise-of-the-tomb-raider/
+This is a tiled and clustered renderer loosely inspired by a frame analysis of "Rise of the Tomb Raider", shown here: https://www.elopezr.com/the-rendering-of-rise-of-the-tomb-raider/
 
-It's still a work-in-progress, and here are the results so far:
+Here are the results so far:
 
 ![Castle gif](DX11Renderer/Doc/Castle-Waves-0.gif)
 
@@ -21,19 +21,20 @@ It's still a work-in-progress, and here are the results so far:
     * Dynamic water using gerstner waves
     * Stencil masking
 * Post effects
-    *	Bloom w/ separable gaussian filter
     *	Depth of field w/ separable disk filter
     *	SSR methods:
         * 3D raymarch (for testing)
         * Nonconservative DDA
         * Binary search
+    *	Bloom w/ separable gaussian filter
     *	HDR + tonemapping
+    *	Dither
 *	Optimizations
     * Instancing
+    * Draw call sorting to minimize state changes
     * Depth prepass
     * Hi-Z buffer
     *	Frustum culling via AABB scene graph
-    *	Draw call sorting to minimize state changes
 
 ## Depth of Field
 
@@ -57,7 +58,9 @@ This step calculates near and far CoC, and creates temporary rendertextures with
 
 ![DoF process](DX11Renderer/Doc/DoF-Near-Process.jpg)
 
-### Step 3: Far DoF: (the white-yellow texture is remapped, as most values were negative)
+Note that the last step includes both a vertical pass, and combining the real and imaginary values to a single RGB value. Doing these at once saves a compute dispatch.
+
+### Step 3: Far DoF:
 
 ![DoF process](DX11Renderer/Doc/DoF-Far-Process.jpg)
 
@@ -91,7 +94,7 @@ For the per-pixel lighting, I wrote to diffuse and specular light textures. This
 
 ## Clustered Forward Lighting
 
-Clustered lighting is great for transparent objects, as it has minimal reliance on the z-buffer. It uses a 3D buffer of mini-frustums that encapsulate the full camera frustum. This buffer stores indices of intersected lights, which shaders can read from.
+Clustered lighting is great for transparent objects, as it has minimal reliance on the z-buffer. It uses a 3D buffer of mini-frustums that encapsulate the full camera frustum. This buffer stores indices of intersected lights, which shaders can read from to know what lights they should calculate.
 
 This debug view shows a histogram of light counts per mini-frustum:
 
@@ -124,4 +127,4 @@ For the blur, instead of multiple up and down-sampling passes, I used a compute 
 2. Kleber Garcia. 2017. _"Circular separable convolution depth of field"_. (2017). https://dl.acm.org/doi/10.1145/3084363.3085022
 3. Ollie Niemitalo. 2010. _"Circularly symmetric convolution and lens blur"_. (2010). http://yehar.com/blog/?p=1495
 4. Bart Wronski. 2017. _"Separable disk-like depth of field"_. (2017). https://bartwronski.com/2017/08/06/separable-bokeh/
-
+5. Ángel Ortiz. 2018. _"How to Implement Clustered Shading"_. (2018). http://www.aortiz.me/2018/12/21/CG.html#part-2
