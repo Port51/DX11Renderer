@@ -47,8 +47,8 @@ namespace gfx
 		float m_focusWidth = 7.2f;
 		float m_farFadeWidth = 19.61f;
 		float m_nearFadeWidth = 7.69f;
-		float m_farIntensity = 0.9f;
-		float m_nearIntensity = 0.9f;
+		float m_farIntensity = 1.0f;
+		float m_nearIntensity = 1.0f;
 
 		// Shared
 		std::unique_ptr<ComputeKernel> m_pDoFPrefilterKernel;

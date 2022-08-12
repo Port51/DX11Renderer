@@ -38,6 +38,7 @@
 #include "SSAOPass.h"
 #include "RandomGenerator.h"
 #include "ParticleManager.h"
+#include <thread>
 
 namespace gfx
 {
@@ -449,22 +450,32 @@ namespace gfx
 			pass.UnbindSharedResources(gfx, renderState);
 		}
 
-		// Submit draw calls
+		// Submit draw call threads
+		std::vector<std::thread> filterThreads;
+		std::vector<std::thread> drawCallThreads;
 		{
 			static DrawContext opaqueDrawContext(*this, std::move(std::vector<RenderPassType> { RenderPassType::DepthPrepassRenderPass, RenderPassType::GBufferRenderPass, RenderPassType::OpaqueRenderPass }));
 			opaqueDrawContext.viewMatrix = camera.GetViewMatrix();
 			opaqueDrawContext.projMatrix = camera.GetProjectionMatrix();
 
-			// todo: filter by render passes too
-			m_pVisibleRendererList->Filter(gfx, camera.GetFrustumWS(), RendererList::RendererSortingType::StateThenBackToFront, RenderPassType::OpaqueRenderPass, camera.GetPositionWS(), camera.GetForwardWS(), camera.GetFarClipPlane());
-			m_pVisibleRendererList->SubmitDrawCalls(gfx, opaqueDrawContext);
-
 			static DrawContext transparentDrawContext(*this, std::move(std::vector<RenderPassType> { RenderPassType::TransparentRenderPass }));
 			transparentDrawContext.viewMatrix = camera.GetViewMatrix();
 			transparentDrawContext.projMatrix = camera.GetProjectionMatrix();
 
-			m_pVisibleTransparentRendererList->Filter(gfx, camera.GetFrustumWS(), RendererList::RendererSortingType::BackToFrontThenState, RenderPassType::TransparentRenderPass, camera.GetPositionWS(), camera.GetForwardWS(), camera.GetFarClipPlane());
-			m_pVisibleTransparentRendererList->SubmitDrawCalls(gfx, transparentDrawContext);
+			//m_pVisibleRendererList->Filter(gfx, camera.GetFrustumWS(), RendererList::RendererSortingType::StateThenBackToFront, RenderPassType::OpaqueRenderPass, camera.GetPositionWS(), camera.GetForwardWS(), camera.GetFarClipPlane());
+			//m_pVisibleTransparentRendererList->Filter(gfx, camera.GetFrustumWS(), RendererList::RendererSortingType::BackToFrontThenState, RenderPassType::TransparentRenderPass, camera.GetPositionWS(), camera.GetForwardWS(), camera.GetFarClipPlane());
+			filterThreads.push_back(std::thread(&RendererList::Filter, m_pVisibleRendererList.get(), std::ref(gfx), std::ref(camera.GetFrustumWS()), RendererList::RendererSortingType::StateThenBackToFront, RenderPassType::OpaqueRenderPass, camera.GetPositionWS(), camera.GetForwardWS(), camera.GetFarClipPlane()));
+			filterThreads.push_back(std::thread(&RendererList::Filter, m_pVisibleTransparentRendererList.get(), std::ref(gfx), std::ref(camera.GetFrustumWS()), RendererList::RendererSortingType::BackToFrontThenState, RenderPassType::TransparentRenderPass, camera.GetPositionWS(), camera.GetForwardWS(), camera.GetFarClipPlane()));
+
+			for (auto& t : filterThreads)
+			{
+				if (t.joinable()) t.join();
+			}
+
+			//m_pVisibleRendererList->SubmitDrawCalls(gfx, opaqueDrawContext);
+			//m_pVisibleTransparentRendererList->SubmitDrawCalls(gfx, transparentDrawContext);
+			drawCallThreads.push_back(std::thread(&RendererList::SubmitDrawCalls, m_pVisibleRendererList.get(), std::ref(gfx), std::ref(opaqueDrawContext)));
+			drawCallThreads.push_back(std::thread(&RendererList::SubmitDrawCalls, m_pVisibleTransparentRendererList.get(), std::ref(gfx), std::ref(transparentDrawContext)));
 		}
 
 		// Early frame calculations
@@ -522,6 +533,14 @@ namespace gfx
 		{
 			const RenderPass& pass = GetRenderPass(RenderPassType::PerCameraRenderPass);
 			pass.BindSharedResources(gfx, renderState);
+		}
+
+		// Wait for draw call threads to complete
+		{
+			for (auto& t : drawCallThreads)
+			{
+				if (t.joinable()) t.join();
+			}
 		}
 
 		// Early Z pass
