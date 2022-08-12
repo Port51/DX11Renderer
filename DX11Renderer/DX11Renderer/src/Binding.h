@@ -11,9 +11,11 @@ namespace gfx
 	{
 	public:
 		Binding(std::shared_ptr<Bindable> pBindable);
-		virtual ~Binding() = default;
+		virtual ~Binding();
 	public:
+		void BindVertexPipelineOnly(const GraphicsDevice& gfx, RenderState& renderState) const;
 		void Bind(const GraphicsDevice& gfx, RenderState& renderState) const;
+		void UnbindVertexPipelineOnly(const GraphicsDevice& gfx, RenderState& renderState) const;
 		void Unbind(const GraphicsDevice& gfx, RenderState& renderState) const;
 		const Bindable& GetBindable() const;
 		Binding& SetupIABinding(const slotUINT slot = 0u);

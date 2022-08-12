@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Bokeh.h"
+#include "Complex.h"
 
 namespace gfx
 {
@@ -68,27 +69,30 @@ namespace gfx
 
 	const float Bokeh::GetDiskAccumulation(const std::vector<float>& weights, const UINT startComponentIdx, const UINT componentCount, const UINT elementsPerComponent, const float combineRealFactor, const float combineImaginaryFactor)
 	{
+		// Weights are in order: C0-real, C0-imag, C1-real, C1-imag, ...
+		
+		//std::vector<float> 
+
 		float accu = 1.f;
 		for (UINT cIdx = startComponentIdx; cIdx < startComponentIdx + componentCount; ++cIdx)
 		{
+			const UINT baseRealIdx = elementsPerComponent * 2u * cIdx;
+			const UINT baseImagIdx = elementsPerComponent * 2u * cIdx + elementsPerComponent;
+
 			// Calculate complex sum
-			float sumR = 0.f;
-			float sumI = 0.f;
+			Complex sum;
 			for (UINT x = 0u; x < elementsPerComponent; ++x)
 			{
 				for (UINT y = 0u; y < elementsPerComponent; ++y)
 				{
-					// Complex mult: P * Q = PrQr - PiQi + [PrQi + QrPi]i
-					// Note that each complex element uses 2 floats
-					const float xReal = weights[elementsPerComponent * 2u * cIdx + x];
-					const float xImag = weights[elementsPerComponent * 2u * cIdx + elementsPerComponent + x];
-					const float yReal = weights[elementsPerComponent * 2u * cIdx + y];
-					const float yImag = weights[elementsPerComponent * 2u * cIdx + elementsPerComponent + y];
-					sumR += (xReal * yReal - xImag * yImag);
-					sumI += (xReal * yImag + xImag * yReal);
+					// Sum of complex numbers is done component-wise
+					// P + Q = (Pr + Qr) + (Pi + Qi) * i
+					const Complex xValue(weights[baseRealIdx + x], weights[baseImagIdx + x]);
+					const Complex yValue(weights[baseRealIdx + y], weights[baseImagIdx + y]);
+					sum += (xValue * yValue);
 				}
 			}
-			accu = accu * (sumR * combineRealFactor + sumI * combineImaginaryFactor); // todo: add weights
+			accu = accu * (sum.GetRealComponent() * combineRealFactor + sum.GetImaginaryComponent() * combineImaginaryFactor); // todo: add weights
 		}
 		return accu;
 	}

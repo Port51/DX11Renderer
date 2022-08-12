@@ -48,12 +48,14 @@ namespace gfx
 		Renderer(const GraphicsDevice& gfx, RandomGenerator& rng, std::shared_ptr<LightManager> pLightManager, std::shared_ptr<ParticleManager> pParticleManager, std::shared_ptr<RendererList> pRendererList);
 		virtual ~Renderer();
 		virtual void Release();
+
 	public:
 		void AcceptDrawCall(GraphicsDevice& gfx, DrawCommand job, const RenderPassType targetPass);
 		void Execute(GraphicsDevice& gfx, const Camera& cam, const float timeStep, const float timeElapsed, const UINT pixelSelectionX, const UINT pixelSelectionY);
 		void DrawImguiControlWindow(const GraphicsDevice& gfx);
 		void Reset();
 		bool IsFeatureEnabled(RendererFeature feature) const;
+
 	private:
 		void SetupRenderPassDependencies(const GraphicsDevice& gfx);
 		RenderPass& GetRenderPass(const RenderPassType pass) const;
@@ -65,8 +67,10 @@ namespace gfx
 
 		std::shared_ptr<Sampler> m_pPointWrapSampler;
 		std::shared_ptr<Sampler> m_pPointClampSampler;
+		std::shared_ptr<Sampler> m_pPointMirrorSampler;
 		std::shared_ptr<Sampler> m_pBilinearWrapSampler;
 		std::shared_ptr<Sampler> m_pBilinearClampSampler;
+		std::shared_ptr<Sampler> m_pBilinearMirrorSampler;
 
 		std::shared_ptr<RenderTexture> m_pNormalRoughReflectivityTarget;
 		std::shared_ptr<RenderTexture> m_pSpecularLighting;
@@ -119,5 +123,6 @@ namespace gfx
 		RendererView m_viewIdx = RendererView::Final;
 		std::vector<bool> m_rendererFeatureEnabled;
 		int m_pixelIteration;
+
 	};
 }

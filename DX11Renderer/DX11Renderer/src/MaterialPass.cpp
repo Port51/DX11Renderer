@@ -57,7 +57,7 @@ namespace gfx
 		m_pDepthStencilState = std::move(pDepthStencilState);
 	}
 
-	const std::shared_ptr<DepthStencilState> MaterialPass::GetStencil() const
+	const std::shared_ptr<DepthStencilState>& MaterialPass::GetStencil() const
 	{
 		return m_pDepthStencilState;
 	}
@@ -166,10 +166,23 @@ namespace gfx
 		{
 			m_pDepthStencilState->BindOM(gfx, renderState);
 		}
-		for (const auto& b : m_bindings)
+
+		if (m_pPixelShader != nullptr)
 		{
-			b.Bind(gfx, renderState);
+			for (const auto& b : m_bindings)
+			{
+				b.Bind(gfx, renderState);
+			}
 		}
+		else
+		{
+			// If doing a depth-only render pass, don't bind PS, RS, OM, etc.
+			for (const auto& b : m_bindings)
+			{
+				b.BindVertexPipelineOnly(gfx, renderState);
+			}
+		}
+		
 	}
 
 }

@@ -17,7 +17,7 @@ namespace gfx
 		//enum AABBCoordinateSpace { WorldSpace, ObjectSpace };
 	public:
 		AABB();
-		~AABB() = default;
+		~AABB();
 	public:
 		void Clear();
 		void SetBoundsByVertices(const std::vector<dx::XMFLOAT3>& vertices);

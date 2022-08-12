@@ -37,10 +37,12 @@ namespace gfx
 
 		LRESULT CALLBACK HandleMsg(const HWND hWnd, const UINT message, const WPARAM wParam, const LPARAM lParam) override;
 		GraphicsDevice& Gfx() const;
+
 	private:
 		void ExecuteFrame();
 		void CreateCastleScene();
 		const dx::XMFLOAT3 GetRandomMagicLight() const;
+
 	private:
 		std::unique_ptr<ImguiManager> m_pImgui; // must be initialized before wnd
 		std::unique_ptr<DX11Window> m_pWindow;

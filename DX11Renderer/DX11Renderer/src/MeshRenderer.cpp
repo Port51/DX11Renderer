@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "MeshRenderer.h"
 #include "Material.h"
+#include "AABB.h"
 #include "VertexBufferWrapper.h"
 #include "IndexBuffer.h"
 #include "Topology.h"
@@ -12,6 +13,7 @@
 #include "Transforms.h"
 #include "TransformCbuf.h"
 #include "MeshAsset.h"
+#include "CommonCbuffers.h"
 
 namespace gfx
 {
@@ -34,12 +36,15 @@ namespace gfx
 		m_pVertexBufferWrapper = std::move(pVertexBuffer);
 	}
 
+	MeshRenderer::~MeshRenderer()
+	{}
+
 	const dx::XMMATRIX MeshRenderer::GetTransformXM() const
 	{
 		return dx::XMLoadFloat4x4(&m_transform);
 	}
 
-	void MeshRenderer::SetTransform(const dx::XMMATRIX _transform)
+	void MeshRenderer::SetTransform(const dx::XMMATRIX& _transform)
 	{
 		dx::XMStoreFloat4x4(&m_transform, _transform);
 	}
@@ -55,13 +60,17 @@ namespace gfx
 		m_pIndexBuffer->BindIA(gfx, renderState, 0u);
 		m_pVertexBufferWrapper->BindIA(gfx, renderState, 0u);
 
-		const auto modelMatrix = GetTransformXM();
-		const auto modelViewMatrix = modelMatrix * drawContext.viewMatrix;
-		const auto modelViewProjectMatrix = modelViewMatrix * drawContext.projMatrix;
-		const ObjectTransformsCB transforms{ modelMatrix, modelViewMatrix, modelViewProjectMatrix };
-		m_pTransformCbuf->UpdateTransforms(gfx, transforms);
+		// Instanced renderers don't need to bind this
+		if (UseModelTransform())
+		{
+			const auto modelMatrix = GetTransformXM();
+			const auto modelViewMatrix = modelMatrix * drawContext.viewMatrix;
+			const auto modelViewProjectMatrix = modelViewMatrix * drawContext.projMatrix;
+			const ObjectTransformsCB transforms{ modelMatrix, modelViewMatrix, modelViewProjectMatrix };
+			m_pTransformCbuf->UpdateTransforms(gfx, transforms);
 
-		m_pTransformCbuf->BindVS(gfx, renderState, RenderSlots::VS_PerObjectTransformCB);
+			m_pTransformCbuf->BindVS(gfx, renderState, RenderSlots::VS_PerObjectTransformCB);
+		}
 	}
 
 	const UINT MeshRenderer::GetIndexCount() const
@@ -87,5 +96,10 @@ namespace gfx
 	void MeshRenderer::IssueDrawCall(const GraphicsDevice& gfx) const
 	{
 		gfx.DrawIndexed(GetIndexCount());
+	}
+
+	const bool MeshRenderer::UseModelTransform() const
+	{
+		return true;
 	}
 }

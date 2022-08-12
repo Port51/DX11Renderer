@@ -11,9 +11,8 @@ struct v2f
     float3 tangentVS : TEXCOORD3;
     float2 uv0 : TEXCOORD4;
     float4 vertColor : TEXCOORD5;
-    float4 screenPos : TEXCOORD6;
-    float4 positionNDC : TEXCOORD7;
-    float4 rng : TEXCOORD8;
+    float4 positionNDC : TEXCOORD6;
+    float4 rng : TEXCOORD7;
 };
 
 #endif

@@ -21,14 +21,6 @@ cbuffer PerObjectTransformCB : register(b3)
     matrix modelViewProj;
 };
 
-float4 ComputeNonStereoScreenPos(float4 pos)
-{
-    float4 o = pos * 0.5f;
-    o.xy = float2(o.x, o.y * _ProjectionParams.x) + o.w;
-    o.zw = pos.zw;
-    return o;
-}
-
 v2f main(attrib i)
 {
     v2f o;
@@ -51,7 +43,6 @@ v2f main(attrib i)
     o.positionNDC = o.pos;
     o.uv0 = float2(i.uv0.x, 1.0 - i.uv0.y);
     o.vertColor = i.vertColor;
-    o.screenPos = o.pos;
 
 #if defined(INSTANCING_ON)
     o.rng = i.instanceRngAndIndex;

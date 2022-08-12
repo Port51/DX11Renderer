@@ -19,6 +19,7 @@
 #include "Config.h"
 #include "Transforms.h"
 #include "RenderConstants.h"
+#include "CommonCbuffers.h"
 
 namespace gfx
 {
@@ -152,6 +153,7 @@ namespace gfx
 
 			// Setup transformation buffer
 			static GlobalTransformCB transformationCB;
+			transformationCB.viewProjMatrix = transforms.viewMatrix * transforms.projMatrix; // required for instancing!
 			transformationCB.viewMatrix = transforms.viewMatrix;
 			transformationCB.projMatrix = transforms.projMatrix;
 			context.transformationCB.Update(context.gfx, transformationCB);

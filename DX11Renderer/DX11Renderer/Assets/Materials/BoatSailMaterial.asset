@@ -9,7 +9,7 @@ Properties
 Pass
 {
 	Name, ShadowRenderPass
-	Cull, Front
+	Cull, Back
 	VS, ShadowPassVS.hlsl
 }
 Pass

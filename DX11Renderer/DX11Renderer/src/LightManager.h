@@ -37,10 +37,12 @@ namespace gfx
 		const static UINT ClusteredLightingClusterPixels = 16u;
 		const static UINT ClusteredLightingZLevels = 16u;
 		const static UINT MaxLightsPerCluster = 32u;
+
 	public:
-		LightManager(const GraphicsDevice& gfx, std::shared_ptr<RendererList> pRendererList);
+		LightManager(const GraphicsDevice& gfx, const std::shared_ptr<RendererList>& pRendererList);
 		virtual ~LightManager();
 		void Release();
+
 	public:
 		void AddLight(std::shared_ptr<Light> pLight);
 		void AddPointLight(const GraphicsDevice& gfx, const dx::XMVECTOR positionWS, const dx::XMFLOAT3 color, const float intensity = 1.f, const float attenuationQ = 4.f, const float range = 2.5f);
@@ -50,8 +52,8 @@ namespace gfx
 		DepthStencilTarget& GetShadowAtlas();
 		ConstantBuffer<LightInputCB>& GetLightInputCB();
 		void RenderShadows(ShadowPassContext& context, RenderState& renderState);
-		const ComPtr<ID3D11ShaderResourceView> GetLightDataSRV() const;
-		const ComPtr<ID3D11ShaderResourceView> GetShadowDataSRV() const;
+		const ComPtr<ID3D11ShaderResourceView>& GetLightDataSRV() const;
+		const ComPtr<ID3D11ShaderResourceView>& GetShadowDataSRV() const;
 		void DrawImguiControlWindows() const;
 		const UINT GetLightCount() const;
 		Light& GetLight(const UINT index) const;
@@ -60,12 +62,14 @@ namespace gfx
 		const UINT GetClusterDimensionY() const;
 		const UINT GetClusterDimensionZ() const;
 		const StructuredBuffer<int>& GetClusteredIndices() const;
+
 	private:
 		std::vector<bool> m_lightVisibility;
 		std::vector<std::shared_ptr<Light>> m_pLights;
 		std::shared_ptr<DirectionalLight> m_pMainLight;
 		std::vector<LightData> m_cachedLightData;
 		UINT m_visibleLightCt;
+
 	private:
 		UINT m_clusterDimensionX;
 		UINT m_clusterDimensionY;
@@ -77,5 +81,6 @@ namespace gfx
 		std::vector<LightShadowData> m_cachedShadowData;
 		std::unique_ptr<DepthStencilTarget> m_pShadowAtlas;
 		std::unique_ptr<StructuredBuffer<int>> m_pClusteredIndices;
+
 	};
 }

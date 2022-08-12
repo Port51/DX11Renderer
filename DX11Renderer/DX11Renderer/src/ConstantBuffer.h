@@ -3,12 +3,11 @@
 #include "ExceptionHandling.h"
 #include "Buffer.h"
 #include "RenderPass.h"
+#include "GraphicsDevice.h"
 #include "DX11Include.h"
 
 namespace gfx
 {
-	class GraphicsDevice;
-
 	template<typename T>
 	class ConstantBuffer : public Buffer
 	{

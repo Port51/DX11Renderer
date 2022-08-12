@@ -1,6 +1,7 @@
 #pragma once
 #include "RenderPass.h"
 #include "CommonHeader.h"
+#include "CommonCbuffers.h"
 
 namespace gfx
 {

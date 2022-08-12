@@ -4,6 +4,7 @@
 #include "GraphicsDevice.h"
 #include "ConstantBuffer.h"
 #include "Transforms.h"
+#include "CommonCbuffers.h"
 
 namespace gfx
 {

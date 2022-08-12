@@ -106,7 +106,7 @@ namespace gfx
 		REGISTER_GPU_CALL();
 	}
 
-	const ComPtr<ID3D11SamplerState> Sampler::GetD3DSampler() const
+	const ComPtr<ID3D11SamplerState>& Sampler::GetD3DSampler() const
 	{
 		return m_pSampler;
 	}

@@ -19,14 +19,17 @@ namespace gfx
 	{
 	public:
 		RandomGenerator();
+
 	public:
 		const int GetUniformInt(const int minInclusive, const int maxExclusive) const;
 		const float GetUniformFloat(const float minInclusive, const float maxExclusive) const;
 		const float GetUniformFloat01() const;
 		const dx::XMVECTOR GetRandomUnitVector(const float wValue);
+
 	private:
 		std::unique_ptr<std::random_device> m_pRandomDevice;
 		std::unique_ptr<std::mt19937> m_pGenerator;
 		std::unique_ptr<std::uniform_real_distribution<float>> m_pUniformFloatDistribution01;
+
 	};
 }

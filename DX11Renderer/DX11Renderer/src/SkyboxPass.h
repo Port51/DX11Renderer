@@ -6,6 +6,7 @@ struct ID3D11ShaderResourceView;
 
 namespace gfx
 {
+	class GraphicsDevice;
 	class ComputeKernel;
 
 	class SkyboxPass : public RenderPass
@@ -24,7 +25,7 @@ namespace gfx
 		SkyboxPass(const GraphicsDevice& gfx);
 	public:
 		void Execute(const GraphicsDevice& gfx, RenderState& renderState) const override;
-		void SetupRenderPassDependencies(const GraphicsDevice& gfx, ComPtr<ID3D11ShaderResourceView> pDepthStencil, const RenderTexture& pCameraColor);
+		void SetupRenderPassDependencies(const GraphicsDevice& gfx, const ComPtr<ID3D11ShaderResourceView>& pDepthStencil, const RenderTexture& pCameraColor);
 	private:
 		std::unique_ptr<ComputeKernel> m_pSkyboxKernel;
 	};

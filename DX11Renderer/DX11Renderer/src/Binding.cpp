@@ -10,44 +10,59 @@ namespace gfx
 		: m_pBindable(pBindable)
 	{}
 
-	void Binding::Bind(const GraphicsDevice& gfx, RenderState& renderState) const
+	Binding::~Binding()
+	{}
+
+	void Binding::BindVertexPipelineOnly(const GraphicsDevice& gfx, RenderState& renderState) const
 	{
 		const guid64 guid = m_pBindable->GetGuid();
 
-		int bindings = 0;
 		if (m_IASlot != -1)
 		{
 			m_pBindable->BindIA(gfx, renderState, m_IASlot);
-			bindings++;
-		}
-		if (m_CSSlot != -1)
-		{
-			m_pBindable->BindCS(gfx, renderState, m_CSSlot);
-			bindings++;
 		}
 		if (m_VSSlot != -1)
 		{
 			m_pBindable->BindVS(gfx, renderState, m_VSSlot);
-			bindings++;
+		}
+	}
+
+	void Binding::Bind(const GraphicsDevice& gfx, RenderState& renderState) const
+	{
+		const guid64 guid = m_pBindable->GetGuid();
+
+		BindVertexPipelineOnly(gfx, renderState);
+
+		if (m_CSSlot != -1)
+		{
+			m_pBindable->BindCS(gfx, renderState, m_CSSlot);
 		}
 		if (m_PSSlot != -1)
 		{
 			m_pBindable->BindPS(gfx, renderState, m_PSSlot);
-			bindings++;
 		}
 		if (m_RSBind)
 		{
 			m_pBindable->BindRS(gfx, renderState);
-			bindings++;
 		}
 		if (m_OMBind)
 		{
 			m_pBindable->BindOM(gfx, renderState);
-			bindings++;
 		}
-		if (bindings == 0)
+	}
+
+	void Binding::UnbindVertexPipelineOnly(const GraphicsDevice& gfx, RenderState& renderState) const
+	{
+		return;
+		const guid64 guid = m_pBindable->GetGuid();
+
+		if (m_IASlot != -1)
 		{
-			THROW("Binding object has no binds setup! Please call something like 'SetupVSBinding()'.");
+			m_pBindable->UnbindIA(gfx, renderState, m_IASlot);
+		}
+		if (m_VSSlot != -1)
+		{
+			m_pBindable->UnbindVS(gfx, renderState, m_VSSlot);
 		}
 	}
 
@@ -56,40 +71,23 @@ namespace gfx
 		return;
 		const guid64 guid = m_pBindable->GetGuid();
 
-		int bindings = 0;
-		if (m_IASlot != -1)
-		{
-			m_pBindable->UnbindIA(gfx, renderState, m_IASlot);
-			bindings++;
-		}
+		UnbindVertexPipelineOnly(gfx, renderState);
+
 		if (m_CSSlot != -1)
 		{
 			m_pBindable->UnbindCS(gfx, renderState, m_CSSlot);
-			bindings++;
-		}
-		if (m_VSSlot != -1)
-		{
-			m_pBindable->UnbindVS(gfx, renderState, m_VSSlot);
-			bindings++;
 		}
 		if (m_PSSlot != -1)
 		{
 			m_pBindable->UnbindPS(gfx, renderState, m_PSSlot);
-			bindings++;
 		}
 		if (m_RSBind)
 		{
 			m_pBindable->UnbindRS(gfx, renderState);
-			bindings++;
 		}
 		if (m_OMBind)
 		{
 			m_pBindable->UnbindOM(gfx, renderState);
-			bindings++;
-		}
-		if (bindings == 0)
-		{
-			THROW("Binding object has no binds setup! Please call something like 'SetupVSBinding()'.");
 		}
 	}
 

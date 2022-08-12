@@ -10,13 +10,6 @@ cbuffer LightCBuf : register(b0)
     float lightIntensity;
 };
 
-/*cbuffer CBuf : register(b2)
-{
-    matrix model;
-    matrix modelView;
-    matrix modelViewProj;
-};*/
-
 // Per-frame
 Texture2D SpecularLightingRT : register(t5);
 Texture2D DiffuseLightingRT : register(t6);
@@ -31,8 +24,8 @@ SamplerState splr2 : register(s1);
 
 float4 main(v2f i) : SV_Target
 {
-    float2 screenPos = (i.screenPos.xy * float2(1, -1) / i.screenPos.w) * 0.5 + 0.5;
-    //screenPos = i.pos.xy / i.pos.w;
+    float3 positionNDC = i.positionNDC.xyz / i.positionNDC.w;
+    float2 screenPos = positionNDC.xy * float2(0.5f, -0.5f) + 0.5;
     float4 specularLight = SpecularLightingRT.Sample(splr, screenPos);
     float4 diffuseLight = DiffuseLightingRT.Sample(splr, screenPos);
 

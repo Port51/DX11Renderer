@@ -31,7 +31,7 @@ namespace gfx
 		}
 	}
 
-	const ComPtr<ID3D11Buffer> VertexBufferWrapper::GetVertexBuffer() const
+	const ComPtr<ID3D11Buffer>& VertexBufferWrapper::GetVertexBuffer() const
 	{
 		return m_pBufferArray[0];
 	}

@@ -18,7 +18,7 @@ namespace gfx
 		virtual void Release() override;
 
 	public:
-		const ComPtr<ID3D11Buffer> GetVertexBuffer() const;
+		const ComPtr<ID3D11Buffer>& GetVertexBuffer() const;
 		void BindIA(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot);
 		void UnbindIA(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot);
 		const UINT GetVertexCount() const;

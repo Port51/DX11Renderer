@@ -3,6 +3,7 @@
 #include "SharedCodex.h"
 #include "RenderPass.h"
 #include "Image.h"
+#include "GraphicsDevice.h"
 
 namespace gfx
 {
@@ -191,7 +192,7 @@ namespace gfx
 		return m_dimension;
 	}
 
-	const ComPtr<ID3D11ShaderResourceView> Texture::GetSRV() const
+	const ComPtr<ID3D11ShaderResourceView>& Texture::GetSRV() const
 	{
 		return m_pShaderResourceView;
 	}

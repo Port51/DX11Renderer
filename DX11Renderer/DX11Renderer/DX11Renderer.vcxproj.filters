@@ -464,6 +464,11 @@
     </ClCompile>
     <ClCompile Include="src\DomainShader.cpp">
       <Filter>Source\Bindable\Shaders</Filter>
+    <ClCompile Include="src\VertexLayout.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Complex.cpp">
+      <Filter>Source\Math</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -802,6 +807,8 @@
     </ClInclude>
     <ClInclude Include="src\DomainShader.h">
       <Filter>Headers\Bindable\Shaders</Filter>
+    <ClInclude Include="src\Complex.h">
+      <Filter>Headers\Math</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -979,9 +986,6 @@
     <FxCompile Include="Assets\Shaders\OpaqueGbuffer.hlsl">
       <Filter>Assets\Shaders\DrawPasses\GBufferPasses</Filter>
     </FxCompile>
-    <FxCompile Include="Assets\Shaders\SolidPS.hlsl">
-      <Filter>Assets\Shaders\DrawPasses\GeometryPasses</Filter>
-    </FxCompile>
     <FxCompile Include="Assets\Shaders\ForwardPS.hlsl">
       <Filter>Assets\Shaders\DrawPasses\GeometryPasses</Filter>
     </FxCompile>
@@ -994,9 +998,6 @@
     <FxCompile Include="Assets\Shaders\PhongVS.hlsl">
       <Filter>Assets\Shaders\DrawPasses\VertexShaders</Filter>
     </FxCompile>
-    <FxCompile Include="Assets\Shaders\ShadowPassPS.hlsl">
-      <Filter>Assets\Shaders\DrawPasses\ShadowPasses</Filter>
-    </FxCompile>
     <FxCompile Include="Assets\Shaders\ShadowPassVS.hlsl">
       <Filter>Assets\Shaders\DrawPasses\ShadowPasses</Filter>
     </FxCompile>
@@ -1005,9 +1006,6 @@
     </FxCompile>
     <FxCompile Include="Assets\Shaders\SolidColorPS.hlsl">
       <Filter>Assets\Shaders\DrawPasses\GeometryPasses</Filter>
-    </FxCompile>
-    <FxCompile Include="Assets\Shaders\SolidVS.hlsl">
-      <Filter>Assets\Shaders\DrawPasses\VertexShaders</Filter>
     </FxCompile>
     <FxCompile Include="Assets\Shaders\GPUParticles.hlsl">
       <Filter>Assets\Shaders\DrawPasses\Particles</Filter>

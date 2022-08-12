@@ -1,15 +1,12 @@
 #pragma once
 #include "CommonHeader.h"
-#include "RenderConstants.h"
-#include "GraphicsDevice.h"
 #include "DrawCommand.h"
 #include <vector>
-#include "CommonCbuffers.h"
-#include "Binding.h"
 
 namespace gfx
 {
-	//class Binding;
+	class GraphicsDevice;
+	class Binding;
 	class Bindable;
 	class RenderTexture;
 
@@ -20,7 +17,8 @@ namespace gfx
 	{
 	public:
 		RenderPass(const RenderPassType renderPassType);
-		virtual ~RenderPass() = default;
+		virtual ~RenderPass();
+
 	public:
 		const RenderPassType GetRenderPassType() const;
 		void EnqueueJob(DrawCommand job);
@@ -29,21 +27,21 @@ namespace gfx
 		virtual void Execute(const GraphicsDevice& gfx, RenderState& renderState) const;
 		void Reset();
 		virtual void DrawImguiControls(const GraphicsDevice& gfx);
+
 	public:
 		RenderPass& ClearBinds();
-		RenderPass& CSSetCB(const slotUINT slot, ComPtr<ID3D11Buffer> pResource);
-		RenderPass& CSSetSRV(const slotUINT slot, ComPtr<ID3D11ShaderResourceView> pResource);
-		RenderPass& CSSetUAV(const slotUINT slot, ComPtr<ID3D11UnorderedAccessView> pResource);
-		RenderPass& CSSetSPL(const slotUINT slot, ComPtr<ID3D11SamplerState> pResource);
-		RenderPass& VSSetCB(const slotUINT slot, ComPtr<ID3D11Buffer> pResource);
-		RenderPass& VSSetSRV(const slotUINT slot, ComPtr<ID3D11ShaderResourceView> pResource);
-		RenderPass& VSSetSPL(const slotUINT slot, ComPtr<ID3D11SamplerState> pResource);
-		RenderPass& PSSetCB(const slotUINT slot, ComPtr<ID3D11Buffer> pResource);
-		RenderPass& PSSetSRV(const slotUINT slot, ComPtr<ID3D11ShaderResourceView> pResource);
-		RenderPass& PSSetSPL(const slotUINT slot, ComPtr<ID3D11SamplerState> pResource);
+		RenderPass& CSSetCB(const slotUINT slot, const ComPtr<ID3D11Buffer>& pResource);
+		RenderPass& CSSetSRV(const slotUINT slot, const ComPtr<ID3D11ShaderResourceView>& pResource);
+		RenderPass& CSSetUAV(const slotUINT slot, const ComPtr<ID3D11UnorderedAccessView>& pResource);
+		RenderPass& CSSetSPL(const slotUINT slot, const ComPtr<ID3D11SamplerState>& pResource);
+		RenderPass& VSSetCB(const slotUINT slot, const ComPtr<ID3D11Buffer>& pResource);
+		RenderPass& VSSetSRV(const slotUINT slot, const ComPtr<ID3D11ShaderResourceView>& pResource);
+		RenderPass& VSSetSPL(const slotUINT slot, const ComPtr<ID3D11SamplerState>& pResource);
+		RenderPass& PSSetCB(const slotUINT slot, const ComPtr<ID3D11Buffer>& pResource);
+		RenderPass& PSSetSRV(const slotUINT slot, const ComPtr<ID3D11ShaderResourceView>& pResource);
+		RenderPass& PSSetSPL(const slotUINT slot, const ComPtr<ID3D11SamplerState>& pResource);
 		RenderPass& SetCameraColorOut(std::shared_ptr<RenderTexture> pCameraColor);
-		Binding& AddBinding(std::shared_ptr<Bindable> pBindable);
-		Binding& AddBinding(Binding pBinding);
+		Binding& AddBinding(const std::shared_ptr<Bindable>& pBindable);
 
 		const RenderTexture& GetCameraColorOut() const;
 		static const std::size_t GetHash(const std::string passName);
@@ -51,6 +49,7 @@ namespace gfx
 		RenderPass& GetSubPass(const UINT pass) const;
 		const RenderPass& CreateSubPass(const UINT pass);
 		const RenderPass& CreateSubPass(const UINT pass, std::unique_ptr<RenderPass> pRenderPass);
+
 	protected:
 		std::vector<Binding> m_bindings;
 		const RenderPassType m_renderPassType;

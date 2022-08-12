@@ -14,6 +14,7 @@
 #include "VertexBufferWrapper.h"
 #include "IndexBuffer.h"
 #include "DepthStencilState.h"
+#include "GraphicsDevice.h"
 
 namespace gfx
 {

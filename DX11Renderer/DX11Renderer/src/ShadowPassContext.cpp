@@ -13,4 +13,7 @@ namespace gfx
 		: gfx(gfx), camera(cam), renderer(renderer), renderPass(renderPass), transformationCB(transformationCB), pRendererList(pRendererList)
 	{
 	}
+
+	ShadowPassContext::~ShadowPassContext()
+	{}
 }

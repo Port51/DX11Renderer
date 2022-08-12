@@ -23,8 +23,9 @@
 
 Texture2D<float4> SRVTex0 : register(t3);
 Texture2D<float4> SRVTex1 : register(t4);
-Texture2D<float2> HiZBuffer : register(t5);
-StructuredBuffer<float> DiskWeights : register(t6); // packed into (C0 real, C0 imaginary, C1 real, C1 imaginary)
+Texture2D<float4> SRVTex2 : register(t5);
+Texture2D<float2> HiZBuffer : register(t6);
+StructuredBuffer<float> DiskWeights : register(t7); // packed into (C0 real, C0 imaginary, C1 real, C1 imaginary)
 RWTexture2D<float4> UAVTex0 : register(u0);
 RWTexture2D<float4> UAVTex1 : register(u1);
 RWTexture2D<float4> UAVTex2 : register(u2);
@@ -99,22 +100,26 @@ void HorizontalFilter(uint3 gtId : SV_GroupThreadID, uint3 tId : SV_DispatchThre
 {
 	uint2 resolution;
 	SRVTex0.GetDimensions(resolution.x, resolution.y);
-	uint2 clampedId = min(tId.xy, (uint2)resolution.xy);
+	const float2 invResolution = 1.f / resolution;
+	const float pixelOffset = invResolution * 0.5f;
 
 	// Cache within group bounds
-	discCache0[gtId.x + DiscWidth] = SRVTex0[clampedId.xy];
-	//CameraColorIn.SampleLevel(BilinearSampler, uv, 0.f)
+	const float2 uv0 = float2(tId.xy) * invResolution + pixelOffset;
+	discCache0[gtId.x + DiscWidth] = SRVTex0.SampleLevel(PointMirrorSampler, uv0, 0.f);
 
 	// Extra samples for data outside group bounds
+	// Mirror at border so the accumulation isn't halved
 	if (gtId.x < DiscWidth)
 	{
-		int srcX = max(0, clampedId.x - DiscWidth);
-		discCache0[gtId.x] = SRVTex0[uint2(srcX, clampedId.y)];
+		const int srcX = ((int)tId.x - (int)DiscWidth);
+		const float2 uv = float2(srcX, tId.y) * invResolution + pixelOffset;
+		discCache0[gtId.x] = SRVTex0.SampleLevel(PointMirrorSampler, uv, 0.f);
 	}
 	else if (gtId.x >= 64u - DiscWidth)
 	{
-		int srcX = min(resolution.x - 1u, clampedId.x + DiscWidth);
-		discCache0[gtId.x + 2u * DiscWidth] = SRVTex0[uint2(srcX, clampedId.y)];
+		const int srcX = ((int)tId.x + (int)DiscWidth);
+		const float2 uv = float2(srcX, tId.y) * invResolution + pixelOffset;
+		discCache0[gtId.x + 2u * DiscWidth] = SRVTex0.SampleLevel(PointMirrorSampler, uv, 0.f);
 	}
 
 	GroupMemoryBarrierWithGroupSync();
@@ -122,13 +127,14 @@ void HorizontalFilter(uint3 gtId : SV_GroupThreadID, uint3 tId : SV_DispatchThre
 	if (tId.x >= (uint) resolution.x || tId.y >= (uint) resolution.y)
 		return;
 
-	// Sum of complex numbers is done component-wise
-	// P + Q = (Pr + Qr) + (Pi + Qi)i
 	float4 Sr = 0.0;
 	float4 Si = 0.0;
 	[unroll(DiscKernelSize)]
 	for (uint i = 0; i < DiscKernelSize; ++i)
 	{
+		// Sum of complex numbers is done component-wise
+		// P + Q = (Pr + Qr) + (Pi + Qi)i
+		
 		// Multiplication of real with complex number
 		Sr += discCache0[i + gtId.x] * GetRealWeight(i);
 		Si += discCache0[i + gtId.x] * GetImaginaryWeight(i);
@@ -143,31 +149,36 @@ void HorizontalFilter(uint3 gtId : SV_GroupThreadID, uint3 tId : SV_DispatchThre
 #endif
 }
 
-// Input: UAVTex0, UAVTex1
+// Input: SRVTex1, SRVTex2
 // Outputs: UAVTex2 (combined)
 [numthreads(1, 64, 1)]
 void VerticalFilterAndCombine(uint3 gtId : SV_GroupThreadID, uint3 tId : SV_DispatchThreadID)
 {
 	uint2 resolution;
-	UAVTex0.GetDimensions(resolution.x, resolution.y);
-	uint2 clampedId = min(tId.xy, (uint2)resolution.xy);
+	SRVTex1.GetDimensions(resolution.x, resolution.y);
+	const float2 invResolution = 1.f / resolution;
+	const float pixelOffset = invResolution * 0.5f;
 
 	// Cache within group bounds
-	discCache0[gtId.y + DiscWidth] = UAVTex0[clampedId.xy];
-	discCache1[gtId.y + DiscWidth] = UAVTex1[clampedId.xy];
+	const float2 uv0 = float2(tId.xy) * invResolution + pixelOffset;
+	discCache0[gtId.y + DiscWidth] = SRVTex1.SampleLevel(PointMirrorSampler, uv0, 0.f);
+	discCache1[gtId.y + DiscWidth] = SRVTex2.SampleLevel(PointMirrorSampler, uv0, 0.f);
 
 	// Extra samples for data outside group bounds
+	// Mirror at border so the accumulation isn't halved
 	if (gtId.y < DiscWidth)
 	{
-		int srcY = max(0, clampedId.y - DiscWidth);
-		discCache0[gtId.y] = UAVTex0[uint2(clampedId.x, srcY)];
-		discCache1[gtId.y] = UAVTex1[uint2(clampedId.x, srcY)];
+		const int srcY = ((int)tId.y - (int)DiscWidth);
+		const float2 uv = float2(tId.x, srcY) * invResolution + pixelOffset;
+		discCache0[gtId.y] = SRVTex1.SampleLevel(PointMirrorSampler, uv, 0.f);
+		discCache1[gtId.y] = SRVTex2.SampleLevel(PointMirrorSampler, uv, 0.f);
 	}
 	else if (gtId.y >= 64u - DiscWidth)
 	{
-		int srcY = min(resolution.y - 1u, clampedId.y + DiscWidth);
-		discCache0[gtId.y + 2u * DiscWidth] = UAVTex0[uint2(clampedId.x, srcY)];
-		discCache1[gtId.y + 2u * DiscWidth] = UAVTex1[uint2(clampedId.x, srcY)];
+		const int srcY = ((int)tId.y + (int)DiscWidth);
+		const float2 uv = float2(tId.x, srcY) * invResolution + pixelOffset;
+		discCache0[gtId.y + 2u * DiscWidth] = SRVTex1.SampleLevel(PointMirrorSampler, uv, 0.f);
+		discCache1[gtId.y + 2u * DiscWidth] = SRVTex2.SampleLevel(PointMirrorSampler, uv, 0.f);
 	}
 
 	GroupMemoryBarrierWithGroupSync();
@@ -175,16 +186,17 @@ void VerticalFilterAndCombine(uint3 gtId : SV_GroupThreadID, uint3 tId : SV_Disp
 	if (tId.x >= (uint) resolution.x || tId.y >= (uint) resolution.y)
 		return;
 
-	// Sum of complex numbers is done component-wise
-	// P + Q = (Pr + Qr) + (Pi + Qi)i
+	
 	float4 Sr = 0.0;
 	float4 Si = 0.0;
 	[unroll(DiscKernelSize)]
 	for (uint i = 0; i < DiscKernelSize; ++i)
 	{
+		// Sum of complex numbers is done component-wise
+		// P + Q = (Pr + Qr) + (Pi + Qi)i
+		// 
 		// Multiplication of complex numbers
-		// P * Q = PrQr - PiQi + [PrQi + PrSi]i
-
+		// P * Q = (PrQr - PiQi) + (PrQi + PrQi)i
 		float4 Pr = discCache0[i + gtId.y];
 		float4 Pi = discCache1[i + gtId.y];
 		float4 Qr = GetRealWeight(i);
@@ -220,11 +232,17 @@ void Composite(uint3 tId : SV_DispatchThreadID)
 
 	uint2 dofId = tId >> 1u;
 
+	// Recalculate far CoC so it doesn't bleed over what's in focus
+	// Mip 1 matches downrez'd texture
+	float hzbFar = HiZBuffer.Load(int3(dofId.xy, 1u)).r;
+	hzbFar = HZB_LINEAR(hzbFar, _ZBufferParams);
+	float cocFar = SCurve(saturate(hzbFar * _FarCoCScale + _FarCoCBias)) * _FarCoCIntensity;
+
 	float4 src = UAVTex0[tId.xy];
 	float4 farCoC = saturate(SRVTex0[dofId.xy]);
 	float4 nearCoC = saturate(SRVTex1[dofId.xy]);
 
-	float3 color = lerp(lerp(src, farCoC.rgb, farCoC.a), nearCoC.rgb, nearCoC.a);
+	float3 color = lerp(lerp(src, farCoC.rgb, cocFar), nearCoC.rgb, nearCoC.a);
 	UAVTex0[tId.xy] = float4(max(color, 0.f), src.a);
 }
 

@@ -10,6 +10,9 @@ namespace gfxcore
 		last = steady_clock::now();
 	}
 
+	Timer::~Timer()
+	{}
+
 	float Timer::Mark()
 	{
 		const auto old = last;

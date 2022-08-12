@@ -9,13 +9,6 @@ cbuffer LightCBuf : register(b0)
     float lightIntensity;
 };
 
-/*cbuffer CBuf : register(b2)
-{
-    matrix model;
-    matrix modelView;
-    matrix modelViewProj;
-};*/
-
 float4 main(v2f i) : SV_Target
 {
     return 0;

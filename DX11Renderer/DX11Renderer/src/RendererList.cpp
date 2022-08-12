@@ -12,10 +12,13 @@
 namespace gfx
 {
 	RendererList::RendererList(std::shared_ptr<RendererList> source)
-		: m_pSource(source)
+		: m_pSource(std::move(source))
 	{
 		m_pRenderers.reserve(m_pSource->m_pRenderers.size());
 	}
+
+	RendererList::~RendererList()
+	{}
 
 	bool RendererList::SortByCode(const std::pair<std::shared_ptr<MeshRenderer>, u64>& a, const std::pair<std::shared_ptr<MeshRenderer>, u64>& b)
 	{

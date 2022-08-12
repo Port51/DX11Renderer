@@ -12,7 +12,7 @@ namespace gfx
 		DX11Window(const DX11Window&) = delete;
 		DX11Window& operator=(const DX11Window&) = delete;
 		~DX11Window() override;
-	public:
+
 	protected:
 		LRESULT HandleMsg(const HWND hWnd, const UINT msg, const WPARAM wParam, const LPARAM lParam) override;
 	};

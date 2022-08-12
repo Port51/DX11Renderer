@@ -25,7 +25,7 @@ namespace gfx
 		void UnbindVS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override;
 		void BindPS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override;
 		void UnbindPS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override;
-		const ComPtr<ID3D11SamplerState> GetD3DSampler() const;
+		const ComPtr<ID3D11SamplerState>& GetD3DSampler() const;
 	public:
 		static std::shared_ptr<Bindable> Resolve(const GraphicsDevice& gfx);
 		static std::shared_ptr<Bindable> Resolve(const GraphicsDevice& gfx, const D3D11_TEXTURE_ADDRESS_MODE wrapU);

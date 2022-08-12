@@ -13,7 +13,7 @@ namespace gfx
 	{
 	public:
 		DrawCommand(const MaterialPass* const pMaterialPass, const Drawable* const pDrawable, const DrawContext& drawContext, const BindingList* const pPropertyBindings);
-		virtual ~DrawCommand() = default;
+		virtual ~DrawCommand();
 	public:
 		void Execute(const GraphicsDevice& gfx, RenderState& renderState) const;
 	private:

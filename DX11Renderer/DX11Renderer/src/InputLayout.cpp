@@ -2,6 +2,7 @@
 #include "InputLayout.h"
 #include "SharedCodex.h"
 #include "VertexLayout.h"
+#include "GraphicsDevice.h"
 
 namespace gfx
 {

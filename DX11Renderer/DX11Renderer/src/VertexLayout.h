@@ -1,8 +1,5 @@
 #pragma once
 #include "DXMathInclude.h"
-#include <type_traits>
-#include "GraphicsDevice.h"
-#include "ColorStructs.h"
 
 namespace gfx
 {
@@ -12,8 +9,8 @@ namespace gfx
 	class VertexLayout
 	{
 	public:
-		VertexLayout() {}
-		virtual ~VertexLayout() = default;
+		VertexLayout();
+		virtual ~VertexLayout();
 
 	public:
 		template <class T> // T should be the CPU type
@@ -41,35 +38,13 @@ namespace gfx
 			return *this;
 		}
 
-		const UINT GetPerVertexStride() const
-		{
-			return m_perVertexStride + m_perVertexPadding;
-		}
-
-		const UINT GetPerInstanceStride() const
-		{
-			return m_perInstanceStride;
-		}
-
-		const UINT GetPerVertexPadding() const
-		{
-			return m_perVertexPadding;
-		}
-
-		const UINT GetElementCount() const
-		{
-			return (UINT)m_elements.size();
-		}
-
-		const std::vector<D3D11_INPUT_ELEMENT_DESC> GetD3DLayout() const
-		{
-			return m_elements;
-		}
-
-		const std::string GetCode() const
-		{
-			return m_code;
-		}
+	public:
+		const UINT GetPerVertexStride() const;
+		const UINT GetPerInstanceStride() const;
+		const UINT GetPerVertexPadding() const;
+		const UINT GetElementCount() const;
+		const std::vector<D3D11_INPUT_ELEMENT_DESC>& GetD3DLayout() const;
+		const std::string& GetCode() const;
 
 	private:
 		std::vector<D3D11_INPUT_ELEMENT_DESC> m_elements;

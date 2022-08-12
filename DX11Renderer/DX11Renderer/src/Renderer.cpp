@@ -38,11 +38,12 @@
 #include "SSAOPass.h"
 #include "RandomGenerator.h"
 #include "ParticleManager.h"
+#include <thread>
 
 namespace gfx
 {
 	Renderer::Renderer(const GraphicsDevice& gfx, RandomGenerator& rng, std::shared_ptr<LightManager> pLightManager, std::shared_ptr<ParticleManager> pParticleManager, std::shared_ptr<RendererList> pRendererList)
-		: m_pRendererList(pRendererList), m_pLightManager(pLightManager), m_pParticleManager(pParticleManager)
+		: m_pRendererList(std::move(pRendererList)), m_pLightManager(std::move(pLightManager)), m_pParticleManager(std::move(pParticleManager))
 	{
 		UINT screenWidth = gfx.GetScreenWidth();
 		UINT screenHeight = gfx.GetScreenHeight();
@@ -52,14 +53,14 @@ namespace gfx
 		//
 		m_rendererFeatureEnabled.resize(RendererFeature::COUNT, true); // enable all features by default
 		m_rendererFeatureEnabled[RendererFeature::HZBSSR] = true;
-		m_rendererFeatureEnabled[RendererFeature::DepthOfField] = false;
+		m_rendererFeatureEnabled[RendererFeature::DepthOfField] = true;
 		m_rendererFeatureEnabled[RendererFeature::Bloom] = true;
 
 		//
 		// Components
 		//
-		m_pVisibleRendererList = std::make_unique<RendererList>(pRendererList);
-		m_pVisibleTransparentRendererList = std::make_unique<RendererList>(pRendererList);
+		m_pVisibleRendererList = std::make_unique<RendererList>(m_pRendererList);
+		m_pVisibleTransparentRendererList = std::make_unique<RendererList>(m_pRendererList);
 
 		//
 		// Texture assets and samplers
@@ -69,8 +70,10 @@ namespace gfx
 
 		m_pPointWrapSampler = std::make_shared<Sampler>(gfx, D3D11_FILTER_MIN_MAG_MIP_POINT, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP);
 		m_pPointClampSampler = std::make_shared<Sampler>(gfx, D3D11_FILTER_MIN_MAG_MIP_POINT, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP);
+		m_pPointMirrorSampler = std::make_shared<Sampler>(gfx, D3D11_FILTER_MIN_MAG_MIP_POINT, D3D11_TEXTURE_ADDRESS_MIRROR, D3D11_TEXTURE_ADDRESS_MIRROR, D3D11_TEXTURE_ADDRESS_MIRROR);
 		m_pBilinearWrapSampler = std::make_shared<Sampler>(gfx, D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP, D3D11_TEXTURE_ADDRESS_WRAP);
 		m_pBilinearClampSampler = std::make_shared<Sampler>(gfx, D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP, D3D11_TEXTURE_ADDRESS_CLAMP);
+		m_pBilinearMirrorSampler = std::make_shared<Sampler>(gfx, D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT, D3D11_TEXTURE_ADDRESS_MIRROR, D3D11_TEXTURE_ADDRESS_MIRROR, D3D11_TEXTURE_ADDRESS_MIRROR);
 		
 		D3D11_SAMPLER_DESC shadowSamplerDesc = {};
 		shadowSamplerDesc.Filter = D3D11_FILTER_COMPARISON_MIN_MAG_LINEAR_MIP_POINT;
@@ -231,18 +234,24 @@ namespace gfx
 			.PSSetCB(RenderSlots::PS_GlobalTransformsCB, m_pTransformationCB->GetD3DBuffer())
 			.PSSetCB(RenderSlots::PS_PerCameraCB, m_pPerCameraCB->GetD3DBuffer())
 			.PSSetCB(RenderSlots::PS_LightInputCB, m_pLightManager->GetLightInputCB().GetD3DBuffer())
-			.CSSetSPL(RenderSlots::CS_PointWrapSampler, m_pPointWrapSampler->GetD3DSampler())
-			.CSSetSPL(RenderSlots::CS_PointClampSampler, m_pPointClampSampler->GetD3DSampler())
-			.CSSetSPL(RenderSlots::CS_BilinearWrapSampler, m_pBilinearWrapSampler->GetD3DSampler())
-			.CSSetSPL(RenderSlots::CS_BilinearClampSampler, m_pBilinearClampSampler->GetD3DSampler())
-			.VSSetSPL(RenderSlots::VS_PointWrapSampler, m_pPointWrapSampler->GetD3DSampler())
-			.VSSetSPL(RenderSlots::VS_PointClampSampler, m_pPointClampSampler->GetD3DSampler())
-			.VSSetSPL(RenderSlots::VS_BilinearWrapSampler, m_pBilinearWrapSampler->GetD3DSampler())
-			.VSSetSPL(RenderSlots::VS_BilinearClampSampler, m_pBilinearClampSampler->GetD3DSampler())
-			.PSSetSPL(RenderSlots::PS_PointWrapSampler, m_pPointWrapSampler->GetD3DSampler())
-			.PSSetSPL(RenderSlots::PS_PointClampSampler, m_pPointClampSampler->GetD3DSampler())
-			.PSSetSPL(RenderSlots::PS_BilinearWrapSampler, m_pBilinearWrapSampler->GetD3DSampler())
-			.PSSetSPL(RenderSlots::PS_BilinearClampSampler, m_pBilinearClampSampler->GetD3DSampler());
+			.CSSetSPL(RenderSlots::Global_PointWrapSampler, m_pPointWrapSampler->GetD3DSampler())
+			.CSSetSPL(RenderSlots::Global_PointClampSampler, m_pPointClampSampler->GetD3DSampler())
+			.CSSetSPL(RenderSlots::Global_PointMirrorSampler, m_pPointMirrorSampler->GetD3DSampler())
+			.CSSetSPL(RenderSlots::Global_BilinearWrapSampler, m_pBilinearWrapSampler->GetD3DSampler())
+			.CSSetSPL(RenderSlots::Global_BilinearClampSampler, m_pBilinearClampSampler->GetD3DSampler())
+			.CSSetSPL(RenderSlots::Global_BilinearMirrorSampler, m_pBilinearMirrorSampler->GetD3DSampler())
+			.VSSetSPL(RenderSlots::Global_PointWrapSampler, m_pPointWrapSampler->GetD3DSampler())
+			.VSSetSPL(RenderSlots::Global_PointClampSampler, m_pPointClampSampler->GetD3DSampler())
+			.VSSetSPL(RenderSlots::Global_PointMirrorSampler, m_pPointMirrorSampler->GetD3DSampler())
+			.VSSetSPL(RenderSlots::Global_BilinearWrapSampler, m_pBilinearWrapSampler->GetD3DSampler())
+			.VSSetSPL(RenderSlots::Global_BilinearClampSampler, m_pBilinearClampSampler->GetD3DSampler())
+			.VSSetSPL(RenderSlots::Global_BilinearMirrorSampler, m_pBilinearMirrorSampler->GetD3DSampler())
+			.PSSetSPL(RenderSlots::Global_PointWrapSampler, m_pPointWrapSampler->GetD3DSampler())
+			.PSSetSPL(RenderSlots::Global_PointClampSampler, m_pPointClampSampler->GetD3DSampler())
+			.PSSetSPL(RenderSlots::Global_PointMirrorSampler, m_pPointMirrorSampler->GetD3DSampler())
+			.PSSetSPL(RenderSlots::Global_BilinearWrapSampler, m_pBilinearWrapSampler->GetD3DSampler())
+			.PSSetSPL(RenderSlots::Global_BilinearClampSampler, m_pBilinearClampSampler->GetD3DSampler())
+			.PSSetSPL(RenderSlots::Global_BilinearMirrorSampler, m_pBilinearMirrorSampler->GetD3DSampler());
 
 		GetRenderPass(RenderPassType::DepthPrepassRenderPass).
 			ClearBinds()
@@ -258,6 +267,7 @@ namespace gfx
 
 		GetRenderPass(RenderPassType::ShadowRenderPass).
 			ClearBinds()
+			.VSSetCB(RenderSlots::VS_GlobalTransformsCB, m_pTransformationCB->GetD3DBuffer())
 			.AddBinding(RasterizerState::Resolve(gfx, D3D11_CULL_MODE::D3D11_CULL_BACK)).SetupRSBinding();
 			//.AddBinding(RasterizerState::Resolve(gfx, D3D11_CULL_MODE::D3D11_CULL_FRONT)).SetupRSBinding(); // Reduce shadow acne w/ front face culling during shadow pass
 
@@ -315,20 +325,6 @@ namespace gfx
 			.PSSetCB(RenderSlots::PS_FreeCB + 1u, m_pClusteredLightingCB->GetD3DBuffer())
 			.PSSetSPL(RenderSlots::PS_FreeSPL + 0u, m_pShadowSampler->GetD3DSampler());
 
-		GetRenderPass(RenderPassType::CreateDownsampledX2Texture).
-			ClearBinds()
-			.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, m_pCameraColor0->GetSRV())
-			.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, m_pDownsampledColor->GetUAV());
-
-		static_cast<DepthOfFieldPass&>(GetRenderPass(RenderPassType::DepthOfFieldRenderPass)).SetupRenderPassDependencies(gfx, *m_pDownsampledColor, *m_pHiZBufferTarget, *m_pCameraColor0);
-
-		static_cast<BloomPass&>(GetRenderPass(RenderPassType::BloomRenderPass)).SetupRenderPassDependencies(gfx, *m_pDownsampledColor, *m_pCameraColor0);
-
-		if (IsFeatureEnabled(RendererFeature::SSAO))
-		{
-			static_cast<SSAOPass&>(GetRenderPass(RenderPassType::SSAORenderPass)).SetupRenderPassDependencies(gfx, *m_pNormalRoughReflectivityTarget, *m_pHiZBufferTarget, *m_pRGBNoiseTexture);
-		}
-
 		if (IsFeatureEnabled(RendererFeature::HZBSSR))
 		{
 			// Assign inputs and outputs
@@ -347,6 +343,27 @@ namespace gfx
 				.CSSetUAV(RenderSlots::CS_FreeUAV + 1u, m_pSSR_DebugData->GetUAV())
 				.CSSetUAV(RenderSlots::CS_FreeUAV + 2u, m_pDebugSSR->GetUAV())
 				.CSSetCB(RenderSlots::CS_FreeCB + 0u, m_pSSR_CB->GetD3DBuffer());
+		}
+
+		// Downsampled FX
+		{
+			const auto& pColorIn = (cameraOutSlot0) ? m_pCameraColor0 : m_pCameraColor1;
+			const auto& pColorOut = (cameraOutSlot0) ? m_pCameraColor1 : m_pCameraColor0;
+			//cameraOutSlot0 = !cameraOutSlot0;
+
+			GetRenderPass(RenderPassType::CreateDownsampledX2Texture).
+				ClearBinds()
+				.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, pColorIn->GetSRV())
+				.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, m_pDownsampledColor->GetUAV());
+
+			static_cast<DepthOfFieldPass&>(GetRenderPass(RenderPassType::DepthOfFieldRenderPass)).SetupRenderPassDependencies(gfx, *m_pDownsampledColor, *m_pHiZBufferTarget, *pColorIn);
+
+			static_cast<BloomPass&>(GetRenderPass(RenderPassType::BloomRenderPass)).SetupRenderPassDependencies(gfx, *m_pDownsampledColor, *pColorIn);
+		}
+
+		if (IsFeatureEnabled(RendererFeature::SSAO))
+		{
+			static_cast<SSAOPass&>(GetRenderPass(RenderPassType::SSAORenderPass)).SetupRenderPassDependencies(gfx, *m_pNormalRoughReflectivityTarget, *m_pHiZBufferTarget, *m_pRGBNoiseTexture);
 		}
 		
 		if (IsFeatureEnabled(RendererFeature::FXAA))
@@ -433,22 +450,32 @@ namespace gfx
 			pass.UnbindSharedResources(gfx, renderState);
 		}
 
-		// Submit draw calls
+		// Submit draw call threads
+		std::vector<std::thread> filterThreads;
+		std::vector<std::thread> drawCallThreads;
 		{
 			static DrawContext opaqueDrawContext(*this, std::move(std::vector<RenderPassType> { RenderPassType::DepthPrepassRenderPass, RenderPassType::GBufferRenderPass, RenderPassType::OpaqueRenderPass }));
 			opaqueDrawContext.viewMatrix = camera.GetViewMatrix();
 			opaqueDrawContext.projMatrix = camera.GetProjectionMatrix();
 
-			// todo: filter by render passes too
-			m_pVisibleRendererList->Filter(gfx, camera.GetFrustumWS(), RendererList::RendererSortingType::StateThenBackToFront, RenderPassType::OpaqueRenderPass, camera.GetPositionWS(), camera.GetForwardWS(), camera.GetFarClipPlane());
-			m_pVisibleRendererList->SubmitDrawCalls(gfx, opaqueDrawContext);
-
 			static DrawContext transparentDrawContext(*this, std::move(std::vector<RenderPassType> { RenderPassType::TransparentRenderPass }));
 			transparentDrawContext.viewMatrix = camera.GetViewMatrix();
 			transparentDrawContext.projMatrix = camera.GetProjectionMatrix();
 
-			m_pVisibleTransparentRendererList->Filter(gfx, camera.GetFrustumWS(), RendererList::RendererSortingType::BackToFrontThenState, RenderPassType::TransparentRenderPass, camera.GetPositionWS(), camera.GetForwardWS(), camera.GetFarClipPlane());
-			m_pVisibleTransparentRendererList->SubmitDrawCalls(gfx, transparentDrawContext);
+			//m_pVisibleRendererList->Filter(gfx, camera.GetFrustumWS(), RendererList::RendererSortingType::StateThenBackToFront, RenderPassType::OpaqueRenderPass, camera.GetPositionWS(), camera.GetForwardWS(), camera.GetFarClipPlane());
+			//m_pVisibleTransparentRendererList->Filter(gfx, camera.GetFrustumWS(), RendererList::RendererSortingType::BackToFrontThenState, RenderPassType::TransparentRenderPass, camera.GetPositionWS(), camera.GetForwardWS(), camera.GetFarClipPlane());
+			filterThreads.push_back(std::thread(&RendererList::Filter, m_pVisibleRendererList.get(), std::ref(gfx), std::ref(camera.GetFrustumWS()), RendererList::RendererSortingType::StateThenBackToFront, RenderPassType::OpaqueRenderPass, camera.GetPositionWS(), camera.GetForwardWS(), camera.GetFarClipPlane()));
+			filterThreads.push_back(std::thread(&RendererList::Filter, m_pVisibleTransparentRendererList.get(), std::ref(gfx), std::ref(camera.GetFrustumWS()), RendererList::RendererSortingType::BackToFrontThenState, RenderPassType::TransparentRenderPass, camera.GetPositionWS(), camera.GetForwardWS(), camera.GetFarClipPlane()));
+
+			for (auto& t : filterThreads)
+			{
+				if (t.joinable()) t.join();
+			}
+
+			//m_pVisibleRendererList->SubmitDrawCalls(gfx, opaqueDrawContext);
+			//m_pVisibleTransparentRendererList->SubmitDrawCalls(gfx, transparentDrawContext);
+			drawCallThreads.push_back(std::thread(&RendererList::SubmitDrawCalls, m_pVisibleRendererList.get(), std::ref(gfx), std::ref(opaqueDrawContext)));
+			drawCallThreads.push_back(std::thread(&RendererList::SubmitDrawCalls, m_pVisibleTransparentRendererList.get(), std::ref(gfx), std::ref(transparentDrawContext)));
 		}
 
 		// Early frame calculations
@@ -506,6 +533,14 @@ namespace gfx
 		{
 			const RenderPass& pass = GetRenderPass(RenderPassType::PerCameraRenderPass);
 			pass.BindSharedResources(gfx, renderState);
+		}
+
+		// Wait for draw call threads to complete
+		{
+			for (auto& t : drawCallThreads)
+			{
+				if (t.joinable()) t.join();
+			}
 		}
 
 		// Early Z pass
@@ -635,7 +670,7 @@ namespace gfx
 			GetRenderPass(SkyboxRenderPass).Execute(gfx, renderState);
 		}
 
-		// todo: Transparent pass
+		// Transparent pass
 		{
 			const RenderPass& pass = GetRenderPass(RenderPassType::TransparentRenderPass);
 			pass.BindSharedResources(gfx, renderState);
@@ -649,6 +684,21 @@ namespace gfx
 			pass.UnbindSharedResources(gfx, renderState);
 
 			gfx.ClearRenderTargets();
+		}
+
+		// SSR pass
+		if (IsFeatureEnabled(RendererFeature::HZBSSR))
+		{
+			const RenderPass& pass = GetRenderPass(RenderPassType::SSRRenderPass);
+			pass.BindSharedResources(gfx, renderState);
+
+			static SSR_CB ssrCB;
+			ssrCB.debugViewStep = (frameCt / 20u) % 25u;
+			m_pSSR_CB->Update(gfx, ssrCB);
+
+			m_pSSRKernel->Dispatch(gfx, screenWidth, screenHeight, 1u);
+
+			pass.UnbindSharedResources(gfx, renderState);
 		}
 
 		// Downsample x2 pass
@@ -670,21 +720,6 @@ namespace gfx
 		if (m_viewIdx == RendererView::Final && IsFeatureEnabled(RendererFeature::Bloom))
 		{
 			GetRenderPass(BloomRenderPass).Execute(gfx, renderState);
-		}
-
-		// SSR pass
-		if (IsFeatureEnabled(RendererFeature::HZBSSR))
-		{
-			const RenderPass& pass = GetRenderPass(RenderPassType::SSRRenderPass);
-			pass.BindSharedResources(gfx, renderState);
-
-			static SSR_CB ssrCB;
-			ssrCB.debugViewStep = (frameCt / 20u) % 25u;
-			m_pSSR_CB->Update(gfx, ssrCB);
-
-			m_pSSRKernel->Dispatch(gfx, screenWidth, screenHeight, 1u);
-
-			pass.UnbindSharedResources(gfx, renderState);
 		}
 
 		// Run GPU particle render pass

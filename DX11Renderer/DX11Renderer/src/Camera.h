@@ -10,6 +10,11 @@ namespace gfx
 	public:
 		Camera(const float fov, const float aspect, const float nearClipPlane, const float farClipPlane);
 		virtual ~Camera();
+
+	public:
+		void SetFOV(const float fov);
+		void SetAspect(const float aspect);
+
 	public:
 		const dx::XMMATRIX& GetViewMatrix() const;
 		const dx::XMMATRIX& GetInverseViewMatrix() const;
@@ -24,14 +29,14 @@ namespace gfx
 		const Frustum& GetFrustumVS() const;
 		const float GetNearClipPlane() const;
 		const float GetFarClipPlane() const;
-		void SetFOV(const float fov);
-		void SetAspect(const float aspect);
 		void DrawImguiControlWindow();
 		void Update();
+
 	private:
 		void UpdateProjectionMatrix();
 		void UpdateFrustumVS();
 		void UpdateFrustumWS();
+
 	private:
 		float m_nearClipPlane;
 		float m_farClipPlane;
@@ -51,5 +56,6 @@ namespace gfx
 		dx::XMFLOAT4 m_frustumCornersVS;
 		dx::XMFLOAT4 m_inverseFrustumCornersVS;
 		dx::XMFLOAT4 m_gpuFrustumPlaneDirVS;
+
 	};
 }

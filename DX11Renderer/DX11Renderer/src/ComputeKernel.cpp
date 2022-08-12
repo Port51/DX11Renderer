@@ -8,7 +8,7 @@
 namespace gfx
 {
 	ComputeKernel::ComputeKernel(std::shared_ptr<ComputeShader> pComputeShader)
-		: m_pComputeShader(pComputeShader)
+		: m_pComputeShader(std::move(pComputeShader))
 	{
 
 	}

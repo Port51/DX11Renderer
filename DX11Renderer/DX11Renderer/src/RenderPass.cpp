@@ -4,6 +4,7 @@
 #include "Binding.h"
 #include "Bindable.h"
 #include "RenderTexture.h"
+#include "GraphicsDevice.h"
 
 namespace gfx
 {
@@ -13,6 +14,9 @@ namespace gfx
 	{
 
 	}
+
+	RenderPass::~RenderPass()
+	{}
 
 	const RenderPassType RenderPass::GetRenderPassType() const
 	{
@@ -159,61 +163,61 @@ namespace gfx
 		return *this;
 	}
 
-	RenderPass& RenderPass::CSSetCB(const slotUINT slot, ComPtr<ID3D11Buffer> pResource)
+	RenderPass& RenderPass::CSSetCB(const slotUINT slot, const ComPtr<ID3D11Buffer>& pResource)
 	{
 		m_CS_CB_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11Buffer>>(slot, pResource));
 		return *this;
 	}
 
-	RenderPass& RenderPass::CSSetSRV(const slotUINT slot, ComPtr<ID3D11ShaderResourceView> pResource)
+	RenderPass& RenderPass::CSSetSRV(const slotUINT slot, const ComPtr<ID3D11ShaderResourceView>& pResource)
 	{
 		m_CS_SRV_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11ShaderResourceView>>(slot, pResource));
 		return *this;
 	}
 
-	RenderPass& RenderPass::CSSetUAV(const slotUINT slot, ComPtr<ID3D11UnorderedAccessView> pResource)
+	RenderPass& RenderPass::CSSetUAV(const slotUINT slot, const ComPtr<ID3D11UnorderedAccessView>& pResource)
 	{
 		m_CS_UAV_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11UnorderedAccessView>>(slot, pResource));
 		return *this;
 	}
 
-	RenderPass& RenderPass::CSSetSPL(const slotUINT slot, ComPtr<ID3D11SamplerState> pResource)
+	RenderPass& RenderPass::CSSetSPL(const slotUINT slot, const ComPtr<ID3D11SamplerState>& pResource)
 	{
 		m_CS_SPL_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11SamplerState>>(slot, pResource));
 		return *this;
 	}
 
-	RenderPass& RenderPass::VSSetCB(const slotUINT slot, ComPtr<ID3D11Buffer> pResource)
+	RenderPass& RenderPass::VSSetCB(const slotUINT slot, const ComPtr<ID3D11Buffer>& pResource)
 	{
 		m_VS_CB_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11Buffer>>(slot, pResource));
 		return *this;
 	}
 
-	RenderPass& RenderPass::VSSetSRV(const slotUINT slot, ComPtr<ID3D11ShaderResourceView> pResource)
+	RenderPass& RenderPass::VSSetSRV(const slotUINT slot, const ComPtr<ID3D11ShaderResourceView>& pResource)
 	{
 		m_VS_SRV_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11ShaderResourceView>>(slot, pResource));
 		return *this;
 	}
 
-	RenderPass& RenderPass::VSSetSPL(const slotUINT slot, ComPtr<ID3D11SamplerState> pResource)
+	RenderPass& RenderPass::VSSetSPL(const slotUINT slot, const ComPtr<ID3D11SamplerState>& pResource)
 	{
 		m_VS_SPL_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11SamplerState>>(slot, pResource));
 		return *this;
 	}
 
-	RenderPass& RenderPass::PSSetCB(const slotUINT slot, ComPtr<ID3D11Buffer> pResource)
+	RenderPass& RenderPass::PSSetCB(const slotUINT slot, const ComPtr<ID3D11Buffer>& pResource)
 	{
 		m_PS_CB_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11Buffer>>(slot, pResource));
 		return *this;
 	}
 
-	RenderPass& RenderPass::PSSetSRV(const slotUINT slot, ComPtr<ID3D11ShaderResourceView> pResource)
+	RenderPass& RenderPass::PSSetSRV(const slotUINT slot, const ComPtr<ID3D11ShaderResourceView>& pResource)
 	{
 		m_PS_SRV_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11ShaderResourceView>>(slot, pResource));
 		return *this;
 	}
 
-	RenderPass& RenderPass::PSSetSPL(const slotUINT slot, ComPtr<ID3D11SamplerState> pResource)
+	RenderPass& RenderPass::PSSetSPL(const slotUINT slot, const ComPtr<ID3D11SamplerState>& pResource)
 	{
 		m_PS_SPL_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11SamplerState>>(slot, pResource));
 		return *this;
@@ -221,19 +225,13 @@ namespace gfx
 
 	RenderPass& RenderPass::SetCameraColorOut(std::shared_ptr<RenderTexture> pCameraColor)
 	{
-		m_pCameraColorOut = pCameraColor;
+		m_pCameraColorOut = std::move(pCameraColor);
 		return *this;
 	}
 
-	Binding& RenderPass::AddBinding(std::shared_ptr<Bindable> pBindable)
+	Binding& RenderPass::AddBinding(const std::shared_ptr<Bindable>& pBindable)
 	{
-		m_bindings.push_back(Binding(std::move(pBindable)));
-		return m_bindings[m_bindings.size() - 1];
-	}
-
-	Binding& RenderPass::AddBinding(Binding pBinding)
-	{
-		m_bindings.push_back(std::move(pBinding));
+		m_bindings.push_back(Binding(pBindable));
 		return m_bindings[m_bindings.size() - 1];
 	}
 

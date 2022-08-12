@@ -1,9 +1,7 @@
 #pragma once
 #include "Drawable.h"
-#include "Material.h"
 #include "CommonHeader.h"
 #include "DX11Include.h"
-#include "AABB.h"
 #include <string>
 
 namespace gfx
@@ -16,6 +14,8 @@ namespace gfx
 	class InputLayout;
 	class TransformCbuf;
 	class MeshAsset;
+	class Material;
+	class AABB;
 
 	struct DrawContext;
 	struct ObjectTransformsCB;
@@ -26,14 +26,20 @@ namespace gfx
 	public:
 		MeshRenderer(const GraphicsDevice& gfx, const std::string name, std::shared_ptr<MeshAsset> pMeshAsset, std::shared_ptr<Material> pMaterial, std::shared_ptr<IndexBuffer> pIndexBuffer, std::shared_ptr<Topology> pTopologyBuffer);
 		MeshRenderer(const GraphicsDevice& gfx, const std::string name, std::shared_ptr<MeshAsset> pMeshAsset, std::shared_ptr<Material> pMaterial, std::shared_ptr<VertexBufferWrapper> pVertexBuffer, std::shared_ptr<IndexBuffer> pIndexBuffer, std::shared_ptr<Topology> pTopologyBuffer);
-		virtual ~MeshRenderer() = default;
+		virtual ~MeshRenderer();
+
 	public:
 		const dx::XMMATRIX GetTransformXM() const;
-		void SetTransform(const dx::XMMATRIX transform);
+		void SetTransform(const dx::XMMATRIX& transform);
 		void SubmitDrawCommands(GraphicsDevice& gfx, const DrawContext& drawContext) const;
+
 	public:
 		virtual void Bind(const GraphicsDevice& gfx, RenderState& renderState, const DrawContext& drawContext) const;
 		virtual void IssueDrawCall(const GraphicsDevice& gfx) const;
+
+	protected:
+		const virtual bool UseModelTransform() const;
+
 	public:
 		const UINT GetIndexCount() const;
 		const UINT GetVertexCount() const;

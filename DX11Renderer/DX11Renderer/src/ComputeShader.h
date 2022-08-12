@@ -17,7 +17,7 @@ namespace gfx
 
 	public:
 		void Dispatch(const GraphicsDevice& gfx, const UINT threadCountX, const UINT threadCountY, const UINT threadCountZ) const;
-		const ComPtr<ID3D11ComputeShader> GetComputeShader() const;
+		const ComPtr<ID3D11ComputeShader>& GetComputeShader() const;
 		const ID3DBlob* GetBytecode() const;
 
 	public:

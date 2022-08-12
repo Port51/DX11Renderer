@@ -45,18 +45,26 @@ namespace gfx
 		std::vector<f32> bokehWeights;
 		bokehWeights.resize(BokehDiskComponentElements * 6u);
 		const float bokehXScale = 1.f / (float)BokehDiskWidth; // scale blur radius
+
+		// Near C0
 		Bokeh::GetDiskRealWeights1D(bokehWeights, 0u, BokehDiskComponentElements, 0.862325f, 1.624835f, bokehXScale, false);
 		Bokeh::GetDiskImaginaryWeights1D(bokehWeights, 1u, BokehDiskComponentElements, 0.862325f, 1.624835f, bokehXScale, false);
+
+		// Far C0
 		Bokeh::GetDiskRealWeights1D(bokehWeights, 2u, BokehDiskComponentElements, 0.886528f, 5.268909f, bokehXScale, false);
 		Bokeh::GetDiskImaginaryWeights1D(bokehWeights, 3u, BokehDiskComponentElements, 0.886528f, 5.268909f, bokehXScale, false);
+
+		// Far C1
 		Bokeh::GetDiskRealWeights1D(bokehWeights, 4u, BokehDiskComponentElements, 1.960518f, 1.558213f, bokehXScale, false);
 		Bokeh::GetDiskImaginaryWeights1D(bokehWeights, 5u, BokehDiskComponentElements, 1.960518f, 1.558213f, bokehXScale, false);
 
+		// Normalize weights
+		// Keep in mind that weights are applied twice, so use sqrt when normalizing
 		const float accuNear = Bokeh::GetDiskAccumulation(bokehWeights, 0u, 1u, BokehDiskComponentElements, 0.767583f, 1.862321f);
 		Bokeh::ApplyScaleToDisk(bokehWeights, 0u, 1u, BokehDiskComponentElements, 1.f / std::sqrt(accuNear));
 		const float accuFar0 = Bokeh::GetDiskAccumulation(bokehWeights, 1u, 1u, BokehDiskComponentElements, 0.411259f, -0.548794f);
 		const float accuFar1 = Bokeh::GetDiskAccumulation(bokehWeights, 1u, 1u, BokehDiskComponentElements, 0.513282f, 4.561110f);
-		const float farScale = 1.f / std::pow(accuFar0 + accuFar1, 0.5f);
+		const float farScale = 1.f / std::sqrt(accuFar0 + accuFar1);
 		Bokeh::ApplyScaleToDisk(bokehWeights, 1u, 2u, BokehDiskComponentElements, farScale);
 
 		m_depthOfFieldCB = std::make_unique<DepthOfFieldCB>();
@@ -97,14 +105,14 @@ namespace gfx
 		GetSubPass(DepthOfFieldSubpass::PrefilterSubpass).
 			ClearBinds()
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, pDownsampledColor.GetSRV())
-			.CSSetSRV(RenderSlots::CS_FreeSRV + 2u, pHiZBufferTarget.GetSRV())
+			.CSSetSRV(RenderSlots::CS_FreeSRV + 3u, pHiZBufferTarget.GetSRV())
 			.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, m_pDoFFar0->GetUAV())
 			.CSSetUAV(RenderSlots::CS_FreeUAV + 1u, m_pDoFNear0->GetUAV());
 
 		GetSubPass(DepthOfFieldSubpass::FarBlurSubpass).
 			ClearBinds()
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, m_pDoFFar0->GetSRV())
-			.CSSetSRV(RenderSlots::CS_FreeSRV + 3u, m_pBokehDiskWeights->GetSRV())
+			.CSSetSRV(RenderSlots::CS_FreeSRV + 4u, m_pBokehDiskWeights->GetSRV())
 			.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, m_pDoFFar1->GetUAV())
 			.CSSetUAV(RenderSlots::CS_FreeUAV + 1u, m_pDoFFar2->GetUAV())
 			.CSSetUAV(RenderSlots::CS_FreeUAV + 2u, m_pDoFFar3->GetUAV());
@@ -112,7 +120,7 @@ namespace gfx
 		GetSubPass(DepthOfFieldSubpass::NearBlurSubpass).
 			ClearBinds()
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, m_pDoFNear0->GetSRV())
-			.CSSetSRV(RenderSlots::CS_FreeSRV + 3u, m_pBokehDiskWeights->GetSRV())
+			.CSSetSRV(RenderSlots::CS_FreeSRV + 4u, m_pBokehDiskWeights->GetSRV())
 			.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, m_pDoFNear1->GetUAV())
 			.CSSetUAV(RenderSlots::CS_FreeUAV + 1u, m_pDoFNear2->GetUAV());
 
@@ -204,6 +212,7 @@ namespace gfx
 				m_depthOfFieldCB->combineImaginaryFactor = -0.548794f;
 				m_pDepthOfFieldCB->Update(gfx, *m_depthOfFieldCB);
 				context->CSSetConstantBuffers(RenderSlots::CS_FreeCB + 0u, 1u, m_pDepthOfFieldCB->GetD3DBuffer().GetAddressOf());
+				REGISTER_GPU_CALL();
 
 				// Input = CoC
 				// Outputs = real + imag
@@ -211,6 +220,13 @@ namespace gfx
 
 				// Inputs = real + imag
 				// Output = combined texture
+
+				// Remap UAVs to SRVs
+				context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 0u, 2u, RenderConstants::NullUAVArray.data(), nullptr);
+				context->CSSetShaderResources(RenderSlots::CS_FreeSRV + 1u, 1u, m_pDoFFar1->GetSRV().GetAddressOf());
+				context->CSSetShaderResources(RenderSlots::CS_FreeSRV + 2u, 1u, m_pDoFFar2->GetSRV().GetAddressOf());
+				REGISTER_GPU_CALLS(3u);
+
 				m_pDoFVerticalFilterAndCombineKernel->Dispatch(gfx, dofTextureWidth, dofTextureHeight, 1u);
 			}
 
@@ -223,13 +239,28 @@ namespace gfx
 				m_depthOfFieldCB->combineImaginaryFactor = 4.561110f;
 				m_pDepthOfFieldCB->Update(gfx, *m_depthOfFieldCB);
 				context->CSSetConstantBuffers(RenderSlots::CS_FreeCB + 0u, 1u, m_pDepthOfFieldCB->GetD3DBuffer().GetAddressOf());
+				REGISTER_GPU_CALL();
 
 				// Input = CoC
 				// Outputs = real + imag
+
+				// Remap SRVs to UAVs
+				context->CSSetShaderResources(RenderSlots::CS_FreeSRV + 1u, 2u, RenderConstants::NullSRVArray.data());
+				context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 0u, 1u, m_pDoFFar1->GetUAV().GetAddressOf(), nullptr);
+				context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 1u, 1u, m_pDoFFar2->GetUAV().GetAddressOf(), nullptr);
+				REGISTER_GPU_CALLS(3u);
+
 				m_pDoFHorizontalFilterKernel->Dispatch(gfx, dofTextureWidth, dofTextureHeight, 1u);
 
 				// Inputs = real + imag
 				// Output = combined texture
+
+				// Remap UAVs to SRVs
+				context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 0u, 2u, RenderConstants::NullUAVArray.data(), nullptr);
+				context->CSSetShaderResources(RenderSlots::CS_FreeSRV + 1u, 1u, m_pDoFFar1->GetSRV().GetAddressOf());
+				context->CSSetShaderResources(RenderSlots::CS_FreeSRV + 2u, 1u, m_pDoFFar2->GetSRV().GetAddressOf());
+				REGISTER_GPU_CALLS(3u);
+
 				m_pDoFVerticalFilterAndCombineKernel->Dispatch(gfx, dofTextureWidth, dofTextureHeight, 1u);
 			}
 
@@ -247,6 +278,7 @@ namespace gfx
 			m_depthOfFieldCB->combineImaginaryFactor = 1.862321f;
 			m_pDepthOfFieldCB->Update(gfx, *m_depthOfFieldCB);
 			context->CSSetConstantBuffers(RenderSlots::CS_FreeCB + 0u, 1u, m_pDepthOfFieldCB->GetD3DBuffer().GetAddressOf());
+			REGISTER_GPU_CALL();
 
 			// Input = CoC
 			// Outputs = real + imag
@@ -254,10 +286,18 @@ namespace gfx
 
 			// Inputs = real + imag
 			// Output = combined texture
-			context->CSSetShaderResources(RenderSlots::CS_FreeSRV + 0u, 1u, RenderConstants::NullSRVArray.data());
+
+			// Remap UAVs to SRVs
+			context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 0u, 2u, RenderConstants::NullUAVArray.data(), nullptr);
+			context->CSSetShaderResources(RenderSlots::CS_FreeSRV + 1u, 1u, m_pDoFNear1->GetSRV().GetAddressOf());
+			context->CSSetShaderResources(RenderSlots::CS_FreeSRV + 2u, 1u, m_pDoFNear2->GetSRV().GetAddressOf());
+			REGISTER_GPU_CALLS(3u);
+
 			context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 2u, 1u, m_pDoFNear0->GetUAV().GetAddressOf(), nullptr);
+			REGISTER_GPU_CALLS(2u);
 			m_pDoFVerticalFilterAndCombineKernel->Dispatch(gfx, dofTextureWidth, dofTextureHeight, 1u);
 			context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 2u, 1u, RenderConstants::NullUAVArray.data(), nullptr);
+			REGISTER_GPU_CALL();
 
 			pass.UnbindSharedResources(gfx, renderState);
 		}
