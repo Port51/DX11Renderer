@@ -35,6 +35,7 @@ namespace gfx
 		void VerifyInstancing(const bool requireInstancing) const;
 		const u64 GetMaterialCode(const RenderPassType renderPassType) const;
 		const VertexLayout& GetVertexLayout() const;
+		const bool HasTessellation() const;
 		static std::shared_ptr<Bindable> Resolve(const GraphicsDevice& gfx, const std::string_view assetPath);
 		static std::shared_ptr<Bindable> Resolve(const GraphicsDevice& gfx, const std::string_view assetPath, const bool instancingOn);
 
@@ -52,6 +53,7 @@ namespace gfx
 		VertexLayout m_vertexLayout;
 		size_t m_instancedPasses = 0u;
 		size_t m_nonInstancedPasses = 0u;
+		bool m_hasTessellation;
 
 	};
 }

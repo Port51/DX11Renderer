@@ -23,7 +23,7 @@ namespace gfx
 			if (shaderDefines.size() > 0u) THROW("Shader defines won't be used as precompiled CSO is used!");
 			CompileBytecodeBlob(gfx, path);
 		}
-		else CompileBytecodeBlob(gfx, path, entryPoint, shaderDefines, "ps_5_0");
+		else CompileBytecodeBlob(gfx, path, entryPoint, shaderDefines, "hs_5_0");
 
 		// Create shader
 		THROW_IF_FAILED(gfx.GetAdapter()->CreateHullShader(

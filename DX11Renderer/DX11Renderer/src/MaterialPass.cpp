@@ -5,10 +5,13 @@
 #include "DrawContext.h"
 #include "DrawCommand.h"
 #include "VertexShader.h"
+#include "HullShader.h"
+#include "DomainShader.h"
 #include "PixelShader.h"
 #include "InputLayout.h"
 #include "DrawContext.h"
 #include "Renderer.h"
+#include "GraphicsDevice.h"
 #include "DepthStencilState.h"
 #include <assert.h>
 
@@ -154,9 +157,19 @@ namespace gfx
 		{
 			m_pHullShader->BindHS(gfx, renderState, 0u);
 		}
+		else
+		{
+			// todo: don't unbind every call
+			gfx.GetContext()->HSSetShader(nullptr, nullptr, 0u);
+		}
 		if (m_pDomainShader != nullptr)
 		{
 			m_pDomainShader->BindDS(gfx, renderState, 0u);
+		}
+		else
+		{
+			// todo: don't unbind every call
+			gfx.GetContext()->DSSetShader(nullptr, nullptr, 0u);
 		}
 		if (m_pPixelShader != nullptr)
 		{

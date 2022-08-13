@@ -81,6 +81,8 @@ namespace gfx
 		static const UINT VS_FreeSPL = 6u; // 1st available general-purpose slot
 		static const UINT VS_FreeSRV = 0u; // 1st available general-purpose slot
 
+		static const UINT DS_GlobalTransformsCB = 1u;
+
 		static const UINT PS_PerFrameCB = 0u;
 		static const UINT PS_GlobalTransformsCB = 1u;
 		static const UINT PS_PerCameraCB = 2u;

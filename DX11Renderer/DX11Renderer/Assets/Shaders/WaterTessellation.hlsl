@@ -1,3 +1,21 @@
+//--------------------------------------------------------------------------------------
+// File: SimpleBezier11.hlsl
+//
+// This sample shows an simple implementation of the DirectX 11 Hardware Tessellator
+// for rendering a Bezier Patch.
+//
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License (MIT).
+//--------------------------------------------------------------------------------------
+
+// References:
+// Concepts - https://www.youtube.com/watch?v=21gfE-zUym8
+// https://www.youtube.com/watch?v=OqRMNrvu6TE
+
+#include "./CbufCommon.hlsli"
+#include "./GerstnerWaves.hlsli"
+#include "./PhongCommon.hlsli"
+
 // This allows us to compile the shader with a #define to choose
 // the different partition modes for the hull shader.
 // See the hull shader: [partitioning(BEZIER_HS_PARTITION)]
@@ -14,21 +32,22 @@
 #define OUTPUT_PATCH_SIZE 16
 
 //--------------------------------------------------------------------------------------
-// Constant Buffers
-//--------------------------------------------------------------------------------------
-cbuffer cbPerFrame : register(b0)
-{
-    matrix g_mViewProjection;
-    float3 g_vCameraPosWorld;
-    float  g_fTessellationFactor;
-};
-
-//--------------------------------------------------------------------------------------
 // Vertex shader section
 //--------------------------------------------------------------------------------------
 struct VS_CONTROL_POINT_INPUT
 {
     float3 vPosition        : POSITION;
+};
+
+struct attrib
+{
+    float3 pos : Position;
+    float3 n : Normal;
+    float3 t : Tangent;
+    float2 uv0 : Texcoord0;
+    float4x4 instanceTransform : INSTANCE_TRANSFORM;
+    float4 instanceColor : INSTANCE_COLOR;
+    float4 instanceRngAndIndex : INSTANCE_RNG_AND_INDEX;
 };
 
 struct VS_CONTROL_POINT_OUTPUT
@@ -44,28 +63,13 @@ struct VS_CONTROL_POINT_OUTPUT
 
 // The output from the vertex shader will go into the hull shader.
 
-v2f WaterVS(attrib i)
+VS_CONTROL_POINT_OUTPUT WaterVS(attrib Input)  //VS_CONTROL_POINT_INPUT Input)
 {
-    v2f o;
+    VS_CONTROL_POINT_OUTPUT Output;
 
-    float3 positionWS = (float3) mul(model, float4(i.pos, 1.0f)).xyz;
-    positionWS = GetGerstnerWaves(positionWS);
+    Output.vPosition = Input.pos;
 
-    o.positionVS = (float3) mul(_ViewMatrix, float4(positionWS, 1.0f)).xyz;
-    o.positionWS = positionWS;
-
-    float3 tangent = GetGerstnerWavesTangent(positionWS);
-    float3 bitangent = GetGerstnerWavesBitangent(positionWS);
-    float3 normal = cross(tangent, bitangent);
-
-    o.normalWS = mul((float3x3) model, normal).xyz;
-    o.normalVS = mul((float3x3) modelView, normal).xyz;
-    o.tangentVS = mul((float3x3) modelView, tangent).xyz;
-    o.pos = mul(_ViewProjMatrix, float4(positionWS, 1.0f));
-    o.positionNDC = o.pos;
-    o.uv0 = float2(i.uv0.x, i.uv0.y);
-    o.screenPos = o.pos;
-    return o;
+    return Output;
 }
 
 //--------------------------------------------------------------------------------------
@@ -92,7 +96,7 @@ HS_CONSTANT_DATA_OUTPUT BezierConstantHS(InputPatch<VS_CONTROL_POINT_OUTPUT, INP
 {
     HS_CONSTANT_DATA_OUTPUT Output;
 
-    float TessAmount = g_fTessellationFactor;
+    float TessAmount = 2.f; // g_fTessellationFactor;
 
     Output.Edges[0] = Output.Edges[1] = Output.Edges[2] = Output.Edges[3] = TessAmount;
     Output.Inside[0] = Output.Inside[1] = TessAmount;
@@ -117,7 +121,7 @@ HS_CONSTANT_DATA_OUTPUT BezierConstantHS(InputPatch<VS_CONTROL_POINT_OUTPUT, INP
 [outputtopology("triangle_cw")]
 [outputcontrolpoints(OUTPUT_PATCH_SIZE)]
 [patchconstantfunc("BezierConstantHS")]
-HS_OUTPUT BezierHS(InputPatch<VS_CONTROL_POINT_OUTPUT, INPUT_PATCH_SIZE> p,
+HS_OUTPUT WaterHS(InputPatch<VS_CONTROL_POINT_OUTPUT, INPUT_PATCH_SIZE> p,
     uint i : SV_OutputControlPointID,
     uint PatchID : SV_PrimitiveID)
 {
@@ -188,7 +192,7 @@ float3 EvaluateBezier(const OutputPatch<HS_OUTPUT, OUTPUT_PATCH_SIZE> bezpatch,
 // rasterization pipeline and get drawn to the screen.
 
 [domain("quad")]
-DS_OUTPUT BezierDS(HS_CONSTANT_DATA_OUTPUT input,
+DS_OUTPUT WaterDS(HS_CONSTANT_DATA_OUTPUT input,
     float2 UV : SV_DomainLocation,
     const OutputPatch<HS_OUTPUT, OUTPUT_PATCH_SIZE> bezpatch)
 {
@@ -203,7 +207,7 @@ DS_OUTPUT BezierDS(HS_CONSTANT_DATA_OUTPUT input,
     float3 Norm = normalize(cross(Tangent, BiTangent));
 
     DS_OUTPUT Output;
-    Output.vPosition = mul(float4(WorldPos, 1), g_mViewProjection);
+    Output.vPosition = mul(_ViewProjMatrix, float4(WorldPos, 1));
     Output.vWorldPos = WorldPos;
     Output.vNormal = Norm;
 
@@ -217,10 +221,11 @@ DS_OUTPUT BezierDS(HS_CONSTANT_DATA_OUTPUT input,
 // The pixel shader works the same as it would in a normal graphics pipeline.
 // In this sample, it performs very simple N dot L lighting.
 
-float4 BezierPS(DS_OUTPUT Input) : SV_TARGET
+float4 WaterPS(DS_OUTPUT Input) : SV_TARGET
 {
     float3 N = normalize(Input.vNormal);
-    float3 L = normalize(Input.vWorldPos - g_vCameraPosWorld);
+    float3 L = normalize(Input.vWorldPos - _CameraPositionWS);
+    return float4(0, 1, 0, 1);
     return abs(dot(N, L)) * float4(1, 0, 0, 1);
 }
 

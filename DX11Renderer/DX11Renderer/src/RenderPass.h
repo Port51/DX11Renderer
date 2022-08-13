@@ -37,6 +37,7 @@ namespace gfx
 		RenderPass& VSSetCB(const slotUINT slot, const ComPtr<ID3D11Buffer>& pResource);
 		RenderPass& VSSetSRV(const slotUINT slot, const ComPtr<ID3D11ShaderResourceView>& pResource);
 		RenderPass& VSSetSPL(const slotUINT slot, const ComPtr<ID3D11SamplerState>& pResource);
+		RenderPass& DSSetCB(const slotUINT slot, const ComPtr<ID3D11Buffer>& pResource);
 		RenderPass& PSSetCB(const slotUINT slot, const ComPtr<ID3D11Buffer>& pResource);
 		RenderPass& PSSetSRV(const slotUINT slot, const ComPtr<ID3D11ShaderResourceView>& pResource);
 		RenderPass& PSSetSPL(const slotUINT slot, const ComPtr<ID3D11SamplerState>& pResource);
@@ -63,6 +64,7 @@ namespace gfx
 		std::vector<std::pair<UINT, ComPtr<ID3D11Buffer>>> m_VS_CB_Binds;
 		std::vector<std::pair<UINT, ComPtr<ID3D11ShaderResourceView>>> m_VS_SRV_Binds;
 		std::vector<std::pair<UINT, ComPtr<ID3D11SamplerState>>> m_VS_SPL_Binds;
+		std::vector<std::pair<UINT, ComPtr<ID3D11Buffer>>> m_DS_CB_Binds;
 		std::vector<std::pair<UINT, ComPtr<ID3D11Buffer>>> m_PS_CB_Binds;
 		std::vector<std::pair<UINT, ComPtr<ID3D11ShaderResourceView>>> m_PS_SRV_Binds;
 		std::vector<std::pair<UINT, ComPtr<ID3D11SamplerState>>> m_PS_SPL_Binds;

@@ -33,7 +33,7 @@ namespace gfx
 {
 	using namespace std::string_literals;
 
-	enum MaterialParseState { None, Properties, Pass };
+	enum MaterialParseState { None, Global, Properties, Pass };
 
 	Material::Material(const GraphicsDevice& gfx, const std::string_view _materialAssetPath, const bool instancingOn)
 		: m_materialAssetPath(std::string(_materialAssetPath))
@@ -83,7 +83,11 @@ namespace gfx
 		while (parser.ReadParsedLine(p))
 		{
 			// Apply
-			if (p.key == "Properties")
+			if (p.key == "Global")
+			{
+				state = MaterialParseState::Global;
+			}
+			else if (p.key == "Properties")
 			{
 				state = MaterialParseState::Properties;
 				pPropertySlot = std::make_unique<BindingList>();
@@ -139,6 +143,13 @@ namespace gfx
 					// Read culling type
 					pMaterialPass->AddBinding(RasterizerState::Resolve(gfx, RasterizerState::GetCullModeFromMaterialString(p.values[0])))
 						.SetupRSBinding();
+				}
+			}
+			else if (state == MaterialParseState::Global)
+			{
+				if (p.key == "Tessellation")
+				{
+					m_hasTessellation = true;
 				}
 			}
 			else if (state == MaterialParseState::Properties)
@@ -280,6 +291,11 @@ namespace gfx
 	const VertexLayout& Material::GetVertexLayout() const
 	{
 		return m_vertexLayout;
+	}
+
+	const bool Material::HasTessellation() const
+	{
+		return m_hasTessellation;
 	}
 
 	std::shared_ptr<Bindable> Material::Resolve(const GraphicsDevice& gfx, const std::string_view assetPath)

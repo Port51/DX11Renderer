@@ -36,47 +36,52 @@ namespace gfx
 		}
 
 		// todo: can optimize by passing one array for each of these
-		for (size_t i = 0; i < m_CS_CB_Binds.size(); ++i)
+		for (const auto& bind : m_CS_CB_Binds)
 		{
-			gfx.GetContext()->CSSetConstantBuffers(m_CS_CB_Binds[i].first, 1u, m_CS_CB_Binds[i].second.GetAddressOf());
+			gfx.GetContext()->CSSetConstantBuffers(bind.first, 1u, bind.second.GetAddressOf());
 		}
-		for (size_t i = 0; i < m_CS_SRV_Binds.size(); ++i)
+		for (const auto& bind : m_CS_SRV_Binds)
 		{
-			gfx.GetContext()->CSSetShaderResources(m_CS_SRV_Binds[i].first, 1u, m_CS_SRV_Binds[i].second.GetAddressOf());
+			gfx.GetContext()->CSSetShaderResources(bind.first, 1u, bind.second.GetAddressOf());
 		}
-		for (size_t i = 0; i < m_CS_UAV_Binds.size(); ++i)
+		for (const auto& bind : m_CS_UAV_Binds)
 		{
-			gfx.GetContext()->CSSetUnorderedAccessViews(m_CS_UAV_Binds[i].first, 1u, m_CS_UAV_Binds[i].second.GetAddressOf(), nullptr);
+			gfx.GetContext()->CSSetUnorderedAccessViews(bind.first, 1u, bind.second.GetAddressOf(), nullptr);
 		}
-		for (size_t i = 0; i < m_CS_SPL_Binds.size(); ++i)
+		for (const auto& bind : m_CS_SPL_Binds)
 		{
-			gfx.GetContext()->CSSetSamplers(m_CS_SPL_Binds[i].first, 1u, m_CS_SPL_Binds[i].second.GetAddressOf());
-		}
-
-		for (size_t i = 0; i < m_VS_CB_Binds.size(); ++i)
-		{
-			gfx.GetContext()->VSSetConstantBuffers(m_VS_CB_Binds[i].first, 1u, m_VS_CB_Binds[i].second.GetAddressOf());
-		}
-		for (size_t i = 0; i < m_VS_SRV_Binds.size(); ++i)
-		{
-			gfx.GetContext()->VSSetShaderResources(m_VS_SRV_Binds[i].first, 1u, m_VS_SRV_Binds[i].second.GetAddressOf());
-		}
-		for (size_t i = 0; i < m_VS_SPL_Binds.size(); ++i)
-		{
-			gfx.GetContext()->VSSetSamplers(m_VS_SPL_Binds[i].first, 1u, m_VS_SPL_Binds[i].second.GetAddressOf());
+			gfx.GetContext()->CSSetSamplers(bind.first, 1u, bind.second.GetAddressOf());
 		}
 
-		for (size_t i = 0; i < m_PS_CB_Binds.size(); ++i)
+		for (const auto& bind : m_VS_CB_Binds)
 		{
-			gfx.GetContext()->PSSetConstantBuffers(m_PS_CB_Binds[i].first, 1u, m_PS_CB_Binds[i].second.GetAddressOf());
+			gfx.GetContext()->VSSetConstantBuffers(bind.first, 1u, bind.second.GetAddressOf());
 		}
-		for (size_t i = 0; i < m_PS_SRV_Binds.size(); ++i)
+		for (const auto& bind : m_VS_SRV_Binds)
 		{
-			gfx.GetContext()->PSSetShaderResources(m_PS_SRV_Binds[i].first, 1u, m_PS_SRV_Binds[i].second.GetAddressOf());
+			gfx.GetContext()->VSSetShaderResources(bind.first, 1u, bind.second.GetAddressOf());
 		}
-		for (size_t i = 0; i < m_PS_SPL_Binds.size(); ++i)
+		for (const auto& bind : m_VS_SPL_Binds)
 		{
-			gfx.GetContext()->PSSetSamplers(m_PS_SPL_Binds[i].first, 1u, m_PS_SPL_Binds[i].second.GetAddressOf());
+			gfx.GetContext()->VSSetSamplers(bind.first, 1u, bind.second.GetAddressOf());
+		}
+
+		for (const auto& bind : m_DS_CB_Binds)
+		{
+			gfx.GetContext()->DSSetConstantBuffers(bind.first, 1u, bind.second.GetAddressOf());
+		}
+
+		for (const auto& bind : m_PS_CB_Binds)
+		{
+			gfx.GetContext()->PSSetConstantBuffers(bind.first, 1u, bind.second.GetAddressOf());
+		}
+		for (const auto& bind : m_PS_SRV_Binds)
+		{
+			gfx.GetContext()->PSSetShaderResources(bind.first, 1u, bind.second.GetAddressOf());
+		}
+		for (const auto& bind : m_PS_SPL_Binds)
+		{
+			gfx.GetContext()->PSSetSamplers(bind.first, 1u, bind.second.GetAddressOf());
 		}
 	}
 
@@ -117,6 +122,11 @@ namespace gfx
 			gfx.GetContext()->VSSetSamplers(m_VS_SPL_Binds[0].first, m_VS_SPL_Binds.size(), RenderConstants::NullSamplerArray.data());
 		}
 
+		if (m_DS_CB_Binds.size() > 0)
+		{
+			gfx.GetContext()->VSSetConstantBuffers(m_DS_CB_Binds[0].first, m_DS_CB_Binds.size(), RenderConstants::NullBufferArray.data());
+		}
+
 		if (m_PS_CB_Binds.size() > 0)
 		{
 			gfx.GetContext()->PSSetConstantBuffers(m_PS_CB_Binds[0].first, m_PS_CB_Binds.size(), RenderConstants::NullBufferArray.data());
@@ -129,6 +139,10 @@ namespace gfx
 		{
 			gfx.GetContext()->PSSetSamplers(m_PS_SPL_Binds[0].first, m_PS_SPL_Binds.size(), RenderConstants::NullSamplerArray.data());
 		}
+
+		// todo: check render state here...
+		gfx.GetContext()->HSSetShader(nullptr, nullptr, 0u);
+		gfx.GetContext()->DSSetShader(nullptr, nullptr, 0u);
 	}
 
 	void RenderPass::Execute(const GraphicsDevice& gfx, RenderState& renderState) const
@@ -157,6 +171,7 @@ namespace gfx
 		m_VS_CB_Binds.clear();
 		m_VS_SRV_Binds.clear();
 		m_VS_SPL_Binds.clear();
+		m_DS_CB_Binds.clear();
 		m_PS_CB_Binds.clear();
 		m_PS_SRV_Binds.clear();
 		m_PS_SPL_Binds.clear();
@@ -202,6 +217,12 @@ namespace gfx
 	RenderPass& RenderPass::VSSetSPL(const slotUINT slot, const ComPtr<ID3D11SamplerState>& pResource)
 	{
 		m_VS_SPL_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11SamplerState>>(slot, pResource));
+		return *this;
+	}
+
+	RenderPass& RenderPass::DSSetCB(const slotUINT slot, const ComPtr<ID3D11Buffer>& pResource)
+	{
+		m_DS_CB_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11Buffer>>(slot, pResource));
 		return *this;
 	}
 

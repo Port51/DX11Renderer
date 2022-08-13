@@ -1,3 +1,7 @@
+Global
+{
+	Tessellation, On
+}
 Properties
 {
 	Slot, 0
@@ -41,7 +45,7 @@ Pass
 	VS, WaterTessellation.hlsl, WaterVS
 	HS, WaterTessellation.hlsl, WaterHS
 	DS, WaterTessellation.hlsl, WaterDS
-	PS, WaterGbuffer.hlsl
+	PS, WaterTessellation.hlsl, WaterPS
 	PropertySlot, 0
 }
 Pass
@@ -60,6 +64,6 @@ Pass
 	VS, WaterTessellation.hlsl, WaterVS
 	HS, WaterTessellation.hlsl, WaterHS
 	DS, WaterTessellation.hlsl, WaterDS
-	PS, WaterPS.hlsl
+	PS, WaterTessellation.hlsl, WaterPS
 	PropertySlot, 0
 }
