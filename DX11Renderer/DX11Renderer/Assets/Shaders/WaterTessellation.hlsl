@@ -96,7 +96,7 @@ HS_CONSTANT_DATA_OUTPUT BezierConstantHS(InputPatch<VS_CONTROL_POINT_OUTPUT, INP
 {
     HS_CONSTANT_DATA_OUTPUT Output;
 
-    float TessAmount = 2.f; // g_fTessellationFactor;
+    float TessAmount = 1.5f; // g_fTessellationFactor;
 
     Output.Edges[0] = Output.Edges[1] = Output.Edges[2] = Output.Edges[3] = TessAmount;
     Output.Inside[0] = Output.Inside[1] = TessAmount;

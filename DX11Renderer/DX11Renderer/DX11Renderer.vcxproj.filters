@@ -1033,6 +1033,9 @@
     <FxCompile Include="Assets\Shaders\DeferredPersonPS.hlsl">
       <Filter>Assets\Shaders\DrawPasses\GeometryPasses</Filter>
     </FxCompile>
+    <FxCompile Include="Assets\Shaders\WaterTessellation.hlsl">
+      <Filter>Assets\Shaders\DrawPasses\VertexShaders</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="Assets\Shaders\HiZDepthCopy.hlsl">

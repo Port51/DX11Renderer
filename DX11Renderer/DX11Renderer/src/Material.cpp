@@ -36,7 +36,7 @@ namespace gfx
 	enum MaterialParseState { None, Global, Properties, Pass };
 
 	Material::Material(const GraphicsDevice& gfx, const std::string_view _materialAssetPath, const bool instancingOn)
-		: m_materialAssetPath(std::string(_materialAssetPath))
+		: m_materialAssetPath(std::string(_materialAssetPath)), m_hasTessellation(false)
 	{
 		// Ref: https://gamedev.stackexchange.com/questions/93105/binding-an-instance-matrix-with-an-inputlayout
 
