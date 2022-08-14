@@ -26,10 +26,10 @@
 
 // The input patch size.  In this sample, it is 16 control points.
 // This value should match the call to IASetPrimitiveTopology()
-#define INPUT_PATCH_SIZE 16
+#define INPUT_PATCH_SIZE 4
 
 // The output patch size.  In this sample, it is also 16 control points.
-#define OUTPUT_PATCH_SIZE 16
+#define OUTPUT_PATCH_SIZE 4
 
 //--------------------------------------------------------------------------------------
 // Vertex shader section
@@ -141,7 +141,7 @@ struct DS_OUTPUT
 };
 
 //--------------------------------------------------------------------------------------
-float4 BernsteinBasis(float t)
+/*float4 BernsteinBasis(float t)
 {
     float invT = 1.0f - t;
 
@@ -174,7 +174,7 @@ float3 EvaluateBezier(const OutputPatch<HS_OUTPUT, OUTPUT_PATCH_SIZE> bezpatch,
     Value += BasisV.w * (bezpatch[12].vPosition * BasisU.x + bezpatch[13].vPosition * BasisU.y + bezpatch[14].vPosition * BasisU.z + bezpatch[15].vPosition * BasisU.w);
 
     return Value;
-}
+}*/
 
 // The domain shader is run once per vertex and calculates the final vertex's position
 // and attributes.  It receives the UVW from the fixed function tessellator and the
@@ -196,7 +196,7 @@ DS_OUTPUT WaterDS(HS_CONSTANT_DATA_OUTPUT input,
     float2 UV : SV_DomainLocation,
     const OutputPatch<HS_OUTPUT, OUTPUT_PATCH_SIZE> bezpatch)
 {
-    float4 BasisU = BernsteinBasis(UV.x);
+    /*float4 BasisU = BernsteinBasis(UV.x);
     float4 BasisV = BernsteinBasis(UV.y);
     float4 dBasisU = dBernsteinBasis(UV.x);
     float4 dBasisV = dBernsteinBasis(UV.y);
@@ -204,12 +204,33 @@ DS_OUTPUT WaterDS(HS_CONSTANT_DATA_OUTPUT input,
     float3 WorldPos = EvaluateBezier(bezpatch, BasisU, BasisV);
     float3 Tangent = EvaluateBezier(bezpatch, dBasisU, BasisV);
     float3 BiTangent = EvaluateBezier(bezpatch, BasisU, dBasisV);
-    float3 Norm = normalize(cross(Tangent, BiTangent));
+    float3 Norm = normalize(cross(Tangent, BiTangent));*/
+
+    float u = UV.x;
+    float v = UV.y;
+
+    //float2 uv0 = uvsCoord[0];
+    //float2 uv1 = uvsCoord[1];
+    //float2 uv2 = uvsCoord[2];
+    //float2 uv3 = uvsCoord[3];
+
+    //float2 leftUV = uv0 + v * (uv3 - uv0);
+    //float2 rightUV = uv1 + v * (uv2 - uv1);
+    //float2 texCoord = leftUV + u * (rightUV - leftUV);
+
+    float3 pos0 = bezpatch[0].vPosition;
+    float3 pos1 = bezpatch[1].vPosition;
+    float3 pos2 = bezpatch[2].vPosition;
+    float3 pos3 = bezpatch[3].vPosition;
+
+    float3 leftPos = pos0 + v * (pos3 - pos0);
+    float3 rightPos = pos1 + v * (pos2 - pos1);
+    float3 pos = leftPos + u * (rightPos - leftPos);
 
     DS_OUTPUT Output;
-    Output.vPosition = mul(_ViewProjMatrix, float4(WorldPos, 1));
-    Output.vWorldPos = WorldPos;
-    Output.vNormal = Norm;
+    Output.vPosition = mul(_ViewProjMatrix, float4(pos, 1));
+    Output.vWorldPos = pos;
+    //Output.vNormal = Norm;
 
     return Output;
 }
