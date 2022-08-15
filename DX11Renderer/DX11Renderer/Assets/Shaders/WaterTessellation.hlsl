@@ -46,11 +46,11 @@ float GetDistanceFactor(float3 positionWS)
     const float farLod = saturate((camDist - 35.0f) / 50.0f);
 
     // Extra factor to use fewer verts at a distance
-    factor *= lerp(1.0f, 0.5f, farLod);
+    //factor *= lerp(1.0f, 0.75f, farLod);
 
     // Lower tessellation at grazing angles, if at a certain distance
-    float anisoFactor = (abs(camOffsetWS.y) / camDist) * farLod;
-    factor *= saturate(1.3f - anisoFactor * 1.85f);
+    float anisoFactor = (1.f - abs(camOffsetWS.y) / camDist) * farLod;
+    factor *= lerp(1.f, 0.1f, saturate(anisoFactor * 1.5f));
 
     return saturate(factor);
 }

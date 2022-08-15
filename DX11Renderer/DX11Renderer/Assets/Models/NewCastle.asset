@@ -3,4 +3,4 @@ GLTF, Assets\\Models\\GLTF\\NewCastle.glb
 Map, GreyStone, Assets\\Materials\\CastleMaterial.asset
 Map, Island0, Assets\\Materials\\IslandMaterial.asset
 Map, Island1, Assets\\Materials\\IslandMaterial.asset
-Map, Mesh, Assets\\Materials\\WaterMaterial.asset
+Map, WaterPlane_quad, Assets\\Materials\\WaterMaterial.asset

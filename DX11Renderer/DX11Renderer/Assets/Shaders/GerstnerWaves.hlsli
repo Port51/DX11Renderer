@@ -17,7 +17,7 @@ float3 GerstnerWave(const float2 vPos, const float2 D, const float W, const floa
 float3 GetGerstnerWaves(float3 positionWS)
 {
 	// Fade out waves at horizon (looks better!)
-	const float isHorizon = saturate(dot(positionWS.xz, positionWS.xz) * 0.0003);
+	const float isHorizon = saturate(dot(positionWS.xz, positionWS.xz) * 0.00011f);
 
 	const float wM = 0.44f;
 	const float qM = 0.85f;
