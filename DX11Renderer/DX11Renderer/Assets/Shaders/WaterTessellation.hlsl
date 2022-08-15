@@ -1,44 +1,17 @@
-//--------------------------------------------------------------------------------------
-// File: SimpleBezier11.hlsl
-//
-// This sample shows an simple implementation of the DirectX 11 Hardware Tessellator
-// for rendering a Bezier Patch.
-//
-// Copyright (c) Microsoft Corporation.
-// Licensed under the MIT License (MIT).
-//--------------------------------------------------------------------------------------
-
 // References:
-// Concepts - https://www.youtube.com/watch?v=21gfE-zUym8
-// https://www.youtube.com/watch?v=OqRMNrvu6TE
+// Concepts         - https://www.youtube.com/watch?v=21gfE-zUym8
+// More concepts    - https://www.youtube.com/watch?v=OqRMNrvu6TE
+// HS indices       - https://www.raywenderlich.com/books/metal-by-tutorials/v2.0/chapters/11-tessellation-terrains
 
+#include "./Common.hlsli"
 #include "./CbufCommon.hlsli"
 #include "./GerstnerWaves.hlsli"
-#include "./PhongCommon.hlsli"
 
-// This allows us to compile the shader with a #define to choose
-// the different partition modes for the hull shader.
-// See the hull shader: [partitioning(BEZIER_HS_PARTITION)]
-// This sample demonstrates "integer", "fractional_even", and "fractional_odd"
-#ifndef BEZIER_HS_PARTITION
-#define BEZIER_HS_PARTITION "integer"
-#endif // BEZIER_HS_PARTITION
-
-// The input patch size.  In this sample, it is 16 control points.
-// This value should match the call to IASetPrimitiveTopology()
+// Input patch size must match IASetPrimitiveTopology()
 #define INPUT_PATCH_SIZE 4
-
-// The output patch size.  In this sample, it is also 16 control points.
 #define OUTPUT_PATCH_SIZE 4
 
-//--------------------------------------------------------------------------------------
-// Vertex shader section
-//--------------------------------------------------------------------------------------
-struct VS_CONTROL_POINT_INPUT
-{
-    float3 vPosition        : POSITION;
-};
-
+// todo: cut this down!
 struct attrib
 {
     float3 pos : Position;
@@ -50,211 +23,210 @@ struct attrib
     float4 instanceRngAndIndex : INSTANCE_RNG_AND_INDEX;
 };
 
-struct VS_CONTROL_POINT_OUTPUT
+struct ControlPt
 {
-    float3 vPosition        : POSITION;
+    float3 positionWS       : POSITION;
+    float tessFactor        : TEXCOORD0;
+    float2 uv               : TEXCOORD1;
 };
 
-// This simple vertex shader passes the control points straight through to the
-// hull shader.  In a more complex scene, you might transform the control points
-// or perform skinning at this step.
-
-// The input to the vertex shader comes from the vertex buffer.
-
-// The output from the vertex shader will go into the hull shader.
-
-VS_CONTROL_POINT_OUTPUT WaterVS(attrib Input)  //VS_CONTROL_POINT_INPUT Input)
+cbuffer PerObjectTransformCB : register(b3)
 {
-    VS_CONTROL_POINT_OUTPUT Output;
+    matrix model;
+    matrix modelView;
+    matrix modelViewProj;
+};
 
-    Output.vPosition = Input.pos;
+float GetDistanceFactor(float3 positionWS)
+{
+    float3 camOffsetWS = _CameraPositionWS.xyz - positionWS.xyz;
+    float camDist = length(camOffsetWS);
+    float factor = 1.f / camDist;
 
-    return Output;
+    const float farLod = saturate((camDist - 35.0f) / 50.0f);
+
+    // Extra factor to use fewer verts at a distance
+    factor *= lerp(1.0f, 0.5f, farLod);
+
+    // Lower tessellation at grazing angles, if at a certain distance
+    float anisoFactor = (abs(camOffsetWS.y) / camDist) * farLod;
+    factor *= saturate(1.3f - anisoFactor * 1.85f);
+
+    return saturate(factor);
 }
 
-//--------------------------------------------------------------------------------------
-// Constant data function for the BezierHS.  This is executed once per patch.
-//--------------------------------------------------------------------------------------
-struct HS_CONSTANT_DATA_OUTPUT
+ControlPt WaterVS(attrib i)
+{
+    ControlPt o;
+
+    float3 positionWS = mul(model, float4(i.pos.xyz, 1.0f)).xyz;
+    o.positionWS = positionWS;
+    o.uv = i.uv0;
+
+    const float tessMax = 551.f;
+    o.tessFactor = GetDistanceFactor(positionWS) * tessMax + 1.f;
+
+    return o;
+}
+
+struct ContantData
 {
     float Edges[4]             : SV_TessFactor;
     float Inside[2]            : SV_InsideTessFactor;
 };
 
-struct HS_OUTPUT
+// Called x1 time per patch
+ContantData WaterConstantHS(InputPatch<ControlPt, INPUT_PATCH_SIZE> pt, uint PatchID : SV_PrimitiveID)
 {
-    float3 vPosition           : BEZIERPOS;
-};
+    ContantData o;
 
-// This constant hull shader is executed once per patch.  For the simple Mobius strip
-// model, it will be executed 4 times.  In this sample, we set the tessellation factor
-// via SV_TessFactor and SV_InsideTessFactor for each patch.  In a more complex scene,
-// you might calculate a variable tessellation factor based on the camera's distance.
+    // Control pt and edge indices from: https://www.raywenderlich.com/books/metal-by-tutorials/v2.0/chapters/11-tessellation-terrains
 
-HS_CONSTANT_DATA_OUTPUT BezierConstantHS(InputPatch<VS_CONTROL_POINT_OUTPUT, INPUT_PATCH_SIZE> ip,
-    uint PatchID : SV_PrimitiveID)
-{
-    HS_CONSTANT_DATA_OUTPUT Output;
+    // Outer tessellation must match edges of other patches
+    o.Edges[0] = (pt[3].tessFactor + pt[0].tessFactor) * 0.5f;
+    o.Edges[1] = (pt[0].tessFactor + pt[1].tessFactor) * 0.5f;
+    o.Edges[2] = (pt[1].tessFactor + pt[2].tessFactor) * 0.5f;
+    o.Edges[3] = (pt[2].tessFactor + pt[3].tessFactor) * 0.5f;
 
-    float TessAmount = 1.5f; // g_fTessellationFactor;
+    // Inner depends on center of patch, so use average
+    o.Inside[0] = o.Inside[1] = (pt[0].tessFactor + pt[1].tessFactor + pt[2].tessFactor + pt[3].tessFactor) * 0.25f;
 
-    Output.Edges[0] = Output.Edges[1] = Output.Edges[2] = Output.Edges[3] = TessAmount;
-    Output.Inside[0] = Output.Inside[1] = TessAmount;
-
-    return Output;
+    return o;
 }
 
-// The hull shader is called once per output control point, which is specified with
-// outputcontrolpoints.  For this sample, we take the control points from the vertex
-// shader and pass them directly off to the domain shader.  In a more complex scene,
-// you might perform a basis conversion from the input control points into a Bezier
-// patch, such as the SubD11 Sample.
-
-// The input to the hull shader comes from the vertex shader
-
-// The output from the hull shader will go to the domain shader.
-// The tessellation factor, topology, and partition mode will go to the fixed function
-// tessellator stage to calculate the UVW and domain points.
+struct h2d
+{
+    float3 positionWS           : TEXCOORD0;
+    float2 uv                   : TEXCOORD1;
+};
 
 [domain("quad")]
-[partitioning(BEZIER_HS_PARTITION)]
+[partitioning("integer")]
 [outputtopology("triangle_cw")]
 [outputcontrolpoints(OUTPUT_PATCH_SIZE)]
-[patchconstantfunc("BezierConstantHS")]
-HS_OUTPUT WaterHS(InputPatch<VS_CONTROL_POINT_OUTPUT, INPUT_PATCH_SIZE> p,
+[patchconstantfunc("WaterConstantHS")]
+h2d WaterHS(InputPatch<ControlPt, INPUT_PATCH_SIZE> p,
     uint i : SV_OutputControlPointID,
     uint PatchID : SV_PrimitiveID)
 {
-    HS_OUTPUT Output;
-    Output.vPosition = p[i].vPosition;
-    return Output;
+    h2d o;
+    o.positionWS = p[i].positionWS;
+    o.uv = p[i].uv;
+    return o;
 }
 
-//--------------------------------------------------------------------------------------
-// Bezier evaluation domain shader section
-//--------------------------------------------------------------------------------------
-struct DS_OUTPUT
+struct d2f
 {
-    float4 vPosition        : SV_POSITION;
-    float3 vWorldPos        : WORLDPOS;
-    float3 vNormal            : NORMAL;
+    float4 pos : SV_Position;
+    float3 normalVS : Normal;
+    float3 positionVS : TEXCOORD0;
+    float3 positionWS : TEXCOORD1;
+    float3 normalWS : TEXCOORD2;
+    float3 tangentVS : TEXCOORD3;
+    float2 uv : TEXCOORD4;
+    float4 vertColor : TEXCOORD5;
+    float4 positionNDC : TEXCOORD6;
+    float4 rng : TEXCOORD7;
 };
 
-//--------------------------------------------------------------------------------------
-/*float4 BernsteinBasis(float t)
-{
-    float invT = 1.0f - t;
-
-    return float4(invT * invT * invT,
-        3.0f * t * invT * invT,
-        3.0f * t * t * invT,
-        t * t * t);
-}
-
-//--------------------------------------------------------------------------------------
-float4 dBernsteinBasis(float t)
-{
-    float invT = 1.0f - t;
-
-    return float4(-3 * invT * invT,
-        3 * invT * invT - 6 * t * invT,
-        6 * t * invT - 3 * t * t,
-        3 * t * t);
-}
-
-//--------------------------------------------------------------------------------------
-float3 EvaluateBezier(const OutputPatch<HS_OUTPUT, OUTPUT_PATCH_SIZE> bezpatch,
-    float4 BasisU,
-    float4 BasisV)
-{
-    float3 Value = float3(0, 0, 0);
-    Value = BasisV.x * (bezpatch[0].vPosition * BasisU.x + bezpatch[1].vPosition * BasisU.y + bezpatch[2].vPosition * BasisU.z + bezpatch[3].vPosition * BasisU.w);
-    Value += BasisV.y * (bezpatch[4].vPosition * BasisU.x + bezpatch[5].vPosition * BasisU.y + bezpatch[6].vPosition * BasisU.z + bezpatch[7].vPosition * BasisU.w);
-    Value += BasisV.z * (bezpatch[8].vPosition * BasisU.x + bezpatch[9].vPosition * BasisU.y + bezpatch[10].vPosition * BasisU.z + bezpatch[11].vPosition * BasisU.w);
-    Value += BasisV.w * (bezpatch[12].vPosition * BasisU.x + bezpatch[13].vPosition * BasisU.y + bezpatch[14].vPosition * BasisU.z + bezpatch[15].vPosition * BasisU.w);
-
-    return Value;
-}*/
-
-// The domain shader is run once per vertex and calculates the final vertex's position
-// and attributes.  It receives the UVW from the fixed function tessellator and the
-// control point outputs from the hull shader.  Since we are using the DirectX 11
-// Tessellation pipeline, it is the domain shader's responsibility to calculate the
-// final SV_POSITION for each vertex.  In this sample, we evaluate the vertex's
-// position using a Bernstein polynomial and the normal is calculated as the cross
-// product of the U and V derivatives.
-
-// The input SV_DomainLocation to the domain shader comes from fixed function
-// tessellator.  And the OutputPatch comes from the hull shader.  From these, you
-// must calculate the final vertex position, color, texcoords, and other attributes.
-
-// The output from the domain shader will be a vertex that will go to the video card's
-// rasterization pipeline and get drawn to the screen.
-
 [domain("quad")]
-DS_OUTPUT WaterDS(HS_CONSTANT_DATA_OUTPUT input,
-    float2 UV : SV_DomainLocation,
-    const OutputPatch<HS_OUTPUT, OUTPUT_PATCH_SIZE> bezpatch)
+d2f WaterDS(ContantData i, float2 dl : SV_DomainLocation, const OutputPatch<h2d, OUTPUT_PATCH_SIZE> patches)
 {
-    /*float4 BasisU = BernsteinBasis(UV.x);
-    float4 BasisV = BernsteinBasis(UV.y);
-    float4 dBasisU = dBernsteinBasis(UV.x);
-    float4 dBasisV = dBernsteinBasis(UV.y);
+    d2f o;
 
-    float3 WorldPos = EvaluateBezier(bezpatch, BasisU, BasisV);
-    float3 Tangent = EvaluateBezier(bezpatch, dBasisU, BasisV);
-    float3 BiTangent = EvaluateBezier(bezpatch, BasisU, dBasisV);
-    float3 Norm = normalize(cross(Tangent, BiTangent));*/
+    // Interpolate attributes from input patches
+    float3 lPos = lerp(patches[0].positionWS, patches[3].positionWS, dl.y);
+    float3 rPos = lerp(patches[1].positionWS, patches[2].positionWS, dl.y);
+    float3 positionWS = lerp(lPos, rPos, dl.x);
 
-    float u = UV.x;
-    float v = UV.y;
+    float2 lUV = lerp(patches[0].uv, patches[3].uv, dl.y);
+    float2 rUV = lerp(patches[1].uv, patches[2].uv, dl.y);
+    float2 uv = lerp(lUV, rUV, dl.x);
 
-    //float2 uv0 = uvsCoord[0];
-    //float2 uv1 = uvsCoord[1];
-    //float2 uv2 = uvsCoord[2];
-    //float2 uv3 = uvsCoord[3];
+    float3 tangentWS = GetGerstnerWavesTangent(positionWS);
+    float3 bitangentWS = GetGerstnerWavesBitangent(positionWS);
+    float3 normalWS = cross(tangentWS, bitangentWS);
+    o.normalWS = normalWS.xyz;
+    o.normalVS = mul((float3x3) _ViewMatrix, normalWS).xyz;
+    o.tangentVS = mul((float3x3) _ViewMatrix, tangentWS).xyz;
 
-    //float2 leftUV = uv0 + v * (uv3 - uv0);
-    //float2 rightUV = uv1 + v * (uv2 - uv1);
-    //float2 texCoord = leftUV + u * (rightUV - leftUV);
+    positionWS = GetGerstnerWaves(positionWS);
 
-    float3 pos0 = bezpatch[0].vPosition;
-    float3 pos1 = bezpatch[1].vPosition;
-    float3 pos2 = bezpatch[2].vPosition;
-    float3 pos3 = bezpatch[3].vPosition;
+    o.pos = mul(_ViewProjMatrix, float4(positionWS, 1.f));
+    o.positionNDC = o.pos;
+    o.positionWS = positionWS;
+    o.uv = uv;
 
-    float3 leftPos = pos0 + v * (pos3 - pos0);
-    float3 rightPos = pos1 + v * (pos2 - pos1);
-    float3 pos = leftPos + u * (rightPos - leftPos);
-
-    DS_OUTPUT Output;
-    Output.vPosition = mul(_ViewProjMatrix, float4(pos, 1));
-    Output.vWorldPos = pos;
-    //Output.vNormal = Norm;
-
-    return Output;
+    return o;
 }
 
-//--------------------------------------------------------------------------------------
-// Smooth shading pixel shader section
-//--------------------------------------------------------------------------------------
+// Per-frame
+Texture2D SpecularLightingRT : register(t5);
+Texture2D DiffuseLightingRT : register(t6);
 
-// The pixel shader works the same as it would in a normal graphics pipeline.
-// In this sample, it performs very simple N dot L lighting.
+// Per-draw
+Texture2D tex : register(t0);
+Texture2D sdfs : register(t1);
+SamplerState splr : register(s0);
+SamplerState splr2 : register(s1);
 
-float4 WaterPS(DS_OUTPUT Input) : SV_TARGET
+float CalculateFoam(float3 positionWS, float2 uv)
 {
-    float3 N = normalize(Input.vNormal);
-    float3 L = normalize(Input.vWorldPos - _CameraPositionWS);
-    return float4(0, 1, 0, 1);
-    return abs(dot(N, L)) * float4(1, 0, 0, 1);
+    const float sdfScale = 3.7f;
+    const float2 sdfOffset = float2(0.05f, 0.0f);
+    const float4 sdfTex = sdfs.Sample(splr2, (uv - 0.5f) * sdfScale + 0.5f + sdfOffset);
+
+    const float foamScale = 0.35;
+    const float foamTex0 = tex.Sample(splr, positionWS.xz * foamScale + _Time.x * 1.13891).x;
+    const float foamTex1 = tex.Sample(splr, positionWS.xz * foamScale * 0.8924 - _Time.x + float2(0.24839, 0.78214)).x;
+    float foam = saturate((positionWS.y + 6.05f) * 1.1f);
+    foam = saturate(foam + (sdfTex.r + sdfTex.g) * 0.75f);
+    foam *= lerp(foamTex0 * foamTex1, 1.0f, foam);
+    foam = SCurve(foam);
+
+    return foam;
 }
 
-//--------------------------------------------------------------------------------------
-// Solid color shading pixel shader (used for wireframe overlay)
-//--------------------------------------------------------------------------------------
-float4 SolidColorPS(DS_OUTPUT Input) : SV_TARGET
+float4 WaterGBufferPS(d2f i) : SV_TARGET
 {
-    // Return a solid green color
-    return float4(0, 1, 0, 1);
+    i.normalVS = normalize(i.normalVS);
+    i.tangentVS = normalize(i.tangentVS);
+    float3 bitangentVS = cross(i.tangentVS, i.normalVS);
+    float3x3 tbnMatrix = float3x3(i.tangentVS.xyz, bitangentVS.xyz, i.normalVS.xyz);
+
+    float4 diffuseTex = tex.Sample(splr, i.uv);
+
+    // Calculate procedural normals
+    {
+        // todo: switch to normalmaps and whiteout blending instead?
+        const float2 baseUV = (i.positionWS.xz + _Time.x * 4.0f * float2(0.09328f, -10.29303f)) * float2(0.01f, 0.1f);
+        const float sampleOffset = 0.01f;
+        const float n0 = tex.Sample(splr, baseUV).x;
+        const float n1 = tex.Sample(splr, baseUV + float2(sampleOffset, 0.0)).x;
+        const float n2 = tex.Sample(splr, baseUV + float2(0.0, sampleOffset)).x;
+
+        const float scale = 300.0f;
+        float3 n = float3((n1 - n0) / sampleOffset, (n2 - n1) / sampleOffset, scale);
+        n = mul(n, tbnMatrix); // no need to transpose
+        i.normalVS = normalize(n);
+    }
+
+    float foam = CalculateFoam(i.positionWS, i.uv);
+
+    return float4(i.normalVS.xy * 0.5f + 0.5f, roughness, reflectivity * (1.0 - foam));
+}
+
+float4 WaterPS(d2f i) : SV_TARGET
+{
+    float3 positionNDC = i.positionNDC.xyz / i.positionNDC.w;
+    float2 screenPos = positionNDC.xy * float2(0.5f, -0.5f) + 0.5f;
+    float4 specularLight = SpecularLightingRT.Sample(splr, screenPos);
+    float4 diffuseLight = DiffuseLightingRT.Sample(splr, screenPos);
+
+    float3 combinedLight = specularLight.rgb + diffuseLight.rgb;
+    float4 diffuseTex = 1.0;
+
+    float foam = CalculateFoam(i.positionWS, i.uv);
+
+    return float4(combinedLight.rgb * lerp(materialColor.rgb, 3.0, foam).rgb, 1) * diffuseTex;
 }

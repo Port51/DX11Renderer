@@ -10,6 +10,7 @@ namespace gfx
 	{
 		D3D11_RASTERIZER_DESC rasterDesc = CD3D11_RASTERIZER_DESC(CD3D11_DEFAULT{});
 		rasterDesc.CullMode = cullMode;
+		//rasterDesc.FillMode = D3D11_FILL_MODE::D3D11_FILL_WIREFRAME;
 
 		//if (cullMode == D3D11_CULL_FRONT)
 		//{

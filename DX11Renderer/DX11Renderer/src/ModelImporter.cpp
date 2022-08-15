@@ -98,6 +98,10 @@ namespace gfx
 		pMeshes.reserve(meshCt);
 		for (const auto& mesh : model.meshes)
 		{
+			// https://stackoverflow.com/questions/874134/find-out-if-string-ends-with-another-string-in-c
+			static const std::string quadMarker = "_quad";
+			const bool createQuads = mesh.name.size() >= quadMarker.size() && 0 == mesh.name.compare(mesh.name.size() - quadMarker.size(), quadMarker.size(), quadMarker);
+
 			// Each primitive is a submesh
 			u32 subNameCt = 0u;
 			for (const auto& primitive : mesh.primitives)
@@ -108,6 +112,7 @@ namespace gfx
 				pMeshes.emplace_back(std::make_shared<MeshAsset>());
 				const auto& pCurrentMeshAsset = pMeshes.at(pMeshes.size() - 1u);
 				pCurrentMeshAsset->m_name = settings.name + "|" + mesh.name + "(sub=" + std::to_string(subNameCt++) + ")";
+				pCurrentMeshAsset->m_faceDimension = (createQuads) ? 4u : 3u;
 
 				if (primitive.attributes.count("POSITION") != 1u) THROW("Mesh primitive " + pCurrentMeshAsset->m_name + " has no POSITION attribute!");
 
@@ -139,18 +144,50 @@ namespace gfx
 					{
 						const auto bufferAccess = GetAttributeBufferAccess(gfx, model, accessorIdx, indicesCt * sizeof(u16));
 						const u16* indices = reinterpret_cast<const u16*>(&model.buffers[bufferAccess.first].data[bufferAccess.second]);
-						for (size_t vi = 0u; vi < indicesCt; ++vi)
+
+						if (createQuads)
 						{
-							pCurrentMeshAsset->m_indices.emplace_back((u32)indices[vi]);
+							const size_t quadCt = indicesCt / 6u;
+							for (int i = 0; i < quadCt; ++i)
+							{
+								// Unwind triangles
+								pCurrentMeshAsset->m_indices.emplace_back(indices[i * 6u + 2u]);
+								pCurrentMeshAsset->m_indices.emplace_back(indices[i * 6u + 5u]);
+								pCurrentMeshAsset->m_indices.emplace_back(indices[i * 6u + 0u]);
+								pCurrentMeshAsset->m_indices.emplace_back(indices[i * 6u + 1u]);
+							}
+						}
+						else
+						{
+							for (size_t vi = 0u; vi < indicesCt; ++vi)
+							{
+								pCurrentMeshAsset->m_indices.emplace_back((u32)indices[vi]);
+							}
 						}
 					}
 					else if (accessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_INT)
 					{
 						const auto bufferAccess = GetAttributeBufferAccess(gfx, model, accessorIdx, indicesCt * sizeof(u32));
 						const u32* indices = reinterpret_cast<const u32*>(&model.buffers[bufferAccess.first].data[bufferAccess.second]);
-						for (size_t vi = 0u; vi < indicesCt; ++vi)
+						
+						if (createQuads)
 						{
-							pCurrentMeshAsset->m_indices.emplace_back((u32)indices[vi]);
+							const size_t quadCt = indicesCt / 6u;
+							for (int i = 0; i < quadCt; ++i)
+							{
+								// Unwind triangles
+								pCurrentMeshAsset->m_indices.emplace_back(indices[i * 6u + 2u]);
+								pCurrentMeshAsset->m_indices.emplace_back(indices[i * 6u + 5u]);
+								pCurrentMeshAsset->m_indices.emplace_back(indices[i * 6u + 0u]);
+								pCurrentMeshAsset->m_indices.emplace_back(indices[i * 6u + 1u]);
+							}
+						}
+						else
+						{
+							for (size_t vi = 0u; vi < indicesCt; ++vi)
+							{
+								pCurrentMeshAsset->m_indices.emplace_back((u32)indices[vi]);
+							}
 						}
 					}
 					else

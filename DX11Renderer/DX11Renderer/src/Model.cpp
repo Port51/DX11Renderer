@@ -95,7 +95,7 @@ namespace gfx
 		const auto vbuf = CreateVertexBufferData(pMeshAsset, pMaterial);
 
 		std::shared_ptr<VertexBufferWrapper> pVertexBuffer = VertexBufferWrapper::Resolve(gfx, meshTag, vbuf);
-		std::shared_ptr<IndexBuffer> pIndexBuffer = IndexBuffer::Resolve(gfx, meshTag, pMeshAsset->m_indices, pMaterial->HasTessellation());
+		std::shared_ptr<IndexBuffer> pIndexBuffer = IndexBuffer::Resolve(gfx, meshTag, pMeshAsset->m_indices);
 
 		D3D_PRIMITIVE_TOPOLOGY topology = pMaterial->HasTessellation() ? D3D11_PRIMITIVE_TOPOLOGY_4_CONTROL_POINT_PATCHLIST : D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 		std::shared_ptr<Topology> pTopology = Topology::Resolve(gfx, topology);

@@ -66,6 +66,11 @@ namespace gfx
 			gfx.GetContext()->VSSetSamplers(bind.first, 1u, bind.second.GetAddressOf());
 		}
 
+		for (const auto& bind : m_HS_CB_Binds)
+		{
+			gfx.GetContext()->HSSetConstantBuffers(bind.first, 1u, bind.second.GetAddressOf());
+		}
+
 		for (const auto& bind : m_DS_CB_Binds)
 		{
 			gfx.GetContext()->DSSetConstantBuffers(bind.first, 1u, bind.second.GetAddressOf());
@@ -83,6 +88,8 @@ namespace gfx
 		{
 			gfx.GetContext()->PSSetSamplers(bind.first, 1u, bind.second.GetAddressOf());
 		}
+
+		REGISTER_GPU_CALLS(m_bindingCount);
 	}
 
 	void RenderPass::UnbindSharedResources(const GraphicsDevice& gfx, RenderState& renderState) const
@@ -95,54 +102,73 @@ namespace gfx
 		if (m_CS_CB_Binds.size() > 0)
 		{
 			gfx.GetContext()->CSSetConstantBuffers(m_CS_CB_Binds[0].first, m_CS_CB_Binds.size(), RenderConstants::NullBufferArray.data());
+			REGISTER_GPU_CALL();
 		}
 		if (m_CS_SRV_Binds.size() > 0)
 		{
 			gfx.GetContext()->CSSetShaderResources(m_CS_SRV_Binds[0].first, m_CS_SRV_Binds.size(), RenderConstants::NullSRVArray.data());
+			REGISTER_GPU_CALL();
 		}
 		if (m_CS_UAV_Binds.size() > 0)
 		{
 			gfx.GetContext()->CSSetUnorderedAccessViews(m_CS_UAV_Binds[0].first, m_CS_UAV_Binds.size(), RenderConstants::NullUAVArray.data(), nullptr);
+			REGISTER_GPU_CALL();
 		}
 		if (m_CS_SPL_Binds.size() > 0)
 		{
 			gfx.GetContext()->CSSetSamplers(m_CS_SPL_Binds[0].first, m_CS_SPL_Binds.size(), RenderConstants::NullSamplerArray.data());
+			REGISTER_GPU_CALL();
 		}
 
 		if (m_VS_CB_Binds.size() > 0)
 		{
 			gfx.GetContext()->VSSetConstantBuffers(m_VS_CB_Binds[0].first, m_VS_CB_Binds.size(), RenderConstants::NullBufferArray.data());
+			REGISTER_GPU_CALL();
 		}
 		if (m_VS_SRV_Binds.size() > 0)
 		{
 			gfx.GetContext()->VSSetShaderResources(m_VS_SRV_Binds[0].first, m_VS_SRV_Binds.size(), RenderConstants::NullSRVArray.data());
+			REGISTER_GPU_CALL();
 		}
 		if (m_VS_SPL_Binds.size() > 0)
 		{
 			gfx.GetContext()->VSSetSamplers(m_VS_SPL_Binds[0].first, m_VS_SPL_Binds.size(), RenderConstants::NullSamplerArray.data());
+			REGISTER_GPU_CALL();
+		}
+
+		if (m_HS_CB_Binds.size() > 0)
+		{
+			gfx.GetContext()->VSSetConstantBuffers(m_HS_CB_Binds[0].first, m_HS_CB_Binds.size(), RenderConstants::NullBufferArray.data());
+			REGISTER_GPU_CALL();
 		}
 
 		if (m_DS_CB_Binds.size() > 0)
 		{
 			gfx.GetContext()->VSSetConstantBuffers(m_DS_CB_Binds[0].first, m_DS_CB_Binds.size(), RenderConstants::NullBufferArray.data());
+			REGISTER_GPU_CALL();
 		}
 
 		if (m_PS_CB_Binds.size() > 0)
 		{
 			gfx.GetContext()->PSSetConstantBuffers(m_PS_CB_Binds[0].first, m_PS_CB_Binds.size(), RenderConstants::NullBufferArray.data());
+			REGISTER_GPU_CALL();
 		}
 		if (m_PS_SRV_Binds.size() > 0)
 		{
 			gfx.GetContext()->PSSetShaderResources(m_PS_SRV_Binds[0].first, m_PS_SRV_Binds.size(), RenderConstants::NullSRVArray.data());
+			REGISTER_GPU_CALL();
 		}
 		if (m_PS_SPL_Binds.size() > 0)
 		{
 			gfx.GetContext()->PSSetSamplers(m_PS_SPL_Binds[0].first, m_PS_SPL_Binds.size(), RenderConstants::NullSamplerArray.data());
+			REGISTER_GPU_CALL();
 		}
 
 		// todo: check render state here...
 		gfx.GetContext()->HSSetShader(nullptr, nullptr, 0u);
 		gfx.GetContext()->DSSetShader(nullptr, nullptr, 0u);
+		REGISTER_GPU_CALL();
+		REGISTER_GPU_CALL();
 	}
 
 	void RenderPass::Execute(const GraphicsDevice& gfx, RenderState& renderState) const
@@ -181,66 +207,84 @@ namespace gfx
 	RenderPass& RenderPass::CSSetCB(const slotUINT slot, const ComPtr<ID3D11Buffer>& pResource)
 	{
 		m_CS_CB_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11Buffer>>(slot, pResource));
+		m_bindingCount++;
 		return *this;
 	}
 
 	RenderPass& RenderPass::CSSetSRV(const slotUINT slot, const ComPtr<ID3D11ShaderResourceView>& pResource)
 	{
 		m_CS_SRV_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11ShaderResourceView>>(slot, pResource));
+		m_bindingCount++;
 		return *this;
 	}
 
 	RenderPass& RenderPass::CSSetUAV(const slotUINT slot, const ComPtr<ID3D11UnorderedAccessView>& pResource)
 	{
 		m_CS_UAV_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11UnorderedAccessView>>(slot, pResource));
+		m_bindingCount++;
 		return *this;
 	}
 
 	RenderPass& RenderPass::CSSetSPL(const slotUINT slot, const ComPtr<ID3D11SamplerState>& pResource)
 	{
 		m_CS_SPL_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11SamplerState>>(slot, pResource));
+		m_bindingCount++;
 		return *this;
 	}
 
 	RenderPass& RenderPass::VSSetCB(const slotUINT slot, const ComPtr<ID3D11Buffer>& pResource)
 	{
 		m_VS_CB_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11Buffer>>(slot, pResource));
+		m_bindingCount++;
 		return *this;
 	}
 
 	RenderPass& RenderPass::VSSetSRV(const slotUINT slot, const ComPtr<ID3D11ShaderResourceView>& pResource)
 	{
 		m_VS_SRV_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11ShaderResourceView>>(slot, pResource));
+		m_bindingCount++;
 		return *this;
 	}
 
 	RenderPass& RenderPass::VSSetSPL(const slotUINT slot, const ComPtr<ID3D11SamplerState>& pResource)
 	{
 		m_VS_SPL_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11SamplerState>>(slot, pResource));
+		m_bindingCount++;
+		return *this;
+	}
+
+	RenderPass& RenderPass::HSSetCB(const slotUINT slot, const ComPtr<ID3D11Buffer>& pResource)
+	{
+		m_HS_CB_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11Buffer>>(slot, pResource));
+		m_bindingCount++;
 		return *this;
 	}
 
 	RenderPass& RenderPass::DSSetCB(const slotUINT slot, const ComPtr<ID3D11Buffer>& pResource)
 	{
 		m_DS_CB_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11Buffer>>(slot, pResource));
+		m_bindingCount++;
 		return *this;
 	}
 
 	RenderPass& RenderPass::PSSetCB(const slotUINT slot, const ComPtr<ID3D11Buffer>& pResource)
 	{
 		m_PS_CB_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11Buffer>>(slot, pResource));
+		m_bindingCount++;
 		return *this;
 	}
 
 	RenderPass& RenderPass::PSSetSRV(const slotUINT slot, const ComPtr<ID3D11ShaderResourceView>& pResource)
 	{
 		m_PS_SRV_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11ShaderResourceView>>(slot, pResource));
+		m_bindingCount++;
 		return *this;
 	}
 
 	RenderPass& RenderPass::PSSetSPL(const slotUINT slot, const ComPtr<ID3D11SamplerState>& pResource)
 	{
 		m_PS_SPL_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11SamplerState>>(slot, pResource));
+		m_bindingCount++;
 		return *this;
 	}
 
@@ -253,6 +297,7 @@ namespace gfx
 	Binding& RenderPass::AddBinding(const std::shared_ptr<Bindable>& pBindable)
 	{
 		m_bindings.push_back(Binding(pBindable));
+		m_bindingCount++;
 		return m_bindings[m_bindings.size() - 1];
 	}
 

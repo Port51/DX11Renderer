@@ -33,6 +33,8 @@ namespace gfx
 		UINT m_numFaces;
 		std::vector<u32> m_indices;
 
+		UINT m_faceDimension;
+
 		int m_materialIndex;
 
 		AABB m_aabb;

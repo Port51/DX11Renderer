@@ -70,6 +70,10 @@ namespace gfx
 			m_pTransformCbuf->UpdateTransforms(gfx, transforms);
 
 			m_pTransformCbuf->BindVS(gfx, renderState, RenderSlots::VS_PerObjectTransformCB);
+			if (m_pMaterial->HasTessellation())
+			{
+				m_pTransformCbuf->BindDS(gfx, renderState, RenderSlots::VS_PerObjectTransformCB);
+			}
 		}
 	}
 

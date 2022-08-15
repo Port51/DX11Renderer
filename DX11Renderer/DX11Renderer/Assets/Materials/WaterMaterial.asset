@@ -45,7 +45,7 @@ Pass
 	VS, WaterTessellation.hlsl, WaterVS
 	HS, WaterTessellation.hlsl, WaterHS
 	DS, WaterTessellation.hlsl, WaterDS
-	PS, WaterTessellation.hlsl, WaterPS
+	PS, WaterTessellation.hlsl, WaterGBufferPS
 	PropertySlot, 0
 }
 Pass

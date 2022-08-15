@@ -38,6 +38,23 @@ namespace gfx
 		REGISTER_GPU_CALL();
 	}
 
+	void TransformCbuf::BindDS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot)
+	{
+		if (renderState.IsNewBinding(GetGuid(), RenderBindingType::DS_CB, slot))
+		{
+			gfx.GetContext()->DSSetConstantBuffers(slot, 1u, m_pVcbuf->GetD3DBuffer().GetAddressOf());
+			REGISTER_GPU_CALL();
+		}
+		else REGISTER_GPU_CALL_SAVED();
+	}
+
+	void TransformCbuf::UnbindDS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot)
+	{
+		renderState.ClearBinding(RenderBindingType::DS_CB, slot);
+		gfx.GetContext()->DSSetConstantBuffers(slot, 1u, nullptr);
+		REGISTER_GPU_CALL();
+	}
+
 	void TransformCbuf::UpdateTransforms(const GraphicsDevice& gfx, const ObjectTransformsCB& transforms)
 	{
 		m_pVcbuf->Update(gfx, transforms);

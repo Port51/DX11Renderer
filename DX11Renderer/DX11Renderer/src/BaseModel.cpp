@@ -18,9 +18,9 @@ namespace gfx
 		{
 			THROW(std::string("Mesh '") + pMeshAsset->m_name + std::string("' has 0 indices!"));
 		}
-		if (pMeshAsset->m_indices.size() % 3 != 0u)
+		if (pMeshAsset->m_indices.size() % pMeshAsset->m_faceDimension != 0u)
 		{
-			THROW(std::string("Mesh '") + pMeshAsset->m_name + std::string("' has indices which are not a multiple of 3!"));
+			THROW(std::string("Mesh '") + pMeshAsset->m_name + std::string("' has indices which are not a multiple of ") + std::to_string(pMeshAsset->m_faceDimension));
 		}
 
 		for (unsigned int i = 0; i < pMeshAsset->m_vertices.size(); ++i)

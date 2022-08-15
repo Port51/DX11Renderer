@@ -42,6 +42,8 @@ namespace gfx
 			IA_InputLayout, IA_VertexBuffer, IA_IndexBuffer, IA_Topology,
 			CS_SRV, CS_UAV, CS_CB, CS_Shader, CS_Sampler,
 			VS_SRV, VS_UAV, VS_CB, VS_Shader, VS_Sampler,
+			HS_SRV, HS_UAV, HS_CB, HS_Shader, HS_Sampler,
+			DS_SRV, DS_UAV, DS_CB, DS_Shader, DS_Sampler,
 			GS_SRV, GS_UAV, GS_CB, GS_Shader, GS_Sampler,
 			RS_State,
 			PS_SRV, PS_UAV, PS_CB, PS_Shader, PS_Sampler,
@@ -59,6 +61,8 @@ namespace gfx
 		static const UINT Global_BilinearClampSampler = 3u;
 		static const UINT Global_BilinearWrapSampler = 4u;
 		static const UINT Global_BilinearMirrorSampler = 5u;
+
+		// todo: move more to the global binds above!
 
 		static const UINT CS_PerFrameCB = 0u;
 		static const UINT CS_GlobalTransformsCB = 1u;
@@ -81,7 +85,13 @@ namespace gfx
 		static const UINT VS_FreeSPL = 6u; // 1st available general-purpose slot
 		static const UINT VS_FreeSRV = 0u; // 1st available general-purpose slot
 
+		static const UINT HS_PerFrameCB = 0u;
+		static const UINT HS_GlobalTransformsCB = 1u;
+		static const UINT HS_PerCameraCB = 2u;
+
+		static const UINT DS_PerFrameCB = 0u;
 		static const UINT DS_GlobalTransformsCB = 1u;
+		static const UINT DS_PerCameraCB = 2u;
 
 		static const UINT PS_PerFrameCB = 0u;
 		static const UINT PS_GlobalTransformsCB = 1u;
