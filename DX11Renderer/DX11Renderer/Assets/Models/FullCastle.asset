@@ -1,0 +1,4 @@
+Name, FullCastle
+GLTF, Assets\\Models\\GLTF\\FullCastle.glb
+Map, GreyStone, Assets\\Materials\\GreyboxMaterial.asset
+Map, IslandRock, Assets\\Materials\\GreyboxMaterial.asset

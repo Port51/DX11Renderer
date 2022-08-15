@@ -1,0 +1,3 @@
+Name, ShadowTestScene
+GLTF, Assets\\Models\\GLTF\\ShadowTestScene.glb
+Map, Default, Assets\\Materials\\GreyboxMaterial.asset

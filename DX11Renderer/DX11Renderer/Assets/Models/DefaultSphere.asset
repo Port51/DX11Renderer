@@ -1,0 +1,3 @@
+Name, DefaultSphere
+GLTF, Assets\\Models\\GLTF\\DefaultSphere.glb
+Map, Default, Assets\\Materials\\CastleMaterial.asset

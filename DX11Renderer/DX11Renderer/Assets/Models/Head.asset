@@ -1,0 +1,4 @@
+Name, Head
+GLTF, Assets\\Models\\GLTF\\Head-triangulated.glb
+Map, Head, Assets\\Materials\\HeadMaterial.asset
+Map, Hair, Assets\\Materials\\HairMaterial.asset
