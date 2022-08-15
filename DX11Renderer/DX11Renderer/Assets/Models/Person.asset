@@ -1,0 +1,3 @@
+Name, Person
+GLTF, Assets\\Models\\GLTF\\Person.glb
+Map, Person, Assets\\Materials\\PersonMaterial.asset

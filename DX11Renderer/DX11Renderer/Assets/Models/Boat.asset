@@ -1,0 +1,5 @@
+Name, Boat
+GLTF, Assets\\Models\\GLTF\\Boat.glb
+Map, Boat, Assets\\Materials\\BoatWoodMaterial.asset
+Map, BoatInterior, Assets\\Materials\\BoatInteriorMaterial.asset
+Map, BoatSail, Assets\\Materials\\BoatSailMaterial.asset

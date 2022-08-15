@@ -1,0 +1,3 @@
+Name, DefaultQuad
+GLTF, Assets\\Models\\GLTF\\DefaultQuad.glb
+Map, Default, Assets\\Materials\\HeadMaterial.asset
