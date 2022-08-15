@@ -5,11 +5,12 @@
 
 namespace gfx
 {
-	RasterizerState::RasterizerState(const GraphicsDevice& gfx, const D3D11_CULL_MODE cullMode)
-		: m_cullMode(cullMode)
+	RasterizerState::RasterizerState(const GraphicsDevice& gfx, const D3D11_CULL_MODE cullMode, const D3D11_FILL_MODE fillMode)
+		: m_cullMode(cullMode), m_fillMode(fillMode)
 	{
 		D3D11_RASTERIZER_DESC rasterDesc = CD3D11_RASTERIZER_DESC(CD3D11_DEFAULT{});
 		rasterDesc.CullMode = cullMode;
+		rasterDesc.FillMode = fillMode;
 
 		//if (cullMode == D3D11_CULL_FRONT)
 		//{
@@ -41,9 +42,9 @@ namespace gfx
 		REGISTER_GPU_CALL();
 	}
 
-	std::shared_ptr<RasterizerState> RasterizerState::Resolve(const GraphicsDevice& gfx, const D3D11_CULL_MODE cullMode)
+	std::shared_ptr<RasterizerState> RasterizerState::Resolve(const GraphicsDevice& gfx, const D3D11_CULL_MODE cullMode, const D3D11_FILL_MODE fillMode)
 	{
-		return std::move(Codex::Resolve<RasterizerState>(gfx, GenerateUID(cullMode), cullMode));
+		return std::move(Codex::Resolve<RasterizerState>(gfx, GenerateUID(cullMode, fillMode), cullMode, fillMode));
 	}
 
 	const D3D11_CULL_MODE RasterizerState::GetCullModeFromMaterialString(const std::string name)
@@ -67,9 +68,9 @@ namespace gfx
 		}
 	}
 
-	std::string RasterizerState::GenerateUID(const D3D11_CULL_MODE cullMode)
+	std::string RasterizerState::GenerateUID(const D3D11_CULL_MODE cullMode, const D3D11_FILL_MODE fillMode)
 	{
 		using namespace std::string_literals;
-		return typeid(RasterizerState).name() + "#"s + std::to_string((int)cullMode);
+		return typeid(RasterizerState).name() + "#"s + std::to_string((int)cullMode) + "|"s + std::to_string((int)fillMode);
 	}
 }

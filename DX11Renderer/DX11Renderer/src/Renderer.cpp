@@ -255,25 +255,22 @@ namespace gfx
 
 		GetRenderPass(RenderPassType::DepthPrepassRenderPass).
 			ClearBinds()
-			.AddBinding(RasterizerState::Resolve(gfx, D3D11_CULL_BACK)).SetupRSBinding();
+			.AddBinding(RasterizerState::Resolve(gfx, D3D11_CULL_BACK, D3D11_FILL_MODE::D3D11_FILL_SOLID)).SetupRSBinding();
 
 		GetRenderPass(RenderPassType::HiZRenderPass).
 			ClearBinds()
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, gfx.GetDepthStencilTarget()->GetSRV())
 			.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, m_pHiZBufferTarget->GetUAV())
 			.CSSetUAV(RenderSlots::CS_FreeUAV + 1u, nullptr)
-			.CSSetCB(RenderSlots::CS_FreeCB + 0u, m_pHiZCreationCB->GetD3DBuffer())
-			.AddBinding(RasterizerState::Resolve(gfx, D3D11_CULL_MODE::D3D11_CULL_BACK)).SetupRSBinding();
+			.CSSetCB(RenderSlots::CS_FreeCB + 0u, m_pHiZCreationCB->GetD3DBuffer());
 
 		GetRenderPass(RenderPassType::ShadowRenderPass).
 			ClearBinds()
-			.VSSetCB(RenderSlots::VS_GlobalTransformsCB, m_pTransformationCB->GetD3DBuffer())
-			.AddBinding(RasterizerState::Resolve(gfx, D3D11_CULL_MODE::D3D11_CULL_BACK)).SetupRSBinding();
+			.VSSetCB(RenderSlots::VS_GlobalTransformsCB, m_pTransformationCB->GetD3DBuffer());
 			//.AddBinding(RasterizerState::Resolve(gfx, D3D11_CULL_MODE::D3D11_CULL_FRONT)).SetupRSBinding(); // Reduce shadow acne w/ front face culling during shadow pass
 
 		GetRenderPass(RenderPassType::GBufferRenderPass).
-			ClearBinds()
-			.AddBinding(RasterizerState::Resolve(gfx, D3D11_CULL_MODE::D3D11_CULL_BACK)).SetupRSBinding();
+			ClearBinds();
 
 		GetRenderPass(RenderPassType::TiledLightingRenderPass).
 			ClearBinds()
@@ -405,7 +402,8 @@ namespace gfx
 			GetRenderPass(RenderPassType::TonemappingRenderPass).
 				ClearBinds()
 				.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, pColorIn->GetSRV())
-				.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, pColorOut->GetUAV());
+				.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, pColorOut->GetUAV())
+				.AddBinding(RasterizerState::Resolve(gfx, D3D11_CULL_MODE::D3D11_CULL_BACK, D3D11_FILL_MODE::D3D11_FILL_SOLID)).SetupRSBinding();
 		}
 
 		// Determine what to use for final blit
@@ -685,6 +683,9 @@ namespace gfx
 
 			gfx.ClearRenderTargets();
 		}
+
+		// Force solid rendering
+		RasterizerState::Resolve(gfx, D3D11_CULL_MODE::D3D11_CULL_BACK, D3D11_FILL_MODE::D3D11_FILL_SOLID)->BindRS(gfx, renderState);
 
 		// SSR pass
 		if (IsFeatureEnabled(RendererFeature::HZBSSR))

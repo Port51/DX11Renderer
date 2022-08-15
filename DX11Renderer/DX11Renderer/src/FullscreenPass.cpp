@@ -30,7 +30,7 @@ namespace gfx
 			.SetupVSBinding(0u);
 		AddBinding(Topology::Resolve(gfx, D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST))
 			.SetupIABinding();
-		AddBinding(RasterizerState::Resolve(gfx, D3D11_CULL_BACK))
+		AddBinding(RasterizerState::Resolve(gfx, D3D11_CULL_BACK, D3D11_FILL_MODE::D3D11_FILL_SOLID))
 			.SetupRSBinding();
 
 		// Setup depth stencil state
