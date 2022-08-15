@@ -141,7 +141,7 @@ namespace gfx
 				if (state == MaterialParseState::Pass)
 				{
 					// Read culling type
-					pMaterialPass->AddBinding(RasterizerState::Resolve(gfx, RasterizerState::GetCullModeFromMaterialString(p.values[0]), D3D11_FILL_MODE::D3D11_FILL_WIREFRAME))
+					pMaterialPass->AddBinding(RasterizerState::Resolve(gfx, RasterizerState::GetCullModeFromMaterialString(p.values[0]), D3D11_FILL_MODE::D3D11_FILL_SOLID))
 						.SetupRSBinding();
 				}
 			}
