@@ -55,6 +55,9 @@ namespace gfx
 	{
 	public:
 		// Shared by all stages
+		static const UINT Global_PerFrameCB = 0u;
+		static const UINT Global_GlobalTransformsCB = 1u;
+		static const UINT Global_PerCameraCB = 2u;
 		static const UINT Global_PointWrapSampler = 0u;
 		static const UINT Global_PointClampSampler = 1u;
 		static const UINT Global_PointMirrorSampler = 2u;
@@ -62,11 +65,7 @@ namespace gfx
 		static const UINT Global_BilinearWrapSampler = 4u;
 		static const UINT Global_BilinearMirrorSampler = 5u;
 
-		// todo: move more to the global binds above!
-
-		static const UINT CS_PerFrameCB = 0u;
-		static const UINT CS_GlobalTransformsCB = 1u;
-		static const UINT CS_PerCameraCB = 2u;
+		// Compute shaders
 		static const UINT CS_LightInputCB = 3u;
 		static const UINT CS_FreeCB = 4u; // 1st available general-purpose slot
 
@@ -77,25 +76,13 @@ namespace gfx
 		static const UINT CS_FreeSPL = 6u; // 1st available general-purpose slot
 		static const UINT CS_FreeUAV = 0u; // 1st available general-purpose slot
 
-		static const UINT VS_PerFrameCB = 0u;
-		static const UINT VS_GlobalTransformsCB = 1u;
-		static const UINT VS_PerCameraCB = 2u;
+		// Vertex shaders
 		static const UINT VS_PerObjectTransformCB = 3u;
 		static const UINT VS_FreeCB = 4u; // 1st available general-purpose slot
 		static const UINT VS_FreeSPL = 6u; // 1st available general-purpose slot
 		static const UINT VS_FreeSRV = 0u; // 1st available general-purpose slot
 
-		static const UINT HS_PerFrameCB = 0u;
-		static const UINT HS_GlobalTransformsCB = 1u;
-		static const UINT HS_PerCameraCB = 2u;
-
-		static const UINT DS_PerFrameCB = 0u;
-		static const UINT DS_GlobalTransformsCB = 1u;
-		static const UINT DS_PerCameraCB = 2u;
-
-		static const UINT PS_PerFrameCB = 0u;
-		static const UINT PS_GlobalTransformsCB = 1u;
-		static const UINT PS_PerCameraCB = 2u;
+		// Pixel shaders
 		static const UINT PS_PerObjectTransformCB = 3u;
 		static const UINT PS_LightInputCB = 4u;
 		static const UINT PS_FreeCB = 5u; // 1st available general-purpose slot

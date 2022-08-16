@@ -70,10 +70,26 @@ namespace gfx
 		{
 			gfx.GetContext()->HSSetConstantBuffers(bind.first, 1u, bind.second.GetAddressOf());
 		}
+		for (const auto& bind : m_HS_SRV_Binds)
+		{
+			gfx.GetContext()->HSSetShaderResources(bind.first, 1u, bind.second.GetAddressOf());
+		}
+		for (const auto& bind : m_HS_SPL_Binds)
+		{
+			gfx.GetContext()->HSSetSamplers(bind.first, 1u, bind.second.GetAddressOf());
+		}
 
 		for (const auto& bind : m_DS_CB_Binds)
 		{
 			gfx.GetContext()->DSSetConstantBuffers(bind.first, 1u, bind.second.GetAddressOf());
+		}
+		for (const auto& bind : m_DS_SRV_Binds)
+		{
+			gfx.GetContext()->DSSetShaderResources(bind.first, 1u, bind.second.GetAddressOf());
+		}
+		for (const auto& bind : m_DS_SPL_Binds)
+		{
+			gfx.GetContext()->DSSetSamplers(bind.first, 1u, bind.second.GetAddressOf());
 		}
 
 		for (const auto& bind : m_PS_CB_Binds)
@@ -138,13 +154,37 @@ namespace gfx
 
 		if (m_HS_CB_Binds.size() > 0)
 		{
-			gfx.GetContext()->VSSetConstantBuffers(m_HS_CB_Binds[0].first, m_HS_CB_Binds.size(), RenderConstants::NullBufferArray.data());
+			gfx.GetContext()->HSSetConstantBuffers(m_HS_CB_Binds[0].first, m_HS_CB_Binds.size(), RenderConstants::NullBufferArray.data());
+			REGISTER_GPU_CALL();
+		}
+
+		if (m_HS_SRV_Binds.size() > 0)
+		{
+			gfx.GetContext()->HSSetConstantBuffers(m_HS_SRV_Binds[0].first, m_HS_SRV_Binds.size(), RenderConstants::NullBufferArray.data());
+			REGISTER_GPU_CALL();
+		}
+
+		if (m_HS_SPL_Binds.size() > 0)
+		{
+			gfx.GetContext()->HSSetSamplers(m_HS_SPL_Binds[0].first, m_HS_SPL_Binds.size(), RenderConstants::NullSamplerArray.data());
 			REGISTER_GPU_CALL();
 		}
 
 		if (m_DS_CB_Binds.size() > 0)
 		{
 			gfx.GetContext()->VSSetConstantBuffers(m_DS_CB_Binds[0].first, m_DS_CB_Binds.size(), RenderConstants::NullBufferArray.data());
+			REGISTER_GPU_CALL();
+		}
+
+		if (m_DS_SRV_Binds.size() > 0)
+		{
+			gfx.GetContext()->DSSetConstantBuffers(m_DS_SRV_Binds[0].first, m_DS_SRV_Binds.size(), RenderConstants::NullBufferArray.data());
+			REGISTER_GPU_CALL();
+		}
+
+		if (m_DS_SPL_Binds.size() > 0)
+		{
+			gfx.GetContext()->HSSetSamplers(m_DS_SPL_Binds[0].first, m_DS_SPL_Binds.size(), RenderConstants::NullSamplerArray.data());
 			REGISTER_GPU_CALL();
 		}
 
@@ -201,6 +241,39 @@ namespace gfx
 		m_PS_CB_Binds.clear();
 		m_PS_SRV_Binds.clear();
 		m_PS_SPL_Binds.clear();
+		return *this;
+	}
+
+	RenderPass& RenderPass::SetGlobalCB(const slotUINT slot, const ComPtr<ID3D11Buffer>& pResource)
+	{
+		m_CS_CB_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11Buffer>>(slot, pResource));
+		m_VS_CB_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11Buffer>>(slot, pResource));
+		m_HS_CB_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11Buffer>>(slot, pResource));
+		m_DS_CB_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11Buffer>>(slot, pResource));
+		m_PS_CB_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11Buffer>>(slot, pResource));
+		m_bindingCount += 5u;
+		return *this;
+	}
+
+	RenderPass& RenderPass::SetGlobalSRV(const slotUINT slot, const ComPtr<ID3D11ShaderResourceView>& pResource)
+	{
+		m_CS_SRV_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11ShaderResourceView>>(slot, pResource));
+		m_VS_SRV_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11ShaderResourceView>>(slot, pResource));
+		m_HS_SRV_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11ShaderResourceView>>(slot, pResource));
+		m_DS_SRV_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11ShaderResourceView>>(slot, pResource));
+		m_PS_SRV_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11ShaderResourceView>>(slot, pResource));
+		m_bindingCount += 5u;
+		return *this;
+	}
+
+	RenderPass& RenderPass::SetGlobalSPL(const slotUINT slot, const ComPtr<ID3D11SamplerState>& pResource)
+	{
+		m_CS_SPL_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11SamplerState>>(slot, pResource));
+		m_VS_SPL_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11SamplerState>>(slot, pResource));
+		m_HS_SPL_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11SamplerState>>(slot, pResource));
+		m_DS_SPL_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11SamplerState>>(slot, pResource));
+		m_PS_SPL_Binds.emplace_back(std::pair<UINT, ComPtr<ID3D11SamplerState>>(slot, pResource));
+		m_bindingCount += 5u;
 		return *this;
 	}
 

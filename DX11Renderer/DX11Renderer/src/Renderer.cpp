@@ -221,43 +221,19 @@ namespace gfx
 
 		GetRenderPass(RenderPassType::PerCameraRenderPass).
 			ClearBinds()
-			.CSSetCB(RenderSlots::CS_PerFrameCB, m_pPerFrameCB->GetD3DBuffer())
-			.CSSetCB(RenderSlots::CS_GlobalTransformsCB, m_pTransformationCB->GetD3DBuffer())
-			.CSSetCB(RenderSlots::CS_PerCameraCB, m_pPerCameraCB->GetD3DBuffer())
+			.SetGlobalCB(RenderSlots::Global_PerFrameCB, m_pPerFrameCB->GetD3DBuffer())
+			.SetGlobalCB(RenderSlots::Global_GlobalTransformsCB, m_pTransformationCB->GetD3DBuffer())
+			.SetGlobalCB(RenderSlots::Global_PerCameraCB, m_pPerCameraCB->GetD3DBuffer())
+			.SetGlobalSPL(RenderSlots::Global_PointWrapSampler, m_pPointWrapSampler->GetD3DSampler())
+			.SetGlobalSPL(RenderSlots::Global_PointClampSampler, m_pPointClampSampler->GetD3DSampler())
+			.SetGlobalSPL(RenderSlots::Global_PointMirrorSampler, m_pPointMirrorSampler->GetD3DSampler())
+			.SetGlobalSPL(RenderSlots::Global_BilinearWrapSampler, m_pBilinearWrapSampler->GetD3DSampler())
+			.SetGlobalSPL(RenderSlots::Global_BilinearClampSampler, m_pBilinearClampSampler->GetD3DSampler())
+			.SetGlobalSPL(RenderSlots::Global_BilinearMirrorSampler, m_pBilinearMirrorSampler->GetD3DSampler())
 			.CSSetCB(RenderSlots::CS_LightInputCB, m_pLightManager->GetLightInputCB().GetD3DBuffer())
 			.CSSetSRV(RenderSlots::CS_LightDataSRV, m_pLightManager->GetLightDataSRV())
 			.CSSetSRV(RenderSlots::CS_LightShadowDataSRV, m_pLightManager->GetShadowDataSRV())
-			.VSSetCB(RenderSlots::VS_PerFrameCB, m_pPerFrameCB->GetD3DBuffer())
-			.VSSetCB(RenderSlots::VS_GlobalTransformsCB, m_pTransformationCB->GetD3DBuffer())
-			.VSSetCB(RenderSlots::VS_PerCameraCB, m_pPerCameraCB->GetD3DBuffer())
-			.HSSetCB(RenderSlots::HS_PerFrameCB, m_pPerFrameCB->GetD3DBuffer())
-			.HSSetCB(RenderSlots::HS_GlobalTransformsCB, m_pTransformationCB->GetD3DBuffer())
-			.HSSetCB(RenderSlots::HS_PerCameraCB, m_pPerCameraCB->GetD3DBuffer())
-			.DSSetCB(RenderSlots::DS_PerFrameCB, m_pPerFrameCB->GetD3DBuffer())
-			.DSSetCB(RenderSlots::DS_GlobalTransformsCB, m_pTransformationCB->GetD3DBuffer())
-			.DSSetCB(RenderSlots::DS_PerCameraCB, m_pPerCameraCB->GetD3DBuffer())
-			.PSSetCB(RenderSlots::PS_PerFrameCB, m_pPerFrameCB->GetD3DBuffer())
-			.PSSetCB(RenderSlots::PS_GlobalTransformsCB, m_pTransformationCB->GetD3DBuffer())
-			.PSSetCB(RenderSlots::PS_PerCameraCB, m_pPerCameraCB->GetD3DBuffer())
-			.PSSetCB(RenderSlots::PS_LightInputCB, m_pLightManager->GetLightInputCB().GetD3DBuffer())
-			.CSSetSPL(RenderSlots::Global_PointWrapSampler, m_pPointWrapSampler->GetD3DSampler())
-			.CSSetSPL(RenderSlots::Global_PointClampSampler, m_pPointClampSampler->GetD3DSampler())
-			.CSSetSPL(RenderSlots::Global_PointMirrorSampler, m_pPointMirrorSampler->GetD3DSampler())
-			.CSSetSPL(RenderSlots::Global_BilinearWrapSampler, m_pBilinearWrapSampler->GetD3DSampler())
-			.CSSetSPL(RenderSlots::Global_BilinearClampSampler, m_pBilinearClampSampler->GetD3DSampler())
-			.CSSetSPL(RenderSlots::Global_BilinearMirrorSampler, m_pBilinearMirrorSampler->GetD3DSampler())
-			.VSSetSPL(RenderSlots::Global_PointWrapSampler, m_pPointWrapSampler->GetD3DSampler())
-			.VSSetSPL(RenderSlots::Global_PointClampSampler, m_pPointClampSampler->GetD3DSampler())
-			.VSSetSPL(RenderSlots::Global_PointMirrorSampler, m_pPointMirrorSampler->GetD3DSampler())
-			.VSSetSPL(RenderSlots::Global_BilinearWrapSampler, m_pBilinearWrapSampler->GetD3DSampler())
-			.VSSetSPL(RenderSlots::Global_BilinearClampSampler, m_pBilinearClampSampler->GetD3DSampler())
-			.VSSetSPL(RenderSlots::Global_BilinearMirrorSampler, m_pBilinearMirrorSampler->GetD3DSampler())
-			.PSSetSPL(RenderSlots::Global_PointWrapSampler, m_pPointWrapSampler->GetD3DSampler())
-			.PSSetSPL(RenderSlots::Global_PointClampSampler, m_pPointClampSampler->GetD3DSampler())
-			.PSSetSPL(RenderSlots::Global_PointMirrorSampler, m_pPointMirrorSampler->GetD3DSampler())
-			.PSSetSPL(RenderSlots::Global_BilinearWrapSampler, m_pBilinearWrapSampler->GetD3DSampler())
-			.PSSetSPL(RenderSlots::Global_BilinearClampSampler, m_pBilinearClampSampler->GetD3DSampler())
-			.PSSetSPL(RenderSlots::Global_BilinearMirrorSampler, m_pBilinearMirrorSampler->GetD3DSampler());
+			.PSSetCB(RenderSlots::PS_LightInputCB, m_pLightManager->GetLightInputCB().GetD3DBuffer());
 
 		GetRenderPass(RenderPassType::DepthPrepassRenderPass).
 			ClearBinds()
@@ -271,8 +247,7 @@ namespace gfx
 			.CSSetCB(RenderSlots::CS_FreeCB + 0u, m_pHiZCreationCB->GetD3DBuffer());
 
 		GetRenderPass(RenderPassType::ShadowRenderPass).
-			ClearBinds()
-			.VSSetCB(RenderSlots::VS_GlobalTransformsCB, m_pTransformationCB->GetD3DBuffer());
+			ClearBinds();
 			//.AddBinding(RasterizerState::Resolve(gfx, D3D11_CULL_MODE::D3D11_CULL_FRONT)).SetupRSBinding(); // Reduce shadow acne w/ front face culling during shadow pass
 
 		GetRenderPass(RenderPassType::GBufferRenderPass).

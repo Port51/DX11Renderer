@@ -30,6 +30,9 @@ namespace gfx
 
 	public:
 		RenderPass& ClearBinds();
+		RenderPass& SetGlobalCB(const slotUINT slot, const ComPtr<ID3D11Buffer>& pResource);
+		RenderPass& SetGlobalSRV(const slotUINT slot, const ComPtr<ID3D11ShaderResourceView>& pResource);
+		RenderPass& SetGlobalSPL(const slotUINT slot, const ComPtr<ID3D11SamplerState>& pResource);
 		RenderPass& CSSetCB(const slotUINT slot, const ComPtr<ID3D11Buffer>& pResource);
 		RenderPass& CSSetSRV(const slotUINT slot, const ComPtr<ID3D11ShaderResourceView>& pResource);
 		RenderPass& CSSetUAV(const slotUINT slot, const ComPtr<ID3D11UnorderedAccessView>& pResource);
@@ -67,7 +70,11 @@ namespace gfx
 		std::vector<std::pair<UINT, ComPtr<ID3D11ShaderResourceView>>> m_VS_SRV_Binds;
 		std::vector<std::pair<UINT, ComPtr<ID3D11SamplerState>>> m_VS_SPL_Binds;
 		std::vector<std::pair<UINT, ComPtr<ID3D11Buffer>>> m_HS_CB_Binds;
+		std::vector<std::pair<UINT, ComPtr<ID3D11ShaderResourceView>>> m_HS_SRV_Binds;
+		std::vector<std::pair<UINT, ComPtr<ID3D11SamplerState>>> m_HS_SPL_Binds;
 		std::vector<std::pair<UINT, ComPtr<ID3D11Buffer>>> m_DS_CB_Binds;
+		std::vector<std::pair<UINT, ComPtr<ID3D11ShaderResourceView>>> m_DS_SRV_Binds;
+		std::vector<std::pair<UINT, ComPtr<ID3D11SamplerState>>> m_DS_SPL_Binds;
 		std::vector<std::pair<UINT, ComPtr<ID3D11Buffer>>> m_PS_CB_Binds;
 		std::vector<std::pair<UINT, ComPtr<ID3D11ShaderResourceView>>> m_PS_SRV_Binds;
 		std::vector<std::pair<UINT, ComPtr<ID3D11SamplerState>>> m_PS_SPL_Binds;
