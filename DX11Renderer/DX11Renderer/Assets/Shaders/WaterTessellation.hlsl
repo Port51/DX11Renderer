@@ -11,16 +11,12 @@
 #define INPUT_PATCH_SIZE 4
 #define OUTPUT_PATCH_SIZE 4
 
-// todo: cut this down!
 struct attrib
 {
     float3 pos : Position;
     float3 n : Normal;
     float3 t : Tangent;
     float2 uv0 : Texcoord0;
-    float4x4 instanceTransform : INSTANCE_TRANSFORM;
-    float4 instanceColor : INSTANCE_COLOR;
-    float4 instanceRngAndIndex : INSTANCE_RNG_AND_INDEX;
 };
 
 struct ControlPt
