@@ -15,8 +15,8 @@ Here are the results so far:
     *	Tiled deferred lighting
     *	Clustered forward lighting
     *	Dynamic shadow atlas
-        *	Supports 1 cascaded directional light
-        *	Number of spot and point lights is only limited by atlas size
+        *	Supports any number of point and spot light shadows
+        *	Supports 1 cascaded directional shadow
     *	PCF shadow filtering
     * Dynamic water using gerstner waves
     * Distance-based tessellation
@@ -89,13 +89,13 @@ Here's a debug view showing light counts per tile:
 
 ![Tiled light counts](DX11Renderer/Doc/Castle-Tiled-Lights.jpg)
 
-Normally, this is done in 1 compute shader with 3 subpasses.
+Normally, this is done in 1 compute shader with 3 stages.
 
 1. Find depth range of tile
 2. Find indices of lights within tile
 3. Calculate per-pixel lighting
 
-In my implementation, I skipped the first pass and instead obtained the min/max depth range from a Hi-Z buffer computed beforehand.
+In my implementation, I skipped the first stage and instead obtained the min/max depth range from a Hi-Z buffer computed beforehand.
 
 When calculating light intersections, I used both Frustum-Sphere and AABB-Sphere tests. By themselves, each method create false positives, which the other method accounts for.
 
