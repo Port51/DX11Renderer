@@ -19,6 +19,7 @@ Here are the results so far:
         *	Number of spot and point lights is only limited by atlas size
     *	PCF shadow filtering
     * Dynamic water using gerstner waves
+    * Distance-based tessellation
     * Stencil masking
 * Post effects
     *	Depth of field w/ separable disk filter
@@ -71,6 +72,14 @@ Using 2 components for far blur increases the quality. This helps, as far blur w
 ![DoF final](DX11Renderer/Doc/DoF-Combined.jpg)
 
 The result is wide, circular blur at a reasonable cost!
+
+## Distance-Based Tessellation
+
+Since the water animation is based on math (gerstner waves), it fit tessellation well. I used quad patches, and setup the hull shader so that neighboring patch edges always had the same tessellation factor. To do this, I averaged the two control points for each edge, and measured their distance from the camera.
+
+Then I further reduced the tessellation factor for distant patches when viewed at an angle.
+
+![Tessellation](DX11Renderer/Doc/Tess-Example.jpg)
 
 ## Tiled Deferred Lighting
 
