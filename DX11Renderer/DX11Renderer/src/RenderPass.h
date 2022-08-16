@@ -15,6 +15,18 @@ namespace gfx
 	///
 	class RenderPass
 	{
+	private:
+		class RenderPassBindingCollection
+		{
+		public:
+			std::vector<std::pair<UINT, ComPtr<ID3D11Buffer>>> CB_Binds;
+			std::vector<std::pair<UINT, ComPtr<ID3D11ShaderResourceView>>> SRV_Binds;
+			std::vector<std::pair<UINT, ComPtr<ID3D11UnorderedAccessView>>> UAV_Binds;
+			std::vector<std::pair<UINT, ComPtr<ID3D11SamplerState>>> SPL_Binds;
+		public:
+			void clear();
+		};
+
 	public:
 		RenderPass(const RenderPassType renderPassType);
 		virtual ~RenderPass();
@@ -62,22 +74,11 @@ namespace gfx
 		UINT m_bindingCount;
 
 		// Binds shared by everything in this render pass
-		std::vector<std::pair<UINT, ComPtr<ID3D11Buffer>>> m_CS_CB_Binds;
-		std::vector<std::pair<UINT, ComPtr<ID3D11ShaderResourceView>>> m_CS_SRV_Binds;
-		std::vector<std::pair<UINT, ComPtr<ID3D11UnorderedAccessView>>> m_CS_UAV_Binds;
-		std::vector<std::pair<UINT, ComPtr<ID3D11SamplerState>>> m_CS_SPL_Binds;
-		std::vector<std::pair<UINT, ComPtr<ID3D11Buffer>>> m_VS_CB_Binds;
-		std::vector<std::pair<UINT, ComPtr<ID3D11ShaderResourceView>>> m_VS_SRV_Binds;
-		std::vector<std::pair<UINT, ComPtr<ID3D11SamplerState>>> m_VS_SPL_Binds;
-		std::vector<std::pair<UINT, ComPtr<ID3D11Buffer>>> m_HS_CB_Binds;
-		std::vector<std::pair<UINT, ComPtr<ID3D11ShaderResourceView>>> m_HS_SRV_Binds;
-		std::vector<std::pair<UINT, ComPtr<ID3D11SamplerState>>> m_HS_SPL_Binds;
-		std::vector<std::pair<UINT, ComPtr<ID3D11Buffer>>> m_DS_CB_Binds;
-		std::vector<std::pair<UINT, ComPtr<ID3D11ShaderResourceView>>> m_DS_SRV_Binds;
-		std::vector<std::pair<UINT, ComPtr<ID3D11SamplerState>>> m_DS_SPL_Binds;
-		std::vector<std::pair<UINT, ComPtr<ID3D11Buffer>>> m_PS_CB_Binds;
-		std::vector<std::pair<UINT, ComPtr<ID3D11ShaderResourceView>>> m_PS_SRV_Binds;
-		std::vector<std::pair<UINT, ComPtr<ID3D11SamplerState>>> m_PS_SPL_Binds;
+		RenderPassBindingCollection m_CS_Bindings;
+		RenderPassBindingCollection m_VS_Bindings;
+		RenderPassBindingCollection m_HS_Bindings;
+		RenderPassBindingCollection m_DS_Bindings;
+		RenderPassBindingCollection m_PS_Bindings;
 
 		std::shared_ptr<RenderTexture> m_pCameraColorOut;
 		std::unordered_map<UINT, std::unique_ptr<RenderPass>> m_pSubPasses;
