@@ -151,6 +151,7 @@ namespace gfx
 		//
 		// Render passes
 		//
+		CreateRenderPass(RenderPassType::PerFrameRenderPass);
 		CreateRenderPass(RenderPassType::PerCameraRenderPass);
 		CreateRenderPass(RenderPassType::DepthPrepassRenderPass);
 		CreateRenderPass(RenderPassType::HiZRenderPass);
@@ -219,17 +220,20 @@ namespace gfx
 	{
 		bool cameraOutSlot0 = true;
 
-		GetRenderPass(RenderPassType::PerCameraRenderPass).
+		GetRenderPass(RenderPassType::PerFrameRenderPass).
 			ClearBinds()
 			.SetGlobalCB(RenderSlots::Global_PerFrameCB, m_pPerFrameCB->GetD3DBuffer())
-			.SetGlobalCB(RenderSlots::Global_GlobalTransformsCB, m_pTransformationCB->GetD3DBuffer())
-			.SetGlobalCB(RenderSlots::Global_PerCameraCB, m_pPerCameraCB->GetD3DBuffer())
 			.SetGlobalSPL(RenderSlots::Global_PointWrapSampler, m_pPointWrapSampler->GetD3DSampler())
 			.SetGlobalSPL(RenderSlots::Global_PointClampSampler, m_pPointClampSampler->GetD3DSampler())
 			.SetGlobalSPL(RenderSlots::Global_PointMirrorSampler, m_pPointMirrorSampler->GetD3DSampler())
 			.SetGlobalSPL(RenderSlots::Global_BilinearWrapSampler, m_pBilinearWrapSampler->GetD3DSampler())
 			.SetGlobalSPL(RenderSlots::Global_BilinearClampSampler, m_pBilinearClampSampler->GetD3DSampler())
-			.SetGlobalSPL(RenderSlots::Global_BilinearMirrorSampler, m_pBilinearMirrorSampler->GetD3DSampler())
+			.SetGlobalSPL(RenderSlots::Global_BilinearMirrorSampler, m_pBilinearMirrorSampler->GetD3DSampler());
+
+		GetRenderPass(RenderPassType::PerCameraRenderPass).
+			ClearBinds()
+			.SetGlobalCB(RenderSlots::Global_GlobalTransformsCB, m_pTransformationCB->GetD3DBuffer())
+			.SetGlobalCB(RenderSlots::Global_PerCameraCB, m_pPerCameraCB->GetD3DBuffer())
 			.CSSetCB(RenderSlots::CS_LightInputCB, m_pLightManager->GetLightInputCB().GetD3DBuffer())
 			.CSSetSRV(RenderSlots::CS_LightDataSRV, m_pLightManager->GetLightDataSRV())
 			.CSSetSRV(RenderSlots::CS_LightShadowDataSRV, m_pLightManager->GetShadowDataSRV())
@@ -412,23 +416,6 @@ namespace gfx
 		static int frameCt = 0;
 		frameCt++;
 
-		// Shadow + lighting culling pass
-		{
-			RenderPass& pass = GetRenderPass(RenderPassType::ShadowRenderPass);
-
-			pass.BindSharedResources(gfx, renderState);
-
-			static ShadowPassContext context(gfx, camera, *this, pass, *m_pTransformationCB.get(), nullptr);
-
-			m_pLightManager->CullLightsAndShadows(gfx, camera, IsFeatureEnabled(RendererFeature::Shadows)); // changes the SRV, which will be bound in per-frame binds
-			if (IsFeatureEnabled(RendererFeature::Shadows))
-			{
-				m_pLightManager->RenderShadows(context, renderState);
-			}
-
-			pass.UnbindSharedResources(gfx, renderState);
-		}
-
 		// Submit draw call threads
 		std::vector<std::thread> filterThreads;
 		std::vector<std::thread> drawCallThreads;
@@ -441,24 +428,24 @@ namespace gfx
 			transparentDrawContext.viewMatrix = camera.GetViewMatrix();
 			transparentDrawContext.projMatrix = camera.GetProjectionMatrix();
 
-			//m_pVisibleRendererList->Filter(gfx, camera.GetFrustumWS(), RendererList::RendererSortingType::StateThenBackToFront, RenderPassType::OpaqueRenderPass, camera.GetPositionWS(), camera.GetForwardWS(), camera.GetFarClipPlane());
-			//m_pVisibleTransparentRendererList->Filter(gfx, camera.GetFrustumWS(), RendererList::RendererSortingType::BackToFrontThenState, RenderPassType::TransparentRenderPass, camera.GetPositionWS(), camera.GetForwardWS(), camera.GetFarClipPlane());
+			gfx.GetRenderStats().StartTaskTimer("Filter + cull threads");
 			filterThreads.push_back(std::thread(&RendererList::Filter, m_pVisibleRendererList.get(), std::ref(gfx), std::ref(camera.GetFrustumWS()), RendererList::RendererSortingType::StateThenBackToFront, RenderPassType::OpaqueRenderPass, camera.GetPositionWS(), camera.GetForwardWS(), camera.GetFarClipPlane()));
 			filterThreads.push_back(std::thread(&RendererList::Filter, m_pVisibleTransparentRendererList.get(), std::ref(gfx), std::ref(camera.GetFrustumWS()), RendererList::RendererSortingType::BackToFrontThenState, RenderPassType::TransparentRenderPass, camera.GetPositionWS(), camera.GetForwardWS(), camera.GetFarClipPlane()));
-
 			for (auto& t : filterThreads)
 			{
 				if (t.joinable()) t.join();
 			}
+			gfx.GetRenderStats().EndTaskTimer("Filter + cull threads");
 
-			//m_pVisibleRendererList->SubmitDrawCalls(gfx, opaqueDrawContext);
-			//m_pVisibleTransparentRendererList->SubmitDrawCalls(gfx, transparentDrawContext);
+			gfx.GetRenderStats().StartTaskTimer("Draw call threads");
 			drawCallThreads.push_back(std::thread(&RendererList::SubmitDrawCalls, m_pVisibleRendererList.get(), std::ref(gfx), std::ref(opaqueDrawContext)));
 			drawCallThreads.push_back(std::thread(&RendererList::SubmitDrawCalls, m_pVisibleTransparentRendererList.get(), std::ref(gfx), std::ref(transparentDrawContext)));
 		}
 
-		// Early frame calculations
+		// Per-frame binds
 		{
+			const RenderPass& pass = GetRenderPass(RenderPassType::PerFrameRenderPass);
+
 			static PerFrameCB perFrameCB;
 			ZERO_MEM(perFrameCB);
 			perFrameCB.pixelSelection = { pixelSelectionX, pixelSelectionY, (UINT)m_pixelIteration, 0u };
@@ -467,6 +454,33 @@ namespace gfx
 			perFrameCB.cosTime = dx::XMVectorSet(std::cos(timeElapsed / 8.f), std::cos(timeElapsed / 4.f), std::cos(timeElapsed / 2.f), std::cos(timeElapsed));
 			perFrameCB.timeStep = dx::XMVectorSet(timeStep, std::min(timeStep, 1.f / 30.f), std::min(timeStep, 1.f / 60.f), timeStep);
 			m_pPerFrameCB->Update(gfx, perFrameCB);
+
+			pass.BindSharedResources(gfx, renderState);
+		}
+
+		// Shadow + lighting culling pass
+		{
+			RenderPass& pass = GetRenderPass(RenderPassType::ShadowRenderPass);
+			gfx.GetRenderStats().StartTaskTimer(pass.GetName());
+
+			pass.BindSharedResources(gfx, renderState);
+
+			static ShadowPassContext context(gfx, camera, *this, pass, *m_pTransformationCB.get(), nullptr);
+
+			m_pLightManager->CullLightsAndShadows(gfx, camera, IsFeatureEnabled(RendererFeature::Shadows)); // changes the SRV, which will be bound in per-frame binds
+			if (IsFeatureEnabled(RendererFeature::Shadows))
+			{
+				m_pLightManager->RenderShadows(context, renderState);
+			}
+
+			pass.UnbindSharedResources(gfx, renderState);
+			gfx.GetRenderStats().EndTaskTimer(pass.GetName());
+		}
+
+		// Per-camera binds
+		// (must be done after shadow passes, as this sets global transforms)
+		{
+			const RenderPass& pass = GetRenderPass(RenderPassType::PerCameraRenderPass);
 
 			static GlobalTransformCB transformationCB;
 			transformationCB.viewMatrix = camera.GetViewMatrix();
@@ -506,11 +520,7 @@ namespace gfx
 				0.f
 			);
 			m_pPerCameraCB->Update(gfx, perCameraCB);
-		}
 
-		// Per-frame and per-camera binds
-		{
-			const RenderPass& pass = GetRenderPass(RenderPassType::PerCameraRenderPass);
 			pass.BindSharedResources(gfx, renderState);
 		}
 
@@ -520,11 +530,13 @@ namespace gfx
 			{
 				if (t.joinable()) t.join();
 			}
+			gfx.GetRenderStats().EndTaskTimer("Draw call threads");
 		}
 
 		// Early Z pass
 		{
 			const RenderPass& pass = GetRenderPass(RenderPassType::DepthPrepassRenderPass);
+			gfx.GetRenderStats().StartTaskTimer(pass.GetName());
 
 			pass.BindSharedResources(gfx, renderState);
 			DepthStencilState::Resolve(gfx, DepthStencilState::Mode::StencilOff)->BindOM(gfx, renderState);
@@ -535,11 +547,13 @@ namespace gfx
 
 			pass.Execute(gfx, renderState);
 			pass.UnbindSharedResources(gfx, renderState);
+			gfx.GetRenderStats().EndTaskTimer(pass.GetName());
 		}
 
 		// Hi-Z buffer pass
 		{
 			const RenderPass& pass = GetRenderPass(RenderPassType::HiZRenderPass);
+			gfx.GetRenderStats().StartTaskTimer(pass.GetName());
 
 			gfx.ClearRenderTargets(); // need in order to access depth
 			pass.BindSharedResources(gfx, renderState);
@@ -573,6 +587,7 @@ namespace gfx
 			}
 
 			pass.UnbindSharedResources(gfx, renderState);
+			gfx.GetRenderStats().EndTaskTimer(pass.GetName());
 		}
 
 		// Run GPU particle compute
@@ -580,9 +595,10 @@ namespace gfx
 			//m_pParticleManager->ExecuteComputePass(gfx, camera, renderState);
 		}
 
-		// Normal-rough-reflectivity pass
+		// Normal-rough-reflectivity pass (slim GBuffer)
 		{
 			const RenderPass& pass = GetRenderPass(RenderPassType::GBufferRenderPass);
+			gfx.GetRenderStats().StartTaskTimer(pass.GetName());
 
 			pass.BindSharedResources(gfx, renderState);
 			DepthStencilState::Resolve(gfx, DepthStencilState::Mode::Normal)->BindOM(gfx, renderState);
@@ -596,6 +612,7 @@ namespace gfx
 			gfx.ClearRenderTargets();
 
 			pass.UnbindSharedResources(gfx, renderState);
+			gfx.GetRenderStats().EndTaskTimer(pass.GetName());
 		}
 
 		if (IsFeatureEnabled(RendererFeature::SSAO))
@@ -606,16 +623,19 @@ namespace gfx
 		// Tiled lighting pass
 		{
 			const RenderPass& pass = GetRenderPass(RenderPassType::TiledLightingRenderPass);
+			gfx.GetRenderStats().StartTaskTimer(pass.GetName());
 			pass.BindSharedResources(gfx, renderState);
 
 			m_pTiledLightingKernel->Dispatch(gfx, screenWidth, screenHeight, 1u);
 
 			pass.UnbindSharedResources(gfx, renderState);
+			gfx.GetRenderStats().EndTaskTimer(pass.GetName());
 		}
 
 		// Clustered lighting pass
 		{
 			const RenderPass& pass = GetRenderPass(RenderPassType::ClusteredLightingRenderPass);
+			gfx.GetRenderStats().StartTaskTimer(pass.GetName());
 			pass.BindSharedResources(gfx, renderState);
 
 			static ClusteredLightingCB clusteredLightingCB;
@@ -625,11 +645,13 @@ namespace gfx
 			m_pClusteredLightingKernel->Dispatch(gfx, m_pLightManager->GetClusterDimensionX(), m_pLightManager->GetClusterDimensionY(), m_pLightManager->GetClusterDimensionZ());
 
 			pass.UnbindSharedResources(gfx, renderState);
+			gfx.GetRenderStats().EndTaskTimer(pass.GetName());
 		}
 
 		// Opaque pass
 		{
 			const RenderPass& pass = GetRenderPass(RenderPassType::OpaqueRenderPass);
+			gfx.GetRenderStats().StartTaskTimer(pass.GetName());
 			pass.BindSharedResources(gfx, renderState);
 
 			DepthStencilState::Resolve(gfx, DepthStencilState::Mode::Normal)->BindOM(gfx, renderState);
@@ -642,6 +664,7 @@ namespace gfx
 			pass.UnbindSharedResources(gfx, renderState);
 
 			gfx.ClearRenderTargets();
+			gfx.GetRenderStats().EndTaskTimer(pass.GetName());
 		}
 
 		// Skybox pass
@@ -652,6 +675,7 @@ namespace gfx
 		// Transparent pass
 		{
 			const RenderPass& pass = GetRenderPass(RenderPassType::TransparentRenderPass);
+			gfx.GetRenderStats().StartTaskTimer(pass.GetName());
 			pass.BindSharedResources(gfx, renderState);
 
 			DepthStencilState::Resolve(gfx, DepthStencilState::Mode::Normal)->BindOM(gfx, renderState);
@@ -663,6 +687,7 @@ namespace gfx
 			pass.UnbindSharedResources(gfx, renderState);
 
 			gfx.ClearRenderTargets();
+			gfx.GetRenderStats().EndTaskTimer(pass.GetName());
 		}
 
 		// Force solid rendering
@@ -672,6 +697,7 @@ namespace gfx
 		if (IsFeatureEnabled(RendererFeature::HZBSSR))
 		{
 			const RenderPass& pass = GetRenderPass(RenderPassType::SSRRenderPass);
+			gfx.GetRenderStats().StartTaskTimer(pass.GetName());
 			pass.BindSharedResources(gfx, renderState);
 
 			static SSR_CB ssrCB;
@@ -681,17 +707,20 @@ namespace gfx
 			m_pSSRKernel->Dispatch(gfx, screenWidth, screenHeight, 1u);
 
 			pass.UnbindSharedResources(gfx, renderState);
+			gfx.GetRenderStats().EndTaskTimer(pass.GetName());
 		}
 
 		// Downsample x2 pass
 		{
 			const RenderPass& pass = GetRenderPass(RenderPassType::CreateDownsampledX2Texture);
+			gfx.GetRenderStats().StartTaskTimer(pass.GetName());
 			pass.BindSharedResources(gfx, renderState);
 
 			m_pBilinearDownsampleKernel->Dispatch(gfx, screenWidth >> 1u, screenHeight >> 1u, 1u);
 
 			pass.Execute(gfx, renderState);
 			pass.UnbindSharedResources(gfx, renderState);
+			gfx.GetRenderStats().EndTaskTimer(pass.GetName());
 		}
 
 		if (m_viewIdx == RendererView::Final && IsFeatureEnabled(RendererFeature::DepthOfField))
@@ -713,6 +742,7 @@ namespace gfx
 		if (Config::AAType == Config::AAType::FXAA && IsFeatureEnabled(RendererFeature::FXAA))
 		{
 			const RenderPass& pass = GetRenderPass(RenderPassType::FXAARenderPass);
+			gfx.GetRenderStats().StartTaskTimer(pass.GetName());
 			pass.BindSharedResources(gfx, renderState);
 
 			static FXAA_CB fxaaCB;
@@ -725,12 +755,14 @@ namespace gfx
 			m_pFXAAKernel->Dispatch(gfx, screenWidth, screenHeight, 1u);
 
 			pass.UnbindSharedResources(gfx, renderState);
+			gfx.GetRenderStats().EndTaskTimer(pass.GetName());
 		}
 
 		// Dither pass
 		if (m_viewIdx == RendererView::Final && IsFeatureEnabled(RendererFeature::Dither))
 		{
 			const RenderPass& pass = GetRenderPass(RenderPassType::DitherRenderPass);
+			gfx.GetRenderStats().StartTaskTimer(pass.GetName());
 			pass.BindSharedResources(gfx, renderState);
 
 			static DitherCB ditherCB;
@@ -741,17 +773,20 @@ namespace gfx
 			m_pDitherKernel->Dispatch(gfx, screenWidth, screenHeight, 1u);
 
 			pass.UnbindSharedResources(gfx, renderState);
+			gfx.GetRenderStats().EndTaskTimer(pass.GetName());
 		}
 
 		// Tonemapping pass
 		if (m_viewIdx == RendererView::Final && IsFeatureEnabled(RendererFeature::Tonemapping))
 		{
 			const RenderPass& pass = GetRenderPass(RenderPassType::TonemappingRenderPass);
+			gfx.GetRenderStats().StartTaskTimer(pass.GetName());
 			pass.BindSharedResources(gfx, renderState);
 
 			m_pTonemappingKernel->Dispatch(gfx, screenWidth, screenHeight, 1u);
 
 			pass.UnbindSharedResources(gfx, renderState);
+			gfx.GetRenderStats().EndTaskTimer(pass.GetName());
 		}
 
 		// Final blit

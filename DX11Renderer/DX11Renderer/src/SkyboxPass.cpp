@@ -17,6 +17,7 @@ namespace gfx
 
 	void SkyboxPass::Execute(const GraphicsDevice & gfx, RenderState & renderState) const
 	{
+		gfx.GetRenderStats().StartTaskTimer(GetName());
 		const UINT screenWidth = gfx.GetScreenWidth();
 		const UINT screenHeight = gfx.GetScreenHeight();
 
@@ -25,6 +26,7 @@ namespace gfx
 		m_pSkyboxKernel->Dispatch(gfx, screenWidth, screenHeight, 1u);
 
 		UnbindSharedResources(gfx, renderState);
+		gfx.GetRenderStats().EndTaskTimer(GetName());
 	}
 
 	void SkyboxPass::SetupRenderPassDependencies(const GraphicsDevice& gfx, const ComPtr<ID3D11ShaderResourceView>& pDepthStencil, const RenderTexture& pCameraColor)

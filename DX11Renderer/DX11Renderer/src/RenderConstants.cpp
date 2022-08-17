@@ -22,11 +22,15 @@ namespace gfx
 		{ RenderPassType::DepthPrepassRenderPass,		"DepthPrepassRenderPass" },
 		{ RenderPassType::HiZRenderPass,				"HiZRenderPass" },
 		{ RenderPassType::GBufferRenderPass,			"GBufferRenderPass" },
+		{ RenderPassType::SSAORenderPass,				"SSAORenderPass" },
 		{ RenderPassType::TiledLightingRenderPass,		"TiledLightingRenderPass" },
 		{ RenderPassType::ClusteredLightingRenderPass,	"ClusteredLightingRenderPass" },
 		{ RenderPassType::OpaqueRenderPass,				"OpaqueRenderPass" },
+		{ RenderPassType::SkyboxRenderPass,				"SkyboxRenderPass" },
 		{ RenderPassType::TransparentRenderPass,		"TransparentRenderPass" },
 		{ RenderPassType::CreateDownsampledX2Texture,	"CreateDownsampledX2Texture" },
+		{ RenderPassType::DepthOfFieldRenderPass,		"DepthOfFieldRenderPass" },
+		{ RenderPassType::BloomRenderPass,				"BloomRenderPass" },
 		{ RenderPassType::SSRRenderPass,				"SSRRenderPass" },
 		{ RenderPassType::FXAARenderPass,				"FXAARenderPass" },
 		{ RenderPassType::DitherRenderPass,				"DitherRenderPass" },
@@ -41,11 +45,15 @@ namespace gfx
 		{ RenderPassType::DepthPrepassRenderPass,		std::hash<std::string>{}("DepthPrepassRenderPass") },
 		{ RenderPassType::HiZRenderPass,				std::hash<std::string>{}("HiZRenderPass") },
 		{ RenderPassType::GBufferRenderPass,			std::hash<std::string>{}("GBufferRenderPass") },
+		{ RenderPassType::SSAORenderPass,				std::hash<std::string>{}("SSAORenderPass") },
 		{ RenderPassType::TiledLightingRenderPass,		std::hash<std::string>{}("TiledLightingRenderPass") },
 		{ RenderPassType::ClusteredLightingRenderPass,	std::hash<std::string>{}("ClusteredLightingRenderPass") },
 		{ RenderPassType::OpaqueRenderPass,				std::hash<std::string>{}("OpaqueRenderPass") },
+		{ RenderPassType::SkyboxRenderPass,				std::hash<std::string>{}("SkyboxRenderPass") },
 		{ RenderPassType::TransparentRenderPass,		std::hash<std::string>{}("TransparentRenderPass") },
 		{ RenderPassType::CreateDownsampledX2Texture,	std::hash<std::string>{}("CreateDownsampledX2Texture") },
+		{ RenderPassType::DepthOfFieldRenderPass,		std::hash<std::string>{}("DepthOfFieldRenderPass") },
+		{ RenderPassType::BloomRenderPass,				std::hash<std::string>{}("BloomRenderPass") },
 		{ RenderPassType::SSRRenderPass,				std::hash<std::string>{}("SSRRenderPass") },
 		{ RenderPassType::FXAARenderPass,				std::hash<std::string>{}("FXAARenderPass") },
 		{ RenderPassType::DitherRenderPass,				std::hash<std::string>{}("DitherRenderPass") },
@@ -60,11 +68,15 @@ namespace gfx
 		{ std::hash<std::string>{}("DepthPrepassRenderPass"),		RenderPassType::DepthPrepassRenderPass },
 		{ std::hash<std::string>{}("HiZRenderPass"),				RenderPassType::HiZRenderPass },
 		{ std::hash<std::string>{}("GBufferRenderPass"),			RenderPassType::GBufferRenderPass },
+		{ std::hash<std::string>{}("SSAORenderPass"),				RenderPassType::SSAORenderPass},
 		{ std::hash<std::string>{}("TiledLightingRenderPass"),		RenderPassType::TiledLightingRenderPass },
 		{ std::hash<std::string>{}("ClusteredLightingRenderPass"),	RenderPassType::ClusteredLightingRenderPass },
 		{ std::hash<std::string>{}("OpaqueRenderPass"),				RenderPassType::OpaqueRenderPass },
+		{ std::hash<std::string>{}("SkyboxRenderPass"),				RenderPassType::SkyboxRenderPass },
 		{ std::hash<std::string>{}("TransparentRenderPass"),		RenderPassType::TransparentRenderPass },
 		{ std::hash<std::string>{}("CreateDownsampledX2Texture"),	RenderPassType::CreateDownsampledX2Texture },
+		{ std::hash<std::string>{}("DepthOfFieldRenderPass"),		RenderPassType::DepthOfFieldRenderPass },
+		{ std::hash<std::string>{}("BloomRenderPass"),				RenderPassType::BloomRenderPass },
 		{ std::hash<std::string>{}("SSRRenderPass"),				RenderPassType::SSRRenderPass },
 		{ std::hash<std::string>{}("FXAARenderPass"),				RenderPassType::FXAARenderPass },
 		{ std::hash<std::string>{}("DitherRenderPass"),				RenderPassType::DitherRenderPass },
@@ -90,6 +102,37 @@ namespace gfx
 			return m_renderPassEnumByHash.at(hash);
 		}
 		return RenderPassType::Undefined;
+	}
+
+	bool RenderPassConstants::TryGetRenderPassName(RenderPassType passType, std::string& result)
+	{
+		if (m_renderPassNameByEnum.find(passType) != m_renderPassNameByEnum.end())
+		{
+			result = m_renderPassNameByEnum.at(passType);
+			return true;
+		}
+		return false;
+	}
+
+	bool RenderPassConstants::TryGetRenderPassHash(RenderPassType passType, std::size_t& result)
+	{
+		if (m_renderPassHashByEnum.find(passType) != m_renderPassHashByEnum.end())
+		{
+			result = m_renderPassHashByEnum.at(passType);
+			return true;
+		}
+		return false;
+	}
+
+	bool RenderPassConstants::TryGetRenderPassType(std::string passName, RenderPassType& result)
+	{
+		std::size_t hash = std::hash<std::string>{}(std::move(passName));
+		if (m_renderPassEnumByHash.find(hash) != m_renderPassEnumByHash.end())
+		{
+			result = m_renderPassEnumByHash.at(hash);
+			return true;
+		}
+		return false;
 	}
 
 }

@@ -19,27 +19,28 @@ namespace gfx
 
 	public:
 		static constexpr bool LinearLighting = true;
+		static constexpr bool UseWireframe = false;
 
-		static inline ShadowType ShadowType = ShadowType::PCF;
-		static inline AAType AAType = AAType::FXAA;
+		static constexpr ShadowType ShadowType = ShadowType::PCF;
+		static constexpr AAType AAType = AAType::FXAA;
 
 		static constexpr int MsaaSamples = 1;
 		static constexpr int MsaaQuality = 0;
 
 		// Each tile represents a shadowmap, which can be a spotlight shadow, cubemap face, or a specific directional cascade
-		static inline int ShadowAtlasResolution = 4096;
+		static constexpr int ShadowAtlasResolution = 4096;
 		// Size of each tile
-		static inline int ShadowAtlasTileResolution = ShadowAtlasResolution / 4;
+		static constexpr int ShadowAtlasTileResolution = ShadowAtlasResolution / 4;
 		// Number of tiles on a side
-		static inline int ShadowAtlasTileDimension = ShadowAtlasResolution / ShadowAtlasTileResolution;
+		static constexpr int ShadowAtlasTileDimension = ShadowAtlasResolution / ShadowAtlasTileResolution;
 		// Total number of tiles
-		static inline int ShadowAtlasTileCount = ShadowAtlasResolution * ShadowAtlasResolution / (ShadowAtlasTileResolution * ShadowAtlasTileResolution);
+		static constexpr int ShadowAtlasTileCount = ShadowAtlasResolution * ShadowAtlasResolution / (ShadowAtlasTileResolution * ShadowAtlasTileResolution);
 
 		// Cascades per dir light
-		static inline int ShadowCascades = 4;
+		static constexpr int ShadowCascades = 4;
 		static std::vector<float> ShadowCascadeDistances;
 		// Distance to start cascades in reverse direction of light (increase to receive more shadows from behind the camera)
-		static inline float ShadowCascadeOffset = 20.f;
+		static constexpr float ShadowCascadeOffset = 20.f;
 
 	};
 }

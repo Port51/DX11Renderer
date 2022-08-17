@@ -146,6 +146,8 @@ namespace gfx
 
 	void DepthOfFieldPass::Execute(const GraphicsDevice & gfx, RenderState& renderState) const
 	{
+		gfx.GetRenderStats().StartTaskTimer(GetName());
+
 		auto context = gfx.GetContext();
 		const UINT screenWidth = gfx.GetScreenWidth();
 		const UINT screenHeight = gfx.GetScreenHeight();
@@ -189,6 +191,8 @@ namespace gfx
 		default:
 			THROW("Unrecognized bokeh type " + m_bokehType);
 		}
+
+		gfx.GetRenderStats().EndTaskTimer(GetName());
 	}
 
 	void DepthOfFieldPass::ExecuteDiskBokeh(const GraphicsDevice & gfx, RenderState& renderState) const

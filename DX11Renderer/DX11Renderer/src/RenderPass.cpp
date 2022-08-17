@@ -12,11 +12,16 @@ namespace gfx
 	RenderPass::RenderPass(const RenderPassType renderPassType)
 		: m_renderPassType(renderPassType)
 	{
-
+		if (!RenderPassConstants::TryGetRenderPassName(renderPassType, m_name)) m_name = "UnknownPass";
 	}
 
 	RenderPass::~RenderPass()
 	{}
+
+	const std::string& RenderPass::GetName() const
+	{
+		return m_name;
+	}
 
 	const RenderPassType RenderPass::GetRenderPassType() const
 	{
@@ -398,7 +403,7 @@ namespace gfx
 		return *m_pSubPasses[pass].get();
 	}
 
-	void RenderPass::RenderPassBindingCollection::clear()
+	void RenderPass::ProgrammableStageBindings::clear()
 	{
 		CB_Binds.clear();
 		SRV_Binds.clear();

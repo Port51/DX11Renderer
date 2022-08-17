@@ -1,10 +1,14 @@
 #include "pch.h"
 #include "RenderStats.h"
+#include "Timer.h"
+#include <sstream>
+#include <iomanip>
 
 namespace gfx
 {
 
 	RenderStats::RenderStats()
+		: m_pTimer(std::make_unique<Timer>()), m_framesLeftInRecording(framesToRecord)
 	{
 	}
 
@@ -29,6 +33,8 @@ namespace gfx
 
 	void RenderStats::EndFrame()
 	{
+		m_framesLeftInRecording--;
+		if (m_framesLeftInRecording <= 0) m_framesLeftInRecording = framesToRecord;
 	}
 
 	void RenderStats::DrawImguiControlWindow()
@@ -51,8 +57,57 @@ namespace gfx
 			//ImGui::Text((std::string("Saved via instancing:  ") + std::to_string(m_cpuDrawCallsSavedByInstancingThisFrame)).c_str());
 			ImGui::Text((std::string("GPU commands:          ") + std::to_string(m_gpuCommandsThisFrame)).c_str());
 			ImGui::Text((std::string("^^ saved by sorting:   ") + std::to_string(m_gpuCallsSavedThisFrame)).c_str());
+			ImGui::Text("");
+			ImGui::Text("CPU TIMINGS");
+
+			std::stringstream ss;
+			for (const auto& task : m_taskDisplayOrder)
+			{
+				const float timeInMs = m_taskTimes.at(task).lastAverageTime * 1000.f;
+
+				ss.str(std::string()); // clear sstring
+				ss << task;
+				for (size_t i = 0; i < 30 - task.size(); ++i) ss << " ";
+				ss << ": ";
+				if (timeInMs < 10.f) ss << " ";
+				ss << std::fixed << std::setprecision(3) << timeInMs << " ms";
+
+				ImGui::Text(ss.str().c_str());
+			}
 		}
 		ImGui::End();
+	}
+
+	void RenderStats::StartTaskTimer(const std::string& taskName)
+	{
+		if (m_taskTimes.find(taskName) == m_taskTimes.end())
+		{
+			// If new task, add to display order
+			m_taskDisplayOrder.emplace_back(taskName);
+
+			TaskTiming newTaskTiming;
+			newTaskTiming.startTimeThisFrame = m_pTimer->Peek();
+			newTaskTiming.cumulativeTaskTime = 0.f;
+			newTaskTiming.lastAverageTime = 0.f;
+			m_taskTimes.emplace(taskName, newTaskTiming);
+		}
+		else
+		{
+			m_taskTimes[taskName].startTimeThisFrame = m_pTimer->Peek();
+		}
+	}
+
+	void RenderStats::EndTaskTimer(const std::string& taskName)
+	{
+		const float duration = m_pTimer->Peek() - m_taskTimes.at(taskName).startTimeThisFrame;
+		m_taskTimes[taskName].cumulativeTaskTime += duration;
+
+		if (m_framesLeftInRecording == 1)
+		{
+			// Save and reset
+			m_taskTimes[taskName].lastAverageTime = m_taskTimes.at(taskName).cumulativeTaskTime / static_cast<float>(framesToRecord);
+			m_taskTimes[taskName].cumulativeTaskTime = 0.f;
+		}
 	}
 
 	void RenderStats::AddVisibleRenderers(const u32 count)

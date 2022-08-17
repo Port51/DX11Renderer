@@ -15,8 +15,11 @@ namespace gfx
 	///
 	class RenderPass
 	{
-	private:
-		class RenderPassBindingCollection
+	protected:
+		///
+		/// Wrapper containing bindings for programmable graphics stages (CS, VS, PS, etc.)
+		///
+		class ProgrammableStageBindings
 		{
 		public:
 			std::vector<std::pair<UINT, ComPtr<ID3D11Buffer>>> CB_Binds;
@@ -32,6 +35,7 @@ namespace gfx
 		virtual ~RenderPass();
 
 	public:
+		const std::string& GetName() const;
 		const RenderPassType GetRenderPassType() const;
 		void EnqueueJob(DrawCommand job);
 		virtual void BindSharedResources(const GraphicsDevice& gfx, RenderState& renderState) const;
@@ -68,17 +72,18 @@ namespace gfx
 		const RenderPass& CreateSubPass(const UINT pass, std::unique_ptr<RenderPass> pRenderPass);
 
 	protected:
+		std::string m_name;
 		std::vector<Binding> m_bindings;
 		const RenderPassType m_renderPassType;
 		std::vector<DrawCommand> m_jobs; // will be replaced by render graph
 		UINT m_bindingCount;
 
 		// Binds shared by everything in this render pass
-		RenderPassBindingCollection m_CS_Bindings;
-		RenderPassBindingCollection m_VS_Bindings;
-		RenderPassBindingCollection m_HS_Bindings;
-		RenderPassBindingCollection m_DS_Bindings;
-		RenderPassBindingCollection m_PS_Bindings;
+		ProgrammableStageBindings m_CS_Bindings;
+		ProgrammableStageBindings m_VS_Bindings;
+		ProgrammableStageBindings m_HS_Bindings;
+		ProgrammableStageBindings m_DS_Bindings;
+		ProgrammableStageBindings m_PS_Bindings;
 
 		std::shared_ptr<RenderTexture> m_pCameraColorOut;
 		std::unordered_map<UINT, std::unique_ptr<RenderPass>> m_pSubPasses;

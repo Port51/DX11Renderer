@@ -76,15 +76,16 @@ ContantData WaterConstantHS(InputPatch<ControlPt, INPUT_PATCH_SIZE> pt, uint Pat
 {
     ContantData o;
 
-    // Control pt and edge indices from: https://www.raywenderlich.com/books/metal-by-tutorials/v2.0/chapters/11-tessellation-terrains
-
     // Outer tessellation must match edges of other patches
+    // To do that, average tessFactor from the 2 points making up each edge
+    // Here's a reference for how to match indices of control points with edges:
+    // https://www.raywenderlich.com/books/metal-by-tutorials/v2.0/chapters/11-tessellation-terrains
     o.Edges[0] = (pt[3].tessFactor + pt[0].tessFactor) * 0.5f;
     o.Edges[1] = (pt[0].tessFactor + pt[1].tessFactor) * 0.5f;
     o.Edges[2] = (pt[1].tessFactor + pt[2].tessFactor) * 0.5f;
     o.Edges[3] = (pt[2].tessFactor + pt[3].tessFactor) * 0.5f;
 
-    // Inner depends on center of patch, so use average
+    // Inner depends on center of patch, so use average of all control points
     o.Inside[0] = o.Inside[1] = (pt[0].tessFactor + pt[1].tessFactor + pt[2].tessFactor + pt[3].tessFactor) * 0.25f;
 
     return o;

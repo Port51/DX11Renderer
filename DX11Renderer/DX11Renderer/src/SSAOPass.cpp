@@ -93,6 +93,8 @@ namespace gfx
 
 	void SSAOPass::Execute(const GraphicsDevice & gfx, RenderState& renderState) const
 	{
+		gfx.GetRenderStats().StartTaskTimer(GetName());
+
 		// Update settings
 		{
 			m_pSettings->radiusVS = m_radiusVS;
@@ -131,6 +133,8 @@ namespace gfx
 
 			pass.UnbindSharedResources(gfx, renderState);
 		}
+
+		gfx.GetRenderStats().EndTaskTimer(GetName());
 	}
 
 	void SSAOPass::DrawImguiControls(const GraphicsDevice & gfx)

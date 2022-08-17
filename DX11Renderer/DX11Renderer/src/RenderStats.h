@@ -1,10 +1,30 @@
 #pragma once
 #include "CommonHeader.h"
+#include <unordered_map>
+
+namespace gfxcore
+{
+	class Timer;
+}
 
 namespace gfx
 {
 	class RenderStats
 	{
+	private:
+		static constexpr int framesToRecord = 30;
+
+		struct TaskTiming
+		{
+		public:
+			float startTimeThisFrame;
+			float cumulativeTaskTime;
+			float lastAverageTime;
+		};
+
+	public:
+		enum TimedProcess { CullAndFrameBindsProcess, ShadowAndLightCull, DrawCallSetupComplete, HZBProcess, GBuffer, SSAO, TiledLighting, ClusteredLighting, Opaque, Skybox, Transparent, SSR, Downsample, 
+		};
 	public:
 		RenderStats();
 		~RenderStats();
@@ -13,6 +33,8 @@ namespace gfx
 		void StartFrame();
 		void EndFrame();
 		void DrawImguiControlWindow();
+		void StartTaskTimer(const std::string& taskName);
+		void EndTaskTimer(const std::string& taskName);
 
 	public:
 		void AddVisibleRenderers(const u32 count);
@@ -49,5 +71,11 @@ namespace gfx
 		u32 m_cpuDrawCallsSavedByInstancingThisFrame;
 		u32 m_gpuCommandsThisFrame;
 		u32 m_gpuCallsSavedThisFrame;
+
+		std::vector<std::string> m_taskDisplayOrder;
+		std::unordered_map<std::string, TaskTiming> m_taskTimes;
+		std::unique_ptr<Timer> m_pTimer;
+		int m_framesLeftInRecording;
+
 	};
 }

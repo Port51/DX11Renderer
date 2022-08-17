@@ -64,6 +64,8 @@ namespace gfx
 
 	void BloomPass::Execute(const GraphicsDevice & gfx, RenderState& renderState) const
 	{
+		gfx.GetRenderStats().StartTaskTimer(GetName());
+
 		auto context = gfx.GetContext();
 		const UINT screenWidth = gfx.GetScreenWidth();
 		const UINT screenHeight = gfx.GetScreenHeight();
@@ -107,6 +109,7 @@ namespace gfx
 			context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 0u, 1u, RenderConstants::NullUAVArray.data(), nullptr);
 
 			pass.UnbindSharedResources(gfx, renderState);
+			gfx.GetRenderStats().EndTaskTimer(GetName());
 		}
 
 		// Bloom combine

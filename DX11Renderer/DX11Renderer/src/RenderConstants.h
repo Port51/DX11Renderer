@@ -11,6 +11,7 @@ namespace gfx
 	{
 		Undefined,
 		Subpass,
+		PerFrameRenderPass,
 		PerCameraRenderPass,
 		ShadowRenderPass,
 		DepthPrepassRenderPass,
@@ -118,6 +119,9 @@ namespace gfx
 		static std::string GetRenderPassName(RenderPassType passType);
 		static std::size_t GetRenderPassHash(RenderPassType passType);
 		static RenderPassType GetRenderPassType(std::string passName);
+		static bool TryGetRenderPassName(RenderPassType passType, std::string& result);
+		static bool TryGetRenderPassHash(RenderPassType passType, std::size_t& result);
+		static bool TryGetRenderPassType(std::string passName, RenderPassType& result);
 	private:
 		static std::unordered_map<RenderPassType, std::string> m_renderPassNameByEnum;
 		static std::unordered_map<RenderPassType, std::size_t> m_renderPassHashByEnum;
