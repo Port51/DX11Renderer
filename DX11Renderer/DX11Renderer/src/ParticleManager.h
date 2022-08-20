@@ -13,9 +13,8 @@ namespace gfx
 	class RenderPass;
 	class RenderState;
 	class ArgsBuffer;
-
-	template<typename Type>
 	class ConstantBuffer;
+
 	template<typename Type>
 	class StructuredBuffer;
 
@@ -33,7 +32,7 @@ namespace gfx
 		const StructuredBuffer<ParticleSystemSettings>& GetParticleSystemBuffer() const;
 		const StructuredBuffer<ParticleSystemRuntime>& GetParticleSystemRuntimeBuffer() const;
 		const ArgsBuffer& GetArgsBuffer() const;
-		const ConstantBuffer<ParticleManagerCB>& GetParticleManagerCB() const;
+		const ConstantBuffer& GetParticleManagerCB() const;
 		const size_t GetMaxParticles() const;
 		const size_t GetParticleSystemCount() const;
 	protected:
@@ -52,7 +51,7 @@ namespace gfx
 		std::shared_ptr<StructuredBuffer<ParticleSortData>> m_pParticleSortBuffer;
 		std::shared_ptr<StructuredBuffer<ParticleSystemSettings>> m_pParticleSystemBuffer;
 		std::shared_ptr<StructuredBuffer<ParticleSystemRuntime>> m_pParticleSystemRuntimeBuffer;
-		std::shared_ptr<ConstantBuffer<ParticleManagerCB>> m_pParticleManagerCB;
+		std::shared_ptr<ConstantBuffer> m_pParticleManagerCB;
 		std::vector<std::unique_ptr<ParticleSystem>> m_pParticleSystems;
 		std::unique_ptr<ParticleSystem> m_pLayeredParticleSystem;
 	};

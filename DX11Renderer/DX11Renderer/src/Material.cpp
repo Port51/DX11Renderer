@@ -114,7 +114,7 @@ namespace gfx
 				else if (state == MaterialParseState::Pass)
 				{
 					// Init cbuffer
-					pMaterialPass->AddBinding(std::move(std::make_shared<ConstantBuffer<PSMaterialConstant>>(gfx, D3D11_USAGE_IMMUTABLE, pmc)))
+					pMaterialPass->AddBinding(std::move(std::make_shared<ConstantBuffer>(gfx, D3D11_USAGE_IMMUTABLE, &pmc, sizeof(PSMaterialConstant))))
 						.SetupPSBinding(RenderSlots::PS_FreeRendererCB + 0u);
 
 					if (pMaterialPass->GetStencil() == nullptr)

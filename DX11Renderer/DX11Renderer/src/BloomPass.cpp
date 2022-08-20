@@ -29,14 +29,14 @@ namespace gfx
 		m_pBloomTarget1 = std::make_shared<RenderTexture>(gfx);
 		m_pBloomTarget1->Init(gfx.GetAdapter(), bloomTextureWidth, bloomTextureHeight);
 
-		m_pBloomCB = std::make_unique<ConstantBuffer<BloomCB>>(gfx, D3D11_USAGE_DYNAMIC);
+		m_pBloomCB = std::make_unique<ConstantBuffer>(gfx, D3D11_USAGE_DYNAMIC, sizeof(BloomCB));
 		m_pBloomGaussianWeights = std::make_unique<StructuredBuffer<f32>>(gfx, D3D11_USAGE_DYNAMIC, D3D11_BIND_SHADER_RESOURCE, BloomBlurWidth * 2u + 1u);
 
 		// todo: make this a setting that can be changed
 		std::vector<f32> blurWeights;
 		blurWeights.resize(BloomBlurWidth * 2u + 1u);
 		Gaussian::GetGaussianWeights1D(blurWeights, 5.f);
-		m_pBloomGaussianWeights->Update(gfx, blurWeights, blurWeights.size());
+		m_pBloomGaussianWeights->Update(gfx, blurWeights.data(), blurWeights.size());
 
 		m_pBloomPrefilterKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, "Bloom.hlsl", "Prefilter"));
 		m_pBloomHorizontalBlurKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, "Bloom.hlsl", "HorizontalGaussian"));
@@ -79,7 +79,7 @@ namespace gfx
 
 			static BloomCB bloomCB;
 			bloomCB.resolutionSrcDst = { screenWidth, screenHeight, screenWidth, screenHeight };
-			m_pBloomCB->Update(gfx, bloomCB);
+			m_pBloomCB->Update(gfx, &bloomCB);
 
 			m_pBloomPrefilterKernel->Dispatch(gfx, bloomTextureWidth, bloomTextureHeight, 1u);
 
@@ -93,7 +93,7 @@ namespace gfx
 
 			static BloomCB bloomCB;
 			bloomCB.resolutionSrcDst = { screenWidth, screenHeight, screenWidth, screenHeight };
-			m_pBloomCB->Update(gfx, bloomCB);
+			m_pBloomCB->Update(gfx, &bloomCB);
 
 			context->CSSetShaderResources(RenderSlots::CS_FreeSRV + 0u, 1u, m_pBloomTarget0->GetSRV().GetAddressOf());
 			context->CSSetShaderResources(RenderSlots::CS_FreeSRV + 1u, 1u, m_pBloomGaussianWeights->GetSRV().GetAddressOf());
@@ -119,7 +119,7 @@ namespace gfx
 
 			static BloomCB bloomCB;
 			bloomCB.resolutionSrcDst = { screenWidth, screenHeight, screenWidth, screenHeight };
-			m_pBloomCB->Update(gfx, bloomCB);
+			m_pBloomCB->Update(gfx, &bloomCB);
 
 			m_pBloomCombineKernel->Dispatch(gfx, screenWidth, screenHeight, 1u);
 

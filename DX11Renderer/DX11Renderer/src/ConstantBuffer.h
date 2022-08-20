@@ -1,137 +1,29 @@
 #pragma once
 #include "CommonHeader.h"
-#include "ExceptionHandling.h"
 #include "Buffer.h"
-#include "RenderPass.h"
-#include "GraphicsDevice.h"
-#include "DX11Include.h"
+
+enum D3D11_USAGE;
 
 namespace gfx
 {
-	template<typename T>
+	class GraphicsDevice;
+
 	class ConstantBuffer : public Buffer
 	{
 	public:
-		ConstantBuffer(const GraphicsDevice& gfx, const D3D11_USAGE usage)
-			: Buffer(usage, D3D11_BIND_CONSTANT_BUFFER, GetCBufferSize(sizeof(T)))
-		{
-			D3D11_BUFFER_DESC bd;
-			ZERO_MEM(bd);
-			bd.Usage = usage;
-			bd.ByteWidth = GetCBufferSize(sizeof(T));
-			bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-			bd.CPUAccessFlags = (usage == D3D11_USAGE_DYNAMIC) ? D3D11_CPU_ACCESS_WRITE : 0;
-			bd.StructureByteStride = 0u;
-
-			THROW_IF_FAILED(gfx.GetAdapter()->CreateBuffer(&bd, nullptr, &m_pBuffer));
-		}
-
-		ConstantBuffer(const GraphicsDevice& gfx, const D3D11_USAGE usage, const T& initialData)
-			: Buffer(usage, D3D11_BIND_CONSTANT_BUFFER, GetCBufferSize(sizeof(T)))
-		{
-			D3D11_BUFFER_DESC bd;
-			ZERO_MEM(bd);
-			bd.Usage = usage;
-			bd.ByteWidth = GetCBufferSize(sizeof(T));
-			bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-			bd.CPUAccessFlags = (usage == D3D11_USAGE_DYNAMIC) ? D3D11_CPU_ACCESS_WRITE : 0;
-			bd.StructureByteStride = 0u;
-
-			D3D11_SUBRESOURCE_DATA sd;
-			ZERO_MEM(sd);
-			sd.pSysMem = (void*)&initialData;
-			THROW_IF_FAILED(gfx.GetAdapter()->CreateBuffer(&bd, &sd, &m_pBuffer));
-		}
+		ConstantBuffer(const GraphicsDevice& gfx, const D3D11_USAGE usage, const UINT bufferSizeBytes);
+		ConstantBuffer(const GraphicsDevice& gfx, const D3D11_USAGE usage, const void* initialData, const UINT bufferSizeBytes);
 
 	public:
-		void BindCS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override
-		{
-			if (renderState.IsNewBinding(GetGuid(), RenderBindingType::CS_CB, slot))
-			{
-				gfx.GetContext()->CSSetConstantBuffers(slot, 1u, m_pBuffer.GetAddressOf());
-				REGISTER_GPU_CALL();
-			}
-			else REGISTER_GPU_CALL_SAVED();
-		}
-
-		void UnbindCS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override
-		{
-			renderState.ClearBinding(RenderBindingType::CS_CB, slot);
-			gfx.GetContext()->CSSetConstantBuffers(slot, 1u, RenderConstants::NullBufferArray.data());
-			REGISTER_GPU_CALL();
-		}
-
-		void BindVS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override
-		{
-			if (renderState.IsNewBinding(GetGuid(), RenderBindingType::VS_CB, slot))
-			{
-				gfx.GetContext()->VSSetConstantBuffers(slot, 1u, m_pBuffer.GetAddressOf());
-				REGISTER_GPU_CALL();
-			}
-			else REGISTER_GPU_CALL_SAVED();
-		}
-
-		void UnbindVS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override
-		{
-			renderState.ClearBinding(RenderBindingType::VS_CB, slot);
-			gfx.GetContext()->VSSetConstantBuffers(slot, 1u, RenderConstants::NullBufferArray.data());
-			REGISTER_GPU_CALL();
-		}
-
-		void BindPS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override
-		{
-			if (renderState.IsNewBinding(GetGuid(), RenderBindingType::PS_CB, slot))
-			{
-				gfx.GetContext()->PSSetConstantBuffers(slot, 1u, m_pBuffer.GetAddressOf());
-				REGISTER_GPU_CALL();
-			}
-			else REGISTER_GPU_CALL_SAVED();
-		}
-
-		void UnbindPS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override
-		{
-			renderState.ClearBinding(RenderBindingType::PS_CB, slot);
-			gfx.GetContext()->PSSetConstantBuffers(slot, 1u, RenderConstants::NullBufferArray.data());
-			REGISTER_GPU_CALL();
-		}
-
-		void Update(const GraphicsDevice& gfx, const T& data)
-		{
-			Update(gfx, &data, sizeof(T));
-		}
-
-		void Update(const GraphicsDevice& gfx, const void* data, const UINT dataSize)
-		{
-			if (m_usage == D3D11_USAGE_DYNAMIC) // Can be continuously modified by CPU
-			{
-				D3D11_MAPPED_SUBRESOURCE subresource;
-				// Map() locks resource and gives ptr to resource
-				THROW_IF_FAILED(gfx.GetContext()->Map(
-					m_pBuffer.Get(), 0u,
-					D3D11_MAP_WRITE_DISCARD, 0u,
-					&subresource // msr gets assigned to resource ptr
-				));
-				// Handle write
-				memcpy(subresource.pData, data, dataSize);
-				// Unlock via Unmap()
-				gfx.GetContext()->Unmap(m_pBuffer.Get(), 0u);
-			}
-			else if (m_usage == D3D11_USAGE_DEFAULT
-				|| m_usage == D3D11_USAGE_STAGING)
-			{
-				// Doesn't work for dynamic or immutable
-				gfx.GetContext()->UpdateSubresource(m_pBuffer.Get(), 0, nullptr, &data, 0, 0);
-			}
-			else
-			{
-				THROW("Cannot update immutable constant buffer!");
-			}
-		}
+		void BindCS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override;
+		void UnbindCS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override;
+		void BindVS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override;
+		void UnbindVS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override;
+		void BindPS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override;
+		void UnbindPS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override;
+		void Update(const GraphicsDevice& gfx, const void* data);
 
 	private:
-		static constexpr UINT GetCBufferSize(const UINT buffer_size)
-		{
-			return (buffer_size + (64 - 1))& ~(64 - 1);
-		}
+		static constexpr UINT GetCBufferSize(const UINT buffer_size);
 	};
 }

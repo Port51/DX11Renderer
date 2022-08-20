@@ -10,6 +10,7 @@ namespace gfx
 	class GraphicsDevice;
 	class MeshRenderer;
 	class RenderPass;
+	class RenderState;
 
 	class Bindable : public CodexElement
 	{

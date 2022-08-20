@@ -27,6 +27,7 @@ namespace gfx
 			if (initialData != nullptr)
 			{
 				D3D11_SUBRESOURCE_DATA srd;
+				ZERO_MEM(srd);
 				srd.pSysMem = initialData;
 				srd.SysMemPitch = 0u;
 				srd.SysMemSlicePitch = 0u;
@@ -52,6 +53,7 @@ namespace gfx
 				else
 				{
 					D3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc;
+					ZERO_MEM(uavDesc);
 					uavDesc.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
 					uavDesc.Buffer.FirstElement = 0;
 					uavDesc.Buffer.NumElements = numElements;
@@ -114,7 +116,8 @@ namespace gfx
 		{
 			if (m_usage == D3D11_USAGE_DYNAMIC) // Can be continuously modified by CPU
 			{
-				D3D11_MAPPED_SUBRESOURCE subresource = {};
+				D3D11_MAPPED_SUBRESOURCE subresource;
+				ZERO_MEM(subresource);
 				// Map() locks resource and gives ptr to resource
 				THROW_IF_FAILED(gfx.GetContext()->Map(
 					m_pBuffer.Get(), 0u,
@@ -123,7 +126,7 @@ namespace gfx
 				));
 				REGISTER_GPU_CALL();
 				// Handle write
-				memcpy(subresource.pData, data, dataBytes);
+				memcpy(subresource.pData, data, GetDataBytes());
 				// Unlock via Unmap()
 				gfx.GetContext()->Unmap(m_pBuffer.Get(), 0u);
 				REGISTER_GPU_CALL();
@@ -141,13 +144,15 @@ namespace gfx
 			}
 		}
 
-		void Update(const GraphicsDevice& gfx, const std::vector<T>& data, const UINT dataElements)
+	protected:
+		const UINT GetDataBytes() const
 		{
-			assert(dataElements <= m_numElements && "Data elements exceed buffer size!");
-			Update(gfx, data.data(), sizeof(T) * dataElements);
+			return m_numElements * m_byteWidth;
 		}
-	private:
+
+	protected:
 		bool m_useCounter;
 		UINT m_numElements;
+
 	};
 }

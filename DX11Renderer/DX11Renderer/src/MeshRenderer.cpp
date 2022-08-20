@@ -14,6 +14,7 @@
 #include "TransformCbuf.h"
 #include "MeshAsset.h"
 #include "CommonCbuffers.h"
+#include "GraphicsDevice.h"
 
 namespace gfx
 {

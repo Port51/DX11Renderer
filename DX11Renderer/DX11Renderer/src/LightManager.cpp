@@ -42,7 +42,7 @@ namespace gfx
 		m_clusterDimensionY = (gfx.GetScreenHeight() + LightManager::ClusteredLightingClusterPixels - 1u) / LightManager::ClusteredLightingClusterPixels;
 		m_clusterDimensionZ = ClusteredLightingZLevels;
 
-		m_pLightInputCB = std::make_unique<ConstantBuffer<LightInputCB>>(gfx, D3D11_USAGE_DYNAMIC);
+		m_pLightInputCB = std::make_unique<ConstantBuffer>(gfx, D3D11_USAGE_DYNAMIC, sizeof(LightInputCB));
 		m_pClusteredIndices = std::make_unique<StructuredBuffer<int>>(gfx, D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS, GetClusterCount() * MaxLightsPerCluster);
 
 		// Create grid of lights
@@ -179,7 +179,7 @@ namespace gfx
 		}
 
 		// Update SB
-		m_pLightData->Update(gfx, m_cachedLightData, m_visibleLightCt);
+		m_pLightData->Update(gfx, m_cachedLightData.data(), m_visibleLightCt);
 
 		// Update CB
 		LightInputCB lightInputCB;
@@ -195,7 +195,7 @@ namespace gfx
 			lightInputCB.shadowCascadeSphere3 = m_pMainLight->GetShadowCascadeSphereVS(3);
 		}
 
-		m_pLightInputCB->Update(gfx, lightInputCB);
+		m_pLightInputCB->Update(gfx, &lightInputCB);
 		gfx.GetContext()->CSSetConstantBuffers(RenderSlots::CS_LightInputCB, 1u, m_pLightInputCB->GetD3DBuffer().GetAddressOf());
 		gfx.GetContext()->CSSetConstantBuffers(RenderSlots::PS_LightInputCB, 1u, m_pLightInputCB->GetD3DBuffer().GetAddressOf());
 	}
@@ -205,7 +205,7 @@ namespace gfx
 		return *m_pShadowAtlas.get();
 	}
 
-	ConstantBuffer<LightInputCB>& LightManager::GetLightInputCB()
+	ConstantBuffer& LightManager::GetLightInputCB()
 	{
 		return *m_pLightInputCB.get();
 	}
@@ -239,7 +239,7 @@ namespace gfx
 			}
 		}
 
-		m_pLightShadowSB->Update(context.gfx, m_cachedShadowData, (UINT)m_cachedShadowData.size());
+		m_pLightShadowSB->Update(context.gfx, m_cachedShadowData.data(), (UINT)m_cachedShadowData.size());
 	}
 
 	const ComPtr<ID3D11ShaderResourceView>& LightManager::GetLightDataSRV() const

@@ -471,6 +471,12 @@
     <ClCompile Include="src\DomainShader.cpp">
       <Filter>Source\Bindable\Shaders</Filter>
     </ClCompile>
+    <ClCompile Include="src\ConstantBuffer.cpp">
+      <Filter>Source\Bindable\Buffers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\StructuredBuffer.cpp">
+      <Filter>Source\Bindable\Buffers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h">

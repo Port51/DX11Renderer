@@ -57,10 +57,10 @@ namespace gfx
 		std::vector<f32> blurWeights;
 		blurWeights.resize(BlurWidth * 2u + 1u);
 		Gaussian::GetGaussianWeights1D(blurWeights, 5.f);
-		m_pGaussianBlurWeights->Update(gfx, blurWeights, blurWeights.size());
+		m_pGaussianBlurWeights->Update(gfx, blurWeights.data(), blurWeights.size());
 
 		m_pSettings = std::make_unique<SSAO_CB>();
-		m_pSettingsCB = std::make_unique<ConstantBuffer<SSAO_CB>>(gfx, D3D11_USAGE_DYNAMIC);
+		m_pSettingsCB = std::make_unique<ConstantBuffer>(gfx, D3D11_USAGE_DYNAMIC, sizeof(SSAO_CB));
 	}
 
 	void SSAOPass::SetupRenderPassDependencies(const GraphicsDevice & gfx, const RenderTexture & pGbuffer, const RenderTexture& hiZBuffer, const Texture& noiseTexture)
@@ -101,7 +101,7 @@ namespace gfx
 			m_pSettings->biasVS = m_biasVS;
 			m_pSettings->intensity = m_intensity;
 			m_pSettings->sharpness = m_sharpness;
-			m_pSettingsCB->Update(gfx, *m_pSettings);
+			m_pSettingsCB->Update(gfx, m_pSettings.get());
 		}
 
 		// Render occlusion

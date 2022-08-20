@@ -14,8 +14,6 @@ namespace gfx
 	class ShadowPassContext;
 	class Model;
 	class ModelAsset;
-
-	template<typename Type>
 	class ConstantBuffer;
 
 	struct LightData;
@@ -56,7 +54,7 @@ namespace gfx
 		float m_intensity;
 		std::unique_ptr<Model> m_pModel;
 		ShadowSettings m_shadowSettings;
-		std::unique_ptr<ConstantBuffer<ShadowPassCB>> m_pShadowPassCB;
+		std::unique_ptr<ConstantBuffer> m_pShadowPassCB;
 		int m_shadowAtlasTileIdx;
 	};
 }

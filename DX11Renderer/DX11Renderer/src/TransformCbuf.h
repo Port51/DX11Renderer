@@ -8,8 +8,6 @@ namespace gfx
 {
 	class GraphicsDevice;
 	class MeshRenderer;
-
-	template<typename Type>
 	class ConstantBuffer;
 
 	struct ObjectTransformsCB;
@@ -26,6 +24,6 @@ namespace gfx
 		void UpdateTransforms(const GraphicsDevice& gfx, const ObjectTransformsCB& transforms);
 	private:
 		// Static so can be re-used each drawcall
-		static std::unique_ptr<ConstantBuffer<ObjectTransformsCB>> m_pVcbuf;
+		static std::unique_ptr<ConstantBuffer> m_pVcbuf;
 	};
 }

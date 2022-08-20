@@ -11,11 +11,10 @@ namespace gfx
 	class ComputeKernel;
 	class RenderTexture;
 	class Sampler;
+	class ConstantBuffer;
 
 	struct DepthOfFieldCB;
 
-	template<typename Type>
-	class ConstantBuffer;
 	template<typename Type>
 	class StructuredBuffer;
 
@@ -66,7 +65,7 @@ namespace gfx
 		//std::unique_ptr<ComputeKernel> m_pDoFCompositeKernel;
 
 		std::unique_ptr<StructuredBuffer<float>> m_pBokehDiskWeights;
-		std::unique_ptr<ConstantBuffer<DepthOfFieldCB>> m_pDepthOfFieldCB;
+		std::unique_ptr<ConstantBuffer> m_pDepthOfFieldCB;
 		std::unique_ptr<DepthOfFieldCB> m_depthOfFieldCB;
 
 		std::shared_ptr<RenderTexture> m_pDoFFar0;

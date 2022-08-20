@@ -10,9 +10,8 @@ namespace gfx
 	class ComputeKernel;
 	class RenderState;
 	class ParticleManager;
-
-	template<typename Type>
 	class ConstantBuffer;
+
 	template<typename Type>
 	class StructuredBuffer;
 

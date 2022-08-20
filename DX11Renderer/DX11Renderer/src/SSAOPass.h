@@ -13,11 +13,10 @@ namespace gfx
 	class DepthStencilTarget;
 	class Sampler;
 	class RandomGenerator;
+	class ConstantBuffer;
 
 	struct SSAO_CB;
 
-	template<typename Type>
-	class ConstantBuffer;
 	template<typename Type>
 	class StructuredBuffer;
 
@@ -39,7 +38,7 @@ namespace gfx
 		const RenderTexture& GetOcclusionTexture() const;
 
 	private:
-		std::unique_ptr<ConstantBuffer<SSAO_CB>> m_pSettingsCB;
+		std::unique_ptr<ConstantBuffer> m_pSettingsCB;
 		std::unique_ptr<SSAO_CB> m_pSettings;
 		std::unique_ptr<StructuredBuffer<float>> m_pGaussianBlurWeights;
 

@@ -9,16 +9,14 @@ namespace gfx
 	class Renderer;
 	class RenderPass;
 	class RendererList;
+	class ConstantBuffer;
 
 	struct GlobalTransformCB;
-
-	template<typename Type>
-	class ConstantBuffer;
 
 	class ShadowPassContext
 	{
 	public:
-		ShadowPassContext(GraphicsDevice& gfx, const Camera& cam, Renderer& renderer, RenderPass& pRenderPass, ConstantBuffer<GlobalTransformCB>& transformationCB, RendererList* pRendererList);
+		ShadowPassContext(GraphicsDevice& gfx, const Camera& cam, Renderer& renderer, RenderPass& pRenderPass, ConstantBuffer& transformationCB, RendererList* pRendererList);
 		virtual ~ShadowPassContext();
 		//void Update();
 	public:
@@ -26,7 +24,7 @@ namespace gfx
 		const Camera& camera;
 		Renderer& renderer;
 		RenderPass& renderPass;
-		ConstantBuffer<GlobalTransformCB>& transformationCB;
+		ConstantBuffer& transformationCB;
 		RendererList* pRendererList; // needs to be nullable
 	};
 }

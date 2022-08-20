@@ -12,11 +12,10 @@ namespace gfx
 	class ComputeKernel;
 	class RenderTexture;
 	class Sampler;
+	class ConstantBuffer;
 
 	struct DepthOfFieldCB;
 
-	template<typename Type>
-	class ConstantBuffer;
 	template<typename Type>
 	class StructuredBuffer;
 
@@ -36,7 +35,7 @@ namespace gfx
 		void Execute(const GraphicsDevice& gfx, RenderState& renderState) const override;
 
 	private:
-		std::unique_ptr<ConstantBuffer<BloomCB>> m_pBloomCB;
+		std::unique_ptr<ConstantBuffer> m_pBloomCB;
 		std::unique_ptr<StructuredBuffer<float>> m_pBloomGaussianWeights;
 
 		std::unique_ptr<ComputeKernel> m_pBloomPrefilterKernel;

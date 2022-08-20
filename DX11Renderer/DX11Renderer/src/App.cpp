@@ -87,6 +87,9 @@ namespace gfx
 
 	void App::ExecuteFrame()
 	{
+		static u32 frameCt = 0u;
+		frameCt++;
+
 		static float timeElapsed = 0.f;
 		const float dt = m_pTimer->Mark();
 		const float limitedDt = std::min(dt, 1.f / 30.f);
@@ -111,7 +114,7 @@ namespace gfx
 
 		// Update cameras
 		{
-			m_pCamera->Update();
+			m_pCamera->Update(frameCt);
 		}
 
 		// Animate boats
@@ -259,7 +262,7 @@ namespace gfx
 
 		Gfx().BeginFrame();
 
-		m_pRenderer->Execute(Gfx(), *m_pCamera.get(), dt, timeElapsed, m_pixelSelectionX, m_pixelSelectionY);
+		m_pRenderer->Execute(Gfx(), *m_pCamera.get(), frameCt, dt, timeElapsed, m_pixelSelectionX, m_pixelSelectionY);
 
 		// Draw Imgui windows
 		{

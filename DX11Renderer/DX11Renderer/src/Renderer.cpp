@@ -124,16 +124,16 @@ namespace gfx
 		//
 		// Buffers
 		//
-		m_pPerFrameCB = std::make_unique<ConstantBuffer<PerFrameCB>>(gfx, D3D11_USAGE_DYNAMIC);
-		m_pTransformationCB = std::make_unique<ConstantBuffer<GlobalTransformCB>>(gfx, D3D11_USAGE_DYNAMIC);
-		m_pPerCameraCB = std::make_unique<ConstantBuffer<PerCameraCB>>(gfx, D3D11_USAGE_DYNAMIC);
-		m_pHiZCreationCB = std::make_unique<ConstantBuffer<HiZCreationCB>>(gfx, D3D11_USAGE_DYNAMIC);
-		m_pClusteredLightingCB = std::make_unique<ConstantBuffer<ClusteredLightingCB>>(gfx, D3D11_USAGE_DYNAMIC);
+		m_pPerFrameCB = std::make_unique<ConstantBuffer>(gfx, D3D11_USAGE_DYNAMIC, sizeof(PerFrameCB));
+		m_pTransformationCB = std::make_unique<ConstantBuffer>(gfx, D3D11_USAGE_DYNAMIC, sizeof(GlobalTransformCB));
+		m_pPerCameraCB = std::make_unique<ConstantBuffer>(gfx, D3D11_USAGE_DYNAMIC, sizeof(PerCameraCB));
+		m_pHiZCreationCB = std::make_unique<ConstantBuffer>(gfx, D3D11_USAGE_DYNAMIC, sizeof(HiZCreationCB));
+		m_pClusteredLightingCB = std::make_unique<ConstantBuffer>(gfx, D3D11_USAGE_DYNAMIC, sizeof(ClusteredLightingCB));
 
-		m_pFXAA_CB = std::make_unique<ConstantBuffer<FXAA_CB>>(gfx, D3D11_USAGE_DYNAMIC);
-		m_pSSR_CB = std::make_unique<ConstantBuffer<SSR_CB>>(gfx, D3D11_USAGE_DYNAMIC);
+		m_pFXAA_CB = std::make_unique<ConstantBuffer>(gfx, D3D11_USAGE_DYNAMIC, sizeof(FXAA_CB));
+		m_pSSR_CB = std::make_unique<ConstantBuffer>(gfx, D3D11_USAGE_DYNAMIC, sizeof(SSR_CB));
 		m_pSSR_DebugData = std::make_unique<StructuredBuffer<int>>(gfx, D3D11_USAGE_DEFAULT, D3D11_BIND_UNORDERED_ACCESS, 10u);
-		m_pDitherCB = std::make_unique<ConstantBuffer<DitherCB>>(gfx, D3D11_USAGE_DYNAMIC);
+		m_pDitherCB = std::make_unique<ConstantBuffer>(gfx, D3D11_USAGE_DYNAMIC, sizeof(DitherCB));
 
 		//
 		// Compute shaders
@@ -401,7 +401,7 @@ namespace gfx
 		m_pRenderPasses[targetPass]->EnqueueJob(std::move(job));
 	}
 
-	void Renderer::Execute(GraphicsDevice& gfx, const Camera& camera, const float timeStep, const float timeElapsed, const UINT pixelSelectionX, const UINT pixelSelectionY)
+	void Renderer::Execute(GraphicsDevice& gfx, const Camera& camera, const u32 frameCt, const float timeStep, const float timeElapsed, const UINT pixelSelectionX, const UINT pixelSelectionY)
 	{
 		auto context = gfx.GetContext();
 		const UINT screenWidth = gfx.GetScreenWidth();
@@ -412,9 +412,6 @@ namespace gfx
 		gfx.GetRenderStats().StartFrame();
 		context->ClearState();
 		RenderState renderState;
-
-		static int frameCt = 0;
-		frameCt++;
 
 		// Submit draw call threads
 		std::vector<std::thread> filterThreads;
@@ -453,7 +450,7 @@ namespace gfx
 			perFrameCB.sinTime = dx::XMVectorSet(std::sin(timeElapsed / 8.f), std::sin(timeElapsed / 4.f), std::sin(timeElapsed / 2.f), std::sin(timeElapsed));
 			perFrameCB.cosTime = dx::XMVectorSet(std::cos(timeElapsed / 8.f), std::cos(timeElapsed / 4.f), std::cos(timeElapsed / 2.f), std::cos(timeElapsed));
 			perFrameCB.timeStep = dx::XMVectorSet(timeStep, std::min(timeStep, 1.f / 30.f), std::min(timeStep, 1.f / 60.f), timeStep);
-			m_pPerFrameCB->Update(gfx, perFrameCB);
+			m_pPerFrameCB->Update(gfx, &perFrameCB);
 
 			pass.BindSharedResources(gfx, renderState);
 		}
@@ -485,11 +482,11 @@ namespace gfx
 			static GlobalTransformCB transformationCB;
 			transformationCB.viewMatrix = camera.GetViewMatrix();
 			transformationCB.projMatrix = camera.GetProjectionMatrix();
-			transformationCB.viewProjMatrix = transformationCB.viewMatrix * transformationCB.projMatrix;
-			transformationCB.invViewMatrix = dx::XMMatrixInverse(nullptr, transformationCB.viewMatrix);
-			transformationCB.invProjMatrix = dx::XMMatrixInverse(nullptr, transformationCB.projMatrix);
-			transformationCB.invViewProjMatrix = dx::XMMatrixInverse(nullptr, transformationCB.viewProjMatrix);
-			m_pTransformationCB->Update(gfx, transformationCB);
+			transformationCB.viewProjMatrix = camera.GetViewProjectionMatrix();
+			transformationCB.invViewMatrix = camera.GetInverseViewMatrix();
+			transformationCB.invProjMatrix = camera.GetInverseProjectionMatrix();
+			transformationCB.invViewProjMatrix = camera.GetInverseViewProjectionMatrix();
+			m_pTransformationCB->Update(gfx, &transformationCB);
 
 			const float farNearRatio = camera.GetFarClipPlane() / camera.GetNearClipPlane();
 
@@ -519,7 +516,7 @@ namespace gfx
 				0.f,
 				0.f
 			);
-			m_pPerCameraCB->Update(gfx, perCameraCB);
+			m_pPerCameraCB->Update(gfx, &perCameraCB);
 
 			pass.BindSharedResources(gfx, renderState);
 		}
@@ -560,7 +557,7 @@ namespace gfx
 
 			static HiZCreationCB hiZCreationCB;
 			hiZCreationCB.resolutionSrcDst = { screenWidth, screenHeight, screenWidth, screenHeight };
-			m_pHiZCreationCB->Update(gfx, hiZCreationCB);
+			m_pHiZCreationCB->Update(gfx, &hiZCreationCB);
 
 			// Copy from depth-stencil
 			context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV, 1u, m_pHiZBufferTarget->GetUAV(0u).GetAddressOf(), nullptr);
@@ -576,7 +573,7 @@ namespace gfx
 					continue;
 
 				hiZCreationCB.resolutionSrcDst = { dstWidth << 1u, dstHeight << 1u, dstWidth, dstHeight };
-				m_pHiZCreationCB->Update(gfx, hiZCreationCB);
+				m_pHiZCreationCB->Update(gfx, &hiZCreationCB);
 
 				// Bind mip slice views as UAVs
 				context->CSSetUnorderedAccessViews(RenderSlots::CS_FreeUAV + 0u, 2u, RenderConstants::NullUAVArray.data(), nullptr);
@@ -640,7 +637,7 @@ namespace gfx
 
 			static ClusteredLightingCB clusteredLightingCB;
 			clusteredLightingCB.groupResolutions = { m_pLightManager->GetClusterDimensionX(), m_pLightManager->GetClusterDimensionY(), m_pLightManager->GetClusterDimensionZ(), 0u };
-			m_pClusteredLightingCB->Update(gfx, clusteredLightingCB);
+			m_pClusteredLightingCB->Update(gfx, &clusteredLightingCB);
 
 			m_pClusteredLightingKernel->Dispatch(gfx, m_pLightManager->GetClusterDimensionX(), m_pLightManager->GetClusterDimensionY(), m_pLightManager->GetClusterDimensionZ());
 
@@ -702,7 +699,7 @@ namespace gfx
 
 			static SSR_CB ssrCB;
 			ssrCB.debugViewStep = (frameCt / 20u) % 25u;
-			m_pSSR_CB->Update(gfx, ssrCB);
+			m_pSSR_CB->Update(gfx, &ssrCB);
 
 			m_pSSRKernel->Dispatch(gfx, screenWidth, screenHeight, 1u);
 
@@ -738,6 +735,8 @@ namespace gfx
 			//m_pParticleManager->ExecuteRenderPass(gfx, camera, renderState);
 		}
 
+		// todo: TAA resolve
+
 		// FXAA pass
 		if (Config::AAType == Config::AAType::FXAA && IsFeatureEnabled(RendererFeature::FXAA))
 		{
@@ -750,7 +749,7 @@ namespace gfx
 			fxaaCB.maxThreshold = 2.f;
 			fxaaCB.edgeSharpness = 0.25f;
 			fxaaCB.padding = 0.f;
-			m_pFXAA_CB->Update(gfx, fxaaCB);
+			m_pFXAA_CB->Update(gfx, &fxaaCB);
 
 			m_pFXAAKernel->Dispatch(gfx, screenWidth, screenHeight, 1u);
 
@@ -768,7 +767,7 @@ namespace gfx
 			static DitherCB ditherCB;
 			ditherCB.shadowDither = 0.15f;
 			ditherCB.midDither = 0.04f;
-			m_pDitherCB->Update(gfx, ditherCB);
+			m_pDitherCB->Update(gfx, &ditherCB);
 
 			m_pDitherKernel->Dispatch(gfx, screenWidth, screenHeight, 1u);
 
@@ -797,15 +796,10 @@ namespace gfx
 			pass.BindSharedResources(gfx, renderState);
 			DepthStencilState::Resolve(gfx, DepthStencilState::Mode::StencilOff)->BindOM(gfx, renderState);
 
-			// Debug view overrides: (do this here so it can be changed dynamically later)
+			// Choose what view to present to the screen
 			switch (m_viewIdx)
 			{
 			case RendererView::Final:
-				//fsPass.SetInputTarget(m_pBloomTarget0);
-				//fsPass.SetInputTarget(m_pDownsampledColor);
-				//fsPass.SetInputTarget(m_pDoFFar3);
-				//fsPass.SetInputTarget(m_pDoFNear0);
-				//fsPass.SetInputTarget(static_cast<SSAOPass&>(GetRenderPass(SSAORenderPass)).GetOcclusionTexture().GetSRV());
 				fsPass.SetInputTarget(m_pFinalBlitInputIsIndex0 ? m_pCameraColor0->GetSRV() : m_pCameraColor1->GetSRV());
 				break;
 			case RendererView::TiledLighting:

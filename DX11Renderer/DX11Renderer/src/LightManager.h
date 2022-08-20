@@ -19,14 +19,13 @@ namespace gfx
 	class ShadowPassContext;
 	class DepthStencilTarget;
 	class DirectionalLight;
+	class ConstantBuffer;
 
 	struct LightInputCB;
 	struct GlobalTransformCB;
 	struct LightData;
 	//struct LightShadowData;
 
-	template<typename Type>
-	class ConstantBuffer;
 	template<typename Type>
 	class StructuredBuffer;
 
@@ -50,7 +49,7 @@ namespace gfx
 		void AddLightModelsToList(RendererList& pRendererList);
 		void CullLightsAndShadows(const GraphicsDevice& gfx, const Camera& cam, const bool enableShadows);
 		DepthStencilTarget& GetShadowAtlas();
-		ConstantBuffer<LightInputCB>& GetLightInputCB();
+		ConstantBuffer& GetLightInputCB();
 		void RenderShadows(ShadowPassContext& context, RenderState& renderState);
 		const ComPtr<ID3D11ShaderResourceView>& GetLightDataSRV() const;
 		const ComPtr<ID3D11ShaderResourceView>& GetShadowDataSRV() const;
@@ -75,7 +74,7 @@ namespace gfx
 		UINT m_clusterDimensionY;
 		UINT m_clusterDimensionZ;
 		std::unique_ptr<StructuredBuffer<LightData>> m_pLightData;
-		std::unique_ptr<ConstantBuffer<LightInputCB>> m_pLightInputCB;
+		std::unique_ptr<ConstantBuffer> m_pLightInputCB;
 		std::unique_ptr<StructuredBuffer<LightShadowData>> m_pLightShadowSB;
 		std::shared_ptr<RendererList> m_pShadowRendererList;
 		std::vector<LightShadowData> m_cachedShadowData;

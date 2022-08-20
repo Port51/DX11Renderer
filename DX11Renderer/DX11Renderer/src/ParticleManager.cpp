@@ -59,10 +59,10 @@ namespace gfx
 			m_pParticleSystemBuffer = std::make_shared<StructuredBuffer<ParticleSystemSettings>>(gfx, D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE, psCount, pssData.data());
 			m_pParticleSystemRuntimeBuffer = std::make_shared<StructuredBuffer<ParticleSystemRuntime>>(gfx, D3D11_USAGE_DEFAULT, D3D11_BIND_UNORDERED_ACCESS, psCount);
 
-			m_pParticleManagerCB = std::make_shared<ConstantBuffer<ParticleManagerCB>>(gfx, D3D11_USAGE_DYNAMIC);
+			m_pParticleManagerCB = std::make_shared<ConstantBuffer>(gfx, D3D11_USAGE_DYNAMIC, sizeof(ParticleManagerCB));
 			ParticleManagerCB initSettings;
 			initSettings.particleSystemCount = psCount;
-			m_pParticleManagerCB->Update(gfx, initSettings);
+			m_pParticleManagerCB->Update(gfx, &initSettings);
 
 			m_pParticleComputePass = std::make_unique<ParticleComputePass>(gfx, *this);
 			m_pParticleRenderPass = std::make_unique<RenderPass>(RenderPassType::ParticleRenderPass);
@@ -165,7 +165,7 @@ namespace gfx
 		return *m_pArgsBuffer;
 	}
 
-	const ConstantBuffer<ParticleManagerCB>& ParticleManager::GetParticleManagerCB() const
+	const ConstantBuffer& ParticleManager::GetParticleManagerCB() const
 	{
 		return *m_pParticleManagerCB;
 	}

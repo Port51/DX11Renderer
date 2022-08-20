@@ -31,7 +31,7 @@ namespace gfx
 
 		if (m_shadowSettings.hasShadow)
 		{
-			m_pShadowPassCB = std::make_unique<ConstantBuffer<ShadowPassCB>>(gfx, D3D11_USAGE_DYNAMIC);
+			m_pShadowPassCB = std::make_unique<ConstantBuffer>(gfx, D3D11_USAGE_DYNAMIC, sizeof(ShadowPassCB));
 		}
 	}
 
@@ -107,7 +107,7 @@ namespace gfx
 		transformationCB.viewProjMatrix = viewMatrix * projMatrix; // required for instancing!
 		transformationCB.viewMatrix = viewMatrix;
 		transformationCB.projMatrix = projMatrix;
-		context.transformationCB.Update(context.gfx, transformationCB);
+		context.transformationCB.Update(context.gfx, &transformationCB);
 
 		static DrawContext drawContext(context.renderer, RenderPassType::ShadowRenderPass);
 		drawContext.viewMatrix = viewMatrix;

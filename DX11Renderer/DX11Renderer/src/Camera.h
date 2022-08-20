@@ -30,7 +30,7 @@ namespace gfx
 		const float GetNearClipPlane() const;
 		const float GetFarClipPlane() const;
 		void DrawImguiControlWindow();
-		void Update();
+		void Update(const u32 frameCt);
 
 	private:
 		void UpdateProjectionMatrix();

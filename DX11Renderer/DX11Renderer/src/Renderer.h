@@ -19,6 +19,7 @@ namespace gfx
 	class Texture;
 	class RandomGenerator;
 	class ParticleManager;
+	class ConstantBuffer;
 
 	struct GlobalTransformCB;
 	struct PerFrameCB;
@@ -31,8 +32,6 @@ namespace gfx
 	struct DepthOfFieldCB;
 	struct BloomCB;
 
-	template<typename Type>
-	class ConstantBuffer;
 	template<typename Type>
 	class StructuredBuffer;
 
@@ -51,7 +50,7 @@ namespace gfx
 
 	public:
 		void AcceptDrawCall(GraphicsDevice& gfx, DrawCommand job, const RenderPassType targetPass);
-		void Execute(GraphicsDevice& gfx, const Camera& cam, const float timeStep, const float timeElapsed, const UINT pixelSelectionX, const UINT pixelSelectionY);
+		void Execute(GraphicsDevice& gfx, const Camera& cam, const u32 frameCt, const float timeStep, const float timeElapsed, const UINT pixelSelectionX, const UINT pixelSelectionY);
 		void DrawImguiControlWindow(const GraphicsDevice& gfx);
 		void Reset();
 		bool IsFeatureEnabled(RendererFeature feature) const;
@@ -97,15 +96,15 @@ namespace gfx
 		std::unique_ptr<ComputeKernel> m_pDitherKernel;
 		std::unique_ptr<ComputeKernel> m_pTonemappingKernel;
 
-		std::unique_ptr<ConstantBuffer<GlobalTransformCB>> m_pTransformationCB;
-		std::unique_ptr<ConstantBuffer<PerFrameCB>> m_pPerFrameCB;
-		std::unique_ptr<ConstantBuffer<PerCameraCB>> m_pPerCameraCB;
-		std::unique_ptr<ConstantBuffer<HiZCreationCB>> m_pHiZCreationCB;
-		std::unique_ptr<ConstantBuffer<ClusteredLightingCB>> m_pClusteredLightingCB;
-		std::unique_ptr<ConstantBuffer<FXAA_CB>> m_pFXAA_CB;
-		std::unique_ptr<ConstantBuffer<SSR_CB>> m_pSSR_CB;
+		std::unique_ptr<ConstantBuffer> m_pTransformationCB;
+		std::unique_ptr<ConstantBuffer> m_pPerFrameCB;
+		std::unique_ptr<ConstantBuffer> m_pPerCameraCB;
+		std::unique_ptr<ConstantBuffer> m_pHiZCreationCB;
+		std::unique_ptr<ConstantBuffer> m_pClusteredLightingCB;
+		std::unique_ptr<ConstantBuffer> m_pFXAA_CB;
+		std::unique_ptr<ConstantBuffer> m_pSSR_CB;
 		std::unique_ptr<StructuredBuffer<int>> m_pSSR_DebugData;
-		std::unique_ptr<ConstantBuffer<DitherCB>> m_pDitherCB;
+		std::unique_ptr<ConstantBuffer> m_pDitherCB;
 
 		std::shared_ptr<Texture> m_pDitherTexture;
 		std::shared_ptr<Texture> m_pRGBNoiseTexture;

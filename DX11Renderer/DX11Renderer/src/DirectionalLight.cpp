@@ -156,7 +156,7 @@ namespace gfx
 			transformationCB.viewProjMatrix = transforms.viewMatrix * transforms.projMatrix; // required for instancing!
 			transformationCB.viewMatrix = transforms.viewMatrix;
 			transformationCB.projMatrix = transforms.projMatrix;
-			context.transformationCB.Update(context.gfx, transformationCB);
+			context.transformationCB.Update(context.gfx, &transformationCB);
 
 			static DrawContext drawContext(context.renderer, RenderPassType::ShadowRenderPass);
 			drawContext.viewMatrix = transforms.viewMatrix;

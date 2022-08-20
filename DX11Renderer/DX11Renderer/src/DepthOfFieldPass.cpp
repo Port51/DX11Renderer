@@ -69,8 +69,8 @@ namespace gfx
 
 		m_depthOfFieldCB = std::make_unique<DepthOfFieldCB>();
 
-		m_pDepthOfFieldCB = std::make_unique<ConstantBuffer<DepthOfFieldCB>>(gfx, D3D11_USAGE_DYNAMIC);
-		m_pBokehDiskWeights->Update(gfx, bokehWeights, bokehWeights.size());
+		m_pDepthOfFieldCB = std::make_unique<ConstantBuffer>(gfx, D3D11_USAGE_DYNAMIC, sizeof(DepthOfFieldCB));
+		m_pBokehDiskWeights->Update(gfx, bokehWeights.data(), bokehWeights.size());
 
 		m_pDoFFar0 = std::make_shared<RenderTexture>(gfx, DXGI_FORMAT_R16G16B16A16_FLOAT);
 		m_pDoFFar0->Init(gfx.GetAdapter(), dofTextureWidth, dofTextureHeight);
@@ -172,7 +172,7 @@ namespace gfx
 			const RenderPass& pass = GetSubPass(DepthOfFieldSubpass::PrefilterSubpass);
 			pass.BindSharedResources(gfx, renderState);
 
-			m_pDepthOfFieldCB->Update(gfx, *m_depthOfFieldCB);
+			m_pDepthOfFieldCB->Update(gfx, m_depthOfFieldCB.get());
 			context->CSSetConstantBuffers(RenderSlots::CS_FreeCB + 0u, 1u, m_pDepthOfFieldCB->GetD3DBuffer().GetAddressOf());
 
 			m_pDoFPrefilterKernel->Dispatch(gfx, dofTextureWidth, dofTextureHeight, 1u);
@@ -214,7 +214,7 @@ namespace gfx
 				m_depthOfFieldCB->verticalPassAddFactor = 0.f;
 				m_depthOfFieldCB->combineRealFactor = 0.411259f;
 				m_depthOfFieldCB->combineImaginaryFactor = -0.548794f;
-				m_pDepthOfFieldCB->Update(gfx, *m_depthOfFieldCB);
+				m_pDepthOfFieldCB->Update(gfx, m_depthOfFieldCB.get());
 				context->CSSetConstantBuffers(RenderSlots::CS_FreeCB + 0u, 1u, m_pDepthOfFieldCB->GetD3DBuffer().GetAddressOf());
 				REGISTER_GPU_CALL();
 
@@ -241,7 +241,7 @@ namespace gfx
 				m_depthOfFieldCB->verticalPassAddFactor = 1.f;
 				m_depthOfFieldCB->combineRealFactor = 0.513282f;
 				m_depthOfFieldCB->combineImaginaryFactor = 4.561110f;
-				m_pDepthOfFieldCB->Update(gfx, *m_depthOfFieldCB);
+				m_pDepthOfFieldCB->Update(gfx, m_depthOfFieldCB.get());
 				context->CSSetConstantBuffers(RenderSlots::CS_FreeCB + 0u, 1u, m_pDepthOfFieldCB->GetD3DBuffer().GetAddressOf());
 				REGISTER_GPU_CALL();
 
@@ -280,7 +280,7 @@ namespace gfx
 			m_depthOfFieldCB->verticalPassAddFactor = 0.f;
 			m_depthOfFieldCB->combineRealFactor = 0.767583f;
 			m_depthOfFieldCB->combineImaginaryFactor = 1.862321f;
-			m_pDepthOfFieldCB->Update(gfx, *m_depthOfFieldCB);
+			m_pDepthOfFieldCB->Update(gfx, m_depthOfFieldCB.get());
 			context->CSSetConstantBuffers(RenderSlots::CS_FreeCB + 0u, 1u, m_pDepthOfFieldCB->GetD3DBuffer().GetAddressOf());
 			REGISTER_GPU_CALL();
 

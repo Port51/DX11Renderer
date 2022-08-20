@@ -147,7 +147,7 @@ namespace gfx
 		ImGui::End();
 	}
 
-	void Camera::Update()
+	void Camera::Update(const u32 frameCt)
 	{
 		m_rotationWS = dx::XMFLOAT3(m_orbitPitch, -m_orbitYaw, 0.f);
 
