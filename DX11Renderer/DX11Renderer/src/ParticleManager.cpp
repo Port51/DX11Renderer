@@ -53,11 +53,11 @@ namespace gfx
 			m_pArgsBuffer = std::make_shared<ArgsBuffer>(gfx, GetParticleSystemCount(), false);
 			m_pArgsBufferPtr = m_pArgsBuffer->GetD3DBuffer().Get();
 
-			m_pParticleBuffer = std::make_shared<StructuredBuffer<Particle>>(gfx, D3D11_USAGE_DEFAULT, D3D11_BIND_UNORDERED_ACCESS, m_maxParticles);
-			m_pParticleInstanceBuffer = std::make_shared<StructuredBuffer<ParticleInstance>>(gfx, D3D11_USAGE_DEFAULT, D3D11_BIND_UNORDERED_ACCESS, m_maxParticles);
-			m_pParticleSortBuffer = std::make_shared<StructuredBuffer<ParticleSortData>>(gfx, D3D11_USAGE_DEFAULT, D3D11_BIND_UNORDERED_ACCESS, m_maxParticles);
-			m_pParticleSystemBuffer = std::make_shared<StructuredBuffer<ParticleSystemSettings>>(gfx, D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE, psCount, pssData.data());
-			m_pParticleSystemRuntimeBuffer = std::make_shared<StructuredBuffer<ParticleSystemRuntime>>(gfx, D3D11_USAGE_DEFAULT, D3D11_BIND_UNORDERED_ACCESS, psCount);
+			m_pParticleBuffer = std::make_shared<StructuredBuffer>(gfx, D3D11_USAGE_DEFAULT, D3D11_BIND_UNORDERED_ACCESS, m_maxParticles, sizeof(Particle));
+			m_pParticleInstanceBuffer = std::make_shared<StructuredBuffer>(gfx, D3D11_USAGE_DEFAULT, D3D11_BIND_UNORDERED_ACCESS, m_maxParticles, sizeof(ParticleInstance));
+			m_pParticleSortBuffer = std::make_shared<StructuredBuffer>(gfx, D3D11_USAGE_DEFAULT, D3D11_BIND_UNORDERED_ACCESS, m_maxParticles, sizeof(ParticleSortData));
+			m_pParticleSystemBuffer = std::make_shared<StructuredBuffer>(gfx, D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE, psCount, sizeof(ParticleSystemSettings), pssData.data());
+			m_pParticleSystemRuntimeBuffer = std::make_shared<StructuredBuffer>(gfx, D3D11_USAGE_DEFAULT, D3D11_BIND_UNORDERED_ACCESS, psCount, sizeof(ParticleSystemRuntime));
 
 			m_pParticleManagerCB = std::make_shared<ConstantBuffer>(gfx, D3D11_USAGE_DYNAMIC, sizeof(ParticleManagerCB));
 			ParticleManagerCB initSettings;
@@ -135,27 +135,27 @@ namespace gfx
 	{
 	}
 
-	const StructuredBuffer<Particle>& ParticleManager::GetParticleBuffer() const
+	const StructuredBuffer& ParticleManager::GetParticleBuffer() const
 	{
 		return *m_pParticleBuffer;
 	}
 
-	const StructuredBuffer<ParticleInstance>& ParticleManager::GetParticleInstanceBuffer() const
+	const StructuredBuffer& ParticleManager::GetParticleInstanceBuffer() const
 	{
 		return *m_pParticleInstanceBuffer;
 	}
 
-	const StructuredBuffer<ParticleSortData>& ParticleManager::GetParticleSortBuffer() const
+	const StructuredBuffer& ParticleManager::GetParticleSortBuffer() const
 	{
 		return *m_pParticleSortBuffer;
 	}
 
-	const StructuredBuffer<ParticleSystemSettings>& ParticleManager::GetParticleSystemBuffer() const
+	const StructuredBuffer& ParticleManager::GetParticleSystemBuffer() const
 	{
 		return *m_pParticleSystemBuffer;
 	}
 
-	const StructuredBuffer<ParticleSystemRuntime>& ParticleManager::GetParticleSystemRuntimeBuffer() const
+	const StructuredBuffer& ParticleManager::GetParticleSystemRuntimeBuffer() const
 	{
 		return *m_pParticleSystemRuntimeBuffer;
 	}

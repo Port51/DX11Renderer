@@ -5,150 +5,23 @@
 
 namespace gfx
 {
-
-	template<typename T>
 	class StructuredBuffer : public Buffer
 	{
 	public:
-		StructuredBuffer(const GraphicsDevice& gfx, const D3D11_USAGE usage, const UINT bindFlags, const UINT numElements, const void* initialData, const bool useCounter = false)
-			: Buffer(usage, bindFlags, sizeof(T)),
-			m_numElements(numElements),
-			m_useCounter(useCounter)
-		{
-			D3D11_BUFFER_DESC bd;
-			ZERO_MEM(bd);
-			bd.Usage = usage;
-			bd.ByteWidth = sizeof(T) * numElements;
-			bd.BindFlags = bindFlags;
-			bd.CPUAccessFlags = (usage == D3D11_USAGE_DYNAMIC) ? D3D11_CPU_ACCESS_WRITE : 0u;
-			bd.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
-			bd.StructureByteStride = sizeof(T);
+		StructuredBuffer(const GraphicsDevice& gfx, const D3D11_USAGE usage, const UINT bindFlags, const UINT numElements, const UINT elementSizeBytes, const void* initialData, const bool useCounter = false);
+		StructuredBuffer(const GraphicsDevice& gfx, const D3D11_USAGE usage, const UINT bindFlags, const UINT numElements, const UINT elementSizeBytes, const bool useCounter = false);
 
-			if (initialData != nullptr)
-			{
-				D3D11_SUBRESOURCE_DATA srd;
-				ZERO_MEM(srd);
-				srd.pSysMem = initialData;
-				srd.SysMemPitch = 0u;
-				srd.SysMemSlicePitch = 0u;
-
-				THROW_IF_FAILED(gfx.GetAdapter()->CreateBuffer(&bd, &srd, &m_pBuffer));
-			}
-			else
-			{
-				THROW_IF_FAILED(gfx.GetAdapter()->CreateBuffer(&bd, nullptr, &m_pBuffer));
-			}
-
-			if (bindFlags & D3D11_BIND_SHADER_RESOURCE)
-			{
-				THROW_IF_FAILED(gfx.GetAdapter()->CreateShaderResourceView(m_pBuffer.Get(), nullptr, &m_pSRV));
-			}
-
-			if (bindFlags & D3D11_BIND_UNORDERED_ACCESS)
-			{
-				if (!useCounter)
-				{
-					THROW_IF_FAILED(gfx.GetAdapter()->CreateUnorderedAccessView(m_pBuffer.Get(), nullptr, &m_pUAV));
-				}
-				else
-				{
-					D3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc;
-					ZERO_MEM(uavDesc);
-					uavDesc.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
-					uavDesc.Buffer.FirstElement = 0;
-					uavDesc.Buffer.NumElements = numElements;
-					uavDesc.Buffer.Flags = D3D11_BUFFER_UAV_FLAG_COUNTER;
-					uavDesc.Format = DXGI_FORMAT_UNKNOWN;
-					THROW_IF_FAILED(gfx.GetAdapter()->CreateUnorderedAccessView(m_pBuffer.Get(), &uavDesc, &m_pUAV));
-				}
-			}
-		}
-
-		StructuredBuffer(const GraphicsDevice& gfx, const D3D11_USAGE usage, const UINT bindFlags, const UINT numElements, const bool useCounter = false)
-			: StructuredBuffer(gfx, usage, bindFlags, numElements, nullptr, useCounter)
-		{}
-
-		void BindCS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override
-		{
-			if (renderState.IsNewBinding(GetGuid(), RenderBindingType::CS_SRV, slot))
-			{
-				gfx.GetContext()->CSSetShaderResources(slot, 1u, m_pSRV.GetAddressOf());
-				REGISTER_GPU_CALL();
-			}
-			else REGISTER_GPU_CALL_SAVED();
-		}
-
-		void BindVS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override
-		{
-			if (renderState.IsNewBinding(GetGuid(), RenderBindingType::VS_SRV, slot))
-			{
-				gfx.GetContext()->VSSetShaderResources(slot, 1u, m_pSRV.GetAddressOf());
-				REGISTER_GPU_CALL();
-			}
-			else REGISTER_GPU_CALL_SAVED();
-		}
-
-		void UnbindVS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override
-		{
-			renderState.ClearBinding(RenderBindingType::VS_SRV, slot);
-			gfx.GetContext()->VSSetShaderResources(slot, 1u, RenderConstants::NullSRVArray.data());
-			REGISTER_GPU_CALL();
-		}
-
-		void BindPS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override
-		{
-			if (renderState.IsNewBinding(GetGuid(), RenderBindingType::PS_SRV, slot))
-			{
-				gfx.GetContext()->PSSetShaderResources(slot, 1u, m_pSRV.GetAddressOf());
-				REGISTER_GPU_CALL();
-			}
-			else REGISTER_GPU_CALL_SAVED();
-		}
-
-		void UnbindPS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override
-		{
-			renderState.ClearBinding(RenderBindingType::PS_SRV, slot);
-			gfx.GetContext()->PSSetShaderResources(slot, 1u, RenderConstants::NullSRVArray.data());
-			REGISTER_GPU_CALL();
-		}
-
-		void Update(const GraphicsDevice& gfx, const void* data, const UINT dataBytes)
-		{
-			if (m_usage == D3D11_USAGE_DYNAMIC) // Can be continuously modified by CPU
-			{
-				D3D11_MAPPED_SUBRESOURCE subresource;
-				ZERO_MEM(subresource);
-				// Map() locks resource and gives ptr to resource
-				THROW_IF_FAILED(gfx.GetContext()->Map(
-					m_pBuffer.Get(), 0u,
-					D3D11_MAP_WRITE_DISCARD, 0u,
-					&subresource // msr gets assigned to resource ptr
-				));
-				REGISTER_GPU_CALL();
-				// Handle write
-				memcpy(subresource.pData, data, GetDataBytes());
-				// Unlock via Unmap()
-				gfx.GetContext()->Unmap(m_pBuffer.Get(), 0u);
-				REGISTER_GPU_CALL();
-			}
-			else if (m_usage == D3D11_USAGE_DEFAULT
-				|| m_usage == D3D11_USAGE_STAGING)
-			{
-				// Doesn't work for dynamic or immutable
-				gfx.GetContext()->UpdateSubresource(m_pBuffer.Get(), 0, nullptr, &data, 0, 0);
-				REGISTER_GPU_CALL();
-			}
-			else
-			{
-				THROW("Cannot update immutable structured buffer!");
-			}
-		}
+	public:
+		void BindCS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override;
+		void BindVS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override;
+		void UnbindVS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override;
+		void BindPS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override;
+		void UnbindPS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot) override;
+		void Update(const GraphicsDevice& gfx, const void* data);
+		void Update(const GraphicsDevice& gfx, const void* data, const size_t numElements);
 
 	protected:
-		const UINT GetDataBytes() const
-		{
-			return m_numElements * m_byteWidth;
-		}
+		const UINT GetDataBytes() const;
 
 	protected:
 		bool m_useCounter;

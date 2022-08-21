@@ -38,7 +38,7 @@ namespace gfx
 		m_pDiagonalHexFilterKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, computeShaderPath, "DiagonalHexFilter"));
 		m_pRhomboidHexFilterKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, computeShaderPath, "RhomboidHexFilter"));
 
-		m_pBokehDiskWeights = std::make_unique<StructuredBuffer<f32>>(gfx, D3D11_USAGE_DYNAMIC, D3D11_BIND_SHADER_RESOURCE, BokehDiskComponentElements * 6u);
+		m_pBokehDiskWeights = std::make_unique<StructuredBuffer>(gfx, D3D11_USAGE_DYNAMIC, D3D11_BIND_SHADER_RESOURCE, BokehDiskComponentElements * 6u, sizeof(f32));
 
 		// First 2 bokeh weights are for near CoC, next 4 are for the 2 components of far CoC
 		// Using functions and settings from http://yehar.com/blog/?p=1495
@@ -70,7 +70,7 @@ namespace gfx
 		m_depthOfFieldCB = std::make_unique<DepthOfFieldCB>();
 
 		m_pDepthOfFieldCB = std::make_unique<ConstantBuffer>(gfx, D3D11_USAGE_DYNAMIC, sizeof(DepthOfFieldCB));
-		m_pBokehDiskWeights->Update(gfx, bokehWeights.data(), bokehWeights.size());
+		m_pBokehDiskWeights->Update(gfx, bokehWeights.data());
 
 		m_pDoFFar0 = std::make_shared<RenderTexture>(gfx, DXGI_FORMAT_R16G16B16A16_FLOAT);
 		m_pDoFFar0->Init(gfx.GetAdapter(), dofTextureWidth, dofTextureHeight);

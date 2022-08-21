@@ -49,15 +49,15 @@ namespace gfx
 				0.f
 			)));
 		}
-		m_pSampleOffsetSB = std::make_unique<StructuredBuffer<dx::XMVECTOR>>(gfx, D3D11_USAGE::D3D11_USAGE_IMMUTABLE, D3D11_BIND_SHADER_RESOURCE, SampleOffsetCount, sampleOffsets.data(), false);
+		m_pSampleOffsetSB = std::make_unique<StructuredBuffer>(gfx, D3D11_USAGE::D3D11_USAGE_IMMUTABLE, D3D11_BIND_SHADER_RESOURCE, SampleOffsetCount, sizeof(dx::XMVECTOR), sampleOffsets.data(), false);
 
-		m_pGaussianBlurWeights = std::make_unique<StructuredBuffer<f32>>(gfx, D3D11_USAGE_DYNAMIC, D3D11_BIND_SHADER_RESOURCE, BlurWidth * 2u + 1u);
+		m_pGaussianBlurWeights = std::make_unique<StructuredBuffer>(gfx, D3D11_USAGE_DYNAMIC, D3D11_BIND_SHADER_RESOURCE, BlurWidth * 2u + 1u, sizeof(f32));
 
 		// todo: make this a setting that can be changed
 		std::vector<f32> blurWeights;
 		blurWeights.resize(BlurWidth * 2u + 1u);
 		Gaussian::GetGaussianWeights1D(blurWeights, 5.f);
-		m_pGaussianBlurWeights->Update(gfx, blurWeights.data(), blurWeights.size());
+		m_pGaussianBlurWeights->Update(gfx, blurWeights.data());
 
 		m_pSettings = std::make_unique<SSAO_CB>();
 		m_pSettingsCB = std::make_unique<ConstantBuffer>(gfx, D3D11_USAGE_DYNAMIC, sizeof(SSAO_CB));

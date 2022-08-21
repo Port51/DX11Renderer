@@ -14,11 +14,9 @@ namespace gfx
 	class Sampler;
 	class RandomGenerator;
 	class ConstantBuffer;
+	class StructuredBuffer;
 
 	struct SSAO_CB;
-
-	template<typename Type>
-	class StructuredBuffer;
 
 	class SSAOPass : public RenderPass
 	{
@@ -40,12 +38,12 @@ namespace gfx
 	private:
 		std::unique_ptr<ConstantBuffer> m_pSettingsCB;
 		std::unique_ptr<SSAO_CB> m_pSettings;
-		std::unique_ptr<StructuredBuffer<float>> m_pGaussianBlurWeights;
+		std::unique_ptr<StructuredBuffer> m_pGaussianBlurWeights;
 
 		std::unique_ptr<ComputeKernel> m_pOcclusionKernel;
 		std::unique_ptr<ComputeKernel> m_pHorizontalBlurKernel;
 		std::unique_ptr<ComputeKernel> m_pVerticalBlurKernel;
-		std::unique_ptr<StructuredBuffer<dx::XMVECTOR>> m_pSampleOffsetSB;
+		std::unique_ptr<StructuredBuffer> m_pSampleOffsetSB;
 
 		// Use x2 occlusion textures because of separable blur
 		std::shared_ptr<RenderTexture> m_pOcclusionTexture0;

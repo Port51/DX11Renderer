@@ -14,8 +14,6 @@ namespace gfx
 	class RenderState;
 	class ArgsBuffer;
 	class ConstantBuffer;
-
-	template<typename Type>
 	class StructuredBuffer;
 
 	class ParticleManager
@@ -26,11 +24,11 @@ namespace gfx
 	public:
 		void ExecuteComputePass(const GraphicsDevice& gfx, const Camera& camera, RenderState& renderState) const;
 		void ExecuteRenderPass(const GraphicsDevice& gfx, const Camera& camera, RenderState& renderState) const;
-		const StructuredBuffer<Particle>& GetParticleBuffer() const;
-		const StructuredBuffer<ParticleInstance>& GetParticleInstanceBuffer() const;
-		const StructuredBuffer<ParticleSortData>& GetParticleSortBuffer() const;
-		const StructuredBuffer<ParticleSystemSettings>& GetParticleSystemBuffer() const;
-		const StructuredBuffer<ParticleSystemRuntime>& GetParticleSystemRuntimeBuffer() const;
+		const StructuredBuffer& GetParticleBuffer() const;
+		const StructuredBuffer& GetParticleInstanceBuffer() const;
+		const StructuredBuffer& GetParticleSortBuffer() const;
+		const StructuredBuffer& GetParticleSystemBuffer() const;
+		const StructuredBuffer& GetParticleSystemRuntimeBuffer() const;
 		const ArgsBuffer& GetArgsBuffer() const;
 		const ConstantBuffer& GetParticleManagerCB() const;
 		const size_t GetMaxParticles() const;
@@ -46,11 +44,11 @@ namespace gfx
 
 		std::shared_ptr<ArgsBuffer> m_pArgsBuffer;
 		ID3D11Buffer* m_pArgsBufferPtr;
-		std::shared_ptr<StructuredBuffer<Particle>> m_pParticleBuffer;
-		std::shared_ptr<StructuredBuffer<ParticleInstance>> m_pParticleInstanceBuffer;
-		std::shared_ptr<StructuredBuffer<ParticleSortData>> m_pParticleSortBuffer;
-		std::shared_ptr<StructuredBuffer<ParticleSystemSettings>> m_pParticleSystemBuffer;
-		std::shared_ptr<StructuredBuffer<ParticleSystemRuntime>> m_pParticleSystemRuntimeBuffer;
+		std::shared_ptr<StructuredBuffer> m_pParticleBuffer;
+		std::shared_ptr<StructuredBuffer> m_pParticleInstanceBuffer;
+		std::shared_ptr<StructuredBuffer> m_pParticleSortBuffer;
+		std::shared_ptr<StructuredBuffer> m_pParticleSystemBuffer;
+		std::shared_ptr<StructuredBuffer> m_pParticleSystemRuntimeBuffer;
 		std::shared_ptr<ConstantBuffer> m_pParticleManagerCB;
 		std::vector<std::unique_ptr<ParticleSystem>> m_pParticleSystems;
 		std::unique_ptr<ParticleSystem> m_pLayeredParticleSystem;

@@ -13,11 +13,9 @@ namespace gfx
 	class RenderTexture;
 	class Sampler;
 	class ConstantBuffer;
+	class StructuredBuffer;
 
 	struct DepthOfFieldCB;
-
-	template<typename Type>
-	class StructuredBuffer;
 
 	class BloomPass : public RenderPass
 	{
@@ -36,7 +34,7 @@ namespace gfx
 
 	private:
 		std::unique_ptr<ConstantBuffer> m_pBloomCB;
-		std::unique_ptr<StructuredBuffer<float>> m_pBloomGaussianWeights;
+		std::unique_ptr<StructuredBuffer> m_pBloomGaussianWeights;
 
 		std::unique_ptr<ComputeKernel> m_pBloomPrefilterKernel;
 		std::unique_ptr<ComputeKernel> m_pBloomHorizontalBlurKernel;

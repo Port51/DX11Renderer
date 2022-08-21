@@ -132,7 +132,7 @@ namespace gfx
 
 		m_pFXAA_CB = std::make_unique<ConstantBuffer>(gfx, D3D11_USAGE_DYNAMIC, sizeof(FXAA_CB));
 		m_pSSR_CB = std::make_unique<ConstantBuffer>(gfx, D3D11_USAGE_DYNAMIC, sizeof(SSR_CB));
-		m_pSSR_DebugData = std::make_unique<StructuredBuffer<int>>(gfx, D3D11_USAGE_DEFAULT, D3D11_BIND_UNORDERED_ACCESS, 10u);
+		m_pSSR_DebugData = std::make_unique<StructuredBuffer>(gfx, D3D11_USAGE_DEFAULT, D3D11_BIND_UNORDERED_ACCESS, 10u, sizeof(int));
 		m_pDitherCB = std::make_unique<ConstantBuffer>(gfx, D3D11_USAGE_DYNAMIC, sizeof(DitherCB));
 
 		//

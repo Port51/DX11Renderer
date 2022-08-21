@@ -12,11 +12,9 @@ namespace gfx
 	class RenderTexture;
 	class Sampler;
 	class ConstantBuffer;
+	class StructuredBuffer;
 
 	struct DepthOfFieldCB;
-
-	template<typename Type>
-	class StructuredBuffer;
 
 	class DepthOfFieldPass : public RenderPass
 	{
@@ -64,7 +62,7 @@ namespace gfx
 		//std::unique_ptr<ComputeKernel> m_pDoFVerticalFilterAndCombineKernel;
 		//std::unique_ptr<ComputeKernel> m_pDoFCompositeKernel;
 
-		std::unique_ptr<StructuredBuffer<float>> m_pBokehDiskWeights;
+		std::unique_ptr<StructuredBuffer> m_pBokehDiskWeights;
 		std::unique_ptr<ConstantBuffer> m_pDepthOfFieldCB;
 		std::unique_ptr<DepthOfFieldCB> m_depthOfFieldCB;
 

@@ -11,8 +11,6 @@ namespace gfx
 	class RenderState;
 	class ParticleManager;
 	class ConstantBuffer;
-
-	template<typename Type>
 	class StructuredBuffer;
 
 	class ParticleComputePass : public RenderPass

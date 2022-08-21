@@ -20,14 +20,12 @@ namespace gfx
 	class DepthStencilTarget;
 	class DirectionalLight;
 	class ConstantBuffer;
+	class StructuredBuffer;
 
 	struct LightInputCB;
 	struct GlobalTransformCB;
 	struct LightData;
 	//struct LightShadowData;
-
-	template<typename Type>
-	class StructuredBuffer;
 
 	class LightManager
 	{
@@ -60,7 +58,7 @@ namespace gfx
 		const UINT GetClusterDimensionX() const;
 		const UINT GetClusterDimensionY() const;
 		const UINT GetClusterDimensionZ() const;
-		const StructuredBuffer<int>& GetClusteredIndices() const;
+		const StructuredBuffer& GetClusteredIndices() const;
 
 	private:
 		std::vector<bool> m_lightVisibility;
@@ -73,13 +71,13 @@ namespace gfx
 		UINT m_clusterDimensionX;
 		UINT m_clusterDimensionY;
 		UINT m_clusterDimensionZ;
-		std::unique_ptr<StructuredBuffer<LightData>> m_pLightData;
+		std::unique_ptr<StructuredBuffer> m_pLightData;
 		std::unique_ptr<ConstantBuffer> m_pLightInputCB;
-		std::unique_ptr<StructuredBuffer<LightShadowData>> m_pLightShadowSB;
+		std::unique_ptr<StructuredBuffer> m_pLightShadowSB;
 		std::shared_ptr<RendererList> m_pShadowRendererList;
 		std::vector<LightShadowData> m_cachedShadowData;
 		std::unique_ptr<DepthStencilTarget> m_pShadowAtlas;
-		std::unique_ptr<StructuredBuffer<int>> m_pClusteredIndices;
+		std::unique_ptr<StructuredBuffer> m_pClusteredIndices;
 
 	};
 }

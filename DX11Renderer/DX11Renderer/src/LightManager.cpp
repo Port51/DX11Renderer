@@ -27,7 +27,7 @@ namespace gfx
 	{
 		const auto pLightModelAsset = ModelImporter::LoadGLTF(gfx, "Assets\\Models\\DefaultSphere.asset");
 
-		m_pLightData = std::make_unique<StructuredBuffer<LightData>>(gfx, D3D11_USAGE_DYNAMIC, D3D11_BIND_SHADER_RESOURCE, MaxLightCount);
+		m_pLightData = std::make_unique<StructuredBuffer>(gfx, D3D11_USAGE_DYNAMIC, D3D11_BIND_SHADER_RESOURCE, MaxLightCount, sizeof(LightData));
 		m_cachedLightData.resize(MaxLightCount);
 
 		//UINT lightIdx = 0u;
@@ -43,7 +43,7 @@ namespace gfx
 		m_clusterDimensionZ = ClusteredLightingZLevels;
 
 		m_pLightInputCB = std::make_unique<ConstantBuffer>(gfx, D3D11_USAGE_DYNAMIC, sizeof(LightInputCB));
-		m_pClusteredIndices = std::make_unique<StructuredBuffer<int>>(gfx, D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS, GetClusterCount() * MaxLightsPerCluster);
+		m_pClusteredIndices = std::make_unique<StructuredBuffer>(gfx, D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS, GetClusterCount() * MaxLightsPerCluster, sizeof(int));
 
 		// Create grid of lights
 		/*const bool renderLightGrid = false;
@@ -65,7 +65,7 @@ namespace gfx
 				shadowLightCt++;
 			}
 		}*/
-		m_pLightShadowSB = std::make_unique<StructuredBuffer<LightShadowData>>(gfx, D3D11_USAGE_DYNAMIC, D3D11_BIND_SHADER_RESOURCE, Config::ShadowAtlasTileCount);
+		m_pLightShadowSB = std::make_unique<StructuredBuffer>(gfx, D3D11_USAGE_DYNAMIC, D3D11_BIND_SHADER_RESOURCE, Config::ShadowAtlasTileCount, sizeof(LightShadowData));
 		m_cachedShadowData.resize(Config::ShadowAtlasTileCount);
 
 		m_pShadowRendererList = std::make_shared<RendererList>(pRendererList);
@@ -239,7 +239,7 @@ namespace gfx
 			}
 		}
 
-		m_pLightShadowSB->Update(context.gfx, m_cachedShadowData.data(), (UINT)m_cachedShadowData.size());
+		m_pLightShadowSB->Update(context.gfx, m_cachedShadowData.data());
 	}
 
 	const ComPtr<ID3D11ShaderResourceView>& LightManager::GetLightDataSRV() const
@@ -290,7 +290,7 @@ namespace gfx
 		return m_clusterDimensionZ;
 	}
 
-	const StructuredBuffer<int>& LightManager::GetClusteredIndices() const
+	const StructuredBuffer& LightManager::GetClusteredIndices() const
 	{
 		return *m_pClusteredIndices.get();
 	}

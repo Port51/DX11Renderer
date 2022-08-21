@@ -20,6 +20,7 @@ namespace gfx
 	class RandomGenerator;
 	class ParticleManager;
 	class ConstantBuffer;
+	class StructuredBuffer;
 
 	struct GlobalTransformCB;
 	struct PerFrameCB;
@@ -31,9 +32,6 @@ namespace gfx
 	struct DitherCB;
 	struct DepthOfFieldCB;
 	struct BloomCB;
-
-	template<typename Type>
-	class StructuredBuffer;
 
 	enum RenderPassType : int;
 
@@ -103,7 +101,7 @@ namespace gfx
 		std::unique_ptr<ConstantBuffer> m_pClusteredLightingCB;
 		std::unique_ptr<ConstantBuffer> m_pFXAA_CB;
 		std::unique_ptr<ConstantBuffer> m_pSSR_CB;
-		std::unique_ptr<StructuredBuffer<int>> m_pSSR_DebugData;
+		std::unique_ptr<StructuredBuffer> m_pSSR_DebugData;
 		std::unique_ptr<ConstantBuffer> m_pDitherCB;
 
 		std::shared_ptr<Texture> m_pDitherTexture;
