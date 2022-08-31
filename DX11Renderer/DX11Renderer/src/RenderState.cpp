@@ -18,6 +18,12 @@ namespace gfx
 		return false;
 	}
 
+	const bool RenderState::HasBinding(const RenderBindingType::RenderBindingTypeEnum bindingType, const slotUINT slot) const
+	{
+		const u16 key = GetKey(bindingType, slot);
+		return (m_activeBindings.find(key) != m_activeBindings.end() && m_activeBindings.at(key) != NullGuid64);
+	}
+
 	void RenderState::ClearBinding(const RenderBindingType::RenderBindingTypeEnum bindingType, const slotUINT slot)
 	{
 		const u16 key = GetKey(bindingType, slot);

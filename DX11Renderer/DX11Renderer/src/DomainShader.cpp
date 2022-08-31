@@ -43,7 +43,7 @@ namespace gfx
 
 	void DomainShader::BindDS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot)
 	{
-		if (renderState.IsNewBinding(GetGuid(), RenderBindingType::PS_Shader, 0u))
+		if (renderState.IsNewBinding(GetGuid(), RenderBindingType::DS_Shader, 0u))
 		{
 			gfx.GetContext()->DSSetShader(m_pDomainShader.Get(), nullptr, 0u);
 			REGISTER_GPU_CALL();
@@ -53,7 +53,7 @@ namespace gfx
 
 	void DomainShader::UnbindDS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot)
 	{
-		renderState.ClearBinding(RenderBindingType::PS_Shader, 0u);
+		renderState.ClearBinding(RenderBindingType::DS_Shader, 0u);
 		gfx.GetContext()->DSSetShader(nullptr, nullptr, 0u);
 		REGISTER_GPU_CALL();
 	}

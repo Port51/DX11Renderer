@@ -1,6 +1,6 @@
 #pragma once
 #include "MeshRenderer.h"
-#include <wrl.h>
+#include "CommonHeader.h"
 #include <vector>
 #include <string>
 

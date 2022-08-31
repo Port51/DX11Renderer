@@ -426,17 +426,33 @@ namespace gfx
 			transparentDrawContext.projMatrix = camera.GetProjectionMatrix();
 
 			gfx.GetRenderStats().StartTaskTimer("Filter + cull threads");
-			filterThreads.push_back(std::thread(&RendererList::Filter, m_pVisibleRendererList.get(), std::ref(gfx), std::ref(camera.GetFrustumWS()), RendererList::RendererSortingType::StateThenBackToFront, RenderPassType::OpaqueRenderPass, camera.GetPositionWS(), camera.GetForwardWS(), camera.GetFarClipPlane()));
-			filterThreads.push_back(std::thread(&RendererList::Filter, m_pVisibleTransparentRendererList.get(), std::ref(gfx), std::ref(camera.GetFrustumWS()), RendererList::RendererSortingType::BackToFrontThenState, RenderPassType::TransparentRenderPass, camera.GetPositionWS(), camera.GetForwardWS(), camera.GetFarClipPlane()));
-			for (auto& t : filterThreads)
+			if (IsFeatureEnabled(RendererFeature::Multithreading))
 			{
-				if (t.joinable()) t.join();
+				filterThreads.push_back(std::thread(&RendererList::Filter, m_pVisibleRendererList.get(), std::ref(gfx), std::ref(camera.GetFrustumWS()), RendererList::RendererSortingType::StateThenBackToFront, RenderPassType::OpaqueRenderPass, camera.GetPositionWS(), camera.GetForwardWS(), camera.GetFarClipPlane()));
+				filterThreads.push_back(std::thread(&RendererList::Filter, m_pVisibleTransparentRendererList.get(), std::ref(gfx), std::ref(camera.GetFrustumWS()), RendererList::RendererSortingType::BackToFrontThenState, RenderPassType::TransparentRenderPass, camera.GetPositionWS(), camera.GetForwardWS(), camera.GetFarClipPlane()));
+				for (auto& t : filterThreads)
+				{
+					if (t.joinable()) t.join();
+				}
+			}
+			else
+			{
+				m_pVisibleRendererList->Filter(gfx, camera.GetFrustumWS(), RendererList::RendererSortingType::StateThenBackToFront, RenderPassType::OpaqueRenderPass, camera.GetPositionWS(), camera.GetForwardWS(), camera.GetFarClipPlane());
+				m_pVisibleTransparentRendererList->Filter(gfx, camera.GetFrustumWS(), RendererList::RendererSortingType::BackToFrontThenState, RenderPassType::TransparentRenderPass, camera.GetPositionWS(), camera.GetForwardWS(), camera.GetFarClipPlane());
 			}
 			gfx.GetRenderStats().EndTaskTimer("Filter + cull threads");
 
 			gfx.GetRenderStats().StartTaskTimer("Draw call threads");
-			drawCallThreads.push_back(std::thread(&RendererList::SubmitDrawCalls, m_pVisibleRendererList.get(), std::ref(gfx), std::ref(opaqueDrawContext)));
-			drawCallThreads.push_back(std::thread(&RendererList::SubmitDrawCalls, m_pVisibleTransparentRendererList.get(), std::ref(gfx), std::ref(transparentDrawContext)));
+			if (IsFeatureEnabled(RendererFeature::Multithreading))
+			{
+				drawCallThreads.push_back(std::thread(&RendererList::SubmitDrawCalls, m_pVisibleRendererList.get(), std::ref(gfx), std::ref(opaqueDrawContext)));
+				drawCallThreads.push_back(std::thread(&RendererList::SubmitDrawCalls, m_pVisibleTransparentRendererList.get(), std::ref(gfx), std::ref(transparentDrawContext)));
+			}
+			else
+			{
+				m_pVisibleRendererList->SubmitDrawCalls(gfx, opaqueDrawContext);
+				m_pVisibleTransparentRendererList->SubmitDrawCalls(gfx, opaqueDrawContext);
+			}
 		}
 
 		// Per-frame binds
@@ -522,6 +538,7 @@ namespace gfx
 		}
 
 		// Wait for draw call threads to complete
+		if (IsFeatureEnabled(RendererFeature::Multithreading))
 		{
 			for (auto& t : drawCallThreads)
 			{
@@ -851,6 +868,7 @@ namespace gfx
 
 			ImGui::BeginTable("FeatureTable", 2);
 			int buttonId = 0;
+			m_rendererFeatureEnabled[(int)RendererFeature::Multithreading]	= DrawToggleOnOffButton(buttonId++, "Multi-threading", m_rendererFeatureEnabled[(int)RendererFeature::Multithreading], featureButtonSize, changed);
 			m_rendererFeatureEnabled[(int)RendererFeature::Shadows]			= DrawToggleOnOffButton(buttonId++, "Shadows", m_rendererFeatureEnabled[(int)RendererFeature::Shadows], featureButtonSize, changed);
 			m_rendererFeatureEnabled[(int)RendererFeature::DepthOfField]	= DrawToggleOnOffButton(buttonId++, "Depth of Field", m_rendererFeatureEnabled[(int)RendererFeature::DepthOfField], featureButtonSize, changed);
 			if (IsFeatureEnabled(RendererFeature::DepthOfField))

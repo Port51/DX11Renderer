@@ -3,7 +3,6 @@
 #include "CommonHeader.h"
 #include <string>
 #include <vector>
-#include <wrl.h>
 #include "DX11Include.h"
 
 struct ID3D11Buffer;

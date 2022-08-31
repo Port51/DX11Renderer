@@ -1,7 +1,6 @@
 #pragma once
 #include "Bindable.h"
 #include "CommonHeader.h"
-#include <wrl.h>
 #include <string>
 #include "DX11Include.h"
 

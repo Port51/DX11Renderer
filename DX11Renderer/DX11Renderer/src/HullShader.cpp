@@ -43,7 +43,7 @@ namespace gfx
 
 	void HullShader::BindHS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot)
 	{
-		if (renderState.IsNewBinding(GetGuid(), RenderBindingType::PS_Shader, 0u))
+		if (renderState.IsNewBinding(GetGuid(), RenderBindingType::HS_Shader, 0u))
 		{
 			gfx.GetContext()->HSSetShader(m_pHullShader.Get(), nullptr, 0u);
 			REGISTER_GPU_CALL();
@@ -53,7 +53,7 @@ namespace gfx
 
 	void HullShader::UnbindHS(const GraphicsDevice& gfx, RenderState& renderState, const slotUINT slot)
 	{
-		renderState.ClearBinding(RenderBindingType::PS_Shader, 0u);
+		renderState.ClearBinding(RenderBindingType::HS_Shader, 0u);
 		gfx.GetContext()->HSSetShader(nullptr, nullptr, 0u);
 		REGISTER_GPU_CALL();
 	}

@@ -153,24 +153,29 @@ namespace gfx
 	{
 		m_pInputLayout->BindIA(gfx, renderState, 0u);
 		m_pVertexShader->BindVS(gfx, renderState, 0u);
+
 		if (m_pHullShader != nullptr)
 		{
 			m_pHullShader->BindHS(gfx, renderState, 0u);
 		}
-		else
+		// Only unbind if there is currently a HS bound
+		else if (renderState.HasBinding(RenderBindingType::HS_Shader, 0u))
 		{
-			// todo: don't unbind every call
+			renderState.ClearBinding(RenderBindingType::HS_Shader, 0u);
 			gfx.GetContext()->HSSetShader(nullptr, nullptr, 0u);
 		}
+
 		if (m_pDomainShader != nullptr)
 		{
 			m_pDomainShader->BindDS(gfx, renderState, 0u);
 		}
-		else
+		// Only unbind if there is currently a DS bound
+		else if (renderState.HasBinding(RenderBindingType::DS_Shader, 0u))
 		{
-			// todo: don't unbind every call
+			renderState.ClearBinding(RenderBindingType::DS_Shader, 0u);
 			gfx.GetContext()->DSSetShader(nullptr, nullptr, 0u);
 		}
+
 		if (m_pPixelShader != nullptr)
 		{
 			m_pPixelShader->BindPS(gfx, renderState, 0u);
