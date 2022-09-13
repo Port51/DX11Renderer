@@ -11,7 +11,7 @@ namespace gfx
 	class DepthStencilState : public Bindable
 	{
 	public:
-		enum class Mode
+		enum class Mode : u8
 		{
 			StencilOff,
 			Normal,

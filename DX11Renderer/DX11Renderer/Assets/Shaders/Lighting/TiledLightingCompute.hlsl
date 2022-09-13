@@ -218,7 +218,7 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
         
         uint type = (uint)round(light.data0.x);
         int shadowIdx = (int)round(light.direction.w);
-        [branch] // should be same for each thread group
+        [branch] // since thread groups are same size as tiles, execution mask should be all 0 or 1
         if (type == 2u)
         {
             // Directional light
@@ -256,7 +256,7 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
             //diffuseLight = lightAtten;
             //break;
         
-            [branch] // should be same for each thread group, as thread groups are the size of 1 tile
+            [branch] // since thread groups are same size as tiles, execution mask should be all 0 or 1
             if (type == 1u)
             {
                 // Apply spotlight cone
@@ -306,7 +306,7 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
         //specularLight += brdf.specularLight * lightColorInput;
     }
 
-    // Ambient lighting (todo: replace with something fancier and read colors from CB!)
+    // Ambient lighting (todo: replace with something fancier like voxel GI or surfels)
     const float3 normalWS = mul(_InvViewMatrix, float4(normalVS.xyz, 0.f)).xyz;
     const float lv = saturate(normalWS.y + 0.15);
     const float ambientIntensity = 0.085;
@@ -320,6 +320,9 @@ void CSMain(uint3 gId : SV_GroupID, uint gIndex : SV_GroupIndex, uint3 groupThre
 		specularLight *= OcclusionTex[tId.xy];
 	}
     
+    //
+    // Debug views
+    //
     float3 debugColor = debugValue;
     uint debugLightCount = tileLightCount - tileDirLightCount;
 #if defined(DEBUG_VIEW_LIGHT_COUNTS)

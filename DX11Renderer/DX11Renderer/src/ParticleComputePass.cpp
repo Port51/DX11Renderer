@@ -21,10 +21,10 @@ namespace gfx
 		m_pFrustumCullKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, computeShaderPath, "FrustumCull"));
 		m_pSetupInstanceBufferKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, computeShaderPath, "SetupInstanceBuffer"));
 
-		CreateSubPass(ParticleComputeSubpass::SpawnParticlesSubpass);
-		CreateSubPass(ParticleComputeSubpass::UpdateParticlesSubpass);
-		CreateSubPass(ParticleComputeSubpass::FrustumCullSubpass);
-		CreateSubPass(ParticleComputeSubpass::SetupInstanceBuffer);
+		CreateSubPass((u8)ParticleComputeSubpass::SpawnParticlesSubpass);
+		CreateSubPass((u8)ParticleComputeSubpass::UpdateParticlesSubpass);
+		CreateSubPass((u8)ParticleComputeSubpass::FrustumCullSubpass);
+		CreateSubPass((u8)ParticleComputeSubpass::SetupInstanceBuffer);
 
 		SetupRenderPassDependencies(gfx);
 	}

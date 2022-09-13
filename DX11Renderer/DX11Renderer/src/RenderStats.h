@@ -23,8 +23,7 @@ namespace gfx
 		};
 
 	public:
-		enum TimedProcess { CullAndFrameBindsProcess, ShadowAndLightCull, DrawCallSetupComplete, HZBProcess, GBuffer, SSAO, TiledLighting, ClusteredLighting, Opaque, Skybox, Transparent, SSR, Downsample, 
-		};
+		enum class TimedProcess : u8 { CullAndFrameBindsProcess, ShadowAndLightCull, DrawCallSetupComplete, HZBProcess, GBuffer, SSAO, TiledLighting, ClusteredLighting, Opaque, Skybox, Transparent, SSR, Downsample, };
 	public:
 		RenderStats();
 		~RenderStats();

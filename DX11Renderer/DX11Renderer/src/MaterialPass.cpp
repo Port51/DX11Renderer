@@ -90,14 +90,14 @@ namespace gfx
 	const u64 MaterialPass::GetMaterialCode() const
 	{
 		// Create sorting code that minimizes state changes
-		// Cost determines the order:
-		// Shader program > ROP > texture bindings > vertex format > UBO bindings > vert bindings > uniform updates
+		// Cost determines the order
+		// Cost: Shader program > ROP > texture bindings > vertex format > UBO bindings > vert bindings > uniform updates
 
-		// Actually use 52 bits for this, as 12 will be used for depth
+		// Actually use 54 bits for this, as 10 will be used for depth
 		// 4 bits - render queue
 		// 10 bits - pixel shader (1024 possible)
 		// 10 bits - vertex shader (1024 possible)
-		// 2 bits - rasterizer state (4 possible)
+		// 4 bits - rasterizer state (16 possible)
 		// 12 bits - texture bindings
 		// 8 bits - vertex layout (256 possible)
 		// 6 bits - UBO bindings (64 possible)

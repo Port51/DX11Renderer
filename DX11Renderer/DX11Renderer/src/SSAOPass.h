@@ -21,7 +21,8 @@ namespace gfx
 	class SSAOPass : public RenderPass
 	{
 	private:
-		enum SSAOSubpass : UINT {
+		enum class SSAOSubpass : u8
+		{
 			OcclusionSubpass,
 			HorizontalBlurSubpass,
 			VerticalBlurSubpass,

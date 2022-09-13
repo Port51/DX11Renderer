@@ -10,7 +10,7 @@ namespace gfx
 	struct Frustum
 	{
 	public:
-		enum IntersectionType { Intersect, Inside, Outside };
+		enum class IntersectionType : u8 { Intersect, Inside, Outside };
 	public:
 		Frustum();
 		Frustum(const std::vector<dx::XMFLOAT4>& planes);

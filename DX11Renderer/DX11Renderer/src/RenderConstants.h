@@ -7,7 +7,7 @@ struct ID3D11BUFFER;
 
 namespace gfx
 {
-	enum RenderPassType : int
+	enum class RenderPassType : u8
 	{
 		Undefined,
 		Subpass,
@@ -35,21 +35,17 @@ namespace gfx
 		FinalBlitRenderPass
 	};
 
-	class RenderBindingType
+	enum class RenderBindingType : u8
 	{
-	public:
-		enum RenderBindingTypeEnum : u8
-		{
-			IA_InputLayout, IA_VertexBuffer, IA_IndexBuffer, IA_Topology,
-			CS_SRV, CS_UAV, CS_CB, CS_Shader, CS_Sampler,
-			VS_SRV, VS_UAV, VS_CB, VS_Shader, VS_Sampler,
-			HS_SRV, HS_UAV, HS_CB, HS_Shader, HS_Sampler,
-			DS_SRV, DS_UAV, DS_CB, DS_Shader, DS_Sampler,
-			GS_SRV, GS_UAV, GS_CB, GS_Shader, GS_Sampler,
-			RS_State,
-			PS_SRV, PS_UAV, PS_CB, PS_Shader, PS_Sampler,
-			OM_DepthStencilState,
-		};
+		IA_InputLayout, IA_VertexBuffer, IA_IndexBuffer, IA_Topology,
+		CS_SRV, CS_UAV, CS_CB, CS_Shader, CS_Sampler,
+		VS_SRV, VS_UAV, VS_CB, VS_Shader, VS_Sampler,
+		HS_SRV, HS_UAV, HS_CB, HS_Shader, HS_Sampler,
+		DS_SRV, DS_UAV, DS_CB, DS_Shader, DS_Sampler,
+		GS_SRV, GS_UAV, GS_CB, GS_Shader, GS_Sampler,
+		RS_State,
+		PS_SRV, PS_UAV, PS_CB, PS_Shader, PS_Sampler,
+		OM_DepthStencilState,
 	};
 
 	class RenderSlots

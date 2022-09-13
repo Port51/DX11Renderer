@@ -51,10 +51,10 @@ namespace gfx
 		//
 		// Debug stuff
 		//
-		m_rendererFeatureEnabled.resize(RendererFeature::COUNT, true); // enable all features by default
-		m_rendererFeatureEnabled[RendererFeature::HZBSSR] = true;
-		m_rendererFeatureEnabled[RendererFeature::DepthOfField] = true;
-		m_rendererFeatureEnabled[RendererFeature::Bloom] = true;
+		m_rendererFeatureEnabled.resize((u8)RendererFeature::COUNT, true); // enable all features by default
+		m_rendererFeatureEnabled[(u8)RendererFeature::HZBSSR] = true;
+		m_rendererFeatureEnabled[(u8)RendererFeature::DepthOfField] = true;
+		m_rendererFeatureEnabled[(u8)RendererFeature::Bloom] = true;
 
 		//
 		// Components
@@ -631,7 +631,7 @@ namespace gfx
 
 		if (IsFeatureEnabled(RendererFeature::SSAO))
 		{
-			GetRenderPass(SSAORenderPass).Execute(gfx, renderState);
+			GetRenderPass(RenderPassType::SSAORenderPass).Execute(gfx, renderState);
 		}
 
 		// Tiled lighting pass
@@ -683,7 +683,7 @@ namespace gfx
 
 		// Skybox pass
 		{
-			GetRenderPass(SkyboxRenderPass).Execute(gfx, renderState);
+			GetRenderPass(RenderPassType::SkyboxRenderPass).Execute(gfx, renderState);
 		}
 
 		// Transparent pass
@@ -739,12 +739,12 @@ namespace gfx
 
 		if (m_viewIdx == RendererView::Final && IsFeatureEnabled(RendererFeature::DepthOfField))
 		{
-			GetRenderPass(DepthOfFieldRenderPass).Execute(gfx, renderState);
+			GetRenderPass(RenderPassType::DepthOfFieldRenderPass).Execute(gfx, renderState);
 		}
 
 		if (m_viewIdx == RendererView::Final && IsFeatureEnabled(RendererFeature::Bloom))
 		{
-			GetRenderPass(BloomRenderPass).Execute(gfx, renderState);
+			GetRenderPass(RenderPassType::BloomRenderPass).Execute(gfx, renderState);
 		}
 
 		// Run GPU particle render pass
@@ -873,14 +873,14 @@ namespace gfx
 			m_rendererFeatureEnabled[(int)RendererFeature::DepthOfField]	= DrawToggleOnOffButton(buttonId++, "Depth of Field", m_rendererFeatureEnabled[(int)RendererFeature::DepthOfField], featureButtonSize, changed);
 			if (IsFeatureEnabled(RendererFeature::DepthOfField))
 			{
-				GetRenderPass(DepthOfFieldRenderPass).DrawImguiControls(gfx);
+				GetRenderPass(RenderPassType::DepthOfFieldRenderPass).DrawImguiControls(gfx);
 			}
 			m_rendererFeatureEnabled[(int)RendererFeature::Bloom]			= DrawToggleOnOffButton(buttonId++, "Bloom", m_rendererFeatureEnabled[(int)RendererFeature::Bloom], featureButtonSize, changed);
 			m_rendererFeatureEnabled[(int)RendererFeature::FXAA]			= DrawToggleOnOffButton(buttonId++, "FXAA", m_rendererFeatureEnabled[(int)RendererFeature::FXAA], featureButtonSize, changed);
 			m_rendererFeatureEnabled[(int)RendererFeature::SSAO]			= DrawToggleOnOffButton(buttonId++, "SSAO", m_rendererFeatureEnabled[(int)RendererFeature::SSAO], featureButtonSize, changed);
 			if (IsFeatureEnabled(RendererFeature::SSAO))
 			{
-				GetRenderPass(SSAORenderPass).DrawImguiControls(gfx);
+				GetRenderPass(RenderPassType::SSAORenderPass).DrawImguiControls(gfx);
 			}
 			m_rendererFeatureEnabled[(int)RendererFeature::HZBSSR]			= DrawToggleOnOffButton(buttonId++, "SSR", m_rendererFeatureEnabled[(int)RendererFeature::HZBSSR], featureButtonSize, changed);
 			m_rendererFeatureEnabled[(int)RendererFeature::Dither]			= DrawToggleOnOffButton(buttonId++, "Dither", m_rendererFeatureEnabled[(int)RendererFeature::Dither], featureButtonSize, changed);

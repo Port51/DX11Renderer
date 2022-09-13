@@ -16,7 +16,7 @@ namespace gfx
 	class RendererList
 	{
 	public:
-		enum RendererSortingType
+		enum class RendererSortingType : u8
 		{
 			StateThenBackToFront,
 			StateThenFrontToBack,

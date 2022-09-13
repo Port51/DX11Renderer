@@ -5,13 +5,13 @@ namespace gfx
 	class Config
 	{
 	public:
-		enum ShadowType
+		enum class ShadowType : u8
 		{
 			Hard,
 			PCF,
 			Moment,
 		};
-		enum AAType
+		enum class AAType : u8
 		{
 			None,
 			FXAA,

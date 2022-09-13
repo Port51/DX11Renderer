@@ -22,9 +22,9 @@ namespace gfx
 		const UINT occlusionTextureWidth = gfx.GetScreenWidth();
 		const UINT occlusionTextureHeight = gfx.GetScreenHeight();
 
-		CreateSubPass(SSAOSubpass::OcclusionSubpass);
-		CreateSubPass(SSAOSubpass::HorizontalBlurSubpass);
-		CreateSubPass(SSAOSubpass::VerticalBlurSubpass);
+		CreateSubPass((u8)SSAOSubpass::OcclusionSubpass);
+		CreateSubPass((u8)SSAOSubpass::HorizontalBlurSubpass);
+		CreateSubPass((u8)SSAOSubpass::VerticalBlurSubpass);
 
 		m_pOcclusionTexture0 = std::make_shared<RenderTexture>(gfx, DXGI_FORMAT_R8_UNORM);
 		m_pOcclusionTexture0->Init(gfx.GetAdapter(), occlusionTextureWidth, occlusionTextureHeight);
@@ -65,7 +65,7 @@ namespace gfx
 
 	void SSAOPass::SetupRenderPassDependencies(const GraphicsDevice & gfx, const RenderTexture & pGbuffer, const RenderTexture& hiZBuffer, const Texture& noiseTexture)
 	{
-		GetSubPass(SSAOSubpass::OcclusionSubpass).
+		GetSubPass((u8)SSAOSubpass::OcclusionSubpass).
 			ClearBinds()
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, pGbuffer.GetSRV())
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 1u, hiZBuffer.GetSRV())
@@ -74,7 +74,7 @@ namespace gfx
 			.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, m_pOcclusionTexture0->GetUAV())
 			.CSSetCB(RenderSlots::CS_FreeCB + 0u, m_pSettingsCB->GetD3DBuffer());
 
-		GetSubPass(SSAOSubpass::HorizontalBlurSubpass).
+		GetSubPass((u8)SSAOSubpass::HorizontalBlurSubpass).
 			ClearBinds()
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 1u, hiZBuffer.GetSRV())
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 4u, m_pOcclusionTexture0->GetSRV())
@@ -82,7 +82,7 @@ namespace gfx
 			.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, m_pOcclusionTexture1->GetUAV())
 			.CSSetCB(RenderSlots::CS_FreeCB + 0u, m_pSettingsCB->GetD3DBuffer());
 
-		GetSubPass(SSAOSubpass::VerticalBlurSubpass).
+		GetSubPass((u8)SSAOSubpass::VerticalBlurSubpass).
 			ClearBinds()
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 1u, hiZBuffer.GetSRV())
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 4u, m_pOcclusionTexture1->GetSRV())
@@ -106,7 +106,7 @@ namespace gfx
 
 		// Render occlusion
 		{
-			const RenderPass& pass = GetSubPass(SSAOSubpass::OcclusionSubpass);
+			const RenderPass& pass = GetSubPass((u8)SSAOSubpass::OcclusionSubpass);
 			pass.BindSharedResources(gfx, renderState);
 
 			m_pOcclusionKernel->Dispatch(gfx, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1u);
@@ -116,7 +116,7 @@ namespace gfx
 
 		// Horizontal blur
 		{
-			const RenderPass& pass = GetSubPass(SSAOSubpass::HorizontalBlurSubpass);
+			const RenderPass& pass = GetSubPass((u8)SSAOSubpass::HorizontalBlurSubpass);
 			pass.BindSharedResources(gfx, renderState);
 
 			m_pHorizontalBlurKernel->Dispatch(gfx, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1u);
@@ -126,7 +126,7 @@ namespace gfx
 
 		// Vertical blur
 		{
-			const RenderPass& pass = GetSubPass(SSAOSubpass::VerticalBlurSubpass);
+			const RenderPass& pass = GetSubPass((u8)SSAOSubpass::VerticalBlurSubpass);
 			pass.BindSharedResources(gfx, renderState);
 
 			m_pVerticalBlurKernel->Dispatch(gfx, gfx.GetScreenWidth(), gfx.GetScreenHeight(), 1u);

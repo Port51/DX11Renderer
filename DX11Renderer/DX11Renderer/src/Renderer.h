@@ -33,13 +33,13 @@ namespace gfx
 	struct DepthOfFieldCB;
 	struct BloomCB;
 
-	enum RenderPassType : int;
+	enum class RenderPassType : u8;
 
 	class Renderer
 	{
 	public:
-		enum RendererView { Final, TiledLighting, ClusteredLighting, SSRTrace };
-		enum RendererFeature { Multithreading, Shadows, DepthOfField, Bloom, FXAA, SSAO, HZBSSR, Dither, Tonemapping, COUNT }; // for COUNT to be accurate, don't set these values to anything weird...
+		enum class RendererView : u8 { Final, TiledLighting, ClusteredLighting, SSRTrace };
+		enum class RendererFeature : u8 { Multithreading, Shadows, DepthOfField, Bloom, FXAA, SSAO, HZBSSR, Dither, Tonemapping, COUNT }; // for COUNT to be accurate, don't set these values to anything weird...
 		
 	public:
 		Renderer(const GraphicsDevice& gfx, RandomGenerator& rng, std::shared_ptr<LightManager> pLightManager, std::shared_ptr<ParticleManager> pParticleManager, std::shared_ptr<RendererList> pRendererList);

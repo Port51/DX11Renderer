@@ -113,9 +113,13 @@ void CSMain(uint3 tId : SV_DispatchThreadID)
             }
         }
     }
+
     // Set light count
     ClusteredIndices[clusterDataIdx] = nextLightIdx;
 
+    //
+    // Debug views
+    //
 #if defined(ENABLE_DEBUG_VIEWS)
 #if defined(DEBUG_VIEW_IS_COUNT_AT_DEPTH)
     // Show light count for one depth

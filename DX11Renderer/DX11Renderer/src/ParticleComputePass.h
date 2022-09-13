@@ -16,7 +16,7 @@ namespace gfx
 	class ParticleComputePass : public RenderPass
 	{
 	private:
-		enum ParticleComputeSubpass : UINT {
+		enum class ParticleComputeSubpass : u8 {
 			SpawnParticlesSubpass,
 			UpdateParticlesSubpass,
 			FrustumCullSubpass,

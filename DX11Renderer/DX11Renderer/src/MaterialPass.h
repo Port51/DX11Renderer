@@ -20,7 +20,7 @@ namespace gfx
 
 	struct DrawContext;
 
-	enum RenderPassType : int;
+	enum class RenderPassType : u8;
 
 	// Collection of bindables needed to execute a material pass in a technique
 	class MaterialPass

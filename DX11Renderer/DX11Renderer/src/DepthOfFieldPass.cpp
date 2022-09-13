@@ -22,10 +22,10 @@ namespace gfx
 		const UINT dofTextureWidth = gfx.GetScreenWidth() >> 1u;
 		const UINT dofTextureHeight = gfx.GetScreenHeight() >> 1u;
 
-		CreateSubPass(DepthOfFieldSubpass::PrefilterSubpass);
-		CreateSubPass(DepthOfFieldSubpass::FarBlurSubpass);
-		CreateSubPass(DepthOfFieldSubpass::NearBlurSubpass);
-		CreateSubPass(DepthOfFieldSubpass::CompositeSubpass);
+		CreateSubPass((u8)DepthOfFieldSubpass::PrefilterSubpass);
+		CreateSubPass((u8)DepthOfFieldSubpass::FarBlurSubpass);
+		CreateSubPass((u8)DepthOfFieldSubpass::NearBlurSubpass);
+		CreateSubPass((u8)DepthOfFieldSubpass::CompositeSubpass);
 
 		const char* computeShaderPath = "DepthOfField.hlsl";
 		m_pDoFPrefilterKernel = std::make_unique<ComputeKernel>(ComputeShader::Resolve(gfx, computeShaderPath, "Prefilter"));
@@ -102,14 +102,14 @@ namespace gfx
 
 	void DepthOfFieldPass::SetupRenderPassDependencies(const GraphicsDevice & gfx, const RenderTexture& pDownsampledColor, const RenderTexture& pHiZBufferTarget, const RenderTexture& pCameraColor)
 	{
-		GetSubPass(DepthOfFieldSubpass::PrefilterSubpass).
+		GetSubPass((u8)DepthOfFieldSubpass::PrefilterSubpass).
 			ClearBinds()
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, pDownsampledColor.GetSRV())
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 3u, pHiZBufferTarget.GetSRV())
 			.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, m_pDoFFar0->GetUAV())
 			.CSSetUAV(RenderSlots::CS_FreeUAV + 1u, m_pDoFNear0->GetUAV());
 
-		GetSubPass(DepthOfFieldSubpass::FarBlurSubpass).
+		GetSubPass((u8)DepthOfFieldSubpass::FarBlurSubpass).
 			ClearBinds()
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, m_pDoFFar0->GetSRV())
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 4u, m_pBokehDiskWeights->GetSRV())
@@ -117,14 +117,14 @@ namespace gfx
 			.CSSetUAV(RenderSlots::CS_FreeUAV + 1u, m_pDoFFar2->GetUAV())
 			.CSSetUAV(RenderSlots::CS_FreeUAV + 2u, m_pDoFFar3->GetUAV());
 
-		GetSubPass(DepthOfFieldSubpass::NearBlurSubpass).
+		GetSubPass((u8)DepthOfFieldSubpass::NearBlurSubpass).
 			ClearBinds()
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, m_pDoFNear0->GetSRV())
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 4u, m_pBokehDiskWeights->GetSRV())
 			.CSSetUAV(RenderSlots::CS_FreeUAV + 0u, m_pDoFNear1->GetUAV())
 			.CSSetUAV(RenderSlots::CS_FreeUAV + 1u, m_pDoFNear2->GetUAV());
 
-		GetSubPass(DepthOfFieldSubpass::CompositeSubpass).
+		GetSubPass((u8)DepthOfFieldSubpass::CompositeSubpass).
 			ClearBinds()
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 0u, m_pDoFFar3->GetSRV())
 			.CSSetSRV(RenderSlots::CS_FreeSRV + 1u, m_pDoFNear0->GetSRV())
@@ -169,7 +169,7 @@ namespace gfx
 
 		// DoF prefilter
 		{
-			const RenderPass& pass = GetSubPass(DepthOfFieldSubpass::PrefilterSubpass);
+			const RenderPass& pass = GetSubPass((u8)DepthOfFieldSubpass::PrefilterSubpass);
 			pass.BindSharedResources(gfx, renderState);
 
 			m_pDepthOfFieldCB->Update(gfx, m_depthOfFieldCB.get());
@@ -189,7 +189,7 @@ namespace gfx
 			ExecuteHexBokeh(gfx, renderState);
 			break;
 		default:
-			THROW("Unrecognized bokeh type " + m_bokehType);
+			THROW("Unrecognized bokeh type " + (u8)m_bokehType);
 		}
 
 		gfx.GetRenderStats().EndTaskTimer(GetName());
@@ -205,7 +205,7 @@ namespace gfx
 
 		// DoF far blur pass
 		{
-			const RenderPass& pass = GetSubPass(DepthOfFieldSubpass::FarBlurSubpass);
+			const RenderPass& pass = GetSubPass((u8)DepthOfFieldSubpass::FarBlurSubpass);
 			pass.BindSharedResources(gfx, renderState);
 
 			// Component #0
@@ -273,7 +273,7 @@ namespace gfx
 
 		// DoF near blur pass
 		{
-			const RenderPass& pass = GetSubPass(DepthOfFieldSubpass::NearBlurSubpass);
+			const RenderPass& pass = GetSubPass((u8)DepthOfFieldSubpass::NearBlurSubpass);
 			pass.BindSharedResources(gfx, renderState);
 
 			m_depthOfFieldCB->weightOffset = 0u;
@@ -308,7 +308,7 @@ namespace gfx
 
 		// DoF composite pass
 		{
-			const RenderPass& pass = GetSubPass(DepthOfFieldSubpass::CompositeSubpass);
+			const RenderPass& pass = GetSubPass((u8)DepthOfFieldSubpass::CompositeSubpass);
 			pass.BindSharedResources(gfx, renderState);
 
 			m_pDoFCompositeKernel->Dispatch(gfx, screenWidth, screenHeight, 1u);
@@ -327,7 +327,7 @@ namespace gfx
 
 		// DoF far blur pass
 		{
-			const RenderPass& pass = GetSubPass(DepthOfFieldSubpass::FarBlurSubpass);
+			const RenderPass& pass = GetSubPass((u8)DepthOfFieldSubpass::FarBlurSubpass);
 			pass.BindSharedResources(gfx, renderState);
 
 			// todo: move to shared
@@ -354,7 +354,7 @@ namespace gfx
 
 		// DoF near blur pass
 		{
-			const RenderPass& pass = GetSubPass(DepthOfFieldSubpass::NearBlurSubpass);
+			const RenderPass& pass = GetSubPass((u8)DepthOfFieldSubpass::NearBlurSubpass);
 			pass.BindSharedResources(gfx, renderState);
 
 			// todo: move to shared
@@ -384,7 +384,7 @@ namespace gfx
 
 		// DoF composite pass
 		{
-			const RenderPass& pass = GetSubPass(DepthOfFieldSubpass::CompositeSubpass);
+			const RenderPass& pass = GetSubPass((u8)DepthOfFieldSubpass::CompositeSubpass);
 			pass.BindSharedResources(gfx, renderState);
 
 			context->CSSetShaderResources(RenderSlots::CS_FreeSRV + 0u, 1u, m_pDoFFar3->GetSRV().GetAddressOf());

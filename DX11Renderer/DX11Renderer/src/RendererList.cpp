@@ -39,6 +39,10 @@ namespace gfx
 
 		// Frustum culling
 		{
+			// Note - this unpacks scene graphs every frame
+			// it could be better to store a vector of renderers at each graph
+			// as long as scene graphs don't gain new renderers very often
+
 			// Use queue to avoid recursion
 			std::queue<std::shared_ptr<SceneGraphNode>> nodeQueue;
 			m_pRenderers.clear();
@@ -53,8 +57,8 @@ namespace gfx
 				nodeQueue.pop();
 
 				// Cull against BVH
-				dx::XMVECTOR nodePositionWS = node->GetPositionWS();
-				bool bvhInFrustum = frustum.DoesAABBIntersect(node->GetBoundingVolume(), nodePositionWS);
+				const dx::XMVECTOR nodePositionWS = node->GetPositionWS();
+				const bool bvhInFrustum = frustum.DoesAABBIntersect(node->GetBoundingVolume(), nodePositionWS);
 				if (bvhInFrustum)
 				{
 					// Add children
@@ -65,8 +69,7 @@ namespace gfx
 
 					// Add renderer, if exists and is in frustum
 					const auto& renderer = node->GetMeshRenderer();
-					if (renderer != nullptr
-						&& frustum.DoesAABBIntersect(renderer->GetAABB(), nodePositionWS))
+					if (renderer != nullptr && frustum.DoesAABBIntersect(renderer->GetAABB(), nodePositionWS))
 					{
 						// Then construct sorting code
 
@@ -75,20 +78,20 @@ namespace gfx
 						{
 							// Combine depth and state
 
-							// Get view depth as that doesn't require an inverse square root (slow)
-							float depth = dx::XMVectorGetX(dx::XMVector3Dot(dx::XMVectorSubtract(renderer->GetAABB().GetCenterWS(nodePositionWS), originWS), directionWS));
+							// Use view depth as distance, since that doesn't require a slow inverse square root calculation
+							const float depth = dx::XMVectorGetX(dx::XMVector3Dot(dx::XMVectorSubtract(renderer->GetAABB().GetCenterWS(nodePositionWS), originWS), directionWS));
 							float depthPercentage = std::min(depth * rcpFarClipPlane, 1.f);
 							if (reverseDepth)
 							{
 								depthPercentage = 1.f - depthPercentage;
 							}
 
-							const u64 depthCode = (u64)(4096u * depthPercentage); // use 12 bits for depth
+							const u64 depthCode = (u64)(1024u * depthPercentage); // use 10 bits for depth, and 2^10 = 1024
 							const u64 materialCode = renderer->GetMaterialCode(renderPassType);
 
 							code = (sortStateFirst) ?
-								(materialCode << 12u) + depthCode
-								: (depthCode << 52u) + materialCode;
+								(materialCode << 10u) + depthCode
+								: (depthCode << 54u) + materialCode;
 						}
 						else
 						{

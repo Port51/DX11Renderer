@@ -9,7 +9,7 @@ namespace gfx
 		class LogMessage
 		{
 		public:
-			enum LogMessageType
+			enum class LogMessageType : u8
 			{
 				Error,
 				Warning,

@@ -19,7 +19,7 @@ namespace gfx
 
 	struct DrawContext;
 
-	enum RenderPassType : int;
+	enum class RenderPassType : u8;
 
 	class Material : public Bindable
 	{

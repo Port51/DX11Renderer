@@ -20,7 +20,7 @@ namespace gfx
 	class BloomPass : public RenderPass
 	{
 	private:
-		enum BloomSubpass : UINT {
+		enum class BloomSubpass : u8 {
 			PrefilterSubpass,
 			SeparableBlurSubpass,
 			CombineSubpass,

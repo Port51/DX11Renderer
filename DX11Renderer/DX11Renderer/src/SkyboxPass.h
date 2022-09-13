@@ -12,9 +12,9 @@ namespace gfx
 	class SkyboxPass : public RenderPass
 	{
 	public:
-		enum DepthOfFieldBokehType { DiskBokeh, HexBokeh };
+		enum class DepthOfFieldBokehType : u8 { DiskBokeh, HexBokeh };
 	private:
-		enum DepthOfFieldSubpass : UINT
+		enum class DepthOfFieldSubpass : u8
 		{
 			PrefilterSubpass,
 			FarBlurSubpass,

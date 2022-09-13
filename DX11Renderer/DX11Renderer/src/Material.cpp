@@ -34,7 +34,7 @@ namespace gfx
 {
 	using namespace std::string_literals;
 
-	enum MaterialParseState { None, Global, Properties, Pass };
+	enum class MaterialParseState : u8 { None, Global, Properties, Pass };
 
 	Material::Material(const GraphicsDevice& gfx, const std::string_view _materialAssetPath, const bool instancingOn)
 		: m_materialAssetPath(std::string(_materialAssetPath)), m_hasTessellation(false)

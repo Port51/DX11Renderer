@@ -67,9 +67,9 @@ namespace gfx
 		const RenderTexture& GetCameraColorOut() const;
 		static const std::size_t GetHash(const std::string passName);
 	protected:
-		RenderPass& GetSubPass(const UINT pass) const;
-		const RenderPass& CreateSubPass(const UINT pass);
-		const RenderPass& CreateSubPass(const UINT pass, std::unique_ptr<RenderPass> pRenderPass);
+		RenderPass& GetSubPass(const u8 pass) const;
+		const RenderPass& CreateSubPass(const u8 pass);
+		const RenderPass& CreateSubPass(const u8 pass, std::unique_ptr<RenderPass> pRenderPass);
 
 	protected:
 		std::string m_name;

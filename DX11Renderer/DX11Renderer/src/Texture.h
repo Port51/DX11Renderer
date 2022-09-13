@@ -16,7 +16,7 @@ namespace gfx
 	class Texture : public Bindable
 	{
 	public:
-		enum TextureDimension { TEXTURE1D, TEXTURE2D, TEXTURE3D };
+		enum class TextureDimension : u8 { TEXTURE1D, TEXTURE2D, TEXTURE3D };
 	public:
 		Texture(const GraphicsDevice& gfx);
 		Texture(const GraphicsDevice& gfx, UINT mipCount);
